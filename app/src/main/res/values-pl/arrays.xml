@@ -1,0 +1,257 @@
+<resources>
+    <string-array name="theme_list_titles">
+        <item>Jasny</item>
+        <item>Ciemny</item>
+        <item>Domyślny systemu</item>
+    </string-array>
+    <string-array name="theme_list_values">
+        <item>jasny</item>
+        <item>ciemny</item>
+        <item>domyślny</item>
+    </string-array>
+
+    <string-array name="pref_cache_size_titles">
+        <item>Duży</item>
+        <item>Średni</item>
+        <item>Mały</item>
+    </string-array>
+    <string-array name="pref_cache_size_values">
+        <item>500</item>
+        <item>250</item>
+        <item>125</item>
+    </string-array>
+
+    <string-array name="pref_image_size_titles">
+        <item>Duży</item>
+        <item>Średni</item>
+        <item>Mały</item>
+    </string-array>
+    <string-array name="pref_image_size_values">
+        <item>-1</item>
+        <item>500</item>
+        <item>300</item>
+    </string-array>
+
+    <string-array name="streaming_cache_size_titles">
+        <item>Wyłączone</item>
+        <item>128 MiB</item>
+        <item>256 MiB</item>
+        <item>512 MiB</item>
+        <item>1024 MiB</item>
+    </string-array>
+    <string-array name="streaming_cache_size_values">
+        <item>0</item>
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+    </string-array>
+
+    <string-array name="max_bitrate_wifi_list_titles">
+        <item>Oryginalny</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_wifi_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+
+    <string-array name="max_bitrate_mobile_list_titles">
+        <item>Oryginalny</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_mobile_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+
+    <string-array name="max_bitrate_download_list_titles">
+        <item>Oryginalny</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_download_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+
+    <string-array name="audio_transcode_format_wifi_list_titles">
+        <item>Odtwarzanie bezpośrednie bezpośrednie</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_wifi_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+
+    <string-array name="audio_transcode_format_mobile_list_titles">
+        <item>Odtwarzanie bezpośrednie</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_mobile_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+
+    <string-array name="audio_transcode_format_download_list_titles">
+        <item>Pobieranie bezpośrednie</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_download_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+
+    <string-array name="queue_syncing_countdown_titles">
+        <item>Dziesięć sekund</item>
+        <item>Pięć sekund</item>
+        <item>Dwie sekundy</item>
+    </string-array>
+    <string-array name="queue_syncing_countdown_values">
+        <item>10</item>
+        <item>5</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="rounded_corner_size_titles">
+        <item>Duży</item>
+        <item>Średni</item>
+        <item>Mały</item>
+    </string-array>
+    <string-array name="rounded_corner_size_values">
+        <item>18</item>
+        <item>12</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="replay_gain_titles">
+        <item>Wyłączony</item>
+        <item>Utwór</item>
+        <item>Album</item>
+        <item>Auto</item>
+    </string-array>
+    <string-array name="replay_gain_values">
+        <item>wyłączony</item>
+        <item>utwór</item>
+        <item>album</item>
+        <item>auto</item>
+    </string-array>
+
+    <string-array name="transcoded_download_option_list_titles">
+        <item>Nie transkoduj</item>
+        <item>Ustawienia serwera</item>
+        <item>Format transkodowania Wi-FI</item>
+        <item>Format transkodowania sieci komórkowej</item>
+    </string-array>
+    <string-array name="transcoded_download_option_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="buffering_strategy_titles">
+        <item>Minimalna</item>
+        <item>Średnia</item>
+        <item>Agresywna</item>
+        <item>Ekstremalna</item>
+    </string-array>
+    <string-array name="buffering_strategy_values">
+        <item>.1</item>
+        <item>1</item>
+        <item>4</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="skip_min_star_rating_titles">
+        <item>Minimum 0 gwiazdek</item>
+        <item>Minimum 1 gwiazdka</item>
+        <item>Minimum 2 gwiazdki</item>
+        <item>Minimum 3 gwiazdki</item>
+        <item>Minimum 4 gwiazdki</item>
+    </string-array>
+    <string-array name="skip_min_star_rating_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+</resources>
