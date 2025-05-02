@@ -104,7 +104,7 @@
     <string name="home_rearrangement_dialog_positive_button">Zapisz</string>
     <string name="home_rearrangement_dialog_title">Zmień układ strony głównej</string>
     <string name="home_rearrangement_dialog_subtitle">Weź pod uwagę to że, żeby zmiany nastąpiły, musisz zrestartować aplikację.</string>
-    <string name="home_subtitle_best_of">Najczęsciej odtwarzane piosenki od twoich ulubionych wykonawców</string>
+    <string name="home_subtitle_best_of">Top piosenki od twoich ulubionych wykonawców</string>
     <string name="home_subtitle_made_for_you">Stwórz miks z piosenki którą lubisz</string>
     <string name="home_subtitle_new_internet_radio_station">Dodaj nowe radio</string>
     <string name="home_subtitle_new_podcast_channel">Dodaj nowy kanał podcastów</string>
@@ -140,7 +140,7 @@
     <string name="home_title_starred_artists_see_all_button">Zobacz wszystkich</string>
     <string name="home_title_starred_tracks">★ Utwory oznaczone gwiazdką</string>
     <string name="home_title_starred_tracks_see_all_button">Zobacz wszystkie</string>
-    <string name="home_title_top_songs">Twoje najczęsciej odtwarzane piosenki</string>
+    <string name="home_title_top_songs">Twoje top piosenki</string>
     <string name="home_option_reorganize">Zmiana układu</string>
     <string name="label_dot_separator" translatable="false">•</string>
     <string name="label_placeholder" translatable="false">--</string>
@@ -375,7 +375,7 @@
     <string name="song_list_page_recently_added">Utwory dodane ostatnio</string>
     <string name="song_list_page_recently_played">Utwory odtwarzane ostatnio</string>
     <string name="song_list_page_starred">Utwory oznaczone gwiazdką</string>
-    <string name="song_list_page_top">%1$s\ najczęściej odtwarzane utwory</string>
+    <string name="song_list_page_top">%1$s\ top utwory</string>
     <string name="song_list_page_year">Rok %1$d</string>
     <string name="song_subtitle_formatter">%1$s  •  %2$s  %3$s</string>
     <string name="starred_sync_dialog_negative_button">Anuluj</string>
