@@ -86,7 +86,7 @@
     <string name="empty_string" />
     <string name="error_required">Wymagane</string>
     <string name="error_server_prefix">wymagany jest prefiks http lub https</string>
-    <string name="exo_download_notification_channel_name">Pobrane</string>
+    <string name="exo_download_notification_channel_name">Pobieranie</string>
     <string name="filter_info_selection">Wybierz dwa lub więcej filtrów</string>
     <string name="filter_title">Filtry</string>
     <string name="filter_title_expanded">Filtruj Gatunki</string>
@@ -159,7 +159,7 @@
     <string name="media_route_menu_title">Przesyłanie</string>
     <string name="menu_add_button">Dodaj</string>
     <string name="menu_download_all_button">Pobierz wszystko</string>
-    <string name="menu_download_label">Pobierz</string>
+    <string name="menu_download_label">Pobrane</string>
     <string name="menu_filter_all">Wszystko</string>
     <string name="menu_filter_download">Pobrane</string>
     <string name="menu_group_by_album">Albumy</string>
@@ -207,7 +207,7 @@
     <string name="playlist_song_count">Playlista  •  %1$d piosenek</string>
     <string name="podcast_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
     <string name="podcast_bottom_sheet_delete">Usuń</string>
-    <string name="podcast_bottom_sheet_download">Pobrane</string>
+    <string name="podcast_bottom_sheet_download">Pobierz</string>
     <string name="podcast_bottom_sheet_go_to_channel">Przejdź do kanału</string>
     <string name="podcast_bottom_sheet_play_next">Odtwórz jako następny</string>
     <string name="podcast_bottom_sheet_remove">Usuń</string>
@@ -360,7 +360,7 @@
     <string name="share_update_dialog_title">Udostępnij</string>
     <string name="song_bottom_sheet_add_to_playlist">Dodaj do playlisty</string>
     <string name="song_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
-    <string name="song_bottom_sheet_download">Pobrane</string>
+    <string name="song_bottom_sheet_download">Pobierz</string>
     <string name="song_bottom_sheet_error_retrieving_album">Błąd podczas pobierania albumu</string>
     <string name="song_bottom_sheet_error_retrieving_artist">Błąd podczas pobierania wykonawcy</string>
     <string name="song_bottom_sheet_go_to_album">Przejdź do albumu</string>
