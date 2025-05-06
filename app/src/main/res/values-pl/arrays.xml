@@ -135,7 +135,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>Odtwarzanie bezpośrednie bezpośrednie</item>
+        <item>Odtwarzanie bezpośrednie</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
