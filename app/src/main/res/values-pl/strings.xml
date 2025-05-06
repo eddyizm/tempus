@@ -360,7 +360,7 @@
     <string name="share_update_dialog_title">Udostępnij</string>
     <string name="song_bottom_sheet_add_to_playlist">Dodaj do playlisty</string>
     <string name="song_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
-    <string name="song_bottom_sheet_download">Pobierz</string>
+    <string name="song_bottom_sheet_download">Pobrane</string>
     <string name="song_bottom_sheet_error_retrieving_album">Błąd podczas pobierania albumu</string>
     <string name="song_bottom_sheet_error_retrieving_artist">Błąd podczas pobierania wykonawcy</string>
     <string name="song_bottom_sheet_go_to_album">Przejdź do albumu</string>
