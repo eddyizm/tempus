@@ -286,7 +286,7 @@
     <string name="settings_equalizer_summary">Zmień ustawienia audio</string>
     <string name="settings_equalizer_title">Equalizer</string>
     <string name="settings_github_link">https://github.com/CappielloAntonio/tempo</string>
-    <string name="settings_github_summary">Śledź tworzenie</string>
+    <string name="settings_github_summary">Śledź tworzenie aplikacji</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_image_size">Rozdzielczość obrazów</string>
     <string name="settings_language">Język</string>
