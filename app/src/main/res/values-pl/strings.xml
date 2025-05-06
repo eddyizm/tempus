@@ -207,7 +207,7 @@
     <string name="playlist_song_count">Playlista  •  %1$d piosenek</string>
     <string name="podcast_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
     <string name="podcast_bottom_sheet_delete">Usuń</string>
-    <string name="podcast_bottom_sheet_download">Pobierz</string>
+    <string name="podcast_bottom_sheet_download">Pobrane</string>
     <string name="podcast_bottom_sheet_go_to_channel">Przejdź do kanału</string>
     <string name="podcast_bottom_sheet_play_next">Odtwórz jako następny</string>
     <string name="podcast_bottom_sheet_remove">Usuń</string>
@@ -279,7 +279,7 @@
     <string name="settings_continuous_play_title">Odtwarzanie bez przerwy</string>
     <string name="settings_covers_cache">Rozmiar cache dla okładek</string>
     <string name="settings_data_saving_mode_summary">Aby zmniejszyć zużycie danych, unikaj pobierania okładek.</string>
-    <string name="settings_data_saving_mode_title">Ogranicz żużycie danych komórkowych</string>
+    <string name="settings_data_saving_mode_title">Ogranicz zużycie danych komórkowych</string>
     <string name="settings_delete_download_storage_summary">Zatwierdzenie nieodwracalnie usunie wszystkie zapisane elementy</string>
     <string name="settings_delete_download_storage_title">Usuń zapisane elementy</string>
     <string name="settings_download_storage_title">Pamięć do pobierania</string>
@@ -288,7 +288,7 @@
     <string name="settings_github_link">https://github.com/CappielloAntonio/tempo</string>
     <string name="settings_github_summary">Śledź tworzenie</string>
     <string name="settings_github_title">Github</string>
-    <string name="settings_image_size">Ustaw rozdzielczość obrazów</string>
+    <string name="settings_image_size">Rozdzielczość obrazów</string>
     <string name="settings_language">Język</string>
     <string name="settings_logout_title">Wyloguj</string>
     <string name="settings_max_bitrate_download">Bitrate dla pobierania</string>
