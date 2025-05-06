@@ -33,7 +33,7 @@
     <string name="artist_bottom_sheet_shuffle">Odtwórz losowo</string>
     <string name="artist_catalogue_title">Wykonawcy</string>
     <string name="artist_catalogue_title_expanded">Przeglądaj wykonawców</string>
-    <string name="artist_error_retrieving_radio">Błąd podczas pobierania radia wykonawcy/string>
+    <string name="artist_error_retrieving_radio">Błąd podczas pobierania radia wykonawcy</string>
     <string name="artist_error_retrieving_tracks">Błąd podczas pobierania utworów wykonawcy</string>
     <string name="artist_list_page_downloaded">Pobrani wykonawcy</string>
     <string name="artist_list_page_starred">Wykonawcy oznaczeni gwiazdką</string>
