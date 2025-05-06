@@ -97,7 +97,7 @@
     <string name="github_update_dialog_negative_button">Przypomnij mi później</string>
     <string name="github_update_dialog_neutral_button">Wesprzyj mnie</string>
     <string name="github_update_dialog_positive_button">Pobierz teraz</string>
-    <string name="github_update_dialog_summary">Nowa wersja aplikacji jest dostępna na Githubie.</string>
+    <string name="github_update_dialog_summary">Nowa wersja aplikacji jest dostępna na GitHubie.</string>
     <string name="github_update_dialog_title">Dostępna aktualizacja</string>
     <string name="home_rearrangement_dialog_negative_button">Anuluj</string>
     <string name="home_rearrangement_dialog_neutral_button">Reset</string>
@@ -287,7 +287,7 @@
     <string name="settings_equalizer_title">Equalizer</string>
     <string name="settings_github_link">https://github.com/CappielloAntonio/tempo</string>
     <string name="settings_github_summary">Śledź tworzenie aplikacji</string>
-    <string name="settings_github_title">Github</string>
+    <string name="settings_github_title">GitHub</string>
     <string name="settings_image_size">Rozdzielczość obrazów</string>
     <string name="settings_language">Język</string>
     <string name="settings_logout_title">Wyloguj</string>
