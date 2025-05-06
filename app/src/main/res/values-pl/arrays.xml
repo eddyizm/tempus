@@ -22,9 +22,9 @@
     </string-array>
 
     <string-array name="pref_image_size_titles">
-        <item>Duży</item>
-        <item>Średni</item>
-        <item>Mały</item>
+        <item>Duża</item>
+        <item>Średnia</item>
+        <item>Mała</item>
     </string-array>
     <string-array name="pref_image_size_values">
         <item>-1</item>
