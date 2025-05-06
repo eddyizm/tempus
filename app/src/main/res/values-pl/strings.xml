@@ -296,7 +296,7 @@
     <string name="settings_max_bitrate_wifi">Bitrate dla Wi-Fi</string>
     <string name="settings_media_cache">Rozmiar plików cache dla mediów</string>
     <string name="settings_music_directory">Pokaż foldery z muzyką</string>
-    <string name="settings_music_directory_summary">Jeżeli włączone, widoczna będzie sekcja z folderami z muzyką. Weź pod uwagę że żeby funckja nawigacji po folderach działała poprawnie, serwer musi wspierać tę funkcję.</string>
+    <string name="settings_music_directory_summary">Jeżeli włączone, widoczna będzie sekcja z folderami z muzyką. Weź pod uwagę że żeby funkcja nawigacji po folderach działała poprawnie, serwer musi wspierać tę funkcję.</string>
     <string name="settings_podcast">Pokazuj podcasty</string>
     <string name="settings_podcast_summary">Jeżeli włączone, widoczna będzie sekcja z podcastami. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
@@ -321,7 +321,7 @@
     <string name="settings_sub_summary_scrobble">Ważne jest to że scrobbling polega też na byciu włączonym na serwerze aby otrzymywać te dane.</string>
     <string name="settings_summary_skip_min_star_rating">Podczas słuchania radia wykonawcy, natychmiastowego miksu albo podczas odtwarzania losowego, utwory poniżej określonej oceny użytkownika będą ignorowane.</string>
     <string name="settings_summary_replay_gain">Wzmocnienie głośności jest funkcją która pozwala tobie na ustawienia poziomu głośności dla utworów aby słuchanie brzmiało cały czas tak samo. To ustawienia działa tylko wtedy kiedy utwór zawiera potrzebne metadane.</string>
-    <string name="settings_summary_scrobble">Scrobbling jest funkcją która pozwala twojemu urządzeniu na wysyłanie informacji na temat piosenek których słuchasz do serwera mzuyki. Te informacje pomagają tworzyć spersonalizowane rekomendacje na podstawie twojego gustu muzycznego.</string>
+    <string name="settings_summary_scrobble">Scrobbling jest funkcją która pozwala twojemu urządzeniu na wysyłanie informacji na temat piosenek których słuchasz do serwera muzyki. Te informacje pomagają tworzyć spersonalizowane rekomendacje na podstawie twojego gustu muzycznego.</string>
     <string name="settings_summary_share">Pozwala udostępnić użytkownikowi muzykę przez link. Ta funkcjonalność musi być wspierana i włączona na serwerze i jest ograniczona do pojedyńczych utworów, albumów i playlist.</string>
     <string name="settings_summary_syncing">Przywraca stan kolejki odtwarzania dla tego użytkownika. Zawiera utwory w kolejce, aktualnie odtwarzany utwór i pozycję w nim. Serwer musi wspierać tę funkcję.</string>
     <string name="settings_summary_streaming_cache_size">%1$s \nAktualnie w użyciu:   %2$s MiB</string>
@@ -385,7 +385,7 @@
     <string name="starred_sync_dialog_title">Synchronizuj utwory oznaczone gwiazdką</string>
     <string name="streaming_cache_storage_dialog_sub_summary">Aby zmiany przyniosły efekt, zrestartuj aplikację.</string>
     <string name="streaming_cache_storage_dialog_summary">Zmiana lokalizacji plików cache z jednej na drugą spowoduje natychmiastowe usunięcie wcześniej pobranych plików cache w drugiej lokalizacji.</string>
-    <string name="streaming_cache_storage_dialog_title">Wybierz opcję pamięci</string>
+    <string name="streaming_cache_storage_dialog_title">Wybieranie pamięci</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">Zewnętrzna</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Wewnętrzna</string>
     <string name="support_url">https://buymeacoffee.com/a.cappiello</string>
@@ -408,7 +408,7 @@
     <string name="track_info_summary_transcoding_bitrate">Aplikacja poprosi serwer o zmodyfikowanie bitrateu pliku. Użytkownik poprosił o bitrate %1$s, ale kodek pliku źródłowego pozostanie ten sam. Wszystkie potencjalne zmiany w bitracie pliku w wybranym formacie będą wykonywane przez serwer, który może ale nie musi obsługiwać tych operacji.</string>
     <string name="track_info_summary_transcoding_codec">Aplikacja poprosi serwer żeby transkodować plik. Kodek wybrany przez użytkownika to %1$s, ale bitrate pliku źródłowego pozostanie ten sam. Wszystkie potencjalne zmiany w kodeku pliku w wybranym formacie będą wykonywane przez serwer, który może ale nie musi obsługiwać tych operacji</string>
     <string name="track_info_title">Tytuł</string>
-    <string name="track_info_track_number">Number utworu</string>
+    <string name="track_info_track_number">Numer utworu</string>
     <string name="track_info_transcoded_content_type">Typ transkodowanej treści</string>
     <string name="track_info_transcoded_suffix">Sufiks transkodowania</string>
     <string name="track_info_year">Rok</string>
