@@ -109,7 +109,7 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
 
         media.setStarred(new Date());
 
-        if (Preferences.isStarredSyncEnabled()) {
+        if (Preferences.isStarredSyncEnabled() && Preferences.getDownloadDirectoryUri() == null) {
             DownloadUtil.getDownloadTracker(context).download(
                     MappingUtil.mapDownload(media),
                     new Download(media)

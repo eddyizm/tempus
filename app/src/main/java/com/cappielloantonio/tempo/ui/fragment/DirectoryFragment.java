@@ -33,7 +33,9 @@ import com.cappielloantonio.tempo.ui.adapter.MusicDirectoryAdapter;
 import com.cappielloantonio.tempo.ui.dialog.DownloadDirectoryDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.MappingUtil;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.DirectoryViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -109,10 +111,17 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
                     directoryViewModel.loadMusicDirectory(getArguments().getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
                         if (isVisible() && getActivity() != null) {
                             List<Child> songs = directory.getChildren().stream().filter(child -> !child.isDir()).collect(Collectors.toList());
-                            DownloadUtil.getDownloadTracker(requireContext()).download(
-                                    MappingUtil.mapDownloads(songs),
-                                    songs.stream().map(Download::new).collect(Collectors.toList())
-                            );
+                            if (Preferences.getDownloadDirectoryUri() == null) {
+                                DownloadUtil.getDownloadTracker(requireContext()).download(
+                                        MappingUtil.mapDownloads(songs),
+                                        songs.stream().map(Download::new).collect(Collectors.toList())
+                                );
+                            } else {
+                                MappingUtil.mapMediaItems(songs).forEach(media -> {
+                                    String title = media.mediaMetadata.title != null ? media.mediaMetadata.title.toString() : media.mediaId;
+                                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), media, title);
+                                });
+                            }
                         }
                     });
                 }

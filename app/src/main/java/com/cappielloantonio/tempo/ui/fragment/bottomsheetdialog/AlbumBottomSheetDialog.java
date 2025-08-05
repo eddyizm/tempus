@@ -37,6 +37,7 @@ import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.viewmodel.AlbumBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -163,7 +164,14 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
             List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
 
             downloadAll.setOnClickListener(v -> {
-                DownloadUtil.getDownloadTracker(requireContext()).download(mediaItems, downloads);
+                if (Preferences.getDownloadDirectoryUri() == null) {
+                    DownloadUtil.getDownloadTracker(requireContext()).download(mediaItems, downloads);
+                } else {
+                    MappingUtil.mapMediaItems(songs).forEach(media -> {
+                        String title = media.mediaMetadata.title != null ? media.mediaMetadata.title.toString() : media.mediaId;
+                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), media, title);
+                    });
+                }
                 dismissBottomSheet();
             });
         });
@@ -238,7 +246,7 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
             List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
 
-            if (DownloadUtil.getDownloadTracker(requireContext()).areDownloaded(mediaItems)) {
+            if (Preferences.getDownloadDirectoryUri() == null && DownloadUtil.getDownloadTracker(requireContext()).areDownloaded(mediaItems)) {
                 removeAll.setVisibility(View.VISIBLE);
             }
         });

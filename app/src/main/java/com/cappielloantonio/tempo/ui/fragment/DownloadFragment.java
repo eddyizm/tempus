@@ -33,6 +33,11 @@ import com.cappielloantonio.tempo.viewmodel.DownloadViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import android.content.Intent;
+import android.app.Activity;
+import android.net.Uri;
+import android.widget.Toast;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +45,7 @@ import java.util.Objects;
 @UnstableApi
 public class DownloadFragment extends Fragment implements ClickCallback {
     private static final String TAG = "DownloadFragment";
+    private static final int REQUEST_CODE_PICK_DIRECTORY = 1002;
 
     private FragmentDownloadBinding bind;
     private MainActivity activity;
@@ -216,6 +222,10 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                 downloadViewModel.initViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_YEAR, null));
                 Preferences.setDefaultDownloadViewType(Constants.DOWNLOAD_TYPE_YEAR);
                 return true;
+            } else if (menuItem.getItemId() == R.id.menu_download_set_directory) { 
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                startActivityForResult(intent, REQUEST_CODE_PICK_DIRECTORY);
+                return true;
             }
 
             return false;
@@ -266,5 +276,21 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     @Override
     public void onDownloadGroupLongClick(Bundle bundle) {
         Navigation.findNavController(requireView()).navigate(R.id.downloadBottomSheetDialog, bundle);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PICK_DIRECTORY && resultCode == Activity.RESULT_OK) {
+            Uri uri = data.getData();
+            if (uri != null) {
+                requireContext().getContentResolver().takePersistableUriPermission(
+                        uri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                );
+                Preferences.setDownloadDirectoryUri(uri.toString());
+                Toast.makeText(requireContext(), "Download directory set", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
