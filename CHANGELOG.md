@@ -2,6 +2,20 @@
 
 ***This log is for this fork to detail updates since 3.9.0 from the main repo.***
 
+## [3.14.1](https://github.com/eddyizm/tempo/releases/tag/v3.14.1) (2025-08-30)
+## What's Changed
+* feat: rating dialog added to album page by @eddyizm in https://github.com/eddyizm/tempo/pull/52
+* style: Add song rating bar in landscape player controller layout by @jaime-grj in https://github.com/eddyizm/tempo/pull/57
+* feat: setting to show/hide 5 star rating on playerview by @eddyizm in https://github.com/eddyizm/tempo/pull/59
+* chore: setting-to-hide-song-rating by @eddyizm in https://github.com/eddyizm/tempo/pull/60
+* fix: catches null value and prepares bundle appropriately adding sing… by @eddyizm in https://github.com/eddyizm/tempo/pull/64
+* fix: artist filtering in library view browse artist resolves #45 by @eddyizm in https://github.com/eddyizm/tempo/pull/69
+* chore: Update French localization by @benoit-smith in https://github.com/eddyizm/tempo/pull/70
+* feat: adds sync starred albums functionality #66 by @eddyizm in https://github.com/eddyizm/tempo/pull/73
+
+
+**Full Changelog**: https://github.com/eddyizm/tempo/compare/v3.13.0...v3.14.1
+
 ## [3.13.0](https://github.com/eddyizm/tempo/releases/tag/v3.13.0) (2025-08-23)
 ## What's Changed
 * style: Change position and size of rating container by @jaime-grj in https://github.com/eddyizm/tempo/pull/44
