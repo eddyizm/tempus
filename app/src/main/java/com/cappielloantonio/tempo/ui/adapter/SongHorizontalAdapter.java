@@ -24,6 +24,7 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.DiscTitle;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -135,10 +136,18 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
 
         holder.item.trackNumberTextView.setText(MusicUtil.getReadableTrackNumber(holder.itemView.getContext(), song.getTrack()));
 
-        if (DownloadUtil.getDownloadTracker(holder.itemView.getContext()).isDownloaded(song.getId())) {
-            holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            if (DownloadUtil.getDownloadTracker(holder.itemView.getContext()).isDownloaded(song.getId())) {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            }
         } else {
-            holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            if (ExternalAudioReader.getUri(song) != null) {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            }
         }
 
         if (showCoverArt) CustomGlideRequest.Builder

@@ -31,6 +31,7 @@ import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -178,10 +179,14 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
 
         TextView remove = view.findViewById(R.id.remove_text_view);
         remove.setOnClickListener(v -> {
-            DownloadUtil.getDownloadTracker(requireContext()).remove(
-                    MappingUtil.mapDownload(song),
-                    new Download(song)
-            );
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                DownloadUtil.getDownloadTracker(requireContext()).remove(
+                        MappingUtil.mapDownload(song),
+                        new Download(song)
+                );
+            } else {
+                ExternalAudioReader.delete(song);
+            }
             dismissBottomSheet();
         });
 
@@ -254,11 +259,20 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     }
 
     private void initDownloadUI(TextView download, TextView remove) {
-        if (DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId())) {
-            remove.setVisibility(View.VISIBLE);
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            if (DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId())) {
+                remove.setVisibility(View.VISIBLE);
+            } else {
+                download.setVisibility(View.VISIBLE);
+                remove.setVisibility(View.GONE);
+            }
         } else {
-            download.setVisibility(View.VISIBLE);
-            remove.setVisibility(View.GONE);
+            if (ExternalAudioReader.getUri(song) != null) {
+                remove.setVisibility(View.VISIBLE);
+            } else {
+                download.setVisibility(View.VISIBLE);
+                remove.setVisibility(View.GONE);
+            }
         }
     }
 

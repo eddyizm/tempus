@@ -49,6 +49,7 @@ import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.UIUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.viewmodel.SettingViewModel;
 
 import java.util.Locale;
@@ -90,6 +91,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                 );
 
                                 Preferences.setDownloadDirectoryUri(uri.toString());
+                                ExternalAudioReader.refreshCache();
                                 Toast.makeText(requireContext(), "Download folder set.", Toast.LENGTH_SHORT).show();
                                 checkDownloadDirectory();
                             }

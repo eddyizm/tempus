@@ -217,12 +217,20 @@ public class MappingUtil {
     }
 
     private static Uri getUri(Child media) {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            Uri local = ExternalAudioReader.getUri(media);
+            return local != null ? local : MusicUtil.getStreamUri(media.getId());
+        }
         return DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(media.getId())
                 ? getDownloadUri(media.getId())
                 : MusicUtil.getStreamUri(media.getId());
     }
 
     private static Uri getUri(PodcastEpisode podcastEpisode) {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            Uri local = ExternalAudioReader.getUri(podcastEpisode);
+            return local != null ? local : MusicUtil.getStreamUri(podcastEpisode.getStreamId());
+        }
         return DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(podcastEpisode.getStreamId())
                 ? getDownloadUri(podcastEpisode.getStreamId())
                 : MusicUtil.getStreamUri(podcastEpisode.getStreamId());
