@@ -123,9 +123,7 @@ public class PlayerCoverFragment extends Fragment {
                                 new Download(song)
                         );
                     } else {
-                        MediaItem item = MappingUtil.mapMediaItem(song);
-                        String title = item.mediaMetadata.title != null ? item.mediaMetadata.title.toString() : item.mediaId;
-                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), item, title);
+                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
                     }
                 });
 

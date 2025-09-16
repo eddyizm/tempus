@@ -16,6 +16,7 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.DialogDeleteDownloadStorageBinding;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -47,7 +48,10 @@ public class DeleteDownloadStorageDialog extends DialogFragment {
         if (dialog != null) {
             Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                DownloadUtil.getDownloadTracker(requireContext()).removeAll();
+                if (Preferences.getDownloadDirectoryUri() == null) {
+                    DownloadUtil.getDownloadTracker(requireContext()).removeAll();
+                }
+
                 String uriString = Preferences.getDownloadDirectoryUri();
                 if (uriString != null) {
                     DocumentFile directory = DocumentFile.fromTreeUri(requireContext(), Uri.parse(uriString));
@@ -57,6 +61,7 @@ public class DeleteDownloadStorageDialog extends DialogFragment {
                         }
                     }
                     ExternalAudioReader.refreshCache();
+                    ExternalDownloadMetadataStore.clear();
                 }
                 dialog.dismiss();
             });

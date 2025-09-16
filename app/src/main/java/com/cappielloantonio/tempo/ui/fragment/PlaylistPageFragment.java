@@ -144,19 +144,16 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                 if (isVisible() && getActivity() != null) {
                     if (Preferences.getDownloadDirectoryUri() == null) {
                         DownloadUtil.getDownloadTracker(requireContext()).download(
-                                MappingUtil.mapDownloads(songs),
-                                songs.stream().map(child -> {
-                                    Download toDownload = new Download(child);
-                                    toDownload.setPlaylistId(playlistPageViewModel.getPlaylist().getId());
-                                    toDownload.setPlaylistName(playlistPageViewModel.getPlaylist().getName());
-                                    return toDownload;
-                                }).collect(Collectors.toList())
+                            MappingUtil.mapDownloads(songs),
+                            songs.stream().map(child -> {
+                                Download toDownload = new Download(child);
+                                toDownload.setPlaylistId(playlistPageViewModel.getPlaylist().getId());
+                                toDownload.setPlaylistName(playlistPageViewModel.getPlaylist().getName());
+                                return toDownload;
+                            }).collect(Collectors.toList())
                         );
                     } else {
-                        MappingUtil.mapMediaItems(songs).forEach(media -> {
-                            String title = media.mediaMetadata.title != null ? media.mediaMetadata.title.toString() : media.mediaId;
-                            ExternalAudioWriter.downloadToUserDirectory(requireContext(), media, title);
-                        });
+                        songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
                     }
                 }
             });

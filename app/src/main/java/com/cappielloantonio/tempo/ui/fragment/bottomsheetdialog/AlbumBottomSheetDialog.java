@@ -38,6 +38,7 @@ import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.viewmodel.AlbumBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -167,10 +168,7 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                 if (Preferences.getDownloadDirectoryUri() == null) {
                     DownloadUtil.getDownloadTracker(requireContext()).download(mediaItems, downloads);
                 } else {
-                    MappingUtil.mapMediaItems(songs).forEach(media -> {
-                        String title = media.mediaMetadata.title != null ? media.mediaMetadata.title.toString() : media.mediaId;
-                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), media, title);
-                    });
+                    songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
                 }
                 dismissBottomSheet();
             });
@@ -196,7 +194,11 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
             List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
 
             removeAll.setOnClickListener(v -> {
-                DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
+                if (Preferences.getDownloadDirectoryUri() == null) {
+                    DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
+                } else {
+                    songs.forEach(ExternalAudioReader::delete);
+                }
                 dismissBottomSheet();
             });
         });
@@ -246,8 +248,15 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
             List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
 
-            if (Preferences.getDownloadDirectoryUri() == null && DownloadUtil.getDownloadTracker(requireContext()).areDownloaded(mediaItems)) {
-                removeAll.setVisibility(View.VISIBLE);
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                if (DownloadUtil.getDownloadTracker(requireContext()).areDownloaded(mediaItems)) {
+                    removeAll.setVisibility(View.VISIBLE);
+                } else {
+                    removeAll.setVisibility(View.GONE);
+                }
+            } else {
+                boolean hasLocal = songs.stream().anyMatch(song -> ExternalAudioReader.getUri(song) != null);
+                removeAll.setVisibility(hasLocal ? View.VISIBLE : View.GONE);
             }
         });
     }

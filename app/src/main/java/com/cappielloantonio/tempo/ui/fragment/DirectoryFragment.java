@@ -117,10 +117,7 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
                                         songs.stream().map(Download::new).collect(Collectors.toList())
                                 );
                             } else {
-                                MappingUtil.mapMediaItems(songs).forEach(media -> {
-                                    String title = media.mediaMetadata.title != null ? media.mediaMetadata.title.toString() : media.mediaId;
-                                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), media, title);
-                                });
+                                songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
                             }
                         }
                     });

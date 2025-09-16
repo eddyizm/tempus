@@ -28,6 +28,7 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.DownloadHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.DownloadViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -289,6 +290,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                         Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 );
                 Preferences.setDownloadDirectoryUri(uri.toString());
+                ExternalAudioReader.refreshCache();
                 Toast.makeText(requireContext(), "Download directory set", Toast.LENGTH_SHORT).show();
             }
         }

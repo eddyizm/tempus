@@ -85,6 +85,13 @@ object Constants {
     const val MEDIA_LEAST_RECENTLY_STARRED = "MEDIA_LEAST_RECENTLY_STARRED"
 
     const val DOWNLOAD_URI = "rest/download"
+    const val ACTION_PLAY_EXTERNAL_DOWNLOAD = "com.cappielloantonio.tempo.action.PLAY_EXTERNAL_DOWNLOAD"
+    const val EXTRA_DOWNLOAD_URI = "EXTRA_DOWNLOAD_URI"
+    const val EXTRA_DOWNLOAD_MEDIA_ID = "EXTRA_DOWNLOAD_MEDIA_ID"
+    const val EXTRA_DOWNLOAD_TITLE = "EXTRA_DOWNLOAD_TITLE"
+    const val EXTRA_DOWNLOAD_ARTIST = "EXTRA_DOWNLOAD_ARTIST"
+    const val EXTRA_DOWNLOAD_ALBUM = "EXTRA_DOWNLOAD_ALBUM"
+    const val EXTRA_DOWNLOAD_DURATION = "EXTRA_DOWNLOAD_DURATION"
 
     const val DOWNLOAD_TYPE_TRACK = "download_type_track"
     const val DOWNLOAD_TYPE_ALBUM = "download_type_album"

@@ -10,8 +10,10 @@ import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 
 import java.text.Normalizer;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class ExternalAudioReader {
 
@@ -36,6 +38,7 @@ public class ExternalAudioReader {
         if (uriString == null) {
             cache.clear();
             cachedDirUri = null;
+            ExternalDownloadMetadataStore.clear();
             return;
         }
 
@@ -43,12 +46,36 @@ public class ExternalAudioReader {
 
         cache.clear();
         DocumentFile directory = DocumentFile.fromTreeUri(App.getContext(), Uri.parse(uriString));
+        Map<String, Long> expectedSizes = ExternalDownloadMetadataStore.snapshot();
+        Set<String> verifiedKeys = new HashSet<>();
         if (directory != null && directory.canRead()) {
             for (DocumentFile file : directory.listFiles()) {
+                if (file == null || file.isDirectory()) continue;
                 String existing = file.getName();
-                if (existing != null) {
-                    String base = existing.replaceFirst("\\.[^\\.]+$", "");
-                    cache.put(normalizeForComparison(base), file);
+                if (existing == null) continue;
+
+                String base = existing.replaceFirst("\\.[^\\.]+$", "");
+                String key = normalizeForComparison(base);
+                Long expected = expectedSizes.get(key);
+                long actualLength = file.length();
+
+                if (expected != null && expected > 0 && actualLength == expected) {
+                    cache.put(key, file);
+                    verifiedKeys.add(key);
+                } else {
+                    ExternalDownloadMetadataStore.remove(key);
+                }
+            }
+        }
+
+        if (!expectedSizes.isEmpty()) {
+            if (verifiedKeys.isEmpty()) {
+                ExternalDownloadMetadataStore.clear();
+            } else {
+                for (String key : expectedSizes.keySet()) {
+                    if (!verifiedKeys.contains(key)) {
+                        ExternalDownloadMetadataStore.remove(key);
+                    }
                 }
             }
         }
@@ -56,7 +83,6 @@ public class ExternalAudioReader {
         cachedDirUri = uriString;
     }
 
-    /** Rebuilds the cache on next access. */
     public static synchronized void refreshCache() {
         cachedDirUri = null;
         cache.clear();
@@ -96,6 +122,7 @@ public class ExternalAudioReader {
         }
         if (deleted) {
             cache.remove(key);
+            ExternalDownloadMetadataStore.remove(key);
         }
         return deleted;
     }

@@ -164,15 +164,13 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
 
         TextView download = view.findViewById(R.id.download_text_view);
         download.setOnClickListener(v -> {
-            MediaItem item = MappingUtil.mapMediaItem(song);
-            String title = item.mediaMetadata.title != null ? item.mediaMetadata.title.toString() : item.mediaId;
             if (Preferences.getDownloadDirectoryUri() == null) {
                 DownloadUtil.getDownloadTracker(requireContext()).download(
                         MappingUtil.mapDownload(song),
                         new Download(song)
                 );
             } else {
-                ExternalAudioWriter.downloadToUserDirectory(requireContext(), item, title);
+                ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
             }
             dismissBottomSheet();
         });

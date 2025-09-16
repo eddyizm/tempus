@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.cappielloantonio.tempo.R;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 
 public class DownloadDirectoryPickerDialog extends DialogFragment {
@@ -37,6 +38,7 @@ public class DownloadDirectoryPickerDialog extends DialogFragment {
                             );
 
                             Preferences.setDownloadDirectoryUri(uri.toString());
+                            ExternalAudioReader.refreshCache();
 
                             Toast.makeText(requireContext(), "Download directory set:\n" + uri.toString(), Toast.LENGTH_LONG).show();
                         }

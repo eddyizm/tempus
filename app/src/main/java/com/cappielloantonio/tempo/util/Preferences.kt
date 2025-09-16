@@ -460,6 +460,10 @@ object Preferences {
 
     @JvmStatic
     fun setDownloadDirectoryUri(uri: String?) {
+        val current = App.getInstance().preferences.getString(DOWNLOAD_DIRECTORY_URI, null)
+        if (current != uri) {
+            ExternalDownloadMetadataStore.clear()
+        }
         App.getInstance().preferences.edit().putString(DOWNLOAD_DIRECTORY_URI, uri).apply()
     }
 

@@ -428,6 +428,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 if (current != null) {
                     Preferences.setDownloadDirectoryUri(null);
                     Preferences.setDownloadStoragePreference(0);
+                    ExternalAudioReader.refreshCache();
                     Toast.makeText(requireContext(), "Download folder cleared.", Toast.LENGTH_SHORT).show();
                     checkStorage();
                     checkDownloadDirectory();
