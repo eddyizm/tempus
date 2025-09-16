@@ -5,17 +5,15 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.webkit.MimeTypeMap;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.media3.common.MediaItem;
 
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -70,6 +68,12 @@ public class ExternalAudioWriter {
                 Uri mediaUri = mediaItem.requestMetadata.mediaUri;
                 if (mediaUri == null) {
                     notifyFailure(context, "Invalid media URI.");
+                    return;
+                }
+
+                String scheme = mediaUri.getScheme();
+                if (scheme == null || (!scheme.equals("http") && !scheme.equals("https"))) {
+                    notifyExists(context, fallbackName);
                     return;
                 }
 
@@ -129,6 +133,7 @@ public class ExternalAudioWriter {
                         notifyFailure(context, "Incomplete download.");
                     } else {
                         notifySuccess(context, fullName);
+                        ExternalAudioReader.refreshCache();
                     }
                 }
             } catch (Exception e) {
@@ -157,20 +162,32 @@ public class ExternalAudioWriter {
     }
 
     private static void notifyFailure(Context context, String message) {
-        new Handler(Looper.getMainLooper()).post(() ->
-            Toast.makeText(context, "External download failed: " + message, Toast.LENGTH_LONG).show()
-        );
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+            .setContentTitle("Download failed")
+            .setContentText(message)
+            .setSmallIcon(android.R.drawable.stat_notify_error)
+            .setAutoCancel(true);
+        manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
     private static void notifySuccess(Context context, String name) {
-        new Handler(Looper.getMainLooper()).post(() ->
-            Toast.makeText(context, "Download success: " + name, Toast.LENGTH_SHORT).show()
-        );
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+            .setContentTitle("Download complete")
+            .setContentText(name)
+            .setSmallIcon(android.R.drawable.stat_sys_download_done)
+            .setAutoCancel(true);
+        manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
     private static void notifyExists(Context context, String name) {
-        new Handler(Looper.getMainLooper()).post(() ->
-            Toast.makeText(context, "Already exists: " + name, Toast.LENGTH_SHORT).show()
-        );
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+            .setContentTitle("Already downloaded")
+            .setContentText(name)
+            .setSmallIcon(android.R.drawable.stat_sys_warning)
+            .setAutoCancel(true);
+        manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 }
