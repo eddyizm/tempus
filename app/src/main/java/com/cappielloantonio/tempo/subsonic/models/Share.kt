@@ -8,15 +8,15 @@ import java.util.*
 
 @Keep
 @Parcelize
-class Share : Parcelable {
+data class Share(
     @SerializedName("entry")
-    var entries: List<Child>? = null
-    var id: String? = null
-    var url: String? = null
-    var description: String? = null
-    var username: String? = null
-    var created: Date? = null
-    var expires: Date? = null
-    var lastVisited: Date? = null
-    var visitCount = 0
-}
+    var entries: List<Child>? = null,
+    var id: String? = null,
+    var url: String? = null,
+    var description: String? = null,
+    var username: String? = null,
+    var created: Date? = null,
+    var expires: Date? = null,
+    var lastVisited: Date? = null,
+    var visitCount: Int = 0
+) : Parcelable

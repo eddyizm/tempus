@@ -123,9 +123,9 @@ class MediaService : MediaLibraryService() {
             val connectionResult = super.onConnect(session, controller)
             val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
 
-            shuffleCommands.forEach { commandButton ->
+            shuffleCommands.forEach {
                 // TODO: Aggiungere i comandi personalizzati
-                // commandButton.sessionCommand?.let { availableSessionCommands.add(it) }
+                // it.sessionCommand?.let { availableSessionCommands.add(it) }
             }
 
             return MediaSession.ConnectionResult.accept(
@@ -430,7 +430,7 @@ class MediaService : MediaLibraryService() {
             .build()
     }
 
-    private fun ignoreFuture(customLayout: ListenableFuture<SessionResult>) {
+    private fun ignoreFuture(@Suppress("UNUSED_PARAMETER") customLayout: ListenableFuture<SessionResult>) {
         /* Do nothing. */
     }
 
