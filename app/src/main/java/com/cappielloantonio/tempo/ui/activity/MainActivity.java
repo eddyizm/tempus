@@ -40,9 +40,6 @@ import com.google.android.material.color.DynamicColors;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @UnstableApi
