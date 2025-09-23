@@ -40,6 +40,9 @@ import com.google.android.material.color.DynamicColors;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @UnstableApi
@@ -82,6 +85,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        pingServer();
         initService();
     }
 
@@ -351,6 +355,7 @@ public class MainActivity extends BaseActivity {
                     Preferences.switchInUseServerAddress();
                     App.refreshSubsonicClient();
                     pingServer();
+                    resetView();
                 } else {
                     Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
                 }
@@ -361,6 +366,7 @@ public class MainActivity extends BaseActivity {
                 Preferences.switchInUseServerAddress();
                 App.refreshSubsonicClient();
                 pingServer();
+                resetView();
             } else {
                 mainViewModel.ping().observe(this, subsonicResponse -> {
                     if (subsonicResponse == null) {
@@ -373,6 +379,18 @@ public class MainActivity extends BaseActivity {
                     }
                 });
             }
+        }
+    }
+
+    private void resetView() {
+        resetViewModel();
+        try {
+            int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+            navController.popBackStack(id, true);
+            navController.navigate(id);
+        } catch(NullPointerException e) {
+            e.printStackTrace();
+            quit();
         }
     }
 
