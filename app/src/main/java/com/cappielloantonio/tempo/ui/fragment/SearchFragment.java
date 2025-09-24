@@ -254,7 +254,7 @@ public class SearchFragment extends Fragment implements ClickCallback {
     }
 
     private boolean isQueryValid(String query) {
-        return !query.equals("") && query.trim().length() > 2;
+        return !query.equals("") && query.trim().length() > 1;
     }
 
     private void inputFocus() {
