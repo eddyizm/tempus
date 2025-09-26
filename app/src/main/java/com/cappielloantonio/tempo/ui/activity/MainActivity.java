@@ -381,14 +381,9 @@ public class MainActivity extends BaseActivity {
 
     private void resetView() {
         resetViewModel();
-        try {
-            int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
-            navController.popBackStack(id, true);
-            navController.navigate(id);
-        } catch(NullPointerException e) {
-            e.printStackTrace();
-            quit();
-        }
+        int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+        navController.popBackStack(id, true);
+        navController.navigate(id);
     }
 
     private void getOpenSubsonicExtensions() {
