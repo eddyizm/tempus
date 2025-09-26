@@ -19,7 +19,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/playlist_dialog_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="8dp"
         android:clipToPadding="false" />
+
+    <CheckBox
+        android:id="@+id/playlist_chooser_dialog_skip_duplicates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/playlist_chooser_dialog_skip_duplicates"
+        android:checked="true" />
 </LinearLayout>

@@ -207,6 +207,7 @@
     <string name="playlist_chooser_dialog_negative_button">Cancel</string>
     <string name="playlist_chooser_dialog_neutral_button">Create</string>
     <string name="playlist_chooser_dialog_title">Add to a playlist</string>
+    <string name="playlist_chooser_dialog_skip_duplicates">Skip duplicates</string>
     <string name="playlist_chooser_dialog_toast_add_success">Added song to playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song to playlist</string>
     <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
