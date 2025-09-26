@@ -131,22 +131,22 @@ public class PlaylistRepository {
                 });
     }
 
-    public void updatePlaylist(String playlistId, String name, boolean isPublic, ArrayList<String> songIdToAdd, ArrayList<Integer> songIndexToRemove) {
-        App.getSubsonicClientInstance(false)
-                .getPlaylistClient()
-                .updatePlaylist(playlistId, name, isPublic, songIdToAdd, songIndexToRemove)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
-    }
+//    public void updatePlaylist(String playlistId, String name, boolean isPublic, ArrayList<String> songIdToAdd, ArrayList<Integer> songIndexToRemove) {
+//        App.getSubsonicClientInstance(false)
+//                .getPlaylistClient()
+//                .updatePlaylist(playlistId, name, isPublic, songIdToAdd, songIndexToRemove)
+//                .enqueue(new Callback<ApiResponse>() {
+//                    @Override
+//                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+//
+//                    }
+//                });
+//    }
 
     public void deletePlaylist(String playlistId) {
         App.getSubsonicClientInstance(false)
