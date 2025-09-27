@@ -38,8 +38,10 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
         List<String> songIds = Lists.transform(toAdd, Child::getId);
         if (skipDuplicates) {
             playlistRepository.getPlaylistSongs(playlistId).observe(owner, playlistSongs -> {
-                List<String> playlistSongIds = Lists.transform(playlistSongs, Child::getId);
-                songIds.removeAll(playlistSongIds);
+                if (playlistSongs != null) {
+                    List<String> playlistSongIds = Lists.transform(playlistSongs, Child::getId);
+                    songIds.removeAll(playlistSongIds);
+                }
                 playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds));
                 dialog.dismiss();
             });
