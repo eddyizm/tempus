@@ -72,7 +72,6 @@ public class StarredArtistsSyncViewModel extends AndroidViewModel {
         AtomicInteger remainingArtists = new AtomicInteger(artists.size());
         
         for (ArtistID3 artist : artists) {
-            // Use the new callback-based method
             artistRepository.getArtistAllSongs(artist.getId(), new ArtistRepository.ArtistSongsCallback() {
                 @Override
                 public void onSongsCollected(List<Child> songs) {
