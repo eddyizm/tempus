@@ -42,6 +42,7 @@ import com.cappielloantonio.tempo.ui.dialog.DeleteDownloadStorageDialog;
 import com.cappielloantonio.tempo.ui.dialog.DownloadStorageDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredAlbumSyncDialog;
+import com.cappielloantonio.tempo.ui.dialog.StarredArtistSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -110,6 +111,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         actionScan();
         actionSyncStarredAlbums();
         actionSyncStarredTracks();
+        actionSyncStarredArtists();
         actionChangeStreamingCacheStorage();
         actionChangeDownloadStorage();
         actionDeleteDownloadStorage();
@@ -296,7 +298,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
     }
-    
+
+    private void actionSyncStarredArtists() {
+        findPreference("sync_starred_artists_for_offline_use").setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue instanceof Boolean) {
+                if ((Boolean) newValue) {
+                    StarredArtistSyncDialog dialog = new StarredArtistSyncDialog(() -> {
+                        ((SwitchPreference)preference).setChecked(false);
+                    });
+                    dialog.show(activity.getSupportFragmentManager(), null);
+                }
+            }
+            return true;
+        });
+    }
+
     private void actionChangeStreamingCacheStorage() {
         findPreference("streaming_cache_storage").setOnPreferenceClickListener(preference -> {
             StreamingCacheStorageDialog dialog = new StreamingCacheStorageDialog(new DialogClickCallback() {

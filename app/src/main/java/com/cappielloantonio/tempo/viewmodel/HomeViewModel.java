@@ -48,6 +48,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final SharingRepository sharingRepository;
 
     private final StarredAlbumsSyncViewModel albumsSyncViewModel;
+    private final StarredArtistsSyncViewModel artistSyncViewModel;
 
     private final MutableLiveData<List<Child>> dicoverSongSample = new MutableLiveData<>(null);
     private final MutableLiveData<List<AlbumID3>> newReleasedAlbum = new MutableLiveData<>(null);
@@ -85,6 +86,7 @@ public class HomeViewModel extends AndroidViewModel {
         sharingRepository = new SharingRepository();
 
         albumsSyncViewModel = new StarredAlbumsSyncViewModel(application);
+        artistSyncViewModel = new StarredArtistsSyncViewModel(application);
 
         setOfflineFavorite();
     }
@@ -172,6 +174,10 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<Child>> getAllStarredAlbumSongs() {
         return albumsSyncViewModel.getAllStarredAlbumSongs();
+    }
+
+    public LiveData<List<Child>> getAllStarredArtistSongs() {
+        return artistSyncViewModel.getAllStarredArtistSongs();
     }
 
     public LiveData<List<ArtistID3>> getStarredArtists(LifecycleOwner owner) {

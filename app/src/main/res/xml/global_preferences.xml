@@ -150,6 +150,12 @@
             android:summary="@string/settings_sync_starred_albums_for_offline_use_summary"
             android:key="sync_starred_albums_for_offline_use" />
 
+        <SwitchPreference
+            android:title="@string/settings_sync_starred_artists_for_offline_use_title"
+            android:defaultValue="false"
+            android:summary="@string/settings_sync_starred_artists_for_offline_use_summary"
+            android:key="sync_starred_artists_for_offline_use" />
+
         <ListPreference
             app:defaultValue="1"
             app:dialogTitle="@string/settings_buffering_strategy"

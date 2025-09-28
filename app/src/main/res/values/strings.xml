@@ -119,6 +119,8 @@
     <string name="home_sync_starred_title">Looks like there are some starred tracks to sync</string>
     <string name="home_sync_starred_albums_title">Sync Starred Albums</string>
     <string name="home_sync_starred_albums_subtitle">Albums marked with a star will be available offline</string>
+    <string name="home_sync_starred_artists_title">Starred Artists Sync</string>
+    <string name="home_sync_starred_artists_subtitle">You have starred artists with music not downloaded</string>
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Discovery</string>
     <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
@@ -346,6 +348,8 @@
     <string name="settings_summary_transcoding">Priority given to the transcoding mode. If set to \"Direct play\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for donwloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_estimate_content_length">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
+    <string name="settings_sync_starred_artists_for_offline_use_summary">If enabled, starred artists will be downloaded for offline use.</string>
+    <string name="settings_sync_starred_artists_for_offline_use_title">Sync starred artists for offline use</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">If enabled, starred albums will be downloaded for offline use.</string>
     <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
@@ -403,6 +407,8 @@
     <string name="starred_sync_dialog_positive_button">Continue and download</string>
     <string name="starred_sync_dialog_summary">Downloading starred tracks may require a large amount of data.</string>
     <string name="starred_sync_dialog_title">Sync starred tracks</string>
+    <string name="starred_artist_sync_dialog_summary">Downloading starred artists may require a large amount of data.</string>
+    <string name="starred_artist_sync_dialog_title">Sync starred artists</string>
     <string name="starred_album_sync_dialog_summary">Downloading starred albums may require a large amount of data.</string>
     <string name="starred_album_sync_dialog_title">Sync starred albums</string>
     <string name="streaming_cache_storage_dialog_sub_summary">For the changes to take effect, restart the app.</string>
@@ -410,7 +416,7 @@
     <string name="streaming_cache_storage_dialog_title">Select storage option</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">External</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Internal</string>
-    <string name="support_url">https://buymeacoffee.com/a.cappiello</string>
+    <string name="support_url">https://ko-fi.com/eddyizm</string>
     <string name="track_info_album">Album</string>
     <string name="track_info_artist">Artist</string>
     <string name="track_info_bit_depth">Bit depth</string>
@@ -442,6 +448,14 @@
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d album to sync</item>
         <item quantity="other">%d albums to sync</item>
+    </plurals>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d artist to sync</item>
+        <item quantity="other">%d artists to sync</item>
+    </plurals>
+    <plurals name="songs_download_started">
+        <item quantity="one">Downloading %d song</item>
+        <item quantity="other">Downloading %d songs</item>
     </plurals>
     <string name="equalizer_fragment_title">Equalizer</string>
     <string name="equalizer_reset">Reset</string>

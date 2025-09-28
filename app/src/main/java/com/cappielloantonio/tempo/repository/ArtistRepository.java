@@ -2,10 +2,12 @@ package com.cappielloantonio.tempo.repository;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
+import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistInfo2;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.IndexID3;
@@ -13,12 +15,92 @@ import com.cappielloantonio.tempo.subsonic.models.IndexID3;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ArtistRepository {
+    private final AlbumRepository albumRepository;
+
+    public ArtistRepository() {
+        this.albumRepository = new AlbumRepository();
+    }
+
+    public void getArtistAllSongs(String artistId, ArtistSongsCallback callback) {
+        Log.d("ArtistSync", "Getting albums for artist: " + artistId);
+
+        // Get the artist info first, which contains the albums
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getArtist(artistId)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && 
+                            response.body().getSubsonicResponse().getArtist() != null && 
+                            response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+                            
+                            List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
+                            Log.d("ArtistSync", "Got albums directly: " + albums.size());
+                            
+                            if (!albums.isEmpty()) {
+                                fetchAllAlbumSongsWithCallback(albums, callback);
+                            } else {
+                                Log.d("ArtistSync", "No albums found in artist response");
+                                callback.onSongsCollected(new ArrayList<>());
+                            }
+                        } else {
+                            Log.d("ArtistSync", "Failed to get artist info");
+                            callback.onSongsCollected(new ArrayList<>());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.d("ArtistSync", "Error getting artist info: " + t.getMessage());
+                        callback.onSongsCollected(new ArrayList<>());
+                    }
+                });
+    }
+
+    private void fetchAllAlbumSongsWithCallback(List<AlbumID3> albums, ArtistSongsCallback callback) {
+        if (albums == null || albums.isEmpty()) {
+            Log.d("ArtistSync", "No albums to process");
+            callback.onSongsCollected(new ArrayList<>());
+            return;
+        }
+
+        List<Child> allSongs = new ArrayList<>();
+        AtomicInteger remainingAlbums = new AtomicInteger(albums.size());
+        Log.d("ArtistSync", "Processing " + albums.size() + " albums");
+        
+        for (AlbumID3 album : albums) {
+            Log.d("ArtistSync", "Getting tracks for album: " + album.getName());
+            MutableLiveData<List<Child>> albumTracks = albumRepository.getAlbumTracks(album.getId());
+            albumTracks.observeForever(songs -> {
+                Log.d("ArtistSync", "Got " + (songs != null ? songs.size() : 0) + " songs from album");
+                if (songs != null) {
+                    allSongs.addAll(songs);
+                }
+                albumTracks.removeObservers(null);
+                
+                int remaining = remainingAlbums.decrementAndGet();
+                Log.d("ArtistSync", "Remaining albums: " + remaining);
+                
+                if (remaining == 0) {
+                    Log.d("ArtistSync", "All albums processed. Total songs: " + allSongs.size());
+                    callback.onSongsCollected(allSongs);
+                }
+            });
+        }
+    }
+
+    public interface ArtistSongsCallback {
+        void onSongsCollected(List<Child> songs);
+    }
+
     public MutableLiveData<List<ArtistID3>> getStarredArtists(boolean random, int size) {
         MutableLiveData<List<ArtistID3>> starredArtists = new MutableLiveData<>(new ArrayList<>());
 
@@ -89,7 +171,7 @@ public class ArtistRepository {
     }
 
     /*
-     * Metodo che mi restituisce le informazioni essenzionali dell'artista (cover, numero di album...)
+     * Method that returns essential artist information (cover, album number, etc.)
      */
     public void getArtistInfo(List<ArtistID3> artists, MutableLiveData<List<ArtistID3>> list) {
         List<ArtistID3> liveArtists = list.getValue();
