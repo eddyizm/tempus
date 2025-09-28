@@ -31,16 +31,38 @@ public class ArtistRepository {
     public void getArtistAllSongs(String artistId, ArtistSongsCallback callback) {
         Log.d("ArtistSync", "Getting albums for artist: " + artistId);
 
-        // Use AlbumRepository to get all albums by this artist
-        albumRepository.getArtistAlbums(artistId).observeForever(albums -> {
-            Log.d("ArtistSync", "Got albums: " + (albums != null ? albums.size() : 0));
-            if (albums != null && !albums.isEmpty()) {
-                fetchAllAlbumSongsWithCallback(albums, callback);
-            } else {
-                Log.d("ArtistSync", "No albums found");
-                callback.onSongsCollected(new ArrayList<>());
-            }
-        });
+        // Get the artist info first, which contains the albums
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getArtist(artistId)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && 
+                            response.body().getSubsonicResponse().getArtist() != null && 
+                            response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+                            
+                            List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
+                            Log.d("ArtistSync", "Got albums directly: " + albums.size());
+                            
+                            if (!albums.isEmpty()) {
+                                fetchAllAlbumSongsWithCallback(albums, callback);
+                            } else {
+                                Log.d("ArtistSync", "No albums found in artist response");
+                                callback.onSongsCollected(new ArrayList<>());
+                            }
+                        } else {
+                            Log.d("ArtistSync", "Failed to get artist info");
+                            callback.onSongsCollected(new ArrayList<>());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.d("ArtistSync", "Error getting artist info: " + t.getMessage());
+                        callback.onSongsCollected(new ArrayList<>());
+                    }
+                });
     }
 
     private void fetchAllAlbumSongsWithCallback(List<AlbumID3> albums, ArtistSongsCallback callback) {
