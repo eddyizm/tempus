@@ -116,6 +116,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         actionChangeDownloadStorage();
         actionDeleteDownloadStorage();
         actionKeepScreenOn();
+        actionAutoDownloadLyrics();
 
         bindMediaService();
         actionAppEqualizer();
@@ -353,6 +354,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         findPreference("delete_download_storage").setOnPreferenceClickListener(preference -> {
             DeleteDownloadStorageDialog dialog = new DeleteDownloadStorageDialog();
             dialog.show(activity.getSupportFragmentManager(), null);
+            return true;
+        });
+    }
+
+    private void actionAutoDownloadLyrics() {
+        SwitchPreference preference = findPreference("auto_download_lyrics");
+        if (preference == null) {
+            return;
+        }
+
+        preference.setChecked(Preferences.isAutoDownloadLyricsEnabled());
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (newValue instanceof Boolean) {
+                Preferences.setAutoDownloadLyricsEnabled((Boolean) newValue);
+            }
             return true;
         });
     }

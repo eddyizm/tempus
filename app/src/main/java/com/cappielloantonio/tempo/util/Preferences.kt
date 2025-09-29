@@ -46,6 +46,7 @@ object Preferences {
     private const val ROUNDED_CORNER_SIZE = "rounded_corner_size"
     private const val PODCAST_SECTION_VISIBILITY = "podcast_section_visibility"
     private const val RADIO_SECTION_VISIBILITY = "radio_section_visibility"
+    private const val AUTO_DOWNLOAD_LYRICS = "auto_download_lyrics"
     private const val MUSIC_DIRECTORY_SECTION_VISIBILITY = "music_directory_section_visibility"
     private const val REPLAY_GAIN_MODE = "replay_gain_mode"
     private const val AUDIO_TRANSCODE_PRIORITY = "audio_transcode_priority"
@@ -161,6 +162,24 @@ object Preferences {
     @JvmStatic
     fun setOpenSubsonicExtensions(extension: List<OpenSubsonicExtension>) {
         App.getInstance().preferences.edit().putString(OPEN_SUBSONIC_EXTENSIONS, Gson().toJson(extension)).apply()
+    }
+
+    @JvmStatic
+    fun isAutoDownloadLyricsEnabled(): Boolean {
+        val preferences = App.getInstance().preferences
+
+        if (preferences.contains(AUTO_DOWNLOAD_LYRICS)) {
+            return preferences.getBoolean(AUTO_DOWNLOAD_LYRICS, false)
+        }
+
+        return false
+    }
+
+    @JvmStatic
+    fun setAutoDownloadLyricsEnabled(isEnabled: Boolean) {
+        App.getInstance().preferences.edit()
+            .putBoolean(AUTO_DOWNLOAD_LYRICS, isEnabled)
+            .apply()
     }
 
     @JvmStatic

@@ -199,6 +199,10 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
+    <string name="player_lyrics_download_content_description">Download lyrics for offline playback</string>
+    <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
+    <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
+    <string name="player_lyrics_download_failure">Lyrics are not available to download.</string>
     <string name="player_server_priority">Server Priority</string>
     <string name="player_unknown_format">Unknown format</string>
     <string name="player_transcoding">Transcoding</string>
@@ -327,6 +331,8 @@
     <string name="settings_queue_syncing_title">Sync play queue for this user [Not Fully Baked]</string>
     <string name="settings_radio">Show radio</string>
     <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
+    <string name="settings_auto_download_lyrics">Auto download lyrics</string>
+    <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
     <string name="settings_replay_gain">Set replay gain mode</string>
     <string name="settings_rounded_corner">Rounded corners</string>
     <string name="settings_rounded_corner_size">Corners size</string>
