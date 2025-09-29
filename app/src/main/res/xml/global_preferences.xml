@@ -87,6 +87,12 @@
             android:key="radio_section_visibility" />
 
         <SwitchPreference
+            android:title="@string/settings_auto_download_lyrics"
+            android:defaultValue="false"
+            android:summary="@string/settings_auto_download_lyrics_summary"
+            android:key="auto_download_lyrics" />
+
+        <SwitchPreference
             android:title="@string/settings_music_directory"
             android:defaultValue="true"
             android:summary="@string/settings_music_directory_summary"
