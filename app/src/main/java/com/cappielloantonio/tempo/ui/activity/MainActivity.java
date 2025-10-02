@@ -82,6 +82,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        pingServer();
         initService();
     }
 
@@ -351,6 +352,7 @@ public class MainActivity extends BaseActivity {
                     Preferences.switchInUseServerAddress();
                     App.refreshSubsonicClient();
                     pingServer();
+                    resetView();
                 } else {
                     Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
                 }
@@ -361,6 +363,7 @@ public class MainActivity extends BaseActivity {
                 Preferences.switchInUseServerAddress();
                 App.refreshSubsonicClient();
                 pingServer();
+                resetView();
             } else {
                 mainViewModel.ping().observe(this, subsonicResponse -> {
                     if (subsonicResponse == null) {
@@ -374,6 +377,13 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }
+    }
+
+    private void resetView() {
+        resetViewModel();
+        int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+        navController.popBackStack(id, true);
+        navController.navigate(id);
     }
 
     private void getOpenSubsonicExtensions() {
