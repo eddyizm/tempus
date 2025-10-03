@@ -12,6 +12,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.media3.common.MediaItem;
 
+import com.cappielloantonio.tempo.model.Download;
+import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 
@@ -156,6 +158,7 @@ public class ExternalAudioWriter {
                 }
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
+                    recordDownload(child, existingFile.getUri());
                     ExternalAudioReader.refreshCache();
                     notifyExists(context, fileName);
                     return;
@@ -204,6 +207,7 @@ public class ExternalAudioWriter {
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
+                recordDownload(child, targetUri);
                 notifySuccess(context, fileName, child, targetUri);
                 ExternalAudioReader.refreshCache();
             }
@@ -263,6 +267,20 @@ public class ExternalAudioWriter {
         }
 
         manager.notify((int) System.currentTimeMillis(), builder.build());
+    }
+
+    private static void recordDownload(Child child, Uri fileUri) {
+        if (child == null) {
+            return;
+        }
+
+        Download download = new Download(child);
+        download.setDownloadState(1);
+        if (fileUri != null) {
+            download.setDownloadUri(fileUri.toString());
+        }
+
+        new DownloadRepository().insert(download);
     }
 
     private static void notifyExists(Context context, String name) {

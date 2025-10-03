@@ -136,8 +136,27 @@ public class DownloadFragment extends Fragment implements ClickCallback {
             }
         });
 
+        downloadViewModel.getRefreshResult().observe(getViewLifecycleOwner(), count -> {
+            if (count == null || bind == null) {
+                return;
+            }
+
+            if (count == -1) {
+                Toast.makeText(requireContext(), R.string.download_refresh_no_directory, Toast.LENGTH_SHORT).show();
+            } else if (count == 0) {
+                Toast.makeText(requireContext(), R.string.download_refresh_no_changes, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(
+                        requireContext(),
+                        getResources().getQuantityString(R.plurals.download_refresh_removed, count, count),
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+
         bind.downloadedGroupByImageView.setOnClickListener(view -> showPopupMenu(view, R.menu.download_popup_menu));
         bind.downloadedGoBackImageView.setOnClickListener(view -> downloadViewModel.popViewStack());
+        bind.downloadedRefreshImageView.setOnClickListener(view -> downloadViewModel.refreshExternalDownloads());
     }
 
     private void finishDownloadView(List<Child> songs) {

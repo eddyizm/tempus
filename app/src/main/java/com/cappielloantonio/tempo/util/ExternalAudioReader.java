@@ -110,6 +110,16 @@ public class ExternalAudioReader {
         return findUri(episode.getArtist(), episode.getTitle(), episode.getAlbum());
     }
 
+    public static synchronized void removeMetadata(Child media) {
+        if (media == null) {
+            return;
+        }
+
+        String key = buildKey(media.getArtist(), media.getTitle(), media.getAlbum());
+        cache.remove(key);
+        ExternalDownloadMetadataStore.remove(key);
+    }
+
     public static boolean delete(Child media) {
         ensureCache();
         if (cachedDirUri == null) return false;

@@ -81,6 +81,13 @@
     <string name="download_storage_internal_dialog_negative_button">Internal</string>
     <string name="download_storage_directory_dialog_neutral_button">Directory</string>
     <string name="download_title_section">Downloads</string>
+    <string name="download_refresh_no_directory">Set a download folder to refresh your downloads.</string>
+    <string name="download_refresh_no_changes">No missing downloads found.</string>
+    <plurals name="download_refresh_removed">
+        <item quantity="one">Removed %d missing download.</item>
+        <item quantity="other">Removed %d missing downloads.</item>
+    </plurals>
+    <string name="download_refresh_button_content_description">Refresh downloaded items</string>
     <string name="downloaded_bottom_sheet_add_to_queue">Add to queue</string>
     <string name="downloaded_bottom_sheet_play_next">Play next</string>
     <string name="downloaded_bottom_sheet_remove">Remove</string>
