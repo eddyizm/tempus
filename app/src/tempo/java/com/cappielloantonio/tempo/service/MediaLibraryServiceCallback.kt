@@ -295,11 +295,6 @@ open class MediaLibrarySessionCallback(
         args: Bundle
     ): ListenableFuture<SessionResult> {
 
-        val mediaItemId = args.getString(
-            MediaConstants.EXTRA_KEY_MEDIA_ID,
-            session.player.currentMediaItem?.mediaId
-        )
-
         when (customCommand.customAction) {
             CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON -> {
                 session.player.shuffleModeEnabled = true

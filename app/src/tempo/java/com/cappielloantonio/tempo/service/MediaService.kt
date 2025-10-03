@@ -147,6 +147,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         player.repeatMode = Preferences.getRepeatMode()
     }
 
+    @Suppress("DEPRECATION")
     private fun initializeCastPlayer() {
         if (GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS

@@ -8,15 +8,15 @@ import java.util.Date
 
 @Keep
 @Parcelize
-class Directory : Parcelable {
+class Directory(
     @SerializedName("child")
-    var children: List<Child>? = null
-    var id: String? = null
+    var children: List<Child>? = null,
+    var id: String? = null,
     @SerializedName("parent")
-    var parentId: String? = null
-    var name: String? = null
-    var starred: Date? = null
-    var userRating: Int? = null
-    var averageRating: Double? = null
-    var playCount: Long? = null
-}
+    var parentId: String? = null,
+    var name: String? = null,
+    var starred: Date? = null,
+    var userRating: Int? = null,
+    var averageRating: Double? = null,
+    var playCount: Long? = null,
+) : Parcelable
