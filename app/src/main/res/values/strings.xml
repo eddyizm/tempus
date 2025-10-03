@@ -309,6 +309,9 @@
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
+    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempo/discussions</string>
+    <string name="settings_support_summary">Join community discussions and support</string>
+    <string name="settings_support_title">User support</string>
     <string name="settings_image_size">Set image resolution</string>
     <string name="settings_language">Language</string>
     <string name="settings_logout_title">Log out</string>
