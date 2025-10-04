@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -53,6 +54,9 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     private SongBottomSheetViewModel songBottomSheetViewModel;
     private Child song;
 
+    private TextView downloadButton;
+    private TextView removeButton;
+
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     @Nullable
@@ -69,6 +73,12 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         init(view);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateDownloadButtons);
     }
 
     @Override
@@ -162,8 +172,8 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
-        TextView download = view.findViewById(R.id.download_text_view);
-        download.setOnClickListener(v -> {
+        downloadButton = view.findViewById(R.id.download_text_view);
+        downloadButton.setOnClickListener(v -> {
             if (Preferences.getDownloadDirectoryUri() == null) {
                 DownloadUtil.getDownloadTracker(requireContext()).download(
                         MappingUtil.mapDownload(song),
@@ -175,8 +185,8 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
-        TextView remove = view.findViewById(R.id.remove_text_view);
-        remove.setOnClickListener(v -> {
+        removeButton = view.findViewById(R.id.remove_text_view);
+        removeButton.setOnClickListener(v -> {
             if (Preferences.getDownloadDirectoryUri() == null) {
                 DownloadUtil.getDownloadTracker(requireContext()).remove(
                         MappingUtil.mapDownload(song),
@@ -188,7 +198,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
-        initDownloadUI(download, remove);
+        updateDownloadButtons();
 
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
         addToPlaylist.setOnClickListener(v -> {
@@ -256,21 +266,19 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         dismiss();
     }
 
-    private void initDownloadUI(TextView download, TextView remove) {
+    private void updateDownloadButtons() {
+        if (downloadButton == null || removeButton == null) {
+            return;
+        }
+
         if (Preferences.getDownloadDirectoryUri() == null) {
-            if (DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId())) {
-                remove.setVisibility(View.VISIBLE);
-            } else {
-                download.setVisibility(View.VISIBLE);
-                remove.setVisibility(View.GONE);
-            }
+            boolean downloaded = DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId());
+            downloadButton.setVisibility(downloaded ? View.GONE : View.VISIBLE);
+            removeButton.setVisibility(downloaded ? View.VISIBLE : View.GONE);
         } else {
-            if (ExternalAudioReader.getUri(song) != null) {
-                remove.setVisibility(View.VISIBLE);
-            } else {
-                download.setVisibility(View.VISIBLE);
-                remove.setVisibility(View.GONE);
-            }
+            boolean hasLocal = ExternalAudioReader.getUri(song) != null;
+            downloadButton.setVisibility(hasLocal ? View.GONE : View.VISIBLE);
+            removeButton.setVisibility(hasLocal ? View.VISIBLE : View.GONE);
         }
     }
 

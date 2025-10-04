@@ -159,7 +159,7 @@ public class ExternalAudioWriter {
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
                     recordDownload(child, existingFile.getUri());
-                    ExternalAudioReader.refreshCache();
+                    ExternalAudioReader.refreshCacheAsync();
                     notifyExists(context, fileName);
                     return;
                 } else {
@@ -209,7 +209,7 @@ public class ExternalAudioWriter {
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
                 recordDownload(child, targetUri);
                 notifySuccess(context, fileName, child, targetUri);
-                ExternalAudioReader.refreshCache();
+                ExternalAudioReader.refreshCacheAsync();
             }
         } catch (Exception e) {
             if (targetFile != null) {

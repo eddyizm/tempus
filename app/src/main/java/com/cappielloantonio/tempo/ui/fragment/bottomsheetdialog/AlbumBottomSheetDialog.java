@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -56,6 +57,10 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     private AlbumBottomSheetViewModel albumBottomSheetViewModel;
     private AlbumID3 album;
 
+    private TextView removeAllTextView;
+    private List<Child> currentAlbumTracks = Collections.emptyList();
+    private List<MediaItem> currentAlbumMediaItems = Collections.emptyList();
+
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     @Nullable
@@ -72,6 +77,12 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         init(view);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateRemoveAllVisibility);
     }
 
     @Override
@@ -188,22 +199,22 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
             });
         });
 
-        TextView removeAll = view.findViewById(R.id.remove_all_text_view);
+        removeAllTextView = view.findViewById(R.id.remove_all_text_view);
         albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
-            List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
-            List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
+            currentAlbumTracks = songs != null ? songs : Collections.emptyList();
+            currentAlbumMediaItems = MappingUtil.mapDownloads(currentAlbumTracks);
 
-            removeAll.setOnClickListener(v -> {
+            removeAllTextView.setOnClickListener(v -> {
                 if (Preferences.getDownloadDirectoryUri() == null) {
-                    DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
+                    List<Download> downloads = currentAlbumTracks.stream().map(Download::new).collect(Collectors.toList());
+                    DownloadUtil.getDownloadTracker(requireContext()).remove(currentAlbumMediaItems, downloads);
                 } else {
-                    songs.forEach(ExternalAudioReader::delete);
+                    currentAlbumTracks.forEach(ExternalAudioReader::delete);
                 }
                 dismissBottomSheet();
             });
+            updateRemoveAllVisibility();
         });
-
-        initDownloadUI(removeAll);
 
         TextView goToArtist = view.findViewById(R.id.go_to_artist_text_view);
         goToArtist.setOnClickListener(v -> albumBottomSheetViewModel.getArtist().observe(getViewLifecycleOwner(), artist -> {
@@ -244,21 +255,29 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         dismiss();
     }
 
-    private void initDownloadUI(TextView removeAll) {
-        albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
-            List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
+    private void updateRemoveAllVisibility() {
+        if (removeAllTextView == null) {
+            return;
+        }
 
-            if (Preferences.getDownloadDirectoryUri() == null) {
-                if (DownloadUtil.getDownloadTracker(requireContext()).areDownloaded(mediaItems)) {
-                    removeAll.setVisibility(View.VISIBLE);
-                } else {
-                    removeAll.setVisibility(View.GONE);
-                }
+        if (currentAlbumTracks == null || currentAlbumTracks.isEmpty()) {
+            removeAllTextView.setVisibility(View.GONE);
+            return;
+        }
+
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            List<MediaItem> mediaItems = currentAlbumMediaItems;
+            if (mediaItems == null || mediaItems.isEmpty()) {
+                removeAllTextView.setVisibility(View.GONE);
+            } else if (DownloadUtil.getDownloadTracker(requireContext()).areDownloaded(mediaItems)) {
+                removeAllTextView.setVisibility(View.VISIBLE);
             } else {
-                boolean hasLocal = songs.stream().anyMatch(song -> ExternalAudioReader.getUri(song) != null);
-                removeAll.setVisibility(hasLocal ? View.VISIBLE : View.GONE);
+                removeAllTextView.setVisibility(View.GONE);
             }
-        });
+        } else {
+            boolean hasLocal = currentAlbumTracks.stream().anyMatch(song -> ExternalAudioReader.getUri(song) != null);
+            removeAllTextView.setVisibility(hasLocal ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void initializeMediaBrowser() {

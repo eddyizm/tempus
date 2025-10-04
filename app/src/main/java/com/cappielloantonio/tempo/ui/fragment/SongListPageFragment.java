@@ -201,7 +201,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         bind.songListRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.songListRecyclerView.setHasFixedSize(true);
 
-        songHorizontalAdapter = new SongHorizontalAdapter(this, true, false, null);
+        songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.songListRecyclerView.setAdapter(songHorizontalAdapter);
         setMediaBrowserListenableFuture();
         reapplyPlayback();

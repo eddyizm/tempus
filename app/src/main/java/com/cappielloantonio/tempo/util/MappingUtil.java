@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.OptIn;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.MimeTypes;
@@ -239,5 +240,12 @@ public class MappingUtil {
     private static Uri getDownloadUri(String id) {
         Download download = new DownloadRepository().getDownload(id);
         return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri()) : MusicUtil.getDownloadUri(id);
+    }
+
+    public static void observeExternalAudioRefresh(LifecycleOwner owner, Runnable onRefresh) {
+        if (owner == null || onRefresh == null) {
+            return;
+        }
+        ExternalAudioReader.getRefreshEvents().observe(owner, event -> onRefresh.run());
     }
 }

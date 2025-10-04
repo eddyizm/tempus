@@ -289,7 +289,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                 bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
                 bind.songRecyclerView.setHasFixedSize(true);
 
-                songHorizontalAdapter = new SongHorizontalAdapter(this, false, false, album);
+                songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, false, false, album);
                 bind.songRecyclerView.setAdapter(songHorizontalAdapter);
                 setMediaBrowserListenableFuture();
                 reapplyPlayback();
