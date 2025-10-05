@@ -32,6 +32,7 @@ import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MO
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON
 import com.google.common.collect.ImmutableList
+import com.cappielloantonio.tempo.util.Preferences
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import retrofit2.Call
@@ -180,11 +181,22 @@ open class MediaLibrarySessionCallback(
     private fun buildCustomLayout(player: Player, isRatingPending: Boolean = false): ImmutableList<CommandButton> {
         val customLayout = mutableListOf<CommandButton>()
 
-        //TODO: create a user setting to decide which of the buttons to show on the mini player
-//        // Add shuffle button
-//        customLayout.add(
-//            if (player.shuffleModeEnabled) customCommandToggleShuffleModeOff else customCommandToggleShuffleModeOn
-//        )
+        val showShuffle = Preferences.showShuffleInsteadOfHeart()
+
+        if (!showShuffle) {
+            if (player.currentMediaItem != null && !isRatingPending) {
+                // Heart button
+                if ((player.mediaMetadata.userRating as HeartRating?)?.isHeart == true) {
+                    customLayout.add(customCommandToggleHeartOff)
+                } else {
+                    customLayout.add(customCommandToggleHeartOn)
+                }
+            }
+        } else {
+            customLayout.add(
+                if (player.shuffleModeEnabled) customCommandToggleShuffleModeOff else customCommandToggleShuffleModeOn
+            )
+        }
 
         // Add repeat button
         val repeatButton = when (player.repeatMode) {
@@ -194,25 +206,6 @@ open class MediaLibrarySessionCallback(
         }
 
         customLayout.add(repeatButton)
-
-        // HEART_DEBUG logging
-        Log.d("HEART_DEBUG:", "Current media item: ${player.currentMediaItem}")
-        Log.d("HEART_DEBUG:", "User rating: ${player.mediaMetadata.userRating}")
-        Log.d("HEART_DEBUG:", "Is rating pending: $isRatingPending")
-
-        // Add heart button if there's a current media item
-        if (player.currentMediaItem != null) {
-            if (isRatingPending) {
-                customLayout.add(customCommandToggleHeartLoading)
-            } else if ((player.mediaMetadata.userRating as HeartRating?)?.isHeart == true) {
-                customLayout.add(customCommandToggleHeartOff)
-            } else {
-                customLayout.add(customCommandToggleHeartOn)
-            }
-        } else {
-            Log.d("HEART_DEBUG:", "No current media item - skipping heart button")
-        }
-
         return ImmutableList.copyOf(customLayout)
     }
 

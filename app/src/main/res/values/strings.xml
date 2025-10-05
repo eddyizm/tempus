@@ -335,6 +335,8 @@
     <string name="settings_queue_syncing_countdown">Sync timer</string>
     <string name="settings_queue_syncing_summary">If enabled, the user will have the ability to save their play queue and will have the ability to load state when opening the application.</string>
     <string name="settings_queue_syncing_title">Sync play queue for this user [Not Fully Baked]</string>
+    <string name="settings_show_mini_shuffle_button">Show Shuffle button</string>
+    <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
     <string name="settings_radio">Show radio</string>
     <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
     <string name="settings_auto_download_lyrics">Auto download lyrics</string>

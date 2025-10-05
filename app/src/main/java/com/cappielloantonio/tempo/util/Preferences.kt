@@ -73,6 +73,7 @@ object Preferences {
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
+    private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
 
     @JvmStatic
     fun getServer(): String? {
@@ -357,6 +358,16 @@ object Preferences {
         App.getInstance().preferences.edit().putBoolean(
                 SYNC_STARRED_TRACKS_FOR_OFFLINE_USE, isStarredSyncEnabled
         ).apply()
+    }
+
+    @JvmStatic
+    fun showShuffleInsteadOfHeart(): Boolean {
+        return App.getInstance().preferences.getBoolean(MINI_SHUFFLE_BUTTON_VISIBILITY, false)
+    }
+
+    @JvmStatic
+    fun setShuffleInsteadOfHeart(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(MINI_SHUFFLE_BUTTON_VISIBILITY, enabled).apply()
     }
 
     @JvmStatic

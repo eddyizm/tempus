@@ -117,6 +117,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         actionDeleteDownloadStorage();
         actionKeepScreenOn();
         actionAutoDownloadLyrics();
+        actionMiniPlayerHeart();
 
         bindMediaService();
         actionAppEqualizer();
@@ -354,6 +355,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         findPreference("delete_download_storage").setOnPreferenceClickListener(preference -> {
             DeleteDownloadStorageDialog dialog = new DeleteDownloadStorageDialog();
             dialog.show(activity.getSupportFragmentManager(), null);
+            return true;
+        });
+    }
+
+    private void actionMiniPlayerHeart() {
+        SwitchPreference preference = findPreference("mini_shuffle_button_visibility");
+        if (preference == null) {
+            return;
+        }
+
+        preference.setChecked(Preferences.showShuffleInsteadOfHeart());
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (newValue instanceof Boolean) {
+                Preferences.setShuffleInsteadOfHeart((Boolean) newValue);
+            }
             return true;
         });
     }
