@@ -219,16 +219,10 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
 
             override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
                 Preferences.setShuffleModeEnabled(shuffleModeEnabled)
-                mediaLibrarySession.setCustomLayout(
-                    librarySessionCallback.buildCustomLayout(player)
-                )
             }
 
             override fun onRepeatModeChanged(repeatMode: Int) {
                 Preferences.setRepeatMode(repeatMode)
-                mediaLibrarySession.setCustomLayout(
-                    librarySessionCallback.buildCustomLayout(player)
-                )
             }
         })
     }
