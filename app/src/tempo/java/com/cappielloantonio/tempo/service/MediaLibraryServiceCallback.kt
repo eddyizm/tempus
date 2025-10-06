@@ -185,11 +185,10 @@ open class MediaLibrarySessionCallback(
 
         if (!showShuffle) {
             if (player.currentMediaItem != null && !isRatingPending) {
-                // Heart button
                 if ((player.mediaMetadata.userRating as HeartRating?)?.isHeart == true) {
-                    customLayout.add(customCommandToggleHeartOff)
-                } else {
                     customLayout.add(customCommandToggleHeartOn)
+                } else {
+                    customLayout.add(customCommandToggleHeartOff)
                 }
             }
         } else {
