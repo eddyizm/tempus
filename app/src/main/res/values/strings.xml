@@ -356,6 +356,7 @@
     <string name="settings_theme">Theme</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
+    <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Rating</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_title_scrobble">Scrobble</string>

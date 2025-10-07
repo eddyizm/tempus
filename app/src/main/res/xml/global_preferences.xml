@@ -25,6 +25,7 @@
             app:title="@string/settings_language" />
 
         <ListPreference
+            android:layout_height="wrap_content"
             app:defaultValue="default"
             app:dialogTitle="@string/settings_theme"
             app:entries="@array/theme_list_titles"
@@ -92,7 +93,7 @@
             android:key="music_directory_section_visibility" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Playlist">
+    <PreferenceCategory app:title="@string/settings_title_playlist">
         <SwitchPreference
             android:title="@string/settings_allow_playlist_duplicates"
             android:defaultValue="false"
