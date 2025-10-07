@@ -1,15 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory app:title="@string/settings_title_general">
-       <Preference
-            android:key="system_equalizer"
-            android:title="@string/settings_system_equalizer_title"
-            android:summary="@string/settings_system_equalizer_summary" />
-
         <Preference
-            android:key="app_equalizer"
-            android:title="@string/settings_app_equalizer"
-            android:summary="@string/settings_app_equalizer_summary" />
+            android:layout_height="match_parent"
+            android:key="equalizer"
+            android:summary="@string/settings_system_equalizer_summary"
+            android:title="@string/settings_system_equalizer_title" />
 
         <Preference
             android:key="scan_library"
@@ -101,16 +97,9 @@
             android:defaultValue="true"
             android:summary="@string/settings_music_directory_summary"
             android:key="music_directory_section_visibility" />
-
-        <SwitchPreference
-            android:title="@string/settings_show_mini_shuffle_button"
-            android:defaultValue="false"
-            android:summary="@string/settings_show_mini_shuffle_button_summary"
-            android:key="mini_shuffle_button_visibility" />
-
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_playlist">
+     <PreferenceCategory app:title="@string/settings_title_playlist">
         <SwitchPreference
             android:title="@string/settings_allow_playlist_duplicates"
             android:defaultValue="false"
@@ -118,6 +107,7 @@
             android:key="allow_playlist_duplicates" />
     </PreferenceCategory>
 
+    
     <PreferenceCategory app:title="@string/settings_title_data">
         <ListPreference
             app:defaultValue="256"
