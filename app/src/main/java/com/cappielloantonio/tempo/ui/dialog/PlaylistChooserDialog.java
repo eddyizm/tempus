@@ -27,7 +27,6 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
     private PlaylistDialogHorizontalAdapter playlistDialogHorizontalAdapter;
 
-    private boolean SkipDuplicates;
 
     @NonNull
     @Override
@@ -80,14 +79,9 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
     private void initPlaylistView() {
         bind.playlistDialogRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.playlistDialogRecyclerView.setHasFixedSize(true);
-        SkipDuplicates = true;
 
         playlistDialogHorizontalAdapter = new PlaylistDialogHorizontalAdapter(this);
         bind.playlistDialogRecyclerView.setAdapter(playlistDialogHorizontalAdapter);
-
-        bind.playlistChooserDialogSkipDuplicates.setOnCheckedChangeListener((__, isChecked) -> {
-            SkipDuplicates = isChecked;
-        });
 
         playlistChooserViewModel.getPlaylistList(requireActivity()).observe(requireActivity(), playlists -> {
             if (playlists != null) {
@@ -107,7 +101,7 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
     public void onPlaylistClick(Bundle bundle) {
         if (playlistChooserViewModel.getSongsToAdd() != null && !playlistChooserViewModel.getSongsToAdd().isEmpty()) {
             Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-            playlistChooserViewModel.addSongsToPlaylist(this, getDialog(), playlist.getId(), SkipDuplicates);
+            playlistChooserViewModel.addSongsToPlaylist(this, getDialog(), playlist.getId());
         } else {
             Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_add_failure, Toast.LENGTH_SHORT).show();
         }

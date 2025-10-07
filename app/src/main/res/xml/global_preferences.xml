@@ -2,9 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory app:title="@string/settings_title_general">
         <Preference
+            android:layout_height="match_parent"
             android:key="equalizer"
-            android:title="@string/settings_equalizer_title"
-            android:summary="@string/settings_equalizer_summary" />
+            android:summary="@string/settings_equalizer_summary"
+            android:title="@string/settings_equalizer_title" />
 
         <Preference
             android:key="scan_library"
@@ -17,10 +18,11 @@
 
     <PreferenceCategory app:title="@string/settings_title_ui">
         <ListPreference
+            android:layout_height="match_parent"
             app:defaultValue="default"
             app:dialogTitle="@string/settings_language"
             app:key="language"
-            app:title="@string/settings_language"/>
+            app:title="@string/settings_language" />
 
         <ListPreference
             app:defaultValue="default"
@@ -37,10 +39,11 @@
             android:key="always_on_display" />
 
         <SwitchPreference
-            android:title="@string/settings_rounded_corner"
+            android:layout_height="match_parent"
             android:defaultValue="true"
+            android:key="rounded_corner"
             android:summary="@string/settings_rounded_corner_summary"
-            android:key="rounded_corner" />
+            android:title="@string/settings_rounded_corner" />
 
         <ListPreference
             app:defaultValue="6"
@@ -52,10 +55,11 @@
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference
-            android:title="@string/settings_audio_quality"
+            android:layout_height="wrap_content"
             android:defaultValue="false"
+            android:key="audio_quality_per_item"
             android:summary="@string/settings_audio_quality_summary"
-            android:key="audio_quality_per_item" />
+            android:title="@string/settings_audio_quality" />
 
         <SwitchPreference
             android:title="@string/settings_song_rating"
@@ -86,6 +90,14 @@
             android:defaultValue="true"
             android:summary="@string/settings_music_directory_summary"
             android:key="music_directory_section_visibility" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Playlist">
+        <SwitchPreference
+            android:title="@string/settings_allow_playlist_duplicates"
+            android:defaultValue="false"
+            android:summary="@string/settings_allow_playlist_duplicates_summary"
+            android:key="allow_playlist_duplicates" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/settings_title_data">

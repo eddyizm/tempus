@@ -207,7 +207,6 @@
     <string name="playlist_chooser_dialog_negative_button">Cancel</string>
     <string name="playlist_chooser_dialog_neutral_button">Create</string>
     <string name="playlist_chooser_dialog_title">Add to a playlist</string>
-    <string name="playlist_chooser_dialog_skip_duplicates">Skip duplicates</string>
     <string name="playlist_chooser_dialog_toast_add_success">Added song to playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song to playlist</string>
     <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
@@ -276,6 +275,8 @@
     <string name="settings_about_summary">Tempo is an open source and lightweight music client for Subsonic, designed and built natively for Android.</string>
     <string name="settings_about_title">About</string>
     <string name="settings_always_on_display">Always on display</string>
+    <string name="settings_allow_playlist_duplicates">Allow adding duplicates to playlist</string>
+    <string name="settings_allow_playlist_duplicates_summary">If enabled, duplicates won\'t be checked while adding to a playlist.</string>
     <string name="settings_audio_transcode_download_format">Transcode format</string>
     <string name="settings_audio_transcode_download_priority_summary">If enabled, Tempo will not force download the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioritize server settings used for streaming in downloads</string>

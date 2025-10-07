@@ -69,6 +69,7 @@ object Preferences {
     private const val NEXT_UPDATE_CHECK = "next_update_check"
     private const val CONTINUOUS_PLAY = "continuous_play"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
+    private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
 
 
     @JvmStatic
@@ -537,5 +538,18 @@ object Preferences {
         return App.getInstance().preferences.getLong(
                 LAST_INSTANT_MIX, 0
         ) + 5000 < System.currentTimeMillis()
+    }
+
+    @JvmStatic
+    fun setAllowPlaylistDuplicates(allowDuplicates: Boolean) {
+        return App.getInstance().preferences.edit().putString(
+            ALLOW_PLAYLIST_DUPLICATES,
+            allowDuplicates.toString()
+        ).apply()
+    }
+
+    @JvmStatic
+    fun allowPlaylistDuplicates(): Boolean {
+        return App.getInstance().preferences.getBoolean(ALLOW_PLAYLIST_DUPLICATES, false)
     }
 }
