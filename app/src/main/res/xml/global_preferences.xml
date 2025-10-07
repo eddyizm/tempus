@@ -4,8 +4,8 @@
         <Preference
             android:layout_height="match_parent"
             android:key="equalizer"
-            android:summary="@string/settings_equalizer_summary"
-            android:title="@string/settings_equalizer_title" />
+            android:summary="@string/settings_system_equalizer_summary"
+            android:title="@string/settings_system_equalizer_title" />
 
         <Preference
             android:key="scan_library"
