@@ -87,7 +87,7 @@ public class PlaylistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_add_success) + " x " + songsId.toArray().length, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_add_success), Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
