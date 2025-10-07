@@ -55,6 +55,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/different_disk_divider_sector" />
 
+    <View
+        android:id="@+id/cover_art_overlay"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:background="#80000000"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/different_disk_divider_sector" />
+
+    <ImageView
+        android:id="@+id/play_pause_icon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/different_disk_divider_sector" />
+
     <TextView
         android:id="@+id/track_number_text_view"
         style="@style/LabelLarge"

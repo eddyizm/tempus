@@ -1,11 +1,17 @@
 package com.cappielloantonio.tempo.service;
 
 import android.content.ComponentName;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
@@ -21,14 +27,79 @@ import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MediaManager {
     private static final String TAG = "MediaManager";
+    private static WeakReference<MediaBrowser> attachedBrowserRef = new WeakReference<>(null);
+
+    public static void registerPlaybackObserver(
+            ListenableFuture<MediaBrowser> browserFuture,
+            PlaybackViewModel playbackViewModel
+    ) {
+        if (browserFuture == null) return;
+
+        Futures.addCallback(browserFuture, new FutureCallback<MediaBrowser>() {
+            @Override
+            public void onSuccess(MediaBrowser browser) {
+                MediaBrowser current = attachedBrowserRef.get();
+                if (current != browser) {
+                    browser.addListener(new Player.Listener() {
+                        @Override
+                        public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
+                            if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)
+                                    || events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED)
+                                    || events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
+
+                                String mediaId = player.getCurrentMediaItem() != null
+                                        ? player.getCurrentMediaItem().mediaId
+                                        : null;
+
+                                boolean playing = player.getPlaybackState() == Player.STATE_READY
+                                        && player.getPlayWhenReady();
+
+                                playbackViewModel.update(mediaId, playing);
+                            }
+                        }
+                    });
+
+                    String mediaId = browser.getCurrentMediaItem() != null
+                            ? browser.getCurrentMediaItem().mediaId
+                            : null;
+                    boolean playing = browser.getPlaybackState() == Player.STATE_READY && browser.getPlayWhenReady();
+                    playbackViewModel.update(mediaId, playing);
+
+                    attachedBrowserRef = new WeakReference<>(browser);
+                } else {
+                    String mediaId = browser.getCurrentMediaItem() != null
+                            ? browser.getCurrentMediaItem().mediaId
+                            : null;
+                    boolean playing = browser.getPlaybackState() == Player.STATE_READY && browser.getPlayWhenReady();
+                    playbackViewModel.update(mediaId, playing);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                Log.e(TAG, "Failed to get MediaBrowser instance", t);
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
+    public static void onBrowserReleased(@Nullable MediaBrowser released) {
+        MediaBrowser attached = attachedBrowserRef.get();
+        if (attached == released) {
+            attachedBrowserRef.clear();
+        }
+    }
 
     public static void reset(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
         if (mediaBrowserListenableFuture != null) {
@@ -107,11 +178,24 @@ public class MediaManager {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        mediaBrowserListenableFuture.get().clearMediaItems();
-                        mediaBrowserListenableFuture.get().setMediaItems(MappingUtil.mapMediaItems(media));
-                        mediaBrowserListenableFuture.get().prepare();
-                        mediaBrowserListenableFuture.get().seekTo(startIndex, 0);
-                        mediaBrowserListenableFuture.get().play();
+                        MediaBrowser browser = mediaBrowserListenableFuture.get();
+                        browser.clearMediaItems();
+                        browser.setMediaItems(MappingUtil.mapMediaItems(media));
+                        browser.prepare();
+
+                        Player.Listener timelineListener = new Player.Listener() {
+                            @Override
+                            public void onTimelineChanged(Timeline timeline, int reason) {
+                                int itemCount = browser.getMediaItemCount();
+                                if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
+                                    browser.seekTo(startIndex, 0);
+                                    browser.play();
+                                    browser.removeListener(this);
+                                }
+                            }
+                        };
+                        browser.addListener(timelineListener);
+
                         enqueueDatabase(media, true, 0);
                     }
                 } catch (ExecutionException | InterruptedException e) {

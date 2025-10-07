@@ -29,19 +29,16 @@ import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.ui.adapter.AlbumArtistPageOrSimilarAdapter;
 import com.cappielloantonio.tempo.ui.adapter.AlbumCatalogueAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistCatalogueAdapter;
-import com.cappielloantonio.tempo.ui.adapter.ArtistSimilarAdapter;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.ArtistPageViewModel;
+import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @UnstableApi
@@ -49,6 +46,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private FragmentArtistPageBinding bind;
     private MainActivity activity;
     private ArtistPageViewModel artistPageViewModel;
+    private PlaybackViewModel playbackViewModel;
 
     private SongHorizontalAdapter songHorizontalAdapter;
     private AlbumCatalogueAdapter albumCatalogueAdapter;
@@ -63,6 +61,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind = FragmentArtistPageBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
         artistPageViewModel = new ViewModelProvider(requireActivity()).get(ArtistPageViewModel.class);
+        playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         init();
         initAppBar();
@@ -80,6 +79,13 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         super.onStart();
 
         initializeMediaBrowser();
+        MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
+        observePlayback();
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (songHorizontalAdapter != null) setMediaBrowserListenableFuture();
     }
 
     @Override
@@ -159,7 +165,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
 
         bind.artistPageRadioButton.setOnClickListener(v -> {
             artistPageViewModel.getArtistInstantMix().observe(getViewLifecycleOwner(), songs -> {
-                if (!songs.isEmpty()) {
+                if (songs != null && !songs.isEmpty()) {
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     activity.setBottomSheetInPeek(true);
                 } else {
@@ -174,6 +180,8 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
 
         songHorizontalAdapter = new SongHorizontalAdapter(this, true, true, null);
         bind.mostStreamedSongRecyclerView.setAdapter(songHorizontalAdapter);
+        setMediaBrowserListenableFuture();
+        reapplyPlayback();
         artistPageViewModel.getArtistTopSongList().observe(getViewLifecycleOwner(), songs -> {
             if (songs == null) {
                 if (bind != null) bind.artistPageTopSongsSector.setVisibility(View.GONE);
@@ -183,6 +191,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                 if (bind != null)
                     bind.artistPageShuffleButton.setEnabled(!songs.isEmpty());
                 songHorizontalAdapter.setItems(songs);
+                reapplyPlayback();
             }
         });
     }
@@ -272,5 +281,32 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     @Override
     public void onArtistLongClick(Bundle bundle) {
         Navigation.findNavController(requireView()).navigate(R.id.artistBottomSheetDialog, bundle);
+    }
+
+    private void observePlayback() {
+        playbackViewModel.getCurrentSongId().observe(getViewLifecycleOwner(), id -> {
+            if (songHorizontalAdapter != null) {
+                Boolean playing = playbackViewModel.getIsPlaying().getValue();
+                songHorizontalAdapter.setPlaybackState(id, playing != null && playing);
+            }
+        });
+        playbackViewModel.getIsPlaying().observe(getViewLifecycleOwner(), playing -> {
+            if (songHorizontalAdapter != null) {
+                String id = playbackViewModel.getCurrentSongId().getValue();
+                songHorizontalAdapter.setPlaybackState(id, playing != null && playing);
+            }
+        });
+    }
+
+    private void reapplyPlayback() {
+        if (songHorizontalAdapter != null) {
+            String id = playbackViewModel.getCurrentSongId().getValue();
+            Boolean playing = playbackViewModel.getIsPlaying().getValue();
+            songHorizontalAdapter.setPlaybackState(id, playing != null && playing);
+        }
+    }
+
+    private void setMediaBrowserListenableFuture() {
+        songHorizontalAdapter.setMediaBrowserListenableFuture(mediaBrowserListenableFuture);
     }
 }

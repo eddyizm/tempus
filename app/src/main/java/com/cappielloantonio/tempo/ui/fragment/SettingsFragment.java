@@ -1,9 +1,13 @@
 package com.cappielloantonio.tempo.ui.fragment;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.audiofx.AudioEffect;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,9 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
+import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -28,11 +35,14 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.interfaces.DialogClickCallback;
 import com.cappielloantonio.tempo.interfaces.ScanCallback;
+import com.cappielloantonio.tempo.service.EqualizerManager;
+import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.DeleteDownloadStorageDialog;
 import com.cappielloantonio.tempo.ui.dialog.DownloadStorageDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredAlbumSyncDialog;
+import com.cappielloantonio.tempo.ui.dialog.StarredArtistSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -50,6 +60,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private SettingViewModel settingViewModel;
 
     private ActivityResultLauncher<Intent> someActivityResultLauncher;
+
+    private MediaService.LocalBinder mediaServiceBinder;
+    private boolean isServiceBound = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,7 +99,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
 
-        checkEqualizer();
+        checkSystemEqualizer();
         checkCacheStorage();
         checkStorage();
 
@@ -98,10 +111,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         actionScan();
         actionSyncStarredAlbums();
         actionSyncStarredTracks();
+        actionSyncStarredArtists();
         actionChangeStreamingCacheStorage();
         actionChangeDownloadStorage();
         actionDeleteDownloadStorage();
         actionKeepScreenOn();
+        actionAutoDownloadLyrics();
+        actionMiniPlayerHeart();
+
+        bindMediaService();
+        actionAppEqualizer();
     }
 
     @Override
@@ -124,8 +143,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
     }
 
-    private void checkEqualizer() {
-        Preference equalizer = findPreference("equalizer");
+    private void checkSystemEqualizer() {
+        Preference equalizer = findPreference("system_equalizer");
 
         if (equalizer == null) return;
 
@@ -281,7 +300,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
     }
-    
+
+    private void actionSyncStarredArtists() {
+        findPreference("sync_starred_artists_for_offline_use").setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue instanceof Boolean) {
+                if ((Boolean) newValue) {
+                    StarredArtistSyncDialog dialog = new StarredArtistSyncDialog(() -> {
+                        ((SwitchPreference)preference).setChecked(false);
+                    });
+                    dialog.show(activity.getSupportFragmentManager(), null);
+                }
+            }
+            return true;
+        });
+    }
+
     private void actionChangeStreamingCacheStorage() {
         findPreference("streaming_cache_storage").setOnPreferenceClickListener(preference -> {
             StreamingCacheStorageDialog dialog = new StreamingCacheStorageDialog(new DialogClickCallback() {
@@ -326,6 +359,36 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
+    private void actionMiniPlayerHeart() {
+        SwitchPreference preference = findPreference("mini_shuffle_button_visibility");
+        if (preference == null) {
+            return;
+        }
+
+        preference.setChecked(Preferences.showShuffleInsteadOfHeart());
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (newValue instanceof Boolean) {
+                Preferences.setShuffleInsteadOfHeart((Boolean) newValue);
+            }
+            return true;
+        });
+    }
+
+    private void actionAutoDownloadLyrics() {
+        SwitchPreference preference = findPreference("auto_download_lyrics");
+        if (preference == null) {
+            return;
+        }
+
+        preference.setChecked(Preferences.isAutoDownloadLyricsEnabled());
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (newValue instanceof Boolean) {
+                Preferences.setAutoDownloadLyricsEnabled((Boolean) newValue);
+            }
+            return true;
+        });
+    }
+
     private void getScanStatus() {
         settingViewModel.getScanStatus(new ScanCallback() {
             @Override
@@ -352,5 +415,64 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             }
             return true;
         });
+    }
+
+    private final ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mediaServiceBinder = (MediaService.LocalBinder) service;
+            isServiceBound = true;
+            checkEqualizerBands();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mediaServiceBinder = null;
+            isServiceBound = false;
+        }
+    };
+
+    private void bindMediaService() {
+        Intent intent = new Intent(requireActivity(), MediaService.class);
+        intent.setAction(MediaService.ACTION_BIND_EQUALIZER);
+        requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        isServiceBound = true;
+    }
+
+    private void checkEqualizerBands() {
+        if (mediaServiceBinder != null) {
+            EqualizerManager eqManager = mediaServiceBinder.getEqualizerManager();
+            short numBands = eqManager.getNumberOfBands();
+            Preference appEqualizer = findPreference("app_equalizer");
+            if (appEqualizer != null) {
+                appEqualizer.setVisible(numBands > 0);
+            }
+        }
+    }
+
+    private void actionAppEqualizer() {
+        Preference appEqualizer = findPreference("app_equalizer");
+        if (appEqualizer != null) {
+            appEqualizer.setOnPreferenceClickListener(preference -> {
+                NavController navController = NavHostFragment.findNavController(this);
+                NavOptions navOptions = new NavOptions.Builder()
+                        .setLaunchSingleTop(true)
+                        .setPopUpTo(R.id.equalizerFragment, true)
+                        .build();
+                activity.setBottomNavigationBarVisibility(true);
+                activity.setBottomSheetVisibility(true);
+                navController.navigate(R.id.equalizerFragment, null, navOptions);
+                return true;
+            });
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (isServiceBound) {
+            requireActivity().unbindService(serviceConnection);
+            isServiceBound = false;
+        }
     }
 }

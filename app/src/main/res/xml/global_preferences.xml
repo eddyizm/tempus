@@ -87,13 +87,19 @@
             android:key="radio_section_visibility" />
 
         <SwitchPreference
+            android:title="@string/settings_auto_download_lyrics"
+            android:defaultValue="false"
+            android:summary="@string/settings_auto_download_lyrics_summary"
+            android:key="auto_download_lyrics" />
+
+        <SwitchPreference
             android:title="@string/settings_music_directory"
             android:defaultValue="true"
             android:summary="@string/settings_music_directory_summary"
             android:key="music_directory_section_visibility" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_playlist">
+     <PreferenceCategory app:title="@string/settings_title_playlist">
         <SwitchPreference
             android:title="@string/settings_allow_playlist_duplicates"
             android:defaultValue="false"
@@ -101,6 +107,7 @@
             android:key="allow_playlist_duplicates" />
     </PreferenceCategory>
 
+    
     <PreferenceCategory app:title="@string/settings_title_data">
         <ListPreference
             app:defaultValue="256"
@@ -157,6 +164,12 @@
             android:defaultValue="false"
             android:summary="@string/settings_sync_starred_albums_for_offline_use_summary"
             android:key="sync_starred_albums_for_offline_use" />
+
+        <SwitchPreference
+            android:title="@string/settings_sync_starred_artists_for_offline_use_title"
+            android:defaultValue="false"
+            android:summary="@string/settings_sync_starred_artists_for_offline_use_summary"
+            android:key="sync_starred_artists_for_offline_use" />
 
         <ListPreference
             app:defaultValue="1"
@@ -370,6 +383,14 @@
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/settings_github_link" />
+        </Preference>
+
+        <Preference
+            app:summary="@string/settings_support_summary"
+            app:title="@string/settings_support_title">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/settings_support_discussion_link" />
         </Preference>
 
         <Preference

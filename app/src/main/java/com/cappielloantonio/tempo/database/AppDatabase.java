@@ -12,6 +12,7 @@ import com.cappielloantonio.tempo.database.converter.DateConverters;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.DownloadDao;
 import com.cappielloantonio.tempo.database.dao.FavoriteDao;
+import com.cappielloantonio.tempo.database.dao.LyricsDao;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
 import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.database.dao.RecentSearchDao;
@@ -20,6 +21,7 @@ import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
 import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.Favorite;
+import com.cappielloantonio.tempo.model.LyricsCache;
 import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.model.RecentSearch;
 import com.cappielloantonio.tempo.model.Server;
@@ -28,9 +30,9 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 11,
-        entities = {Queue.class, Server.class, RecentSearch.class, Download.class, Chronology.class, Favorite.class, SessionMediaItem.class, Playlist.class},
-        autoMigrations = {@AutoMigration(from = 10, to = 11)}
+        version = 12,
+        entities = {Queue.class, Server.class, RecentSearch.class, Download.class, Chronology.class, Favorite.class, SessionMediaItem.class, Playlist.class, LyricsCache.class},
+        autoMigrations = {@AutoMigration(from = 10, to = 11), @AutoMigration(from = 11, to = 12)}
 )
 @TypeConverters({DateConverters.class})
 public abstract class AppDatabase extends RoomDatabase {
@@ -62,4 +64,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SessionMediaItemDao sessionMediaItemDao();
 
     public abstract PlaylistDao playlistDao();
+
+    public abstract LyricsDao lyricsDao();
 }

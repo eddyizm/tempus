@@ -37,6 +37,7 @@ object Preferences {
     private const val WIFI_ONLY = "wifi_only"
     private const val DATA_SAVING_MODE = "data_saving_mode"
     private const val SERVER_UNREACHABLE = "server_unreachable"
+    private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
     private const val SYNC_STARRED_ALBUMS_FOR_OFFLINE_USE = "sync_starred_albums_for_offline_use"
     private const val SYNC_STARRED_TRACKS_FOR_OFFLINE_USE = "sync_starred_tracks_for_offline_use"
     private const val QUEUE_SYNCING = "queue_syncing"
@@ -45,6 +46,7 @@ object Preferences {
     private const val ROUNDED_CORNER_SIZE = "rounded_corner_size"
     private const val PODCAST_SECTION_VISIBILITY = "podcast_section_visibility"
     private const val RADIO_SECTION_VISIBILITY = "radio_section_visibility"
+    private const val AUTO_DOWNLOAD_LYRICS = "auto_download_lyrics"
     private const val MUSIC_DIRECTORY_SECTION_VISIBILITY = "music_directory_section_visibility"
     private const val REPLAY_GAIN_MODE = "replay_gain_mode"
     private const val AUDIO_TRANSCODE_PRIORITY = "audio_transcode_priority"
@@ -70,7 +72,9 @@ object Preferences {
     private const val CONTINUOUS_PLAY = "continuous_play"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
-
+    private const val EQUALIZER_ENABLED = "equalizer_enabled"
+    private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
+    private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
 
     @JvmStatic
     fun getServer(): String? {
@@ -160,6 +164,24 @@ object Preferences {
     @JvmStatic
     fun setOpenSubsonicExtensions(extension: List<OpenSubsonicExtension>) {
         App.getInstance().preferences.edit().putString(OPEN_SUBSONIC_EXTENSIONS, Gson().toJson(extension)).apply()
+    }
+
+    @JvmStatic
+    fun isAutoDownloadLyricsEnabled(): Boolean {
+        val preferences = App.getInstance().preferences
+
+        if (preferences.contains(AUTO_DOWNLOAD_LYRICS)) {
+            return preferences.getBoolean(AUTO_DOWNLOAD_LYRICS, false)
+        }
+
+        return false
+    }
+
+    @JvmStatic
+    fun setAutoDownloadLyricsEnabled(isEnabled: Boolean) {
+        App.getInstance().preferences.edit()
+            .putBoolean(AUTO_DOWNLOAD_LYRICS, isEnabled)
+            .apply()
     }
 
     @JvmStatic
@@ -304,6 +326,18 @@ object Preferences {
     }
 
     @JvmStatic
+    fun isStarredArtistsSyncEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE, false)
+    }
+
+    @JvmStatic
+    fun setStarredArtistsSyncEnabled(isStarredSyncEnabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(
+                SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE, isStarredSyncEnabled
+        ).apply()
+    }
+
+    @JvmStatic
     fun isStarredAlbumsSyncEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(SYNC_STARRED_ALBUMS_FOR_OFFLINE_USE, false)
     }
@@ -325,6 +359,16 @@ object Preferences {
         App.getInstance().preferences.edit().putBoolean(
                 SYNC_STARRED_TRACKS_FOR_OFFLINE_USE, isStarredSyncEnabled
         ).apply()
+    }
+
+    @JvmStatic
+    fun showShuffleInsteadOfHeart(): Boolean {
+        return App.getInstance().preferences.getBoolean(MINI_SHUFFLE_BUTTON_VISIBILITY, false)
+    }
+
+    @JvmStatic
+    fun setShuffleInsteadOfHeart(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(MINI_SHUFFLE_BUTTON_VISIBILITY, enabled).apply()
     }
 
     @JvmStatic
@@ -551,5 +595,32 @@ object Preferences {
     @JvmStatic
     fun allowPlaylistDuplicates(): Boolean {
         return App.getInstance().preferences.getBoolean(ALLOW_PLAYLIST_DUPLICATES, false)
+    }
+
+    @JvmStatic
+    fun setEqualizerEnabled(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(EQUALIZER_ENABLED, enabled).apply()
+    }
+
+    @JvmStatic
+    fun isEqualizerEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(EQUALIZER_ENABLED, false)
+    }
+
+    @JvmStatic
+    fun setEqualizerBandLevels(bandLevels: ShortArray) {
+        val asString = bandLevels.joinToString(",")
+        App.getInstance().preferences.edit().putString(EQUALIZER_BAND_LEVELS, asString).apply()
+    }
+
+    @JvmStatic
+    fun getEqualizerBandLevels(bandCount: Short): ShortArray {
+        val str = App.getInstance().preferences.getString(EQUALIZER_BAND_LEVELS, null)
+        if (str.isNullOrBlank()) {
+            return ShortArray(bandCount.toInt())
+        }
+        val parts = str.split(",")
+        if (parts.size < bandCount) return ShortArray(bandCount.toInt())
+        return ShortArray(bandCount.toInt()) { i -> parts[i].toShortOrNull() ?: 0 }
     }
 }
