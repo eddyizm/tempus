@@ -11,6 +11,7 @@ import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,8 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.DiscTitle;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
+import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -89,7 +92,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         }
     };
 
-    public SongHorizontalAdapter(ClickCallback click, boolean showCoverArt, boolean showAlbum, AlbumID3 album) {
+    public SongHorizontalAdapter(LifecycleOwner lifecycleOwner, ClickCallback click, boolean showCoverArt, boolean showAlbum, AlbumID3 album) {
         this.click = click;
         this.showCoverArt = showCoverArt;
         this.showAlbum = showAlbum;
@@ -98,6 +101,10 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         this.currentFilter = "";
         this.album = album;
         setHasStableIds(false);
+
+        if (lifecycleOwner != null) {
+            MappingUtil.observeExternalAudioRefresh(lifecycleOwner, this::handleExternalAudioRefresh);
+        }
     }
 
     @NonNull
@@ -135,10 +142,18 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
 
         holder.item.trackNumberTextView.setText(MusicUtil.getReadableTrackNumber(holder.itemView.getContext(), song.getTrack()));
 
-        if (DownloadUtil.getDownloadTracker(holder.itemView.getContext()).isDownloaded(song.getId())) {
-            holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            if (DownloadUtil.getDownloadTracker(holder.itemView.getContext()).isDownloaded(song.getId())) {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            }
         } else {
-            holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            if (ExternalAudioReader.getUri(song) != null) {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            }
         }
 
         if (showCoverArt) CustomGlideRequest.Builder
@@ -193,6 +208,12 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         }
 
         bindPlaybackState(holder, song);
+    }
+
+    private void handleExternalAudioRefresh() {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            notifyDataSetChanged();
+        }
     }
 
     private void bindPlaybackState(@NonNull ViewHolder holder, @NonNull Child song) {

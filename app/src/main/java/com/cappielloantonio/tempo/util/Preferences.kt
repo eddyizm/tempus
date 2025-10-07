@@ -52,6 +52,7 @@ object Preferences {
     private const val AUDIO_TRANSCODE_PRIORITY = "audio_transcode_priority"
     private const val STREAMING_CACHE_STORAGE = "streaming_cache_storage"
     private const val DOWNLOAD_STORAGE = "download_storage"
+    private const val DOWNLOAD_DIRECTORY_URI = "download_directory_uri"
     private const val DEFAULT_DOWNLOAD_VIEW_TYPE = "default_download_view_type"
     private const val AUDIO_TRANSCODE_DOWNLOAD = "audio_transcode_download"
     private const val AUDIO_TRANSCODE_DOWNLOAD_PRIORITY = "audio_transcode_download_priority"
@@ -462,6 +463,20 @@ object Preferences {
                 DOWNLOAD_STORAGE,
                 storagePreference.toString()
         ).apply()
+    }
+
+    @JvmStatic
+    fun getDownloadDirectoryUri(): String? {
+        return App.getInstance().preferences.getString(DOWNLOAD_DIRECTORY_URI, null)
+    }
+
+    @JvmStatic
+    fun setDownloadDirectoryUri(uri: String?) {
+        val current = App.getInstance().preferences.getString(DOWNLOAD_DIRECTORY_URI, null)
+        if (current != uri) {
+            ExternalDownloadMetadataStore.clear()
+        }
+        App.getInstance().preferences.edit().putString(DOWNLOAD_DIRECTORY_URI, uri).apply()
     }
 
     @JvmStatic

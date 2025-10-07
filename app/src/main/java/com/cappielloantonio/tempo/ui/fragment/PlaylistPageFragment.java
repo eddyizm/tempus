@@ -37,6 +37,8 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaylistPageViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -140,7 +142,8 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         if (item.getItemId() == R.id.action_download_playlist) {
             playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
                 if (isVisible() && getActivity() != null) {
-                    DownloadUtil.getDownloadTracker(requireContext()).download(
+                    if (Preferences.getDownloadDirectoryUri() == null) {
+                        DownloadUtil.getDownloadTracker(requireContext()).download(
                             MappingUtil.mapDownloads(songs),
                             songs.stream().map(child -> {
                                 Download toDownload = new Download(child);
@@ -148,7 +151,10 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                                 toDownload.setPlaylistName(playlistPageViewModel.getPlaylist().getName());
                                 return toDownload;
                             }).collect(Collectors.toList())
-                    );
+                        );
+                    } else {
+                        songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+                    }
                 }
             });
             return true;
@@ -258,7 +264,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.songRecyclerView.setHasFixedSize(true);
 
-        songHorizontalAdapter = new SongHorizontalAdapter(this, true, false, null);
+        songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.songRecyclerView.setAdapter(songHorizontalAdapter);
         setMediaBrowserListenableFuture();
         reapplyPlayback();

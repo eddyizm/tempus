@@ -190,6 +190,14 @@
             app:title="@string/settings_download_storage_title" />
 
         <Preference
+            android:key="set_download_directory"
+            android:title="Set download folder"
+            android:summary="Choose a folder for downloaded music files"
+            android:icon="@drawable/ic_folder"
+            android:order="104"
+            app:isPreferenceVisible="false" />
+
+        <Preference
             android:key="delete_download_storage"
             app:title="@string/settings_delete_download_storage_title"
             app:summary="@string/settings_delete_download_storage_summary"/>

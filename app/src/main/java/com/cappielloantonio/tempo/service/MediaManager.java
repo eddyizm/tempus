@@ -223,6 +223,25 @@ public class MediaManager {
         }
     }
 
+    public static void playDownloadedMediaItem(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, MediaItem mediaItem) {
+        if (mediaBrowserListenableFuture != null && mediaItem != null) {
+            mediaBrowserListenableFuture.addListener(() -> {
+                try {
+                    if (mediaBrowserListenableFuture.isDone()) {
+                        MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                        mediaBrowser.clearMediaItems();
+                        mediaBrowser.setMediaItem(mediaItem);
+                        mediaBrowser.prepare();
+                        mediaBrowser.play();
+                        clearDatabase();
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }, MoreExecutors.directExecutor());
+        }
+    }
+
     public static void startRadio(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, InternetRadioStation internetRadioStation) {
         if (mediaBrowserListenableFuture != null) {
             mediaBrowserListenableFuture.addListener(() -> {
