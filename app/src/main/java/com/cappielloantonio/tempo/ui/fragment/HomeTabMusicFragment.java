@@ -66,6 +66,8 @@ import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import androidx.media3.common.MediaItem;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -277,7 +279,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     }
 
     private void initSyncStarredView() {
-        if (Preferences.isStarredSyncEnabled()) {
+        if (Preferences.isStarredSyncEnabled() && Preferences.getDownloadDirectoryUri() == null) {
             homeViewModel.getAllStarredTracks().observeForever(new Observer<List<Child>>() {
                 @Override
                 public void onChanged(List<Child> songs) {
@@ -598,7 +600,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
         bind.topSongsRecyclerView.setHasFixedSize(true);
 
-        topSongAdapter = new SongHorizontalAdapter(this, true, false, null);
+        topSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.topSongsRecyclerView.setAdapter(topSongAdapter);
         setTopSongsMediaBrowserListenableFuture();
         reapplyTopSongsPlayback();
@@ -639,7 +641,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
         bind.starredTracksRecyclerView.setHasFixedSize(true);
 
-        starredSongAdapter = new SongHorizontalAdapter(this, true, false, null);
+        starredSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.starredTracksRecyclerView.setAdapter(starredSongAdapter);
         setStarredSongsMediaBrowserListenableFuture();
         reapplyStarredSongsPlayback();

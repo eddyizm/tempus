@@ -187,19 +187,21 @@ public final class DownloadUtil {
 
     private static synchronized File getDownloadDirectory(Context context) {
         if (downloadDirectory == null) {
-            if (Preferences.getDownloadStoragePreference() == 0) {
+            int pref = Preferences.getDownloadStoragePreference();
+            if (pref == 0) {
                 downloadDirectory = context.getExternalFilesDirs(null)[0];
                 if (downloadDirectory == null) {
                     downloadDirectory = context.getFilesDir();
                 }
-            } else {
+            } else if (pref == 1) {
                 try {
                     downloadDirectory = context.getExternalFilesDirs(null)[1];
                 } catch (Exception exception) {
                     downloadDirectory = context.getExternalFilesDirs(null)[0];
                     Preferences.setDownloadStoragePreference(0);
                 }
-
+            } else {
+                downloadDirectory = context.getExternalFilesDirs(null)[0];
             }
         }
 
