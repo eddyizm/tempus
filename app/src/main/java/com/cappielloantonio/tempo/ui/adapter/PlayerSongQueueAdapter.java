@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.adapter;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +24,23 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueueAdapter.ViewHolder> {
+    private static final String TAG = "PlayerSongQueueAdapter";
     private final ClickCallback click;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
     private List<Child> songs;
+
+    private String currentPlayingId;
+    private boolean isPlaying;
+    private List<Integer> currentPlayingPositions = Collections.emptyList();
 
     public PlayerSongQueueAdapter(ClickCallback click) {
         this.click = click;
@@ -104,6 +112,46 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
         } else {
             holder.item.ratingIndicatorImageView.setVisibility(View.GONE);
         }
+        holder.itemView.setOnClickListener(v -> {
+            mediaBrowserListenableFuture.addListener(() -> {
+                try {
+                    MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                    int pos = holder.getBindingAdapterPosition();
+                    Child s = songs.get(pos);
+                    if (currentPlayingId != null && currentPlayingId.equals(s.getId())) {
+                        if (isPlaying) {
+                            mediaBrowser.pause();
+                        } else {
+                            mediaBrowser.play();
+                        }
+                    } else {
+                        mediaBrowser.seekTo(pos, 0);
+                        mediaBrowser.play();
+                    }
+                } catch (Exception e) {
+                    Log.w(TAG, "Error obtaining MediaBrowser", e);
+                }
+            }, MoreExecutors.directExecutor());
+
+        });
+        bindPlaybackState(holder, song);
+    }
+
+    private void bindPlaybackState(@NonNull PlayerSongQueueAdapter.ViewHolder holder, @NonNull Child song) {
+        boolean isCurrent = currentPlayingId != null && currentPlayingId.equals(song.getId());
+
+        if (isCurrent) {
+            holder.item.playPauseIcon.setVisibility(View.VISIBLE);
+            if (isPlaying) {
+                holder.item.playPauseIcon.setImageResource(R.drawable.ic_pause);
+            } else {
+                holder.item.playPauseIcon.setImageResource(R.drawable.ic_play);
+            }
+            holder.item.coverArtOverlay.setVisibility(View.VISIBLE);
+        } else {
+            holder.item.playPauseIcon.setVisibility(View.INVISIBLE);
+            holder.item.coverArtOverlay.setVisibility(View.INVISIBLE);
+        }
     }
 
     public List<Child> getItems() {
@@ -130,6 +178,46 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
 
     public void setMediaBrowserListenableFuture(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
         this.mediaBrowserListenableFuture = mediaBrowserListenableFuture;
+    }
+
+    public void setPlaybackState(String mediaId, boolean playing) {
+        String oldId = this.currentPlayingId;
+        boolean oldPlaying = this.isPlaying;
+        List<Integer> oldPositions = currentPlayingPositions;
+
+        this.currentPlayingId = mediaId;
+        this.isPlaying = playing;
+
+        if (Objects.equals(oldId, mediaId) && oldPlaying == playing) {
+            List<Integer> newPositionsCheck = mediaId != null ? findPositionsById(mediaId) : Collections.emptyList();
+            if (oldPositions.equals(newPositionsCheck)) {
+                return;
+            }
+        }
+
+        currentPlayingPositions = mediaId != null ? findPositionsById(mediaId) : Collections.emptyList();
+
+        for (int pos : oldPositions) {
+            if (pos >= 0 && pos < songs.size()) {
+                notifyItemChanged(pos, "payload_playback");
+            }
+        }
+        for (int pos : currentPlayingPositions) {
+            if (!oldPositions.contains(pos) && pos >= 0 && pos < songs.size()) {
+                notifyItemChanged(pos, "payload_playback");
+            }
+        }
+    }
+
+    private List<Integer> findPositionsById(String id) {
+        if (id == null) return Collections.emptyList();
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < songs.size(); i++) {
+            if (id.equals(songs.get(i).getId())) {
+                positions.add(i);
+            }
+        }
+        return positions;
     }
 
     public Child getItem(int id) {

@@ -2,7 +2,7 @@
     <string name="activity_battery_optimizations_conclusion">Если у вас возникли проблемы, посетите https://dontkillmyapp.com. Он содержит подробные инструкции о том, как отключить любые функции энергосбережения, которые могут повлиять на производительность приложения.</string>
     <string name="activity_battery_optimizations_summary">Пожалуйста, отключите оптимизацию батареи для воспроизведения мультимедиа при выключенном экране.</string>
     <string name="activity_battery_optimizations_title">Оптимизация батареи</string>
-    <string name="activity_info_offline_mode">Офлайн-режим</string>
+    <string name="activity_info_offline_mode">Автономный режим</string>
     <string name="album_bottom_sheet_add_to_playlist">Добавить в плейлист</string>
     <string name="album_bottom_sheet_add_to_queue">Добавить в очередь</string>
     <string name="album_bottom_sheet_download_all">Скачать все</string>
@@ -90,6 +90,7 @@
     <string name="exo_download_notification_channel_name">Загрузки</string>
     <string name="filter_info_selection">Выберите два или более фильтров</string>
     <string name="filter_title">Фильтр</string>
+    <string name="filter_artist">Фильтровать исполнителей</string>
     <string name="filter_title_expanded">Фильтровать жанры</string>
     <string name="genre_catalogue_title">Каталог жанров</string>
     <string name="genre_catalogue_title_expanded">Просмотр жанров</string>
@@ -103,6 +104,9 @@
     <string name="home_rearrangement_dialog_positive_button">Сохранять</string>
     <string name="home_rearrangement_dialog_title">Настроить главную</string>
     <string name="home_rearrangement_dialog_subtitle">Обратите внимание, чтобы внесенные изменения вступили в силу, необходимо перезапустить приложение.</string>
+    <string name="home_section_music">Музыка</string>
+    <string name="home_section_podcast">Подкасты</string>
+    <string name="home_section_radio">Радио</string>
     <string name="home_subtitle_best_of">Лучшие треки любимых исполнителей</string>
     <string name="home_subtitle_made_for_you">Запустите микс с понравившимся вам треком</string>
     <string name="home_subtitle_new_internet_radio_station">Добавить новое радио</string>
@@ -111,6 +115,8 @@
     <string name="home_sync_starred_download">Скачать</string>
     <string name="home_sync_starred_subtitle">Загрузка этих треков может потребовать значительного использования данных</string>
     <string name="home_sync_starred_title">Похоже, есть несколько отмеченных треков для синхронизации.</string>
+    <string name="home_sync_starred_albums_title">Синхронизировать отмеченные альбомы</string>
+    <string name="home_sync_starred_albums_subtitle">Отмеченные альбомы будут доступны в автономном режиме</string>
     <string name="home_title_best_of">Лучшее из</string>
     <string name="home_title_discovery">Открытие</string>
     <string name="home_title_discovery_shuffle_all_button">Перемешать все</string>
@@ -126,6 +132,7 @@
     <string name="home_title_most_played_see_all_button">Увидеть все</string>
     <string name="home_title_new_releases">Новые релизы</string>
     <string name="home_title_newest_podcasts">Новейшие подкасты</string>
+    <string name="home_title_pinned_playlists">Плейлисты</string>
     <string name="home_title_podcast_channels">Каналы</string>
     <string name="home_title_podcast_channels_see_all_button">Увидеть все</string>
     <string name="home_title_radio_station">Радиостанции</string>
@@ -156,6 +163,7 @@
     <string name="menu_add_button">Добавить</string>
     <string name="menu_add_to_playlist_button">Добавить в плейлист</string>
     <string name="menu_download_all_button">Скачать все</string>
+    <string name="menu_rate_album">Оценить альбом</string>
     <string name="menu_download_label">Скачать</string>
     <string name="menu_filter_all">Все</string>
     <string name="menu_filter_download">Загружено</string>
@@ -165,6 +173,9 @@
     <string name="menu_group_by_track">Трек</string>
     <string name="menu_group_by_year">Год</string>
     <string name="menu_home_label">Главная</string>
+    <string name="menu_last_week_name">Прошлая неделя</string>
+    <string name="menu_last_month_name">Прошлый месяц</string>
+    <string name="menu_last_year_name">Прошлый год</string>
     <string name="menu_library_label">Библиотека</string>
     <string name="menu_search_button">Поиск</string>
     <string name="menu_settings_button">Настройки</string>
@@ -181,7 +192,11 @@
     <string name="menu_unpin_button">Убрать с главного экрана</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Очистить очередь воспроизведения</string>
+    <string name="player_queue_save_queue_success">Очередь сохранена</string>
     <string name="player_server_priority">Приоритет сервера</string>
+    <string name="player_unknown_format">Неизвестный форма</string>
+    <string name="player_transcoding">Транскодирование</string>
+    <string name="player_transcoding_requested">запрошено</string>
     <string name="playlist_catalogue_title">Каталог плейлистов</string>
     <string name="playlist_catalogue_title_expanded">Просмотр плейлистов</string>
     <string name="playlist_chooser_dialog_empty">Плейлисты не созданы</string>
@@ -271,14 +286,16 @@
     <string name="settings_audio_transcode_priority_toast">Приоритет при перекодировании трека отдается серверу</string>
     <string name="settings_buffering_strategy">Стратегия буферизации</string>
     <string name="settings_buffering_strategy_summary">Чтобы изменения вступили в силу, необходимо вручную перезапустить приложение.</string>
+    <string name="settings_continuous_play_summary">Разрешить играть включать треки после окончания плейлиста</string>
+    <string name="settings_continuous_play_title">Продолжать играть</string>
     <string name="settings_covers_cache">Размер кэша обложек</string>
     <string name="settings_data_saving_mode_summary">Чтобы сократить потребление данных, избегайте загрузки обложек.</string>
     <string name="settings_data_saving_mode_title">Ограничить использование мобильных данных</string>
     <string name="settings_delete_download_storage_summary">Продолжение приведет к необратимому удалению всех сохраненных элементов.</string>
     <string name="settings_delete_download_storage_title">Удалить сохраненные элементы</string>
     <string name="settings_download_storage_title">Загрузить хранилище</string>
-    <string name="settings_equalizer_summary">Отрегулируйте настройки звука</string>
-    <string name="settings_equalizer_title">Эквалайзер</string>
+    <string name="settings_system_equalizer_summary">Отрегулируйте настройки звука</string>
+    <string name="settings_system_equalizer_title">Системный эквалайзер</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
     <string name="settings_github_summary">Следите за развитием</string>
     <string name="settings_github_title">Github</string>
@@ -295,6 +312,8 @@
     <string name="settings_podcast_summary">Если включено, показывать раздел подкаста. Перезапустите приложение, чтобы оно вступило в силу.</string>
     <string name="settings_audio_quality">Показать качество звука (битрейт)</string>
     <string name="settings_audio_quality_summary">Битрейт и аудиоформат будут показаны для каждой аудиодорожки.</string>
+    <string name="settings_song_rating">Показать рейтинг трека</string>
+    <string name="settings_song_rating_summary">Если эта функция включена, будет отображаться пятизвездочный рейтинг трека на странице воспроизведения\n\n*Требует перезапуска приложения</string>
     <string name="settings_item_rating">Показать рейтинг</string>
     <string name="settings_item_rating_summary">Если эта функция включена, будет отображаться рейтинг элемента и то, отмечен ли он как избранный.</string>
     <string name="settings_queue_syncing_countdown">Таймер синхронизации</string>
@@ -309,18 +328,24 @@
     <string name="settings_rounded_corner_summary">Если этот параметр включен, задает угол кривизны для всех отображаемых обложек. Изменения вступят в силу при перезапуске.</string>
     <string name="settings_scan_title">Сканировать библиотеку</string>
     <string name="settings_scrobble_title">Включить скробблинг музыки Last.FM и т.д.</string>
+    <string name="settings_system_language">Язык системы</string>
     <string name="settings_share_title">Включить обмен музыкой</string>
+    <string name="settings_streaming_cache_size">Размер кэша стриминга</string>
+    <string name="settings_streaming_cache_storage_title">Хранилище кэша стриминга</string>
     <string name="settings_sub_summary_scrobble">Важно отметить, что скробблинг также зависит от того, настроен ли сервер для получения этих данных.</string>
     <string name="settings_summary_skip_min_star_rating">При прослушивании радио исполнителя, мгновенном миксе или перемешивании всех, треки ниже определенного пользовательского рейтинга будут игнорироваться.</string>
     <string name="settings_summary_replay_gain">Усиление воспроизведения — это функция, которая позволяет регулировать уровень громкости звуковых дорожек для обеспечения единообразного качества прослушивания. Этот параметр действует только в том случае, если трек содержит необходимые метаданные.</string>
     <string name="settings_summary_scrobble">Скробблинг — это функция, которая позволяет вашему устройству отправлять информацию о песнях, которые вы слушаете, на музыкальный сервер. Эта информация помогает создавать персональные рекомендации на основе ваших музыкальных предпочтений.</string>
     <string name="settings_summary_share">Позволяет пользователю делиться музыкой по ссылке. Функциональность должна поддерживаться и включаться на стороне сервера и ограничивается отдельными треками, альбомами и плейлистами.</string>
     <string name="settings_summary_syncing">Возвращает состояние очереди воспроизведения для этого пользователя. Сюда входят треки в очереди воспроизведения, воспроизводимый в данный момент трек и позиция внутри этого трека. Сервер должен поддерживать эту функцию.</string>
+    <string name="settings_summary_streaming_cache_size">%1$s \nСейчас используется:   %2$s MiB</string>
     <string name="settings_summary_transcoding">Приоритет отдается режиму перекодирования. Если установлено «Прямое воспроизведение», битрейт файла не изменится.</string>
     <string name="settings_summary_transcoding_download">Загрузите перекодированные медиафайлы. Если этот параметр включен, будет использоваться не конечная точка загрузки, а следующие настройки. Если для параметра «Формат перекодирования для загрузки» установлено значение «Прямая загрузка», битрейт файла не изменится.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Когда файл перекодируется на лету, клиент обычно не показывает длину трека. Можно запросить у серверов, поддерживающих данную функцию, оценку длительности воспроизводимого трека, но время ответа может занять больше времени.</string>
+    <string name="settings_sync_starred_albums_for_offline_use_summary">Если этот параметр включен, помеченные альбомы будут загружены для использования в автономном режиме.</string>
+    <string name="settings_sync_starred_albums_for_offline_use_title">Синхронизировать помеченные альбомы для использования в автономном режиме.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Если этот параметр включен, помеченные треки будут загружены для использования в автономном режиме.</string>
-    <string name="settings_sync_starred_tracks_for_offline_use_title">Синхронизируйте помеченные треки для использования в автономном режиме.</string>
+    <string name="settings_sync_starred_tracks_for_offline_use_title">Синхронизировать помеченные треки для использования в автономном режиме.</string>
     <string name="settings_theme">Тема</string>
     <string name="settings_title_data">Данные</string>
     <string name="settings_title_general">Общий</string>
@@ -332,7 +357,7 @@
     <string name="settings_title_share">Поделиться</string>
     <string name="settings_title_syncing">Синхронизации</string>
     <string name="settings_title_transcoding">Транскодирование</string>
-    <string name="settings_title_transcoding_download">Транскодирование Скачать</string>
+    <string name="settings_title_transcoding_download">Скачивание с транскодированием</string>
     <string name="settings_title_ui">UI (Пользовательский интерфейс)</string>
     <string name="settings_transcoded_download">Перекодированная загрузка</string>
     <string name="settings_version_title">Версия</string>
@@ -373,8 +398,16 @@
     <string name="starred_sync_dialog_positive_button">Продолжить и скачать</string>
     <string name="starred_sync_dialog_summary">Для скачивания рейтинговых треков может потребоваться большой объем данных.</string>
     <string name="starred_sync_dialog_title">Синхронизировать отмеченные треки</string>
+    <string name="starred_album_sync_dialog_summary">Для скачивания рейтинговых альбомов может потребоваться большой объем данных.</string>
+    <string name="starred_album_sync_dialog_title">Синхронизировать отмеченные альбомы</string>
+    <string name="streaming_cache_storage_dialog_sub_summary">Чтобы изменения вступили в силу необходимо перезапустить приложение.</string>
+    <string name="streaming_cache_storage_dialog_summary">Изменение места сохранения кэшированных файлов с одного на другое может привести к удалению файлов в старом хранилище.</string>
+    <string name="streaming_cache_storage_dialog_title">Выберите способ сохранения</string>
+    <string name="streaming_cache_storage_external_dialog_positive_button">Внешний</string>
+    <string name="streaming_cache_storage_internal_dialog_negative_button">Внутренний</string>
     <string name="track_info_album">Альбом</string>
     <string name="track_info_artist">Исполнитель</string>
+    <string name="track_info_bit_depth">Разрядность</string>
     <string name="track_info_bitrate">Битрейт</string>
     <string name="track_info_content_type">Тип содержимого</string>
     <string name="track_info_dialog_positive_button">OK</string>
@@ -383,6 +416,7 @@
     <string name="track_info_duration">Продолжительность</string>
     <string name="track_info_genre">Жанр</string>
     <string name="track_info_path">Путь</string>
+    <string name="track_info_sampling_rate">Частота сэмплирования</string>
     <string name="track_info_size">Размер</string>
     <string name="track_info_suffix">Суффикс</string>
     <string name="track_info_summary_downloaded_file">Файл был загружен с использованием API Subsonic. Кодек и битрейт файла остаются неизменными по сравнению с исходным файлом.</string>
@@ -399,4 +433,8 @@
     <string name="undraw_page">Развернуть</string>
     <string name="undraw_thanks">Особая благодарность — команде unDraw, без иллюстраций которой мы не смогли бы сделать это приложение красивее.</string>
     <string name="undraw_url">https://undraw.co/</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">Альбомов для синхронизации: %d</item>
+        <item quantity="other">Альбомов для синхронизации: %d</item>
+    </plurals>
 </resources>

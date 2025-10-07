@@ -255,8 +255,8 @@
     <string name="settings_delete_download_storage_summary">继续当前操作将导致所有已保存的项目被永久删除。</string>
     <string name="settings_delete_download_storage_title">删除已保存的项目</string>
     <string name="settings_download_storage_title">下载存储</string>
-    <string name="settings_equalizer_summary">调整音频设置</string>
-    <string name="settings_equalizer_title">均衡器</string>
+    <string name="settings_system_equalizer_summary">调整音频设置</string>
+    <string name="settings_system_equalizer_title">系统均衡器</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
     <string name="settings_github_summary">关注开发进展</string>
     <string name="settings_github_title">Github</string>

@@ -4,10 +4,12 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.OptIn;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.HeartRating;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
@@ -16,6 +18,7 @@ import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +86,13 @@ public class MappingUtil {
                                 .setAlbumTitle(media.getAlbum())
                                 .setArtist(media.getArtist())
                                 .setArtworkUri(artworkUri)
+                                .setUserRating(new HeartRating(media.getStarred() != null))
+                                .setSupportedCommands(
+                                        ImmutableList.of(
+                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
+                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
+                                        )
+                                )
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
@@ -217,12 +227,20 @@ public class MappingUtil {
     }
 
     private static Uri getUri(Child media) {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            Uri local = ExternalAudioReader.getUri(media);
+            return local != null ? local : MusicUtil.getStreamUri(media.getId());
+        }
         return DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(media.getId())
                 ? getDownloadUri(media.getId())
                 : MusicUtil.getStreamUri(media.getId());
     }
 
     private static Uri getUri(PodcastEpisode podcastEpisode) {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            Uri local = ExternalAudioReader.getUri(podcastEpisode);
+            return local != null ? local : MusicUtil.getStreamUri(podcastEpisode.getStreamId());
+        }
         return DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(podcastEpisode.getStreamId())
                 ? getDownloadUri(podcastEpisode.getStreamId())
                 : MusicUtil.getStreamUri(podcastEpisode.getStreamId());
@@ -231,5 +249,12 @@ public class MappingUtil {
     private static Uri getDownloadUri(String id) {
         Download download = new DownloadRepository().getDownload(id);
         return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri()) : MusicUtil.getDownloadUri(id);
+    }
+
+    public static void observeExternalAudioRefresh(LifecycleOwner owner, Runnable onRefresh) {
+        if (owner == null || onRefresh == null) {
+            return;
+        }
+        ExternalAudioReader.getRefreshEvents().observe(owner, event -> onRefresh.run());
     }
 }

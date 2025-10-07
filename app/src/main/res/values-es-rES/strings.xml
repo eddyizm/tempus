@@ -257,8 +257,8 @@
     <string name="search_hint">Buscar pista, artistas o álbumes</string>
     <string name="search_info_minimum_characters">Introduzca al menos tres caracteres</string>
     <string name="search_title_album">Álbumes</string>
-    <string name="settings_equalizer_summary">Ajustes de audio</string>
-    <string name="settings_equalizer_title">Ecualizador</string>
+    <string name="settings_system_equalizer_summary">Ajustes de audio</string>
+    <string name="settings_system_equalizer_title">Ecualizador del sistema</string>
     <string name="search_title_artist">Artistas</string>
     <string name="search_title_song">Pistas</string>
     <string name="server_signup_dialog_action_low_security">Baja seguridad</string>
@@ -435,4 +435,10 @@
     <string name="home_sync_starred_albums_title">Sincronizar álbumes favoritos</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Si está habilitada, los álbumes favoritos se descargarán para uso sin conexión.</string>
     <string name="starred_album_sync_dialog_summary">Descargar los álbumes favoritos puede consumir una gran cantidad de datos.</string>
+    <string name="equalizer_fragment_title">Ecualizador</string>
+    <string name="equalizer_reset">Restablecer</string>
+    <string name="equalizer_enable">Habilitar</string>
+    <string name="equalizer_not_supported">No disponible en este dispositivo</string>
+    <string name="settings_app_equalizer">Ecualizador</string>
+    <string name="settings_app_equalizer_summary">Abrir el ecualizador integrado</string>
 </resources>

@@ -10,9 +10,8 @@ android {
         minSdkVersion 24
         targetSdk 35
 
-        versionCode 31
-        versionName '3.14.8'
-
+        versionCode 32
+        versionName '3.15.1'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -23,7 +22,20 @@ android {
                 ]
             }
         }
+
     }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            //noinspection ChromeOsAbiSupport
+            include 'armeabi-v7a', 'arm64-v8a'
+            universalApk false
+        }
+    }
+
+   
 
     flavorDimensions += "default"
 
@@ -50,6 +62,11 @@ android {
             minifyEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            applicationIdSuffix ".debug"
+            debuggable true
         }
     }
 

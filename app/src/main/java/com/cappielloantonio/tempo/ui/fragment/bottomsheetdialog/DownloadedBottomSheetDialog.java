@@ -25,6 +25,8 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -117,10 +119,13 @@ public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment imple
 
         TextView removeAll = view.findViewById(R.id.remove_all_text_view);
         removeAll.setOnClickListener(v -> {
-            List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
-            List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
-
-            DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
+                List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
+                DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
+            } else {
+                songs.forEach(ExternalAudioReader::delete);
+            }
 
             dismissBottomSheet();
         });

@@ -2,6 +2,39 @@
 
 ***This log is for this fork to detail updates since 3.9.0 from the main repo.***
 
+## [3.15.0](https://github.com/eddyizm/tempo/releases/tag/v3.15.0) (2025-09-23)
+## What's Changed
+* chore: Update French localization by @benoit-smith in https://github.com/eddyizm/tempo/pull/84
+* chore: Update RU locale by @ArchiDevil in https://github.com/eddyizm/tempo/pull/87
+* chore: Update Korean translations by @kongwoojin in https://github.com/eddyizm/tempo/pull/97
+* fix: only plays the first song on an album by @eddyizm in https://github.com/eddyizm/tempo/pull/81
+* fix: handle null and not crash when disconnecting chromecast by @eddyizm in https://github.com/eddyizm/tempo/pull/81
+* feat: Built-in audio equalizer by @jaime-grj in https://github.com/eddyizm/tempo/pull/94
+* fix: Resolve playback issues with live radio MPEG & HLS streams by @jaime-grj in https://github.com/eddyizm/tempo/pull/89
+* chore: Updates to polish translation by @skajmer in https://github.com/eddyizm/tempo/pull/105
+* feat: added 32bit build and debug build for testing. Removed unused f… by @eddyizm in https://github.com/eddyizm/tempo/pull/108
+* feat: Mark currently playing song with play/pause button by @jaime-grj in https://github.com/eddyizm/tempo/pull/107
+* fix: add listener to track playlist click/change by @eddyizm in https://github.com/eddyizm/tempo/pull/113
+* feat: Tap anywhere on the song item to toggle playback by @jaime-grj in https://github.com/eddyizm/tempo/pull/112
+
+## New Contributors
+* @ArchiDevil made their first contribution in https://github.com/eddyizm/tempo/pull/87
+* @kongwoojin made their first contribution in https://github.com/eddyizm/tempo/pull/97
+
+**Full Changelog**: https://github.com/eddyizm/tempo/compare/v3.14.8...v3.15.0
+
+
+## [3.14.8](https://github.com/eddyizm/tempo/releases/tag/v3.14.8) (2025-08-30)
+## What's Changed
+* fix: Use correct SearchView widget to avoid crash in AlbumListPageFragment by @jaime-grj in https://github.com/eddyizm/tempo/pull/76
+* chore(i18n): Update Spanish (es-ES) and English translations by @jaime-grj in https://github.com/eddyizm/tempo/pull/77
+* style: Center subtitle text in empty_download_layout in fragment_download.xml when there is more than one line by @jaime-grj in https://github.com/eddyizm/tempo/pull/78
+* fix: Disable "sync starred tracks/albums" switches when Cancel is clicked in warning dialog, use proper view for "Sync starred albums" dialog by @jaime-grj in https://github.com/eddyizm/tempo/pull/79
+* bug fixes, chores, docs v3.14.8 by @eddyizm in https://github.com/eddyizm/tempo/pull/80
+
+
+**Full Changelog**: https://github.com/eddyizm/tempo/compare/v3.14.1...v3.14.8
+
 ## [3.14.1](https://github.com/eddyizm/tempo/releases/tag/v3.14.1) (2025-08-30)
 ## What's Changed
 * feat: rating dialog added to album page by @eddyizm in https://github.com/eddyizm/tempo/pull/52

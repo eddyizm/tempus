@@ -248,8 +248,8 @@
     <string name="settings_delete_download_storage_summary">O processo resultará na exclusão irreversível de todos os itens salvos.</string>
     <string name="settings_delete_download_storage_title">Excluir itens salvos</string>
     <string name="settings_download_storage_title">Armazenamento dos downloads</string>
-    <string name="settings_equalizer_summary">Ajustar configurações de áudio</string>
-    <string name="settings_equalizer_title">Equalizador</string>
+    <string name="settings_system_equalizer_summary">Ajustar configurações de áudio</string>
+    <string name="settings_system_equalizer_title">Equalizador do sistema</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
     <string name="settings_github_summary">Acompanhe o desenvolvimento</string>
     <string name="settings_github_title">Github</string>

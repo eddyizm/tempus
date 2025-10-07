@@ -293,8 +293,8 @@
     <string name="settings_delete_download_storage_summary">Devam ederseniz tüm kayıtlı öğeler geri alınamaz şekilde silinecektir.</string>
     <string name="settings_delete_download_storage_title">Kayıtlı öğeleri sil</string>
     <string name="settings_download_storage_title">İndirme depolaması</string>
-    <string name="settings_equalizer_summary">Ses ayarlarını düzenle</string>
-    <string name="settings_equalizer_title">Ekolayzır</string>
+    <string name="settings_system_equalizer_summary">Ses ayarlarını düzenle</string>
+    <string name="settings_system_equalizer_title">Sistem ekolayzır</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
     <string name="settings_github_summary">Gelişmeleri takip et</string>
     <string name="settings_github_title">Github</string>

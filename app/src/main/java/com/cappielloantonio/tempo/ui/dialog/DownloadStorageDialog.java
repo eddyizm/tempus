@@ -34,6 +34,7 @@ public class DownloadStorageDialog extends DialogFragment {
                 .setTitle(R.string.download_storage_dialog_title)
                 .setPositiveButton(R.string.download_storage_external_dialog_positive_button, null)
                 .setNegativeButton(R.string.download_storage_internal_dialog_negative_button, null)
+                .setNeutralButton(R.string.download_storage_directory_dialog_neutral_button, null)
                 .create();
     }
 
@@ -70,6 +71,20 @@ public class DownloadStorageDialog extends DialogFragment {
                     Preferences.setDownloadStoragePreference(newPreference);
                     DownloadUtil.getDownloadTracker(requireContext()).removeAll();
                     dialogClickCallback.onNegativeClick();
+                }
+
+                dialog.dismiss();
+            });
+
+            Button neutralButton = dialog.getButton(Dialog.BUTTON_NEUTRAL);
+            neutralButton.setOnClickListener(v -> {
+                int currentPreference = Preferences.getDownloadStoragePreference();
+                int newPreference = 2;
+
+                if (currentPreference != newPreference) {
+                    Preferences.setDownloadStoragePreference(newPreference);
+                    DownloadUtil.getDownloadTracker(requireContext()).removeAll();
+                    dialogClickCallback.onNeutralClick();
                 }
 
                 dialog.dismiss();

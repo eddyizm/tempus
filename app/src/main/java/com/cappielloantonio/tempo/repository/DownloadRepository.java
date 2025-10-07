@@ -18,6 +18,20 @@ public class DownloadRepository {
         return downloadDao.getAll();
     }
 
+    public List<Download> getAllDownloads() {
+        GetAllDownloadsThreadSafe getDownloads = new GetAllDownloadsThreadSafe(downloadDao);
+        Thread thread = new Thread(getDownloads);
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return getDownloads.getDownloads();
+    }
+
     public Download getDownload(String id) {
         Download download = null;
 
@@ -33,6 +47,24 @@ public class DownloadRepository {
         }
 
         return download;
+    }
+
+    private static class GetAllDownloadsThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private List<Download> downloads;
+
+        public GetAllDownloadsThreadSafe(DownloadDao downloadDao) {
+            this.downloadDao = downloadDao;
+        }
+
+        @Override
+        public void run() {
+            downloads = downloadDao.getAllSync();
+        }
+
+        public List<Download> getDownloads() {
+            return downloads;
+        }
     }
 
     private static class GetDownloadThreadSafe implements Runnable {
@@ -143,6 +175,12 @@ public class DownloadRepository {
         thread.start();
     }
 
+    public void delete(List<String> ids) {
+        DeleteMultipleThreadSafe delete = new DeleteMultipleThreadSafe(downloadDao, ids);
+        Thread thread = new Thread(delete);
+        thread.start();
+    }
+
     private static class DeleteThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private final String id;
@@ -155,6 +193,21 @@ public class DownloadRepository {
         @Override
         public void run() {
             downloadDao.delete(id);
+        }
+    }
+
+    private static class DeleteMultipleThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private final List<String> ids;
+
+        public DeleteMultipleThreadSafe(DownloadDao downloadDao, List<String> ids) {
+            this.downloadDao = downloadDao;
+            this.ids = ids;
+        }
+
+        @Override
+        public void run() {
+            downloadDao.deleteByIds(ids);
         }
     }
 }

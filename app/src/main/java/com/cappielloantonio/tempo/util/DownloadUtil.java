@@ -78,32 +78,26 @@ public final class DownloadUtil {
         return httpDataSourceFactory;
     }
 
-    public static synchronized DataSource.Factory getDataSourceFactory(Context context) {
-        if (dataSourceFactory == null) {
-            context = context.getApplicationContext();
+    public static synchronized DataSource.Factory getUpstreamDataSourceFactory(Context context) {
+        DefaultDataSource.Factory upstreamFactory = new DefaultDataSource.Factory(context, getHttpDataSourceFactory());
+        dataSourceFactory = buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache(context));
+        return dataSourceFactory;
+    }
 
-            DefaultDataSource.Factory upstreamFactory = new DefaultDataSource.Factory(context, getHttpDataSourceFactory());
+    public static synchronized DataSource.Factory getCacheDataSourceFactory(Context context) {
+        CacheDataSource.Factory streamCacheFactory = new CacheDataSource.Factory()
+                .setCache(getStreamingCache(context))
+                .setUpstreamDataSourceFactory(getUpstreamDataSourceFactory(context));
 
-            if (Preferences.getStreamingCacheSize() > 0) {
-                CacheDataSource.Factory streamCacheFactory = new CacheDataSource.Factory()
-                        .setCache(getStreamingCache(context))
-                        .setUpstreamDataSourceFactory(upstreamFactory);
-
-                ResolvingDataSource.Factory resolvingFactory = new ResolvingDataSource.Factory(
-                        new StreamingCacheDataSource.Factory(streamCacheFactory),
-                        dataSpec -> {
-                            DataSpec.Builder builder = dataSpec.buildUpon();
-                            builder.setFlags(dataSpec.flags & ~DataSpec.FLAG_DONT_CACHE_IF_LENGTH_UNKNOWN);
-                            return builder.build();
-                        }
-                );
-
-                dataSourceFactory = buildReadOnlyCacheDataSource(resolvingFactory, getDownloadCache(context));
-            } else {
-                dataSourceFactory = buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache(context));
-            }
-        }
-
+        ResolvingDataSource.Factory resolvingFactory = new ResolvingDataSource.Factory(
+                new StreamingCacheDataSource.Factory(streamCacheFactory),
+                dataSpec -> {
+                    DataSpec.Builder builder = dataSpec.buildUpon();
+                    builder.setFlags(dataSpec.flags & ~DataSpec.FLAG_DONT_CACHE_IF_LENGTH_UNKNOWN);
+                    return builder.build();
+                }
+        );
+        dataSourceFactory = buildReadOnlyCacheDataSource(resolvingFactory, getDownloadCache(context));
         return dataSourceFactory;
     }
 
@@ -193,19 +187,21 @@ public final class DownloadUtil {
 
     private static synchronized File getDownloadDirectory(Context context) {
         if (downloadDirectory == null) {
-            if (Preferences.getDownloadStoragePreference() == 0) {
+            int pref = Preferences.getDownloadStoragePreference();
+            if (pref == 0) {
                 downloadDirectory = context.getExternalFilesDirs(null)[0];
                 if (downloadDirectory == null) {
                     downloadDirectory = context.getFilesDir();
                 }
-            } else {
+            } else if (pref == 1) {
                 try {
                     downloadDirectory = context.getExternalFilesDirs(null)[1];
                 } catch (Exception exception) {
                     downloadDirectory = context.getExternalFilesDirs(null)[0];
                     Preferences.setDownloadStoragePreference(0);
                 }
-
+            } else {
+                downloadDirectory = context.getExternalFilesDirs(null)[0];
             }
         }
 

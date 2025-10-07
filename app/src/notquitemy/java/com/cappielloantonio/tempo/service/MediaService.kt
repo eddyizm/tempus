@@ -5,12 +5,13 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.os.Binder
 import android.os.Bundle
+import android.os.IBinder
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.TrackGroupArray
 import androidx.media3.exoplayer.trackselection.TrackSelectionArray
 import androidx.media3.session.*
@@ -19,6 +20,7 @@ import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.DownloadUtil
+import com.cappielloantonio.tempo.util.DynamicMediaSourceFactory
 import com.cappielloantonio.tempo.util.Preferences
 import com.cappielloantonio.tempo.util.ReplayGainUtil
 import com.google.common.collect.ImmutableList
@@ -34,8 +36,17 @@ class MediaService : MediaLibraryService() {
     private lateinit var mediaLibrarySession: MediaLibrarySession
     private lateinit var shuffleCommands: List<CommandButton>
     private lateinit var repeatCommands: List<CommandButton>
+    lateinit var equalizerManager: EqualizerManager
 
     private var customLayout = ImmutableList.of<CommandButton>()
+
+    inner class LocalBinder : Binder() {
+        fun getEqualizerManager(): EqualizerManager {
+            return this@MediaService.equalizerManager
+        }
+    }
+
+    private val binder = LocalBinder()
 
     companion object {
         private const val CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON =
@@ -48,6 +59,7 @@ class MediaService : MediaLibraryService() {
             "android.media3.session.demo.REPEAT_ONE"
         private const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL =
             "android.media3.session.demo.REPEAT_ALL"
+        const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
     }
 
     override fun onCreate() {
@@ -57,6 +69,7 @@ class MediaService : MediaLibraryService() {
         initializePlayer()
         initializeMediaLibrarySession()
         initializePlayerListener()
+        initializeEqualizerManager()
 
         setPlayer(player)
     }
@@ -66,8 +79,18 @@ class MediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        equalizerManager.release()
         releasePlayer()
         super.onDestroy()
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        // Check if the intent is for our custom equalizer binder
+        if (intent?.action == ACTION_BIND_EQUALIZER) {
+            return binder
+        }
+        // Otherwise, handle it as a normal MediaLibraryService connection
+        return super.onBind(intent)
     }
 
     private inner class CustomMediaLibrarySessionCallback : MediaLibrarySession.Callback {
@@ -186,7 +209,7 @@ class MediaService : MediaLibraryService() {
     private fun initializePlayer() {
         player = ExoPlayer.Builder(this)
             .setRenderersFactory(getRenderersFactory())
-            .setMediaSourceFactory(getMediaSourceFactory())
+            .setMediaSourceFactory(DynamicMediaSourceFactory(this))
             .setAudioAttributes(AudioAttributes.DEFAULT, true)
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
@@ -195,6 +218,21 @@ class MediaService : MediaLibraryService() {
 
         player.shuffleModeEnabled = Preferences.isShuffleModeEnabled()
         player.repeatMode = Preferences.getRepeatMode()
+    }
+
+    private fun initializeEqualizerManager() {
+        equalizerManager = EqualizerManager()
+        val audioSessionId = player.audioSessionId
+        if (equalizerManager.attachToSession(audioSessionId)) {
+            val enabled = Preferences.isEqualizerEnabled()
+            equalizerManager.setEnabled(enabled)
+
+            val bands = equalizerManager.getNumberOfBands()
+            val savedLevels = Preferences.getEqualizerBandLevels(bands)
+            for (i in 0 until bands) {
+                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
+            }
+        }
     }
 
     private fun initializeMediaLibrarySession() {
@@ -226,7 +264,10 @@ class MediaService : MediaLibraryService() {
 
             override fun onTracksChanged(tracks: Tracks) {
                 ReplayGainUtil.setReplayGain(player, tracks)
-                MediaManager.scrobble(player.currentMediaItem, false)
+                val currentMediaItem = player.currentMediaItem
+                if (currentMediaItem != null && currentMediaItem.mediaMetadata.extras != null) {
+                    MediaManager.scrobble(currentMediaItem, false)
+                }
 
                 if (player.currentMediaItemIndex + 1 == player.mediaItemCount)
                     MediaManager.continuousPlay(player.currentMediaItem)
@@ -346,7 +387,4 @@ class MediaService : MediaLibraryService() {
     }
 
     private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)
-
-    private fun getMediaSourceFactory() =
-        DefaultMediaSourceFactory(this).setDataSourceFactory(DownloadUtil.getDataSourceFactory(this))
 }

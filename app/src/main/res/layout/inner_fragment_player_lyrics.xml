@@ -51,7 +51,25 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.core.widget.NestedScrollView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/download_lyrics_button"
+        style="@style/Widget.Material3.Button.TonalButton.Icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_margin="16dp"
+        android:alpha="0.7"
+        android:contentDescription="@string/player_lyrics_download_content_description"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:visibility="gone"
+        app:cornerRadius="64dp"
+        app:icon="@drawable/ic_download"
+        app:layout_constraintBottom_toTopOf="@+id/sync_lyrics_tap_button"
+        app:layout_constraintEnd_toEndOf="@+id/now_playing_song_lyrics_sroll_view" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/sync_lyrics_tap_button"
         style="@style/Widget.Material3.Button.TonalButton.Icon"
         android:layout_width="48dp"
