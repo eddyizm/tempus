@@ -69,7 +69,7 @@
     <string name="download_directory_dialog_positive_button">Descargar</string>
     <string name="download_directory_dialog_summary">Se descargarán todas las pistas de esta carpeta. Las pistas en las subcarpetas no se descargarán.</string>
     <string name="download_directory_dialog_title">Descargar las pistas</string>
-    <string name="download_directory_set">Indicar dónde se descarga la música</string>
+    <string name="download_directory_set">Indicar ubicación de descarga</string>
     <string name="download_info_empty_subtitle">Una vez que descargues una pista, la encontrarás aquí</string>
     <string name="download_info_empty_title">No hay descargas</string>
     <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s elementos</string>
