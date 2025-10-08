@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -40,6 +41,7 @@ import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Share;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
+import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.AlbumHorizontalAdapter;
@@ -63,6 +65,8 @@ import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
+
+import androidx.media3.common.MediaItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +120,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
         initSyncStarredView();
         initSyncStarredAlbumsView();
+        initSyncStarredArtistsView();
         initDiscoverSongSlideView();
         initSimilarSongView();
         initArtistRadio();
@@ -274,7 +279,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     }
 
     private void initSyncStarredView() {
-        if (Preferences.isStarredSyncEnabled()) {
+        if (Preferences.isStarredSyncEnabled() && Preferences.getDownloadDirectoryUri() == null) {
             homeViewModel.getAllStarredTracks().observeForever(new Observer<List<Child>>() {
                 @Override
                 public void onChanged(List<Child> songs) {
@@ -327,32 +332,12 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
     private void initSyncStarredAlbumsView() {
         if (Preferences.isStarredAlbumsSyncEnabled()) {
-            homeViewModel.getStarredAlbums(getViewLifecycleOwner()).observeForever(new Observer<List<AlbumID3>>() {
+            homeViewModel.getStarredAlbums(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), new Observer<List<AlbumID3>>() {
                 @Override
                 public void onChanged(List<AlbumID3> albums) {
-                    if (albums != null) {
-                        DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
-                        List<String> albumsToSync = new ArrayList<>();
-                        int albumCount = 0;
-
-                        for (AlbumID3 album : albums) {
-                            boolean needsSync = false;
-                            albumCount++;
-                            albumsToSync.add(album.getName());
-                        }
-
-                        if (albumCount > 0) {
-                            bind.homeSyncStarredAlbumsCard.setVisibility(View.VISIBLE);
-                            String message = getResources().getQuantityString(
-                                R.plurals.home_sync_starred_albums_count, 
-                                albumCount, 
-                                albumCount
-                            );
-                            bind.homeSyncStarredAlbumsToSync.setText(message);
-                        }
+                    if (albums != null && !albums.isEmpty()) {
+                        checkIfAlbumsNeedSync(albums);
                     }
-
-                    homeViewModel.getStarredAlbums(getViewLifecycleOwner()).removeObserver(this);
                 }
             });
         }
@@ -362,26 +347,157 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
 
         bind.homeSyncStarredAlbumsDownload.setOnClickListener(v -> {
-            homeViewModel.getAllStarredAlbumSongs().observeForever(new Observer<List<Child>>() {
+            homeViewModel.getAllStarredAlbumSongs().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
                 @Override
                 public void onChanged(List<Child> allSongs) {
-                    if (allSongs != null) {
+                    if (allSongs != null && !allSongs.isEmpty()) {
                         DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
+                        int songsToDownload = 0;
 
                         for (Child song : allSongs) {
                             if (!manager.isDownloaded(song.getId())) {
                                 manager.download(MappingUtil.mapDownload(song), new Download(song));
+                                songsToDownload++;
                             }
                         }
-                    }
 
-                    homeViewModel.getAllStarredAlbumSongs().removeObserver(this);
+                        if (songsToDownload > 0) {
+                            Toast.makeText(requireContext(), 
+                                getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload, songsToDownload), 
+                                Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    
                     bind.homeSyncStarredAlbumsCard.setVisibility(View.GONE);
                 }
             });
         });
     }
 
+    private void checkIfAlbumsNeedSync(List<AlbumID3> albums) {
+        homeViewModel.getAllStarredAlbumSongs().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
+            @Override
+            public void onChanged(List<Child> allSongs) {
+                if (allSongs != null) {
+                    DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
+                    int songsToDownload = 0;
+                    List<String> albumsNeedingSync = new ArrayList<>();
+
+                    for (AlbumID3 album : albums) {
+                        boolean albumNeedsSync = false;
+                        // Check if any songs from this album need downloading
+                        for (Child song : allSongs) {
+                            if (song.getAlbumId() != null && song.getAlbumId().equals(album.getId()) && 
+                                !manager.isDownloaded(song.getId())) {
+                                songsToDownload++;
+                                albumNeedsSync = true;
+                            }
+                        }
+                        if (albumNeedsSync) {
+                            albumsNeedingSync.add(album.getName());
+                        }
+                    }
+
+                    if (songsToDownload > 0) {
+                        bind.homeSyncStarredAlbumsCard.setVisibility(View.VISIBLE);
+                        String message = getResources().getQuantityString(
+                            R.plurals.home_sync_starred_albums_count, 
+                            albumsNeedingSync.size(), 
+                            albumsNeedingSync.size()
+                        );
+                        bind.homeSyncStarredAlbumsToSync.setText(message);
+                    } else {
+                        bind.homeSyncStarredAlbumsCard.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+    }
+
+    private void initSyncStarredArtistsView() {
+        if (Preferences.isStarredArtistsSyncEnabled()) {
+            homeViewModel.getStarredArtists(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), new Observer<List<ArtistID3>>() {
+                @Override
+                public void onChanged(List<ArtistID3> artists) {
+                    if (artists != null && !artists.isEmpty()) {
+                        checkIfArtistsNeedSync(artists);
+                    }
+                }
+            });
+        }
+
+        bind.homeSyncStarredArtistsCancel.setOnClickListener(v -> {
+            bind.homeSyncStarredArtistsCard.setVisibility(View.GONE);
+        });
+
+        bind.homeSyncStarredArtistsDownload.setOnClickListener(v -> {
+            homeViewModel.getAllStarredArtistSongs().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
+                @Override
+                public void onChanged(List<Child> allSongs) {
+                    if (allSongs != null && !allSongs.isEmpty()) {
+                        DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
+                        int songsToDownload = 0;
+
+                        for (Child song : allSongs) {
+                            if (!manager.isDownloaded(song.getId())) {
+                                manager.download(MappingUtil.mapDownload(song), new Download(song));
+                                songsToDownload++;
+                            }
+                        }
+
+                        if (songsToDownload > 0) {
+                            Toast.makeText(requireContext(), 
+                                getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload, songsToDownload), 
+                                Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    
+                    bind.homeSyncStarredArtistsCard.setVisibility(View.GONE);
+                }
+            });
+        });
+    }
+
+    private void checkIfArtistsNeedSync(List<ArtistID3> artists) {
+        homeViewModel.getAllStarredArtistSongs().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
+            @Override
+            public void onChanged(List<Child> allSongs) {
+                if (allSongs != null) {
+                    DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
+                    int songsToDownload = 0;
+                    List<String> artistsNeedingSync = new ArrayList<>();
+
+                    for (ArtistID3 artist : artists) {
+                        boolean artistNeedsSync = false;
+                        // Check if any songs from this artist need downloading
+                        for (Child song : allSongs) {
+                            if (song.getArtistId() != null && song.getArtistId().equals(artist.getId()) && 
+                                !manager.isDownloaded(song.getId())) {
+                                songsToDownload++;
+                                artistNeedsSync = true;
+                            }
+                        }
+                        if (artistNeedsSync) {
+                            artistsNeedingSync.add(artist.getName());
+                        }
+                    }
+
+                    if (songsToDownload > 0) {
+                        bind.homeSyncStarredArtistsCard.setVisibility(View.VISIBLE);
+                        String message = getResources().getQuantityString(
+                            R.plurals.home_sync_starred_artists_count, 
+                            artistsNeedingSync.size(), 
+                            artistsNeedingSync.size()
+                        );
+                        bind.homeSyncStarredArtistsToSync.setText(message);
+                    } else {
+                        bind.homeSyncStarredArtistsCard.setVisibility(View.GONE);
+                    }
+                }
+            }
+        });
+    }
+    
     private void initDiscoverSongSlideView() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_DISCOVERY)) return;
 
@@ -484,7 +600,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
         bind.topSongsRecyclerView.setHasFixedSize(true);
 
-        topSongAdapter = new SongHorizontalAdapter(this, true, false, null);
+        topSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.topSongsRecyclerView.setAdapter(topSongAdapter);
         setTopSongsMediaBrowserListenableFuture();
         reapplyTopSongsPlayback();
@@ -525,7 +641,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
         bind.starredTracksRecyclerView.setHasFixedSize(true);
 
-        starredSongAdapter = new SongHorizontalAdapter(this, true, false, null);
+        starredSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.starredTracksRecyclerView.setAdapter(starredSongAdapter);
         setStarredSongsMediaBrowserListenableFuture();
         reapplyStarredSongsPlayback();

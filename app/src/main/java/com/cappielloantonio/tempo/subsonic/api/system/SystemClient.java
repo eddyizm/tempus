@@ -5,6 +5,9 @@ import android.util.Log;
 import com.cappielloantonio.tempo.subsonic.RetrofitClient;
 import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
+import com.cappielloantonio.tempo.util.Preferences;
+
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 
@@ -21,7 +24,15 @@ public class SystemClient {
 
     public Call<ApiResponse> ping() {
         Log.d(TAG, "ping()");
-        return systemService.ping(subsonic.getParams());
+        Call<ApiResponse> pingCall = systemService.ping(subsonic.getParams());
+        if (Preferences.isInUseServerAddressLocal()) {
+            pingCall.timeout()
+                    .timeout(1, TimeUnit.SECONDS);
+        } else {
+            pingCall.timeout()
+                    .timeout(3, TimeUnit.SECONDS);
+        }
+        return pingCall;
     }
 
     public Call<ApiResponse> getLicense() {

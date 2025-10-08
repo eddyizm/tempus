@@ -15,6 +15,9 @@ public interface DownloadDao {
     @Query("SELECT * FROM download WHERE download_state = 1 ORDER BY artist, album, disc_number, track ASC")
     LiveData<List<Download>> getAll();
 
+    @Query("SELECT * FROM download WHERE download_state = 1 ORDER BY artist, album, disc_number, track ASC")
+    List<Download> getAllSync();
+
     @Query("SELECT * FROM download WHERE id = :id")
     Download getOne(String id);
 
@@ -29,6 +32,9 @@ public interface DownloadDao {
 
     @Query("DELETE FROM download WHERE id = :id")
     void delete(String id);
+
+    @Query("DELETE FROM download WHERE id IN (:ids)")
+    void deleteByIds(List<String> ids);
 
     @Query("DELETE FROM download")
     void deleteAll();

@@ -85,6 +85,13 @@ object Constants {
     const val MEDIA_LEAST_RECENTLY_STARRED = "MEDIA_LEAST_RECENTLY_STARRED"
 
     const val DOWNLOAD_URI = "rest/download"
+    const val ACTION_PLAY_EXTERNAL_DOWNLOAD = "com.cappielloantonio.tempo.action.PLAY_EXTERNAL_DOWNLOAD"
+    const val EXTRA_DOWNLOAD_URI = "EXTRA_DOWNLOAD_URI"
+    const val EXTRA_DOWNLOAD_MEDIA_ID = "EXTRA_DOWNLOAD_MEDIA_ID"
+    const val EXTRA_DOWNLOAD_TITLE = "EXTRA_DOWNLOAD_TITLE"
+    const val EXTRA_DOWNLOAD_ARTIST = "EXTRA_DOWNLOAD_ARTIST"
+    const val EXTRA_DOWNLOAD_ALBUM = "EXTRA_DOWNLOAD_ALBUM"
+    const val EXTRA_DOWNLOAD_DURATION = "EXTRA_DOWNLOAD_DURATION"
 
     const val DOWNLOAD_TYPE_TRACK = "download_type_track"
     const val DOWNLOAD_TYPE_ALBUM = "download_type_album"
@@ -116,4 +123,13 @@ object Constants {
     const val HOME_SECTOR_RECENTLY_ADDED = "HOME_SECTOR_RECENTLY_ADDED"
     const val HOME_SECTOR_PINNED_PLAYLISTS = "HOME_SECTOR_PINNED_PLAYLISTS"
     const val HOME_SECTOR_SHARED = "HOME_SECTOR_SHARED"
+
+    const val CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON = "android.media3.session.demo.SHUFFLE_ON"
+    const val CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF = "android.media3.session.demo.SHUFFLE_OFF"
+    const val CUSTOM_COMMAND_TOGGLE_HEART_ON = "android.media3.session.demo.HEART_ON"
+    const val CUSTOM_COMMAND_TOGGLE_HEART_OFF = "android.media3.session.demo.HEART_OFF"
+    const val CUSTOM_COMMAND_TOGGLE_HEART_LOADING = "android.media3.session.demo.HEART_LOADING"
+    const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF = "android.media3.session.demo.REPEAT_OFF"
+    const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE = "android.media3.session.demo.REPEAT_ONE"
+    const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL = "android.media3.session.demo.REPEAT_ALL"
 }

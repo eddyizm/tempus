@@ -440,4 +440,10 @@
         <item quantity="one">%d album à synchroniser</item>
         <item quantity="other">%d albums à synchroniser</item>
     </plurals>
+    <string name="equalizer_fragment_title">Égaliseur</string>
+    <string name="equalizer_reset">Réinitialiser</string>
+    <string name="equalizer_enable">Activer</string>
+    <string name="equalizer_not_supported">Non supporté sur cet appareil</string>
+    <string name="settings_app_equalizer">Égaliseur</string>
+    <string name="settings_app_equalizer_summary">Ouvrir l\'égaliseur intégré</string>
 </resources>

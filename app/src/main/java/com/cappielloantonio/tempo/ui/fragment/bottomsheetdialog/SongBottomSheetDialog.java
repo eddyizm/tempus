@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -31,6 +32,7 @@ import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -38,6 +40,10 @@ import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.cappielloantonio.tempo.viewmodel.SongBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.util.concurrent.ListenableFuture;
+
+import android.content.Intent;
+import androidx.media3.common.MediaItem;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +53,9 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     private HomeViewModel homeViewModel;
     private SongBottomSheetViewModel songBottomSheetViewModel;
     private Child song;
+
+    private TextView downloadButton;
+    private TextView removeButton;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -64,6 +73,12 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         init(view);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateDownloadButtons);
     }
 
     @Override
@@ -157,25 +172,33 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
-        TextView download = view.findViewById(R.id.download_text_view);
-        download.setOnClickListener(v -> {
-            DownloadUtil.getDownloadTracker(requireContext()).download(
-                    MappingUtil.mapDownload(song),
-                    new Download(song)
-            );
+        downloadButton = view.findViewById(R.id.download_text_view);
+        downloadButton.setOnClickListener(v -> {
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                DownloadUtil.getDownloadTracker(requireContext()).download(
+                        MappingUtil.mapDownload(song),
+                        new Download(song)
+                );
+            } else {
+                ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+            }
             dismissBottomSheet();
         });
 
-        TextView remove = view.findViewById(R.id.remove_text_view);
-        remove.setOnClickListener(v -> {
-            DownloadUtil.getDownloadTracker(requireContext()).remove(
-                    MappingUtil.mapDownload(song),
-                    new Download(song)
-            );
+        removeButton = view.findViewById(R.id.remove_text_view);
+        removeButton.setOnClickListener(v -> {
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                DownloadUtil.getDownloadTracker(requireContext()).remove(
+                        MappingUtil.mapDownload(song),
+                        new Download(song)
+                );
+            } else {
+                ExternalAudioReader.delete(song);
+            }
             dismissBottomSheet();
         });
 
-        initDownloadUI(download, remove);
+        updateDownloadButtons();
 
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
         addToPlaylist.setOnClickListener(v -> {
@@ -243,12 +266,19 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         dismiss();
     }
 
-    private void initDownloadUI(TextView download, TextView remove) {
-        if (DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId())) {
-            remove.setVisibility(View.VISIBLE);
+    private void updateDownloadButtons() {
+        if (downloadButton == null || removeButton == null) {
+            return;
+        }
+
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            boolean downloaded = DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId());
+            downloadButton.setVisibility(downloaded ? View.GONE : View.VISIBLE);
+            removeButton.setVisibility(downloaded ? View.VISIBLE : View.GONE);
         } else {
-            download.setVisibility(View.VISIBLE);
-            remove.setVisibility(View.GONE);
+            boolean hasLocal = ExternalAudioReader.getUri(song) != null;
+            downloadButton.setVisibility(hasLocal ? View.GONE : View.VISIBLE);
+            removeButton.setVisibility(hasLocal ? View.VISIBLE : View.GONE);
         }
     }
 

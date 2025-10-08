@@ -81,20 +81,24 @@ public class PlaylistRepository {
     }
 
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId) {
-        App.getSubsonicClientInstance(false)
-                .getPlaylistClient()
-                .updatePlaylist(playlistId, null, true, songsId, null)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_add_success), Toast.LENGTH_SHORT).show();
-                    }
+        if (songsId.isEmpty()) {
+            Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_all_skipped), Toast.LENGTH_SHORT).show();
+        } else{
+            App.getSubsonicClientInstance(false)
+                    .getPlaylistClient()
+                    .updatePlaylist(playlistId, null, true, songsId, null)
+                    .enqueue(new Callback<ApiResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                            Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_add_success), Toast.LENGTH_SHORT).show();
+                        }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_add_failure), Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        @Override
+                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                            Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_add_failure), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 
     public void createPlaylist(String playlistId, String name, ArrayList<String> songsId) {
@@ -122,23 +126,6 @@ public class PlaylistRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         createPlaylist(null, name, songsId);
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
-    }
-
-    public void updatePlaylist(String playlistId, String name, boolean isPublic, ArrayList<String> songIdToAdd, ArrayList<Integer> songIndexToRemove) {
-        App.getSubsonicClientInstance(false)
-                .getPlaylistClient()
-                .updatePlaylist(playlistId, name, isPublic, songIdToAdd, songIndexToRemove)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
                     }
 
                     @Override

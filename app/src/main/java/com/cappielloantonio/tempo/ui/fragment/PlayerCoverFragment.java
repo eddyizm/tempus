@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
@@ -31,6 +32,7 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.google.android.material.snackbar.Snackbar;
@@ -115,10 +117,14 @@ public class PlayerCoverFragment extends Fragment {
         playerBottomSheetViewModel.getLiveMedia().observe(getViewLifecycleOwner(), song -> {
             if (song != null && bind != null) {
                 bind.innerButtonTopLeft.setOnClickListener(view -> {
-                    DownloadUtil.getDownloadTracker(requireContext()).download(
-                            MappingUtil.mapDownload(song),
-                            new Download(song)
-                    );
+                    if (Preferences.getDownloadDirectoryUri() == null) {
+                        DownloadUtil.getDownloadTracker(requireContext()).download(
+                                MappingUtil.mapDownload(song),
+                                new Download(song)
+                        );
+                    } else {
+                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                    }
                 });
 
                 bind.innerButtonTopRight.setOnClickListener(view -> {

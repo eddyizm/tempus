@@ -1,17 +1,19 @@
 package com.cappielloantonio.tempo.ui.fragment;
 
-import android.content.ComponentName;
+import android.app.Activity;
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.audiofx.AudioEffect;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -42,10 +44,12 @@ import com.cappielloantonio.tempo.ui.dialog.DeleteDownloadStorageDialog;
 import com.cappielloantonio.tempo.ui.dialog.DownloadStorageDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredAlbumSyncDialog;
+import com.cappielloantonio.tempo.ui.dialog.StarredArtistSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.UIUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.viewmodel.SettingViewModel;
 
 import java.util.Locale;
@@ -58,7 +62,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private MainActivity activity;
     private SettingViewModel settingViewModel;
 
-    private ActivityResultLauncher<Intent> someActivityResultLauncher;
+    private ActivityResultLauncher<Intent> equalizerResultLauncher;
+    private ActivityResultLauncher<Intent> directoryPickerLauncher;
 
     private MediaService.LocalBinder mediaServiceBinder;
     private boolean isServiceBound = false;
@@ -67,9 +72,31 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        someActivityResultLauncher = registerForActivityResult(
+        equalizerResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {}
+        );
+
+        directoryPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Uri uri = data.getData();
+                            if (uri != null) {
+                                requireContext().getContentResolver().takePersistableUriPermission(
+                                    uri,
+                                    Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                );
+
+                                Preferences.setDownloadDirectoryUri(uri.toString());
+                                ExternalAudioReader.refreshCache();
+                                Toast.makeText(requireContext(), "Download folder set.", Toast.LENGTH_SHORT).show();
+                                checkDownloadDirectory();
+                            }
+                        }
+                    }
                 });
     }
 
@@ -101,6 +128,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         checkSystemEqualizer();
         checkCacheStorage();
         checkStorage();
+        checkDownloadDirectory();
 
         setStreamingCacheSize();
         setAppLanguage();
@@ -110,10 +138,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         actionScan();
         actionSyncStarredAlbums();
         actionSyncStarredTracks();
+        actionSyncStarredArtists();
         actionChangeStreamingCacheStorage();
         actionChangeDownloadStorage();
+        actionSetDownloadDirectory();
         actionDeleteDownloadStorage();
         actionKeepScreenOn();
+        actionAutoDownloadLyrics();
+        actionMiniPlayerHeart();
 
         bindMediaService();
         actionAppEqualizer();
@@ -148,7 +180,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         if ((intent.resolveActivity(requireActivity().getPackageManager()) != null)) {
             equalizer.setOnPreferenceClickListener(preference -> {
-                someActivityResultLauncher.launch(intent);
+                equalizerResultLauncher.launch(intent);
                 return true;
             });
         } else {
@@ -165,7 +197,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             if (requireContext().getExternalFilesDirs(null)[1] == null) {
                 storage.setVisible(false);
             } else {
-                storage.setSummary(Preferences.getDownloadStoragePreference() == 0 ? R.string.download_storage_internal_dialog_negative_button : R.string.download_storage_external_dialog_positive_button);
+                storage.setSummary(Preferences.getStreamingCacheStoragePreference() == 0 ? R.string.download_storage_internal_dialog_negative_button : R.string.download_storage_external_dialog_positive_button);
             }
         } catch (Exception exception) {
             storage.setVisible(false);
@@ -181,10 +213,43 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             if (requireContext().getExternalFilesDirs(null)[1] == null) {
                 storage.setVisible(false);
             } else {
-                storage.setSummary(Preferences.getDownloadStoragePreference() == 0 ? R.string.download_storage_internal_dialog_negative_button : R.string.download_storage_external_dialog_positive_button);
+                int pref = Preferences.getDownloadStoragePreference();
+                if (pref == 0) {
+                    storage.setSummary(R.string.download_storage_internal_dialog_negative_button);
+                } else if (pref == 1) {
+                    storage.setSummary(R.string.download_storage_external_dialog_positive_button);
+                } else {
+                    storage.setSummary(R.string.download_storage_directory_dialog_neutral_button);
+                }
             }
         } catch (Exception exception) {
             storage.setVisible(false);
+        }
+    }
+
+    private void checkDownloadDirectory() {
+        Preference storage = findPreference("download_storage");
+        Preference directory = findPreference("set_download_directory");
+
+        if (directory == null) return;
+
+        String current = Preferences.getDownloadDirectoryUri();
+        if (current != null) {
+            if (storage != null) storage.setVisible(false);
+            directory.setVisible(true);
+            directory.setIcon(R.drawable.ic_close);
+            directory.setTitle("Clear download folder");
+            directory.setSummary(current);
+        } else {
+            if (storage != null) storage.setVisible(true);
+            if (Preferences.getDownloadStoragePreference() == 2) {
+                directory.setVisible(true);
+                directory.setIcon(R.drawable.ic_folder);
+                directory.setTitle("Set download folder");
+                directory.setSummary("Choose a folder for downloaded music files");
+            } else {
+                directory.setVisible(false);
+            }
         }
     }
 
@@ -296,7 +361,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
     }
-    
+
+    private void actionSyncStarredArtists() {
+        findPreference("sync_starred_artists_for_offline_use").setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue instanceof Boolean) {
+                if ((Boolean) newValue) {
+                    StarredArtistSyncDialog dialog = new StarredArtistSyncDialog(() -> {
+                        ((SwitchPreference)preference).setChecked(false);
+                    });
+                    dialog.show(activity.getSupportFragmentManager(), null);
+                }
+            }
+            return true;
+        });
+    }
+
     private void actionChangeStreamingCacheStorage() {
         findPreference("streaming_cache_storage").setOnPreferenceClickListener(preference -> {
             StreamingCacheStorageDialog dialog = new StreamingCacheStorageDialog(new DialogClickCallback() {
@@ -321,11 +400,19 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 @Override
                 public void onPositiveClick() {
                     findPreference("download_storage").setSummary(R.string.download_storage_external_dialog_positive_button);
+                    checkDownloadDirectory();
                 }
 
                 @Override
                 public void onNegativeClick() {
                     findPreference("download_storage").setSummary(R.string.download_storage_internal_dialog_negative_button);
+                    checkDownloadDirectory();
+                }
+
+                @Override
+                public void onNeutralClick() {
+                    findPreference("download_storage").setSummary(R.string.download_storage_directory_dialog_neutral_button);
+                    checkDownloadDirectory();
                 }
             });
             dialog.show(activity.getSupportFragmentManager(), null);
@@ -333,10 +420,65 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
     }
 
+    private void actionSetDownloadDirectory() {
+        Preference pref = findPreference("set_download_directory");
+        if (pref != null) {
+            pref.setOnPreferenceClickListener(preference -> {
+                String current = Preferences.getDownloadDirectoryUri();
+
+                if (current != null) {
+                    Preferences.setDownloadDirectoryUri(null);
+                    Preferences.setDownloadStoragePreference(0);
+                    ExternalAudioReader.refreshCache();
+                    Toast.makeText(requireContext(), "Download folder cleared.", Toast.LENGTH_SHORT).show();
+                    checkStorage();
+                    checkDownloadDirectory();
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                    intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+                        | Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                    directoryPickerLauncher.launch(intent);
+                }
+                return true;
+            });
+        }
+    }
+
     private void actionDeleteDownloadStorage() {
         findPreference("delete_download_storage").setOnPreferenceClickListener(preference -> {
             DeleteDownloadStorageDialog dialog = new DeleteDownloadStorageDialog();
             dialog.show(activity.getSupportFragmentManager(), null);
+            return true;
+        });
+    }
+
+    private void actionMiniPlayerHeart() {
+        SwitchPreference preference = findPreference("mini_shuffle_button_visibility");
+        if (preference == null) {
+            return;
+        }
+
+        preference.setChecked(Preferences.showShuffleInsteadOfHeart());
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (newValue instanceof Boolean) {
+                Preferences.setShuffleInsteadOfHeart((Boolean) newValue);
+            }
+            return true;
+        });
+    }
+
+    private void actionAutoDownloadLyrics() {
+        SwitchPreference preference = findPreference("auto_download_lyrics");
+        if (preference == null) {
+            return;
+        }
+
+        preference.setChecked(Preferences.isAutoDownloadLyricsEnabled());
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (newValue instanceof Boolean) {
+                Preferences.setAutoDownloadLyricsEnabled((Boolean) newValue);
+            }
             return true;
         });
     }

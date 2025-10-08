@@ -27,6 +27,7 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
     private PlaylistDialogHorizontalAdapter playlistDialogHorizontalAdapter;
 
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -100,8 +101,7 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
     public void onPlaylistClick(Bundle bundle) {
         if (playlistChooserViewModel.getSongsToAdd() != null && !playlistChooserViewModel.getSongsToAdd().isEmpty()) {
             Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-            playlistChooserViewModel.addSongsToPlaylist(playlist.getId());
-            dismiss();
+            playlistChooserViewModel.addSongsToPlaylist(this, getDialog(), playlist.getId());
         } else {
             Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_add_failure, Toast.LENGTH_SHORT).show();
         }

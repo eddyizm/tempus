@@ -2,14 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory app:title="@string/settings_title_general">
         <Preference
-            android:key="system_equalizer"
-            android:title="@string/settings_system_equalizer_title"
-            android:summary="@string/settings_system_equalizer_summary" />
-
-        <Preference
-            android:key="app_equalizer"
-            android:title="@string/settings_app_equalizer"
-            android:summary="@string/settings_app_equalizer_summary" />
+            android:layout_height="match_parent"
+            android:key="equalizer"
+            android:summary="@string/settings_system_equalizer_summary"
+            android:title="@string/settings_system_equalizer_title" />
 
         <Preference
             android:key="scan_library"
@@ -22,12 +18,14 @@
 
     <PreferenceCategory app:title="@string/settings_title_ui">
         <ListPreference
+            android:layout_height="match_parent"
             app:defaultValue="default"
             app:dialogTitle="@string/settings_language"
             app:key="language"
-            app:title="@string/settings_language"/>
+            app:title="@string/settings_language" />
 
         <ListPreference
+            android:layout_height="wrap_content"
             app:defaultValue="default"
             app:dialogTitle="@string/settings_theme"
             app:entries="@array/theme_list_titles"
@@ -42,10 +40,11 @@
             android:key="always_on_display" />
 
         <SwitchPreference
-            android:title="@string/settings_rounded_corner"
+            android:layout_height="match_parent"
             android:defaultValue="true"
+            android:key="rounded_corner"
             android:summary="@string/settings_rounded_corner_summary"
-            android:key="rounded_corner" />
+            android:title="@string/settings_rounded_corner" />
 
         <ListPreference
             app:defaultValue="6"
@@ -57,10 +56,11 @@
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference
-            android:title="@string/settings_audio_quality"
+            android:layout_height="wrap_content"
             android:defaultValue="false"
+            android:key="audio_quality_per_item"
             android:summary="@string/settings_audio_quality_summary"
-            android:key="audio_quality_per_item" />
+            android:title="@string/settings_audio_quality" />
 
         <SwitchPreference
             android:title="@string/settings_song_rating"
@@ -87,12 +87,34 @@
             android:key="radio_section_visibility" />
 
         <SwitchPreference
+            android:title="@string/settings_auto_download_lyrics"
+            android:defaultValue="false"
+            android:summary="@string/settings_auto_download_lyrics_summary"
+            android:key="auto_download_lyrics" />
+
+        <SwitchPreference
+            android:title="@string/settings_show_mini_shuffle_button"
+            android:defaultValue="false"
+            android:summary="@string/settings_show_mini_shuffle_button_summary"
+            android:key="mini_shuffle_button_visibility" />
+
+        <SwitchPreference
             android:title="@string/settings_music_directory"
             android:defaultValue="true"
             android:summary="@string/settings_music_directory_summary"
             android:key="music_directory_section_visibility" />
+
     </PreferenceCategory>
 
+     <PreferenceCategory app:title="@string/settings_title_playlist">
+        <SwitchPreference
+            android:title="@string/settings_allow_playlist_duplicates"
+            android:defaultValue="false"
+            android:summary="@string/settings_allow_playlist_duplicates_summary"
+            android:key="allow_playlist_duplicates" />
+    </PreferenceCategory>
+
+    
     <PreferenceCategory app:title="@string/settings_title_data">
         <ListPreference
             app:defaultValue="256"
@@ -150,6 +172,12 @@
             android:summary="@string/settings_sync_starred_albums_for_offline_use_summary"
             android:key="sync_starred_albums_for_offline_use" />
 
+        <SwitchPreference
+            android:title="@string/settings_sync_starred_artists_for_offline_use_title"
+            android:defaultValue="false"
+            android:summary="@string/settings_sync_starred_artists_for_offline_use_summary"
+            android:key="sync_starred_artists_for_offline_use" />
+
         <ListPreference
             app:defaultValue="1"
             app:dialogTitle="@string/settings_buffering_strategy"
@@ -167,6 +195,14 @@
         <Preference
             android:key="download_storage"
             app:title="@string/settings_download_storage_title" />
+
+        <Preference
+            android:key="set_download_directory"
+            android:title="Set download folder"
+            android:summary="Choose a folder for downloaded music files"
+            android:icon="@drawable/ic_folder"
+            android:order="104"
+            app:isPreferenceVisible="false" />
 
         <Preference
             android:key="delete_download_storage"
@@ -362,6 +398,14 @@
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="@string/settings_github_link" />
+        </Preference>
+
+        <Preference
+            app:summary="@string/settings_support_summary"
+            app:title="@string/settings_support_title">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/settings_support_discussion_link" />
         </Preference>
 
         <Preference

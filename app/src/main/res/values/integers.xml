@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="widget_medium_min_height_dp">100</integer>
+    <integer name="widget_large_min_height_dp">160</integer>
+    <integer name="widget_expanded_min_height_dp">220</integer>
+</resources>
