@@ -2,6 +2,28 @@
 
 ***This log is for this fork to detail updates since 3.9.0 from the main repo.***
 
+## [3.16.0](https://github.com/eddyizm/tempo/releases/tag/v3.16.0) (2025-10-07)
+## What's Changed
+* chore: add sha256 fingerprint for validation by @eddyizm in https://github.com/eddyizm/tempo/commit/3c58e6fbb2157a804853259dfadbbffe3b6793b5
+* fix: Prevent crash when getting artist radio and song list is null by @jaime-grj in https://github.com/eddyizm/tempo/pull/117
+* chore: Update French localization by @benoit-smith in https://github.com/eddyizm/tempo/pull/125
+* fix: Update search query validation to require at least 2 characters instead of 3 by @jaime-grj in https://github.com/eddyizm/tempo/pull/124
+* feat: download starred artists. by @eddyizm in https://github.com/eddyizm/tempo/pull/137
+* feat: Enable downloading of song lyrics for offline viewing by @le-firehawk in https://github.com/eddyizm/tempo/pull/99
+* fix: Lag during startup when local url is not available by @SinTan1729 in https://github.com/eddyizm/tempo/pull/110
+* chore: add link to discussion page in settings by @eddyizm in https://github.com/eddyizm/tempo/pull/143
+* feat: Notification heart rating by @eddyizm in https://github.com/eddyizm/tempo/pull/140
+* chore: Unify and update polish translation by @skajmer in https://github.com/eddyizm/tempo/pull/146
+* chore: added sha256 signing key for verification by @eddyizm in https://github.com/eddyizm/tempo/pull/147
+* feat: Support user-defined download directory for media by @le-firehawk in https://github.com/eddyizm/tempo/pull/21
+* feat: Added support for skipping duplicates by @SinTan1729 in https://github.com/eddyizm/tempo/pull/135
+* feat: Add home screen music playback widget and some updates in Turkish localization by @mucahit-kaya in https://github.com/eddyizm/tempo/pull/98
+
+## New Contributors
+* @SinTan1729 made their first contribution in https://github.com/eddyizm/tempo/pull/110
+
+**Full Changelog**: https://github.com/eddyizm/tempo/compare/v3.15.0...v3.16.0
+
 ## [3.15.0](https://github.com/eddyizm/tempo/releases/tag/v3.15.0) (2025-09-23)
 ## What's Changed
 * chore: Update French localization by @benoit-smith in https://github.com/eddyizm/tempo/pull/84
