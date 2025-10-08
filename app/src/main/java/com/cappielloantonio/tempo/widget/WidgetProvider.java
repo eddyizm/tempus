@@ -8,9 +8,12 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import com.cappielloantonio.tempo.R;
+
 import android.app.TaskStackBuilder;
 import android.app.PendingIntent;
+
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
+
 import android.util.Log;
 
 public class WidgetProvider extends AppWidgetProvider {
@@ -21,7 +24,8 @@ public class WidgetProvider extends AppWidgetProvider {
     public static final String ACT_TOGGLE_SHUFFLE = "tempo.widget.SHUFFLE";
     public static final String ACT_CYCLE_REPEAT = "tempo.widget.REPEAT";
 
-    @Override public void onUpdate(Context ctx, AppWidgetManager mgr, int[] ids) {
+    @Override
+    public void onUpdate(Context ctx, AppWidgetManager mgr, int[] ids) {
         for (int id : ids) {
             RemoteViews rv = WidgetUpdateManager.chooseBuild(ctx, id);
             attachIntents(ctx, rv, id);
@@ -29,7 +33,8 @@ public class WidgetProvider extends AppWidgetProvider {
         }
     }
 
-    @Override public void onReceive(Context ctx, Intent intent) {
+    @Override
+    public void onReceive(Context ctx, Intent intent) {
         super.onReceive(ctx, intent);
         String a = intent.getAction();
         Log.d(TAG, "onReceive action=" + a);
@@ -41,7 +46,8 @@ public class WidgetProvider extends AppWidgetProvider {
         }
     }
 
-    @Override public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, android.os.Bundle newOptions) {
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, android.os.Bundle newOptions) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
         RemoteViews rv = WidgetUpdateManager.chooseBuild(context, appWidgetId);
         attachIntents(context, rv, appWidgetId);
