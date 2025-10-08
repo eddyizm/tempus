@@ -93,10 +93,17 @@
             android:key="auto_download_lyrics" />
 
         <SwitchPreference
+            android:title="@string/settings_show_mini_shuffle_button"
+            android:defaultValue="false"
+            android:summary="@string/settings_show_mini_shuffle_button_summary"
+            android:key="mini_shuffle_button_visibility" />
+
+        <SwitchPreference
             android:title="@string/settings_music_directory"
             android:defaultValue="true"
             android:summary="@string/settings_music_directory_summary"
             android:key="music_directory_section_visibility" />
+
     </PreferenceCategory>
 
      <PreferenceCategory app:title="@string/settings_title_playlist">
