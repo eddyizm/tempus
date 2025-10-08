@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.chip.ChipGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/asset_link_chip_group"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    app:singleLine="true"
+    app:selectionRequired="false"
+    app:singleSelection="false">
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/asset_link_song_chip"
+        style="@style/Widget.Material3.Chip.Assist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="false"
+        android:clickable="true"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text=""
+        app:chipIcon="@drawable/ic_link"
+        app:chipIconTint="?attr/colorOnSurfaceVariant"
+        app:rippleColor="@color/ripple_material_light" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/asset_link_album_chip"
+        style="@style/Widget.Material3.Chip.Assist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="false"
+        android:clickable="true"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text=""
+        app:chipIcon="@drawable/ic_link"
+        app:chipIconTint="?attr/colorOnSurfaceVariant"
+        app:rippleColor="@color/ripple_material_light" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/asset_link_artist_chip"
+        style="@style/Widget.Material3.Chip.Assist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkable="false"
+        android:clickable="true"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text=""
+        app:chipIcon="@drawable/ic_link"
+        app:chipIconTint="?attr/colorOnSurfaceVariant"
+        app:rippleColor="@color/ripple_material_light" />
+</com.google.android.material.chip.ChipGroup>

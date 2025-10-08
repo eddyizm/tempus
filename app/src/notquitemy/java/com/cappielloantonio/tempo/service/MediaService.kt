@@ -20,6 +20,7 @@ import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.ui.activity.MainActivity
+import com.cappielloantonio.tempo.util.AssetLinkUtil
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.DownloadUtil
 import com.cappielloantonio.tempo.util.DynamicMediaSourceFactory
@@ -421,7 +422,14 @@ class MediaService : MediaLibraryService() {
             ?: mi?.mediaMetadata?.extras?.getString("artist")
         val album = mi?.mediaMetadata?.albumTitle?.toString()
             ?: mi?.mediaMetadata?.extras?.getString("album")
-        val coverId = mi?.mediaMetadata?.extras?.getString("coverArtId")
+        val extras = mi?.mediaMetadata?.extras
+        val coverId = extras?.getString("coverArtId")
+        val songLink = extras?.getString("assetLinkSong")
+            ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, extras?.getString("id"))
+        val albumLink = extras?.getString("assetLinkAlbum")
+            ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, extras?.getString("albumId"))
+        val artistLink = extras?.getString("assetLinkArtist")
+            ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, extras?.getString("artistId"))
         val position = player.currentPosition.takeIf { it != C.TIME_UNSET } ?: 0L
         val duration = player.duration.takeIf { it != C.TIME_UNSET } ?: 0L
         WidgetUpdateManager.updateFromState(
@@ -434,7 +442,10 @@ class MediaService : MediaLibraryService() {
             player.shuffleModeEnabled,
             player.repeatMode,
             position,
-            duration
+            duration,
+            songLink,
+            albumLink,
+            artistLink
         )
     }
 

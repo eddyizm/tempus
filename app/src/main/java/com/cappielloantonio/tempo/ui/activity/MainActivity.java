@@ -37,6 +37,8 @@ import com.cappielloantonio.tempo.ui.dialog.ConnectionAlertDialog;
 import com.cappielloantonio.tempo.ui.dialog.GithubTempoUpdateDialog;
 import com.cappielloantonio.tempo.ui.dialog.ServerUnreachableDialog;
 import com.cappielloantonio.tempo.ui.fragment.PlayerBottomSheetFragment;
+import com.cappielloantonio.tempo.util.AssetLinkNavigator;
+import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
@@ -60,6 +62,8 @@ public class MainActivity extends BaseActivity {
     private BottomNavigationView bottomNavigationView;
     public NavController navController;
     private BottomSheetBehavior bottomSheetBehavior;
+    private AssetLinkNavigator assetLinkNavigator;
+    private AssetLinkUtil.AssetLink pendingAssetLink;
 
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
     private Intent pendingDownloadPlaybackIntent;
@@ -76,6 +80,7 @@ public class MainActivity extends BaseActivity {
         setContentView(view);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        assetLinkNavigator = new AssetLinkNavigator(this);
 
         connectivityStatusBroadcastReceiver = new ConnectivityStatusBroadcastReceiver(this);
         connectivityStatusReceiverManager(true);
@@ -311,6 +316,24 @@ public class MainActivity extends BaseActivity {
     public void goFromLogin() {
         setBottomSheetInPeek(mainViewModel.isQueueLoaded());
         goToHome();
+        consumePendingAssetLink();
+    }
+
+    public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink) {
+        openAssetLink(assetLink, true);
+    }
+
+    public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink, boolean collapsePlayer) {
+        if (!isUserAuthenticated()) {
+            pendingAssetLink = assetLink;
+            return;
+        }
+        if (collapsePlayer) {
+            setBottomSheetInPeek(true);
+        }
+        if (assetLinkNavigator != null) {
+            assetLinkNavigator.open(assetLink);
+        }
     }
 
     public void quit() {
@@ -443,6 +466,7 @@ public class MainActivity extends BaseActivity {
                 || intent.hasExtra(Constants.EXTRA_DOWNLOAD_URI)) {
             pendingDownloadPlaybackIntent = new Intent(intent);
         }
+        handleAssetLinkIntent(intent);
     }
 
     private void consumePendingPlaybackIntent() {
@@ -450,6 +474,35 @@ public class MainActivity extends BaseActivity {
         Intent intent = pendingDownloadPlaybackIntent;
         pendingDownloadPlaybackIntent = null;
         playDownloadedMedia(intent);
+    }
+
+    private void handleAssetLinkIntent(Intent intent) {
+        AssetLinkUtil.AssetLink assetLink = AssetLinkUtil.parse(intent);
+        if (assetLink == null) {
+            return;
+        }
+        if (!isUserAuthenticated()) {
+            pendingAssetLink = assetLink;
+            intent.setData(null);
+            return;
+        }
+        if (assetLinkNavigator != null) {
+            assetLinkNavigator.open(assetLink);
+        }
+        intent.setData(null);
+    }
+
+    private boolean isUserAuthenticated() {
+        return Preferences.getPassword() != null
+                || (Preferences.getToken() != null && Preferences.getSalt() != null);
+    }
+
+    private void consumePendingAssetLink() {
+        if (pendingAssetLink == null || assetLinkNavigator == null) {
+            return;
+        }
+        assetLinkNavigator.open(pendingAssetLink);
+        pendingAssetLink = null;
     }
 
     private void playDownloadedMedia(Intent intent) {

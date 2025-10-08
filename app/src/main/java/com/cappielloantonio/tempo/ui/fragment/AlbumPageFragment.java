@@ -35,6 +35,7 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
+import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
@@ -177,8 +178,35 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
                 bind.albumNameLabel.setText(album.getName());
                 bind.albumArtistLabel.setText(album.getArtist());
+                AssetLinkUtil.applyLinkAppearance(bind.albumArtistLabel);
+                AssetLinkUtil.AssetLink artistLink = buildArtistLink(album);
+                bind.albumArtistLabel.setOnLongClickListener(v -> {
+                    if (artistLink != null) {
+                        AssetLinkUtil.copyToClipboard(requireContext(), artistLink);
+                        Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, artistLink.id), Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    return false;
+                });
                 bind.albumReleaseYearLabel.setText(album.getYear() != 0 ? String.valueOf(album.getYear()) : "");
-                bind.albumReleaseYearLabel.setVisibility(album.getYear() != 0 ? View.VISIBLE : View.GONE);
+                if (album.getYear() != 0) {
+                    bind.albumReleaseYearLabel.setVisibility(View.VISIBLE);
+                    AssetLinkUtil.applyLinkAppearance(bind.albumReleaseYearLabel);
+                    bind.albumReleaseYearLabel.setOnClickListener(v -> openYearLink(album.getYear()));
+                    bind.albumReleaseYearLabel.setOnLongClickListener(v -> {
+                        AssetLinkUtil.AssetLink yearLink = buildYearLink(album.getYear());
+                        if (yearLink != null) {
+                            AssetLinkUtil.copyToClipboard(requireContext(), yearLink);
+                            Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, yearLink.id), Toast.LENGTH_SHORT).show();
+                        }
+                        return true;
+                    });
+                } else {
+                    bind.albumReleaseYearLabel.setVisibility(View.GONE);
+                    bind.albumReleaseYearLabel.setOnClickListener(null);
+                    bind.albumReleaseYearLabel.setOnLongClickListener(null);
+                    AssetLinkUtil.clearLinkAppearance(bind.albumReleaseYearLabel);
+                }
                 bind.albumSongCountDurationTextview.setText(getString(R.string.album_page_tracks_count_and_duration, album.getSongCount(), album.getDuration() != null ? album.getDuration() / 60 : 0));
                 if (album.getGenre() != null && !album.getGenre().isEmpty()) {
                     bind.albumGenresTextview.setText(album.getGenre());
@@ -346,5 +374,24 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
     private void setMediaBrowserListenableFuture() {
         songHorizontalAdapter.setMediaBrowserListenableFuture(mediaBrowserListenableFuture);
+    }
+
+    private void openYearLink(int year) {
+        AssetLinkUtil.AssetLink link = buildYearLink(year);
+        if (link != null) {
+            activity.openAssetLink(link);
+        }
+    }
+
+    private AssetLinkUtil.AssetLink buildYearLink(int year) {
+        if (year <= 0) return null;
+        return AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year));
+    }
+
+    private AssetLinkUtil.AssetLink buildArtistLink(AlbumID3 album) {
+        if (album == null || album.getArtistId() == null || album.getArtistId().isEmpty()) {
+            return null;
+        }
+        return AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_ARTIST, album.getArtistId());
     }
 }
