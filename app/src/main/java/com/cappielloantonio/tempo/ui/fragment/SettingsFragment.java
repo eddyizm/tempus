@@ -92,7 +92,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                                 Preferences.setDownloadDirectoryUri(uri.toString());
                                 ExternalAudioReader.refreshCache();
-                                Toast.makeText(requireContext(), "Download folder set.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), R.string.settings_download_folder_set, Toast.LENGTH_SHORT).show();
                                 checkDownloadDirectory();
                             }
                         }
@@ -238,15 +238,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             if (storage != null) storage.setVisible(false);
             directory.setVisible(true);
             directory.setIcon(R.drawable.ic_close);
-            directory.setTitle("Clear download folder");
+            directory.setTitle(R.string.settings_clear_download_folder);
             directory.setSummary(current);
         } else {
             if (storage != null) storage.setVisible(true);
             if (Preferences.getDownloadStoragePreference() == 2) {
                 directory.setVisible(true);
                 directory.setIcon(R.drawable.ic_folder);
-                directory.setTitle("Set download folder");
-                directory.setSummary("Choose a folder for downloaded music files");
+                directory.setTitle(R.string.settings_set_download_folder);
+                directory.setSummary(R.string.settings_choose_download_folder);
             } else {
                 directory.setVisible(false);
             }
@@ -325,7 +325,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 @Override
                 public void onSuccess(boolean isScanning, long count) {
-                    findPreference("scan_library").setSummary("Scanning: counting " + count + " tracks");
+                    findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
                     if (isScanning) getScanStatus();
                 }
             });
@@ -430,7 +430,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     Preferences.setDownloadDirectoryUri(null);
                     Preferences.setDownloadStoragePreference(0);
                     ExternalAudioReader.refreshCache();
-                    Toast.makeText(requireContext(), "Download folder cleared.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), R.string.settings_download_folder_cleared, Toast.LENGTH_SHORT).show();
                     checkStorage();
                     checkDownloadDirectory();
                 } else {
@@ -492,7 +492,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             @Override
             public void onSuccess(boolean isScanning, long count) {
-                findPreference("scan_library").setSummary("Scanning: counting " + count + " tracks");
+                findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
                 if (isScanning) getScanStatus();
             }
         });
