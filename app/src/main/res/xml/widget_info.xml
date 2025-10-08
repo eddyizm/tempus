@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="250dp"
+    android:minHeight="64dp"
+    android:updatePeriodMillis="0"
+    android:resizeMode="horizontal|vertical"
+    android:initialLayout="@layout/widget_layout_compact"
+    android:previewImage="@drawable/ic_splash_logo"
+    android:previewLayout="@layout/widget_preview_compact"
+    android:widgetCategory="home_screen|keyguard" />

@@ -472,6 +472,17 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
     <string name="undraw_url">https://undraw.co/</string>
+    <string name="widget_label">Tempo Widget</string>
+    <string name="widget_not_playing">Not playing</string>
+    <string name="widget_placeholder_subtitle">Open Tempo</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
+    <string name="widget_time_duration_placeholder">0:00</string>
+    <string name="widget_content_desc_album_art">Album artwork</string>
+    <string name="widget_content_desc_play_pause">Play or pause</string>
+    <string name="widget_content_desc_next">Next track</string>
+    <string name="widget_content_desc_prev">Previous track</string>
+    <string name="widget_content_desc_shuffle">Toggle shuffle</string>
+    <string name="widget_content_desc_repeat">Change repeat mode</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d album to sync</item>
         <item quantity="other">%d albums to sync</item>

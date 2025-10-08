@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light theme: bright card with dark content -->
+    <color name="widget_bg">#CCFFFFFF</color>
+    <color name="widget_title">#DE000000</color>
+    <color name="widget_subtitle">#99000000</color>
+    <color name="widget_icon_tint">#DE000000</color>
+    <color name="widget_icon_tint_active">#FF6750A4</color>
+</resources>
