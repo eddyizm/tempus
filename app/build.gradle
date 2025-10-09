@@ -10,8 +10,8 @@ android {
         minSdkVersion 24
         targetSdk 35
 
-        versionCode 33
-        versionName '3.16.0'
+        versionCode 34
+        versionName '3.16.6'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -50,10 +50,6 @@ android {
             applicationId "com.cappielloantonio.notquitemy.tempo"
         }
 
-        play {
-            dimension = "default"
-            applicationId "com.cappielloantonio.play.tempo"
-        }
     }
 
     buildTypes {
@@ -115,7 +111,7 @@ dependencies {
     implementation 'androidx.media3:media3-ui:1.5.1'
     implementation 'androidx.media3:media3-exoplayer-hls:1.5.1'
     tempoImplementation 'androidx.media3:media3-cast:1.5.1'
-    playImplementation 'androidx.media3:media3-cast:1.5.1'
+
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     annotationProcessor 'androidx.room:room-compiler:2.6.1'
