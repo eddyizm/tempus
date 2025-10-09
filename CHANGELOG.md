@@ -2,6 +2,18 @@
 
 ***This log is for this fork to detail updates since 3.9.0 from the main repo.***
 
+## [3.16.6](https://github.com/eddyizm/tempo/releases/tag/v3.16.6) (2025-10-08)
+## What's Changed
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempo/pull/151
+* fix: Re-add new equalizer settings that got lost by @jaime-grj in https://github.com/eddyizm/tempo/pull/153
+* chore: removed play variant by @eddyizm in https://github.com/eddyizm/tempo/pull/155
+* fix: updating release workflow to account for the 32/64 bit builds an… by @eddyizm in https://github.com/eddyizm/tempo/pull/156
+* feat: Show sampling rate and bit depth in downloads by @jaime-grj in https://github.com/eddyizm/tempo/pull/154
+* fix: Replace hardcoded strings in SettingsFragment by @jaime-grj in https://github.com/eddyizm/tempo/pull/152
+
+
+**Full Changelog**: https://github.com/eddyizm/tempo/compare/v3.16.0...v3.16.6
+
 ## [3.16.0](https://github.com/eddyizm/tempo/releases/tag/v3.16.0) (2025-10-07)
 ## What's Changed
 * chore: add sha256 fingerprint for validation by @eddyizm in https://github.com/eddyizm/tempo/commit/3c58e6fbb2157a804853259dfadbbffe3b6793b5
