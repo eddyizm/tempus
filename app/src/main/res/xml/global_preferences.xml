@@ -3,9 +3,15 @@
     <PreferenceCategory app:title="@string/settings_title_general">
         <Preference
             android:layout_height="match_parent"
-            android:key="equalizer"
+            android:key="system_equalizer"
             android:summary="@string/settings_system_equalizer_summary"
             android:title="@string/settings_system_equalizer_title" />
+
+        <Preference
+            android:layout_height="match_parent"
+            android:key="app_equalizer"
+            android:summary="@string/settings_app_equalizer_summary"
+            android:title="@string/settings_app_equalizer" />
 
         <Preference
             android:key="scan_library"

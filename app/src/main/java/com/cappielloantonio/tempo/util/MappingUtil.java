@@ -120,6 +120,11 @@ public class MappingUtil {
     }
 
     public static MediaItem mapDownload(Child media) {
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("samplingRate", media.getSamplingRate() != null ? media.getSamplingRate() : 0);
+        bundle.putInt("bitDepth", media.getBitDepth() != null ? media.getBitDepth() : 0);
+
         return new MediaItem.Builder()
                 .setMediaId(media.getId())
                 .setMediaMetadata(
@@ -130,12 +135,14 @@ public class MappingUtil {
                                 .setReleaseYear(media.getYear() != null ? media.getYear() : 0)
                                 .setAlbumTitle(media.getAlbum())
                                 .setArtist(media.getArtist())
+                                .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
                                 .build()
                 )
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
+                                .setExtras(bundle)
                                 .setMediaUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
                                 .build()
                 )
