@@ -69,6 +69,7 @@
     <string name="download_directory_dialog_positive_button">Descargar</string>
     <string name="download_directory_dialog_summary">Se descargarán todas las pistas de esta carpeta. Las pistas en las subcarpetas no se descargarán.</string>
     <string name="download_directory_dialog_title">Descargar las pistas</string>
+    <string name="download_directory_set">Indicar ubicación de descarga</string>
     <string name="download_info_empty_subtitle">Una vez que descargues una pista, la encontrarás aquí</string>
     <string name="download_info_empty_title">No hay descargas</string>
     <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s elementos</string>
@@ -79,7 +80,10 @@
     <string name="download_storage_dialog_title">Selecciona una opción de almacenamiento</string>
     <string name="download_storage_external_dialog_positive_button">Externo</string>
     <string name="download_storage_internal_dialog_negative_button">Interno</string>
+    <string name="download_storage_directory_dialog_neutral_button">Directorio</string>
     <string name="download_title_section">Descargas</string>
+    <string name="download_refresh_no_changes">No se han encontrado descargas que falten</string>
+    <string name="download_refresh_button_content_description">Actualizar descargas</string>
     <string name="downloaded_bottom_sheet_add_to_queue">Añadir a la cola</string>
     <string name="downloaded_bottom_sheet_play_next">Reproducir siguiente</string>
     <string name="downloaded_bottom_sheet_remove">Eliminar</string>
@@ -88,6 +92,8 @@
     <string name="error_required">Obligatorio</string>
     <string name="error_server_prefix">Se necesita un prefijo http o https</string>
     <string name="exo_download_notification_channel_name">Descargas</string>
+    <string name="exo_controls_heart_on_description">Añadir a favoritos</string>
+    <string name="cast_expanded_controller_loading">Cargando…</string>
     <string name="filter_info_selection">Selecciona dos o más filtros</string>
     <string name="filter_title">Filtrar</string>
     <string name="filter_artist">Filtrar artistas</string>
@@ -118,6 +124,7 @@
     <string name="home_sync_starred_subtitle">Descargar estas pistas usará una gran cantidad de datos</string>
     <string name="home_sync_starred_title">Parece que hay algunas pistas destacadas para sincronizar</string>
     <string name="home_sync_starred_albums_subtitle">Los álbumes marcados como favoritos estarán disponibles en el modo sin conexión.</string>
+    <string name="home_sync_starred_artists_subtitle">Has destacado artistas con música que no has descargado</string>
     <string name="home_title_best_of">Lo mejor de</string>
     <string name="home_title_discovery">Descubrir</string>
     <string name="home_title_discovery_shuffle_all_button">Todo en aleatorio</string>
@@ -170,6 +177,7 @@
     <string name="menu_filter_download">Descargado</string>
     <string name="menu_group_by_album">Álbum</string>
     <string name="menu_group_by_artist">Artista</string>
+    <string name="settings_support_title">Soporte al usuario</string>
     <string name="settings_image_size">Resolución de la imagen</string>
     <string name="settings_language">Idioma</string>
     <string name="settings_system_language">Idioma del sistema</string>
@@ -201,6 +209,7 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Limpiar la cola de reproducción</string>
     <string name="player_queue_save_queue_success">Cola de reproducción guardada</string>
+    <string name="player_lyrics_download_failure">La letra no se puede descargar</string>
     <string name="player_server_priority">Prioridad del servidor</string>
     <string name="player_unknown_format">Formato desconocido</string>
     <string name="player_transcoding">Transcodificando</string>
@@ -212,6 +221,7 @@
     <string name="playlist_chooser_dialog_neutral_button">Crear</string>
     <string name="playlist_chooser_dialog_title">Añadir a una lista de reproducción</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Error al añadir a la lista</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">Todas las pistas se han descartado porque están repetidas</string>
     <string name="playlist_counted_tracks">%1$d pistas •  %2$s</string>
     <string name="playlist_duration">Duración  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Pulsación larga para eliminar</string>
@@ -280,6 +290,7 @@
     <string name="settings_about_summary">Tempo es un cliente de música Subsonic ligero y de código abierto, diseñado nativamente para Android.</string>
     <string name="settings_about_title">Acerca de</string>
     <string name="settings_always_on_display">Pantalla siempre activa</string>
+    <string name="settings_allow_playlist_duplicates_summary">Si está habilitada, no se comprobará si hay pistas repetidas cuando se añadan a la lista.</string>
     <string name="settings_audio_transcode_download_format">Formato de transcodificación</string>
     <string name="settings_audio_transcode_download_priority_summary">Si está habilitada, Tempo no descargará la pista con las opciones de transcodificación que aparecen a continuación.</string>
     <string name="settings_audio_transcode_download_priority_title">Dar prioridad a las opciones del servidor usadas para el streaming en las descargas</string>
@@ -316,7 +327,9 @@
     <string name="settings_song_rating_summary">Si está habilitada, muestra la valoración de la pista como barra de 5 estrellas en la página del control de reproducción.\n\n*Requiere reiniciar la aplicación</string>
     <string name="settings_item_rating">Mostrar valoración de los elementos</string>
     <string name="settings_queue_syncing_title">Sincronizar cola de reproducción para este usuario</string>
+    <string name="settings_show_mini_shuffle_button_summary">Si está habilitada, muestra el botón de reproducción aleatoria y oculta el botón de «Favoritos» en el minirreproductor</string>
     <string name="settings_radio">Mostrar emisoras de radio</string>
+    <string name="settings_auto_download_lyrics_summary">Descargar las letras automáticamente cuando estén disponibles para que se puedan mostrar cuando no hay conexión.</string>
     <string name="settings_replay_gain">Configurar el modo de ganancia de reproducción</string>
     <string name="settings_rounded_corner">Esquinas redondeadas</string>
     <string name="settings_rounded_corner_size">Tamaño de las esquinas</string>
@@ -368,6 +381,7 @@
     <string name="settings_theme">Tema</string>
     <string name="settings_title_data">Datos</string>
     <string name="settings_title_general">General</string>
+    <string name="settings_title_playlist">Lista de reproducción</string>
     <string name="settings_title_rating">Valoraciones</string>
     <string name="settings_title_replay_gain">Ganancia de reproducción</string>
     <string name="settings_title_scrobble">Rastreo de música (scrobble)</string>
@@ -433,7 +447,9 @@
     <string name="playlist_chooser_dialog_toast_add_success">Se ha añadido a la lista</string>
     <string name="settings_song_rating">Mostrar valoración de las pistas</string>
     <string name="home_sync_starred_albums_title">Sincronizar álbumes favoritos</string>
+    <string name="settings_sync_starred_artists_for_offline_use_title">Sincronizar artistas destacados para uso sin conexión</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Si está habilitada, los álbumes favoritos se descargarán para uso sin conexión.</string>
+    <string name="starred_artist_sync_dialog_title">Sincronizar artistas destacados</string>
     <string name="starred_album_sync_dialog_summary">Descargar los álbumes favoritos puede consumir una gran cantidad de datos.</string>
     <string name="equalizer_fragment_title">Ecualizador</string>
     <string name="equalizer_reset">Restablecer</string>
@@ -441,4 +457,27 @@
     <string name="equalizer_not_supported">No disponible en este dispositivo</string>
     <string name="settings_app_equalizer">Ecualizador</string>
     <string name="settings_app_equalizer_summary">Abrir el ecualizador integrado</string>
+    <string name="widget_label">Widget de Tempo</string>
+    <string name="widget_not_playing">En pausa</string>
+    <string name="widget_placeholder_subtitle">Abrir Tempo</string>
+    <string name="widget_time_duration_placeholder">0:00</string>
+    <string name="widget_content_desc_album_art">Portada del álbum</string>
+    <string name="widget_content_desc_play_pause">Reproducir o pausar</string>
+    <string name="widget_content_desc_next">Siguiente pista</string>
+    <string name="widget_content_desc_repeat">Cambiar modo de repetición</string>
+    <string name="widget_content_desc_shuffle">Activar/desactivar aleatorio</string>
+    <string name="widget_content_desc_prev">Pista anterior</string>
+    <string name="download_refresh_no_directory">Establece una carpeta de descarga para actualizar tus descargas</string>
+    <string name="home_sync_starred_artists_title">Sincronizar artistas destacados</string>
+    <string name="player_lyrics_download_content_description">Descargar letras para uso sin conexión</string>
+    <string name="player_lyrics_downloaded_content_description">Letras descargadas para uso sin conexión</string>
+    <string name="player_lyrics_download_success">Letra guardada para uso sin conexión</string>
+    <string name="settings_allow_playlist_duplicates">Permitir añadir pistas repetidas a la lista</string>
+    <string name="settings_support_summary">Participa en las discusiones y el soporte de la comunidad</string>
+    <string name="settings_show_mini_shuffle_button">Mostrar el botón «Aleatorio»</string>
+    <string name="settings_auto_download_lyrics">Descargar automáticamente las letras</string>
+    <string name="starred_artist_sync_dialog_summary">Descargar los artistas destacados podría consumir una gran cantidad de datos.</string>
+    <string name="settings_sync_starred_artists_for_offline_use_summary">Si está habilitada, los artistas destacados se descargarán para uso sin conexión.</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
+    <string name="exo_controls_heart_off_description">Eliminar de favoritos</string>
 </resources>
