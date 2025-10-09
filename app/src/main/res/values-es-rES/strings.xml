@@ -177,6 +177,7 @@
     <string name="menu_filter_download">Descargado</string>
     <string name="menu_group_by_album">Álbum</string>
     <string name="menu_group_by_artist">Artista</string>
+    <string name="settings_scan_result">Escaneo: hay %1$d pistas</string>
     <string name="settings_support_title">Soporte al usuario</string>
     <string name="settings_image_size">Resolución de la imagen</string>
     <string name="settings_language">Idioma</string>
@@ -267,6 +268,7 @@
     <string name="search_hint">Buscar pista, artistas o álbumes</string>
     <string name="search_info_minimum_characters">Introduzca al menos tres caracteres</string>
     <string name="search_title_album">Álbumes</string>
+    <string name="settings_set_download_folder">Establecer la carpeta de descargas</string>
     <string name="settings_system_equalizer_summary">Ajustes de audio</string>
     <string name="settings_system_equalizer_title">Ecualizador del sistema</string>
     <string name="search_title_artist">Artistas</string>
@@ -306,6 +308,8 @@
     <string name="settings_audio_transcode_priority_toast">Prioridad a la hora de transcodificar una pista</string>
     <string name="settings_buffering_strategy">Estrategia de buffer</string>
     <string name="settings_buffering_strategy_summary">Para que los cambios surtan efecto, debes reinciar la app.</string>
+    <string name="settings_choose_download_folder">Elige una carpeta para descargar los archivos de música</string>
+    <string name="settings_clear_download_folder">Limpiar la carpeta de descargas</string>
     <string name="settings_continuous_play_summary">Permite que la música siga reproduciéndose una vez que la lista de reproducción ha terminado, reproduciendo pistas similares</string>
     <string name="settings_continuous_play_title">Reproducción continua</string>
     <string name="settings_covers_cache">Tamaño de la caché de portadas de álbumes</string>
@@ -457,6 +461,8 @@
     <string name="equalizer_not_supported">No disponible en este dispositivo</string>
     <string name="settings_app_equalizer">Ecualizador</string>
     <string name="settings_app_equalizer_summary">Abrir el ecualizador integrado</string>
+    <string name="settings_download_folder_cleared">Se ha limpiado la carpeta de descargas.</string>
+    <string name="settings_download_folder_set">Se ha establecido la carpeta de descargas</string>
     <string name="widget_label">Widget de Tempo</string>
     <string name="widget_not_playing">En pausa</string>
     <string name="widget_placeholder_subtitle">Abrir Tempo</string>
