@@ -60,7 +60,20 @@ This app works with any service that implements the Subsonic API, including:
 **TODO**
 
 ### Now Playing Screen
-**TODO**
+
+On the main player control screen, tapping on the artwork will reveal a small collection of 4 buttons/icons. 
+<p align="left">
+    <img src="mockup/usage/player_icons.png" width=159>
+</p>
+
+*marked the icons with numbers for clarity* 
+
+1. Downloads the track (there is a notification if the android screen but not a pop toast currently )
+2. Adds track to playlist - pops up playlist dialog.
+3. Adds tracks to the queue via instant mix function
+4. Saves play queue (if the feature is enabled in the settings) 
+    * if the setting is not enabled, it toggles a view of the lyrics if available (slides to the right) 
+
 
 ## Navigation
 
