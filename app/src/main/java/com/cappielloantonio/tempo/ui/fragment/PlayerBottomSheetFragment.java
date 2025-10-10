@@ -195,6 +195,7 @@ public class PlayerBottomSheetFragment extends Fragment {
         }
     }
 
+
     private void setMediaControllerUI(MediaBrowser mediaBrowser) {
         if (mediaBrowser.getMediaMetadata().extras != null) {
             switch (mediaBrowser.getMediaMetadata().extras.getString("type", Constants.MEDIA_TYPE_MUSIC)) {

@@ -80,6 +80,33 @@ public class PlaylistRepository {
         return listLivePlaylistSongs;
     }
 
+    public MutableLiveData<Playlist> getPlaylist(String id) {
+        MutableLiveData<Playlist> playlistLiveData = new MutableLiveData<>();
+
+        App.getSubsonicClientInstance(false)
+                .getPlaylistClient()
+                .getPlaylist(id)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse().getPlaylist() != null) {
+                            playlistLiveData.setValue(response.body().getSubsonicResponse().getPlaylist());
+                        } else {
+                            playlistLiveData.setValue(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        playlistLiveData.setValue(null);
+                    }
+                });
+
+        return playlistLiveData;
+    }
+
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId) {
         if (songsId.isEmpty()) {
             Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_all_skipped), Toast.LENGTH_SHORT).show();

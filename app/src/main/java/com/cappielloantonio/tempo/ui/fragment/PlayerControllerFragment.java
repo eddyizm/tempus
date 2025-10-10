@@ -13,9 +13,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-import android.widget.RatingBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -41,12 +42,14 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
 import com.cappielloantonio.tempo.ui.dialog.TrackInfoDialog;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerHorizontalPager;
+import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.RatingViewModel;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -76,6 +79,10 @@ public class PlayerControllerFragment extends Fragment {
     private ImageButton playerTrackInfo;
     private LinearLayout ratingContainer;
     private ImageButton equalizerButton;
+    private ChipGroup assetLinkChipGroup;
+    private Chip playerSongLinkChip;
+    private Chip playerAlbumLinkChip;
+    private Chip playerArtistLinkChip;
 
     private MainActivity activity;
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
@@ -139,6 +146,10 @@ public class PlayerControllerFragment extends Fragment {
         songRatingBar =  bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
         equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
+        assetLinkChipGroup = bind.getRoot().findViewById(R.id.asset_link_chip_group);
+        playerSongLinkChip = bind.getRoot().findViewById(R.id.asset_link_song_chip);
+        playerAlbumLinkChip = bind.getRoot().findViewById(R.id.asset_link_album_chip);
+        playerArtistLinkChip = bind.getRoot().findViewById(R.id.asset_link_artist_chip);
         checkAndSetRatingContainerVisibility();
     }
 
@@ -219,6 +230,8 @@ public class PlayerControllerFragment extends Fragment {
                         || mediaMetadata.extras != null && Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO) && mediaMetadata.extras.getString("uri") != null
                         ? View.VISIBLE
                         : View.GONE);
+
+        updateAssetLinkChips(mediaMetadata);
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
@@ -257,6 +270,110 @@ public class PlayerControllerFragment extends Fragment {
             TrackInfoDialog dialog = new TrackInfoDialog(mediaMetadata);
             dialog.show(activity.getSupportFragmentManager(), null);
         });
+    }
+
+    private void updateAssetLinkChips(MediaMetadata mediaMetadata) {
+        if (assetLinkChipGroup == null) return;
+        String mediaType = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type", Constants.MEDIA_TYPE_MUSIC) : Constants.MEDIA_TYPE_MUSIC;
+        if (!Constants.MEDIA_TYPE_MUSIC.equals(mediaType)) {
+            clearAssetLinkChip(playerSongLinkChip);
+            clearAssetLinkChip(playerAlbumLinkChip);
+            clearAssetLinkChip(playerArtistLinkChip);
+            syncAssetLinkGroupVisibility();
+            return;
+        }
+
+        String songId = mediaMetadata.extras != null ? mediaMetadata.extras.getString("id") : null;
+        String albumId = mediaMetadata.extras != null ? mediaMetadata.extras.getString("albumId") : null;
+        String artistId = mediaMetadata.extras != null ? mediaMetadata.extras.getString("artistId") : null;
+
+        AssetLinkUtil.AssetLink songLink = bindAssetLinkChip(playerSongLinkChip, AssetLinkUtil.TYPE_SONG, songId);
+        AssetLinkUtil.AssetLink albumLink = bindAssetLinkChip(playerAlbumLinkChip, AssetLinkUtil.TYPE_ALBUM, albumId);
+        AssetLinkUtil.AssetLink artistLink = bindAssetLinkChip(playerArtistLinkChip, AssetLinkUtil.TYPE_ARTIST, artistId);
+        bindAssetLinkView(playerMediaTitleLabel, songLink);
+        bindAssetLinkView(playerArtistNameLabel, artistLink != null ? artistLink : songLink);
+        bindAssetLinkView(playerMediaCoverViewPager, songLink);
+        syncAssetLinkGroupVisibility();
+    }
+
+    private AssetLinkUtil.AssetLink bindAssetLinkChip(Chip chip, String type, String id) {
+        if (chip == null) return null;
+        if (TextUtils.isEmpty(id)) {
+            clearAssetLinkChip(chip);
+            return null;
+        }
+
+        String label = getString(AssetLinkUtil.getLabelRes(type));
+        AssetLinkUtil.AssetLink assetLink = AssetLinkUtil.buildAssetLink(type, id);
+        if (assetLink == null) {
+            clearAssetLinkChip(chip);
+            return null;
+        }
+
+        chip.setText(getString(R.string.asset_link_chip_text, label, assetLink.id));
+        chip.setVisibility(View.VISIBLE);
+
+        chip.setOnClickListener(v -> {
+            if (assetLink != null) {
+                activity.openAssetLink(assetLink);
+            }
+        });
+
+        chip.setOnLongClickListener(v -> {
+            if (assetLink != null) {
+                AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
+                Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, id), Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
+
+        return assetLink;
+    }
+
+    private void clearAssetLinkChip(Chip chip) {
+        if (chip == null) return;
+        chip.setVisibility(View.GONE);
+        chip.setText("");
+        chip.setOnClickListener(null);
+        chip.setOnLongClickListener(null);
+    }
+
+    private void bindAssetLinkView(View view, AssetLinkUtil.AssetLink assetLink) {
+        if (view == null) return;
+        if (assetLink == null) {
+            AssetLinkUtil.clearLinkAppearance(view);
+            view.setOnClickListener(null);
+            view.setOnLongClickListener(null);
+            view.setClickable(false);
+            view.setLongClickable(false);
+            return;
+        }
+
+        view.setClickable(true);
+        view.setLongClickable(true);
+        AssetLinkUtil.applyLinkAppearance(view);
+        view.setOnClickListener(v -> {
+            boolean collapse = !AssetLinkUtil.TYPE_SONG.equals(assetLink.type);
+            activity.openAssetLink(assetLink, collapse);
+        });
+        view.setOnLongClickListener(v -> {
+            AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
+            Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, assetLink.id), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+    }
+
+    private void syncAssetLinkGroupVisibility() {
+        if (assetLinkChipGroup == null) return;
+        boolean hasVisible = false;
+        for (int i = 0; i < assetLinkChipGroup.getChildCount(); i++) {
+            View child = assetLinkChipGroup.getChildAt(i);
+            if (child.getVisibility() == View.VISIBLE) {
+                hasVisible = true;
+                break;
+            }
+        }
+        assetLinkChipGroup.setVisibility(hasVisible ? View.VISIBLE : View.GONE);
     }
 
     private void setMediaControllerUI(MediaBrowser mediaBrowser) {
