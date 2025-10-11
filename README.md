@@ -25,7 +25,7 @@ Tempo does not rely on magic algorithms to decide what you should listen to. Ins
 ## Fork  
 
 sha256 signing key fingerprint   
-`SHA256: B7:85:01:B9:34:D0:4E:0A:CA:8D:94:AF:D6:72:6A:4D:1D:CE:65:79:7F:1D:41:71:0F:64:3C:29:00:EB:1D:1D`  
+`B7:85:01:B9:34:D0:4E:0A:CA:8D:94:AF:D6:72:6A:4D:1D:CE:65:79:7F:1D:41:71:0F:64:3C:29:00:EB:1D:1D`  
 
 This fork is my attempt to keep development moving forward and merge in PR's that have been sitting for a while in the main repo. Thankful to @CappielloAntonio for the amazing app and hopefully we can continue to build on top of it. I will only be releasing on github and if I am not able to merge back to the main repo, I plan to rename the app to be able to publish it to fdroid and possibly google play? We will see.
 
@@ -101,9 +101,9 @@ Thanks to the original repo/creator [CappielloAntonio](https://github.com/Cappie
 
 Please fork and open PR's against the development branch. Make sure your PR builds successfully. 
 
-If there is a UI change, please provide a before/after screenshot and a short video/gif if that helps elaborating the fix/feature in the PR. 
+If there is an UI change, please include a before/after screenshot and a short video/gif if that helps elaborating the fix/feature in the PR. 
 
-Currently there are not tests but I would love to start on some unit tests. 
+Currently there are no tests but I would love to start on some unit tests. 
 
 Not a hard requirement but any new feature/change should ideally include an update to the nacent documention. 
 
