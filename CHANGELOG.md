@@ -2,6 +2,15 @@
 
 ***This log is for this fork to detail updates since 3.9.0 from the main repo.***
 
+## [3.17.0](https://github.com/eddyizm/tempo/releases/tag/v3.17.0) (2025-10-10)
+## What's Changed
+* chore: adding screenshot and docs for 4 icons/buttons in player control by @eddyizm in https://github.com/eddyizm/tempo/pull/162
+* Update Polish translation by @skajmer in https://github.com/eddyizm/tempo/pull/160
+* feat: Make all objects in Tempo references for quick access by @le-firehawk in https://github.com/eddyizm/tempo/pull/158
+* fix: Glide module incorrectly encoding IPv6 addresses by @le-firehawk in https://github.com/eddyizm/tempo/pull/159
+
+**Full Changelog**: https://github.com/eddyizm/tempo/compare/v3.16.6...v3.17.0
+
 ## [3.16.6](https://github.com/eddyizm/tempo/releases/tag/v3.16.6) (2025-10-08)
 ## What's Changed
 * chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempo/pull/151
