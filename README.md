@@ -59,6 +59,7 @@ Fork [**sponsorship here**](https://ko-fi.com/eddyizm).
 - **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempo, expanding your audio entertainment options.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
 - **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.
+- **Multiple Libraries**: Tempo handles multi-library setups gracefully. They are displayed as Library folders.
 
 ## Credits
 Thanks to the original repo/creator [CappielloAntonio](https://github.com/CappielloAntonio) (3.9.0)
