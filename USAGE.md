@@ -57,7 +57,14 @@ This app works with any service that implements the Subsonic API, including:
 ## Main Features
 
 ### Library View
-**TODO**
+
+**Multi-library**
+
+Tempo handles multi-library setups gracefully. They are displayed as Library folders. 
+
+However, if you want to limit or change libraries you could use a workaround, if your server supports it.
+
+You can create multiple users , one for each library, and save each of them in Tempo app.
 
 ### Now Playing Screen
 
