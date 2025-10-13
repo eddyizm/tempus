@@ -6,6 +6,6 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-open class ItemGenre : Parcelable {
-    var name: String? = null
-}
+open class ItemGenre(
+    var name: String? = null,
+) : Parcelable

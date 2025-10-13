@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-class MusicFolder : Parcelable {
-    var id: String? = null
-    var name: String? = null
-}
+class MusicFolder(
+    var id: String? = null,
+    var name: String? = null,
+) : Parcelable

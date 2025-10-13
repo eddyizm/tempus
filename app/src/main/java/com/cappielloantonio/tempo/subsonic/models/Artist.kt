@@ -7,10 +7,10 @@ import java.util.Date
 
 @Keep
 @Parcelize
-class Artist : Parcelable {
-    var id: String? = null
-    var name: String? = null
-    var starred: Date? = null
-    var userRating: Int? = null
-    var averageRating: Double? = null
-}
+class Artist(
+    var id: String? = null,
+    var name: String? = null,
+    var starred: Date? = null,
+    var userRating: Int? = null,
+    var averageRating: Double? = null,
+) : Parcelable
