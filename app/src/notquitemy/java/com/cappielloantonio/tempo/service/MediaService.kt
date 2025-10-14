@@ -14,16 +14,19 @@ import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.TrackGroupArray
 import androidx.media3.exoplayer.trackselection.TrackSelectionArray
 import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
 import com.cappielloantonio.tempo.R
+import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.AssetLinkUtil
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.DownloadUtil
 import com.cappielloantonio.tempo.util.DynamicMediaSourceFactory
+import com.cappielloantonio.tempo.util.MappingUtil
 import com.cappielloantonio.tempo.util.Preferences
 import com.cappielloantonio.tempo.util.ReplayGainUtil
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
@@ -84,6 +87,7 @@ class MediaService : MediaLibraryService() {
         initializeCustomCommands()
         initializePlayer()
         initializeMediaLibrarySession()
+        restorePlayerFromQueue()
         initializePlayerListener()
         initializeEqualizerManager()
 
@@ -119,9 +123,9 @@ class MediaService : MediaLibraryService() {
             val connectionResult = super.onConnect(session, controller)
             val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
 
-            shuffleCommands.forEach { commandButton ->
+            shuffleCommands.forEach {
                 // TODO: Aggiungere i comandi personalizzati
-                // commandButton.sessionCommand?.let { availableSessionCommands.add(it) }
+                // it.sessionCommand?.let { availableSessionCommands.add(it) }
             }
 
             return MediaSession.ConnectionResult.accept(
@@ -226,7 +230,7 @@ class MediaService : MediaLibraryService() {
     private fun initializePlayer() {
         player = ExoPlayer.Builder(this)
             .setRenderersFactory(getRenderersFactory())
-            .setMediaSourceFactory(DynamicMediaSourceFactory(this))
+            .setMediaSourceFactory(getMediaSourceFactory())
             .setAudioAttributes(AudioAttributes.DEFAULT, true)
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
@@ -267,6 +271,33 @@ class MediaService : MediaLibraryService() {
         if (!customLayout.isEmpty()) {
             mediaLibrarySession.setCustomLayout(customLayout)
         }
+    }
+
+    private fun restorePlayerFromQueue() {
+        if (player.mediaItemCount > 0) return
+
+        val queueRepository = QueueRepository()
+        val storedQueue = queueRepository.media
+        if (storedQueue.isNullOrEmpty()) return
+
+        val mediaItems = MappingUtil.mapMediaItems(storedQueue)
+        if (mediaItems.isEmpty()) return
+
+        val lastIndex = try {
+            queueRepository.lastPlayedMediaIndex
+        } catch (_: Exception) {
+            0
+        }.coerceIn(0, mediaItems.size - 1)
+
+        val lastPosition = try {
+            queueRepository.lastPlayedMediaTimestamp
+        } catch (_: Exception) {
+            0L
+        }.let { if (it < 0L) 0L else it }
+
+        player.setMediaItems(mediaItems, lastIndex, lastPosition)
+        player.prepare()
+        updateWidget()
     }
 
     private fun initializePlayerListener() {
@@ -399,7 +430,7 @@ class MediaService : MediaLibraryService() {
             .build()
     }
 
-    private fun ignoreFuture(customLayout: ListenableFuture<SessionResult>) {
+    private fun ignoreFuture(@Suppress("UNUSED_PARAMETER") customLayout: ListenableFuture<SessionResult>) {
         /* Do nothing. */
     }
 
@@ -464,6 +495,7 @@ class MediaService : MediaLibraryService() {
 
     private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)
 
+    private fun getMediaSourceFactory(): MediaSource.Factory = DynamicMediaSourceFactory(this)
 }
 
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L

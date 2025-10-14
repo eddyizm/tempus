@@ -8,6 +8,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.Handler
 import android.os.Looper
+import androidx.core.content.ContextCompat
 import androidx.media3.cast.CastPlayer
 import androidx.media3.cast.SessionAvailabilityListener
 import androidx.media3.common.AudioAttributes
@@ -21,11 +22,13 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession.ControllerInfo
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
+import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.AssetLinkUtil
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.DownloadUtil
 import com.cappielloantonio.tempo.util.DynamicMediaSourceFactory
+import com.cappielloantonio.tempo.util.MappingUtil
 import com.cappielloantonio.tempo.util.Preferences
 import com.cappielloantonio.tempo.util.ReplayGainUtil
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
@@ -71,9 +74,10 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
 
         initializeRepository()
         initializePlayer()
-        initializeCastPlayer()
         initializeMediaLibrarySession()
+        restorePlayerFromQueue()
         initializePlayerListener()
+        initializeCastPlayer()
         initializeEqualizerManager()
 
         setPlayer(
@@ -143,12 +147,20 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         player.repeatMode = Preferences.getRepeatMode()
     }
 
+    @Suppress("DEPRECATION")
     private fun initializeCastPlayer() {
         if (GoogleApiAvailability.getInstance()
                 .isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS
         ) {
-            castPlayer = CastPlayer(CastContext.getSharedInstance(this))
-            castPlayer.setSessionAvailabilityListener(this)
+            CastContext.getSharedInstance(this, ContextCompat.getMainExecutor(this))
+                    .addOnSuccessListener { castContext ->
+                        castPlayer = CastPlayer(castContext)
+                        castPlayer.setSessionAvailabilityListener(this@MediaService)
+
+                        if (castPlayer.isCastSessionAvailable && this::mediaLibrarySession.isInitialized) {
+                            setPlayer(player, castPlayer)
+                        }
+                    }
         }
     }
 
@@ -164,6 +176,33 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
             MediaLibrarySession.Builder(this, player, librarySessionCallback)
                 .setSessionActivity(sessionActivityPendingIntent)
                 .build()
+    }
+
+    private fun restorePlayerFromQueue() {
+        if (player.mediaItemCount > 0) return
+
+        val queueRepository = QueueRepository()
+        val storedQueue = queueRepository.media
+        if (storedQueue.isNullOrEmpty()) return
+
+        val mediaItems = MappingUtil.mapMediaItems(storedQueue)
+        if (mediaItems.isEmpty()) return
+
+        val lastIndex = try {
+            queueRepository.lastPlayedMediaIndex
+        } catch (_: Exception) {
+            0
+        }.coerceIn(0, mediaItems.size - 1)
+
+        val lastPosition = try {
+            queueRepository.lastPlayedMediaTimestamp
+        } catch (_: Exception) {
+            0L
+        }.let { if (it < 0L) 0L else it }
+
+        player.setMediaItems(mediaItems, lastIndex, lastPosition)
+        player.prepare()
+        updateWidget()
     }
 
     private fun createLibrarySessionCallback(): MediaLibrarySessionCallback {
