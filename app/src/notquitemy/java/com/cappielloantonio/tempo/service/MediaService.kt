@@ -123,15 +123,17 @@ class MediaService : MediaLibraryService() {
             val connectionResult = super.onConnect(session, controller)
             val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
 
-            shuffleCommands.forEach {
-                // TODO: Aggiungere i comandi personalizzati
-                // it.sessionCommand?.let { availableSessionCommands.add(it) }
+            (shuffleCommands + repeatCommands).forEach { commandButton ->
+                commandButton.sessionCommand?.let { availableSessionCommands.add(it) }
             }
 
-            return MediaSession.ConnectionResult.accept(
-                availableSessionCommands.build(),
-                connectionResult.availablePlayerCommands
-            )
+            customLayout = buildCustomLayout(session.player)
+
+            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                .setAvailableSessionCommands(availableSessionCommands.build())
+                .setAvailablePlayerCommands(connectionResult.availablePlayerCommands)
+                .setCustomLayout(customLayout)
+                .build()
         }
 
         override fun onPostConnect(session: MediaSession, controller: ControllerInfo) {
