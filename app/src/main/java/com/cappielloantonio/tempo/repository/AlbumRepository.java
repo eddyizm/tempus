@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.repository;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.interfaces.DecadesCallback;
@@ -31,14 +32,22 @@ public class AlbumRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbumList2() != null && response.body().getSubsonicResponse().getAlbumList2().getAlbums() != null) {
+                        if (response.isSuccessful() 
+                            && response.body() != null 
+                            && response.body().getSubsonicResponse().getAlbumList2() != null 
+                            && response.body().getSubsonicResponse().getAlbumList2().getAlbums() != null) {
+                            
                             listLiveAlbums.setValue(response.body().getSubsonicResponse().getAlbumList2().getAlbums());
+                        } else {
+                            Log.e("AlbumRepository", "API Error on getAlbums. HTTP Code: " + response.code());
+                            listLiveAlbums.setValue(new ArrayList<>());
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        Log.e("AlbumRepository", "Network Failure on getAlbums: " + t.getMessage());
+                        listLiveAlbums.setValue(new ArrayList<>());
                     }
                 });
 

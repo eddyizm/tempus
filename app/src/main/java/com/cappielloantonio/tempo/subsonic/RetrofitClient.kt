@@ -2,22 +2,28 @@ package com.cappielloantonio.tempo.subsonic
 
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.subsonic.utils.CacheUtil
+import com.cappielloantonio.tempo.subsonic.utils.EmptyDateTypeAdapter
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class RetrofitClient(subsonic: Subsonic) {
     var retrofit: Retrofit
 
     init {
+        val gson = GsonBuilder()
+            .registerTypeAdapter(Date::class.java, EmptyDateTypeAdapter())
+            .setLenient()
+            .create()
+
         retrofit = Retrofit.Builder()
             .baseUrl(subsonic.url)
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()))
-            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(getOkHttpClient())
             .build()
     }

@@ -20,6 +20,7 @@ import com.cappielloantonio.tempo.util.MusicUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAdapter.ViewHolder> implements Filterable {
@@ -152,12 +153,20 @@ public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAd
     }
 
     public void sort(String order) {
+        if (albums == null) return;
+        
         switch (order) {
             case Constants.ALBUM_ORDER_BY_NAME:
-                albums.sort(Comparator.comparing(AlbumID3::getName));
+                albums.sort(Comparator.comparing(
+                    album -> album.getName() != null ? album.getName() : "",
+                    String.CASE_INSENSITIVE_ORDER
+                ));
                 break;
             case Constants.ALBUM_ORDER_BY_ARTIST:
-                albums.sort(Comparator.comparing(AlbumID3::getArtist, Comparator.nullsLast(Comparator.naturalOrder())));
+                albums.sort(Comparator.comparing(
+                    album -> album.getArtist() != null ? album.getArtist() : "",
+                    String.CASE_INSENSITIVE_ORDER
+                ));
                 break;
             case Constants.ALBUM_ORDER_BY_YEAR:
                 albums.sort(Comparator.comparing(AlbumID3::getYear));
@@ -166,15 +175,23 @@ public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAd
                 Collections.shuffle(albums);
                 break;
             case Constants.ALBUM_ORDER_BY_RECENTLY_ADDED:
-                albums.sort(Comparator.comparing(AlbumID3::getCreated));
+                albums.sort(Comparator.comparing(
+                    album -> album.getCreated() != null ? album.getCreated() : new Date(0),
+                    Comparator.nullsLast(Date::compareTo)
+                ));
                 Collections.reverse(albums);
                 break;
             case Constants.ALBUM_ORDER_BY_RECENTLY_PLAYED:
-                albums.sort(Comparator.comparing(AlbumID3::getPlayed));
+                albums.sort(Comparator.comparing(
+                    album -> album.getPlayed() != null ? album.getPlayed() : new Date(0),
+                    Comparator.nullsLast(Date::compareTo)
+                ));
                 Collections.reverse(albums);
                 break;
             case Constants.ALBUM_ORDER_BY_MOST_PLAYED:
-                albums.sort(Comparator.comparing(AlbumID3::getPlayCount));
+                albums.sort(Comparator.comparing(
+                    album -> album.getPlayCount() != null ? album.getPlayCount() : 0L
+                ));
                 Collections.reverse(albums);
                 break;
         }

@@ -39,7 +39,7 @@ Please note the two variants in the release assets include release/debug and 32/
 
 As mentioned above, I am working towards a rebrand to get into app stores with a new name an icon.
 
-Moved details to [CHANGELOG.md](https://github.com/eddyizm/tempo/blob/main/CHANGELOG.md)
+Moved details to [CHANGELOG.md](CHANGELOG.md)
 
 Fork [**sponsorship here**](https://ko-fi.com/eddyizm). 
 
