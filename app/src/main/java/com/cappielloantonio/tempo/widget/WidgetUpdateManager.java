@@ -27,6 +27,8 @@ import java.util.concurrent.ExecutionException;
 
 public final class WidgetUpdateManager {
 
+    private static final int WIDGET_SAFE_ART_SIZE = 512;
+
     public static void updateFromState(Context ctx,
                                        String title,
                                        String artist,
@@ -95,7 +97,7 @@ public final class WidgetUpdateManager {
             CustomGlideRequest.loadAlbumArtBitmap(
                     appCtx,
                     coverArtId,
-                    com.cappielloantonio.tempo.util.Preferences.getImageSize(),
+                    WIDGET_SAFE_ART_SIZE,
                     new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
