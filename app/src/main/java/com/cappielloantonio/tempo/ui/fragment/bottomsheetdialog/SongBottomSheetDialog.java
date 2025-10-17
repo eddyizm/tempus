@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -29,15 +30,23 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
+import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.cappielloantonio.tempo.viewmodel.SongBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.common.util.concurrent.ListenableFuture;
+
+import android.content.Intent;
+import androidx.media3.common.MediaItem;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,6 +56,16 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     private HomeViewModel homeViewModel;
     private SongBottomSheetViewModel songBottomSheetViewModel;
     private Child song;
+
+    private TextView downloadButton;
+    private TextView removeButton;
+    private ChipGroup assetLinkChipGroup;
+    private Chip songLinkChip;
+    private Chip albumLinkChip;
+    private Chip artistLinkChip;
+    private AssetLinkUtil.AssetLink currentSongLink;
+    private AssetLinkUtil.AssetLink currentAlbumLink;
+    private AssetLinkUtil.AssetLink currentArtistLink;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -64,6 +83,12 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         init(view);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateDownloadButtons);
     }
 
     @Override
@@ -93,6 +118,11 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
 
         TextView artistSong = view.findViewById(R.id.song_artist_text_view);
         artistSong.setText(songBottomSheetViewModel.getSong().getArtist());
+
+        initAssetLinkChips(view);
+        bindAssetLinkView(coverSong, currentSongLink);
+        bindAssetLinkView(titleSong, currentSongLink);
+        bindAssetLinkView(artistSong, currentArtistLink != null ? currentArtistLink : currentSongLink);
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(songBottomSheetViewModel.getSong().getStarred() != null);
@@ -157,25 +187,33 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
-        TextView download = view.findViewById(R.id.download_text_view);
-        download.setOnClickListener(v -> {
-            DownloadUtil.getDownloadTracker(requireContext()).download(
-                    MappingUtil.mapDownload(song),
-                    new Download(song)
-            );
+        downloadButton = view.findViewById(R.id.download_text_view);
+        downloadButton.setOnClickListener(v -> {
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                DownloadUtil.getDownloadTracker(requireContext()).download(
+                        MappingUtil.mapDownload(song),
+                        new Download(song)
+                );
+            } else {
+                ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+            }
             dismissBottomSheet();
         });
 
-        TextView remove = view.findViewById(R.id.remove_text_view);
-        remove.setOnClickListener(v -> {
-            DownloadUtil.getDownloadTracker(requireContext()).remove(
-                    MappingUtil.mapDownload(song),
-                    new Download(song)
-            );
+        removeButton = view.findViewById(R.id.remove_text_view);
+        removeButton.setOnClickListener(v -> {
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                DownloadUtil.getDownloadTracker(requireContext()).remove(
+                        MappingUtil.mapDownload(song),
+                        new Download(song)
+                );
+            } else {
+                ExternalAudioReader.delete(song);
+            }
             dismissBottomSheet();
         });
 
-        initDownloadUI(download, remove);
+        updateDownloadButtons();
 
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
         addToPlaylist.setOnClickListener(v -> {
@@ -243,13 +281,109 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         dismiss();
     }
 
-    private void initDownloadUI(TextView download, TextView remove) {
-        if (DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId())) {
-            remove.setVisibility(View.VISIBLE);
-        } else {
-            download.setVisibility(View.VISIBLE);
-            remove.setVisibility(View.GONE);
+    private void updateDownloadButtons() {
+        if (downloadButton == null || removeButton == null) {
+            return;
         }
+
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            boolean downloaded = DownloadUtil.getDownloadTracker(requireContext()).isDownloaded(song.getId());
+            downloadButton.setVisibility(downloaded ? View.GONE : View.VISIBLE);
+            removeButton.setVisibility(downloaded ? View.VISIBLE : View.GONE);
+        } else {
+            boolean hasLocal = ExternalAudioReader.getUri(song) != null;
+            downloadButton.setVisibility(hasLocal ? View.GONE : View.VISIBLE);
+            removeButton.setVisibility(hasLocal ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void initAssetLinkChips(View root) {
+        assetLinkChipGroup = root.findViewById(R.id.asset_link_chip_group);
+        songLinkChip = root.findViewById(R.id.asset_link_song_chip);
+        albumLinkChip = root.findViewById(R.id.asset_link_album_chip);
+        artistLinkChip = root.findViewById(R.id.asset_link_artist_chip);
+
+        currentSongLink = bindAssetLinkChip(songLinkChip, AssetLinkUtil.TYPE_SONG, song.getId());
+        currentAlbumLink = bindAssetLinkChip(albumLinkChip, AssetLinkUtil.TYPE_ALBUM, song.getAlbumId());
+        currentArtistLink = bindAssetLinkChip(artistLinkChip, AssetLinkUtil.TYPE_ARTIST, song.getArtistId());
+        syncAssetLinkGroupVisibility();
+    }
+
+    private AssetLinkUtil.AssetLink bindAssetLinkChip(@Nullable Chip chip, String type, @Nullable String id) {
+        if (chip == null) return null;
+        if (id == null || id.isEmpty()) {
+            clearAssetLinkChip(chip);
+            return null;
+        }
+
+        String label = getString(AssetLinkUtil.getLabelRes(type));
+        AssetLinkUtil.AssetLink assetLink = AssetLinkUtil.buildAssetLink(type, id);
+        if (assetLink == null) {
+            clearAssetLinkChip(chip);
+            return null;
+        }
+
+        chip.setText(getString(R.string.asset_link_chip_text, label, assetLink.id));
+        chip.setVisibility(View.VISIBLE);
+
+        chip.setOnClickListener(v -> {
+            if (assetLink != null) {
+                ((MainActivity) requireActivity()).openAssetLink(assetLink);
+            }
+        });
+
+        chip.setOnLongClickListener(v -> {
+            if (assetLink != null) {
+                AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
+                Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, id), Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
+
+        return assetLink;
+    }
+
+    private void clearAssetLinkChip(@Nullable Chip chip) {
+        if (chip == null) return;
+        chip.setVisibility(View.GONE);
+        chip.setText("");
+        chip.setOnClickListener(null);
+        chip.setOnLongClickListener(null);
+    }
+
+    private void syncAssetLinkGroupVisibility() {
+        if (assetLinkChipGroup == null) return;
+        boolean hasVisible = false;
+        for (int i = 0; i < assetLinkChipGroup.getChildCount(); i++) {
+            View child = assetLinkChipGroup.getChildAt(i);
+            if (child.getVisibility() == View.VISIBLE) {
+                hasVisible = true;
+                break;
+            }
+        }
+        assetLinkChipGroup.setVisibility(hasVisible ? View.VISIBLE : View.GONE);
+    }
+
+    private void bindAssetLinkView(@Nullable View view, @Nullable AssetLinkUtil.AssetLink assetLink) {
+        if (view == null) return;
+        if (assetLink == null) {
+            AssetLinkUtil.clearLinkAppearance(view);
+            view.setOnClickListener(null);
+            view.setOnLongClickListener(null);
+            view.setClickable(false);
+            view.setLongClickable(false);
+            return;
+        }
+
+        view.setClickable(true);
+        view.setLongClickable(true);
+        AssetLinkUtil.applyLinkAppearance(view);
+        view.setOnClickListener(v -> ((MainActivity) requireActivity()).openAssetLink(assetLink, !AssetLinkUtil.TYPE_SONG.equals(assetLink.type)));
+        view.setOnLongClickListener(v -> {
+            AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
+            Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, assetLink.id), Toast.LENGTH_SHORT).show();
+            return true;
+        });
     }
 
     private void initializeMediaBrowser() {

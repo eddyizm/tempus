@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-open class DiscTitle : Parcelable {
-    var disc: Int? = null
-    var title: String? = null
-}
+open class DiscTitle(
+    var disc: Int? = null,
+    var title: String? = null,
+) : Parcelable

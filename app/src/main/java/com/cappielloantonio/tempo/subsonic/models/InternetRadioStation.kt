@@ -6,9 +6,9 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-class InternetRadioStation : Parcelable {
-    var id: String? = null
-    var name: String? = null
-    var streamUrl: String? = null
-    var homePageUrl: String? = null
-}
+class InternetRadioStation(
+    var id: String? = null,
+    var name: String? = null,
+    var streamUrl: String? = null,
+    var homePageUrl: String? = null,
+) : Parcelable

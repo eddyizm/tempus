@@ -57,10 +57,30 @@ This app works with any service that implements the Subsonic API, including:
 ## Main Features
 
 ### Library View
-**TODO**
+
+**Multi-library**
+
+Tempo handles multi-library setups gracefully. They are displayed as Library folders. 
+
+However, if you want to limit or change libraries you could use a workaround, if your server supports it.
+
+You can create multiple users , one for each library, and save each of them in Tempo app.
 
 ### Now Playing Screen
-**TODO**
+
+On the main player control screen, tapping on the artwork will reveal a small collection of 4 buttons/icons. 
+<p align="left">
+    <img src="mockup/usage/player_icons.png" width=159>
+</p>
+
+*marked the icons with numbers for clarity* 
+
+1. Downloads the track (there is a notification if the android screen but not a pop toast currently )
+2. Adds track to playlist - pops up playlist dialog.
+3. Adds tracks to the queue via instant mix function
+4. Saves play queue (if the feature is enabled in the settings) 
+    * if the setting is not enabled, it toggles a view of the lyrics if available (slides to the right) 
+
 
 ## Navigation
 

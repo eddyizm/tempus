@@ -1,6 +1,8 @@
 package com.cappielloantonio.tempo.ui.adapter;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +11,9 @@ import android.widget.Filterable;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.session.MediaBrowser;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cappielloantonio.tempo.R;
@@ -21,8 +25,11 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.DiscTitle;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
+import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +37,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 @UnstableApi
 public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAdapter.ViewHolder> implements Filterable {
@@ -41,6 +49,11 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     private List<Child> songsFull;
     private List<Child> songs;
     private String currentFilter;
+
+    private String currentPlayingId;
+    private boolean isPlaying;
+    private List<Integer> currentPlayingPositions = Collections.emptyList();
+    private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     private final Filter filtering = new Filter() {
         @Override
@@ -70,10 +83,16 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         protected void publishResults(CharSequence constraint, FilterResults results) {
             songs = (List<Child>) results.values;
             notifyDataSetChanged();
+
+            for (int pos : currentPlayingPositions) {
+                if (pos >= 0 && pos < songs.size()) {
+                    notifyItemChanged(pos, "payload_playback");
+                }
+            }
         }
     };
 
-    public SongHorizontalAdapter(ClickCallback click, boolean showCoverArt, boolean showAlbum, AlbumID3 album) {
+    public SongHorizontalAdapter(LifecycleOwner lifecycleOwner, ClickCallback click, boolean showCoverArt, boolean showAlbum, AlbumID3 album) {
         this.click = click;
         this.showCoverArt = showCoverArt;
         this.showAlbum = showAlbum;
@@ -81,6 +100,11 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         this.songsFull = Collections.emptyList();
         this.currentFilter = "";
         this.album = album;
+        setHasStableIds(false);
+
+        if (lifecycleOwner != null) {
+            MappingUtil.observeExternalAudioRefresh(lifecycleOwner, this::handleExternalAudioRefresh);
+        }
     }
 
     @NonNull
@@ -91,7 +115,16 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (!payloads.isEmpty() && payloads.contains("payload_playback")) {
+            bindPlaybackState(holder, songs.get(position));
+        } else {
+            super.onBindViewHolder(holder, position, payloads);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Child song = songs.get(position);
 
         holder.item.searchResultSongTitleTextView.setText(song.getTitle());
@@ -109,10 +142,18 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
 
         holder.item.trackNumberTextView.setText(MusicUtil.getReadableTrackNumber(holder.itemView.getContext(), song.getTrack()));
 
-        if (DownloadUtil.getDownloadTracker(holder.itemView.getContext()).isDownloaded(song.getId())) {
-            holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            if (DownloadUtil.getDownloadTracker(holder.itemView.getContext()).isDownloaded(song.getId())) {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            }
         } else {
-            holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            if (ExternalAudioReader.getUri(song) != null) {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.searchResultDownloadIndicatorImageView.setVisibility(View.GONE);
+            }
         }
 
         if (showCoverArt) CustomGlideRequest.Builder
@@ -165,6 +206,39 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         } else {
             holder.item.ratingIndicatorImageView.setVisibility(View.GONE);
         }
+
+        bindPlaybackState(holder, song);
+    }
+
+    private void handleExternalAudioRefresh() {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            notifyDataSetChanged();
+        }
+    }
+
+    private void bindPlaybackState(@NonNull ViewHolder holder, @NonNull Child song) {
+        boolean isCurrent = currentPlayingId != null && currentPlayingId.equals(song.getId());
+
+        if (isCurrent) {
+            holder.item.playPauseIcon.setVisibility(View.VISIBLE);
+            if (isPlaying) {
+                holder.item.playPauseIcon.setImageResource(R.drawable.ic_pause);
+            } else {
+                holder.item.playPauseIcon.setImageResource(R.drawable.ic_play);
+            }
+            if (!showCoverArt) {
+                holder.item.trackNumberTextView.setVisibility(View.INVISIBLE);
+            } else {
+                holder.item.coverArtOverlay.setVisibility(View.VISIBLE);
+            }
+        } else {
+            holder.item.playPauseIcon.setVisibility(View.INVISIBLE);
+            if (!showCoverArt) {
+                holder.item.trackNumberTextView.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.coverArtOverlay.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
     @Override
@@ -186,6 +260,46 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    public void setPlaybackState(String mediaId, boolean playing) {
+        String oldId = this.currentPlayingId;
+        boolean oldPlaying = this.isPlaying;
+        List<Integer> oldPositions = currentPlayingPositions;
+
+        this.currentPlayingId = mediaId;
+        this.isPlaying = playing;
+
+        if (Objects.equals(oldId, mediaId) && oldPlaying == playing) {
+            List<Integer> newPositionsCheck = mediaId != null ? findPositionsById(mediaId) : Collections.emptyList();
+            if (oldPositions.equals(newPositionsCheck)) {
+                return;
+            }
+        }
+
+        currentPlayingPositions = mediaId != null ? findPositionsById(mediaId) : Collections.emptyList();
+
+        for (int pos : oldPositions) {
+            if (pos >= 0 && pos < songs.size()) {
+                notifyItemChanged(pos, "payload_playback");
+            }
+        }
+        for (int pos : currentPlayingPositions) {
+            if (!oldPositions.contains(pos) && pos >= 0 && pos < songs.size()) {
+                notifyItemChanged(pos, "payload_playback");
+            }
+        }
+    }
+
+    private List<Integer> findPositionsById(String id) {
+        if (id == null) return Collections.emptyList();
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < songs.size(); i++) {
+            if (id.equals(songs.get(i).getId())) {
+                positions.add(i);
+            }
+        }
+        return positions;
     }
 
     @Override
@@ -215,11 +329,29 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         }
 
         public void onClick() {
+            int pos = getBindingAdapterPosition();
+            Child tappedSong = songs.get(pos);
+
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(MusicUtil.limitPlayableMedia(songs, getBindingAdapterPosition())));
             bundle.putInt(Constants.ITEM_POSITION, MusicUtil.getPlayableMediaPosition(songs, getBindingAdapterPosition()));
 
-            click.onMediaClick(bundle);
+            if (tappedSong.getId().equals(currentPlayingId)) {
+                Log.i("SongHorizontalAdapter", "Tapping on currently playing song, toggling playback");
+                try{
+                    MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                    Log.i("SongHorizontalAdapter", "MediaBrowser retrieved, isPlaying: " + isPlaying);
+                    if (isPlaying) {
+                        mediaBrowser.pause();
+                    } else {
+                        mediaBrowser.play();
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e("SongHorizontalAdapter", "Error getting MediaBrowser", e);
+                }
+            } else {
+                click.onMediaClick(bundle);
+            }
         }
 
         private boolean onLongClick() {
@@ -246,5 +378,9 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         }
 
         notifyDataSetChanged();
+    }
+
+    public void setMediaBrowserListenableFuture(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
+        this.mediaBrowserListenableFuture = mediaBrowserListenableFuture;
     }
 }

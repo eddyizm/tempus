@@ -4,10 +4,12 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.OptIn;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.HeartRating;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
@@ -16,6 +18,7 @@ import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +74,12 @@ public class MappingUtil {
         bundle.putInt("originalWidth", media.getOriginalWidth() != null ? media.getOriginalWidth() : 0);
         bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
         bundle.putString("uri", uri.toString());
+        bundle.putString("assetLinkSong", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()));
+        bundle.putString("assetLinkAlbum", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()));
+        bundle.putString("assetLinkArtist", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()));
+        bundle.putString("assetLinkGenre", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_GENRE, media.getGenre()));
+        Integer year = media.getYear();
+        bundle.putString("assetLinkYear", year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year)) : null);
 
         return new MediaItem.Builder()
                 .setMediaId(media.getId())
@@ -83,6 +92,13 @@ public class MappingUtil {
                                 .setAlbumTitle(media.getAlbum())
                                 .setArtist(media.getArtist())
                                 .setArtworkUri(artworkUri)
+                                .setUserRating(new HeartRating(media.getStarred() != null))
+                                .setSupportedCommands(
+                                        ImmutableList.of(
+                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
+                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
+                                        )
+                                )
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
@@ -110,6 +126,11 @@ public class MappingUtil {
     }
 
     public static MediaItem mapDownload(Child media) {
+
+        Bundle bundle = new Bundle();
+        bundle.putInt("samplingRate", media.getSamplingRate() != null ? media.getSamplingRate() : 0);
+        bundle.putInt("bitDepth", media.getBitDepth() != null ? media.getBitDepth() : 0);
+
         return new MediaItem.Builder()
                 .setMediaId(media.getId())
                 .setMediaMetadata(
@@ -120,12 +141,14 @@ public class MappingUtil {
                                 .setReleaseYear(media.getYear() != null ? media.getYear() : 0)
                                 .setAlbumTitle(media.getAlbum())
                                 .setArtist(media.getArtist())
+                                .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
                                 .build()
                 )
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
+                                .setExtras(bundle)
                                 .setMediaUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
                                 .build()
                 )
@@ -217,12 +240,20 @@ public class MappingUtil {
     }
 
     private static Uri getUri(Child media) {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            Uri local = ExternalAudioReader.getUri(media);
+            return local != null ? local : MusicUtil.getStreamUri(media.getId());
+        }
         return DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(media.getId())
                 ? getDownloadUri(media.getId())
                 : MusicUtil.getStreamUri(media.getId());
     }
 
     private static Uri getUri(PodcastEpisode podcastEpisode) {
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            Uri local = ExternalAudioReader.getUri(podcastEpisode);
+            return local != null ? local : MusicUtil.getStreamUri(podcastEpisode.getStreamId());
+        }
         return DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(podcastEpisode.getStreamId())
                 ? getDownloadUri(podcastEpisode.getStreamId())
                 : MusicUtil.getStreamUri(podcastEpisode.getStreamId());
@@ -231,5 +262,12 @@ public class MappingUtil {
     private static Uri getDownloadUri(String id) {
         Download download = new DownloadRepository().getDownload(id);
         return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri()) : MusicUtil.getDownloadUri(id);
+    }
+
+    public static void observeExternalAudioRefresh(LifecycleOwner owner, Runnable onRefresh) {
+        if (owner == null || onRefresh == null) {
+            return;
+        }
+        ExternalAudioReader.getRefreshEvents().observe(owner, event -> onRefresh.run());
     }
 }

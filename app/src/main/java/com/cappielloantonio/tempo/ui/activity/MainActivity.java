@@ -1,11 +1,14 @@
 package com.cappielloantonio.tempo.ui.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -13,7 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
+import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -31,6 +37,8 @@ import com.cappielloantonio.tempo.ui.dialog.ConnectionAlertDialog;
 import com.cappielloantonio.tempo.ui.dialog.GithubTempoUpdateDialog;
 import com.cappielloantonio.tempo.ui.dialog.ServerUnreachableDialog;
 import com.cappielloantonio.tempo.ui.fragment.PlayerBottomSheetFragment;
+import com.cappielloantonio.tempo.util.AssetLinkNavigator;
+import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
@@ -54,8 +62,11 @@ public class MainActivity extends BaseActivity {
     private BottomNavigationView bottomNavigationView;
     public NavController navController;
     private BottomSheetBehavior bottomSheetBehavior;
+    private AssetLinkNavigator assetLinkNavigator;
+    private AssetLinkUtil.AssetLink pendingAssetLink;
 
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
+    private Intent pendingDownloadPlaybackIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +80,7 @@ public class MainActivity extends BaseActivity {
         setContentView(view);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        assetLinkNavigator = new AssetLinkNavigator(this);
 
         connectivityStatusBroadcastReceiver = new ConnectivityStatusBroadcastReceiver(this);
         connectivityStatusReceiverManager(true);
@@ -77,12 +89,16 @@ public class MainActivity extends BaseActivity {
         checkConnectionType();
         getOpenSubsonicExtensions();
         checkTempoUpdate();
+
+        maybeSchedulePlaybackIntent(getIntent());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        pingServer();
         initService();
+        consumePendingPlaybackIntent();
     }
 
     @Override
@@ -96,6 +112,14 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         connectivityStatusReceiverManager(false);
         bind = null;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        maybeSchedulePlaybackIntent(intent);
+        consumePendingPlaybackIntent();
     }
 
     @Override
@@ -292,6 +316,24 @@ public class MainActivity extends BaseActivity {
     public void goFromLogin() {
         setBottomSheetInPeek(mainViewModel.isQueueLoaded());
         goToHome();
+        consumePendingAssetLink();
+    }
+
+    public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink) {
+        openAssetLink(assetLink, true);
+    }
+
+    public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink, boolean collapsePlayer) {
+        if (!isUserAuthenticated()) {
+            pendingAssetLink = assetLink;
+            return;
+        }
+        if (collapsePlayer) {
+            setBottomSheetInPeek(true);
+        }
+        if (assetLinkNavigator != null) {
+            assetLinkNavigator.open(assetLink);
+        }
     }
 
     public void quit() {
@@ -351,6 +393,7 @@ public class MainActivity extends BaseActivity {
                     Preferences.switchInUseServerAddress();
                     App.refreshSubsonicClient();
                     pingServer();
+                    resetView();
                 } else {
                     Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
                 }
@@ -361,6 +404,7 @@ public class MainActivity extends BaseActivity {
                 Preferences.switchInUseServerAddress();
                 App.refreshSubsonicClient();
                 pingServer();
+                resetView();
             } else {
                 mainViewModel.ping().observe(this, subsonicResponse -> {
                     if (subsonicResponse == null) {
@@ -374,6 +418,13 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }
+    }
+
+    private void resetView() {
+        resetViewModel();
+        int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
+        navController.popBackStack(id, true);
+        navController.navigate(id);
     }
 
     private void getOpenSubsonicExtensions() {
@@ -407,5 +458,99 @@ public class MainActivity extends BaseActivity {
                 dialog.show(getSupportFragmentManager(), null);
             }
         }
+    }
+
+    private void maybeSchedulePlaybackIntent(Intent intent) {
+        if (intent == null) return;
+        if (Constants.ACTION_PLAY_EXTERNAL_DOWNLOAD.equals(intent.getAction())
+                || intent.hasExtra(Constants.EXTRA_DOWNLOAD_URI)) {
+            pendingDownloadPlaybackIntent = new Intent(intent);
+        }
+        handleAssetLinkIntent(intent);
+    }
+
+    private void consumePendingPlaybackIntent() {
+        if (pendingDownloadPlaybackIntent == null) return;
+        Intent intent = pendingDownloadPlaybackIntent;
+        pendingDownloadPlaybackIntent = null;
+        playDownloadedMedia(intent);
+    }
+
+    private void handleAssetLinkIntent(Intent intent) {
+        AssetLinkUtil.AssetLink assetLink = AssetLinkUtil.parse(intent);
+        if (assetLink == null) {
+            return;
+        }
+        if (!isUserAuthenticated()) {
+            pendingAssetLink = assetLink;
+            intent.setData(null);
+            return;
+        }
+        if (assetLinkNavigator != null) {
+            assetLinkNavigator.open(assetLink);
+        }
+        intent.setData(null);
+    }
+
+    private boolean isUserAuthenticated() {
+        return Preferences.getPassword() != null
+                || (Preferences.getToken() != null && Preferences.getSalt() != null);
+    }
+
+    private void consumePendingAssetLink() {
+        if (pendingAssetLink == null || assetLinkNavigator == null) {
+            return;
+        }
+        assetLinkNavigator.open(pendingAssetLink);
+        pendingAssetLink = null;
+    }
+
+    private void playDownloadedMedia(Intent intent) {
+        String uriString = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_URI);
+        if (TextUtils.isEmpty(uriString)) {
+            return;
+        }
+
+        Uri uri = Uri.parse(uriString);
+        String mediaId = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_MEDIA_ID);
+        if (TextUtils.isEmpty(mediaId)) {
+            mediaId = uri.toString();
+        }
+
+        String title = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_TITLE);
+        String artist = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_ARTIST);
+        String album = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_ALBUM);
+        int duration = intent.getIntExtra(Constants.EXTRA_DOWNLOAD_DURATION, 0);
+
+        Bundle extras = new Bundle();
+        extras.putString("id", mediaId);
+        extras.putString("title", title);
+        extras.putString("artist", artist);
+        extras.putString("album", album);
+        extras.putString("uri", uri.toString());
+        extras.putString("type", Constants.MEDIA_TYPE_MUSIC);
+        extras.putInt("duration", duration);
+
+        MediaMetadata.Builder metadataBuilder = new MediaMetadata.Builder()
+                .setExtras(extras)
+                .setIsBrowsable(false)
+                .setIsPlayable(true);
+
+        if (!TextUtils.isEmpty(title)) metadataBuilder.setTitle(title);
+        if (!TextUtils.isEmpty(artist)) metadataBuilder.setArtist(artist);
+        if (!TextUtils.isEmpty(album)) metadataBuilder.setAlbumTitle(album);
+
+        MediaItem mediaItem = new MediaItem.Builder()
+                .setMediaId(mediaId)
+                .setMediaMetadata(metadataBuilder.build())
+                .setUri(uri)
+                .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
+                .setRequestMetadata(new MediaItem.RequestMetadata.Builder()
+                        .setMediaUri(uri)
+                        .setExtras(extras)
+                        .build())
+                .build();
+
+        MediaManager.playDownloadedMediaItem(getMediaBrowserListenableFuture(), mediaItem);
     }
 }

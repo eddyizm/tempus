@@ -68,6 +68,7 @@
     <string name="download_directory_dialog_positive_button">Download</string>
     <string name="download_directory_dialog_summary">All tracks in this folder will be downloaded. Tracks present in subfolders will not be downloaded.</string>
     <string name="download_directory_dialog_title">Download the tracks</string>
+    <string name="download_directory_set">Set where music is downloaded</string>
     <string name="download_info_empty_subtitle">Once you download a song, you\'ll find it here</string>
     <string name="download_info_empty_title">No downloads yet!</string>
     <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s items</string>
@@ -78,7 +79,15 @@
     <string name="download_storage_dialog_title">Select storage option</string>
     <string name="download_storage_external_dialog_positive_button">External</string>
     <string name="download_storage_internal_dialog_negative_button">Internal</string>
+    <string name="download_storage_directory_dialog_neutral_button">Directory</string>
     <string name="download_title_section">Downloads</string>
+    <string name="download_refresh_no_directory">Set a download folder to refresh your downloads.</string>
+    <string name="download_refresh_no_changes">No missing downloads found.</string>
+    <plurals name="download_refresh_removed">
+        <item quantity="one">Removed %d missing download.</item>
+        <item quantity="other">Removed %d missing downloads.</item>
+    </plurals>
+    <string name="download_refresh_button_content_description">Refresh downloaded items</string>
     <string name="downloaded_bottom_sheet_add_to_queue">Add to queue</string>
     <string name="downloaded_bottom_sheet_play_next">Play next</string>
     <string name="downloaded_bottom_sheet_remove">Remove</string>
@@ -88,6 +97,9 @@
     <string name="error_required">Required</string>
     <string name="error_server_prefix">http or https prefix required</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
+    <string name="exo_controls_heart_off_description">Toggle Heart off</string>
+    <string name="exo_controls_heart_on_description">Toggle Heart on</string>
+    <string name="cast_expanded_controller_loading">Loading…</string>
     <string name="filter_info_selection">Select two or more filters</string>
     <string name="filter_title">Filter</string>
     <string name="filter_artist">Filter artists</string>
@@ -119,6 +131,8 @@
     <string name="home_sync_starred_title">Looks like there are some starred tracks to sync</string>
     <string name="home_sync_starred_albums_title">Sync Starred Albums</string>
     <string name="home_sync_starred_albums_subtitle">Albums marked with a star will be available offline</string>
+    <string name="home_sync_starred_artists_title">Starred Artists Sync</string>
+    <string name="home_sync_starred_artists_subtitle">You have starred artists with music not downloaded</string>
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Discovery</string>
     <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
@@ -197,6 +211,10 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
+    <string name="player_lyrics_download_content_description">Download lyrics for offline playback</string>
+    <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
+    <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
+    <string name="player_lyrics_download_failure">Lyrics are not available to download.</string>
     <string name="player_server_priority">Server Priority</string>
     <string name="player_unknown_format">Unknown format</string>
     <string name="player_transcoding">Transcoding</string>
@@ -207,8 +225,9 @@
     <string name="playlist_chooser_dialog_negative_button">Cancel</string>
     <string name="playlist_chooser_dialog_neutral_button">Create</string>
     <string name="playlist_chooser_dialog_title">Add to a playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Added song to playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song to playlist</string>
+    <string name="playlist_chooser_dialog_toast_add_success">Added song(s) to playlist</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song(s) to playlist</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">All songs were skipped as duplicates</string>
     <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
     <string name="playlist_duration">Duration  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Long press to delete</string>
@@ -275,6 +294,8 @@
     <string name="settings_about_summary">Tempo is an open source and lightweight music client for Subsonic, designed and built natively for Android.</string>
     <string name="settings_about_title">About</string>
     <string name="settings_always_on_display">Always on display</string>
+    <string name="settings_allow_playlist_duplicates">Allow adding duplicates to playlist</string>
+    <string name="settings_allow_playlist_duplicates_summary">If enabled, duplicates won\'t be checked while adding to a playlist.</string>
     <string name="settings_audio_transcode_download_format">Transcode format</string>
     <string name="settings_audio_transcode_download_priority_summary">If enabled, Tempo will not force download the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioritize server settings used for streaming in downloads</string>
@@ -290,6 +311,8 @@
     <string name="settings_audio_transcode_priority_toast">Priority on transcoding of track given to server</string>
     <string name="settings_buffering_strategy">Buffering strategy</string>
     <string name="settings_buffering_strategy_summary">For the change to take effect you must manually restart the app.</string>
+    <string name="settings_choose_download_folder">Choose a folder for downloaded music files</string>
+    <string name="settings_clear_download_folder">Clear download folder</string>
     <string name="settings_continuous_play_summary">Allows music to keep playing after a playlist has ended, playing similar songs</string>
     <string name="settings_continuous_play_title">Continuous play</string>
     <string name="settings_covers_cache">Size of artwork cache</string>
@@ -298,11 +321,18 @@
     <string name="settings_delete_download_storage_summary">Proceeding will result in the irreversible deletion of all saved items.</string>
     <string name="settings_delete_download_storage_title">Delete saved items</string>
     <string name="settings_download_storage_title">Download storage</string>
-    <string name="settings_equalizer_summary">Adjust audio settings</string>
-    <string name="settings_equalizer_title">Equalizer</string>
+    <string name="settings_download_folder_cleared">Download folder cleared.</string>
+    <string name="settings_download_folder_set">Download folder set</string>
+    <string name="settings_set_download_folder">Set download folder</string>
+    <string name="settings_system_equalizer_summary">Adjust audio settings</string>
+    <string name="settings_system_equalizer_title">System equalizer</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
+    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempo/discussions</string>
+    <string name="settings_support_summary">Join community discussions and support</string>
+    <string name="settings_support_title">User support</string>
+    <string name="settings_scan_result">Scanning: counting %1$d tracks</string>
     <string name="settings_image_size">Set image resolution</string>
     <string name="settings_language">Language</string>
     <string name="settings_logout_title">Log out</string>
@@ -323,8 +353,12 @@
     <string name="settings_queue_syncing_countdown">Sync timer</string>
     <string name="settings_queue_syncing_summary">If enabled, the user will have the ability to save their play queue and will have the ability to load state when opening the application.</string>
     <string name="settings_queue_syncing_title">Sync play queue for this user [Not Fully Baked]</string>
+    <string name="settings_show_mini_shuffle_button">Show Shuffle button</string>
+    <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
     <string name="settings_radio">Show radio</string>
     <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
+    <string name="settings_auto_download_lyrics">Auto download lyrics</string>
+    <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
     <string name="settings_replay_gain">Set replay gain mode</string>
     <string name="settings_rounded_corner">Rounded corners</string>
     <string name="settings_rounded_corner_size">Corners size</string>
@@ -346,6 +380,8 @@
     <string name="settings_summary_transcoding">Priority given to the transcoding mode. If set to \"Direct play\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for donwloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_estimate_content_length">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
+    <string name="settings_sync_starred_artists_for_offline_use_summary">If enabled, starred artists will be downloaded for offline use.</string>
+    <string name="settings_sync_starred_artists_for_offline_use_title">Sync starred artists for offline use</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">If enabled, starred albums will be downloaded for offline use.</string>
     <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
@@ -353,6 +389,7 @@
     <string name="settings_theme">Theme</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
+    <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Rating</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_title_scrobble">Scrobble</string>
@@ -373,6 +410,22 @@
     <string name="share_bottom_sheet_update">Update share</string>
     <string name="share_subtitle_item">Expiration date: %1$s</string>
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
+    <string name="asset_link_clipboard_label">Tempo asset link</string>
+    <string name="asset_link_label_song">Song UID</string>
+    <string name="asset_link_label_album">Album UID</string>
+    <string name="asset_link_label_artist">Artist UID</string>
+    <string name="asset_link_label_playlist">Playlist UID</string>
+    <string name="asset_link_label_genre">Genre UID</string>
+    <string name="asset_link_label_year">Year UID</string>
+    <string name="asset_link_label_unknown">Asset UID</string>
+    <string name="asset_link_error_unsupported">Unsupported asset link</string>
+    <string name="asset_link_error_song">Song could not be opened</string>
+    <string name="asset_link_error_album">Album could not be opened</string>
+    <string name="asset_link_error_artist">Artist could not be opened</string>
+    <string name="asset_link_error_playlist">Playlist could not be opened</string>
+    <string name="asset_link_chip_text">%1$s • %2$s</string>
+    <string name="asset_link_copied_toast">Copied %1$s to clipboard</string>
+    <string name="asset_link_debug_toast">Asset link: %1$s</string>
     <string name="share_update_dialog_hint_description">Description</string>
     <string name="share_update_dialog_hint_expiration_date">Expiration date</string>
     <string name="share_update_dialog_negative_button">Cancel</string>
@@ -403,6 +456,8 @@
     <string name="starred_sync_dialog_positive_button">Continue and download</string>
     <string name="starred_sync_dialog_summary">Downloading starred tracks may require a large amount of data.</string>
     <string name="starred_sync_dialog_title">Sync starred tracks</string>
+    <string name="starred_artist_sync_dialog_summary">Downloading starred artists may require a large amount of data.</string>
+    <string name="starred_artist_sync_dialog_title">Sync starred artists</string>
     <string name="starred_album_sync_dialog_summary">Downloading starred albums may require a large amount of data.</string>
     <string name="starred_album_sync_dialog_title">Sync starred albums</string>
     <string name="streaming_cache_storage_dialog_sub_summary">For the changes to take effect, restart the app.</string>
@@ -410,7 +465,7 @@
     <string name="streaming_cache_storage_dialog_title">Select storage option</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">External</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Internal</string>
-    <string name="support_url">https://buymeacoffee.com/a.cappiello</string>
+    <string name="support_url">https://ko-fi.com/eddyizm</string>
     <string name="track_info_album">Album</string>
     <string name="track_info_artist">Artist</string>
     <string name="track_info_bit_depth">Bit depth</string>
@@ -439,8 +494,33 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
     <string name="undraw_url">https://undraw.co/</string>
+    <string name="widget_label">Tempo Widget</string>
+    <string name="widget_not_playing">Not playing</string>
+    <string name="widget_placeholder_subtitle">Open Tempo</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
+    <string name="widget_time_duration_placeholder">0:00</string>
+    <string name="widget_content_desc_album_art">Album artwork</string>
+    <string name="widget_content_desc_play_pause">Play or pause</string>
+    <string name="widget_content_desc_next">Next track</string>
+    <string name="widget_content_desc_prev">Previous track</string>
+    <string name="widget_content_desc_shuffle">Toggle shuffle</string>
+    <string name="widget_content_desc_repeat">Change repeat mode</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d album to sync</item>
         <item quantity="other">%d albums to sync</item>
     </plurals>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d artist to sync</item>
+        <item quantity="other">%d artists to sync</item>
+    </plurals>
+    <plurals name="songs_download_started">
+        <item quantity="one">Downloading %d song</item>
+        <item quantity="other">Downloading %d songs</item>
+    </plurals>
+    <string name="equalizer_fragment_title">Equalizer</string>
+    <string name="equalizer_reset">Reset</string>
+    <string name="equalizer_enable">Enable</string>
+    <string name="equalizer_not_supported">Not supported on this device</string>
+    <string name="settings_app_equalizer">Equalizer</string>
+    <string name="settings_app_equalizer_summary">Open the built-in equalizer</string>
 </resources>

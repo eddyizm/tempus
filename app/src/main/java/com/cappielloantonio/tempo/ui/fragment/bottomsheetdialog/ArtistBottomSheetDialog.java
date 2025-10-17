@@ -66,7 +66,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         super.onStop();
     }
 
-    // TODO Utilizzare il viewmodel come tramite ed evitare le chiamate dirette
+    // TODO Use the viewmodel as a conduit and avoid direct calls
     private void init(View view) {
         ImageView coverArtist = view.findViewById(R.id.artist_cover_image_view);
         CustomGlideRequest.Builder
@@ -81,7 +81,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(artistBottomSheetViewModel.getArtist().getStarred() != null);
         favoriteToggle.setOnClickListener(v -> {
-            artistBottomSheetViewModel.setFavorite();
+            artistBottomSheetViewModel.setFavorite(requireContext());
         });
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);

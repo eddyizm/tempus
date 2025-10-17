@@ -5,22 +5,31 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.os.Binder
 import android.os.Bundle
+import android.os.IBinder
+import android.os.Handler
+import android.os.Looper
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.TrackGroupArray
 import androidx.media3.exoplayer.trackselection.TrackSelectionArray
 import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
 import com.cappielloantonio.tempo.R
+import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
+import com.cappielloantonio.tempo.util.AssetLinkUtil
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.DownloadUtil
+import com.cappielloantonio.tempo.util.DynamicMediaSourceFactory
+import com.cappielloantonio.tempo.util.MappingUtil
 import com.cappielloantonio.tempo.util.Preferences
 import com.cappielloantonio.tempo.util.ReplayGainUtil
+import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -34,8 +43,29 @@ class MediaService : MediaLibraryService() {
     private lateinit var mediaLibrarySession: MediaLibrarySession
     private lateinit var shuffleCommands: List<CommandButton>
     private lateinit var repeatCommands: List<CommandButton>
+    lateinit var equalizerManager: EqualizerManager
 
     private var customLayout = ImmutableList.of<CommandButton>()
+    private val widgetUpdateHandler = Handler(Looper.getMainLooper())
+    private var widgetUpdateScheduled = false
+    private val widgetUpdateRunnable = object : Runnable {
+        override fun run() {
+            if (!player.isPlaying) {
+                widgetUpdateScheduled = false
+                return
+            }
+            updateWidget()
+            widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
+        }
+    }
+
+    inner class LocalBinder : Binder() {
+        fun getEqualizerManager(): EqualizerManager {
+            return this@MediaService.equalizerManager
+        }
+    }
+
+    private val binder = LocalBinder()
 
     companion object {
         private const val CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON =
@@ -48,6 +78,7 @@ class MediaService : MediaLibraryService() {
             "android.media3.session.demo.REPEAT_ONE"
         private const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL =
             "android.media3.session.demo.REPEAT_ALL"
+        const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
     }
 
     override fun onCreate() {
@@ -56,7 +87,9 @@ class MediaService : MediaLibraryService() {
         initializeCustomCommands()
         initializePlayer()
         initializeMediaLibrarySession()
+        restorePlayerFromQueue()
         initializePlayerListener()
+        initializeEqualizerManager()
 
         setPlayer(player)
     }
@@ -66,8 +99,19 @@ class MediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        equalizerManager.release()
+        stopWidgetUpdates()
         releasePlayer()
         super.onDestroy()
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        // Check if the intent is for our custom equalizer binder
+        if (intent?.action == ACTION_BIND_EQUALIZER) {
+            return binder
+        }
+        // Otherwise, handle it as a normal MediaLibraryService connection
+        return super.onBind(intent)
     }
 
     private inner class CustomMediaLibrarySessionCallback : MediaLibrarySession.Callback {
@@ -79,15 +123,17 @@ class MediaService : MediaLibraryService() {
             val connectionResult = super.onConnect(session, controller)
             val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
 
-            shuffleCommands.forEach { commandButton ->
-                // TODO: Aggiungere i comandi personalizzati
-                // commandButton.sessionCommand?.let { availableSessionCommands.add(it) }
+            (shuffleCommands + repeatCommands).forEach { commandButton ->
+                commandButton.sessionCommand?.let { availableSessionCommands.add(it) }
             }
 
-            return MediaSession.ConnectionResult.accept(
-                availableSessionCommands.build(),
-                connectionResult.availablePlayerCommands
-            )
+            customLayout = buildCustomLayout(session.player)
+
+            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                .setAvailableSessionCommands(availableSessionCommands.build())
+                .setAvailablePlayerCommands(connectionResult.availablePlayerCommands)
+                .setCustomLayout(customLayout)
+                .build()
         }
 
         override fun onPostConnect(session: MediaSession, controller: ControllerInfo) {
@@ -197,6 +243,21 @@ class MediaService : MediaLibraryService() {
         player.repeatMode = Preferences.getRepeatMode()
     }
 
+    private fun initializeEqualizerManager() {
+        equalizerManager = EqualizerManager()
+        val audioSessionId = player.audioSessionId
+        if (equalizerManager.attachToSession(audioSessionId)) {
+            val enabled = Preferences.isEqualizerEnabled()
+            equalizerManager.setEnabled(enabled)
+
+            val bands = equalizerManager.getNumberOfBands()
+            val savedLevels = Preferences.getEqualizerBandLevels(bands)
+            for (i in 0 until bands) {
+                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
+            }
+        }
+    }
+
     private fun initializeMediaLibrarySession() {
         val sessionActivityPendingIntent =
             TaskStackBuilder.create(this).run {
@@ -214,6 +275,33 @@ class MediaService : MediaLibraryService() {
         }
     }
 
+    private fun restorePlayerFromQueue() {
+        if (player.mediaItemCount > 0) return
+
+        val queueRepository = QueueRepository()
+        val storedQueue = queueRepository.media
+        if (storedQueue.isNullOrEmpty()) return
+
+        val mediaItems = MappingUtil.mapMediaItems(storedQueue)
+        if (mediaItems.isEmpty()) return
+
+        val lastIndex = try {
+            queueRepository.lastPlayedMediaIndex
+        } catch (_: Exception) {
+            0
+        }.coerceIn(0, mediaItems.size - 1)
+
+        val lastPosition = try {
+            queueRepository.lastPlayedMediaTimestamp
+        } catch (_: Exception) {
+            0L
+        }.let { if (it < 0L) 0L else it }
+
+        player.setMediaItems(mediaItems, lastIndex, lastPosition)
+        player.prepare()
+        updateWidget()
+    }
+
     private fun initializePlayerListener() {
         player.addListener(object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -222,11 +310,15 @@ class MediaService : MediaLibraryService() {
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
                 }
+                updateWidget()
             }
 
             override fun onTracksChanged(tracks: Tracks) {
                 ReplayGainUtil.setReplayGain(player, tracks)
-                MediaManager.scrobble(player.currentMediaItem, false)
+                val currentMediaItem = player.currentMediaItem
+                if (currentMediaItem != null && currentMediaItem.mediaMetadata.extras != null) {
+                    MediaManager.scrobble(currentMediaItem, false)
+                }
 
                 if (player.currentMediaItemIndex + 1 == player.mediaItemCount)
                     MediaManager.continuousPlay(player.currentMediaItem)
@@ -241,6 +333,12 @@ class MediaService : MediaLibraryService() {
                 } else {
                     MediaManager.scrobble(player.currentMediaItem, false)
                 }
+                if (isPlaying) {
+                    scheduleWidgetUpdates()
+                } else {
+                    stopWidgetUpdates()
+                }
+                updateWidget()
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -252,6 +350,7 @@ class MediaService : MediaLibraryService() {
                     MediaManager.scrobble(player.currentMediaItem, true)
                     MediaManager.saveChronology(player.currentMediaItem)
                 }
+                updateWidget()
             }
 
             override fun onPositionDiscontinuity(
@@ -285,6 +384,9 @@ class MediaService : MediaLibraryService() {
                 mediaLibrarySession.setCustomLayout(customLayout)
             }
         })
+        if (player.isPlaying) {
+            scheduleWidgetUpdates()
+        }
     }
 
     private fun setPlayer(player: Player) {
@@ -330,7 +432,7 @@ class MediaService : MediaLibraryService() {
             .build()
     }
 
-    private fun ignoreFuture(customLayout: ListenableFuture<SessionResult>) {
+    private fun ignoreFuture(@Suppress("UNUSED_PARAMETER") customLayout: ListenableFuture<SessionResult>) {
         /* Do nothing. */
     }
 
@@ -345,8 +447,57 @@ class MediaService : MediaLibraryService() {
             .build()
     }
 
+    private fun updateWidget() {
+        val mi = player.currentMediaItem
+        val title = mi?.mediaMetadata?.title?.toString()
+            ?: mi?.mediaMetadata?.extras?.getString("title")
+        val artist = mi?.mediaMetadata?.artist?.toString()
+            ?: mi?.mediaMetadata?.extras?.getString("artist")
+        val album = mi?.mediaMetadata?.albumTitle?.toString()
+            ?: mi?.mediaMetadata?.extras?.getString("album")
+        val extras = mi?.mediaMetadata?.extras
+        val coverId = extras?.getString("coverArtId")
+        val songLink = extras?.getString("assetLinkSong")
+            ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, extras?.getString("id"))
+        val albumLink = extras?.getString("assetLinkAlbum")
+            ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, extras?.getString("albumId"))
+        val artistLink = extras?.getString("assetLinkArtist")
+            ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, extras?.getString("artistId"))
+        val position = player.currentPosition.takeIf { it != C.TIME_UNSET } ?: 0L
+        val duration = player.duration.takeIf { it != C.TIME_UNSET } ?: 0L
+        WidgetUpdateManager.updateFromState(
+            this,
+            title ?: "",
+            artist ?: "",
+            album ?: "",
+            coverId,
+            player.isPlaying,
+            player.shuffleModeEnabled,
+            player.repeatMode,
+            position,
+            duration,
+            songLink,
+            albumLink,
+            artistLink
+        )
+    }
+
+    private fun scheduleWidgetUpdates() {
+        if (widgetUpdateScheduled) return
+        widgetUpdateHandler.postDelayed(widgetUpdateRunnable, WIDGET_UPDATE_INTERVAL_MS)
+        widgetUpdateScheduled = true
+    }
+
+    private fun stopWidgetUpdates() {
+        if (!widgetUpdateScheduled) return
+        widgetUpdateHandler.removeCallbacks(widgetUpdateRunnable)
+        widgetUpdateScheduled = false
+    }
+
+
     private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)
 
-    private fun getMediaSourceFactory() =
-        DefaultMediaSourceFactory(this).setDataSourceFactory(DownloadUtil.getDataSourceFactory(this))
+    private fun getMediaSourceFactory(): MediaSource.Factory = DynamicMediaSourceFactory(this)
 }
+
+private const val WIDGET_UPDATE_INTERVAL_MS = 1000L

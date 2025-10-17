@@ -10,20 +10,18 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 @Entity(tableName = "queue")
-class Queue(override val id: String) : Child(id) {
+class Queue(
+    override val id: String,
     @PrimaryKey
     @ColumnInfo(name = "track_order")
-    var trackOrder: Int = 0
-
+    var trackOrder: Int = 0,
     @ColumnInfo(name = "last_play")
-    var lastPlay: Long = 0
-
+    var lastPlay: Long = 0,
     @ColumnInfo(name = "playing_changed")
-    var playingChanged: Long = 0
-
+    var playingChanged: Long = 0,
     @ColumnInfo(name = "stream_id")
-    var streamId: String? = null
-
+    var streamId: String? = null,
+) : Child(id) {
     constructor(child: Child) : this(child.id) {
         parentId = child.parentId
         isDir = child.isDir

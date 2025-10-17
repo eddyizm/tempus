@@ -68,6 +68,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include
+        android:id="@+id/song_asset_link_row"
+        layout="@layout/view_asset_link_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="12dp" />
+
     <LinearLayout
         android:id="@+id/option_linear_layout"
         android:layout_width="match_parent"

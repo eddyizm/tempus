@@ -10,19 +10,17 @@ import kotlinx.parcelize.Parcelize
 @Keep
 @Parcelize
 @Entity(tableName = "download")
-class Download(@PrimaryKey override val id: String) : Child(id) {
+class Download(
+    @PrimaryKey override val id: String,
     @ColumnInfo(name = "playlist_id")
-    var playlistId: String? = null
-
+    var playlistId: String? = null,
     @ColumnInfo(name = "playlist_name")
-    var playlistName: String? = null
-
+    var playlistName: String? = null,
     @ColumnInfo(name = "download_state", defaultValue = "1")
-    var downloadState: Int = 0
-
+    var downloadState: Int = 0,
     @ColumnInfo(name = "download_uri", defaultValue = "")
-    var downloadUri: String? = null
-
+    var downloadUri: String? = null,
+) : Child(id) {
     constructor(child: Child) : this(child.id) {
         parentId = child.parentId
         isDir = child.isDir
@@ -40,6 +38,8 @@ class Download(@PrimaryKey override val id: String) : Child(id) {
         transcodedSuffix = child.transcodedSuffix
         duration = child.duration
         bitrate = child.bitrate
+        samplingRate = child.samplingRate
+        bitDepth = child.bitDepth
         path = child.path
         isVideo = child.isVideo
         userRating = child.userRating
@@ -60,5 +60,5 @@ class Download(@PrimaryKey override val id: String) : Child(id) {
 @Keep
 data class DownloadStack(
     var id: String,
-    var view: String?
+    var view: String?,
 )

@@ -24,9 +24,22 @@ Tempo does not rely on magic algorithms to decide what you should listen to. Ins
 
 ## Fork  
 
+sha256 signing key fingerprint   
+`B7:85:01:B9:34:D0:4E:0A:CA:8D:94:AF:D6:72:6A:4D:1D:CE:65:79:7F:1D:41:71:0F:64:3C:29:00:EB:1D:1D`  
+
 This fork is my attempt to keep development moving forward and merge in PR's that have been sitting for a while in the main repo. Thankful to @CappielloAntonio for the amazing app and hopefully we can continue to build on top of it. I will only be releasing on github and if I am not able to merge back to the main repo, I plan to rename the app to be able to publish it to fdroid and possibly google play? We will see.
 
-Moved details to [CHANGELOG.md](https://github.com/eddyizm/tempo/blob/main/CHANGELOG.md)
+### Releases  
+
+Please note the two variants in the release assets include release/debug and 32/64 bit flavors.
+
+`app-tempo` <- The github release with all the android auto/chromecast features 
+
+`app-notquitemy*` <- The f-droid release that goes without any of the google stuff. It was last released at 3.8.1 from the original repo. Since I don't have access to that original repo, I am releasing the apk's here on github.
+
+As mentioned above, I am working towards a rebrand to get into app stores with a new name an icon.
+
+Moved details to [CHANGELOG.md](CHANGELOG.md)
 
 Fork [**sponsorship here**](https://ko-fi.com/eddyizm). 
 
@@ -46,12 +59,10 @@ Fork [**sponsorship here**](https://ko-fi.com/eddyizm).
 - **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempo, expanding your audio entertainment options.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
 - **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.
+- **Multiple Libraries**: Tempo handles multi-library setups gracefully. They are displayed as Library folders.
 
-## Sponsors
+## Credits
 Thanks to the original repo/creator [CappielloAntonio](https://github.com/CappielloAntonio) (3.9.0)
-
-Tempo is an open-source project developed and maintained solely by me. I would like to express my heartfelt thanks to all the users who have shown their love and support for Tempo. Your contributions and encouragement mean a lot to me, and they help drive the development and improvement of the app.
-
 
 ## Screenshot
 
@@ -86,6 +97,16 @@ Tempo is an open-source project developed and maintained solely by me. I would l
     <img src="mockup/dark/7_screenshot.png" width=200>
     <img src="mockup/dark/8_screenshot.png" width=200>
 </p>
+
+## Contributing  
+
+Please fork and open PR's against the development branch. Make sure your PR builds successfully. 
+
+If there is an UI change, please include a before/after screenshot and a short video/gif if that helps elaborating the fix/feature in the PR. 
+
+Currently there are no tests but I would love to start on some unit tests. 
+
+Not a hard requirement but any new feature/change should ideally include an update to the nacent documention. 
 
 ## License
 

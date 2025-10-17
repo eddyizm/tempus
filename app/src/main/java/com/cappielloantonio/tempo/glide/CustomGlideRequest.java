@@ -1,6 +1,7 @@
 package com.cappielloantonio.tempo.glide;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.signature.ObjectKey;
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.R;
@@ -109,9 +111,21 @@ public class CustomGlideRequest {
         return uri.toString();
     }
 
+    public static void loadAlbumArtBitmap(Context context,
+                                          String coverId,
+                                          int size,
+                                          CustomTarget<Bitmap> target) {
+        String url = createUrl(coverId, size);
+        Glide.with(context)
+                .asBitmap()
+                .load(url)
+                .apply(createRequestOptions(context, coverId, ResourceType.Album))
+                .into(target);
+    }
+
     public static class Builder {
         private final RequestManager requestManager;
-        private Object item;
+        private String item;
 
         private Builder(Context context, String item, ResourceType type) {
             this.requestManager = Glide.with(context);

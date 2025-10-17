@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-class AlbumWithSongsID3 : AlbumID3(), Parcelable {
+class AlbumWithSongsID3(
     @SerializedName("song")
-    var songs: List<Child>? = null
-}
+    var songs: List<Child>? = null,
+) : AlbumID3(), Parcelable

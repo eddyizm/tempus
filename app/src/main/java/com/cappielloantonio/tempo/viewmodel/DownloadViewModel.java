@@ -1,6 +1,7 @@
 package com.cappielloantonio.tempo.viewmodel;
 
 import android.app.Application;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -8,10 +9,13 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.documentfile.provider.DocumentFile;
 
+import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.DownloadStack;
 import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 
 import java.util.ArrayList;
@@ -25,6 +29,7 @@ public class DownloadViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<Child>> downloadedTrackSample = new MutableLiveData<>(null);
     private final MutableLiveData<ArrayList<DownloadStack>> viewStack = new MutableLiveData<>(null);
+    private final MutableLiveData<Integer> refreshResult = new MutableLiveData<>();
 
     public DownloadViewModel(@NonNull Application application) {
         super(application);
@@ -43,6 +48,10 @@ public class DownloadViewModel extends AndroidViewModel {
         return viewStack;
     }
 
+    public LiveData<Integer> getRefreshResult() {
+        return refreshResult;
+    }
+
     public void initViewStack(DownloadStack level) {
         ArrayList<DownloadStack> stack = new ArrayList<>();
         stack.add(level);
@@ -59,5 +68,60 @@ public class DownloadViewModel extends AndroidViewModel {
         ArrayList<DownloadStack> stack = viewStack.getValue();
         stack.remove(stack.size() - 1);
         viewStack.setValue(stack);
+    }
+
+    public void refreshExternalDownloads() {
+        new Thread(() -> {
+            String directoryUri = Preferences.getDownloadDirectoryUri();
+            if (directoryUri == null) {
+                refreshResult.postValue(-1);
+                return;
+            }
+
+            List<Download> downloads = downloadRepository.getAllDownloads();
+            if (downloads == null || downloads.isEmpty()) {
+                refreshResult.postValue(0);
+                return;
+            }
+
+            ArrayList<Download> toRemove = new ArrayList<>();
+
+            for (Download download : downloads) {
+                String uriString = download.getDownloadUri();
+                if (uriString == null || uriString.isEmpty()) {
+                    continue;
+                }
+
+                Uri uri = Uri.parse(uriString);
+                if (uri.getScheme() == null || !uri.getScheme().equalsIgnoreCase("content")) {
+                    continue;
+                }
+
+                DocumentFile file;
+                try {
+                    file = DocumentFile.fromSingleUri(getApplication(), uri);
+                } catch (SecurityException exception) {
+                    file = null;
+                }
+
+                if (file == null || !file.exists()) {
+                    toRemove.add(download);
+                }
+            }
+
+            if (!toRemove.isEmpty()) {
+                ArrayList<String> ids = new ArrayList<>();
+                for (Download download : toRemove) {
+                    ids.add(download.getId());
+                    ExternalAudioReader.removeMetadata(download);
+                }
+
+                downloadRepository.delete(ids);
+                ExternalAudioReader.refreshCache();
+                refreshResult.postValue(ids.size());
+            } else {
+                refreshResult.postValue(0);
+            }
+        }).start();
     }
 }

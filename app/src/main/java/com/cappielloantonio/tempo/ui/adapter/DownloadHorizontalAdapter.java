@@ -191,7 +191,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                         R.string.song_subtitle_formatter,
                         song.getArtist(),
                         MusicUtil.getReadableDurationString(song.getDuration(), false),
-                        ""
+                        MusicUtil.getReadableAudioQualityString(song)
                 )
         );
 

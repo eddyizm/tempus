@@ -9,8 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class PlaylistWithSongs(
     @SerializedName("_id")
-    override var id: String
-) : Playlist(id), Parcelable {
+    override var id: String,
     @SerializedName("entry")
-    var entries: List<Child>? = null
-}
+    var entries: List<Child>? = null,
+) : Playlist(id), Parcelable

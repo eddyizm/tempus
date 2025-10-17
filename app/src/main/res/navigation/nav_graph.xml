@@ -151,6 +151,9 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_settingsFragment_to_equalizerFragment"
+            app:destination="@id/equalizerFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -300,6 +303,20 @@
             android:id="@+id/action_indexFragment_to_directoryFragment"
             app:destination="@id/directoryFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/playerControllerFragment"
+        android:name="com.cappielloantonio.tempo.ui.fragment.PlayerControllerFragment"
+        android:label="PlayerControllerFragment"
+        tools:layout="@layout/inner_fragment_player_controller">
+        <action
+            android:id="@+id/action_playerControllerFragment_to_equalizerFragment"
+            app:destination="@id/equalizerFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/equalizerFragment"
+        android:name="com.cappielloantonio.tempo.ui.fragment.EqualizerFragment"
+        android:label="EqualizerFragment"
+        tools:layout="@layout/fragment_equalizer" />
     <dialog
         android:id="@+id/songBottomSheetDialog"
         android:name="com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog.SongBottomSheetDialog"

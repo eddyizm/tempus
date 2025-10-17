@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/eq_frame_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:id="@+id/eq_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:id="@+id/eq_root_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/equalizer_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/equalizer_fragment_title"
+                style="@style/HeadlineSmall"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="16dp" />
+
+            <LinearLayout
+                android:id="@+id/equalizer_switch_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="16dp">
+
+                <TextView
+                    android:id="@+id/equalizer_switch_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/LabelMedium"
+                    android:text="@string/equalizer_enable" />
+
+                <Switch
+                    android:id="@+id/equalizer_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/eq_bands_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/equalizer_reset_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/equalizer_reset"
+                android:layout_gravity="center_horizontal"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_marginTop="24dp"/>
+
+            <Space
+                android:id="@+id/equalizer_bottom_space"
+                android:layout_width="match_parent"
+                android:layout_height="128dp"
+                android:layout_marginTop="0dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/equalizer_not_supported_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/equalizer_not_supported_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:maxWidth="240dp"
+            android:maxHeight="240dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ui_eq_not_supported" />
+
+        <TextView
+            android:id="@+id/equalizer_not_supported_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/equalizer_not_supported"
+            android:gravity="center"
+            style="@style/BodyMedium"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+
+</FrameLayout>

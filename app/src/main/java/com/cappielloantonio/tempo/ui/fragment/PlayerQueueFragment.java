@@ -23,6 +23,7 @@ import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.adapter.PlayerSongQueueAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -38,6 +39,7 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     private InnerFragmentPlayerQueueBinding bind;
 
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
+    private PlaybackViewModel playbackViewModel;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     private PlayerSongQueueAdapter playerSongQueueAdapter;
@@ -48,6 +50,7 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         View view = bind.getRoot();
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
+        playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         initQueueRecyclerView();
 
@@ -59,6 +62,9 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         super.onStart();
         initializeBrowser();
         bindMediaController();
+
+        MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
+        observePlayback();
     }
 
     @Override
@@ -110,9 +116,12 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
         playerSongQueueAdapter = new PlayerSongQueueAdapter(this);
         bind.playerQueueRecyclerView.setAdapter(playerSongQueueAdapter);
+        reapplyPlayback();
+
         playerBottomSheetViewModel.getQueueSong().observe(getViewLifecycleOwner(), queue -> {
             if (queue != null) {
                 playerSongQueueAdapter.setItems(queue.stream().map(item -> (Child) item).collect(Collectors.toList()));
+                reapplyPlayback();
             }
         });
 
@@ -215,5 +224,28 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     @Override
     public void onMediaClick(Bundle bundle) {
         MediaManager.startQueue(mediaBrowserListenableFuture, bundle.getParcelableArrayList(Constants.TRACKS_OBJECT), bundle.getInt(Constants.ITEM_POSITION));
+    }
+
+    private void observePlayback() {
+        playbackViewModel.getCurrentSongId().observe(getViewLifecycleOwner(), id -> {
+            if (playerSongQueueAdapter != null) {
+                Boolean playing = playbackViewModel.getIsPlaying().getValue();
+                playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
+            }
+        });
+        playbackViewModel.getIsPlaying().observe(getViewLifecycleOwner(), playing -> {
+            if (playerSongQueueAdapter != null) {
+                String id = playbackViewModel.getCurrentSongId().getValue();
+                playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
+            }
+        });
+    }
+
+    private void reapplyPlayback() {
+        if (playerSongQueueAdapter != null) {
+            String id = playbackViewModel.getCurrentSongId().getValue();
+            Boolean playing = playbackViewModel.getIsPlaying().getValue();
+            playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
+        }
     }
 }

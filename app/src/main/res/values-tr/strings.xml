@@ -90,6 +90,7 @@
     <string name="exo_download_notification_channel_name">İndirilenler</string>
     <string name="filter_info_selection">İki veya daha fazla filtre seçin</string>
     <string name="filter_title">Filtre</string>
+    <string name="filter_artist">Sanatçıları filtrele</string>
     <string name="filter_title_expanded">Türleri filtrele</string>
     <string name="generic_list_page_count">(%1$d)</string>
     <string name="generic_list_page_count_unknown">(+%1$d)</string>
@@ -116,6 +117,7 @@
     <string name="home_sync_starred_download">İndir</string>
     <string name="home_sync_starred_subtitle">Bu parçaların indirilmesi önemli miktarda veri kullanabilir</string>
     <string name="home_sync_starred_title">Eşitlenecek bazı yıldızlı parçalar var gibi görünüyor</string>
+    <string name="home_sync_starred_albums_subtitle">Yıldız ile işaretlenen albümler çevrimdışı kullanılabilir olacak</string>
     <string name="home_title_best_of">En iyiler</string>
     <string name="home_title_discovery">Keşfet</string>
     <string name="home_title_discovery_shuffle_all_button">Tümünü karıştır</string>
@@ -164,6 +166,7 @@
     <string name="menu_add_button">Ekle</string>
     <string name="menu_add_to_playlist_button">Çalma listesine ekle</string>
     <string name="menu_download_all_button">Tümünü indir</string>
+    <string name="menu_rate_album">Albümü oyla</string>
     <string name="menu_download_label">İndir</string>
     <string name="menu_filter_all">Tümü</string>
     <string name="menu_filter_download">İndirilenler</string>
@@ -192,6 +195,7 @@
     <string name="menu_sort_year">Yıl</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Çalma sırasını temizle</string>
+    <string name="player_queue_save_queue_success">Kayıtlı oynatma sırası</string>
     <string name="player_server_priority">Sunucu önceliği</string>
     <string name="player_unknown_format">Bilinmeyen format</string>
     <string name="player_transcoding">Dönüştürme</string>
@@ -293,8 +297,8 @@
     <string name="settings_delete_download_storage_summary">Devam ederseniz tüm kayıtlı öğeler geri alınamaz şekilde silinecektir.</string>
     <string name="settings_delete_download_storage_title">Kayıtlı öğeleri sil</string>
     <string name="settings_download_storage_title">İndirme depolaması</string>
-    <string name="settings_equalizer_summary">Ses ayarlarını düzenle</string>
-    <string name="settings_equalizer_title">Ekolayzır</string>
+    <string name="settings_system_equalizer_summary">Ses ayarlarını düzenle</string>
+    <string name="settings_system_equalizer_title">Sistem ekolayzır</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
     <string name="settings_github_summary">Gelişmeleri takip et</string>
     <string name="settings_github_title">Github</string>
@@ -311,6 +315,7 @@
     <string name="settings_podcast_summary">Etkinleştirildiğinde podcast bölümü görüntülenir. Tam etkili olması için uygulamayı yeniden başlatın.</string>
     <string name="settings_audio_quality">Ses kalitesini göster</string>
     <string name="settings_audio_quality_summary">Her ses parçası için bit hızı ve ses formatı gösterilecektir.</string>
+    <string name="settings_song_rating_summary">" "</string>
     <string name="settings_item_rating">Öğe değerlemesini göster</string>
     <string name="settings_item_rating_summary">Etkinleştirildiğinde, öğenin puanı ve favori olarak işaretlenip işaretlenmediği görüntülenir.</string>
     <string name="settings_queue_syncing_countdown">Eşitleme zamanlayıcısı</string>
@@ -340,6 +345,7 @@
     <string name="settings_summary_transcoding_download">Dönüştürülmüş medyayı indir. Etkinleştirilirse indirme uç noktası kullanılmaz, bunun yerine aşağıdaki ayarlar geçerli olur. \n\n “İndirmeler için dönüştürme formatı” “Doğrudan indir” olarak ayarlanırsa dosyanın bit hızı değiştirilmez.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Dosya anlık olarak dönüştürüldüğünde, istemci genellikle parçanın süresini göstermez. Bu işlevi destekleyen sunuculardan çalınan parçanın süresini tahmin etmeleri istenebilir, 
     ancak yanıt süreleri daha uzun olabilir.</string>
+    <string name="settings_sync_starred_albums_for_offline_use_title">Çevrimdışı kullanım için yıldızlı albümleri senkronize et</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Etkinleştirildiğinde, yıldızlı parçalar çevrimdışı kullanım için indirilecektir.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Çevrimdışı kullanım için yıldızlı parçaları eşitle</string>
     <string name="settings_theme">Tema</string>
@@ -395,6 +401,8 @@
     <string name="starred_sync_dialog_positive_button">Devam et ve indir</string>
     <string name="starred_sync_dialog_summary">Yıldızlı parçaların indirilmesi yüksek miktarda veri gerektirebilir.</string>
     <string name="starred_sync_dialog_title">Yıldızlı parçaları eşitle</string>
+    <string name="starred_album_sync_dialog_summary">Yıldızlı albümleri indirmek yüksek miktarda veri kullanımı gerektirebilir.</string>
+    <string name="starred_album_sync_dialog_title">Yıldızlı albümleri senkronize et</string>
     <string name="streaming_cache_storage_dialog_sub_summary">Değişikliklerin geçerli olması için uygulamayı yeniden başlatın.</string>
     <string name="streaming_cache_storage_dialog_summary">Önbelleğe alınmış dosyaların hedefini bir depolamadan diğerine değiştirmek, önceki depolamadaki önbellek dosyalarının silinmesine yol açabilir.</string>
     <string name="streaming_cache_storage_dialog_title">Depolama seçeneğini seç</string>
@@ -433,4 +441,16 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">İllüstrasyonlarıyla bu uygulamayı daha güzel hale getirmemize yardımcı olan unDraw’a özel teşekkürler.</string>
     <string name="undraw_url">https://undraw.co/</string>
+    <string name="home_sync_starred_albums_title">Yıldızlı Albümleri Senkronize Et</string>
+    <string name="widget_label">Tempo Widget</string>
+    <string name="widget_not_playing">Şu an oynatılmıyor</string>
+    <string name="widget_placeholder_subtitle">Tempo’yu aç</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
+    <string name="widget_time_duration_placeholder">0:00</string>
+    <string name="widget_content_desc_album_art">Albüm kapağı</string>
+    <string name="widget_content_desc_play_pause">Çal/Duraklat</string>
+    <string name="widget_content_desc_next">Sonraki parça</string>
+    <string name="widget_content_desc_prev">Önceki parça</string>
+    <string name="settings_song_rating">Şarkının yıldız derecelendirmesini göster</string>
+    <string name="settings_sync_starred_albums_for_offline_use_summary">"Etkinleştirildiğinde yıldızlı albümler çevrimdışı kullanım için indirilecek. "</string>
 </resources>

@@ -4,15 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Layout;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,10 +30,10 @@ import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Line;
 import com.cappielloantonio.tempo.subsonic.models.LyricsList;
 import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.OpenSubsonicExtensionsUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.android.material.button.MaterialButton;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.List;
@@ -48,6 +49,9 @@ public class PlayerLyricsFragment extends Fragment {
     private MediaBrowser mediaBrowser;
     private Handler syncLyricsHandler;
     private Runnable syncLyricsRunnable;
+    private String currentLyrics;
+    private LyricsList currentLyricsList;
+    private String currentDescription;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -66,6 +70,7 @@ public class PlayerLyricsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         initPanelContent();
+        observeDownloadState();
     }
 
     @Override
@@ -101,11 +106,25 @@ public class PlayerLyricsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         bind = null;
+        currentLyrics = null;
+        currentLyricsList = null;
+        currentDescription = null;
     }
 
     private void initOverlay() {
         bind.syncLyricsTapButton.setOnClickListener(view -> {
             playerBottomSheetViewModel.changeSyncLyricsState();
+        });
+
+        bind.downloadLyricsButton.setOnClickListener(view -> {
+            boolean saved = playerBottomSheetViewModel.downloadCurrentLyrics();
+            if (getContext() != null) {
+                Toast.makeText(
+                        requireContext(),
+                        saved ? R.string.player_lyrics_download_success : R.string.player_lyrics_download_failure,
+                        Toast.LENGTH_SHORT
+                ).show();
+            }
         });
     }
 
@@ -136,48 +155,89 @@ public class PlayerLyricsFragment extends Fragment {
     }
 
     private void initPanelContent() {
-        if (OpenSubsonicExtensionsUtil.isSongLyricsExtensionAvailable()) {
-            playerBottomSheetViewModel.getLiveLyricsList().observe(getViewLifecycleOwner(), lyricsList -> {
-                setPanelContent(null, lyricsList);
-            });
-        } else {
-            playerBottomSheetViewModel.getLiveLyrics().observe(getViewLifecycleOwner(), lyrics -> {
-                setPanelContent(lyrics, null);
-            });
-        }
+        playerBottomSheetViewModel.getLiveLyrics().observe(getViewLifecycleOwner(), lyrics -> {
+            currentLyrics = lyrics;
+            updatePanelContent();
+        });
+
+        playerBottomSheetViewModel.getLiveLyricsList().observe(getViewLifecycleOwner(), lyricsList -> {
+            currentLyricsList = lyricsList;
+            updatePanelContent();
+        });
+
+        playerBottomSheetViewModel.getLiveDescription().observe(getViewLifecycleOwner(), description -> {
+            currentDescription = description;
+            updatePanelContent();
+        });
     }
 
-    private void setPanelContent(String lyrics, LyricsList lyricsList) {
-        playerBottomSheetViewModel.getLiveDescription().observe(getViewLifecycleOwner(), description -> {
+    private void observeDownloadState() {
+        playerBottomSheetViewModel.getLyricsCachedState().observe(getViewLifecycleOwner(), cached -> {
             if (bind != null) {
-                bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, 0);
-
-                if (lyrics != null && !lyrics.trim().equals("")) {
-                    bind.nowPlayingSongLyricsTextView.setText(MusicUtil.getReadableLyrics(lyrics));
-                    bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
-                    bind.emptyDescriptionImageView.setVisibility(View.GONE);
-                    bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-                    bind.syncLyricsTapButton.setVisibility(View.GONE);
-                } else if (lyricsList != null && lyricsList.getStructuredLyrics() != null) {
-                    setSyncLirics(lyricsList);
-                    bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
-                    bind.emptyDescriptionImageView.setVisibility(View.GONE);
-                    bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-                    bind.syncLyricsTapButton.setVisibility(View.VISIBLE);
-                } else if (description != null && !description.trim().equals("")) {
-                    bind.nowPlayingSongLyricsTextView.setText(MusicUtil.getReadableLyrics(description));
-                    bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
-                    bind.emptyDescriptionImageView.setVisibility(View.GONE);
-                    bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
-                    bind.syncLyricsTapButton.setVisibility(View.GONE);
+                MaterialButton downloadButton = (MaterialButton) bind.downloadLyricsButton;
+                if (cached != null && cached) {
+                    downloadButton.setIconResource(R.drawable.ic_done);
+                    downloadButton.setContentDescription(getString(R.string.player_lyrics_downloaded_content_description));
                 } else {
-                    bind.nowPlayingSongLyricsTextView.setVisibility(View.GONE);
-                    bind.emptyDescriptionImageView.setVisibility(View.VISIBLE);
-                    bind.titleEmptyDescriptionLabel.setVisibility(View.VISIBLE);
-                    bind.syncLyricsTapButton.setVisibility(View.GONE);
+                    downloadButton.setIconResource(R.drawable.ic_download);
+                    downloadButton.setContentDescription(getString(R.string.player_lyrics_download_content_description));
                 }
             }
         });
+    }
+
+    private void updatePanelContent() {
+        if (bind == null) {
+            return;
+        }
+
+        bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, 0);
+
+        if (hasStructuredLyrics(currentLyricsList)) {
+            setSyncLirics(currentLyricsList);
+            bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
+            bind.emptyDescriptionImageView.setVisibility(View.GONE);
+            bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
+            bind.syncLyricsTapButton.setVisibility(View.VISIBLE);
+            bind.downloadLyricsButton.setVisibility(View.VISIBLE);
+            bind.downloadLyricsButton.setEnabled(true);
+        } else if (hasText(currentLyrics)) {
+            bind.nowPlayingSongLyricsTextView.setText(MusicUtil.getReadableLyrics(currentLyrics));
+            bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
+            bind.emptyDescriptionImageView.setVisibility(View.GONE);
+            bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
+            bind.syncLyricsTapButton.setVisibility(View.GONE);
+            bind.downloadLyricsButton.setVisibility(View.VISIBLE);
+            bind.downloadLyricsButton.setEnabled(true);
+        } else if (hasText(currentDescription)) {
+            bind.nowPlayingSongLyricsTextView.setText(MusicUtil.getReadableLyrics(currentDescription));
+            bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
+            bind.emptyDescriptionImageView.setVisibility(View.GONE);
+            bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
+            bind.syncLyricsTapButton.setVisibility(View.GONE);
+            bind.downloadLyricsButton.setVisibility(View.GONE);
+            bind.downloadLyricsButton.setEnabled(false);
+        } else {
+            bind.nowPlayingSongLyricsTextView.setVisibility(View.GONE);
+            bind.emptyDescriptionImageView.setVisibility(View.VISIBLE);
+            bind.titleEmptyDescriptionLabel.setVisibility(View.VISIBLE);
+            bind.syncLyricsTapButton.setVisibility(View.GONE);
+            bind.downloadLyricsButton.setVisibility(View.GONE);
+            bind.downloadLyricsButton.setEnabled(false);
+        }
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    private boolean hasStructuredLyrics(LyricsList lyricsList) {
+        return lyricsList != null
+                && lyricsList.getStructuredLyrics() != null
+                && !lyricsList.getStructuredLyrics().isEmpty()
+                && lyricsList.getStructuredLyrics().get(0) != null
+                && lyricsList.getStructuredLyrics().get(0).getLine() != null
+                && !lyricsList.getStructuredLyrics().get(0).getLine().isEmpty();
     }
 
     @SuppressLint("DefaultLocale")
@@ -198,28 +258,28 @@ public class PlayerLyricsFragment extends Fragment {
 
     private void defineProgressHandler() {
         playerBottomSheetViewModel.getLiveLyricsList().observe(getViewLifecycleOwner(), lyricsList -> {
-            if (lyricsList != null) {
-
-                if (lyricsList.getStructuredLyrics() != null && lyricsList.getStructuredLyrics().get(0) != null && !lyricsList.getStructuredLyrics().get(0).getSynced()) {
-                    releaseHandler();
-                    return;
-                }
-
-                syncLyricsHandler = new Handler();
-                syncLyricsRunnable = () -> {
-                    if (syncLyricsHandler != null) {
-                        if (bind != null) {
-                            displaySyncedLyrics();
-                        }
-
-                        syncLyricsHandler.postDelayed(syncLyricsRunnable, 250);
-                    }
-                };
-
-                syncLyricsHandler.postDelayed(syncLyricsRunnable, 250);
-            } else {
+            if (!hasStructuredLyrics(lyricsList)) {
                 releaseHandler();
+                return;
             }
+
+            if (!lyricsList.getStructuredLyrics().get(0).getSynced()) {
+                releaseHandler();
+                return;
+            }
+
+            syncLyricsHandler = new Handler();
+            syncLyricsRunnable = () -> {
+                if (syncLyricsHandler != null) {
+                    if (bind != null) {
+                        displaySyncedLyrics();
+                    }
+
+                    syncLyricsHandler.postDelayed(syncLyricsRunnable, 250);
+                }
+            };
+
+            syncLyricsHandler.postDelayed(syncLyricsRunnable, 250);
         });
     }
 
@@ -227,7 +287,7 @@ public class PlayerLyricsFragment extends Fragment {
         LyricsList lyricsList = playerBottomSheetViewModel.getLiveLyricsList().getValue();
         int timestamp = (int) (mediaBrowser.getCurrentPosition());
 
-        if (lyricsList != null && lyricsList.getStructuredLyrics() != null && !lyricsList.getStructuredLyrics().isEmpty() && lyricsList.getStructuredLyrics().get(0).getLine() != null) {
+        if (hasStructuredLyrics(lyricsList)) {
             StringBuilder lyricsBuilder = new StringBuilder();
             List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
 

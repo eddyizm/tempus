@@ -3,7 +3,7 @@ name: Github Release Workflow
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   build:
@@ -35,12 +35,18 @@ jobs:
           echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
           echo Last build tool version is: $BUILD_TOOL_VERSION
 
-      - name: Build APK
+      - name: Build All APKs
         id: build
-        run: bash ./gradlew assembleTempoRelease
+        run: |
+          # Build release variants
+          bash ./gradlew assembleTempoRelease
+          bash ./gradlew assembleNotquitemyRelease
+          # Build debug variants  
+          bash ./gradlew assembleTempoDebug
+          bash ./gradlew assembleNotquitemyDebug
 
-      - name: Sign APK
-        id: sign_apk
+      - name: Sign Tempo Release APKs
+        id: sign_tempo_release
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: app/build/outputs/apk/tempo/release
@@ -51,11 +57,17 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
-      - name: Make artifact
-        uses: actions/upload-artifact@v4
+      - name: Sign NotQuiteMy Release APKs
+        id: sign_notquitemy_release
+        uses: r0adkll/sign-android-release@v1
         with:
-          name: app-release-signed
-          path: ${{steps.sign_apk.outputs.signedReleaseFile}}
+          releaseDirectory: app/build/outputs/apk/notquitemy/release
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS_GITHUB }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
+        env:
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
       - name: Create Release
         id: create_release
@@ -67,12 +79,40 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Upload APK
+      - name: Upload Release APKs
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{steps.sign_apk.outputs.signedReleaseFile}}
+          asset_path: ${{steps.sign_tempo_release.outputs.signedReleaseFile}}
           asset_name: app-tempo-release.apk
-          asset_content_type: application/zip
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload NotQuiteMy Release APK
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{steps.sign_notquitemy_release.outputs.signedReleaseFile}}
+          asset_name: app-notquitemy-release.apk
+          asset_content_type: application/vnd.android.package-archive
+
+      - name: Upload Debug APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apks
+          path: |
+            app/build/outputs/apk/tempo/debug/
+            app/build/outputs/apk/notquitemy/debug/
+          retention-days: 30
+
+      - name: Upload Release APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apks
+          path: |
+            ${{steps.sign_tempo_release.outputs.signedReleaseFile}}
+            ${{steps.sign_notquitemy_release.outputs.signedReleaseFile}}
+          retention-days: 30

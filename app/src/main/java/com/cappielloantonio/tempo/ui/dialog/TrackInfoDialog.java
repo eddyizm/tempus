@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -10,6 +11,7 @@ import androidx.media3.common.MediaMetadata;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.DialogTrackInfoBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
+import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -21,6 +23,11 @@ public class TrackInfoDialog extends DialogFragment {
     private DialogTrackInfoBinding bind;
 
     private final MediaMetadata mediaMetadata;
+    private AssetLinkUtil.AssetLink songLink;
+    private AssetLinkUtil.AssetLink albumLink;
+    private AssetLinkUtil.AssetLink artistLink;
+    private AssetLinkUtil.AssetLink genreLink;
+    private AssetLinkUtil.AssetLink yearLink;
 
     public TrackInfoDialog(MediaMetadata mediaMetadata) {
         this.mediaMetadata = mediaMetadata;
@@ -52,6 +59,8 @@ public class TrackInfoDialog extends DialogFragment {
     }
 
     private void setTrackInfo() {
+        genreLink = null;
+        yearLink = null;
         bind.trakTitleInfoTextView.setText(mediaMetadata.title);
         bind.trakArtistInfoTextView.setText(
                 mediaMetadata.artist != null
@@ -61,17 +70,41 @@ public class TrackInfoDialog extends DialogFragment {
                         : "");
 
         if (mediaMetadata.extras != null) {
+            songLink = AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_SONG, mediaMetadata.extras.getString("id"));
+            albumLink = AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_ALBUM, mediaMetadata.extras.getString("albumId"));
+            artistLink = AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_ARTIST, mediaMetadata.extras.getString("artistId"));
+            genreLink = AssetLinkUtil.parseLinkString(mediaMetadata.extras.getString("assetLinkGenre"));
+            yearLink = AssetLinkUtil.parseLinkString(mediaMetadata.extras.getString("assetLinkYear"));
+
             CustomGlideRequest.Builder
                     .from(requireContext(), mediaMetadata.extras.getString("coverArtId", ""), CustomGlideRequest.ResourceType.Song)
                     .build()
                     .into(bind.trackCoverInfoImageView);
 
-            bind.titleValueSector.setText(mediaMetadata.extras.getString("title", getString(R.string.label_placeholder)));
-            bind.albumValueSector.setText(mediaMetadata.extras.getString("album", getString(R.string.label_placeholder)));
-            bind.artistValueSector.setText(mediaMetadata.extras.getString("artist", getString(R.string.label_placeholder)));
+            bindAssetLink(bind.trackCoverInfoImageView, albumLink != null ? albumLink : songLink);
+            bindAssetLink(bind.trakTitleInfoTextView, songLink);
+            bindAssetLink(bind.trakArtistInfoTextView, artistLink != null ? artistLink : songLink);
+
+            String titleValue = mediaMetadata.extras.getString("title", getString(R.string.label_placeholder));
+            String albumValue = mediaMetadata.extras.getString("album", getString(R.string.label_placeholder));
+            String artistValue = mediaMetadata.extras.getString("artist", getString(R.string.label_placeholder));
+            String genreValue = mediaMetadata.extras.getString("genre", getString(R.string.label_placeholder));
+            int yearValue = mediaMetadata.extras.getInt("year", 0);
+
+            if (genreLink == null && genreValue != null && !genreValue.isEmpty() && !getString(R.string.label_placeholder).contentEquals(genreValue)) {
+                genreLink = AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_GENRE, genreValue);
+            }
+
+            if (yearLink == null && yearValue != 0) {
+                yearLink = AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(yearValue));
+            }
+
+            bind.titleValueSector.setText(titleValue);
+            bind.albumValueSector.setText(albumValue);
+            bind.artistValueSector.setText(artistValue);
             bind.trackNumberValueSector.setText(mediaMetadata.extras.getInt("track", 0) != 0 ? String.valueOf(mediaMetadata.extras.getInt("track", 0)) : getString(R.string.label_placeholder));
-            bind.yearValueSector.setText(mediaMetadata.extras.getInt("year", 0) != 0 ? String.valueOf(mediaMetadata.extras.getInt("year", 0)) : getString(R.string.label_placeholder));
-            bind.genreValueSector.setText(mediaMetadata.extras.getString("genre", getString(R.string.label_placeholder)));
+            bind.yearValueSector.setText(yearValue != 0 ? String.valueOf(yearValue) : getString(R.string.label_placeholder));
+            bind.genreValueSector.setText(genreValue);
             bind.sizeValueSector.setText(mediaMetadata.extras.getLong("size", 0) != 0 ? MusicUtil.getReadableByteCount(mediaMetadata.extras.getLong("size", 0)) : getString(R.string.label_placeholder));
             bind.contentTypeValueSector.setText(mediaMetadata.extras.getString("contentType", getString(R.string.label_placeholder)));
             bind.suffixValueSector.setText(mediaMetadata.extras.getString("suffix", getString(R.string.label_placeholder)));
@@ -83,6 +116,12 @@ public class TrackInfoDialog extends DialogFragment {
             bind.bitDepthValueSector.setText(mediaMetadata.extras.getInt("bitDepth", 0) != 0 ? mediaMetadata.extras.getInt("bitDepth", 0) + " bits" : getString(R.string.label_placeholder));
             bind.pathValueSector.setText(mediaMetadata.extras.getString("path", getString(R.string.label_placeholder)));
             bind.discNumberValueSector.setText(mediaMetadata.extras.getInt("discNumber", 0) != 0 ? String.valueOf(mediaMetadata.extras.getInt("discNumber", 0)) : getString(R.string.label_placeholder));
+
+            bindAssetLink(bind.titleValueSector, songLink);
+            bindAssetLink(bind.albumValueSector, albumLink);
+            bindAssetLink(bind.artistValueSector, artistLink);
+            bindAssetLink(bind.genreValueSector, genreLink);
+            bindAssetLink(bind.yearValueSector, yearLink);
         }
     }
 
@@ -135,4 +174,31 @@ public class TrackInfoDialog extends DialogFragment {
             bind.trakTranscodingInfoTextView.setText(info);
         }
     }
+
+    private void bindAssetLink(android.view.View view, AssetLinkUtil.AssetLink assetLink) {
+        if (view == null) return;
+        if (assetLink == null) {
+            AssetLinkUtil.clearLinkAppearance(view);
+            view.setOnClickListener(null);
+            view.setOnLongClickListener(null);
+            view.setClickable(false);
+            view.setLongClickable(false);
+            return;
+        }
+
+        view.setClickable(true);
+        view.setLongClickable(true);
+        AssetLinkUtil.applyLinkAppearance(view);
+        view.setOnClickListener(v -> {
+            dismissAllowingStateLoss();
+            boolean collapse = !AssetLinkUtil.TYPE_SONG.equals(assetLink.type);
+            ((com.cappielloantonio.tempo.ui.activity.MainActivity) requireActivity()).openAssetLink(assetLink, collapse);
+        });
+        view.setOnLongClickListener(v -> {
+            AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
+            Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, assetLink.id), Toast.LENGTH_SHORT).show();
+            return true;
+        });
+    }
+
 }
