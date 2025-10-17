@@ -76,6 +76,7 @@ object Preferences {
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
     private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
+    private const val ALBUM_DETAIL = "album_detail"
 
     @JvmStatic
     fun getServer(): String? {
@@ -637,5 +638,10 @@ object Preferences {
         val parts = str.split(",")
         if (parts.size < bandCount) return ShortArray(bandCount.toInt())
         return ShortArray(bandCount.toInt()) { i -> parts[i].toShortOrNull() ?: 0 }
+    }
+
+    @JvmStatic
+    fun showAlbumDetail(): Boolean {
+        return App.getInstance().preferences.getBoolean(ALBUM_DETAIL, false)
     }
 }
