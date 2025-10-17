@@ -2,6 +2,16 @@
 
 ***This log is for this fork to detail updates since 3.9.0 from the main repo.***
 
+## [3.17.14](https://github.com/eddyizm/tempo/releases/tag/v3.17.14) (2025-10-16)
+## What's Changed
+* fix: General build warning and playback issues by @le-firehawk in https://github.com/eddyizm/tempo/pull/167
+* fix: persist album sort preference by @eddyizm in https://github.com/eddyizm/tempo/pull/168
+* Fix album parse empty date field by @eddyizm in https://github.com/eddyizm/tempo/pull/171
+* fix: Include shuffle/repeat controls in f-droid build's media notific… by @le-firehawk in https://github.com/eddyizm/tempo/pull/174
+* fix: limits image size to prevent widget crash #172 by @eddyizm in https://github.com/eddyizm/tempo/pull/175
+
+**Full Changelog**: https://github.com/eddyizm/tempo/compare/v3.17.0...v3.17.14
+
 ## [3.17.0](https://github.com/eddyizm/tempo/releases/tag/v3.17.0) (2025-10-10)
 ## What's Changed
 * chore: adding screenshot and docs for 4 icons/buttons in player control by @eddyizm in https://github.com/eddyizm/tempo/pull/162
