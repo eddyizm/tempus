@@ -3,20 +3,21 @@ package com.cappielloantonio.tempo.subsonic.models
 import android.os.Parcelable
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
-import java.util.*
+import java.util.Date
 
 @Keep
 @Parcelize
-class Share : Parcelable {
+data class Share(
     @SerializedName("entry")
-    var entries: List<Child>? = null
-    var id: String? = null
-    var url: String? = null
-    var description: String? = null
-    var username: String? = null
-    var created: Date? = null
-    var expires: Date? = null
-    var lastVisited: Date? = null
-    var visitCount = 0
-}
+    var entries: List<Child>? = null,
+    var id: String? = null,
+    var url: String? = null,
+    var description: String? = null,
+    var username: String? = null,
+    var created: Date? = null,
+    var expires: Date? = null,
+    var lastVisited: Date? = null,
+    var visitCount: Int = 0
+) : Parcelable

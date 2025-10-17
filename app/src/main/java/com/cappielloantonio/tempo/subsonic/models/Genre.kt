@@ -7,9 +7,9 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-class Genre : Parcelable {
+class Genre(
     @SerializedName("value")
-    var genre: String? = null
-    var songCount = 0
-    var albumCount = 0
-}
+    var genre: String? = null,
+    var songCount: Int = 0,
+    var albumCount: Int = 0,
+) : Parcelable

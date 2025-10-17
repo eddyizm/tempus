@@ -9,11 +9,11 @@ import java.util.Locale
 
 @Keep
 @Parcelize
-open class ItemDate : Parcelable {
-    var year: Int? = null
-    var month: Int? = null
-    var day: Int? = null
-
+open class ItemDate(
+    var year: Int? = null,
+    var month: Int? = null,
+    var day: Int? = null,
+) : Parcelable {
     fun getFormattedDate(): String? {
         if (year == null && month == null && day == null) return null
 
@@ -22,8 +22,7 @@ open class ItemDate : Parcelable {
             SimpleDateFormat("yyyy", Locale.getDefault())
         } else if (day == null) {
             SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-        }
-        else{
+        } else {
             SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
         }
 

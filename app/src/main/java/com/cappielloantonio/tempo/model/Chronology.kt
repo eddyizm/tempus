@@ -8,18 +8,18 @@ import androidx.room.PrimaryKey
 import com.cappielloantonio.tempo.subsonic.models.Child
 import com.cappielloantonio.tempo.util.Preferences
 import kotlinx.parcelize.Parcelize
-import java.util.*
+import java.util.Date
 
 @Keep
 @Parcelize
 @Entity(tableName = "chronology")
-class Chronology(@PrimaryKey override val id: String) : Child(id) {
+class Chronology(
+    @PrimaryKey override val id: String,
     @ColumnInfo(name = "timestamp")
-    var timestamp: Long = System.currentTimeMillis()
-
+    var timestamp: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "server")
-    var server: String? = null
-
+    var server: String? = null,
+) : Child(id) {
     constructor(mediaItem: MediaItem) : this(mediaItem.mediaMetadata.extras!!.getString("id")!!) {
         parentId = mediaItem.mediaMetadata.extras!!.getString("parentId")
         isDir = mediaItem.mediaMetadata.extras!!.getBoolean("isDir")

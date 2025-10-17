@@ -88,6 +88,9 @@
     <string name="error_required">Wymagane</string>
     <string name="error_server_prefix">wymagany jest prefiks http lub https</string>
     <string name="exo_download_notification_channel_name">Pobieranie</string>
+    <string name="exo_controls_heart_off_description">Wyłącz serce</string>
+    <string name="exo_controls_heart_on_description">Włącz serce</string>
+    <string name="cast_expanded_controller_loading">Ładowanie…</string>
     <string name="filter_info_selection">Wybierz dwa lub więcej filtrów</string>
     <string name="filter_title">Filtry</string>
     <string name="filter_artist">Filtruj wykonawców</string>
@@ -213,8 +216,9 @@
     <string name="playlist_chooser_dialog_negative_button">Anuluj</string>
     <string name="playlist_chooser_dialog_neutral_button">Utwórz</string>
     <string name="playlist_chooser_dialog_title">Dodaj do playlisty</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Dodano piosenkę do playlisty</string>
-    <string name="playlist_chooser_dialog_toast_add_failure">Nie udało się dodać piosenki do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_add_success">Dodano piosenki do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Nie udało się dodać piosenek do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">Pominięto wszystkie piosenki jako duplikaty</string>
     <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
     <string name="playlist_duration">Długość  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
@@ -281,6 +285,8 @@
     <string name="settings_about_summary">Tempo jest otwarto-źródłowym i lekkim klientem muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
     <string name="settings_about_title">O aplikacji</string>
     <string name="settings_always_on_display">Always on display</string>
+    <string name="settings_allow_playlist_duplicates">Zezwalaj na dodawania duplikatów do playlist</string>
+    <string name="settings_allow_playlist_duplicates_summary">Jeżeli włączone, duplikaty nie będą sprawdzane podczas dodawania do playlisty.</string>
     <string name="settings_audio_transcode_download_format">Format transkodowania</string>
     <string name="settings_audio_transcode_download_priority_summary">Jeżeli włączone, Tempo nie będzię wymuszał pobierania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
     <string name="settings_audio_transcode_download_priority_title">Priorytetyzuj ustawienia serwera używanego do strumieniowania w pobieraniach</string>
@@ -296,6 +302,8 @@
     <string name="settings_audio_transcode_priority_toast">Priorytet przy transkodowaniu utworu danego serwerowi</string>
     <string name="settings_buffering_strategy">Strategia buforowania</string>
     <string name="settings_buffering_strategy_summary">Aby zmiany przyniosły efekt, musisz ręcznie zrestartować aplikację.</string>
+    <string name="settings_choose_download_folder">Wybierz folder dla pobranych plików muzycznych</string>
+    <string name="settings_clear_download_folder">Wyczyść folder pobierania</string>
     <string name="settings_continuous_play_summary">Pozwala muzyce odtwarzać się dalej po końcu playlisty, odtwarza podobne piosenki</string>
     <string name="settings_continuous_play_title">Odtwarzanie bez przerwy</string>
     <string name="settings_covers_cache">Rozmiar cache dla okładek</string>
@@ -304,6 +312,9 @@
     <string name="settings_delete_download_storage_summary">Zatwierdzenie nieodwracalnie usunie wszystkie zapisane elementy</string>
     <string name="settings_delete_download_storage_title">Usuń zapisane elementy</string>
     <string name="settings_download_storage_title">Pamięć do pobierania</string>
+    <string name="settings_download_folder_cleared">Utworzono folder pobierania.</string>
+    <string name="settings_download_folder_set">Wybrano folder pobierania</string>
+    <string name="settings_set_download_folder">Ustaw folder pobierania</string>
     <string name="settings_system_equalizer_summary">Zmień ustawienia audio</string>
     <string name="settings_system_equalizer_title">Korektor systemowy</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
@@ -312,6 +323,7 @@
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempo/discussions</string>
     <string name="settings_support_summary">Dołącz do dyskusji i wsparcia społeczności</string>
     <string name="settings_support_title">Wsparcie użytkowników</string>
+    <string name="settings_scan_result">Skanowanie: naliczono %1$d utworów</string>
     <string name="settings_image_size">Rozdzielczość obrazów</string>
     <string name="settings_language">Język</string>
     <string name="settings_logout_title">Wyloguj</string>
@@ -332,6 +344,8 @@
     <string name="settings_queue_syncing_countdown">Timer synchronizacji</string>
     <string name="settings_queue_syncing_summary">Jeżeli włączone, użytkownik będzie miał możliwość zapisania kolejki i będzie miał możliwość załadowania jej stanu przy otwarciu aplikacji.</string>
     <string name="settings_queue_syncing_title">Synchronizuj kolejkę odtwarzania dla tego użytkownika [Niedokończone]</string>
+    <string name="settings_show_mini_shuffle_button">Pokaż przycisk odtwarzania losowego</string>
+    <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
     <string name="settings_radio">Pokaż radio</string>
     <string name="settings_radio_summary">Jeżeli włączone, widoczna będzie sekcja radia. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
@@ -366,6 +380,7 @@
     <string name="settings_theme">Motyw</string>
     <string name="settings_title_data">Dane</string>
     <string name="settings_title_general">Ogólne</string>
+    <string name="settings_title_playlist">Playlisty</string>
     <string name="settings_title_rating">Oceny</string>
     <string name="settings_title_replay_gain">Wzmocnienie głośności przy ponownym odtwarzaniu</string>
     <string name="settings_title_scrobble">Scrobble</string>
@@ -454,6 +469,17 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">Specjalne podziękowania dla unDraw bez którego ilustracji nie mogliśmy uczynić tej aplikacji jeszcze piękniejszą.</string>
     <string name="undraw_url">https://undraw.co/</string>
+    <string name="widget_label">Widget Tempo</string>
+    <string name="widget_not_playing">Nie odtwarza</string>
+    <string name="widget_placeholder_subtitle">Otwórz Tempo</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
+    <string name="widget_time_duration_placeholder">0:00</string>
+    <string name="widget_content_desc_album_art">Okładka albumu</string>
+    <string name="widget_content_desc_play_pause">Play lub pauza</string>
+    <string name="widget_content_desc_next">Następny utwór</string>
+    <string name="widget_content_desc_prev">Poprzedni utwór</string>
+    <string name="widget_content_desc_shuffle">Przełącznik odtwarzania losowego</string>
+    <string name="widget_content_desc_repeat">Zmień tryb powtarzania</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d album do zsynchronizowania </item>
         <item quantity="other">%d albumów do zsynchrpnizowania</item>

@@ -17,6 +17,9 @@ import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -102,35 +105,76 @@ public class ExternalAudioWriter {
             ExternalDownloadMetadataStore.remove(metadataKey);
             return;
         }
-        String scheme = mediaUri.getScheme();
-        if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https"))) {
-            notifyFailure(context, "Unsupported media URI.");
-            ExternalDownloadMetadataStore.remove(metadataKey);
-            return;
-        }
+
+        String scheme = mediaUri.getScheme() != null ? mediaUri.getScheme().toLowerCase(Locale.ROOT) : "";
 
         HttpURLConnection connection = null;
+        DocumentFile sourceDocument = null;
+        File sourceFile = null;
+        long remoteLength = -1;
+        String mimeType = null;
         DocumentFile targetFile = null;
-        try {
-            connection = (HttpURLConnection) new URL(mediaUri.toString()).openConnection();
-            connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
-            connection.setReadTimeout(READ_TIMEOUT_MS);
-            connection.setRequestProperty("Accept-Encoding", "identity");
-            connection.connect();
 
-            int responseCode = connection.getResponseCode();
-            if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-                notifyFailure(context, "Server returned " + responseCode);
+        try {
+            if (scheme.equals("http") || scheme.equals("https")) {
+                connection = (HttpURLConnection) new URL(mediaUri.toString()).openConnection();
+                connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
+                connection.setReadTimeout(READ_TIMEOUT_MS);
+                connection.setRequestProperty("Accept-Encoding", "identity");
+                connection.connect();
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                    notifyFailure(context, "Server returned " + responseCode);
+                    ExternalDownloadMetadataStore.remove(metadataKey);
+                    return;
+                }
+
+                mimeType = connection.getContentType();
+                remoteLength = connection.getContentLengthLong();
+            } else if (scheme.equals("content")) {
+                sourceDocument = DocumentFile.fromSingleUri(context, mediaUri);
+                mimeType = context.getContentResolver().getType(mediaUri);
+                if (sourceDocument != null) {
+                    remoteLength = sourceDocument.length();
+                }
+            } else if (scheme.equals("file")) {
+                String path = mediaUri.getPath();
+                if (path != null) {
+                    sourceFile = new File(path);
+                    if (sourceFile.exists()) {
+                        remoteLength = sourceFile.length();
+                    }
+                }
+                String ext = MimeTypeMap.getFileExtensionFromUrl(mediaUri.toString());
+                if (ext != null && !ext.isEmpty()) {
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
+                }
+            } else {
+                notifyFailure(context, "Unsupported media URI.");
                 ExternalDownloadMetadataStore.remove(metadataKey);
                 return;
             }
 
-            String mimeType = connection.getContentType();
             if (mimeType == null || mimeType.isEmpty()) {
                 mimeType = "application/octet-stream";
             }
 
             String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+            if ((extension == null || extension.isEmpty()) && sourceDocument != null && sourceDocument.getName() != null) {
+                String name = sourceDocument.getName();
+                int dot = name.lastIndexOf('.');
+                if (dot >= 0 && dot < name.length() - 1) {
+                    extension = name.substring(dot + 1);
+                }
+            }
+            if ((extension == null || extension.isEmpty()) && sourceFile != null) {
+                String name = sourceFile.getName();
+                int dot = name.lastIndexOf('.');
+                if (dot >= 0 && dot < name.length() - 1) {
+                    extension = name.substring(dot + 1);
+                }
+            }
             if (extension == null || extension.isEmpty()) {
                 String suffix = child.getSuffix();
                 if (suffix != null && !suffix.isEmpty()) {
@@ -146,7 +190,6 @@ public class ExternalAudioWriter {
             String fileName = sanitized + "." + extension;
 
             DocumentFile existingFile = findFile(directory, fileName);
-            long remoteLength = connection.getContentLengthLong();
             Long recordedSize = ExternalDownloadMetadataStore.getSize(metadataKey);
             if (existingFile != null && existingFile.exists()) {
                 long localLength = existingFile.length();
@@ -175,7 +218,7 @@ public class ExternalAudioWriter {
             }
 
             Uri targetUri = targetFile.getUri();
-            try (InputStream in = connection.getInputStream();
+            try (InputStream in = openInputStream(context, mediaUri, scheme, connection, sourceFile);
                  OutputStream out = context.getContentResolver().openOutputStream(targetUri)) {
                 if (out == null) {
                     notifyFailure(context, "Cannot open output stream.");
@@ -318,5 +361,33 @@ public class ExternalAudioWriter {
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
+    }
+
+    private static InputStream openInputStream(Context context,
+                                               Uri mediaUri,
+                                               String scheme,
+                                               HttpURLConnection connection,
+                                               File sourceFile) throws IOException {
+        switch (scheme) {
+            case "http":
+            case "https":
+                if (connection == null) {
+                    throw new IOException("Connection not initialized");
+                }
+                return connection.getInputStream();
+            case "content":
+                InputStream contentStream = context.getContentResolver().openInputStream(mediaUri);
+                if (contentStream == null) {
+                    throw new IOException("Cannot open content stream");
+                }
+                return contentStream;
+            case "file":
+                if (sourceFile == null || !sourceFile.exists()) {
+                    throw new IOException("Missing source file");
+                }
+                return new FileInputStream(sourceFile);
+            default:
+                throw new IOException("Unsupported scheme " + scheme);
+        }
     }
 }

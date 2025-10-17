@@ -74,6 +74,12 @@ public class MappingUtil {
         bundle.putInt("originalWidth", media.getOriginalWidth() != null ? media.getOriginalWidth() : 0);
         bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
         bundle.putString("uri", uri.toString());
+        bundle.putString("assetLinkSong", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()));
+        bundle.putString("assetLinkAlbum", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()));
+        bundle.putString("assetLinkArtist", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()));
+        bundle.putString("assetLinkGenre", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_GENRE, media.getGenre()));
+        Integer year = media.getYear();
+        bundle.putString("assetLinkYear", year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year)) : null);
 
         return new MediaItem.Builder()
                 .setMediaId(media.getId())

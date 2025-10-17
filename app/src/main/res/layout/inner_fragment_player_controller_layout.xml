@@ -57,6 +57,17 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <include
+        android:id="@+id/player_asset_link_row"
+        layout="@layout/view_asset_link_row"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/player_media_quality_sector" />
+
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/player_media_cover_view_pager"
         android:layout_width="0dp"
@@ -66,7 +77,7 @@
         app:layout_constraintBottom_toTopOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/player_media_quality_sector" />
+        app:layout_constraintTop_toBottomOf="@+id/player_asset_link_row" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

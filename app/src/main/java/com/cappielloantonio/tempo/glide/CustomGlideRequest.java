@@ -125,7 +125,7 @@ public class CustomGlideRequest {
 
     public static class Builder {
         private final RequestManager requestManager;
-        private Object item;
+        private String item;
 
         private Builder(Context context, String item, ResourceType type) {
             this.requestManager = Glide.with(context);
