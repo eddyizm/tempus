@@ -1,6 +1,5 @@
 <p align="center">
-  <img alt="Tempus" title="Tempus" src="mockup/svg/tempus_horizontal_logo.png
-  " width="250">
+  <img alt="Tempus" title="Tempus" src="mockup/svg/tempus_horizontal_logo.png" width="250">
 </p>
 
 <p align="center">
