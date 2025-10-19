@@ -106,6 +106,6 @@ Not a hard requirement but any new feature/change should ideally include an upda
 Tempus is released under the [GNU General Public License v3.0](LICENSE). Feel free to modify, distribute, and use the app in accordance with the terms of the license. Contributions to the project are also welcome. 
 
 ## Credits
-Thanks to the original repo/creator [CappielloAntonio](https://github.com/CappielloAntonio) (3.9.0)
+Thanks to the original repo/creator [CappielloAntonio](https://github.com/CappielloAntonio) (forked from v3.9.0)
 
 [Opensvg.org}(https://opensvg.org) for the new turntable logo. 
