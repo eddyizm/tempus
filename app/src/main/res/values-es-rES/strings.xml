@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="album_page_tracks_count_and_duration">%1$d pistas  •  %2$d minutos</string>
-    <string name="app_name">Tempo</string>
+    <string name="app_name">Tempus</string>
     <string name="activity_battery_optimizations_conclusion">Si tienes problemas, visita https://dontkillmyapp.com. Ofrece instrucciones detalladas para desactivar características de ahorro de energía que podrían afectar al rendimiento de la app.</string>
     <string name="activity_battery_optimizations_summary">Por favor, desactive las optimizaciones de batería para continuar la reproducción multimedia mientras la pantalla está apagada.</string>
     <string name="activity_battery_optimizations_title">Optimizaciones de batería</string>
@@ -183,7 +183,7 @@
     <string name="settings_language">Idioma</string>
     <string name="settings_system_language">Idioma del sistema</string>
     <string name="settings_logout_title">Cerrar sesión</string>
-    <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
+    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
     <string name="settings_github_summary">Siga el desarrollo</string>
     <string name="settings_github_title">Github</string>
     <string name="menu_group_by_genre">Género</string>
@@ -289,21 +289,21 @@
     <string name="server_unreachable_dialog_positive_button">Continuar de todas formas</string>
     <string name="server_unreachable_dialog_summary">El servidor no está disponible. Si decide continuar, este diálogo no aparecerá de nuevo durante una hora.</string>
     <string name="server_unreachable_dialog_title">No se puede conectar con el servidor</string>
-    <string name="settings_about_summary">Tempo es un cliente de música Subsonic ligero y de código abierto, diseñado nativamente para Android.</string>
+    <string name="settings_about_summary">Tempus es un cliente de música Subsonic ligero y de código abierto, diseñado nativamente para Android.</string>
     <string name="settings_about_title">Acerca de</string>
     <string name="settings_always_on_display">Pantalla siempre activa</string>
     <string name="settings_allow_playlist_duplicates_summary">Si está habilitada, no se comprobará si hay pistas repetidas cuando se añadan a la lista.</string>
     <string name="settings_audio_transcode_download_format">Formato de transcodificación</string>
-    <string name="settings_audio_transcode_download_priority_summary">Si está habilitada, Tempo no descargará la pista con las opciones de transcodificación que aparecen a continuación.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Si está habilitada, Tempus no descargará la pista con las opciones de transcodificación que aparecen a continuación.</string>
     <string name="settings_audio_transcode_download_priority_title">Dar prioridad a las opciones del servidor usadas para el streaming en las descargas</string>
-    <string name="settings_audio_transcode_download_summary">Si está habilitada, Tempo descargará las pistas transcodificadas.</string>
+    <string name="settings_audio_transcode_download_summary">Si está habilitada, Tempus descargará las pistas transcodificadas.</string>
     <string name="settings_audio_transcode_download_title">Descargas pistas transcodificadas</string>
     <string name="settings_audio_transcode_estimate_content_length_summary">Si está habilitada, se pedirá al servidor la duración estimada de la pista.</string>
     <string name="settings_audio_transcode_estimate_content_length_title">Calcular la duración del contenido</string>
     <string name="settings_audio_transcode_format_download">Formato de transcodificación para las descargas</string>
     <string name="settings_audio_transcode_format_mobile">Formato de transcodificación en red de datos móviles</string>
     <string name="settings_audio_transcode_format_wifi">Formato de transcodificación en red Wi-Fi</string>
-    <string name="settings_audio_transcode_priority_summary">Si está habilitada, Tempo no reproducirá la pista con las opciones de transcodificación que aparecen a continuación.</string>
+    <string name="settings_audio_transcode_priority_summary">Si está habilitada, Tempus no reproducirá la pista con las opciones de transcodificación que aparecen a continuación.</string>
     <string name="settings_audio_transcode_priority_title">Dar prioridad a las opciones de transcodificación del servidor</string>
     <string name="settings_audio_transcode_priority_toast">Prioridad a la hora de transcodificar una pista</string>
     <string name="settings_buffering_strategy">Estrategia de buffer</string>
@@ -367,7 +367,7 @@
     <string name="undraw_url">https://undraw.co/</string>
     <string name="track_info_track_number">Número de pista</string>
     <string name="settings_item_rating_summary">Si está habilitada, se mostrará la valoración del elemento y si está marcado como favorito.</string>
-    <string name="settings_queue_syncing_countdown">Temporizador de sincronización</string>
+    <string name="settings_queue_syncing_countdown">Tempusrizador de sincronización</string>
     <string name="settings_queue_syncing_summary">Si está habilitada, el usuario podrá guardar la cola de reproducción y restaurarla cuando abra la aplicación.</string>
     <string name="settings_radio_summary">Si está habilitada, se mostrará la sección de emisoras de radio. Reinicia la app para que los cambios surtan efecto.</string>
     <string name="settings_rounded_corner_size_summary">Establece la proporción del ángulo de curvatura.</string>
@@ -463,9 +463,9 @@
     <string name="settings_app_equalizer_summary">Abrir el ecualizador integrado</string>
     <string name="settings_download_folder_cleared">Se ha limpiado la carpeta de descargas.</string>
     <string name="settings_download_folder_set">Se ha establecido la carpeta de descargas</string>
-    <string name="widget_label">Widget de Tempo</string>
+    <string name="widget_label">Widget de Tempus</string>
     <string name="widget_not_playing">En pausa</string>
-    <string name="widget_placeholder_subtitle">Abrir Tempo</string>
+    <string name="widget_placeholder_subtitle">Abrir Tempus</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Portada del álbum</string>
     <string name="widget_content_desc_play_pause">Reproducir o pausar</string>

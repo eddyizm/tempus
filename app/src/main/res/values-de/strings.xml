@@ -28,7 +28,7 @@
     <string name="album_page_release_dates_label">Veröffentlicht am %1$s, ursprünglich %2$s</string>
     <string name="album_page_shuffle_button">Zufällige Wiedergabe</string>
     <string name="album_page_tracks_count_and_duration">%1$d Tracks • %2$d Minuten</string>
-    <string name="app_name">Tempo</string>
+    <string name="app_name">Tempus</string>
     <string name="artist_adapter_radio_station_starting">Suche…</string>
     <string name="artist_bottom_sheet_instant_mix">Instant mix</string>
     <string name="artist_bottom_sheet_shuffle">Mischen</string>
@@ -256,7 +256,7 @@
     <string name="server_unreachable_dialog_positive_button">Trotzdem weitermachen</string>
     <string name="server_unreachable_dialog_summary">Der angefragte Server ist nicht erreichbar. Wenn Du trotzdem weitermachst, wird dieser Dialog für eine Stunden nicht wieder erscheinen.</string>
     <string name="server_unreachable_dialog_title">Server nicht erreichbar</string>
-    <string name="settings_about_summary">Tempo ist ein nativ für Android entwickelter, leichtgewichtiger Open-Source Client für Subsonic.</string>
+    <string name="settings_about_summary">Tempus ist ein nativ für Android entwickelter, leichtgewichtiger Open-Source Client für Subsonic.</string>
     <string name="settings_about_title">Über</string>
     <string name="settings_always_on_display">Immer anzeigen</string>
     <string name="settings_audio_transcode_download_format">Transkodierungs-Format</string>
@@ -284,7 +284,7 @@
     <string name="settings_download_storage_title">Download storage</string>
     <string name="settings_system_equalizer_summary">Audio Einstellungen anpassen</string>
     <string name="settings_system_equalizer_title">System-Equalizer</string>
-    <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
+    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
     <string name="settings_github_summary">Verfolge die Entwicklung</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_image_size">Bilder Auflösung anpassen</string>
@@ -411,9 +411,9 @@
     <string name="track_info_path">Pfad</string>
     <string name="track_info_disc_number">Disk Nummer</string>
     <string name="track_info_summary_downloaded_file">Diese Datei wurde mit den Subsonic APIs heruntergeladen. Der Codec und die Bitrate sind unverändert zur original Datei.</string>
-    <string name="track_info_summary_server_prioritized">Die Qualität des abzuspielenden Titels wird vom Server bestimmt. Tempo stellt keinen Codec und keine Bitrate für eine potentielle Transkodierung sicher.</string>
-    <string name="track_info_summary_original_file">Tempo wird nur die original Datei, so wie sie vom Server geliefert wird, lesen. Die Anwendung wird den Server explizit nach einer nicht-transkodierten Version der Datei mit der Bitrate der original Datei fragen.</string>
-    <string name="track_info_summary_transcoding_codec">Tempo wird den Server bitten, die Datei zu transkodieren. Der vom Benutzer gewünschte Codec ist %1$s, die Bitrate wird dieselbe wie bei der original Datei sein. Die potentielle Transkodierung der Datei in das gewünschte Format ist vom Server abhängig. Dieser kann die Operation gegebenenfalls nicht unterstützen.</string>
-    <string name="track_info_summary_transcoding_bitrate">Tempo wird den Server bitten, die Bitrate der Datei zu erändern. Die vom Benutzer gewünschte Bitrate ist %1$s, der Codec der Originaldatei wird nicht verändert. Änderungen an der Bitrate der Datei werden vom Server ausgeführt, dieser kann die Operation gegebenenfalls nicht unterstützen.</string>
+    <string name="track_info_summary_server_prioritized">Die Qualität des abzuspielenden Titels wird vom Server bestimmt. Tempus stellt keinen Codec und keine Bitrate für eine potentielle Transkodierung sicher.</string>
+    <string name="track_info_summary_original_file">Tempus wird nur die original Datei, so wie sie vom Server geliefert wird, lesen. Die Anwendung wird den Server explizit nach einer nicht-transkodierten Version der Datei mit der Bitrate der original Datei fragen.</string>
+    <string name="track_info_summary_transcoding_codec">Tempus wird den Server bitten, die Datei zu transkodieren. Der vom Benutzer gewünschte Codec ist %1$s, die Bitrate wird dieselbe wie bei der original Datei sein. Die potentielle Transkodierung der Datei in das gewünschte Format ist vom Server abhängig. Dieser kann die Operation gegebenenfalls nicht unterstützen.</string>
+    <string name="track_info_summary_transcoding_bitrate">Tempus wird den Server bitten, die Bitrate der Datei zu erändern. Die vom Benutzer gewünschte Bitrate ist %1$s, der Codec der Originaldatei wird nicht verändert. Änderungen an der Bitrate der Datei werden vom Server ausgeführt, dieser kann die Operation gegebenenfalls nicht unterstützen.</string>
     <string name="track_info_summary_full_transcode">Die Anwendung wird den Server bitten die Datei zu transkodieren und die Bitrate zu verändern. Der vom Benutzer gewünschte Codec ist %1$s, mit der Bitrate %2$s. Änderungen am Codec und an der Bitrate der Datei werden vom Server ausgeführt, dieser kann die Operation gegebenenfalls nicht unterstützen.</string>
 </resources>

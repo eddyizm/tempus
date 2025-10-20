@@ -51,11 +51,14 @@ Fork [**sponsorship here**](https://ko-fi.com/eddyizm).
 - **Playlist Management**: Create, edit, and manage playlists to curate your perfect music collection.
 - **Gapless Playback**: Experience uninterrupted playback with gapless listening mode.
 - **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.
-- **Scrobbling Integration**: Optionally integrate Tempus with Last.fm to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
+- **Scrobbling Integration**: Optionally integrate Tempus with Last.fm or Listenbrainz.org to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
 - **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
 - **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
+- **Equalizer**: Option to use in app equalizer.
+- **Widget**: New widget to keeping the basic controls on your screen at all times.
+- **Available in 11 languages**: Currently in Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish and Turkish
 
 ## Screenshot
 
@@ -64,11 +67,11 @@ Fork [**sponsorship here**](https://ko-fi.com/eddyizm).
 </p>
 
 <p align="center">
-    <img src="mockup/light/1_screenshot.png" width=200>
-    <img src="mockup/light/2_screenshot.png" width=200>
-    <img src="mockup/light/3_screenshot.png" width=200>
-    <img src="mockup/light/4_screenshot.png" width=200>
-    <img src="mockup/light/5_screenshot.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_light.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_light.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_light.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_light.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_light.png" width=200>
     <img src="mockup/light/6_screenshot.png" width=200>
     <img src="mockup/light/7_screenshot.png" width=200>
     <img src="mockup/light/8_screenshot.png" width=200>
@@ -81,11 +84,11 @@ Fork [**sponsorship here**](https://ko-fi.com/eddyizm).
 </p>
 
 <p align="center">
-    <img src="mockup/dark/1_screenshot.png" width=200>
-    <img src="mockup/dark/2_screenshot.png" width=200>
-    <img src="mockup/dark/3_screenshot.png" width=200>
-    <img src="mockup/dark/4_screenshot.png" width=200>
-    <img src="mockup/dark/5_screenshot.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_dark.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_dark.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_dark.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_dark.png" width=200>
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_dark.png" width=200>
     <img src="mockup/dark/6_screenshot.png" width=200>
     <img src="mockup/dark/7_screenshot.png" width=200>
     <img src="mockup/dark/8_screenshot.png" width=200>

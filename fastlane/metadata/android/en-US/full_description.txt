@@ -12,3 +12,7 @@ Features
 - Scrobbling Integration: Optionally integrate Tempus with Last.fm to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
 - Podcasts and Radio: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
 - Transcoding Support: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
+- Multiple Libraries: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
+- Equalizer: Option to use in app equalizer.
+- Widget: New widget to keeping the basic controls on your screen at all times.
+- Available in 11 languages: Currently in Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish and Turkish
