@@ -250,7 +250,7 @@
     <string name="settings_download_storage_title">Armazenamento dos downloads</string>
     <string name="settings_system_equalizer_summary">Ajustar configurações de áudio</string>
     <string name="settings_system_equalizer_title">Equalizador do sistema</string>
-    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
+    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Acompanhe o desenvolvimento</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_image_size">Definir resolução da imagem</string>
@@ -264,7 +264,7 @@
     <string name="settings_music_directory_summary">Se ativado, mostrará a seção do diretório de música. Observe que, para que a navegação na pasta funcione corretamente, o servidor deve oferecer suporte a esse recurso.</string>
     <string name="settings_podcast">Mostrar podcast</string>
     <string name="settings_podcast_summary">Se ativado, mostrará a seção de podcasts. Reinicie o aplicativo para que as mudanças tenham efeito.</string>
-    <string name="settings_queue_syncing_countdown">Tempusrizador de sincronização</string>
+    <string name="settings_queue_syncing_countdown">Temporizador de sincronização</string>
     <string name="settings_queue_syncing_summary">Se ativado, o usuário poderá salvar sua fila de reprodução e carregar o estado ao abrir o aplicativo.</string>
     <string name="settings_queue_syncing_title">Sincronizar a fila de reprodução para este usuário</string>
     <string name="settings_radio">Mostrar rádios</string>

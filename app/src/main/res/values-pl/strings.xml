@@ -317,10 +317,10 @@
     <string name="settings_set_download_folder">Ustaw folder pobierania</string>
     <string name="settings_system_equalizer_summary">Zmień ustawienia audio</string>
     <string name="settings_system_equalizer_title">Korektor systemowy</string>
-    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
+    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Śledź tworzenie aplikacji</string>
     <string name="settings_github_title">GitHub</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/Tempus/discussions</string>
+    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">Dołącz do dyskusji i wsparcia społeczności</string>
     <string name="settings_support_title">Wsparcie użytkowników</string>
     <string name="settings_scan_result">Skanowanie: naliczono %1$d utworów</string>

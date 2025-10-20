@@ -183,7 +183,7 @@
     <string name="settings_language">Idioma</string>
     <string name="settings_system_language">Idioma del sistema</string>
     <string name="settings_logout_title">Cerrar sesión</string>
-    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
+    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Siga el desarrollo</string>
     <string name="settings_github_title">Github</string>
     <string name="menu_group_by_genre">Género</string>
@@ -367,7 +367,7 @@
     <string name="undraw_url">https://undraw.co/</string>
     <string name="track_info_track_number">Número de pista</string>
     <string name="settings_item_rating_summary">Si está habilitada, se mostrará la valoración del elemento y si está marcado como favorito.</string>
-    <string name="settings_queue_syncing_countdown">Tempusrizador de sincronización</string>
+    <string name="settings_queue_syncing_countdown">Temporizador de sincronización</string>
     <string name="settings_queue_syncing_summary">Si está habilitada, el usuario podrá guardar la cola de reproducción y restaurarla cuando abra la aplicación.</string>
     <string name="settings_radio_summary">Si está habilitada, se mostrará la sección de emisoras de radio. Reinicia la app para que los cambios surtan efecto.</string>
     <string name="settings_rounded_corner_size_summary">Establece la proporción del ángulo de curvatura.</string>

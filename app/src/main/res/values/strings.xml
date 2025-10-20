@@ -326,10 +326,10 @@
     <string name="settings_set_download_folder">Set download folder</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
-    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
+    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/Tempus/discussions</string>
+    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">Join community discussions and support</string>
     <string name="settings_support_title">User support</string>
     <string name="settings_scan_result">Scanning: counting %1$d tracks</string>

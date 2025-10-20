@@ -257,7 +257,7 @@
     <string name="settings_download_storage_title">下载存储</string>
     <string name="settings_system_equalizer_summary">调整音频设置</string>
     <string name="settings_system_equalizer_title">系统均衡器</string>
-    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
+    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">关注开发进展</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_image_size">设置图像分辨率</string>

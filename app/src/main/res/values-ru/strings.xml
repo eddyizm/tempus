@@ -296,7 +296,7 @@
     <string name="settings_download_storage_title">Загрузить хранилище</string>
     <string name="settings_system_equalizer_summary">Отрегулируйте настройки звука</string>
     <string name="settings_system_equalizer_title">Системный эквалайзер</string>
-    <string name="settings_github_link">https://github.com/eddyizm/Tempus</string>
+    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Следите за развитием</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_image_size">Установить разрешение изображения</string>
