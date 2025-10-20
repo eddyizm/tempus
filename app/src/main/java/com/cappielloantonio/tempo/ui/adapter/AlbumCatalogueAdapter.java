@@ -152,6 +152,12 @@ public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAd
         }
     }
 
+    public void setItemsWithoutFilter(List<AlbumID3> albums) {
+        this.albumsFull = new ArrayList<>(albums);
+        this.albums = new ArrayList<>(albums);
+        notifyDataSetChanged();
+    }
+
     public void sort(String order) {
         if (albums == null) return;
         

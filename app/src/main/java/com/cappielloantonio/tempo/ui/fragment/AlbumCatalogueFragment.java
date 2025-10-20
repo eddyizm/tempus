@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +36,10 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.AlbumCatalogueViewModel;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 @OptIn(markerClass = UnstableApi.class)
 public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
     private static final String TAG = "AlbumCatalogueFragment";
@@ -45,13 +50,31 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
 
     private AlbumCatalogueAdapter albumAdapter;
     private String currentSortOrder;
+    private List<com.cappielloantonio.tempo.subsonic.models.AlbumID3> originalAlbums;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        currentSortOrder = Preferences.getAlbumSortOrder();
 
         initData();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        String latestSort = Preferences.getAlbumSortOrder();
+        
+        if (!latestSort.equals(currentSortOrder)) {
+            currentSortOrder = latestSort;
+        }
+        // Re-apply sort when returning to fragment
+        if (originalAlbums != null && currentSortOrder != null) {
+            applySortToAlbums(currentSortOrder);
+        } else {
+            Log.d(TAG, "onResume - Cannot re-sort, missing data");
+        }
     }
 
     @Override
@@ -118,8 +141,10 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
         albumAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
         bind.albumCatalogueRecyclerView.setAdapter(albumAdapter);
         albumCatalogueViewModel.getAlbumList().observe(getViewLifecycleOwner(), albums -> {
-            albumAdapter.setItems(albums);
-            applySavedSortOrder();
+            originalAlbums = albums;
+            currentSortOrder = Preferences.getAlbumSortOrder();
+            applySortToAlbums(currentSortOrder);
+            updateSortIndicator();
         });
 
         bind.albumCatalogueRecyclerView.setOnTouchListener((v, event) -> {
@@ -128,6 +153,16 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
         });
 
         bind.albumListSortImageView.setOnClickListener(view -> showPopupMenu(view, R.menu.sort_album_popup_menu));
+    }
+
+    private void applySortToAlbums(String sortOrder) {
+        if (originalAlbums == null) {
+            return;
+        }
+        albumAdapter.setItemsWithoutFilter(originalAlbums);
+        if (sortOrder != null) {
+            albumAdapter.sort(sortOrder);
+        }
     }
 
     private void initProgressLoader() {
@@ -140,13 +175,6 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
                 bind.albumListProgressLoader.setVisibility(View.GONE);
             }
         });
-    }
-
-    private void applySavedSortOrder() {
-        String savedSortOrder = Preferences.getAlbumSortOrder();
-        currentSortOrder = savedSortOrder;
-        albumAdapter.sort(savedSortOrder);
-        updateSortIndicator();
     }
 
     private void updateSortIndicator() {
@@ -235,8 +263,8 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
 
             if (newSortOrder != null) {
                 currentSortOrder = newSortOrder;
-                albumAdapter.sort(newSortOrder);
                 Preferences.setAlbumSortOrder(newSortOrder);
+                applySortToAlbums(newSortOrder);
                 updateSortIndicator();
                 return true;
             }
