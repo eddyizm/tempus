@@ -27,7 +27,7 @@
     <string name="album_page_release_dates_label">%1$s에 발매, %2$s에 최초 발매됨</string>
     <string name="album_page_shuffle_button">셔플</string>
     <string name="album_page_tracks_count_and_duration">%1$d 곡  •  %2$d 분</string>
-    <string name="app_name">Tempo</string>
+    <string name="app_name">Tempus</string>
     <string name="artist_adapter_radio_station_starting">탐색 중…</string>
     <string name="artist_bottom_sheet_instant_mix">인스턴트 믹스</string>
     <string name="artist_bottom_sheet_shuffle">셔플</string>
@@ -238,7 +238,7 @@
     <string name="server_unreachable_dialog_positive_button">무시하고 계속</string>
     <string name="server_unreachable_dialog_summary">요청한 서버를 사용할 수 없습니다. 계속하면 한 시간 동안 더 이상 경고하지 않습니다.</string>
     <string name="server_unreachable_dialog_title">서버에 연결할 수 없음</string>
-    <string name="settings_about_summary">Tempo는 안드로이드용 경량 Subsonic 오픈 소스 음악 클라이언트입니다.</string>
+    <string name="settings_about_summary">Tempus는 안드로이드용 경량 Subsonic 오픈 소스 음악 클라이언트입니다.</string>
     <string name="settings_about_title">About</string>
     <string name="settings_audio_transcode_download_format">트랜스코딩 포맷</string>
     <string name="settings_audio_transcode_download_priority_summary">활성화 시, 아래 트랜스코딩 설정으로 트랙 강제 다운로드를 하지 않습니다.</string>
@@ -263,7 +263,7 @@
     <string name="settings_download_storage_title">스토리지 다운로드</string>
     <string name="settings_system_equalizer_summary">오디오 설정 적용</string>
     <string name="settings_system_equalizer_title">시스템 이퀄라이저</string>
-    <string name="settings_github_link">https://github.com/eddyizm/tempo</string>
+    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_image_size">이미지 해상도 설정</string>

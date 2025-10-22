@@ -1,4 +1,4 @@
-# Tempo Usage Guide 
+# Tempus Usage Guide 
 [<- back home](README.md)
 
 ## Table of Contents
@@ -34,7 +34,7 @@ This app works with any service that implements the Subsonic API, including:
 ## Getting Started
 
 ### Installation
-1. Download the APK from the [Releases](https://github.com/eddyizm/tempo/releases) section
+1. Download the APK from the [Releases](https://github.com/eddyizm/tempus/releases) section
 2. Enable "Install from unknown sources" in your Android settings
 3. Install the application
 
@@ -60,11 +60,11 @@ This app works with any service that implements the Subsonic API, including:
 
 **Multi-library**
 
-Tempo handles multi-library setups gracefully. They are displayed as Library folders. 
+Tempus handles multi-library setups gracefully. They are displayed as Library folders. 
 
 However, if you want to limit or change libraries you could use a workaround, if your server supports it.
 
-You can create multiple users , one for each library, and save each of them in Tempo app.
+You can create multiple users , one for each library, and save each of them in Tempus app.
 
 ### Now Playing Screen
 
@@ -157,8 +157,8 @@ On the main player control screen, tapping on the artwork will reveal a small co
 
 ### Support
 For additional help:
-- Question? Start a [Discussion](https://github.com/eddyizm/tempo/discussions)
-- Open an [issue](https://github.com/eddyizm/tempo/issues) if you don't find a discussion solving your issue. 
+- Question? Start a [Discussion](https://github.com/eddyizm/tempus/discussions)
+- Open an [issue](https://github.com/eddyizm/tempus/issues) if you don't find a discussion solving your issue. 
 - Consult your Subsonic server's documentation
 
 ---
