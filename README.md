@@ -72,9 +72,8 @@ Fork [**sponsorship here**](https://ko-fi.com/eddyizm).
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_light.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_light.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_light.png" width=200>
-    <!-- <img src="mockup/light/6_screenshot.png" width=200> -->
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_light.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_light.png" width=200>
-    <img src="mockup/light/8_screenshot.png" width=200>
 </p>
 
 <br>
@@ -89,9 +88,9 @@ Fork [**sponsorship here**](https://ko-fi.com/eddyizm).
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_dark.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_dark.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_dark.png" width=200>
-    <!-- <img src="mockup/dark/6_screenshot.png" width=200> -->
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_dark.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_dark.png" width=200>
-    <img src="mockup/dark/8_screenshot.png" width=200>
+    
 </p>
 
 ## Contributing  
