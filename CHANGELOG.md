@@ -1,6 +1,26 @@
 # Changelog
 
-***This log is for this fork to detail updates since 3.9.0 from the main repo.***
+## [4.0.2](https://github.com/eddyizm/tempo/releases/tag/v4.0.2) (2025-10-26)
+## Attention
+This release will not update previous installs as it is considered a new app, no longer `Tempo`, new icon, new app id, and new app name. Hoping it will not be a huge inconvenience but was necessary in order to publish to app stores like IzzyDroid and FDroid.  
+
+**Android Auto** 
+Support should be the same as before, however, I was not able to test any of the icons/visuals, so please let me know if there are any remnants of the tempo logo/icon as I believe I removed them all and replaced them successfully.  
+
+## What's Changed
+* Check also underlying transport by @zc-devs in https://github.com/eddyizm/tempus/pull/90
+* fix: updated workflow for 32/64 bit apks by @eddyizm in https://github.com/eddyizm/tempus/pull/176
+* Unhide genre from album details view by @sebaFlame in https://github.com/eddyizm/tempus/pull/161
+* fix: persist album sorting on resume by @eddyizm in https://github.com/eddyizm/tempus/pull/181
+* chore: update readme and usage references to tempus. added new banner… by @eddyizm in https://github.com/eddyizm/tempus/pull/182
+* Tempus rebrand by @eddyizm in https://github.com/eddyizm/tempus/pull/183
+* Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/188
+
+## New Contributors
+* @zc-devs made their first contribution in https://github.com/eddyizm/tempus/pull/90
+* @sebaFlame made their first contribution in https://github.com/eddyizm/tempus/pull/161
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v3.17.14...v4.0.1
 
 ## [3.17.14](https://github.com/eddyizm/tempo/releases/tag/v3.17.14) (2025-10-16)
 ## What's Changed
@@ -170,3 +190,5 @@
  [\#400](https://github.com/CappielloAntonio/tempo/pull/400)
 - [Chore] Spanish translation [\#374](https://github.com/CappielloAntonio/tempo/pull/374)
 - [Chore] Polish translation [\#378](https://github.com/CappielloAntonio/tempo/pull/378)
+
+***This log is for this fork to detail updates since 3.9.0 from the main repo.***

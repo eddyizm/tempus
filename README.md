@@ -35,9 +35,10 @@ Please note the two variants in the release assets include release/debug and 32/
 
 `app-degoogled*` <- The f-droid release that goes without any of the google stuff. It was last released at 3.8.1 from the original repo. Since I don't have access to that original repo, I am releasing the apk's here on github.
 
-Moved details to [CHANGELOG.md](CHANGELOG.md)
+[CHANGELOG.md](CHANGELOG.md)
 
-Fork [**sponsorship here**](https://ko-fi.com/eddyizm). 
+[**Buy me a coffee**](https://ko-fi.com/eddyizm)
+
 
 ## Usage
 

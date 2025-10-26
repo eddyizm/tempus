@@ -45,7 +45,7 @@ jobs:
           bash ./gradlew assembleTempusDebug
           bash ./gradlew assembleDegoogledDebug
 
-      - name: Sign All Tempus Release APKs
+      - name: Sign Tempus Release APKs
         id: sign_tempus_release
         uses: r0adkll/sign-android-release@v1
         with:
@@ -54,11 +54,25 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS_GITHUB }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
-          apkPath: "**/*.apk"
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
-      - name: Sign All Degoogled Release APKs
+      - name: Prepare Signed Tempus APKs for Release
+        run: |
+          # The signing action overwrites the original, so we find the files and rename them.
+          TEMPUS_PATH=app/build/outputs/apk/tempus/release
+          
+          # Renaming 64-bit APK
+          mv $TEMPUS_PATH/*arm64-v8a*.apk ./app-tempus-arm64-v8a-release.apk
+          
+          # Renaming 32-bit APK
+          mv $TEMPUS_PATH/*armeabi-v7a*.apk ./app-tempus-armeabi-v7a-release.apk
+          
+          echo "Prepared Tempus APKs."
+          ls -la *.apk
+
+      # --- DEGOOGLED SIGNING AND RENAMING ---
+      - name: Sign Degoogled Release APKs
         id: sign_degoogled_release
         uses: r0adkll/sign-android-release@v1
         with:
@@ -67,87 +81,39 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS_GITHUB }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
-          apkPath: "**/*.apk"
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
-      - name: Rename and Prepare APK Files
+      - name: Prepare Signed Degoogled APKs for Release
         run: |
-          # Copy and rename tempus APKs
-          for file in app/build/outputs/apk/tempus/release/*.apk; do
-            if [[ $file == *"arm64-v8a"* ]]; then
-              cp "$file" "./app-tempus-arm64-v8a-release.apk"
-              echo "Created: app-tempus-arm64-v8a-release.apk"
-            elif [[ $file == *"armeabi-v7a"* ]]; then
-              cp "$file" "./app-tempus-armeabi-v7a-release.apk"
-              echo "Created: app-tempus-armeabi-v7a-release.apk"
-            fi
-          done
+          # The signing action overwrites the original, so we find the files and rename them.
+          DEGOOGLED_PATH=app/build/outputs/apk/degoogled/release
           
-          # Copy and rename degoogled APKs
-          for file in app/build/outputs/apk/degoogled/release/*.apk; do
-            if [[ $file == *"arm64-v8a"* ]]; then
-              cp "$file" "./app-degoogled-arm64-v8a-release.apk"
-              echo "Created: app-degoogled-arm64-v8a-release.apk"
-            elif [[ $file == *"armeabi-v7a"* ]]; then
-              cp "$file" "./app-degoogled-armeabi-v7a-release.apk"
-              echo "Created: app-degoogled-armeabi-v7a-release.apk"
-            fi
-          done
+          # Renaming 64-bit APK
+          mv $DEGOOGLED_PATH/*arm64-v8a*.apk ./app-degoogled-arm64-v8a-release.apk
           
-          # List the created files for verification
-          echo "Final APK files:"
+          # Renaming 32-bit APK
+          mv $DEGOOGLED_PATH/*armeabi-v7a*.apk ./app-degoogled-armeabi-v7a-release.apk
+          
+          echo "Prepared Degoogled APKs."
           ls -la *.apk
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release v${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
           body: '> Changelog coming soon'
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Upload Tempus 64-bit Release APK
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-tempus-arm64-v8a-release.apk
-          asset_name: app-tempus-arm64-v8a-release.apk
-          asset_content_type: application/vnd.android.package-archive
-
-      - name: Upload Tempus 32-bit Release APK
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-tempus-armeabi-v7a-release.apk
-          asset_name: app-tempus-armeabi-v7a-release.apk
-          asset_content_type: application/vnd.android.package-archive
-
-      - name: Upload Degoogled 64-bit Release APK
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-degoogled-arm64-v8a-release.apk
-          asset_name: app-degoogled-arm64-v8a-release.apk
-          asset_content_type: application/vnd.android.package-archive
-
-      - name: Upload Degoogled 32-bit Release APK
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-degoogled-armeabi-v7a-release.apk
-          asset_name: app-degoogled-armeabi-v7a-release.apk
-          asset_content_type: application/vnd.android.package-archive
+          draft: false
+          prerelease: false
+          # Attach all four files in one go to the release created above
+          files: | 
+            ./app-tempus-arm64-v8a-release.apk
+            ./app-tempus-armeabi-v7a-release.apk
+            ./app-degoogled-arm64-v8a-release.apk
+            ./app-degoogled-armeabi-v7a-release.apk
+      
 
       - name: Upload Debug APKs as artifacts
         uses: actions/upload-artifact@v4
