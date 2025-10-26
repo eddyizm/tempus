@@ -59,19 +59,24 @@ jobs:
 
       - name: Prepare Signed Tempus APKs for Release
         run: |
-          # The signing action overwrites the original, so we find the files and rename them.
           TEMPUS_PATH=app/build/outputs/apk/tempus/release
           
+          echo "--- Files in Tempus Release Directory ---"
+          ls -la $TEMPUS_PATH
+          echo "-----------------------------------------"
+          
+          # TARGET: app-tempus-arm64-v8a-release-unsigned-signed.apk
+          # We use a wildcard that matches the ABI AND ensures it's the signed file.
+          
           # Renaming 64-bit APK
-          mv $TEMPUS_PATH/*arm64-v8a*.apk ./app-tempus-arm64-v8a-release.apk
+          mv $TEMPUS_PATH/*arm64-v8a*signed.apk ./app-tempus-arm64-v8a-release.apk
           
           # Renaming 32-bit APK
-          mv $TEMPUS_PATH/*armeabi-v7a*.apk ./app-tempus-armeabi-v7a-release.apk
+          mv $TEMPUS_PATH/*armeabi-v7a*signed.apk ./app-tempus-armeabi-v7a-release.apk
           
           echo "Prepared Tempus APKs."
           ls -la *.apk
 
-      # --- DEGOOGLED SIGNING AND RENAMING ---
       - name: Sign Degoogled Release APKs
         id: sign_degoogled_release
         uses: r0adkll/sign-android-release@v1
@@ -86,14 +91,17 @@ jobs:
 
       - name: Prepare Signed Degoogled APKs for Release
         run: |
-          # The signing action overwrites the original, so we find the files and rename them.
           DEGOOGLED_PATH=app/build/outputs/apk/degoogled/release
+
+          echo "--- Files in Degoogled Release Directory ---"
+          ls -la $DEGOOGLED_PATH
+          echo "-----------------------------------------"
           
           # Renaming 64-bit APK
-          mv $DEGOOGLED_PATH/*arm64-v8a*.apk ./app-degoogled-arm64-v8a-release.apk
+          mv $DEGOOGLED_PATH/*arm64-v8a*signed.apk ./app-degoogled-arm64-v8a-release.apk
           
           # Renaming 32-bit APK
-          mv $DEGOOGLED_PATH/*armeabi-v7a*.apk ./app-degoogled-armeabi-v7a-release.apk
+          mv $DEGOOGLED_PATH/*armeabi-v7a*signed.apk ./app-degoogled-armeabi-v7a-release.apk
           
           echo "Prepared Degoogled APKs."
           ls -la *.apk
@@ -113,7 +121,6 @@ jobs:
             ./app-tempus-armeabi-v7a-release.apk
             ./app-degoogled-arm64-v8a-release.apk
             ./app-degoogled-armeabi-v7a-release.apk
-      
 
       - name: Upload Debug APKs as artifacts
         uses: actions/upload-artifact@v4
