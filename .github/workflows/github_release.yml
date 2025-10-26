@@ -39,17 +39,17 @@ jobs:
         id: build
         run: |
           # Build release variants
-          bash ./gradlew assembleTempoRelease
-          bash ./gradlew assembleNotquitemyRelease
+          bash ./gradlew assembleTempusRelease
+          bash ./gradlew assembleDegoggledRelease
           # Build debug variants  
-          bash ./gradlew assembleTempoDebug
-          bash ./gradlew assembleNotquitemyDebug
+          bash ./gradlew assembleTempusDebug
+          bash ./gradlew assembleDegoggledDebug
 
-      - name: Sign All Tempo Release APKs
-        id: sign_tempo_release
+      - name: Sign All Tempus Release APKs
+        id: sign_tempus_release
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/tempo/release
+          releaseDirectory: app/build/outputs/apk/tempus/release
           signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS_GITHUB }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -58,11 +58,11 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
-      - name: Sign All NotQuiteMy Release APKs
-        id: sign_notquitemy_release
+      - name: Sign All Degoggled Release APKs
+        id: sign_degoogled_release
         uses: r0adkll/sign-android-release@v1
         with:
-          releaseDirectory: app/build/outputs/apk/notquitemy/release
+          releaseDirectory: app/build/outputs/apk/degoogled/release
           signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
           alias: ${{ secrets.KEY_ALIAS_GITHUB }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -73,25 +73,25 @@ jobs:
 
       - name: Rename and Prepare APK Files
         run: |
-          # Copy and rename tempo APKs
-          for file in app/build/outputs/apk/tempo/release/*.apk; do
+          # Copy and rename tempus APKs
+          for file in app/build/outputs/apk/tempus/release/*.apk; do
             if [[ $file == *"arm64-v8a"* ]]; then
-              cp "$file" "./app-tempo-arm64-v8a-release.apk"
-              echo "Created: app-tempo-arm64-v8a-release.apk"
+              cp "$file" "./app-tempus-arm64-v8a-release.apk"
+              echo "Created: app-tempus-arm64-v8a-release.apk"
             elif [[ $file == *"armeabi-v7a"* ]]; then
-              cp "$file" "./app-tempo-armeabi-v7a-release.apk"
-              echo "Created: app-tempo-armeabi-v7a-release.apk"
+              cp "$file" "./app-tempus-armeabi-v7a-release.apk"
+              echo "Created: app-tempus-armeabi-v7a-release.apk"
             fi
           done
           
-          # Copy and rename notquitemy APKs
-          for file in app/build/outputs/apk/notquitemy/release/*.apk; do
+          # Copy and rename degoogled APKs
+          for file in app/build/outputs/apk/degoogled/release/*.apk; do
             if [[ $file == *"arm64-v8a"* ]]; then
-              cp "$file" "./app-notquitemy-arm64-v8a-release.apk"
-              echo "Created: app-notquitemy-arm64-v8a-release.apk"
+              cp "$file" "./app-degoogled-arm64-v8a-release.apk"
+              echo "Created: app-degoogled-arm64-v8a-release.apk"
             elif [[ $file == *"armeabi-v7a"* ]]; then
-              cp "$file" "./app-notquitemy-armeabi-v7a-release.apk"
-              echo "Created: app-notquitemy-armeabi-v7a-release.apk"
+              cp "$file" "./app-degoogled-armeabi-v7a-release.apk"
+              echo "Created: app-degoogled-armeabi-v7a-release.apk"
             fi
           done
           
@@ -109,44 +109,44 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Upload Tempo 64-bit Release APK
+      - name: Upload Tempus 64-bit Release APK
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-tempo-arm64-v8a-release.apk
-          asset_name: app-tempo-arm64-v8a-release.apk
+          asset_path: ./app-tempus-arm64-v8a-release.apk
+          asset_name: app-tempus-arm64-v8a-release.apk
           asset_content_type: application/vnd.android.package-archive
 
-      - name: Upload Tempo 32-bit Release APK
+      - name: Upload Tempus 32-bit Release APK
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-tempo-armeabi-v7a-release.apk
-          asset_name: app-tempo-armeabi-v7a-release.apk
+          asset_path: ./app-tempus-armeabi-v7a-release.apk
+          asset_name: app-tempus-armeabi-v7a-release.apk
           asset_content_type: application/vnd.android.package-archive
 
-      - name: Upload NotQuiteMy 64-bit Release APK
+      - name: Upload Degoggled 64-bit Release APK
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-notquitemy-arm64-v8a-release.apk
-          asset_name: app-notquitemy-arm64-v8a-release.apk
+          asset_path: ./app-degoogled-arm64-v8a-release.apk
+          asset_name: app-degoogled-arm64-v8a-release.apk
           asset_content_type: application/vnd.android.package-archive
 
-      - name: Upload NotQuiteMy 32-bit Release APK
+      - name: Upload Degoggled 32-bit Release APK
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./app-notquitemy-armeabi-v7a-release.apk
-          asset_name: app-notquitemy-armeabi-v7a-release.apk
+          asset_path: ./app-degoogled-armeabi-v7a-release.apk
+          asset_name: app-degoogled-armeabi-v7a-release.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload Debug APKs as artifacts
@@ -154,8 +154,8 @@ jobs:
         with:
           name: debug-apks
           path: |
-            app/build/outputs/apk/tempo/debug/
-            app/build/outputs/apk/notquitemy/debug/
+            app/build/outputs/apk/tempus/debug/
+            app/build/outputs/apk/degoogled/debug/
           retention-days: 30
 
       - name: Upload Release APKs as artifacts
@@ -163,8 +163,8 @@ jobs:
         with:
           name: release-apks
           path: |
-            ./app-tempo-arm64-v8a-release.apk
-            ./app-tempo-armeabi-v7a-release.apk
-            ./app-notquitemy-arm64-v8a-release.apk
-            ./app-notquitemy-armeabi-v7a-release.apk
+            ./app-tempus-arm64-v8a-release.apk
+            ./app-tempus-armeabi-v7a-release.apk
+            ./app-degoogled-arm64-v8a-release.apk
+            ./app-degoogled-armeabi-v7a-release.apk
           retention-days: 30
