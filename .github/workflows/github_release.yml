@@ -35,15 +35,16 @@ jobs:
           echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
           echo Last build tool version is: $BUILD_TOOL_VERSION
 
-      - name: Build All APKs
+      - name: Build All Release APKs
         id: build
         run: |
-          # Build release variants
+          # Only build release variants (removed debug builds)
           bash ./gradlew assembleTempusRelease
           bash ./gradlew assembleDegoogledRelease
-          # Build debug variants  
-          bash ./gradlew assembleTempusDebug
-          bash ./gradlew assembleDegoogledDebug
+
+
+      - name: Create Artifact Staging Directory
+        run: mkdir -p release-artifacts
 
       - name: Sign Tempus Release APKs
         id: sign_tempus_release
@@ -61,21 +62,13 @@ jobs:
         run: |
           TEMPUS_PATH=app/build/outputs/apk/tempus/release
           
-          echo "--- Files in Tempus Release Directory ---"
-          ls -la $TEMPUS_PATH
-          echo "-----------------------------------------"
+          # Renaming 64-bit APK and moving to safe staging directory
+          mv $TEMPUS_PATH/*arm64-v8a*signed.apk ./release-artifacts/app-tempus-arm64-v8a-release.apk
           
-          # TARGET: app-tempus-arm64-v8a-release-unsigned-signed.apk
-          # We use a wildcard that matches the ABI AND ensures it's the signed file.
-          
-          # Renaming 64-bit APK
-          mv $TEMPUS_PATH/*arm64-v8a*signed.apk ./app-tempus-arm64-v8a-release.apk
-          
-          # Renaming 32-bit APK
-          mv $TEMPUS_PATH/*armeabi-v7a*signed.apk ./app-tempus-armeabi-v7a-release.apk
+          # Renaming 32-bit APK and moving to safe staging directory
+          mv $TEMPUS_PATH/*armeabi-v7a*signed.apk ./release-artifacts/app-tempus-armeabi-v7a-release.apk
           
           echo "Prepared Tempus APKs."
-          ls -la *.apk
 
       - name: Sign Degoogled Release APKs
         id: sign_degoogled_release
@@ -92,19 +85,15 @@ jobs:
       - name: Prepare Signed Degoogled APKs for Release
         run: |
           DEGOOGLED_PATH=app/build/outputs/apk/degoogled/release
-
-          echo "--- Files in Degoogled Release Directory ---"
-          ls -la $DEGOOGLED_PATH
-          echo "-----------------------------------------"
           
-          # Renaming 64-bit APK
-          mv $DEGOOGLED_PATH/*arm64-v8a*signed.apk ./app-degoogled-arm64-v8a-release.apk
+          # Renaming 64-bit APK and moving to safe staging directory
+          mv $DEGOOGLED_PATH/*arm64-v8a*signed.apk ./release-artifacts/app-degoogled-arm64-v8a-release.apk
           
-          # Renaming 32-bit APK
-          mv $DEGOOGLED_PATH/*armeabi-v7a*signed.apk ./app-degoogled-armeabi-v7a-release.apk
+          # Renaming 32-bit APK and moving to safe staging directory
+          mv $DEGOOGLED_PATH/*armeabi-v7a*signed.apk ./release-artifacts/app-degoogled-armeabi-v7a-release.apk
           
           echo "Prepared Degoogled APKs."
-          ls -la *.apk
+          ls -la ./release-artifacts/
 
       - name: Create Release
         id: create_release
@@ -115,29 +104,13 @@ jobs:
           body: '> Changelog coming soon'
           draft: false
           prerelease: false
-          # Attach all four files in one go to the release created above
-          files: | 
-            ./app-tempus-arm64-v8a-release.apk
-            ./app-tempus-armeabi-v7a-release.apk
-            ./app-degoogled-arm64-v8a-release.apk
-            ./app-degoogled-armeabi-v7a-release.apk
+          files: ./release-artifacts/*.apk
 
-      - name: Upload Debug APKs as artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: debug-apks
-          path: |
-            app/build/outputs/apk/tempus/debug/
-            app/build/outputs/apk/degoogled/debug/
-          retention-days: 30
 
-      - name: Upload Release APKs as artifacts
+
+      - name: Upload Release APKs as artifacts (For easy pipeline access)
         uses: actions/upload-artifact@v4
         with:
           name: release-apks
-          path: |
-            ./app-tempus-arm64-v8a-release.apk
-            ./app-tempus-armeabi-v7a-release.apk
-            ./app-degoogled-arm64-v8a-release.apk
-            ./app-degoogled-armeabi-v7a-release.apk
+          path: ./release-artifacts/*.apk
           retention-days: 30
