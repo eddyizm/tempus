@@ -42,7 +42,6 @@ jobs:
           bash ./gradlew assembleTempusRelease
           bash ./gradlew assembleDegoogledRelease
 
-
       - name: Create Artifact Staging Directory
         run: mkdir -p release-artifacts
 
@@ -62,11 +61,19 @@ jobs:
         run: |
           TEMPUS_PATH=app/build/outputs/apk/tempus/release
           
+          echo "--- Tempus Files BEFORE Move ---"
+          ls -la $TEMPUS_PATH
+          echo "--------------------------------"
+          
+          # FIX: Use find/xargs for robust file matching and moving.
+          
           # Renaming 64-bit APK and moving to safe staging directory
-          mv $TEMPUS_PATH/*arm64-v8a*signed.apk ./release-artifacts/app-tempus-arm64-v8a-release.apk
+          find $TEMPUS_PATH -name '*arm64-v8a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
+          mv ./release-artifacts/*arm64-v8a*signed.apk ./release-artifacts/app-tempus-arm64-v8a-release.apk
           
           # Renaming 32-bit APK and moving to safe staging directory
-          mv $TEMPUS_PATH/*armeabi-v7a*signed.apk ./release-artifacts/app-tempus-armeabi-v7a-release.apk
+          find $TEMPUS_PATH -name '*armeabi-v7a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
+          mv ./release-artifacts/*armeabi-v7a*signed.apk ./release-artifacts/app-tempus-armeabi-v7a-release.apk
           
           echo "Prepared Tempus APKs."
 
@@ -86,11 +93,19 @@ jobs:
         run: |
           DEGOOGLED_PATH=app/build/outputs/apk/degoogled/release
           
+          echo "--- Degoogled Files BEFORE Move ---"
+          ls -la $DEGOOGLED_PATH
+          echo "--------------------------------"
+          
+          # FIX: Use find/xargs for robust file matching and moving.
+          
           # Renaming 64-bit APK and moving to safe staging directory
-          mv $DEGOOGLED_PATH/*arm64-v8a*signed.apk ./release-artifacts/app-degoogled-arm64-v8a-release.apk
+          find $DEGOOGLED_PATH -name '*arm64-v8a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
+          mv ./release-artifacts/*arm64-v8a*signed.apk ./release-artifacts/app-degoogled-arm64-v8a-release.apk
           
           # Renaming 32-bit APK and moving to safe staging directory
-          mv $DEGOOGLED_PATH/*armeabi-v7a*signed.apk ./release-artifacts/app-degoogled-armeabi-v7a-release.apk
+          find $DEGOOGLED_PATH -name '*armeabi-v7a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
+          mv ./release-artifacts/*armeabi-v7a*signed.apk ./release-artifacts/app-degoogled-armeabi-v7a-release.apk
           
           echo "Prepared Degoogled APKs."
           ls -la ./release-artifacts/
@@ -105,8 +120,6 @@ jobs:
           draft: false
           prerelease: false
           files: ./release-artifacts/*.apk
-
-
 
       - name: Upload Release APKs as artifacts (For easy pipeline access)
         uses: actions/upload-artifact@v4
