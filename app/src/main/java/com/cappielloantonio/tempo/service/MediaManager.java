@@ -32,9 +32,16 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Collections;
+import java.util.stream.Collectors;
 import java.util.concurrent.ExecutionException;
 
 public class MediaManager {
@@ -223,6 +230,153 @@ public class MediaManager {
         }
     }
 
+    public static void startQueue(List<Child> media, int startIndex) {
+        
+
+        //Stop current media
+        App.getSubsonicClientInstance(false)
+                .getJukeboxControlClient()
+                .jukeboxControl("stop", null, null, null, null)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                        //Pull the ids from the list of media and put into a string list for jukeboxControl
+                        List<String> ids = media.stream()
+                                                .map(Child::getId)
+                                                .collect(Collectors.toList());
+
+                        int itemCount = media.size();
+
+                        App.getSubsonicClientInstance(false)
+                                .getJukeboxControlClient()
+                                .jukeboxControl("set", null, null, ids, null)
+                                .enqueue(new Callback<ApiResponse>() {
+                                    @Override
+                                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                                            // Then skip to startIndex if valid
+                                        if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
+                                            App.getSubsonicClientInstance(false)
+                                                    .getJukeboxControlClient()
+                                                    .jukeboxControl("skip", startIndex, null, null, null)
+                                                    .enqueue(new Callback<ApiResponse>() {
+                                                        @Override
+                                                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                                                            // set does NOT auto-start the queue, must start it here
+                                                            App.getSubsonicClientInstance(false)
+                                                                    .getJukeboxControlClient()
+                                                                    .jukeboxControl("start", null, null, null, null)
+                                                                    .enqueue(new Callback<ApiResponse>() {
+                                                                        @Override
+                                                                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                                                                        }
+
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                                                                        }
+                                                                    });
+
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                                                        }
+                                                    });
+                                        }
+
+                                        else {
+
+                                            // set does NOT auto-start the queue, must start it here
+                                            App.getSubsonicClientInstance(false)
+                                                    .getJukeboxControlClient()
+                                                    .jukeboxControl("start", null, null, null, null)
+                                                    .enqueue(new Callback<ApiResponse>() {
+                                                        @Override
+                                                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                                                        }
+
+                                                        @Override
+                                                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                                                        }
+                                                    });
+
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                                    }
+                                });
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                    }
+                });
+        
+    }
+
+    public static void startQueue(Child media) {
+        //Stop current media
+        App.getSubsonicClientInstance(false)
+                .getJukeboxControlClient()
+                .jukeboxControl("stop", null, null, null, null)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        List<String> ids = Collections.singletonList(media.getId());
+
+                        App.getSubsonicClientInstance(false)
+                                .getJukeboxControlClient()
+                                .jukeboxControl("set", null, null, ids, null)
+                                .enqueue(new Callback<ApiResponse>() {
+                                    @Override
+                                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                                        // set does NOT auto-start the queue, must start it here
+                                        App.getSubsonicClientInstance(false)
+                                                .getJukeboxControlClient()
+                                                .jukeboxControl("start", null, null, null, null)
+                                                .enqueue(new Callback<ApiResponse>() {
+                                                    @Override
+                                                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                                                    }
+                                                });
+                                    }
+
+                                    @Override
+                                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                                    }
+                                });
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                    }
+                });
+
+
+    }
+
     public static void playDownloadedMediaItem(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, MediaItem mediaItem) {
         if (mediaBrowserListenableFuture != null && mediaItem != null) {
             mediaBrowserListenableFuture.addListener(() -> {
@@ -314,6 +468,47 @@ public class MediaManager {
                 }
             }, MoreExecutors.directExecutor());
         }
+    }
+
+    public static void enqueue(List<Child> media) {
+        List<String> ids = media.stream()
+                                .map(Child::getId)
+                                .collect(Collectors.toList());
+        
+        App.getSubsonicClientInstance(false)
+                .getJukeboxControlClient()
+                .jukeboxControl("add", null, null, ids, null)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                    }
+                });
+    }
+
+    public static void enqueue(Child media){
+
+        List<String> ids = Collections.singletonList(media.getId());
+
+        App.getSubsonicClientInstance(false)
+                .getJukeboxControlClient()
+                .jukeboxControl("add", null, null, ids, null)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                    }
+                });
     }
 
     public static void shuffle(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex, int endIndex) {
