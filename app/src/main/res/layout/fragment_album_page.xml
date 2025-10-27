@@ -214,6 +214,20 @@
                         app:iconPadding="18dp" />
 
                     <Button
+                        android:id="@+id/album_page_jukebox_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:padding="10dp"
+                        android:text="@string/album_page_jukebox_button"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_play"
+                        app:iconGravity="textStart"
+                        app:iconPadding="18dp" />
+
+                    <Button
                         android:id="@+id/album_page_shuffle_button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"

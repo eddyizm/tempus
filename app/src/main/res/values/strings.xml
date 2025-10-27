@@ -24,6 +24,7 @@
     <string name="album_list_page_title">Albums</string>
     <string name="album_page_extra_info_button">More like this</string>
     <string name="album_page_play_button">Play</string>
+    <string name="album_page_jukebox_button">Jukebox</string>
     <string name="album_page_release_date_label">Released on %1$s</string>
     <string name="album_page_release_dates_label">Released on %1$s, originally %2$s</string>
     <string name="album_page_shuffle_button">Shuffle</string>
@@ -237,6 +238,7 @@
     <string name="playlist_editor_dialog_positive_button">Save</string>
     <string name="playlist_editor_dialog_title">Edit playlist</string>
     <string name="playlist_page_play_button">Play</string>
+    <string name="playlist_page_jukebox_button">Jukebox</string>
     <string name="playlist_page_shuffle_button">Shuffle</string>
     <string name="playlist_song_count">Playlist  •  %1$d songs</string>
     <string name="podcast_bottom_sheet_add_to_queue">Add to queue</string>
