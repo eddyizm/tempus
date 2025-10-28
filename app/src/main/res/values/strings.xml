@@ -409,6 +409,7 @@
     <string name="share_bottom_sheet_delete">Delete share</string>
     <string name="share_bottom_sheet_update">Update share</string>
     <string name="share_subtitle_item">Expiration date: %1$s</string>
+    <string name="share_no_expiration">Never</string>
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
     <string name="asset_link_clipboard_label">Tempus asset link</string>
     <string name="asset_link_label_song">Song UID</string>
