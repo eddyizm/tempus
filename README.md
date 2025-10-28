@@ -2,17 +2,26 @@
   <img alt="Tempus" title="Tempus" src="mockup/svg/tempus_horizontal_logo.png" width="250">
 </p>
 
+---
+
 <p align="center">
   <b>Access your music library on all your android devices</b>
 </p>
 
+<div align="center">
+
+  <!-- Reproducible build  -->  
+[<img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status">](https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus) 
+
+</div>
+
 <p align="center">
     <a href="https://github.com/eddyizm/tempo/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
+    <a href="https://apt.izzysoft.de/fdroid/index/apk/com.eddyizm.degoogled.tempus"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200"></a>
 </p>
-<!-- <p align="center">
+<!-- 
     <a href="https://f-droid.org/packages/com.cappielloantonio.notquitemy.tempo"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="200"></a>
-    <a href="https://apt.izzysoft.de/fdroid/index/apk/com.cappielloantonio.tempo"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200"></a>
-</p> -->
+-->
 
 **Tempus** is an open-source and lightweight music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device. 
 
@@ -33,7 +42,7 @@ Please note the two variants in the release assets include release/debug and 32/
 
 `app-tempus` <- The github release with all the android auto/chromecast features 
 
-`app-degoogled*` <- The f-droid release that goes without any of the google stuff. It was last released at 3.8.1 from the original repo. Since I don't have access to that original repo, I am releasing the apk's here on github.
+`app-degoogled*` <- The izzyOnDroid release that goes without any of the google stuff. It is now available on izzyOnDroid (64bit) I am releasing the both 32/64bit apk's here on github for those who need a 32bit version.
 
 [CHANGELOG.md](CHANGELOG.md)
 

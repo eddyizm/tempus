@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.0.2](https://github.com/eddyizm/tempo/releases/tag/v4.0.2) (2025-10-26)
+## [4.0.6](https://github.com/eddyizm/tempo/releases/tag/v4.0.6) (2025-10-26)
 ## Attention
 This release will not update previous installs as it is considered a new app, no longer `Tempo`, new icon, new app id, and new app name. Hoping it will not be a huge inconvenience but was necessary in order to publish to app stores like IzzyDroid and FDroid.  
 
