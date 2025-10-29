@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.0.7](https://github.com/eddyizm/tempo/releases/tag/v4.0.7) (2025-10-28)
+## What's Changed
+* chore: updated tempo references to tempus including github check by @eddyizm in https://github.com/eddyizm/tempus/pull/197
+* fix: Crash on share no expiration date or field returned from api by @eddyizm in https://github.com/eddyizm/tempus/pull/199
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.0.6...v4.0.7
+
 ## [4.0.6](https://github.com/eddyizm/tempo/releases/tag/v4.0.6) (2025-10-26)
 ## Attention
 This release will not update previous installs as it is considered a new app, no longer `Tempo`, new icon, new app id, and new app name. Hoping it will not be a huge inconvenience but was necessary in order to publish to app stores like IzzyDroid and FDroid.  
