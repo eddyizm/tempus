@@ -400,6 +400,7 @@
     <string name="share_bottom_sheet_delete">Usuń udostępnianie</string>
     <string name="share_bottom_sheet_update">Zaktualizuj udostępnianie</string>
     <string name="share_subtitle_item">Data wygaśnięcia: %1$s</string>
+    <string name="share_no_expiration">Nigdy</string>
     <string name="share_unsupported_error">Udostępnianie nie jest wspierane lub włączone</string>
     <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
     <string name="asset_link_label_song">UID piosenki</string>
