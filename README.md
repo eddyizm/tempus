@@ -16,7 +16,7 @@
 </div>
 
 <p align="center">
-    <a href="https://github.com/eddyizm/tempo/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
+    <a href="https://github.com/eddyizm/tempus/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
     <a href="https://apt.izzysoft.de/fdroid/index/apk/com.eddyizm.degoogled.tempus"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200"></a>
 </p>
 <!-- 
