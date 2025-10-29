@@ -11,7 +11,7 @@
 <div align="center">
 
   <!-- Reproducible build  -->  
-[<img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status">](https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus) 
+<!-- [<img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status">](https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus)  -->
 
 </div>
 
@@ -22,6 +22,7 @@
 <!-- 
     <a href="https://f-droid.org/packages/com.cappielloantonio.notquitemy.tempo"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="200"></a>
 -->
+  
 
 **Tempus** is an open-source and lightweight music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device. 
 
