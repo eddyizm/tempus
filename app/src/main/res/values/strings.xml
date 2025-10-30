@@ -200,6 +200,7 @@
     <string name="menu_sort_artist">Artist</string>
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_random">Random</string>
+    <string name="menu_sort_album_count">Album Count</string>
     <string name="menu_sort_recently_added">Recently added</string>
     <string name="menu_sort_recently_played">Recently played</string>
     <string name="menu_sort_most_played">Most played</string>

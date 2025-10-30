@@ -192,6 +192,9 @@ public class ArtistCatalogueFragment extends Fragment implements ClickCallback {
             } else if (menuItem.getItemId() == R.id.menu_artist_sort_random) {
                 artistAdapter.sort(Constants.ARTIST_ORDER_BY_RANDOM);
                 return true;
+            } else if (menuItem.getItemId() == R.id.menu_artist_sort_album_count) {
+                artistAdapter.sort(Constants.ARTIST_ORDER_BY_ALBUM_COUNT);
+                return true;
             }
 
             return false;
