@@ -413,7 +413,9 @@
     <string name="share_bottom_sheet_delete">Eliminar compartición</string>
     <string name="share_bottom_sheet_update">Actualizar compartición</string>
     <string name="share_subtitle_item">Fecha de caducidad: %1$s</string>
+    <string name="share_no_expiration">Nunca</string>
     <string name="share_unsupported_error">El uso compartido no está soportado o no está habilitado</string>
+    <string name="asset_link_debug_toast">Enlace de recurso: %1$s</string>
     <string name="share_update_dialog_hint_description">Descripción</string>
     <string name="share_update_dialog_hint_expiration_date">Fecha de caducidad</string>
     <string name="song_bottom_sheet_add_to_queue">Añadir a la cola</string>
@@ -486,4 +488,21 @@
     <string name="settings_sync_starred_artists_for_offline_use_summary">Si está habilitada, los artistas destacados se descargarán para uso sin conexión.</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="exo_controls_heart_off_description">Eliminar de favoritos</string>
+    <string name="asset_link_chip_text">%1$s • %2$s</string>
+    <string name="asset_link_copied_toast">Copiado %1$s al portapapeles</string>
+    <string name="settings_album_detail">Mostrar los detalles del álbum</string>
+    <string name="settings_album_detail_summary">Si está habilitada, muestra los detalles del álbum, como el género, el número de pistas, etc. en la página de álbum</string>
+    <string name="asset_link_clipboard_label">Enlace de recurso de Tempus</string>
+    <string name="asset_link_label_song">UID de la pista</string>
+    <string name="asset_link_label_album">UID del álbum</string>
+    <string name="asset_link_label_artist">UID del artista</string>
+    <string name="asset_link_label_playlist">UID de la lista de reproducción</string>
+    <string name="asset_link_label_genre">UID del género</string>
+    <string name="asset_link_label_year">UID del año</string>
+    <string name="asset_link_label_unknown">UID del recurso</string>
+    <string name="asset_link_error_unsupported">Enlace de recurso no válido</string>
+    <string name="asset_link_error_song">No se ha podido abrir la pista</string>
+    <string name="asset_link_error_album">No se ha podido abrir el álbum</string>
+    <string name="asset_link_error_artist">No se ha podido abrir el artista</string>
+    <string name="asset_link_error_playlist">No se ha podido abrir la lista de reproducción</string>
 </resources>
