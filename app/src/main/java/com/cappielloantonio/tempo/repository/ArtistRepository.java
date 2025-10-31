@@ -13,9 +13,11 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.IndexID3;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -312,24 +314,42 @@ public class ArtistRepository {
 
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
-                .getTopSongs(artist.getName(), count)
+                .getArtist(artist.getId())
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getTopSongs() != null && response.body().getSubsonicResponse().getTopSongs().getSongs() != null) {
-                            List<Child> songs = response.body().getSubsonicResponse().getTopSongs().getSongs();
+                        if (response.isSuccessful() && response.body() != null &&
+                                response.body().getSubsonicResponse().getArtist() != null &&
+                                response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
 
-                            if (songs != null && !songs.isEmpty()) {
-                                Collections.shuffle(songs);
+                            List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
+                            Log.d("ArtistRepository", "Got albums directly: " + albums.size());
+                            if (albums.isEmpty()) {
+                                Log.d("ArtistRepository", "No albums found in artist response");
+                                return;
                             }
 
-                            randomSongs.setValue(songs);
+                            Collections.shuffle(albums);
+                            int[] counts = albums.stream().mapToInt(AlbumID3::getSongCount).toArray();
+                            Arrays.parallelPrefix(counts, Integer::sum);
+                            int albumLimit = 0;
+                            int multiplier = 4; // get more than the limit so we can shuffle them
+                            while (albumLimit < albums.size() && counts[albumLimit] < count * multiplier)
+                                albumLimit++;
+                            Log.d("ArtistRepository", String.format("Retaining %d/%d albums", albumLimit, albums.size()));
+
+                            fetchAllAlbumSongsWithCallback(albums.stream().limit(albumLimit).collect(Collectors.toList()), songs -> {
+                                Collections.shuffle(songs);
+                                randomSongs.setValue(songs.stream().limit(count).collect(Collectors.toList()));
+                            });
+                        } else {
+                            Log.d("ArtistRepository", "Failed to get artist info");
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        Log.d("ArtistRepository", "Error getting artist info: " + t.getMessage());
                     }
                 });
 
