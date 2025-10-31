@@ -151,6 +151,9 @@ public class ArtistCatalogueAdapter extends RecyclerView.Adapter<ArtistCatalogue
             case Constants.ARTIST_ORDER_BY_RANDOM:
                 Collections.shuffle(artists);
                 break;
+            case Constants.ARTIST_ORDER_BY_ALBUM_COUNT:
+                artists.sort(Comparator.comparing(ArtistID3::getAlbumCount).reversed());
+                break;
         }
 
         notifyDataSetChanged();

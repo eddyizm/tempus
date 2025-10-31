@@ -116,6 +116,12 @@
             android:summary="@string/settings_album_detail_summary"
             android:key="album_detail" />
 
+        <SwitchPreference
+            android:title="@string/settings_artist_sort_by_album_count"
+            android:defaultValue="false"
+            android:summary="@string/settings_artist_sort_by_album_count_summary"
+            android:key="artist_sort_by_album_count" />
+
     </PreferenceCategory>
 
      <PreferenceCategory app:title="@string/settings_title_playlist">
