@@ -298,7 +298,6 @@ class MediaService : MediaLibraryService() {
         }.let { if (it < 0L) 0L else it }
 
         player.setMediaItems(mediaItems, lastIndex, lastPosition)
-        player.prepare()
         updateWidget()
     }
 
