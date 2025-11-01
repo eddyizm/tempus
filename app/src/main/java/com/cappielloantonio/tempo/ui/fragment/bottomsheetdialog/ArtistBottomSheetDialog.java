@@ -89,6 +89,9 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
             ArtistRepository artistRepository = new ArtistRepository();
 
             artistRepository.getInstantMix(artist, 20).observe(getViewLifecycleOwner(), songs -> {
+                // navidrome may return null for this
+                if (songs == null)
+                    return;
                 MusicUtil.ratingFilter(songs);
 
                 if (!songs.isEmpty()) {
