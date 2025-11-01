@@ -78,6 +78,9 @@ On the main player control screen, tapping on the artwork will reveal a small co
 1. Downloads the track (there is a notification if the android screen but not a pop toast currently )
 2. Adds track to playlist - pops up playlist dialog.
 3. Adds tracks to the queue via instant mix function
+    * TBD: what is the _instant mix function_?
+    * Uses [getSimilarSongs](https://opensubsonic.netlify.app/docs/endpoints/getsimilarsongs/) of OpenSubsonic API.
+      Which tracks to be mixed depends on the server implementation. For example, Navidrome gets 15 similar artists from LastFM, then 20 top songs from each.
 4. Saves play queue (if the feature is enabled in the settings) 
     * if the setting is not enabled, it toggles a view of the lyrics if available (slides to the right) 
 
