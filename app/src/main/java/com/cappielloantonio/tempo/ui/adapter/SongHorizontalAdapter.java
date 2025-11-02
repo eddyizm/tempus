@@ -252,16 +252,6 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
     public void setPlaybackState(String mediaId, boolean playing) {
         String oldId = this.currentPlayingId;
         boolean oldPlaying = this.isPlaying;

@@ -96,16 +96,6 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         return shuffling;
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
     private List<Child> groupSong(List<Child> songs) {
         switch (view) {
             case Constants.DOWNLOAD_TYPE_TRACK:
