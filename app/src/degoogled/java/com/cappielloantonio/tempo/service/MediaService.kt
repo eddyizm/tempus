@@ -5,6 +5,8 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -13,6 +15,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.Handler
 import android.os.Looper
+import android.text.TextUtils
 import android.util.Log
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
@@ -21,7 +24,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.cappielloantonio.tempo.R
+import com.cappielloantonio.tempo.glide.CustomGlideRequest
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.AssetLinkUtil
@@ -35,6 +41,7 @@ import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import java.util.Optional
 
 
 @UnstableApi
@@ -61,6 +68,7 @@ class MediaService : MediaLibraryService() {
             widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
         }
     }
+    @Volatile private var artCache : Optional<Optional<Bitmap>> = Optional.empty<Optional<Bitmap>>()
 
     inner class LocalBinder : Binder() {
         fun getEqualizerManager(): EqualizerManager {
@@ -368,6 +376,7 @@ class MediaService : MediaLibraryService() {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
+                artCache = Optional.empty()
                 if (!isPlaying) {
                     MediaManager.setPlayingPausedTimestamp(
                         player.currentMediaItem,
@@ -494,6 +503,16 @@ class MediaService : MediaLibraryService() {
             .build()
     }
 
+    private inner class CustomGlideTarget : CustomTarget<Bitmap>() {
+        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+            artCache = Optional.of(Optional.of(resource))
+        }
+
+        override fun onLoadCleared(placeholder: Drawable?) {
+            artCache = Optional.of(Optional.empty())
+        }
+    }
+
     private fun updateWidget() {
         val mi = player.currentMediaItem
         val title = mi?.mediaMetadata?.title?.toString()
@@ -512,12 +531,21 @@ class MediaService : MediaLibraryService() {
             ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, extras?.getString("artistId"))
         val position = player.currentPosition.takeIf { it != C.TIME_UNSET } ?: 0L
         val duration = player.duration.takeIf { it != C.TIME_UNSET } ?: 0L
+
+        if (!TextUtils.isEmpty(coverId) && artCache.isEmpty) {
+            CustomGlideRequest.loadAlbumArtBitmap(
+                applicationContext,
+                coverId,
+                WidgetUpdateManager.WIDGET_SAFE_ART_SIZE,
+                CustomGlideTarget())
+        }
+
         WidgetUpdateManager.updateFromState(
             this,
             title ?: "",
             artist ?: "",
             album ?: "",
-            coverId,
+            artCache,
             player.isPlaying,
             player.shuffleModeEnabled,
             player.repeatMode,

@@ -13,7 +13,9 @@ import com.bumptech.glide.request.transition.Transition;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.R;
 
+import androidx.annotation.OptIn;
 import androidx.media3.common.C;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -23,11 +25,12 @@ import com.cappielloantonio.tempo.util.MusicUtil;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public final class WidgetUpdateManager {
 
-    private static final int WIDGET_SAFE_ART_SIZE = 512;
+    public static final int WIDGET_SAFE_ART_SIZE = 512;
 
     public static void updateFromState(Context ctx,
                                        String title,
@@ -68,11 +71,12 @@ public final class WidgetUpdateManager {
         }
     }
 
+
     public static void updateFromState(Context ctx,
                                        String title,
                                        String artist,
                                        String album,
-                                       String coverArtId,
+                                       Optional<Optional<Bitmap>> coverArt,
                                        boolean playing,
                                        boolean shuffleEnabled,
                                        int repeatMode,
@@ -93,6 +97,32 @@ public final class WidgetUpdateManager {
         final String albumLinkFinal = albumLink;
         final String artistLinkFinal = artistLink;
 
+        AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);
+        int[] ids = mgr.getAppWidgetIds(new ComponentName(appCtx, WidgetProvider4x1.class));
+        Bitmap resource = coverArt.filter(Optional::isPresent).map(Optional::get).orElse(null);
+
+        for (int id : ids) {
+            android.widget.RemoteViews rv = choosePopulate(appCtx, t, a, alb, resource, p,
+                    timing.elapsedText, timing.totalText, timing.progress, sh, rep, id);
+            WidgetProvider.attachIntents(appCtx, rv, id, songLinkFinal, albumLinkFinal, artistLinkFinal);
+            mgr.updateAppWidget(id, rv);
+        }
+    }
+
+    public static void updateFromState(Context ctx,
+                                       String title,
+                                       String artist,
+                                       String album,
+                                       String coverArtId,
+                                       boolean playing,
+                                       boolean shuffleEnabled,
+                                       int repeatMode,
+                                       long positionMs,
+                                       long durationMs,
+                                       String songLink,
+                                       String albumLink,
+                                       String artistLink) {
+        final Context appCtx = ctx.getApplicationContext();
         if (!TextUtils.isEmpty(coverArtId)) {
             CustomGlideRequest.loadAlbumArtBitmap(
                     appCtx,
@@ -101,41 +131,24 @@ public final class WidgetUpdateManager {
                     new CustomTarget<Bitmap>() {
                         @Override
                         public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                            AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);
-                            int[] ids = mgr.getAppWidgetIds(new ComponentName(appCtx, WidgetProvider4x1.class));
-                            for (int id : ids) {
-                                android.widget.RemoteViews rv = choosePopulate(appCtx, t, a, alb, resource, p,
-                                        timing.elapsedText, timing.totalText, timing.progress, sh, rep, id);
-                                WidgetProvider.attachIntents(appCtx, rv, id, songLinkFinal, albumLinkFinal, artistLinkFinal);
-                                mgr.updateAppWidget(id, rv);
-                            }
+                            updateFromState(ctx, title, artist, album, Optional.of(Optional.of(resource)),
+                                    playing, shuffleEnabled, repeatMode, positionMs, durationMs, songLink, albumLink, artistLink);
                         }
 
                         @Override
                         public void onLoadCleared(Drawable placeholder) {
-                            AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);
-                            int[] ids = mgr.getAppWidgetIds(new ComponentName(appCtx, WidgetProvider4x1.class));
-                            for (int id : ids) {
-                                android.widget.RemoteViews rv = choosePopulate(appCtx, t, a, alb, null, p,
-                                        timing.elapsedText, timing.totalText, timing.progress, sh, rep, id);
-                                WidgetProvider.attachIntents(appCtx, rv, id, songLinkFinal, albumLinkFinal, artistLinkFinal);
-                                mgr.updateAppWidget(id, rv);
-                            }
+                            updateFromState(ctx, title, artist, album, Optional.of(Optional.empty()),
+                                    playing, shuffleEnabled, repeatMode, positionMs, durationMs, songLink, albumLink, artistLink);
                         }
                     }
             );
         } else {
-            AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);
-            int[] ids = mgr.getAppWidgetIds(new ComponentName(appCtx, WidgetProvider4x1.class));
-            for (int id : ids) {
-                android.widget.RemoteViews rv = choosePopulate(appCtx, t, a, alb, null, p,
-                        timing.elapsedText, timing.totalText, timing.progress, sh, rep, id);
-                WidgetProvider.attachIntents(appCtx, rv, id, songLinkFinal, albumLinkFinal, artistLinkFinal);
-                mgr.updateAppWidget(id, rv);
-            }
+            updateFromState(ctx, title, artist, album, Optional.of(Optional.empty()),
+                    playing, shuffleEnabled, repeatMode, positionMs, durationMs, songLink, albumLink, artistLink);
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     public static void refreshFromController(Context ctx) {
         final Context appCtx = ctx.getApplicationContext();
         SessionToken token = new SessionToken(appCtx, new ComponentName(appCtx, MediaService.class));
