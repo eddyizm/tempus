@@ -21,10 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MusicUtil {
     private static final String TAG = "MusicUtil";
+
+    private static final Pattern BITRATE_PATTERN = Pattern.compile("&maxBitRate=\\d+");
+    private static final Pattern FORMAT_PATTERN = Pattern.compile("&format=\\w+");
 
     public static Uri getStreamUri(String id) {
         Map<String, String> params = App.getSubsonicClientInstance(false).getParams();
@@ -59,6 +64,24 @@ public class MusicUtil {
         Log.d(TAG, "getStreamUri: " + uri);
 
         return Uri.parse(uri.toString());
+    }
+
+    public static Uri updateStreamUri(Uri uri) {
+        String s = uri.toString();
+        Matcher m1 = BITRATE_PATTERN.matcher(s);
+        s = m1.replaceAll("");
+        Matcher m2 = FORMAT_PATTERN.matcher(s);
+        s = m2.replaceAll("");
+        s = s.replace("&estimateContentLength=true", "");
+
+        if (!Preferences.isServerPrioritized())
+            s += "&maxBitRate=" + getBitratePreference();
+        if (!Preferences.isServerPrioritized())
+            s += "&format=" + getTranscodingFormatPreference();
+        if (Preferences.askForEstimateContentLength())
+            s += "&estimateContentLength=true";
+
+        return Uri.parse(s);
     }
 
     public static Uri getDownloadUri(String id) {

@@ -5,18 +5,20 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
-import androidx.media3.exoplayer.source.TrackGroupArray
-import androidx.media3.exoplayer.trackselection.TrackSelectionArray
 import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
 import com.cappielloantonio.tempo.R
@@ -43,6 +45,7 @@ class MediaService : MediaLibraryService() {
     private lateinit var mediaLibrarySession: MediaLibrarySession
     private lateinit var shuffleCommands: List<CommandButton>
     private lateinit var repeatCommands: List<CommandButton>
+    private lateinit var networkCallback: CustomNetworkCallback
     lateinit var equalizerManager: EqualizerManager
 
     private var customLayout = ImmutableList.of<CommandButton>()
@@ -81,6 +84,38 @@ class MediaService : MediaLibraryService() {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
     }
 
+    fun updateMediaItems() {
+        Log.d("MediaService", "update items");
+        val n = player.mediaItemCount
+        val k = player.currentMediaItemIndex
+        val current = player.currentPosition
+        val items = (0 .. n-1).map{i -> MappingUtil.mapMediaItem(player.getMediaItemAt(i))}
+        player.clearMediaItems()
+        player.setMediaItems(items, k, current)
+    }
+
+    inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
+        var wasWifi = false
+
+        init {
+            val manager = getSystemService(ConnectivityManager::class.java)
+            val network = manager.activeNetwork
+            val capabilities = manager.getNetworkCapabilities(network)
+            if (capabilities != null)
+                wasWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        }
+
+        override fun onCapabilitiesChanged(network : Network, networkCapabilities : NetworkCapabilities) {
+            val isWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+            if (isWifi != wasWifi) {
+                wasWifi = isWifi
+                widgetUpdateHandler.post(Runnable {
+                    updateMediaItems()
+                })
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -90,6 +125,7 @@ class MediaService : MediaLibraryService() {
         restorePlayerFromQueue()
         initializePlayerListener()
         initializeEqualizerManager()
+        initializeNetworkListener()
 
         setPlayer(player)
     }
@@ -99,6 +135,7 @@ class MediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        releaseNetworkCallback()
         equalizerManager.release()
         stopWidgetUpdates()
         releasePlayer()
@@ -275,6 +312,12 @@ class MediaService : MediaLibraryService() {
         }
     }
 
+    private fun initializeNetworkListener() {
+        networkCallback = CustomNetworkCallback()
+        getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(networkCallback)
+        updateMediaItems()
+    }
+
     private fun restorePlayerFromQueue() {
         if (player.mediaItemCount > 0) return
 
@@ -396,6 +439,10 @@ class MediaService : MediaLibraryService() {
     private fun releasePlayer() {
         player.release()
         mediaLibrarySession.release()
+    }
+
+    private fun releaseNetworkCallback() {
+        getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(networkCallback)
     }
 
     @SuppressLint("PrivateResource")
