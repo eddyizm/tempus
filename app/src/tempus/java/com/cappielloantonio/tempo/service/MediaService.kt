@@ -4,10 +4,14 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Binder
 import android.os.IBinder
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.media3.cast.CastPlayer
 import androidx.media3.cast.SessionAvailabilityListener
@@ -43,6 +47,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
     private lateinit var castPlayer: CastPlayer
     private lateinit var mediaLibrarySession: MediaLibrarySession
     private lateinit var librarySessionCallback: MediaLibrarySessionCallback
+    private lateinit var networkCallback: CustomNetworkCallback
     lateinit var equalizerManager: EqualizerManager
 
     inner class LocalBinder : Binder() {
@@ -69,6 +74,38 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         }
     }
 
+    fun updateMediaItems() {
+        Log.d("MediaService", "update items");
+        val n = player.mediaItemCount
+        val k = player.currentMediaItemIndex
+        val current = player.currentPosition
+        val items = (0 .. n-1).map{i -> MappingUtil.mapMediaItem(player.getMediaItemAt(i))}
+        player.clearMediaItems()
+        player.setMediaItems(items, k, current)
+    }
+
+    inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
+        var wasWifi = false
+
+        init {
+            val manager = getSystemService(ConnectivityManager::class.java)
+            val network = manager.activeNetwork
+            val capabilities = manager.getNetworkCapabilities(network)
+            if (capabilities != null)
+                wasWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+        }
+
+        override fun onCapabilitiesChanged(network : Network, networkCapabilities : NetworkCapabilities) {
+            val isWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+            if (isWifi != wasWifi) {
+                wasWifi = isWifi
+                widgetUpdateHandler.post(Runnable {
+                    updateMediaItems()
+                })
+            }
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
 
@@ -79,6 +116,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         initializePlayerListener()
         initializeCastPlayer()
         initializeEqualizerManager()
+        initializeNetworkListener()
 
         setPlayer(
             null,
@@ -99,6 +137,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
     }
 
     override fun onDestroy() {
+        releaseNetworkCallback()
         equalizerManager.release()
         stopWidgetUpdates()
         releasePlayer()
@@ -176,6 +215,12 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
             MediaLibrarySession.Builder(this, player, librarySessionCallback)
                 .setSessionActivity(sessionActivityPendingIntent)
                 .build()
+    }
+
+    private fun initializeNetworkListener() {
+        networkCallback = CustomNetworkCallback()
+        getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(networkCallback)
+        updateMediaItems()
     }
 
     private fun restorePlayerFromQueue() {
@@ -372,6 +417,10 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         player.release()
         mediaLibrarySession.release()
         automotiveRepository.deleteMetadata()
+    }
+
+    private fun releaseNetworkCallback() {
+        getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(networkCallback)
     }
 
     private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)

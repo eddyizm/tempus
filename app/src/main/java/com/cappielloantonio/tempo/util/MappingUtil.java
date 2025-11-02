@@ -115,6 +115,22 @@ public class MappingUtil {
                 .build();
     }
 
+    public static MediaItem mapMediaItem(MediaItem old) {
+        Uri uri = old.requestMetadata.mediaUri == null ? null : MusicUtil.updateStreamUri(old.requestMetadata.mediaUri);
+        return new MediaItem.Builder()
+                .setMediaId(old.mediaId)
+                .setMediaMetadata(old.mediaMetadata)
+                .setRequestMetadata(
+                        new MediaItem.RequestMetadata.Builder()
+                                .setMediaUri(uri)
+                                .setExtras(old.requestMetadata.extras)
+                                .build()
+                )
+                .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
+                .setUri(uri)
+                .build();
+    }
+
     public static List<MediaItem> mapDownloads(List<Child> items) {
         ArrayList<MediaItem> downloads = new ArrayList<>();
 
