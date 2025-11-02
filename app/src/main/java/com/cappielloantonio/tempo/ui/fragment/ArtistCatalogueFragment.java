@@ -34,6 +34,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.ArtistCatalogueAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.ArtistCatalogueViewModel;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 
@@ -114,7 +115,10 @@ public class ArtistCatalogueFragment extends Fragment implements ClickCallback {
         artistAdapter = new ArtistCatalogueAdapter(this);
         artistAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
         bind.artistCatalogueRecyclerView.setAdapter(artistAdapter);
-        artistCatalogueViewModel.getArtistList().observe(getViewLifecycleOwner(), artistList -> artistAdapter.setItems(artistList));
+        artistCatalogueViewModel.getArtistList().observe(getViewLifecycleOwner(), artistList -> {
+            artistAdapter.setItems(artistList);
+            artistAdapter.sort(Preferences.getArtistSortOrder());
+        });
 
         bind.artistCatalogueRecyclerView.setOnTouchListener((v, event) -> {
             hideKeyboard(v);
@@ -191,6 +195,9 @@ public class ArtistCatalogueFragment extends Fragment implements ClickCallback {
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_artist_sort_random) {
                 artistAdapter.sort(Constants.ARTIST_ORDER_BY_RANDOM);
+                return true;
+            } else if (menuItem.getItemId() == R.id.menu_artist_sort_album_count) {
+                artistAdapter.sort(Constants.ARTIST_ORDER_BY_ALBUM_COUNT);
                 return true;
             }
 

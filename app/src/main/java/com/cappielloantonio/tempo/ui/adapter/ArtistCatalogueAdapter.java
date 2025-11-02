@@ -98,16 +98,6 @@ public class ArtistCatalogueAdapter extends RecyclerView.Adapter<ArtistCatalogue
     }
 
     @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
     public Filter getFilter() {
         return filtering;
     }
@@ -150,6 +140,9 @@ public class ArtistCatalogueAdapter extends RecyclerView.Adapter<ArtistCatalogue
                 break;
             case Constants.ARTIST_ORDER_BY_RANDOM:
                 Collections.shuffle(artists);
+                break;
+            case Constants.ARTIST_ORDER_BY_ALBUM_COUNT:
+                artists.sort(Comparator.comparing(ArtistID3::getAlbumCount).reversed());
                 break;
         }
 
