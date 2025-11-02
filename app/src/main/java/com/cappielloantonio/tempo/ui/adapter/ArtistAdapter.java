@@ -66,16 +66,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemLibraryArtistBinding item;
 
