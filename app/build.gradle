@@ -110,12 +110,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:annotations:4.16.0'
 
     // Media3
-    implementation 'androidx.media3:media3-session:1.5.1'
-    implementation 'androidx.media3:media3-common:1.5.1'
-    implementation 'androidx.media3:media3-exoplayer:1.5.1'
-    implementation 'androidx.media3:media3-ui:1.5.1'
-    implementation 'androidx.media3:media3-exoplayer-hls:1.5.1'
-    tempusImplementation 'androidx.media3:media3-cast:1.5.1'
+    implementation 'androidx.media3:media3-session:1.8.0'
+    implementation 'androidx.media3:media3-common:1.8.0'
+    implementation 'androidx.media3:media3-exoplayer:1.8.0'
+    implementation 'androidx.media3:media3-ui:1.8.0'
+    implementation 'androidx.media3:media3-exoplayer-hls:1.8.0'
+    tempusImplementation 'androidx.media3:media3-cast:1.8.0'
 
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
