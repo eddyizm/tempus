@@ -79,6 +79,7 @@ object Preferences {
     private const val ALBUM_DETAIL = "album_detail"
     private const val ALBUM_SORT_ORDER = "album_sort_order"
     private const val DEFAULT_ALBUM_SORT_ORDER = Constants.ALBUM_ORDER_BY_NAME
+    private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
 
     @JvmStatic
     fun getServer(): String? {
@@ -655,5 +656,15 @@ object Preferences {
     @JvmStatic
     fun setAlbumSortOrder(sortOrder: String) {
         App.getInstance().preferences.edit().putString(ALBUM_SORT_ORDER, sortOrder).apply()
+    }
+
+    @JvmStatic
+    fun getArtistSortOrder(): String {
+        val sort_by_album_count = App.getInstance().preferences.getBoolean(ARTIST_SORT_BY_ALBUM_COUNT, false)
+        Log.d("Preferences", "getSortOrder")
+        if (sort_by_album_count)
+            return Constants.ARTIST_ORDER_BY_ALBUM_COUNT
+        else
+            return Constants.ARTIST_ORDER_BY_NAME
     }
 }
