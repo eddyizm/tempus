@@ -21,6 +21,8 @@ import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import androidx.media3.common.*
+import androidx.media3.common.Player.REPEAT_MODE_ALL
+import androidx.media3.common.Player.RepeatMode
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
@@ -136,9 +138,12 @@ class MediaService : MediaLibraryService() {
                     Log.d("MediaService", "update item due to network change");
                     val pos = player.currentPosition
                     val k = player.currentMediaItemIndex
-                    val item = MappingUtil.mapMediaItem(player.getMediaItemAt(k))
-                    player.replaceMediaItem(k, item)
-                    player.seekTo(pos)
+                    val old = player.getMediaItemAt(k)
+                    val item = MappingUtil.mapMediaItem(old)
+                    if (item.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
+                        player.replaceMediaItem(k, item)
+                        player.seekTo(pos)
+                    }
                 })
             }
         }
@@ -397,15 +402,26 @@ class MediaService : MediaLibraryService() {
 
                 if (currentMediaItem != null) {
                     val item = MappingUtil.mapMediaItem(currentMediaItem)
-                    player.replaceMediaItem(player.currentMediaItemIndex, item)
+                    if (item.requestMetadata.mediaUri != currentMediaItem.requestMetadata.mediaUri)
+                        player.replaceMediaItem(player.currentMediaItemIndex, item)
 
                     if (item.mediaMetadata.extras != null) {
                         MediaManager.scrobble(item, false)
                     }
                 }
 
-                if (player.currentMediaItemIndex + 1 == player.mediaItemCount)
+                if (player.currentMediaItemIndex + 1 < player.mediaItemCount)
+                    player.replaceMediaItem(
+                        player.currentMediaItemIndex + 1,
+                        MappingUtil.mapMediaItem(player.getMediaItemAt(player.currentMediaItemIndex + 1)))
+
+                if (player.currentMediaItemIndex + 1 == player.mediaItemCount) {
+                    if (player.repeatMode == REPEAT_MODE_ALL && player.mediaItemCount > 1)
+                        player.replaceMediaItem(
+                            0,
+                            MappingUtil.mapMediaItem(player.getMediaItemAt(0)))
                     MediaManager.continuousPlay(player.currentMediaItem)
+                }
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
