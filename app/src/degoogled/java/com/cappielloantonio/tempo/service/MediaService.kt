@@ -395,11 +395,13 @@ class MediaService : MediaLibraryService() {
                 ReplayGainUtil.setReplayGain(player, tracks)
                 val currentMediaItem = player.currentMediaItem
 
-                val item = MappingUtil.mapMediaItem(currentMediaItem)
-                player.replaceMediaItem(player.currentMediaItemIndex, item)
+                if (currentMediaItem != null) {
+                    val item = MappingUtil.mapMediaItem(currentMediaItem)
+                    player.replaceMediaItem(player.currentMediaItemIndex, item)
 
-                if (item != null && item.mediaMetadata.extras != null) {
-                    MediaManager.scrobble(item, false)
+                    if (item.mediaMetadata.extras != null) {
+                        MediaManager.scrobble(item, false)
+                    }
                 }
 
                 if (player.currentMediaItemIndex + 1 == player.mediaItemCount)
