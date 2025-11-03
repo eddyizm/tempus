@@ -4,7 +4,10 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
@@ -60,7 +63,7 @@ class MediaService : MediaLibraryService() {
     private var widgetUpdateScheduled = false
     private val widgetUpdateRunnable = object : Runnable {
         override fun run() {
-            if (!player.isPlaying) {
+            if (!player.isPlaying || !screenOn) {
                 widgetUpdateScheduled = false
                 return
             }
@@ -68,7 +71,29 @@ class MediaService : MediaLibraryService() {
             widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
         }
     }
-    @Volatile private var artCache : Optional<Optional<Bitmap>> = Optional.empty<Optional<Bitmap>>()
+
+    private var prevPlayerStates = Triple(false, false, -1)
+    @Volatile private var nowPlayingChanged = false
+    @Volatile private var artCacheUpdated = false
+    @Volatile private var artCache : Bitmap? = null
+    @Volatile private var screenOn = true
+
+    val broadCastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(contxt: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_SCREEN_ON -> {
+                    Log.d("MediaService", "screenOn");
+                    screenOn = true
+                    widgetUpdateHandler.post(widgetUpdateRunnable)
+                }
+                Intent.ACTION_SCREEN_OFF -> {
+                    Log.d("MediaService", "screenOff");
+                    screenOn = false
+                }
+            }
+        }
+    }
+
 
     inner class LocalBinder : Binder() {
         fun getEqualizerManager(): EqualizerManager {
@@ -134,6 +159,7 @@ class MediaService : MediaLibraryService() {
         initializePlayerListener()
         initializeEqualizerManager()
         initializeNetworkListener()
+        initializeScreenListener()
 
         setPlayer(player)
     }
@@ -143,6 +169,7 @@ class MediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        unregisterReceiver(broadCastReceiver)
         releaseNetworkCallback()
         equalizerManager.release()
         stopWidgetUpdates()
@@ -288,6 +315,12 @@ class MediaService : MediaLibraryService() {
         player.repeatMode = Preferences.getRepeatMode()
     }
 
+    private fun initializeScreenListener() {
+        val filter = IntentFilter(Intent.ACTION_SCREEN_ON)
+        filter.addAction(Intent.ACTION_SCREEN_OFF)
+        registerReceiver(broadCastReceiver, filter)
+    }
+
     private fun initializeEqualizerManager() {
         equalizerManager = EqualizerManager()
         val audioSessionId = player.audioSessionId
@@ -376,7 +409,9 @@ class MediaService : MediaLibraryService() {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                artCache = Optional.empty()
+                nowPlayingChanged = true
+                artCacheUpdated = false
+                artCache = null
                 if (!isPlaying) {
                     MediaManager.setPlayingPausedTimestamp(
                         player.currentMediaItem,
@@ -390,7 +425,8 @@ class MediaService : MediaLibraryService() {
                 } else {
                     stopWidgetUpdates()
                 }
-                updateWidget()
+                if (screenOn)
+                    updateWidget()
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -505,11 +541,11 @@ class MediaService : MediaLibraryService() {
 
     private inner class CustomGlideTarget : CustomTarget<Bitmap>() {
         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-            artCache = Optional.of(Optional.of(resource))
+            artCache = resource
         }
 
         override fun onLoadCleared(placeholder: Drawable?) {
-            artCache = Optional.of(Optional.empty())
+            artCache = null
         }
     }
 
@@ -532,7 +568,7 @@ class MediaService : MediaLibraryService() {
         val position = player.currentPosition.takeIf { it != C.TIME_UNSET } ?: 0L
         val duration = player.duration.takeIf { it != C.TIME_UNSET } ?: 0L
 
-        if (!TextUtils.isEmpty(coverId) && artCache.isEmpty) {
+        if (!TextUtils.isEmpty(coverId) && nowPlayingChanged) {
             CustomGlideRequest.loadAlbumArtBitmap(
                 applicationContext,
                 coverId,
@@ -540,21 +576,30 @@ class MediaService : MediaLibraryService() {
                 CustomGlideTarget())
         }
 
-        WidgetUpdateManager.updateFromState(
-            this,
-            title ?: "",
-            artist ?: "",
-            album ?: "",
-            artCache,
-            player.isPlaying,
-            player.shuffleModeEnabled,
-            player.repeatMode,
-            position,
-            duration,
-            songLink,
-            albumLink,
-            artistLink
-        )
+        val newPlayerState = Triple(player.isPlaying, player.shuffleModeEnabled, player.repeatMode)
+        if (nowPlayingChanged || prevPlayerStates != newPlayerState) {
+            WidgetUpdateManager.updateFromState(
+                this,
+                title ?: "",
+                artist ?: "",
+                album ?: "",
+                Optional.ofNullable(artCache),
+                player.isPlaying,
+                player.shuffleModeEnabled,
+                player.repeatMode,
+                position,
+                duration,
+                songLink,
+                albumLink,
+                artistLink
+            )
+            prevPlayerStates = newPlayerState
+            Log.d("MediaService", "fullUpdate");
+        } else {
+            WidgetUpdateManager.updateProgress(this, position, duration)
+            Log.d("MediaService", "updateProgress");
+        }
+        nowPlayingChanged = false
     }
 
     private fun scheduleWidgetUpdates() {
