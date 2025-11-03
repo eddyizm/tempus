@@ -311,6 +311,13 @@ class MediaService : MediaLibraryService() {
             .setLoadControl(initializeLoadControl())
             .build()
 
+        val params = player.trackSelectionParameters.buildUpon()
+            .setAudioOffloadPreferences(
+                TrackSelectionParameters.AudioOffloadPreferences.Builder().setAudioOffloadMode(
+                    TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
+                ).build()
+            ).build()
+        player.trackSelectionParameters = params
         player.shuffleModeEnabled = Preferences.isShuffleModeEnabled()
         player.repeatMode = Preferences.getRepeatMode()
     }
