@@ -117,16 +117,6 @@ class MediaService : MediaLibraryService() {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
     }
 
-    fun updateMediaItems() {
-        Log.d("MediaService", "update items");
-        val n = player.mediaItemCount
-        val k = player.currentMediaItemIndex
-        val current = player.currentPosition
-        val items = (0 .. n-1).map{i -> MappingUtil.mapMediaItem(player.getMediaItemAt(i))}
-        player.clearMediaItems()
-        player.setMediaItems(items, k, current)
-    }
-
     inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
         var wasWifi = false
 
@@ -143,7 +133,12 @@ class MediaService : MediaLibraryService() {
             if (isWifi != wasWifi) {
                 wasWifi = isWifi
                 widgetUpdateHandler.post(Runnable {
-                    updateMediaItems()
+                    Log.d("MediaService", "update item due to network change");
+                    val pos = player.currentPosition
+                    val k = player.currentMediaItemIndex
+                    val item = MappingUtil.mapMediaItem(player.getMediaItemAt(k))
+                    player.replaceMediaItem(k, item)
+                    player.seekTo(pos)
                 })
             }
         }
@@ -356,7 +351,6 @@ class MediaService : MediaLibraryService() {
     private fun initializeNetworkListener() {
         networkCallback = CustomNetworkCallback()
         getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(networkCallback)
-        updateMediaItems()
     }
 
     private fun restorePlayerFromQueue() {
@@ -400,8 +394,12 @@ class MediaService : MediaLibraryService() {
             override fun onTracksChanged(tracks: Tracks) {
                 ReplayGainUtil.setReplayGain(player, tracks)
                 val currentMediaItem = player.currentMediaItem
-                if (currentMediaItem != null && currentMediaItem.mediaMetadata.extras != null) {
-                    MediaManager.scrobble(currentMediaItem, false)
+
+                val item = MappingUtil.mapMediaItem(currentMediaItem)
+                player.replaceMediaItem(player.currentMediaItemIndex, item)
+
+                if (item != null && item.mediaMetadata.extras != null) {
+                    MediaManager.scrobble(item, false)
                 }
 
                 if (player.currentMediaItemIndex + 1 == player.mediaItemCount)
