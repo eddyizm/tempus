@@ -19,7 +19,7 @@ import com.cappielloantonio.tempo.R;
 
 public final class WidgetViewsFactory {
 
-    public static final int PROGRESS_MAX = 1000;
+    static final int PROGRESS_MAX = 1000;
     private static final float ALBUM_ART_CORNER_RADIUS_DP = 6f;
 
     private WidgetViewsFactory() {

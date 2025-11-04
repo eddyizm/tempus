@@ -3,7 +3,6 @@ package com.cappielloantonio.tempo.ui.fragment;
 import android.content.ComponentName;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +47,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
-    private Handler progressBarHandler = null;
+    private Handler progressBarHandler;
     private Runnable progressBarRunnable;
 
     @Nullable
@@ -65,14 +64,6 @@ public class PlayerBottomSheetFragment extends Fragment {
         setHeaderBookmarksButton();
 
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (progressBarHandler != null)
-            progressBarHandler.post(progressBarRunnable);
-        Log.d("Player", "resumed");
     }
 
     @Override
@@ -290,10 +281,6 @@ public class PlayerBottomSheetFragment extends Fragment {
     private void defineProgressBarHandler(MediaBrowser mediaBrowser) {
         progressBarHandler = new Handler();
         progressBarRunnable = () -> {
-            if (!isResumed()) {
-                Log.d("Player", "not resumed");
-                return;
-            }
             setProgress(mediaBrowser);
             progressBarHandler.postDelayed(progressBarRunnable, 1000);
         };

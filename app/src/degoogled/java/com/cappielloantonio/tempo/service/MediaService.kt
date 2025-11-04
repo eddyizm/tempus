@@ -4,12 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -18,21 +13,15 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.Handler
 import android.os.Looper
-import android.text.TextUtils
 import android.util.Log
 import androidx.media3.common.*
-import androidx.media3.common.Player.REPEAT_MODE_ALL
-import androidx.media3.common.Player.RepeatMode
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
 import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.glide.CustomGlideRequest
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.AssetLinkUtil
@@ -46,7 +35,6 @@ import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import java.util.Optional
 
 
 @UnstableApi
@@ -65,7 +53,7 @@ class MediaService : MediaLibraryService() {
     private var widgetUpdateScheduled = false
     private val widgetUpdateRunnable = object : Runnable {
         override fun run() {
-            if (!player.isPlaying || !screenOn) {
+            if (!player.isPlaying) {
                 widgetUpdateScheduled = false
                 return
             }
@@ -73,29 +61,6 @@ class MediaService : MediaLibraryService() {
             widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
         }
     }
-
-    private var prevPlayerStates = Triple(false, false, -1)
-    @Volatile private var nowPlayingChanged = false
-    @Volatile private var artCacheUpdated = false
-    @Volatile private var artCache : Bitmap? = null
-    @Volatile private var screenOn = true
-
-    val broadCastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(contxt: Context?, intent: Intent?) {
-            when (intent?.action) {
-                Intent.ACTION_SCREEN_ON -> {
-                    Log.d("MediaService", "screenOn");
-                    screenOn = true
-                    widgetUpdateHandler.post(widgetUpdateRunnable)
-                }
-                Intent.ACTION_SCREEN_OFF -> {
-                    Log.d("MediaService", "screenOff");
-                    screenOn = false
-                }
-            }
-        }
-    }
-
 
     inner class LocalBinder : Binder() {
         fun getEqualizerManager(): EqualizerManager {
@@ -119,6 +84,16 @@ class MediaService : MediaLibraryService() {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
     }
 
+    fun updateMediaItems() {
+        Log.d("MediaService", "update items");
+        val n = player.mediaItemCount
+        val k = player.currentMediaItemIndex
+        val current = player.currentPosition
+        val items = (0 .. n-1).map{i -> MappingUtil.mapMediaItem(player.getMediaItemAt(i))}
+        player.clearMediaItems()
+        player.setMediaItems(items, k, current)
+    }
+
     inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
         var wasWifi = false
 
@@ -135,15 +110,7 @@ class MediaService : MediaLibraryService() {
             if (isWifi != wasWifi) {
                 wasWifi = isWifi
                 widgetUpdateHandler.post(Runnable {
-                    Log.d("MediaService", "update item due to network change");
-                    val pos = player.currentPosition
-                    val k = player.currentMediaItemIndex
-                    val old = player.getMediaItemAt(k)
-                    val item = MappingUtil.mapMediaItem(old)
-                    if (item.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
-                        player.replaceMediaItem(k, item)
-                        player.seekTo(pos)
-                    }
+                    updateMediaItems()
                 })
             }
         }
@@ -159,7 +126,6 @@ class MediaService : MediaLibraryService() {
         initializePlayerListener()
         initializeEqualizerManager()
         initializeNetworkListener()
-        initializeScreenListener()
 
         setPlayer(player)
     }
@@ -169,7 +135,6 @@ class MediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
-        unregisterReceiver(broadCastReceiver)
         releaseNetworkCallback()
         equalizerManager.release()
         stopWidgetUpdates()
@@ -311,21 +276,8 @@ class MediaService : MediaLibraryService() {
             .setLoadControl(initializeLoadControl())
             .build()
 
-        val params = player.trackSelectionParameters.buildUpon()
-            .setAudioOffloadPreferences(
-                TrackSelectionParameters.AudioOffloadPreferences.Builder().setAudioOffloadMode(
-                    TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
-                ).build()
-            ).build()
-        player.trackSelectionParameters = params
         player.shuffleModeEnabled = Preferences.isShuffleModeEnabled()
         player.repeatMode = Preferences.getRepeatMode()
-    }
-
-    private fun initializeScreenListener() {
-        val filter = IntentFilter(Intent.ACTION_SCREEN_ON)
-        filter.addAction(Intent.ACTION_SCREEN_OFF)
-        registerReceiver(broadCastReceiver, filter)
     }
 
     private fun initializeEqualizerManager() {
@@ -363,6 +315,7 @@ class MediaService : MediaLibraryService() {
     private fun initializeNetworkListener() {
         networkCallback = CustomNetworkCallback()
         getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(networkCallback)
+        updateMediaItems()
     }
 
     private fun restorePlayerFromQueue() {
@@ -406,35 +359,15 @@ class MediaService : MediaLibraryService() {
             override fun onTracksChanged(tracks: Tracks) {
                 ReplayGainUtil.setReplayGain(player, tracks)
                 val currentMediaItem = player.currentMediaItem
-
-                if (currentMediaItem != null) {
-                    val item = MappingUtil.mapMediaItem(currentMediaItem)
-                    if (item.requestMetadata.mediaUri != currentMediaItem.requestMetadata.mediaUri)
-                        player.replaceMediaItem(player.currentMediaItemIndex, item)
-
-                    if (item.mediaMetadata.extras != null) {
-                        MediaManager.scrobble(item, false)
-                    }
+                if (currentMediaItem != null && currentMediaItem.mediaMetadata.extras != null) {
+                    MediaManager.scrobble(currentMediaItem, false)
                 }
 
-                if (player.currentMediaItemIndex + 1 < player.mediaItemCount)
-                    player.replaceMediaItem(
-                        player.currentMediaItemIndex + 1,
-                        MappingUtil.mapMediaItem(player.getMediaItemAt(player.currentMediaItemIndex + 1)))
-
-                if (player.currentMediaItemIndex + 1 == player.mediaItemCount) {
-                    if (player.repeatMode == REPEAT_MODE_ALL && player.mediaItemCount > 1)
-                        player.replaceMediaItem(
-                            0,
-                            MappingUtil.mapMediaItem(player.getMediaItemAt(0)))
+                if (player.currentMediaItemIndex + 1 == player.mediaItemCount)
                     MediaManager.continuousPlay(player.currentMediaItem)
-                }
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                nowPlayingChanged = true
-                artCacheUpdated = false
-                artCache = null
                 if (!isPlaying) {
                     MediaManager.setPlayingPausedTimestamp(
                         player.currentMediaItem,
@@ -448,8 +381,7 @@ class MediaService : MediaLibraryService() {
                 } else {
                     stopWidgetUpdates()
                 }
-                if (screenOn)
-                    updateWidget()
+                updateWidget()
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -562,16 +494,6 @@ class MediaService : MediaLibraryService() {
             .build()
     }
 
-    private inner class CustomGlideTarget : CustomTarget<Bitmap>() {
-        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-            artCache = resource
-        }
-
-        override fun onLoadCleared(placeholder: Drawable?) {
-            artCache = null
-        }
-    }
-
     private fun updateWidget() {
         val mi = player.currentMediaItem
         val title = mi?.mediaMetadata?.title?.toString()
@@ -590,39 +512,21 @@ class MediaService : MediaLibraryService() {
             ?: AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, extras?.getString("artistId"))
         val position = player.currentPosition.takeIf { it != C.TIME_UNSET } ?: 0L
         val duration = player.duration.takeIf { it != C.TIME_UNSET } ?: 0L
-
-        if (!TextUtils.isEmpty(coverId) && nowPlayingChanged) {
-            CustomGlideRequest.loadAlbumArtBitmap(
-                applicationContext,
-                coverId,
-                WidgetUpdateManager.WIDGET_SAFE_ART_SIZE,
-                CustomGlideTarget())
-        }
-
-        val newPlayerState = Triple(player.isPlaying, player.shuffleModeEnabled, player.repeatMode)
-        if (nowPlayingChanged || prevPlayerStates != newPlayerState) {
-            WidgetUpdateManager.updateFromState(
-                this,
-                title ?: "",
-                artist ?: "",
-                album ?: "",
-                Optional.ofNullable(artCache),
-                player.isPlaying,
-                player.shuffleModeEnabled,
-                player.repeatMode,
-                position,
-                duration,
-                songLink,
-                albumLink,
-                artistLink
-            )
-            prevPlayerStates = newPlayerState
-            Log.d("MediaService", "fullUpdate");
-        } else {
-            WidgetUpdateManager.updateProgress(this, position, duration)
-            Log.d("MediaService", "updateProgress");
-        }
-        nowPlayingChanged = false
+        WidgetUpdateManager.updateFromState(
+            this,
+            title ?: "",
+            artist ?: "",
+            album ?: "",
+            coverId,
+            player.isPlaying,
+            player.shuffleModeEnabled,
+            player.repeatMode,
+            position,
+            duration,
+            songLink,
+            albumLink,
+            artistLink
+        )
     }
 
     private fun scheduleWidgetUpdates() {
