@@ -47,9 +47,6 @@ Please note the two variants in the release assets include release/debug and 32/
 
 [CHANGELOG.md](CHANGELOG.md)
 
-[**Buy me a coffee**](https://ko-fi.com/eddyizm)
-
-
 ## Usage
 
 [Documentation](USAGE.md) (work in progress)
@@ -113,6 +110,11 @@ If there is an UI change, please include a before/after screenshot and a short v
 Currently there are no tests but I would love to start on some unit tests. 
 
 Not a hard requirement but any new feature/change should ideally include an update to the nacent documention. 
+
+## Support
+
+[**Buy me a coffee**](https://ko-fi.com/eddyizm)  
+bitcoin: `3QVHSSCJvn6yXEcJ3A3cxYLMmbvFsrnUs5`  
 
 ## License
 
