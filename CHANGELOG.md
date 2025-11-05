@@ -1,10 +1,12 @@
 # Changelog
 
-
 ## Pending release..
+
+## [4.1.0](https://github.com/eddyizm/tempo/releases/tag/v4.1.0) (2025-11-05)
+## What's Changed
 * chore(i18n): Update Spanish (es-ES) translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/205
-* feat: shuffle for artists without using `getTopSongs` by @pca006132 in https://github.com/eddyizm/tempus/pull/207
-* chore: Update USAGE.md with instant mix details by @zc-devs in https://github.com/eddyizm/tempus/pull/220
+* shuffle for artists without using `getTopSongs` by @pca006132 in https://github.com/eddyizm/tempus/pull/207
+* Update USAGE.md with instant mix details by @zc-devs in https://github.com/eddyizm/tempus/pull/220
 * feat: sort artists by album count by @pca006132 in https://github.com/eddyizm/tempus/pull/206
 * Fix downloaded tab performance by @pca006132 in https://github.com/eddyizm/tempus/pull/210
 * fix: remove NestedScrollViews for fragment_album_page by @pca006132 in https://github.com/eddyizm/tempus/pull/216
@@ -12,8 +14,12 @@
 * fix: do not override getItemViewType and getItemId by @pca006132 in https://github.com/eddyizm/tempus/pull/221
 * chore: update media3 dependencies by @pca006132 in https://github.com/eddyizm/tempus/pull/217
 * fix: update MediaItems after network change by @pca006132 in https://github.com/eddyizm/tempus/pull/222
+* fix: skip mapping downloaded item by @pca006132 in https://github.com/eddyizm/tempus/pull/228
 
----
+## New Contributors
+* @pca006132 made their first contribution in https://github.com/eddyizm/tempus/pull/207
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.0.7...v4.1.0
 
 ## [4.0.7](https://github.com/eddyizm/tempo/releases/tag/v4.0.7) (2025-10-28)
 ## What's Changed
