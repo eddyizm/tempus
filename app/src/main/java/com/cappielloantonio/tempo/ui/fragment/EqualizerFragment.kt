@@ -36,7 +36,6 @@ class EqualizerFragment : Fragment() {
         @OptIn(UnstableApi::class)
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == MediaService.ACTION_EQUALIZER_UPDATED) {
-                // Equalizer became available or updated. Rebuild UI and restore values.
                 initUI()
                 restoreEqualizerPreferences()
             }
