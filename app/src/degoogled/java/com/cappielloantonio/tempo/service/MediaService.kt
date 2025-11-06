@@ -82,6 +82,7 @@ class MediaService : MediaLibraryService() {
         private const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL =
             "android.media3.session.demo.REPEAT_ALL"
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
+        const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
     }
 
     fun updateMediaItems() {
@@ -283,16 +284,7 @@ class MediaService : MediaLibraryService() {
     private fun initializeEqualizerManager() {
         equalizerManager = EqualizerManager()
         val audioSessionId = player.audioSessionId
-        if (equalizerManager.attachToSession(audioSessionId)) {
-            val enabled = Preferences.isEqualizerEnabled()
-            equalizerManager.setEnabled(enabled)
-
-            val bands = equalizerManager.getNumberOfBands()
-            val savedLevels = Preferences.getEqualizerBandLevels(bands)
-            for (i in 0 until bands) {
-                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
-            }
-        }
+        attachEqualizerIfPossible(audioSessionId)
     }
 
     private fun initializeMediaLibrarySession() {
@@ -426,6 +418,10 @@ class MediaService : MediaLibraryService() {
                 customLayout = librarySessionCallback.buildCustomLayout(player)
                 mediaLibrarySession.setCustomLayout(customLayout)
             }
+
+            override fun onAudioSessionIdChanged(audioSessionId: Int) {
+                attachEqualizerIfPossible(audioSessionId)
+            }
         })
         if (player.isPlaying) {
             scheduleWidgetUpdates()
@@ -541,6 +537,21 @@ class MediaService : MediaLibraryService() {
         widgetUpdateScheduled = false
     }
 
+    private fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
+        if (audioSessionId == 0 || audioSessionId == -1) return false
+        val attached = equalizerManager.attachToSession(audioSessionId)
+        if (attached) {
+            val enabled = Preferences.isEqualizerEnabled()
+            equalizerManager.setEnabled(enabled)
+            val bands = equalizerManager.getNumberOfBands()
+            val savedLevels = Preferences.getEqualizerBandLevels(bands)
+            for (i in 0 until bands) {
+                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
+            }
+            sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+        }
+        return attached
+    }
 
     private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)
 
