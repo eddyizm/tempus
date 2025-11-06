@@ -1,6 +1,10 @@
 # Changelog
 
 ## Pending release..
+* fix: reverts change causing album disc/track list to get out of order by @eddyizm in https://github.com/eddyizm/tempus/pull/237
+* fix: Add listener to enable equalizer when audioSessionId changes by @jaime-grj in https://github.com/eddyizm/tempus/pull/235
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.1.0...v4.1.2
 
 ## [4.1.0](https://github.com/eddyizm/tempo/releases/tag/v4.1.0) (2025-11-05)
 ## What's Changed
