@@ -161,16 +161,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
     private fun initializeEqualizerManager() {
         equalizerManager = EqualizerManager()
         val audioSessionId = player.audioSessionId
-        if (equalizerManager.attachToSession(audioSessionId)) {
-            val enabled = Preferences.isEqualizerEnabled()
-            equalizerManager.setEnabled(enabled)
-
-            val bands = equalizerManager.getNumberOfBands()
-            val savedLevels = Preferences.getEqualizerBandLevels(bands)
-            for (i in 0 until bands) {
-                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
-            }
-        }
+        attachEqualizerIfPossible(audioSessionId)
     }
 
     private fun initializePlayer() {
@@ -334,6 +325,10 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
             override fun onRepeatModeChanged(repeatMode: Int) {
                 Preferences.setRepeatMode(repeatMode)
             }
+
+            override fun onAudioSessionIdChanged(audioSessionId: Int) {
+                attachEqualizerIfPossible(audioSessionId)
+            }
         })
         if (player.isPlaying) {
             scheduleWidgetUpdates()
@@ -450,6 +445,22 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         player.setMediaItems(currentQueue, currentIndex, currentPosition)
         player.playWhenReady = isPlaying
         player.prepare()
+    }
+
+    private fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
+        if (audioSessionId == 0 || audioSessionId == -1) return false
+        val attached = equalizerManager.attachToSession(audioSessionId)
+        if (attached) {
+            val enabled = Preferences.isEqualizerEnabled()
+            equalizerManager.setEnabled(enabled)
+            val bands = equalizerManager.getNumberOfBands()
+            val savedLevels = Preferences.getEqualizerBandLevels(bands)
+            for (i in 0 until bands) {
+                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
+            }
+            sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+        }
+        return attached
     }
 }
 
