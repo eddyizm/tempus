@@ -60,6 +60,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
 
     companion object {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
+        const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
     }
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
     private var widgetUpdateScheduled = false
