@@ -270,7 +270,13 @@
     <string name="server_unreachable_dialog_title">Сервер недоступен</string>
     <string name="settings_about_summary">Tempus — это легкий музыкальный клиент с открытым исходным кодом для Subsonic, разработанный и созданный специально для Android.</string>
     <string name="settings_about_title">О нас</string>
+    <string name="settings_album_detail">Показать детали альбома</string>
+    <string name="settings_album_detail_summary">Если включено, отображать информацию об альбоме, например жанр, количество песен и т. д., на странице альбома.</string>
+    <string name="settings_allow_playlist_duplicates">Разрешить добавление дубликатов в плейлист</string>
+    <string name="settings_allow_playlist_duplicates_summary">Если включено, дубликаты не будут проверяться при добавлении в плейлист..</string>
     <string name="settings_always_on_display">Всегда на дисплее</string>
+    <string name="settings_artist_sort_by_album_count">Сортировать исполнителей по количеству альбомов</string>
+    <string name="settings_artist_sort_by_album_count_summary">Если включено, сортировать исполнителей по количеству альбомов. Если отключено, сортировать по имени.</string>
     <string name="settings_audio_transcode_download_format">Формат перекодирования</string>
     <string name="settings_audio_transcode_download_priority_summary">Если этот параметр включен, Tempus не будет принудительно загружать трек с настройками перекодирования, указанными ниже.</string>
     <string name="settings_audio_transcode_download_priority_title">Установите приоритет настроек сервера, используемых для потоковой передачи при загрузке</string>
@@ -319,8 +325,12 @@
     <string name="settings_queue_syncing_countdown">Таймер синхронизации</string>
     <string name="settings_queue_syncing_summary">Если этот параметр включен, пользователь будет иметь возможность сохранять свою очередь воспроизведения и загружать состояние при открытии приложения.</string>
     <string name="settings_queue_syncing_title">Синхронизировать очередь воспроизведения для этого пользователя</string>
+    <string name="settings_show_mini_shuffle_button">Показать кнопку Shuffle</string>
+    <string name="settings_show_mini_shuffle_button_summary">Если включено, показывать кнопку перемешивания, убрать сердечко в мини-плеере</string>
     <string name="settings_radio">Показать радио</string>
     <string name="settings_radio_summary">Если включено, показывать раздел радио. Перезапустите приложение, чтобы оно вступило в силу.</string>
+    <string name="settings_auto_download_lyrics">Автоматическая загрузка текстов песен</string>
+    <string name="settings_auto_download_lyrics_summary">Автоматически сохранять тексты песен, когда они доступны, чтобы их можно было просматривать в автономном режиме.</string>
     <string name="settings_replay_gain">Установите режим усиления воспроизведения</string>
     <string name="settings_rounded_corner">Закругленные углы</string>
     <string name="settings_rounded_corner_size">Размер углов</string>
@@ -346,6 +356,9 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Синхронизировать помеченные альбомы для использования в автономном режиме.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Если этот параметр включен, помеченные треки будут загружены для использования в автономном режиме.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Синхронизировать помеченные треки для использования в автономном режиме.</string>
+    <string name="settings_sync_starred_artists_for_offline_use_title">Синхронизировать избранных исполнителей для использования офлайн</string>
+    <string name="settings_support_summary">Присоединяйтесь к обсуждениям в сообществе и оказывайте поддержку</string>
+    <string name="settings_support_title">Поддержка пользователей</string>
     <string name="settings_theme">Тема</string>
     <string name="settings_title_data">Данные</string>
     <string name="settings_title_general">Общий</string>
