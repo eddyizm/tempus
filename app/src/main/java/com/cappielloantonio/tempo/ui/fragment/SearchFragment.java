@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,13 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.FragmentSearchBinding;
+import com.cappielloantonio.tempo.databinding.InnerFragmentSearchGroupBinding;
+import com.cappielloantonio.tempo.databinding.ItemLibraryArtistBinding;
 import com.cappielloantonio.tempo.helper.recyclerview.CustomLinearSnapHelper;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.service.MediaManager;
@@ -29,6 +33,7 @@ import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistAdapter;
+import com.cappielloantonio.tempo.ui.adapter.SingleAdapter;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -36,6 +41,7 @@ import com.cappielloantonio.tempo.viewmodel.SearchViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Collections;
+import java.util.List;
 
 @UnstableApi
 public class SearchFragment extends Fragment implements ClickCallback {
@@ -46,9 +52,13 @@ public class SearchFragment extends Fragment implements ClickCallback {
     private SearchViewModel searchViewModel;
     private PlaybackViewModel playbackViewModel;
 
-    private ArtistAdapter artistAdapter;
-    private AlbumAdapter albumAdapter;
-    private SongHorizontalAdapter songHorizontalAdapter;
+    ArtistAdapter realArtistAdapter;
+    AlbumAdapter realAlbumAdapter;
+    SongHorizontalAdapter realSongAdapter;
+    private SingleAdapter<InnerFragmentSearchGroupBinding> artistAdapter;
+    private SingleAdapter<InnerFragmentSearchGroupBinding> albumAdapter;
+    private SingleAdapter<InnerFragmentSearchGroupBinding> songAdapter;
+    private ConcatAdapter concatAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -81,7 +91,7 @@ public class SearchFragment extends Fragment implements ClickCallback {
     @Override
     public void onResume() {
         super.onResume();
-        if (songHorizontalAdapter != null) setMediaBrowserListenableFuture();
+        if (songAdapter != null) setMediaBrowserListenableFuture();
     }
 
     @Override
@@ -97,35 +107,57 @@ public class SearchFragment extends Fragment implements ClickCallback {
     }
 
     private void initSearchResultView() {
-        // Artists
-        bind.searchResultArtistRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        bind.searchResultArtistRecyclerView.setHasFixedSize(true);
+        realArtistAdapter = new ArtistAdapter(this, false, false);
+        artistAdapter = new SingleAdapter<>(
+                vg -> {
+                    InnerFragmentSearchGroupBinding binding = InnerFragmentSearchGroupBinding.inflate(LayoutInflater.from(vg.getContext()), vg, false);
+                    CustomLinearSnapHelper artistSnapHelper = new CustomLinearSnapHelper();
+                    artistSnapHelper.attachToRecyclerView(binding.searchResultGroupRecyclerView);
+                    return binding;
+                },
+                holder -> {
+                    InnerFragmentSearchGroupBinding binding = (InnerFragmentSearchGroupBinding) holder.item;
+                    binding.searchResultGroupRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+                    binding.searchResultGroupRecyclerView.setHasFixedSize(true);
+                    binding.searchResultGroupRecyclerView.setAdapter(realArtistAdapter);
+                    binding.searchResultGroupTitle.setText(R.string.search_title_artist);
+                }
+        );
 
-        artistAdapter = new ArtistAdapter(this, false, false);
-        bind.searchResultArtistRecyclerView.setAdapter(artistAdapter);
+        realAlbumAdapter = new AlbumAdapter(this);
+        albumAdapter = new SingleAdapter<>(
+                vg -> {
+                    InnerFragmentSearchGroupBinding binding = InnerFragmentSearchGroupBinding.inflate(LayoutInflater.from(vg.getContext()), vg, false);
+                    CustomLinearSnapHelper artistSnapHelper = new CustomLinearSnapHelper();
+                    artistSnapHelper.attachToRecyclerView(binding.searchResultGroupRecyclerView);
+                    return binding;
+                },
+                holder -> {
+                    InnerFragmentSearchGroupBinding binding = (InnerFragmentSearchGroupBinding) holder.item;
+                    binding.searchResultGroupRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+                    binding.searchResultGroupRecyclerView.setHasFixedSize(true);
+                    binding.searchResultGroupRecyclerView.setAdapter(realAlbumAdapter);
+                    binding.searchResultGroupTitle.setText(R.string.search_title_album);
+                }
+        );
 
-        CustomLinearSnapHelper artistSnapHelper = new CustomLinearSnapHelper();
-        artistSnapHelper.attachToRecyclerView(bind.searchResultArtistRecyclerView);
+        realSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
+        songAdapter = new SingleAdapter<>(
+                vg -> InnerFragmentSearchGroupBinding.inflate(LayoutInflater.from(vg.getContext()), vg, false),
+                holder -> {
+                    InnerFragmentSearchGroupBinding binding = (InnerFragmentSearchGroupBinding) holder.item;
+                    binding.searchResultGroupRecyclerView.setVisibility(View.GONE);
+                    binding.searchResultGroupTitle.setText(R.string.search_title_song);
+                }
+        );
 
-        // Albums
-        bind.searchResultAlbumRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
-        bind.searchResultAlbumRecyclerView.setHasFixedSize(true);
+        concatAdapter = new ConcatAdapter(List.of(artistAdapter, albumAdapter, songAdapter, realSongAdapter));
+        bind.searchResultsRecyclerView.setAdapter(concatAdapter);
+        bind.searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        bind.searchResultsRecyclerView.setHasFixedSize(true);
 
-        albumAdapter = new AlbumAdapter(this);
-        bind.searchResultAlbumRecyclerView.setAdapter(albumAdapter);
-
-        CustomLinearSnapHelper albumSnapHelper = new CustomLinearSnapHelper();
-        albumSnapHelper.attachToRecyclerView(bind.searchResultAlbumRecyclerView);
-
-        // Songs
-        bind.searchResultTracksRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        bind.searchResultTracksRecyclerView.setHasFixedSize(true);
-
-        songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         setMediaBrowserListenableFuture();
         reapplyPlayback();
-
-        bind.searchResultTracksRecyclerView.setAdapter(songHorizontalAdapter);
     }
 
     private void initSearchView() {
@@ -224,37 +256,27 @@ public class SearchFragment extends Fragment implements ClickCallback {
     private void performSearch(String query) {
         searchViewModel.search3(query).observe(getViewLifecycleOwner(), result -> {
             if (bind != null) {
-                if (result.getArtists() != null) {
-                    bind.searchArtistSector.setVisibility(!result.getArtists().isEmpty() ? View.VISIBLE : View.GONE);
-                    artistAdapter.setItems(result.getArtists());
-                } else {
-                    artistAdapter.setItems(Collections.emptyList());
-                    bind.searchArtistSector.setVisibility(View.GONE);
-                }
+                Log.d("Search", "artists: " + (result.getArtists() == null ? 0 : result.getArtists().size()));
+                realArtistAdapter.setItems(result.getArtists() == null ?  Collections.emptyList() : result.getArtists());
+                artistAdapter.setDisplay(result.getArtists() != null && !result.getArtists().isEmpty());
 
-                if (result.getAlbums() != null) {
-                    bind.searchAlbumSector.setVisibility(!result.getAlbums().isEmpty() ? View.VISIBLE : View.GONE);
-                    albumAdapter.setItems(result.getAlbums());
-                } else {
-                    albumAdapter.setItems(Collections.emptyList());
-                    bind.searchAlbumSector.setVisibility(View.GONE);
-                }
+                Log.d("Search", "albums: " + (result.getAlbums() == null ? 0 : result.getAlbums().size()));
+                realAlbumAdapter.setItems(result.getAlbums() == null ? Collections.emptyList() : result.getAlbums());
+                albumAdapter.setDisplay(result.getAlbums() != null && !result.getAlbums().isEmpty());
 
-                if (result.getSongs() != null) {
-                    bind.searchSongSector.setVisibility(!result.getSongs().isEmpty() ? View.VISIBLE : View.GONE);
-                    songHorizontalAdapter.setItems(result.getSongs());
-                } else {
-                    songHorizontalAdapter.setItems(Collections.emptyList());
-                    bind.searchSongSector.setVisibility(View.GONE);
-                }
+                Log.d("Search", "songs: " + (result.getSongs() == null ? 0 : result.getSongs().size()));
+                realSongAdapter.setItems(result.getSongs() == null ? Collections.emptyList() : result.getSongs());
+                songAdapter.setDisplay(result.getSongs() != null && !result.getSongs().isEmpty());
+
+                concatAdapter.notifyDataSetChanged();
             }
         });
 
-        bind.searchResultLayout.setVisibility(View.VISIBLE);
+        bind.searchResultsRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private boolean isQueryValid(String query) {
-        return !query.equals("") && query.trim().length() > 1;
+        return !query.equals("") && query.trim().length() > 0;
     }
 
     private void inputFocus() {
@@ -271,8 +293,9 @@ public class SearchFragment extends Fragment implements ClickCallback {
 
     @Override
     public void onMediaClick(Bundle bundle) {
+        Log.d("SearchFragment", "onMediaClick");
         MediaManager.startQueue(mediaBrowserListenableFuture, bundle.getParcelableArrayList(Constants.TRACKS_OBJECT), bundle.getInt(Constants.ITEM_POSITION));
-        songHorizontalAdapter.notifyDataSetChanged();
+        realSongAdapter.notifyDataSetChanged();
         activity.setBottomSheetInPeek(true);
     }
 
@@ -303,28 +326,28 @@ public class SearchFragment extends Fragment implements ClickCallback {
 
     private void observePlayback() {
         playbackViewModel.getCurrentSongId().observe(getViewLifecycleOwner(), id -> {
-            if (songHorizontalAdapter != null) {
+            if (realSongAdapter != null) {
                 Boolean playing = playbackViewModel.getIsPlaying().getValue();
-                songHorizontalAdapter.setPlaybackState(id, playing != null && playing);
+                realSongAdapter.setPlaybackState(id, playing != null && playing);
             }
         });
         playbackViewModel.getIsPlaying().observe(getViewLifecycleOwner(), playing -> {
-            if (songHorizontalAdapter != null) {
+            if (realSongAdapter != null) {
                 String id = playbackViewModel.getCurrentSongId().getValue();
-                songHorizontalAdapter.setPlaybackState(id, playing != null && playing);
+                realSongAdapter.setPlaybackState(id, playing != null && playing);
             }
         });
     }
 
     private void reapplyPlayback() {
-        if (songHorizontalAdapter != null) {
+        if (realSongAdapter != null) {
             String id = playbackViewModel.getCurrentSongId().getValue();
             Boolean playing = playbackViewModel.getIsPlaying().getValue();
-            songHorizontalAdapter.setPlaybackState(id, playing != null && playing);
+            realSongAdapter.setPlaybackState(id, playing != null && playing);
         }
     }
 
     private void setMediaBrowserListenableFuture() {
-        songHorizontalAdapter.setMediaBrowserListenableFuture(mediaBrowserListenableFuture);
+        realSongAdapter.setMediaBrowserListenableFuture(mediaBrowserListenableFuture);
     }
 }

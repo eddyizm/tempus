@@ -18,7 +18,6 @@ import com.cappielloantonio.tempo.util.MusicUtil;
 import java.util.Collections;
 import java.util.List;
 
-@UnstableApi
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
     private final ClickCallback click;
     private final boolean mix;
