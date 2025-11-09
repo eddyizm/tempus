@@ -72,6 +72,14 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         super.onResume();
         setMediaBrowserListenableFuture();
         updateNowPlayingItem();
+        try {
+            long position = mediaBrowserListenableFuture.get().getCurrentMediaItemIndex();
+            // hopefully this cast dont bite us in the arse hehe
+            bind.playerQueueRecyclerView.scrollToPosition((int) position);
+        } catch (Exception e) {
+            //dont worry about it
+            e.printStackTrace();
+        }
     }
 
     @Override
