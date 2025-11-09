@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.fragment;
 
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,11 +75,9 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         updateNowPlayingItem();
         try {
             long position = mediaBrowserListenableFuture.get().getCurrentMediaItemIndex();
-            // hopefully this cast dont bite us in the arse hehe
             bind.playerQueueRecyclerView.scrollToPosition((int) position);
         } catch (Exception e) {
-            //dont worry about it
-            e.printStackTrace();
+            Log.e("PlayerQueueFragment", "Failed to get mediaBrowserListenableFuture in onResume", e);
         }
     }
 
