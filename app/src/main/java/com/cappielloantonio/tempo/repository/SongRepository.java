@@ -100,6 +100,33 @@ public class SongRepository {
         return randomSongsSample;
     }
 
+    public MutableLiveData<List<Child>> getRandomSampleWithGenre(int number, Integer fromYear, Integer toYear, String genre) {
+        MutableLiveData<List<Child>> randomSongsSample = new MutableLiveData<>();
+
+        App.getSubsonicClientInstance(false)
+                .getAlbumSongListClient()
+                .getRandomSongs2(number, fromYear, toYear, genre)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        List<Child> songs = new ArrayList<>();
+
+                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getRandomSongs() != null && response.body().getSubsonicResponse().getRandomSongs().getSongs() != null) {
+                            songs.addAll(response.body().getSubsonicResponse().getRandomSongs().getSongs());
+                        }
+
+                        randomSongsSample.setValue(songs);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+
+                    }
+                });
+
+        return randomSongsSample;
+    }
+
     public void scrobble(String id, boolean submission) {
         App.getSubsonicClientInstance(false)
                 .getMediaAnnotationClient()
