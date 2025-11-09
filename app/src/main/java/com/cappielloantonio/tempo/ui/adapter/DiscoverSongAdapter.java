@@ -73,6 +73,11 @@ public class DiscoverSongAdapter extends RecyclerView.Adapter<DiscoverSongAdapte
             this.item = item;
 
             itemView.setOnClickListener(v -> onClick());
+
+            itemView.setOnLongClickListener(v -> {
+                onLongClick();
+                return true;
+            });
         }
 
         public void onClick() {
@@ -81,6 +86,13 @@ public class DiscoverSongAdapter extends RecyclerView.Adapter<DiscoverSongAdapte
             bundle.putBoolean(Constants.MEDIA_MIX, true);
 
             click.onMediaClick(bundle);
+        }
+
+        private boolean onLongClick() {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.TRACK_OBJECT, songs.get(getBindingAdapterPosition()));
+            click.onMediaLongClick(bundle);
+            return true;
         }
     }
 
