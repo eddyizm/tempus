@@ -105,7 +105,7 @@ public class SongRepository {
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
-                .getRandomSongs2(number, fromYear, toYear, genre)
+                .getRandomSongs(number, fromYear, toYear, genre)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {

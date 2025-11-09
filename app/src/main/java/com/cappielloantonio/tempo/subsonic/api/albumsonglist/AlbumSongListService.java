@@ -20,7 +20,7 @@ public interface AlbumSongListService {
     Call<ApiResponse> getRandomSongs(@QueryMap Map<String, String> params, @Query("size") int size, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear);
 
     @GET("getRandomSongs")
-    Call<ApiResponse> getRandomSongs2(@QueryMap Map<String, String> params, @Query("size") int size, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear, @Query("genre") String genre);
+    Call<ApiResponse> getRandomSongs(@QueryMap Map<String, String> params, @Query("size") int size, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear, @Query("genre") String genre);
 
     @GET("getSongsByGenre")
     Call<ApiResponse> getSongsByGenre(@QueryMap Map<String, String> params, @Query("genre") String genre, @Query("count") int count, @Query("offset") int offset);
