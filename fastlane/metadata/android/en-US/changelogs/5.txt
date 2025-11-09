@@ -1,0 +1,3 @@
+Equalizer fix in main build variant
+fix Images not filling holder in discovery 
+Make artist and album clickable on home discovery
