@@ -1,0 +1,2 @@
+reverts change causing album disc/track list to get out of order
+Add listener to enable equalizer when audioSessionId

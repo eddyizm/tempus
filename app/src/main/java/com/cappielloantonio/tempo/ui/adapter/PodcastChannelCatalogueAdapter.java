@@ -96,6 +96,16 @@ public class PodcastChannelCatalogueAdapter extends RecyclerView.Adapter<Podcast
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
     public Filter getFilter() {
         return filtering;
     }
