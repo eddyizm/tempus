@@ -34,6 +34,11 @@ public class AlbumSongListClient {
         return albumSongListService.getRandomSongs(subsonic.getParams(), size, fromYear, toYear);
     }
 
+    public Call<ApiResponse> getRandomSongs(int size, Integer fromYear, Integer toYear, String genre) {
+        Log.d(TAG, "getRandomSongs()");
+        return albumSongListService.getRandomSongs(subsonic.getParams(), size, fromYear, toYear, genre);
+    }
+
     public Call<ApiResponse> getSongsByGenre(String genre, int count, int offset) {
         Log.d(TAG, "getSongsByGenre()");
         return albumSongListService.getSongsByGenre(subsonic.getParams(), genre, count, offset);
