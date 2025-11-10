@@ -4,6 +4,8 @@
 * fix: Equalizer fix in main build variant by @jaime-grj in https://github.com/eddyizm/tempus/pull/239
 * fix: Images not filling holder by @eddyizm in https://github.com/eddyizm/tempus/pull/244
 * feat: Make artist and album clickable by @eddyizm in https://github.com/eddyizm/tempus/pull/243
+* feat: implement scroll to currently playing feature by @shrapnelnet in https://github.com/eddyizm/tempus/pull/247
+* fix: shuffling genres only queuing 25 songs by @shrapnelnet in https://github.com/eddyizm/tempus/pull/246
 
 ## [4.1.3](https://github.com/eddyizm/tempo/releases/tag/v4.1.3) (2025-11-06)
 ## What's Changed
