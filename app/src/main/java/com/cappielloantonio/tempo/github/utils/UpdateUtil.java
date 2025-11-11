@@ -7,10 +7,11 @@ public class UpdateUtil {
 
     public static boolean showUpdateDialog(LatestRelease release) {
         if (release.getTagName() == null) return false;
+        String remoteTag = release.getTagName().replaceAll("^\\D+", "");
 
         try {
             String[] local = BuildConfig.VERSION_NAME.split("\\.");
-            String[] remote = release.getTagName().split("\\.");
+            String[] remote = remoteTag.split("\\.");
 
             for (int i = 0; i < local.length; i++) {
                 int localPart = Integer.parseInt(local[i]);
