@@ -121,6 +121,15 @@ public class QueueRepository {
         }
     }
 
+    private boolean isMediaInQueue(List<Queue> queue, Child media) {
+        if (queue == null || media == null) return false;
+        
+        return queue.stream().anyMatch(queueItem -> 
+            queueItem != null && media.getId() != null && 
+            queueItem.getId().equals(media.getId())
+        );
+    }
+
     public void insertAll(List<Child> toAdd, boolean reset, int afterIndex) {
         try {
             List<Queue> media = new ArrayList<>();
@@ -134,8 +143,14 @@ public class QueueRepository {
                 media = getMediaThreadSafe.getMedia();
             }
 
-            for (int i = 0; i < toAdd.size(); i++) {
-                Queue queueItem = new Queue(toAdd.get(i));
+            List<Child> filteredToAdd = toAdd;
+            final List<Queue> finalMedia = media;
+            filteredToAdd = toAdd.stream()
+                .filter(child -> !isMediaInQueue(finalMedia, child))
+                .collect(Collectors.toList());
+
+            for (int i = 0; i < filteredToAdd.size(); i++) {
+                Queue queueItem = new Queue(filteredToAdd.get(i));
                 media.add(afterIndex + i, queueItem);
             }
 
