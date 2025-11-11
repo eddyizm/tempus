@@ -37,7 +37,7 @@ public class SongListPageViewModel extends AndroidViewModel {
 
     public int year = 0;
     public int maxNumberByYear = 500;
-    public int maxNumberByGenre = 100;
+    public int maxNumberByGenre = 500;
 
     public SongListPageViewModel(@NonNull Application application) {
         super(application);
@@ -51,7 +51,7 @@ public class SongListPageViewModel extends AndroidViewModel {
 
         switch (title) {
             case Constants.MEDIA_BY_GENRE:
-                songList = songRepository.getSongsByGenre(genre.getGenre(), 0);
+                songList = songRepository.getRandomSampleWithGenre(maxNumberByGenre, 0, 3000, genre.getGenre());
                 break;
             case Constants.MEDIA_BY_ARTIST:
                 songList = artistRepository.getTopSongs(artist.getName(), 50);

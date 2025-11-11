@@ -1,10 +1,27 @@
 # Changelog
 
 ## Pending release..
-* fix: reverts change causing album disc/track list to get out of order by @eddyizm in https://github.com/eddyizm/tempus/pull/237
+
+## [4.2.0](https://github.com/eddyizm/tempo/releases/tag/v4.2.0) (2025-11-09)
+## What's Changed
+* fix: Equalizer fix in main build variant by @jaime-grj in https://github.com/eddyizm/tempus/pull/239
+* fix: Images not filling holder by @eddyizm in https://github.com/eddyizm/tempus/pull/244
+* feat: Make artist and album clickable by @eddyizm in https://github.com/eddyizm/tempus/pull/243
+* feat: implement scroll to currently playing feature by @shrapnelnet in https://github.com/eddyizm/tempus/pull/247
+* fix: shuffling genres only queuing 25 songs by @shrapnelnet in https://github.com/eddyizm/tempus/pull/246
+
+## New Contributors
+* @shrapnelnet made their first contribution in https://github.com/eddyizm/tempus/pull/247
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.1.3...v4.2.0
+
+## [4.1.3](https://github.com/eddyizm/tempo/releases/tag/v4.1.3) (2025-11-06)
+## What's Changed
+* [fix: equalizer missing referenced value](https://github.com/eddyizm/tempus/commit/923cfd5bc97ed7db28c90348e3619d0a784fc434)
+* Fix: Album track list bug by @eddyizm in https://github.com/eddyizm/tempus/pull/237
 * fix: Add listener to enable equalizer when audioSessionId changes by @jaime-grj in https://github.com/eddyizm/tempus/pull/235
 
-**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.1.0...v4.1.2
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.1.0...v4.1.3
 
 ## [4.1.0](https://github.com/eddyizm/tempo/releases/tag/v4.1.0) (2025-11-05)
 ## What's Changed
