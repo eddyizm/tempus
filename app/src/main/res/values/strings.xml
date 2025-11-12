@@ -331,6 +331,9 @@
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_github_update">Updates</string>
+    <string name="settings_github_update_title">Check github for release updates</string>
+    <string name="settings_github_update_summary">If using the github version, by default app will check for new apk release. Toggle to disable automatic github checks</string>
     <string name="settings_support_summary">Join community discussions and support</string>
     <string name="settings_support_title">User support</string>
     <string name="settings_scan_result">Scanning: counting %1$d tracks</string>

@@ -29,6 +29,7 @@ import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 
@@ -76,6 +77,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {}
         );
+
+        if (!BuildConfig.FLAVOR.equals("tempus")) {
+            PreferenceCategory githubUpdateCategory = findPreference("settings_github_update_category_key");
+            if (githubUpdateCategory != null) {
+                getPreferenceScreen().removePreference(githubUpdateCategory);
+            }
+        }
 
         directoryPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
