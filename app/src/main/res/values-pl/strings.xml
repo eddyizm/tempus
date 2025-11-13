@@ -268,7 +268,7 @@
     <string name="search_title_song">Piosenki</string>
     <string name="server_signup_dialog_action_low_security">Niskie bezpieczeństwo</string>
     <string name="server_signup_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
-    <string name="server_signup_dialog_hint_local_address">Lokalny URL</string>
+    <string name="server_signup_dialog_hint_local_address">Lokalny URL</string>ą
     <string name="server_signup_dialog_hint_name">Nazwa Serwera</string>
     <string name="server_signup_dialog_hint_password">Hasło</string>
     <string name="server_signup_dialog_hint_url">URL Serwera</string>
@@ -321,6 +321,9 @@
     <string name="settings_github_summary">Śledź tworzenie aplikacji</string>
     <string name="settings_github_title">GitHub</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_github_update">Aktualizacje</string>
+    <string name="settings_github_update_title">Sprawdzaj dostępność nowych aktualizacji na githubie</string>
+    <string name="settings_github_update_summary">Jeżeli używana jest wersja z githuba, domyślnie aplikacja będzie sprawdzać czy są dostępne nowe wydania apk. Kliknij przełącznik aby, wyłączyć automatyczne sprawdzanie</string>
     <string name="settings_support_summary">Dołącz do dyskusji i wsparcia społeczności</string>
     <string name="settings_support_title">Wsparcie użytkowników</string>
     <string name="settings_scan_result">Skanowanie: naliczono %1$d utworów</string>
