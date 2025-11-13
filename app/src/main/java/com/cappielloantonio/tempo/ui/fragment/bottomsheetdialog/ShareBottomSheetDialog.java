@@ -17,12 +17,15 @@ import androidx.media3.common.util.UnstableApi;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.subsonic.models.Share;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.dialog.ShareUpdateDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.cappielloantonio.tempo.viewmodel.ShareBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
+import java.util.List;
 
 @UnstableApi
 public class ShareBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
@@ -50,8 +53,15 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment implements
     private void init(View view) {
         ImageView shareCover = view.findViewById(R.id.share_cover_image_view);
 
+        String coverArtId = null;
+        List<Child> entries = shareBottomSheetViewModel.getShare().getEntries();
+
+        if (entries != null && !entries.isEmpty()) {
+            coverArtId = entries.get(0).getCoverArtId();
+        }
+
         CustomGlideRequest.Builder
-                .from(requireContext(), shareBottomSheetViewModel.getShare().getEntries().get(0).getCoverArtId(), CustomGlideRequest.ResourceType.Unknown)
+                .from(requireContext(), coverArtId, CustomGlideRequest.ResourceType.Unknown)
                 .build()
                 .into(shareCover);
 
