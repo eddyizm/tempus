@@ -268,7 +268,7 @@
     <string name="search_title_song">Piosenki</string>
     <string name="server_signup_dialog_action_low_security">Niskie bezpieczeństwo</string>
     <string name="server_signup_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
-    <string name="server_signup_dialog_hint_local_address">Lokalny URL</string>ą
+    <string name="server_signup_dialog_hint_local_address">Lokalny URL</string>
     <string name="server_signup_dialog_hint_name">Nazwa Serwera</string>
     <string name="server_signup_dialog_hint_password">Hasło</string>
     <string name="server_signup_dialog_hint_url">URL Serwera</string>
