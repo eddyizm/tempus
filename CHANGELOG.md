@@ -3,6 +3,8 @@
 ## Pending release..
 * chore: Update strings.xml by @Sevinfolds in https://github.com/eddyizm/tempus/pull/249
 * fix: disallow duplicate songs in queue by @eddyizm in https://github.com/eddyizm/tempus/pull/252
+* fix: github release check by @eddyizm in https://github.com/eddyizm/tempus/pull/253
+* fix: Fixed crash when viewing share by @drakeerv in https://github.com/eddyizm/tempus/pull/255
 
 ## [4.2.0](https://github.com/eddyizm/tempo/releases/tag/v4.2.0) (2025-11-09)
 ## What's Changed
