@@ -520,6 +520,6 @@
     <string name="settings_app_equalizer_summary">Otwórz wbudowany korektor dźwięku</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>
     <string name="settings_album_detail_summary">Jeżeli włączone, pokaż szczegóły albumu takie jak gatunek, ilość piosenek itp. na stronie albumu</string>
-    <string name="settings_artist_sort_by_album_count">Sort artists by album count Sortuj wykonawców po ilości albumów</string>
+    <string name="settings_artist_sort_by_album_count">"Sortuj wykonawców po ilości albumów</string>
     <string name="settings_artist_sort_by_album_count_summary">"Jeżeli włączone, sortuje wykonawców po ilości albumów. Jeżeli wyłączone, sortuje albumy po nazwach.</string>
 </resources>
