@@ -1,10 +1,16 @@
 # Changelog
 
-## Pending release..
-* chore: Update strings.xml by @Sevinfolds in https://github.com/eddyizm/tempus/pull/249
+## Pending release...
+* chore: Update russian strings.xml by @Sevinfolds in https://github.com/eddyizm/tempus/pull/249
 * fix: disallow duplicate songs in queue by @eddyizm in https://github.com/eddyizm/tempus/pull/252
-* fix: github release check by @eddyizm in https://github.com/eddyizm/tempus/pull/253
+* fix:github release check by @eddyizm in https://github.com/eddyizm/tempus/pull/253
 * fix: Fixed crash when viewing share by @drakeerv in https://github.com/eddyizm/tempus/pull/255
+* chore: Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/257
+* fix: add podcast/radio channel visible when empty podcasts/radio by @eddyizm in https://github.com/eddyizm/tempus/pull/260
+
+## New Contributors
+* @Sevinfolds made their first contribution in https://github.com/eddyizm/tempus/pull/249
+* @drakeerv made their first contribution in https://github.com/eddyizm/tempus/pull/255
 
 ## [4.2.0](https://github.com/eddyizm/tempo/releases/tag/v4.2.0) (2025-11-09)
 ## What's Changed
