@@ -35,6 +35,14 @@ import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @UnstableApi
@@ -47,6 +55,9 @@ class MediaService : MediaLibraryService() {
     private lateinit var repeatCommands: List<CommandButton>
     private lateinit var networkCallback: CustomNetworkCallback
     lateinit var equalizerManager: EqualizerManager
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var pendingAttachJob: Job? = null
 
     private var customLayout = ImmutableList.of<CommandButton>()
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
@@ -86,7 +97,7 @@ class MediaService : MediaLibraryService() {
     }
 
     fun updateMediaItems() {
-        Log.d("MediaService", "update items");
+        Log.d("MediaService", "update items")
         val n = player.mediaItemCount
         val k = player.currentMediaItemIndex
         val current = player.currentPosition
@@ -110,9 +121,9 @@ class MediaService : MediaLibraryService() {
             val isWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
             if (isWifi != wasWifi) {
                 wasWifi = isWifi
-                widgetUpdateHandler.post(Runnable {
+                widgetUpdateHandler.post {
                     updateMediaItems()
-                })
+                }
             }
         }
     }
@@ -136,6 +147,7 @@ class MediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        serviceScope.cancel()
         releaseNetworkCallback()
         equalizerManager.release()
         stopWidgetUpdates()
@@ -423,9 +435,7 @@ class MediaService : MediaLibraryService() {
                 attachEqualizerIfPossible(audioSessionId)
             }
         })
-        if (player.isPlaying) {
-            scheduleWidgetUpdates()
-        }
+        if (player.isPlaying) scheduleWidgetUpdates()
     }
 
     private fun setPlayer(player: Player) {
@@ -537,20 +547,36 @@ class MediaService : MediaLibraryService() {
         widgetUpdateScheduled = false
     }
 
-    private fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
-        if (audioSessionId == 0 || audioSessionId == -1) return false
-        val attached = equalizerManager.attachToSession(audioSessionId)
-        if (attached) {
-            val enabled = Preferences.isEqualizerEnabled()
-            equalizerManager.setEnabled(enabled)
-            val bands = equalizerManager.getNumberOfBands()
-            val savedLevels = Preferences.getEqualizerBandLevels(bands)
-            for (i in 0 until bands) {
-                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
-            }
-            sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+    private fun attachEqualizerIfPossible(audioSessionId: Int) {
+        if (audioSessionId == 0 || audioSessionId == -1) return
+        pendingAttachJob?.cancel()
+        pendingAttachJob = serviceScope.launch {
+            delay(150) // 150ms debounce
+            attachEqualizerInternal(audioSessionId)
         }
-        return attached
+    }
+
+    private suspend fun attachEqualizerInternal(audioSessionId: Int) {
+        return withContext(Dispatchers.IO) {
+            try {
+                val attached = equalizerManager.attachToSession(audioSessionId)
+                if (attached) {
+                    val enabled = Preferences.isEqualizerEnabled()
+                    equalizerManager.setEnabled(enabled)
+                    val bands = equalizerManager.getNumberOfBands()
+                    val savedLevels = Preferences.getEqualizerBandLevels(bands)
+                    for (i in 0 until bands) {
+                        equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
+                    }
+                    withContext(Dispatchers.Main) {
+                        sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+                    }
+                }
+                attached
+            } catch (e: Exception) {
+                Log.e("Equalizer", "Error attaching equalizer: ${e.message}")
+            }
+        }
     }
 
     private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)

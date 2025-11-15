@@ -40,6 +40,15 @@ import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 @UnstableApi
 class MediaService : MediaLibraryService(), SessionAvailabilityListener {
     private lateinit var automotiveRepository: AutomotiveRepository
@@ -49,6 +58,9 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
     private lateinit var librarySessionCallback: MediaLibrarySessionCallback
     private lateinit var networkCallback: CustomNetworkCallback
     lateinit var equalizerManager: EqualizerManager
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private var pendingAttachJob: Job? = null
 
     inner class LocalBinder : Binder() {
         fun getEqualizerManager(): EqualizerManager {
@@ -62,6 +74,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
     }
+
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
     private var widgetUpdateScheduled = false
     private val widgetUpdateRunnable = object : Runnable {
@@ -76,11 +89,11 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
     }
 
     fun updateMediaItems() {
-        Log.d("MediaService", "update items");
+        Log.d("MediaService", "update items")
         val n = player.mediaItemCount
         val k = player.currentMediaItemIndex
         val current = player.currentPosition
-        val items = (0 .. n-1).map{i -> MappingUtil.mapMediaItem(player.getMediaItemAt(i))}
+        val items = (0..n - 1).map { i -> MappingUtil.mapMediaItem(player.getMediaItemAt(i)) }
         player.clearMediaItems()
         player.setMediaItems(items, k, current)
     }
@@ -96,13 +109,16 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
                 wasWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
         }
 
-        override fun onCapabilitiesChanged(network : Network, networkCapabilities : NetworkCapabilities) {
+        override fun onCapabilitiesChanged(
+            network: Network,
+            networkCapabilities: NetworkCapabilities
+        ) {
             val isWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
             if (isWifi != wasWifi) {
                 wasWifi = isWifi
-                widgetUpdateHandler.post(Runnable {
+                widgetUpdateHandler.post {
                     updateMediaItems()
-                })
+                }
             }
         }
     }
@@ -138,6 +154,7 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
     }
 
     override fun onDestroy() {
+        serviceScope.cancel()
         releaseNetworkCallback()
         equalizerManager.release()
         stopWidgetUpdates()
@@ -166,13 +183,13 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
 
     private fun initializePlayer() {
         player = ExoPlayer.Builder(this)
-                .setRenderersFactory(getRenderersFactory())
-                .setMediaSourceFactory(DynamicMediaSourceFactory(this))
-                .setAudioAttributes(AudioAttributes.DEFAULT, true)
-                .setHandleAudioBecomingNoisy(true)
-                .setWakeMode(C.WAKE_MODE_NETWORK)
-                .setLoadControl(initializeLoadControl())
-                .build()
+            .setRenderersFactory(getRenderersFactory())
+            .setMediaSourceFactory(DynamicMediaSourceFactory(this))
+            .setAudioAttributes(AudioAttributes.DEFAULT, true)
+            .setHandleAudioBecomingNoisy(true)
+            .setWakeMode(C.WAKE_MODE_NETWORK)
+            .setLoadControl(initializeLoadControl())
+            .build()
 
         player.shuffleModeEnabled = Preferences.isShuffleModeEnabled()
         player.repeatMode = Preferences.getRepeatMode()
@@ -184,14 +201,14 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
                 .isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS
         ) {
             CastContext.getSharedInstance(this, ContextCompat.getMainExecutor(this))
-                    .addOnSuccessListener { castContext ->
-                        castPlayer = CastPlayer(castContext)
-                        castPlayer.setSessionAvailabilityListener(this@MediaService)
+                .addOnSuccessListener { castContext ->
+                    castPlayer = CastPlayer(castContext)
+                    castPlayer.setSessionAvailabilityListener(this@MediaService)
 
-                        if (castPlayer.isCastSessionAvailable && this::mediaLibrarySession.isInitialized) {
-                            setPlayer(player, castPlayer)
-                        }
+                    if (castPlayer.isCastSessionAvailable && this::mediaLibrarySession.isInitialized) {
+                        setPlayer(player, castPlayer)
                     }
+                }
         }
     }
 
@@ -211,7 +228,9 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
 
     private fun initializeNetworkListener() {
         networkCallback = CustomNetworkCallback()
-        getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(networkCallback)
+        getSystemService(ConnectivityManager::class.java).registerDefaultNetworkCallback(
+            networkCallback
+        )
         updateMediaItems()
     }
 
@@ -447,21 +466,38 @@ class MediaService : MediaLibraryService(), SessionAvailabilityListener {
         player.prepare()
     }
 
-    private fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
-        if (audioSessionId == 0 || audioSessionId == -1) return false
-        val attached = equalizerManager.attachToSession(audioSessionId)
-        if (attached) {
-            val enabled = Preferences.isEqualizerEnabled()
-            equalizerManager.setEnabled(enabled)
-            val bands = equalizerManager.getNumberOfBands()
-            val savedLevels = Preferences.getEqualizerBandLevels(bands)
-            for (i in 0 until bands) {
-                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
-            }
-            sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+    private fun attachEqualizerIfPossible(audioSessionId: Int) {
+        if (audioSessionId == 0 || audioSessionId == -1) return
+        pendingAttachJob?.cancel()
+        pendingAttachJob = serviceScope.launch {
+            delay(150) // 150ms debounce
+            attachEqualizerInternal(audioSessionId)
         }
-        return attached
     }
+
+    private suspend fun attachEqualizerInternal(audioSessionId: Int) {
+        return withContext(Dispatchers.IO) {
+            try {
+                val attached = equalizerManager.attachToSession(audioSessionId)
+                if (attached) {
+                    val enabled = Preferences.isEqualizerEnabled()
+                    equalizerManager.setEnabled(enabled)
+                    val bands = equalizerManager.getNumberOfBands()
+                    val savedLevels = Preferences.getEqualizerBandLevels(bands)
+                    for (i in 0 until bands) {
+                        equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
+                    }
+                    withContext(Dispatchers.Main) {
+                        sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+                    }
+                }
+                attached
+            } catch (e: Exception) {
+                Log.e("Equalizer", "Error attaching equalizer: ${e.message}")
+            }
+        }
+    }
+
 }
 
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
