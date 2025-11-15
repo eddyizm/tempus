@@ -6,6 +6,7 @@
 - [Getting Started](#getting-started)
 - [Server Configuration](#server-configuration)
 - [Main Features](#main-features)
+
 - [Navigation](#navigation)
 - [Playback Controls](#playback-controls)
 - [Favorites](#favorites)
@@ -27,6 +28,8 @@ This app works with any service that implements the Subsonic API, including:
 - [LMS - Lightweight Music Server](https://github.com/epoupon/lms) -  *personal fave and my backend*
 - [Navidrome](https://www.navidrome.org/)
 - [Gonic](https://github.com/sentriz/gonic)
+- [Ampache](https://github.com/ampache/ampache)
+- [NextCloud Music](https://apps.nextcloud.com/apps/music)
 
 
 
@@ -84,6 +87,17 @@ On the main player control screen, tapping on the artwork will reveal a small co
 4. Saves play queue (if the feature is enabled in the settings) 
     * if the setting is not enabled, it toggles a view of the lyrics if available (slides to the right) 
 
+### Podcasts  
+If your server supports it - add a podcast rss feed
+<p align="left">
+    <img src="mockup/usage/add_podcast_feed.png" width=317>
+</p>
+
+### Radio Stations
+If your server supports it - add a internet radio station feed
+<p align="left">
+    <img src="mockup/usage/add_radio_station.png" width=326>
+</p>
 
 ## Navigation
 

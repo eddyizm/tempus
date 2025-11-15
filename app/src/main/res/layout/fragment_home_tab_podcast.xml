@@ -20,6 +20,20 @@
             android:orientation="vertical"
             android:paddingBottom="@dimen/global_padding_bottom">
 
+            <TextView
+                android:id="@+id/podcast_channels_pre_text_view"
+                style="@style/TitleMedium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
+                android:text="@string/home_subtitle_new_podcast_channel"
+                android:textAllCaps="true"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold" />
+
             <LinearLayout
                 android:id="@+id/home_podcast_channels_sector"
                 android:layout_width="match_parent"
@@ -28,17 +42,6 @@
                 android:paddingBottom="8dp"
                 android:visibility="gone"
                 tools:visibility="visible">
-
-                <TextView
-                    android:id="@+id/podcast_channels_pre_text_view"
-                    style="@style/TitleMedium"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingTop="16dp"
-                    android:paddingEnd="16dp"
-                    android:text="@string/home_subtitle_new_podcast_channel"
-                    android:textAllCaps="true" />
 
                 <!--  Label and button  -->
                 <LinearLayout
