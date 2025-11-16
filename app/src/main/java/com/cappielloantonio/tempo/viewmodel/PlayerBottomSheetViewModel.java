@@ -14,7 +14,6 @@ import androidx.lifecycle.Observer;
 import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.interfaces.StarCallback;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.LyricsCache;
 import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
@@ -31,7 +30,6 @@ import com.cappielloantonio.tempo.subsonic.models.LyricsList;
 import com.cappielloantonio.tempo.subsonic.models.PlayQueue;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.NetworkUtil;
 import com.cappielloantonio.tempo.util.OpenSubsonicExtensionsUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -135,10 +133,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         media.setStarred(new Date());
 
         if (Preferences.isStarredSyncEnabled() && Preferences.getDownloadDirectoryUri() == null) {
-            DownloadUtil.getDownloadTracker(context).download(
-                    MappingUtil.mapDownload(media),
-                    new Download(media)
-            );
+            DownloadUtil.getDownloadTracker(context).download(List.of(media));
         }
     }
 

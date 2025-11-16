@@ -6,7 +6,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.repository.ArtistRepository;
 import com.cappielloantonio.tempo.repository.FavoriteRepository;
@@ -14,11 +13,9 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.NetworkUtil;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 
 import java.util.Date;
-import java.util.stream.Collectors;
 import java.util.List;
 
 public class ArtistBottomSheetViewModel extends AndroidViewModel {
@@ -100,10 +97,7 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
                     Log.d("ArtistSync", "Callback triggered with songs: " + (songs != null ? songs.size() : 0));
                     if (songs != null && !songs.isEmpty()) {
                         Log.d("ArtistSync", "Starting download of " + songs.size() + " songs");
-                        DownloadUtil.getDownloadTracker(context).download(
-                                MappingUtil.mapDownloads(songs),
-                                songs.stream().map(Download::new).collect(Collectors.toList())
-                        );
+                        DownloadUtil.getDownloadTracker(context).download(songs);
                         Log.d("ArtistSync", "Download started successfully");
                     } else {
                         Log.d("ArtistSync", "No songs to download");

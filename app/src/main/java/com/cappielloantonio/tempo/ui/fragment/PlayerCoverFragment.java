@@ -10,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
@@ -24,13 +24,11 @@ import androidx.media3.session.SessionToken;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerCoverBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
@@ -118,10 +116,7 @@ public class PlayerCoverFragment extends Fragment {
             if (song != null && bind != null) {
                 bind.innerButtonTopLeft.setOnClickListener(view -> {
                     if (Preferences.getDownloadDirectoryUri() == null) {
-                        DownloadUtil.getDownloadTracker(requireContext()).download(
-                                MappingUtil.mapDownload(song),
-                                new Download(song)
-                        );
+                        DownloadUtil.getDownloadTracker(requireContext()).download(List.of(song));
                     } else {
                         ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
                     }

@@ -33,7 +33,6 @@ import com.cappielloantonio.tempo.helper.recyclerview.CustomLinearSnapHelper;
 import com.cappielloantonio.tempo.helper.recyclerview.DotsIndicatorDecoration;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.HomeSector;
 import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.service.MediaManager;
@@ -57,7 +56,6 @@ import com.cappielloantonio.tempo.ui.dialog.HomeRearrangementDialog;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistEditorDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.UIUtil;
@@ -66,10 +64,9 @@ import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import androidx.media3.common.MediaItem;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @UnstableApi
@@ -314,12 +311,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                     public void onChanged(List<Child> songs) {
                         if (songs != null) {
                             DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
-
-                            for (Child song : songs) {
-                                if (!manager.isDownloaded(song.getId())) {
-                                    manager.download(MappingUtil.mapDownload(song), new Download(song));
-                                }
-                            }
+                            manager.download(songs.stream().filter(s -> !manager.isDownloaded(s.getId())).collect(Collectors.toList()));
                         }
 
                         homeViewModel.getAllStarredTracks().removeObserver(this);
@@ -352,19 +344,12 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                 public void onChanged(List<Child> allSongs) {
                     if (allSongs != null && !allSongs.isEmpty()) {
                         DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
-                        int songsToDownload = 0;
-
-                        for (Child song : allSongs) {
-                            if (!manager.isDownloaded(song.getId())) {
-                                manager.download(MappingUtil.mapDownload(song), new Download(song));
-                                songsToDownload++;
-                            }
-                        }
-
-                        if (songsToDownload > 0) {
-                            Toast.makeText(requireContext(), 
-                                getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload, songsToDownload), 
-                                Toast.LENGTH_SHORT).show();
+                        List<Child> songsToDownload = allSongs.stream().filter(song -> !manager.isDownloaded(song.getId())).collect(Collectors.toList());
+                        manager.download(songsToDownload);
+                        if (!songsToDownload.isEmpty()) {
+                            Toast.makeText(requireContext(),
+                                    getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload.size(), songsToDownload.size()),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                     
@@ -387,7 +372,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                         boolean albumNeedsSync = false;
                         // Check if any songs from this album need downloading
                         for (Child song : allSongs) {
-                            if (song.getAlbumId() != null && song.getAlbumId().equals(album.getId()) && 
+                            if (Objects.equals(song.getAlbumId(), album.getId()) &&
                                 !manager.isDownloaded(song.getId())) {
                                 songsToDownload++;
                                 albumNeedsSync = true;
@@ -436,18 +421,11 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                 public void onChanged(List<Child> allSongs) {
                     if (allSongs != null && !allSongs.isEmpty()) {
                         DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
-                        int songsToDownload = 0;
-
-                        for (Child song : allSongs) {
-                            if (!manager.isDownloaded(song.getId())) {
-                                manager.download(MappingUtil.mapDownload(song), new Download(song));
-                                songsToDownload++;
-                            }
-                        }
-
-                        if (songsToDownload > 0) {
+                        List<Child> songsToDownload = allSongs.stream().filter(song -> !manager.isDownloaded(song.getId())).collect(Collectors.toList());
+                        manager.download(songsToDownload);
+                        if (!songsToDownload.isEmpty()) {
                             Toast.makeText(requireContext(), 
-                                getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload, songsToDownload), 
+                                getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload.size(), songsToDownload.size()),
                                 Toast.LENGTH_SHORT).show();
                         }
                     }

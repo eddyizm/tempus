@@ -23,7 +23,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
@@ -44,12 +43,11 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import android.content.Intent;
-import androidx.media3.common.MediaItem;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @UnstableApi
 public class SongBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
@@ -190,10 +188,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         downloadButton = view.findViewById(R.id.download_text_view);
         downloadButton.setOnClickListener(v -> {
             if (Preferences.getDownloadDirectoryUri() == null) {
-                DownloadUtil.getDownloadTracker(requireContext()).download(
-                        MappingUtil.mapDownload(song),
-                        new Download(song)
-                );
+                DownloadUtil.getDownloadTracker(requireContext()).download(List.of(song));
             } else {
                 ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
             }
@@ -203,10 +198,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         removeButton = view.findViewById(R.id.remove_text_view);
         removeButton.setOnClickListener(v -> {
             if (Preferences.getDownloadDirectoryUri() == null) {
-                DownloadUtil.getDownloadTracker(requireContext()).remove(
-                        MappingUtil.mapDownload(song),
-                        new Download(song)
-                );
+                DownloadUtil.getDownloadTracker(requireContext()).remove(List.of(song));
             } else {
                 ExternalAudioReader.delete(song);
             }

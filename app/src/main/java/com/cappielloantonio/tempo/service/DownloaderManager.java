@@ -19,27 +19,33 @@ import androidx.media3.exoplayer.offline.DownloadRequest;
 import androidx.media3.exoplayer.offline.DownloadService;
 
 import com.cappielloantonio.tempo.repository.DownloadRepository;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.MappingUtil;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @UnstableApi
 public class DownloaderManager {
     private static final String TAG = "DownloaderManager";
 
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+
     private final Context context;
     private final DataSource.Factory dataSourceFactory;
     private final DownloadIndex downloadIndex;
 
-    private static HashMap<String, Download> downloads;
+    private final static ConcurrentHashMap<String, Download> downloads = new ConcurrentHashMap<>();
+    private final static ConcurrentHashMap<String, com.cappielloantonio.tempo.model.Download> downloads2 = new ConcurrentHashMap<>();
 
     public DownloaderManager(Context context, DataSource.Factory dataSourceFactory, DownloadManager downloadManager) {
         this.context = context.getApplicationContext();
         this.dataSourceFactory = dataSourceFactory;
 
-        downloads = new HashMap<>();
         downloadIndex = downloadManager.getDownloadIndex();
 
         loadDownloads();
@@ -61,6 +67,12 @@ public class DownloaderManager {
         return download != null && download.state != Download.STATE_FAILED;
     }
 
+    public com.cappielloantonio.tempo.model.Download getDownload(String id) {
+        if (!downloads.containsKey(id))
+            return null;
+        return downloads2.get(id);
+    }
+
     public boolean isDownloaded(MediaItem mediaItem) {
         return isDownloaded(mediaItem.mediaId);
     }
@@ -69,35 +81,48 @@ public class DownloaderManager {
         return mediaItems.stream().anyMatch(this::isDownloaded);
     }
 
-    public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
+    private void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
+        if (mediaItem.requestMetadata.mediaUri == null) return;
+        downloads2.put(download.getId(), download);
         download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
 
         DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
         insertDatabase(download);
     }
 
-    public void download(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
-        for (int counter = 0; counter < mediaItems.size(); counter++) {
-            download(mediaItems.get(counter), downloads.get(counter));
-        }
+    public void download(List<Child> items) {
+        executor.submit(() -> {
+            for (Child item : items)
+                download(MappingUtil.mapDownload(item), new com.cappielloantonio.tempo.model.Download(item));
+        });
     }
 
-    public void remove(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
+    public void download(List<Child> items, List<com.cappielloantonio.tempo.model.Download> downloads) {
+        executor.submit(() -> {
+            for (int counter = 0; counter < items.size(); counter++)
+                download(MappingUtil.mapDownload(items.get(counter)), downloads.get(counter));
+        });
+    }
+
+    private void remove(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
         DownloadService.sendRemoveDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem).id, false);
         deleteDatabase(download.getId());
         downloads.remove(download.getId());
     }
 
-    public void remove(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
-        for (int counter = 0; counter < mediaItems.size(); counter++) {
-            remove(mediaItems.get(counter), downloads.get(counter));
-        }
+    public void remove(List<Child> items) {
+        executor.submit(() -> {
+            for (Child item : items)
+                remove(MappingUtil.mapDownload(item), new com.cappielloantonio.tempo.model.Download(item));
+        });
     }
 
     public void removeAll() {
-        DownloadService.sendRemoveAllDownloads(context, DownloaderService.class, false);
-        deleteAllDatabase();
-        DownloadUtil.eraseDownloadFolder(context);
+        executor.submit(() -> {
+            DownloadService.sendRemoveAllDownloads(context, DownloaderService.class, false);
+            deleteAllDatabase();
+            DownloadUtil.eraseDownloadFolder(context);
+        });
     }
 
     private void loadDownloads() {
@@ -111,38 +136,42 @@ public class DownloaderManager {
         }
     }
 
-    public static String getDownloadNotificationMessage(String id) {
+    public String getDownloadNotificationMessage(String id) {
         com.cappielloantonio.tempo.model.Download download = getDownloadRepository().getDownload(id);
         return download != null ? download.getTitle() : null;
     }
 
-    public static void updateRequestDownload(Download download) {
-        updateDatabase(download.request.id);
-        downloads.put(download.request.id, download);
+    public void updateRequestDownload(Download download) {
+        executor.submit(() -> {
+            updateDatabase(download.request.id);
+            downloads.put(download.request.id, download);
+        });
     }
 
-    public static void removeRequestDownload(Download download) {
-        deleteDatabase(download.request.id);
-        downloads.remove(download.request.id);
+    public void removeRequestDownload(Download download) {
+        executor.submit(() -> {
+            deleteDatabase(download.request.id);
+            downloads.remove(download.request.id);
+        });
     }
 
-    private static DownloadRepository getDownloadRepository() {
+    private DownloadRepository getDownloadRepository() {
         return new DownloadRepository();
     }
 
-    private static void insertDatabase(com.cappielloantonio.tempo.model.Download download) {
+    private void insertDatabase(com.cappielloantonio.tempo.model.Download download) {
         getDownloadRepository().insert(download);
     }
 
-    private static void deleteDatabase(String id) {
+    private void deleteDatabase(String id) {
         getDownloadRepository().delete(id);
     }
 
-    private static void deleteAllDatabase() {
+    private void deleteAllDatabase() {
         getDownloadRepository().deleteAll();
     }
 
-    private static void updateDatabase(String id) {
+    private void updateDatabase(String id) {
         getDownloadRepository().update(id);
     }
 }

@@ -21,7 +21,6 @@ import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerQueueBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
-import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.adapter.PlayerSongQueueAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -31,7 +30,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 @UnstableApi
 public class PlayerQueueFragment extends Fragment implements ClickCallback {
@@ -129,13 +127,12 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         bind.playerQueueRecyclerView.setAdapter(playerSongQueueAdapter);
         reapplyPlayback();
 
-        playerBottomSheetViewModel.getQueueSong().observe(getViewLifecycleOwner(), queue -> {
-            if (queue != null) {
-                playerSongQueueAdapter.setItems(queue.stream().map(item -> (Child) item).collect(Collectors.toList()));
+        playerBottomSheetViewModel.getQueueSongLive().observe(getViewLifecycleOwner(), songs -> {
+            if (songs != null) {
+                playerSongQueueAdapter.setItems(songs);
                 reapplyPlayback();
             }
         });
-
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
             int originalPosition = -1;
             int fromPosition = -1;

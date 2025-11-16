@@ -14,25 +14,18 @@ import androidx.media3.common.HeartRating;
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.model.Download;
-import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @OptIn(markerClass = UnstableApi.class)
 public class MappingUtil {
     public static List<MediaItem> mapMediaItems(List<Child> items) {
-        ArrayList<MediaItem> mediaItems = new ArrayList<>();
-
-        for (int i = 0; i < items.size(); i++) {
-            mediaItems.add(mapMediaItem(items.get(i)));
-        }
-
-        return mediaItems;
+        return items.stream().map(MappingUtil::mapMediaItem).collect(Collectors.toList());
     }
 
     public static MediaItem mapMediaItem(Child media) {
@@ -138,18 +131,7 @@ public class MappingUtil {
                 .build();
     }
 
-    public static List<MediaItem> mapDownloads(List<Child> items) {
-        ArrayList<MediaItem> downloads = new ArrayList<>();
-
-        for (int i = 0; i < items.size(); i++) {
-            downloads.add(mapDownload(items.get(i)));
-        }
-
-        return downloads;
-    }
-
     public static MediaItem mapDownload(Child media) {
-
         Bundle bundle = new Bundle();
         bundle.putInt("samplingRate", media.getSamplingRate() != null ? media.getSamplingRate() : 0);
         bundle.putInt("bitDepth", media.getBitDepth() != null ? media.getBitDepth() : 0);
@@ -283,7 +265,7 @@ public class MappingUtil {
     }
 
     private static Uri getDownloadUri(String id) {
-        Download download = new DownloadRepository().getDownload(id);
+        Download download = DownloadUtil.getDownloadTracker(App.getContext()).getDownload(id);
         return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri()) : MusicUtil.getDownloadUri(id);
     }
 

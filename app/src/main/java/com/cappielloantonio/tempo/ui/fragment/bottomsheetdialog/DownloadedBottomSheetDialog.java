@@ -9,22 +9,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.media3.common.MediaItem;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
-import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -33,7 +29,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @UnstableApi
 public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
@@ -120,9 +115,7 @@ public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment imple
         TextView removeAll = view.findViewById(R.id.remove_all_text_view);
         removeAll.setOnClickListener(v -> {
             if (Preferences.getDownloadDirectoryUri() == null) {
-                List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
-                List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
-                DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
+                DownloadUtil.getDownloadTracker(requireContext()).remove(songs);
             } else {
                 songs.forEach(ExternalAudioReader::delete);
             }
