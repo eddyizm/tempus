@@ -13,28 +13,31 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.ItemHorizontalDownloadBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
+import com.cappielloantonio.tempo.model.DownloadStack;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @UnstableApi
 public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHorizontalAdapter.ViewHolder> {
     private final ClickCallback click;
 
     private String view;
-    private String filterKey;
-    private String filterValue;
 
     private List<Child> songs;
-    private List<Child> shuffling;
+    private List<Child> filtered;
     private List<Child> grouped;
+    private List<Integer> counts;
 
     public DownloadHorizontalAdapter(ClickCallback click) {
         this.click = click;
@@ -76,15 +79,25 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         return grouped.size();
     }
 
-    public void setItems(String view, String filterKey, String filterValue, List<Child> songs) {
-        this.view = filterValue != null ? view : filterKey;
-        this.filterKey = filterKey;
-        this.filterValue = filterValue;
+    public void setItems(String view, List<DownloadStack> filters, List<Child> songs) {
+        this.view = view;
 
         this.songs = songs;
-        this.grouped = groupSong(songs);
-        this.shuffling = shufflingSong(new ArrayList<>(songs));
+        this.filtered = filterSongs(filters, songs).collect(Collectors.toList());
+        this.grouped = new ArrayList<>();
 
+        Function<Child, Object> grouping = getGrouping();
+        Map<Object, Integer> mapping = new HashMap<>();
+        for (Child song : filtered) {
+            Object key = grouping.apply(song);
+            Integer prev = mapping.putIfAbsent(key, 1);
+            if (prev != null) {
+                mapping.put(key, prev + 1);
+            } else {
+                grouped.add(song);
+            }
+        }
+        this.counts = grouped.stream().map(song -> mapping.get(grouping.apply(song))).collect(Collectors.toList());
         notifyDataSetChanged();
     }
 
@@ -92,84 +105,54 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         return grouped.get(id);
     }
 
-    public List<Child> getShuffling() {
-        return shuffling;
+    public List<Child> getFiltered() {
+        return filtered;
     }
 
-    private List<Child> groupSong(List<Child> songs) {
+    private Function<Child, Object> getGrouping() {
         switch (view) {
             case Constants.DOWNLOAD_TYPE_TRACK:
-                return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getId())).filter(Util.distinctByKey(Child::getId)).collect(Collectors.toList()));
+                return Child::getId;
             case Constants.DOWNLOAD_TYPE_ALBUM:
-                return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getAlbumId())).filter(Util.distinctByKey(Child::getAlbumId)).collect(Collectors.toList()));
+                return Child::getAlbumId;
             case Constants.DOWNLOAD_TYPE_ARTIST:
-                return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getArtistId())).filter(Util.distinctByKey(Child::getArtistId)).collect(Collectors.toList()));
+                return Child::getArtistId;
             case Constants.DOWNLOAD_TYPE_GENRE:
-                return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getGenre())).filter(Util.distinctByKey(Child::getGenre)).collect(Collectors.toList()));
+                return  Child::getGenre;
             case Constants.DOWNLOAD_TYPE_YEAR:
-                return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getYear())).filter(Util.distinctByKey(Child::getYear)).collect(Collectors.toList()));
-        }
-
-        return Collections.emptyList();
-    }
-
-    private List<Child> filterSong(String filterKey, String filterValue, List<Child> songs) {
-        if (filterValue != null) {
-            switch (filterKey) {
-                case Constants.DOWNLOAD_TYPE_TRACK:
-                    return songs.stream().filter(child -> child.getId().equals(filterValue)).collect(Collectors.toList());
-                case Constants.DOWNLOAD_TYPE_ALBUM:
-                    return songs.stream().filter(child -> Objects.equals(child.getAlbumId(), filterValue)).collect(Collectors.toList());
-                case Constants.DOWNLOAD_TYPE_GENRE:
-                    return songs.stream().filter(child -> Objects.equals(child.getGenre(), filterValue)).collect(Collectors.toList());
-                case Constants.DOWNLOAD_TYPE_YEAR:
-                    return songs.stream().filter(child -> Objects.equals(child.getYear(), Integer.valueOf(filterValue))).collect(Collectors.toList());
-                case Constants.DOWNLOAD_TYPE_ARTIST:
-                    return songs.stream().filter(child -> Objects.equals(child.getArtistId(), filterValue)).collect(Collectors.toList());
-            }
-        }
-
-        return songs;
-    }
-
-    private List<Child> shufflingSong(List<Child> songs) {
-        if (filterValue == null) {
-            return songs;
-        }
-
-        switch (filterKey) {
-            case Constants.DOWNLOAD_TYPE_TRACK:
-                return songs.stream().filter(child -> child.getId().equals(filterValue)).collect(Collectors.toList());
-            case Constants.DOWNLOAD_TYPE_ALBUM:
-                return songs.stream().filter(child -> Objects.equals(child.getAlbumId(), filterValue)).collect(Collectors.toList());
-            case Constants.DOWNLOAD_TYPE_GENRE:
-                return songs.stream().filter(child -> Objects.equals(child.getGenre(), filterValue)).collect(Collectors.toList());
-            case Constants.DOWNLOAD_TYPE_YEAR:
-                return songs.stream().filter(child -> Objects.equals(child.getYear(), Integer.valueOf(filterValue))).collect(Collectors.toList());
-            case Constants.DOWNLOAD_TYPE_ARTIST:
-                return songs.stream().filter(child -> Objects.equals(child.getArtistId(), filterValue)).collect(Collectors.toList());
+                return Child::getYear;
             default:
-                return songs;
+                throw new IllegalArgumentException();
         }
     }
 
-    private String countSong(String filterKey, String filterValue, List<Child> songs) {
-        if (filterValue != null) {
-            switch (filterKey) {
+    private Stream<Child> filterSongs(List<DownloadStack> filters, List<Child> songs) {
+        Stream<Child> stream = songs.stream();
+        for (DownloadStack s : filters) {
+            if (s.getView() == null) continue;
+            Function<Child, String> keymap;
+            switch (s.getId()) {
                 case Constants.DOWNLOAD_TYPE_TRACK:
-                    return String.valueOf(songs.stream().filter(child -> child.getId().equals(filterValue)).count());
+                    keymap = Child::getId;
+                    break;
                 case Constants.DOWNLOAD_TYPE_ALBUM:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getAlbumId(), filterValue)).count());
+                    keymap = Child::getAlbumId;
+                    break;
                 case Constants.DOWNLOAD_TYPE_GENRE:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getGenre(), filterValue)).count());
+                    keymap = Child::getGenre;
+                    break;
                 case Constants.DOWNLOAD_TYPE_YEAR:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getYear(), Integer.valueOf(filterValue))).count());
+                    keymap = child -> Objects.toString(child.getYear(), "");
+                    break;
                 case Constants.DOWNLOAD_TYPE_ARTIST:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getArtistId(), filterValue)).count());
+                    keymap = Child::getArtistId;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
             }
+            stream = stream.filter(c -> Objects.equals(keymap.apply(c), s.getView()));
         }
-
-        return "0";
+        return stream;
     }
 
     private void initTrackLayout(ViewHolder holder, int position) {
@@ -207,7 +190,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(song.getAlbum());
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_ALBUM, song.getAlbumId(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext()
+                .getString(R.string.download_item_single_subtitle_formatter, counts.get(position).toString()));
         holder.item.downloadedItemPreTextView.setText(song.getArtist());
 
         CustomGlideRequest.Builder
@@ -230,7 +214,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(song.getArtist());
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_ARTIST, song.getArtistId(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext()
+                .getString(R.string.download_item_single_subtitle_formatter, counts.get(position).toString()));
 
         CustomGlideRequest.Builder
                 .from(holder.itemView.getContext(), song.getCoverArtId(), CustomGlideRequest.ResourceType.Song)
@@ -246,7 +231,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(song.getGenre());
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_GENRE, song.getGenre(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext()
+                .getString(R.string.download_item_single_subtitle_formatter, counts.get(position).toString()));
 
         holder.item.itemCoverImageView.setVisibility(View.GONE);
         holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
@@ -257,7 +243,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(String.valueOf(song.getYear()));
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_YEAR, song.getYear().toString(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext()
+                .getString(R.string.download_item_single_subtitle_formatter, counts.get(position).toString()));
 
         holder.item.itemCoverImageView.setVisibility(View.GONE);
         holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
@@ -319,16 +306,20 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                     filteredSongs.add(grouped.get(getBindingAdapterPosition()));
                     break;
                 case Constants.DOWNLOAD_TYPE_ALBUM:
-                    filteredSongs.addAll(filterSong(Constants.DOWNLOAD_TYPE_ALBUM, grouped.get(getBindingAdapterPosition()).getAlbumId(), songs));
+                    filteredSongs.addAll(filterSongs(List.of(new DownloadStack(Constants.DOWNLOAD_TYPE_ALBUM, grouped.get(getBindingAdapterPosition()).getAlbumId())), filtered)
+                            .collect(Collectors.toList()));
                     break;
                 case Constants.DOWNLOAD_TYPE_ARTIST:
-                    filteredSongs.addAll(filterSong(Constants.DOWNLOAD_TYPE_ARTIST, grouped.get(getBindingAdapterPosition()).getArtistId(), songs));
+                    filteredSongs.addAll(filterSongs(List.of(new DownloadStack(Constants.DOWNLOAD_TYPE_ARTIST, grouped.get(getBindingAdapterPosition()).getArtistId())), filtered)
+                            .collect(Collectors.toList()));
                     break;
                 case Constants.DOWNLOAD_TYPE_GENRE:
-                    filteredSongs.addAll(filterSong(Constants.DOWNLOAD_TYPE_GENRE, grouped.get(getBindingAdapterPosition()).getGenre(), songs));
+                    filteredSongs.addAll(filterSongs(List.of(new DownloadStack(Constants.DOWNLOAD_TYPE_GENRE, grouped.get(getBindingAdapterPosition()).getGenre())), filtered)
+                            .collect(Collectors.toList()));
                     break;
                 case Constants.DOWNLOAD_TYPE_YEAR:
-                    filteredSongs.addAll(filterSong(Constants.DOWNLOAD_TYPE_YEAR, grouped.get(getBindingAdapterPosition()).getYear().toString(), songs));
+                    filteredSongs.addAll(filterSongs(List.of(new DownloadStack(Constants.DOWNLOAD_TYPE_YEAR,
+                            Objects.toString(grouped.get(getBindingAdapterPosition()).getYear(), ""))), filtered).collect(Collectors.toList()));
                     break;
             }
 
