@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.media3.common.MediaItem;
 
+import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
@@ -26,12 +27,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.Normalizer;
 import java.util.Locale;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ExternalAudioWriter {
 
-    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final int BUFFER_SIZE = 8192;
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 60_000;
@@ -68,10 +66,12 @@ public class ExternalAudioWriter {
         if (context == null || child == null) {
             return;
         }
-        Context appContext = context.getApplicationContext();
-        MediaItem mediaItem = MappingUtil.mapDownload(child);
-        String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
-        EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child));
+        App.getExecutor().submit(() -> {
+            Context appContext = context.getApplicationContext();
+            MediaItem mediaItem = MappingUtil.mapDownload(child);
+            String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
+            performDownload(appContext, mediaItem, fallbackName, child);
+        });
     }
 
     private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child) {

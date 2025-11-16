@@ -13,17 +13,22 @@ import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.SubsonicPreferences;
 import com.cappielloantonio.tempo.util.Preferences;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class App extends Application {
     private static App instance;
     private static Context context;
     private static Subsonic subsonic;
     private static Github github;
     private static SharedPreferences preferences;
+    private static ExecutorService executor;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        executor = Executors.newFixedThreadPool(2);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String themePref = sharedPreferences.getString(Preferences.THEME, ThemeHelper.DEFAULT_MODE);
         ThemeHelper.applyTheme(themePref);
@@ -39,6 +44,11 @@ public class App extends Application {
         }
 
         return instance;
+    }
+
+    public static ExecutorService getExecutor() {
+        getInstance();
+        return executor;
     }
 
     public static Context getContext() {
