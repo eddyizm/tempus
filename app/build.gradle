@@ -99,8 +99,12 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.8.6'
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'androidx.room:room-runtime:2.6.1'
+    implementation 'androidx.room:room-rxjava3:2.6.1'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
+
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
 
     // Android Material
     implementation 'com.google.android.material:material:1.10.0'
