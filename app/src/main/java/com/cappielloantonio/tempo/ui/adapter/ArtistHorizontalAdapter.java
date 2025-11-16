@@ -113,16 +113,6 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
         return artists.get(id);
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemHorizontalArtistBinding item;
 

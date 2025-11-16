@@ -186,6 +186,8 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
                     holder.item.discTitleTextView.setText(holder.itemView.getContext().getString(R.string.disc_titlefull, discTitle.get().getDisc().toString() , discTitle.get().getTitle()));
                 }
             }
+        } else {
+            holder.item.differentDiskDividerSector.setVisibility(View.GONE);
         }
 
         if (Preferences.showItemRating()) {
@@ -250,16 +252,6 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         this.songsFull = songs != null ? songs : Collections.emptyList();
         filtering.filter(currentFilter);
         notifyDataSetChanged();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
     public void setPlaybackState(String mediaId, boolean playing) {
