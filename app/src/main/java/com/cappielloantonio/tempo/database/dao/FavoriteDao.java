@@ -10,10 +10,12 @@ import com.cappielloantonio.tempo.model.Favorite;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Maybe;
+
 @Dao
 public interface FavoriteDao {
     @Query("SELECT * FROM favorite")
-    List<Favorite> getAll();
+    Maybe<List<Favorite>> getAll();
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Favorite favorite);

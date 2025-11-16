@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Maybe;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -118,79 +119,18 @@ public class SearchingRepository {
     }
 
     public void insert(RecentSearch recentSearch) {
-        InsertThreadSafe insert = new InsertThreadSafe(recentSearchDao, recentSearch);
-        Thread thread = new Thread(insert);
-        thread.start();
+        App.getExecutor().submit(() -> {
+           recentSearchDao.insert(recentSearch);
+        });
     }
 
     public void delete(RecentSearch recentSearch) {
-        DeleteThreadSafe delete = new DeleteThreadSafe(recentSearchDao, recentSearch);
-        Thread thread = new Thread(delete);
-        thread.start();
-    }
-
-    public List<String> getRecentSearchSuggestion() {
-        List<String> recent = new ArrayList<>();
-
-        RecentThreadSafe suggestionsThread = new RecentThreadSafe(recentSearchDao);
-        Thread thread = new Thread(suggestionsThread);
-        thread.start();
-
-        try {
-            thread.join();
-            recent = suggestionsThread.getRecent();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return recent;
-    }
-
-    private static class DeleteThreadSafe implements Runnable {
-        private final RecentSearchDao recentSearchDao;
-        private final RecentSearch recentSearch;
-
-        public DeleteThreadSafe(RecentSearchDao recentSearchDao, RecentSearch recentSearch) {
-            this.recentSearchDao = recentSearchDao;
-            this.recentSearch = recentSearch;
-        }
-
-        @Override
-        public void run() {
+        App.getExecutor().submit(() -> {
             recentSearchDao.delete(recentSearch);
-        }
+        });
     }
 
-    private static class InsertThreadSafe implements Runnable {
-        private final RecentSearchDao recentSearchDao;
-        private final RecentSearch recentSearch;
-
-        public InsertThreadSafe(RecentSearchDao recentSearchDao, RecentSearch recentSearch) {
-            this.recentSearchDao = recentSearchDao;
-            this.recentSearch = recentSearch;
-        }
-
-        @Override
-        public void run() {
-            recentSearchDao.insert(recentSearch);
-        }
-    }
-
-    private static class RecentThreadSafe implements Runnable {
-        private final RecentSearchDao recentSearchDao;
-        private List<String> recent = new ArrayList<>();
-
-        public RecentThreadSafe(RecentSearchDao recentSearchDao) {
-            this.recentSearchDao = recentSearchDao;
-        }
-
-        @Override
-        public void run() {
-            recent = recentSearchDao.getRecent();
-        }
-
-        public List<String> getRecent() {
-            return recent;
-        }
+    public Maybe<List<String>> getRecentSearchSuggestion() {
+        return recentSearchDao.getRecent();
     }
 }

@@ -10,10 +10,12 @@ import com.cappielloantonio.tempo.model.RecentSearch;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Maybe;
+
 @Dao
 public interface RecentSearchDao {
     @Query("SELECT * FROM recent_search ORDER BY search DESC")
-    List<String> getRecent();
+    Maybe<List<String>> getRecent();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(RecentSearch search);

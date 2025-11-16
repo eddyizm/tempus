@@ -59,6 +59,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+
 @UnstableApi
 public class PlayerControllerFragment extends Fragment {
     private static final String TAG = "PlayerCoverFragment";
@@ -87,6 +89,8 @@ public class PlayerControllerFragment extends Fragment {
     private MainActivity activity;
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+
+    private CompositeDisposable composite = new CompositeDisposable();
 
     private MediaService.LocalBinder mediaServiceBinder;
     private boolean isServiceBound = false;
@@ -127,6 +131,7 @@ public class PlayerControllerFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
+        composite.clear();
         super.onDestroyView();
         bind = null;
     }
@@ -488,7 +493,7 @@ public class PlayerControllerFragment extends Fragment {
 
 
                 if (getActivity() != null) {
-                    playerBottomSheetViewModel.refreshMediaInfo(requireActivity(), media);
+                    playerBottomSheetViewModel.refreshMediaInfo(requireActivity(), media, composite);
                 }
             }
         });

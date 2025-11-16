@@ -14,6 +14,8 @@ import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Single;
+
 public class MainViewModel extends AndroidViewModel {
     private static final String TAG = "SearchViewModel";
 
@@ -25,9 +27,8 @@ public class MainViewModel extends AndroidViewModel {
         systemRepository = new SystemRepository();
     }
 
-    public boolean isQueueLoaded() {
-        QueueRepository queueRepository = new QueueRepository();
-        return queueRepository.count() != 0;
+    public Single<Boolean> isQueueLoaded() {
+        return new QueueRepository().count().map(count -> count != 0);
     }
 
     public LiveData<SubsonicResponse> ping() {

@@ -8,10 +8,12 @@ import androidx.room.Query;
 
 import com.cappielloantonio.tempo.model.LyricsCache;
 
+import io.reactivex.rxjava3.core.Maybe;
+
 @Dao
 public interface LyricsDao {
     @Query("SELECT * FROM lyrics_cache WHERE song_id = :songId")
-    LyricsCache getOne(String songId);
+    Maybe<LyricsCache> getOne(String songId);
 
     @Query("SELECT * FROM lyrics_cache WHERE song_id = :songId")
     LiveData<LyricsCache> observeOne(String songId);

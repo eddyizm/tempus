@@ -35,7 +35,6 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -144,7 +143,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                 if (isVisible() && getActivity() != null) {
                     if (Preferences.getDownloadDirectoryUri() == null) {
                         DownloadUtil.getDownloadTracker(requireContext()).download(
-                            MappingUtil.mapDownloads(songs),
+                            songs,
                             songs.stream().map(child -> {
                                 Download toDownload = new Download(child);
                                 toDownload.setPlaylistId(playlistPageViewModel.getPlaylist().getId());
@@ -201,7 +200,6 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
         Objects.requireNonNull(bind.animToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
     }
-
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

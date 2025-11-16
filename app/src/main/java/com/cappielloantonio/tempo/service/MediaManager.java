@@ -2,16 +2,16 @@ package com.cappielloantonio.tempo.service;
 
 import android.content.ComponentName;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
-import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
@@ -19,6 +19,7 @@ import androidx.media3.session.SessionToken;
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
 import com.cappielloantonio.tempo.model.Chronology;
+import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.repository.ChronologyRepository;
 import com.cappielloantonio.tempo.repository.QueueRepository;
 import com.cappielloantonio.tempo.repository.SongRepository;
@@ -34,66 +35,70 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MediaManager {
     private static final String TAG = "MediaManager";
     private static WeakReference<MediaBrowser> attachedBrowserRef = new WeakReference<>(null);
     public static AtomicBoolean justStarted = new AtomicBoolean(false);
 
+    public static void runWithBrowser(ListenableFuture<MediaBrowser> future, Consumer<MediaBrowser> callback) {
+        if (future == null) return;
+        Futures.addCallback(future, new FutureCallback<MediaBrowser>() {
+            @Override
+            public void onSuccess(MediaBrowser result) {
+                callback.accept(result);
+            }
+
+            @Override
+            public void onFailure(@NonNull Throwable thrown) {
+                Log.e(TAG, "Failed to get MediaBrowser instance", thrown);
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
     public static void registerPlaybackObserver(
             ListenableFuture<MediaBrowser> browserFuture,
             PlaybackViewModel playbackViewModel
     ) {
-        if (browserFuture == null) return;
+        runWithBrowser(browserFuture, browser -> {
+            MediaBrowser current = attachedBrowserRef.get();
+            if (current != browser) {
+                browser.addListener(new Player.Listener() {
+                    @Override
+                    public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
+                        if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)
+                                || events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED)
+                                || events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
 
-        Futures.addCallback(browserFuture, new FutureCallback<MediaBrowser>() {
-            @Override
-            public void onSuccess(MediaBrowser browser) {
-                MediaBrowser current = attachedBrowserRef.get();
-                if (current != browser) {
-                    browser.addListener(new Player.Listener() {
-                        @Override
-                        public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
-                            if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)
-                                    || events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED)
-                                    || events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
+                            String mediaId = player.getCurrentMediaItem() != null
+                                    ? player.getCurrentMediaItem().mediaId
+                                    : null;
 
-                                String mediaId = player.getCurrentMediaItem() != null
-                                        ? player.getCurrentMediaItem().mediaId
-                                        : null;
+                            boolean playing = player.getPlaybackState() == Player.STATE_READY
+                                    && player.getPlayWhenReady();
 
-                                boolean playing = player.getPlaybackState() == Player.STATE_READY
-                                        && player.getPlayWhenReady();
-
-                                playbackViewModel.update(mediaId, playing);
-                            }
+                            playbackViewModel.update(mediaId, playing);
                         }
-                    });
-
-                    String mediaId = browser.getCurrentMediaItem() != null
-                            ? browser.getCurrentMediaItem().mediaId
-                            : null;
-                    boolean playing = browser.getPlaybackState() == Player.STATE_READY && browser.getPlayWhenReady();
-                    playbackViewModel.update(mediaId, playing);
-
-                    attachedBrowserRef = new WeakReference<>(browser);
-                } else {
-                    String mediaId = browser.getCurrentMediaItem() != null
-                            ? browser.getCurrentMediaItem().mediaId
-                            : null;
-                    boolean playing = browser.getPlaybackState() == Player.STATE_READY && browser.getPlayWhenReady();
-                    playbackViewModel.update(mediaId, playing);
-                }
+                    }
+                });
+                attachedBrowserRef = new WeakReference<>(browser);
             }
-
-            @Override
-            public void onFailure(@NonNull Throwable t) {
-                Log.e(TAG, "Failed to get MediaBrowser instance", t);
-            }
-        }, MoreExecutors.directExecutor());
+            String mediaId = browser.getCurrentMediaItem() != null
+                    ? browser.getCurrentMediaItem().mediaId
+                    : null;
+            boolean playing = browser.getPlaybackState() == Player.STATE_READY && browser.getPlayWhenReady();
+            playbackViewModel.update(mediaId, playing);
+        });
     }
 
     public static void onBrowserReleased(@Nullable MediaBrowser released) {
@@ -103,310 +108,156 @@ public class MediaManager {
         }
     }
 
-    public static void reset(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        if (mediaBrowserListenableFuture.get().isPlaying()) {
-                            mediaBrowserListenableFuture.get().pause();
-                        }
-
-                        mediaBrowserListenableFuture.get().stop();
-                        mediaBrowserListenableFuture.get().clearMediaItems();
-                        clearDatabase();
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void reset(ListenableFuture<MediaBrowser> future) {
+        runWithBrowser(future, browser -> {
+            if (browser.isPlaying())
+                browser.pause();
+            browser.stop();
+            browser.clearMediaItems();
+            clearDatabase();
+        });
     }
 
-    public static void hide(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        if (mediaBrowserListenableFuture.get().isPlaying()) {
-                            mediaBrowserListenableFuture.get().pause();
-                        }
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void hide(ListenableFuture<MediaBrowser> future) {
+        runWithBrowser(future, browser -> {
+            if (browser.isPlaying())
+                browser.pause();
+        });
     }
 
-    public static void check(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        if (mediaBrowserListenableFuture.get().getMediaItemCount() < 1) {
-                            List<Child> media = getQueueRepository().getMedia();
-                            if (media != null && media.size() >= 1) {
-                                init(mediaBrowserListenableFuture, media);
-                            }
-                        }
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
-    }
-
-    public static void init(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        mediaBrowserListenableFuture.get().clearMediaItems();
-                        mediaBrowserListenableFuture.get().setMediaItems(MappingUtil.mapMediaItems(media));
-                        mediaBrowserListenableFuture.get().seekTo(getQueueRepository().getLastPlayedMediaIndex(), getQueueRepository().getLastPlayedMediaTimestamp());
-                        mediaBrowserListenableFuture.get().prepare();
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
-    }
-
-    public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        justStarted.set(true);
-                        browser.setMediaItems(MappingUtil.mapMediaItems(media), startIndex, 0);
+    @OptIn(markerClass = UnstableApi.class)
+    public static void check(ListenableFuture<MediaBrowser> future, CompositeDisposable composite) {
+        runWithBrowser(future, browser -> {
+            QueueRepository queueRepo = getQueueRepository();
+            Maybe<Pair<Pair<Integer, Long>, List<Queue>>> maybe =
+                    ((browser.getMediaItemCount() == 0) ?
+                            Maybe.zip(Maybe.zip(queueRepo.getLastPlayedMediaIndex(), queueRepo.getLastPlayedMediaTimestamp(), Pair::create),
+                                            queueRepo.getQueue(),
+                                            Pair::create)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                            : Maybe.empty());
+            Disposable disposable = maybe.subscribe(input -> {
+                        int index = input.first.first;
+                        long timestamp = input.first.second;
+                        List<Child> media = input.second.stream().map(Child.class::cast).collect(Collectors.toList());
+                        browser.clearMediaItems();
+                        browser.setMediaItems(MappingUtil.mapMediaItems(media));
+                        browser.seekTo(index, timestamp);
                         browser.prepare();
-
-                        Player.Listener timelineListener = new Player.Listener() {
-                            @Override
-                            public void onTimelineChanged(Timeline timeline, int reason) {
-                                int itemCount = browser.getMediaItemCount();
-                                if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                    browser.seekTo(startIndex, 0);
-                                    browser.play();
-                                    browser.removeListener(this);
-                                }
-                            }
-                        };
-                        browser.addListener(timelineListener);
-
-                        enqueueDatabase(media, true, 0);
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+                    });
+            composite.add(disposable);
+        });
     }
 
-    public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, Child media) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        justStarted.set(true);
-                        browser.setMediaItem(MappingUtil.mapMediaItem(media));
-                        browser.prepare();
-                        browser.play();
-                        enqueueDatabase(media, true, 0);
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void startQueue(ListenableFuture<MediaBrowser> future, List<Child> media, int startIndex) {
+        runWithBrowser(future, browser -> {
+            justStarted.set(true);
+            browser.clearMediaItems();
+            browser.setMediaItems(MappingUtil.mapMediaItems(media), startIndex, 0);
+            browser.prepare();
+            browser.play();
+            enqueueDatabase(media, true, 0);
+        });
     }
 
-    public static void playDownloadedMediaItem(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, MediaItem mediaItem) {
-        if (mediaBrowserListenableFuture != null && mediaItem != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-                        justStarted.set(true);
-                        mediaBrowser.setMediaItem(mediaItem);
-                        mediaBrowser.prepare();
-                        mediaBrowser.play();
-                        clearDatabase();
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void startQueue(ListenableFuture<MediaBrowser> future, Child media) {
+        runWithBrowser(future, browser -> {
+            justStarted.set(true);
+            browser.setMediaItem(MappingUtil.mapMediaItem(media));
+            browser.prepare();
+            browser.play();
+            enqueueDatabase(media, true, 0);
+        });
     }
 
-    public static void startRadio(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, InternetRadioStation internetRadioStation) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        justStarted.set(true);
-                        browser.setMediaItem(MappingUtil.mapInternetRadioStation(internetRadioStation));
-                        browser.prepare();
-                        browser.play();
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void playDownloadedMediaItem(ListenableFuture<MediaBrowser> future, MediaItem mediaItem) {
+        runWithBrowser(future, browser -> {
+            justStarted.set(true);
+            browser.setMediaItem(mediaItem);
+            browser.prepare();
+            browser.play();
+            clearDatabase();
+        });
     }
 
-    public static void startPodcast(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, PodcastEpisode podcastEpisode) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        justStarted.set(true);
-                        browser.setMediaItem(MappingUtil.mapMediaItem(podcastEpisode));
-                        browser.prepare();
-                        browser.play();
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void startRadio(ListenableFuture<MediaBrowser> future, InternetRadioStation internetRadioStation) {
+        runWithBrowser(future, browser -> {
+            browser.setMediaItem(MappingUtil.mapInternetRadioStation(internetRadioStation));
+            browser.prepare();
+            browser.play();
+        });
     }
 
-    public static void enqueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, boolean playImmediatelyAfter) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "enqueue");
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItems(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItems(media));
-                        } else {
-                            enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
-                            mediaBrowserListenableFuture.get().addMediaItems(MappingUtil.mapMediaItems(media));
-                        }
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void startPodcast(ListenableFuture<MediaBrowser> future, PodcastEpisode podcastEpisode) {
+        runWithBrowser(future, browser -> {
+            browser.setMediaItem(MappingUtil.mapMediaItem(podcastEpisode));
+            browser.prepare();
+            browser.play();
+        });
     }
 
-    public static void enqueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, Child media, boolean playImmediatelyAfter) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "enqueue");
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItem(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItem(media));
-                        } else {
-                            enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
-                            mediaBrowserListenableFuture.get().addMediaItem(MappingUtil.mapMediaItem(media));
-                        }
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void enqueue(ListenableFuture<MediaBrowser> future, List<Child> media, boolean playImmediatelyAfter) {
+        runWithBrowser(future, browser -> {
+            if (playImmediatelyAfter && browser.getNextMediaItemIndex() != C.INDEX_UNSET) {
+                enqueueDatabase(media, false, browser.getNextMediaItemIndex());
+                browser.addMediaItems(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItems(media));
+            } else {
+                enqueueDatabase(media, false, browser.getMediaItemCount());
+                browser.addMediaItems(MappingUtil.mapMediaItems(media));
+            }
+        });
     }
 
-    public static void shuffle(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex, int endIndex) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "shuffle");
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        browser.removeMediaItems(startIndex, endIndex + 1);
-                        browser.addMediaItems(MappingUtil.mapMediaItems(media).subList(startIndex, endIndex + 1));
-                        swapDatabase(media);
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void enqueue(ListenableFuture<MediaBrowser> future, Child media, boolean playImmediatelyAfter) {
+        runWithBrowser(future, browser -> {
+            if (playImmediatelyAfter && browser.getNextMediaItemIndex() != C.INDEX_UNSET) {
+                enqueueDatabase(media, false, browser.getNextMediaItemIndex());
+                browser.addMediaItem(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItem(media));
+            } else {
+                enqueueDatabase(media, false, browser.getMediaItemCount());
+                browser.addMediaItem(MappingUtil.mapMediaItem(media));
+            }
+        });
     }
 
-    public static void swap(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int from, int to) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "swap");
-                        mediaBrowserListenableFuture.get().moveMediaItem(from, to);
-                        swapDatabase(media);
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void shuffle(ListenableFuture<MediaBrowser> future, List<Child> media, int startIndex, int endIndex) {
+        runWithBrowser(future, browser -> {
+            browser.removeMediaItems(startIndex, endIndex + 1);
+            browser.addMediaItems(MappingUtil.mapMediaItems(media).subList(startIndex, endIndex + 1));
+            swapDatabase(media);
+        });
     }
 
-    public static void remove(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int toRemove) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "remove");
-                        if (mediaBrowserListenableFuture.get().getMediaItemCount() > 1 && mediaBrowserListenableFuture.get().getCurrentMediaItemIndex() != toRemove) {
-                            mediaBrowserListenableFuture.get().removeMediaItem(toRemove);
-                            removeDatabase(media, toRemove);
-                        } else {
-                            removeDatabase(media, -1);
-                        }
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void swap(ListenableFuture<MediaBrowser> future, List<Child> media, int from, int to) {
+        runWithBrowser(future, browser -> {
+            browser.moveMediaItem(from, to);
+            swapDatabase(media);
+        });
     }
 
-    public static void removeRange(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int fromItem, int toItem) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "remove range");
-                        mediaBrowserListenableFuture.get().removeMediaItems(fromItem, toItem);
-                        removeRangeDatabase(media, fromItem, toItem);
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void remove(ListenableFuture<MediaBrowser> future, List<Child> media, int toRemove) {
+        runWithBrowser(future, browser -> {
+            if (browser.getMediaItemCount() > 1 && browser.getCurrentMediaItemIndex() != toRemove) {
+                browser.removeMediaItem(toRemove);
+                removeDatabase(media, toRemove);
+            } else {
+                removeDatabase(media, -1);
+            }
+        });
     }
 
-    public static void getCurrentIndex(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, MediaIndexCallback callback) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        callback.onRecovery(mediaBrowserListenableFuture.get().getCurrentMediaItemIndex());
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
-        }
+    public static void removeRange(ListenableFuture<MediaBrowser> future, List<Child> media, int fromItem, int toItem) {
+        runWithBrowser(future, browser -> {
+            browser.removeMediaItems(fromItem, toItem);
+            removeRangeDatabase(media, fromItem, toItem);
+        });
+    }
+
+    public static void getCurrentIndex(ListenableFuture<MediaBrowser> future, MediaIndexCallback callback) {
+        runWithBrowser(future, browser -> {
+            callback.onRecovery(browser.getCurrentMediaItemIndex());
+        });
     }
 
     public static void setLastPlayedTimestamp(MediaItem mediaItem) {
@@ -434,7 +285,6 @@ public class MediaManager {
                 @Override
                 public void onChanged(List<Child> media) {
                     if (media != null) {
-                        Log.e(TAG, "continuous play");
                         ListenableFuture<MediaBrowser> mediaBrowserListenableFuture = new MediaBrowser.Builder(
                                 App.getContext(),
                                 new SessionToken(App.getContext(), new ComponentName(App.getContext(), MediaService.class))

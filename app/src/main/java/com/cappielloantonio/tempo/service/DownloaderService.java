@@ -5,7 +5,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.media3.common.util.NotificationUtil;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.offline.Download;
 import androidx.media3.exoplayer.offline.DownloadManager;
@@ -21,7 +20,6 @@ import java.util.List;
 
 @UnstableApi
 public class DownloaderService extends androidx.media3.exoplayer.offline.DownloadService {
-
     private static final int JOB_ID = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
@@ -89,27 +87,29 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
         @Override
         public void onDownloadChanged(@NonNull DownloadManager downloadManager, Download download, @Nullable Exception finalException) {
-            Notification notification;
-
-            if (download.state == Download.STATE_COMPLETED) {
-                notification = notificationHelper.buildDownloadCompletedNotification(context, R.drawable.ic_check_circle, null, DownloaderManager.getDownloadNotificationMessage(download.request.id));
-                notification = Notification.Builder.recoverBuilder(context, notification).setGroup(DownloadUtil.DOWNLOAD_NOTIFICATION_SUCCESSFUL_GROUP).build();
-                NotificationUtil.setNotification(this.context, successfulDownloadGroupNotificationId, successfulDownloadGroupNotification);
-                DownloaderManager.updateRequestDownload(download);
-            } else if (download.state == Download.STATE_FAILED) {
-                notification = notificationHelper.buildDownloadFailedNotification(context, R.drawable.ic_error, null, DownloaderManager.getDownloadNotificationMessage(download.request.id));
-                notification = Notification.Builder.recoverBuilder(context, notification).setGroup(DownloadUtil.DOWNLOAD_NOTIFICATION_FAILED_GROUP).build();
-                NotificationUtil.setNotification(this.context, failedDownloadGroupNotificationId, failedDownloadGroupNotification);
-            } else {
-                return;
-            }
-
-            NotificationUtil.setNotification(context, nextNotificationId++, notification);
+            DownloadUtil.getDownloadTracker(context).updateRequestDownload(download);
+//            App.getExecutor().submit(() -> {
+//                Notification notification;
+//
+//                if (download.state == Download.STATE_COMPLETED) {
+//                    notification = notificationHelper.buildDownloadCompletedNotification(context, R.drawable.ic_check_circle, null, DownloaderManager.getDownloadNotificationMessage(download.request.id));
+//                    notification = Notification.Builder.recoverBuilder(context, notification).setGroup(DownloadUtil.DOWNLOAD_NOTIFICATION_SUCCESSFUL_GROUP).build();
+//                    NotificationUtil.setNotification(this.context, successfulDownloadGroupNotificationId, successfulDownloadGroupNotification);
+//                } else if (download.state == Download.STATE_FAILED) {
+//                    notification = notificationHelper.buildDownloadFailedNotification(context, R.drawable.ic_error, null, DownloaderManager.getDownloadNotificationMessage(download.request.id));
+//                    notification = Notification.Builder.recoverBuilder(context, notification).setGroup(DownloadUtil.DOWNLOAD_NOTIFICATION_FAILED_GROUP).build();
+//                    NotificationUtil.setNotification(this.context, failedDownloadGroupNotificationId, failedDownloadGroupNotification);
+//                } else {
+//                    return;
+//                }
+//
+//                NotificationUtil.setNotification(context, nextNotificationId++, notification);
+//            });
         }
 
         @Override
         public void onDownloadRemoved(@NonNull DownloadManager downloadManager, Download download) {
-            DownloaderManager.removeRequestDownload(download);
+            DownloadUtil.getDownloadTracker(context).removeRequestDownload(download);
         }
     }
 }

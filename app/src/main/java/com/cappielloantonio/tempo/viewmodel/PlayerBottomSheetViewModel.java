@@ -15,7 +15,6 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.LyricsCache;
-import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
 import com.cappielloantonio.tempo.repository.ArtistRepository;
 import com.cappielloantonio.tempo.repository.FavoriteRepository;
@@ -38,7 +37,13 @@ import com.google.gson.Gson;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @OptIn(markerClass = UnstableApi.class)
 public class PlayerBottomSheetViewModel extends AndroidViewModel {
@@ -78,8 +83,8 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         lyricsRepository = new LyricsRepository();
     }
 
-    public LiveData<List<Queue>> getQueueSong() {
-        return queueRepository.getLiveQueue();
+    public LiveData<List<Child>> getQueueSongLive() {
+        return queueRepository.getMediaLive();
     }
 
     public void setFavorite(Context context, Child media) {
@@ -145,7 +150,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         return lyricsListLiveData;
     }
 
-    public void refreshMediaInfo(LifecycleOwner owner, Child media) {
+    public void refreshMediaInfo(LifecycleOwner owner, Child media, CompositeDisposable composite) {
         lyricsLiveData.postValue(null);
         lyricsListLiveData.postValue(null);
         lyricsCachedLiveData.postValue(false);
@@ -162,45 +167,50 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
 
         observeCachedLyrics(owner, songId);
 
-        LyricsCache cachedLyrics = lyricsRepository.getLyrics(songId);
-        if (cachedLyrics != null) {
-            onCachedLyricsChanged(cachedLyrics);
-        }
+        Disposable disposable = lyricsRepository.getLyrics(songId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(cached -> {
+                    if (cached  != null) {
+                        onCachedLyricsChanged(cached);
+                    }
 
-        if (NetworkUtil.isOffline() || media == null) {
-            return;
-        }
+                    if (NetworkUtil.isOffline() || media == null) {
+                        return;
+                    }
 
-        if (OpenSubsonicExtensionsUtil.isSongLyricsExtensionAvailable()) {
-            openRepository.getLyricsBySongId(media.getId()).observe(owner, lyricsList -> {
-                lyricsListLiveData.postValue(lyricsList);
-                lyricsLiveData.postValue(null);
+                    if (OpenSubsonicExtensionsUtil.isSongLyricsExtensionAvailable()) {
+                        openRepository.getLyricsBySongId(media.getId()).observe(owner, lyricsList -> {
+                            lyricsListLiveData.postValue(lyricsList);
+                            lyricsLiveData.postValue(null);
 
-                if (shouldAutoDownloadLyrics() && hasStructuredLyrics(lyricsList)) {
-                    saveLyricsToCache(media, null, lyricsList);
-                }
-            });
-        } else {
-            songRepository.getSongLyrics(media).observe(owner, lyrics -> {
-                lyricsLiveData.postValue(lyrics);
-                lyricsListLiveData.postValue(null);
+                            if (shouldAutoDownloadLyrics() && hasStructuredLyrics(lyricsList)) {
+                                saveLyricsToCache(media, null, lyricsList);
+                            }
+                        });
+                    } else {
+                        songRepository.getSongLyrics(media).observe(owner, lyrics -> {
+                            lyricsLiveData.postValue(lyrics);
+                            lyricsListLiveData.postValue(null);
 
-                if (shouldAutoDownloadLyrics() && !TextUtils.isEmpty(lyrics)) {
-                    saveLyricsToCache(media, lyrics, null);
-                }
-            });
-        }
+                            if (shouldAutoDownloadLyrics() && !TextUtils.isEmpty(lyrics)) {
+                                saveLyricsToCache(media, lyrics, null);
+                            }
+                        });
+                    }
+                });
+        composite.add(disposable);
     }
 
     public LiveData<Child> getLiveMedia() {
         return liveMedia;
     }
 
-    public void setLiveMedia(LifecycleOwner owner, String mediaType, String mediaId) {
+    public void setLiveMedia(LifecycleOwner owner, String mediaType, String mediaId, CompositeDisposable composite) {
         currentSongId = mediaId;
 
         if (!TextUtils.isEmpty(mediaId)) {
-            refreshMediaInfo(owner, null);
+            refreshMediaInfo(owner, null, composite);
         } else {
             clearCachedLyricsObserver();
             lyricsLiveData.postValue(null);
@@ -280,17 +290,18 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         return queueRepository.getPlayQueue();
     }
 
-    public boolean savePlayQueue() {
+    public void savePlayQueue(Consumer<Boolean> callback, CompositeDisposable composite) {
         Child media = getLiveMedia().getValue();
-        List<Child> queue = queueRepository.getMedia();
-        List<String> ids = queue.stream().map(Child::getId).collect(Collectors.toList());
-
-        if (media != null) {
-            queueRepository.savePlayQueue(ids, media.getId(), 0);
-            return true;
-        }
-
-        return false;
+        Disposable disposable = queueRepository.getMedia()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(queue -> {
+                    List<String> ids = queue.stream().map(Child::getId).collect(Collectors.toList());
+                    if (media != null)
+                        queueRepository.savePlayQueue(ids, media.getId(), 0);
+                    callback.accept(media != null);
+                });
+        composite.add(disposable);
     }
 
     private void observeCachedLyrics(LifecycleOwner owner, String songId) {

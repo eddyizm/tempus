@@ -69,6 +69,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+
 @UnstableApi
 public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private static final String TAG = "HomeFragment";
@@ -96,6 +98,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
+    private CompositeDisposable composite = new CompositeDisposable();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -104,6 +108,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         bind = FragmentHomeTabMusicBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        homeViewModel.setOfflineFavorite(composite);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         init();
@@ -165,6 +170,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
     @Override
     public void onDestroyView() {
+        composite.clear();
         super.onDestroyView();
         bind = null;
     }

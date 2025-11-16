@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -45,10 +44,13 @@ import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.color.DynamicColors;
-import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 @UnstableApi
 public class MainActivity extends BaseActivity {
@@ -67,6 +69,8 @@ public class MainActivity extends BaseActivity {
 
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
     private Intent pendingDownloadPlaybackIntent;
+
+    private final CompositeDisposable composite = new CompositeDisposable();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,7 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         connectivityStatusReceiverManager(false);
         bind = null;
+        composite.clear();
     }
 
     @Override
@@ -170,8 +175,13 @@ public class MainActivity extends BaseActivity {
 
     private void checkBottomSheetAfterStateChanged() {
         final Handler handler = new Handler();
-        final Runnable runnable = () -> setBottomSheetInPeek(mainViewModel.isQueueLoaded());
-        handler.postDelayed(runnable, 100);
+        handler.postDelayed(() -> {
+            Disposable disposable = mainViewModel.isQueueLoaded()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this::setBottomSheetInPeek);
+            composite.add(disposable);
+        }, 100);
     }
 
     public void collapseBottomSheetDelayed() {
@@ -271,22 +281,15 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initService() {
-        MediaManager.check(getMediaBrowserListenableFuture());
-
-        getMediaBrowserListenableFuture().addListener(() -> {
-            try {
-                getMediaBrowserListenableFuture().get().addListener(new Player.Listener() {
-                    @Override
-                    public void onIsPlayingChanged(boolean isPlaying) {
-                        if (isPlaying && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
-                            setBottomSheetInPeek(true);
-                        }
-                    }
-                });
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
+        MediaManager.check(getMediaBrowserListenableFuture(), composite);
+        MediaManager.runWithBrowser(getMediaBrowserListenableFuture(), browser -> browser.addListener(new Player.Listener() {
+            @Override
+            public void onIsPlayingChanged(boolean isPlaying) {
+                if (isPlaying && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    setBottomSheetInPeek(true);
+                }
             }
-        }, MoreExecutors.directExecutor());
+        }));
     }
 
     private void goToLogin() {
@@ -314,9 +317,15 @@ public class MainActivity extends BaseActivity {
     }
 
     public void goFromLogin() {
-        setBottomSheetInPeek(mainViewModel.isQueueLoaded());
-        goToHome();
-        consumePendingAssetLink();
+        Disposable disposable = mainViewModel.isQueueLoaded()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    setBottomSheetInPeek(result);
+                    goToHome();
+                    consumePendingAssetLink();
+                });
+        composite.add(disposable);
     }
 
     public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink) {
