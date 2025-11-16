@@ -1,6 +1,8 @@
 # Changelog
 
 ## Pending release...
+* feat: Add Catalan i18n (#268)
+* Fix player queue soft-lock (#266)
 
 ## [4.2.4](https://github.com/eddyizm/tempo/releases/tag/v4.2.4) (2025-11-15)
 ## What's Changed
