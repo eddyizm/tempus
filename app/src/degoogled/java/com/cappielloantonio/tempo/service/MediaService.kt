@@ -19,6 +19,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
 import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
 import com.cappielloantonio.tempo.R
@@ -39,6 +40,7 @@ import com.google.common.util.concurrent.ListenableFuture
 
 @UnstableApi
 class MediaService : MediaLibraryService() {
+    private val TAG = "MediaService"
     private val librarySessionCallback = CustomMediaLibrarySessionCallback()
 
     private lateinit var player: ExoPlayer
@@ -86,7 +88,7 @@ class MediaService : MediaLibraryService() {
     }
 
     fun updateMediaItems() {
-        Log.d("MediaService", "update items");
+        Log.d(TAG, "update items");
         val n = player.mediaItemCount
         val k = player.currentMediaItemIndex
         val current = player.currentPosition
@@ -349,14 +351,30 @@ class MediaService : MediaLibraryService() {
             }
 
             override fun onTracksChanged(tracks: Tracks) {
+                Log.d(TAG, "onTracksChanged " + player.currentMediaItemIndex);
                 ReplayGainUtil.setReplayGain(player, tracks)
                 val currentMediaItem = player.currentMediaItem
-                if (currentMediaItem != null && currentMediaItem.mediaMetadata.extras != null) {
-                    MediaManager.scrobble(currentMediaItem, false)
+                if (currentMediaItem != null) {
+                    val item = MappingUtil.mapMediaItem(currentMediaItem)
+                    if (item.mediaMetadata.extras != null)
+                        MediaManager.scrobble(item, false)
+
+                    if (player.nextMediaItemIndex == C.INDEX_UNSET)
+                        MediaManager.continuousPlay(player.currentMediaItem)
                 }
 
-                if (player.currentMediaItemIndex + 1 == player.mediaItemCount)
-                    MediaManager.continuousPlay(player.currentMediaItem)
+                // https://stackoverflow.com/questions/56937283/exoplayer-shuffle-doesnt-reproduce-all-the-songs
+                if (MediaManager.justStarted.get()) {
+                    Log.d(TAG, "update shuffle order")
+                    MediaManager.justStarted.set(false)
+                    val shuffledList = IntArray(player.mediaItemCount) { i -> i }
+                    shuffledList.shuffle()
+                    val index = shuffledList.indexOf(player.currentMediaItemIndex)
+                    // swap current media index to the first index
+                    if (index > -1 && shuffledList.isNotEmpty())
+                        run { val tmp = shuffledList[0]; shuffledList[0] = shuffledList[index]; shuffledList[index] = tmp}
+                    player.shuffleOrder = DefaultShuffleOrder(shuffledList, kotlin.random.Random.nextLong())
+                }
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
