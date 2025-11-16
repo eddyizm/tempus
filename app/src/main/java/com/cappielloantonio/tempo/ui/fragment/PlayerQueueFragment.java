@@ -73,12 +73,16 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         super.onResume();
         setMediaBrowserListenableFuture();
         updateNowPlayingItem();
-        try {
-            long position = mediaBrowserListenableFuture.get().getCurrentMediaItemIndex();
-            bind.playerQueueRecyclerView.scrollToPosition((int) position);
-        } catch (Exception e) {
-            Log.e("PlayerQueueFragment", "Failed to get mediaBrowserListenableFuture in onResume", e);
-        }
+        mediaBrowserListenableFuture.addListener(() -> {
+            try {
+                long position = mediaBrowserListenableFuture.get().getCurrentMediaItemIndex();
+                requireActivity().runOnUiThread(() -> {
+                    bind.playerQueueRecyclerView.scrollToPosition((int) position);
+                });
+            } catch (Exception e) {
+                Log.e("PlayerQueueFragment", "Failed to get mediaBrowserListenableFuture in onResume", e);
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     @Override
