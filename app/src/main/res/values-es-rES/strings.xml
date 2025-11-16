@@ -510,5 +510,5 @@
     <string name="asset_link_error_playlist">No se ha podido abrir la lista de reproducción</string>
     <string name="settings_github_update">Actualizaciones</string>
     <string name="settings_artist_sort_by_album_count">Ordenar artistas por número de álbumes</string>
-    <string name="settings_artist_sort_by_album_count_summary">Ordena los artistas por número de álbums si la opción está habilitada. Si no, los ordena por nombre.</string>
+    <string name="settings_artist_sort_by_album_count_summary">Ordena los artistas por número de álbumes si la opción está habilitada. Si no, los ordena por nombre.</string>
 </resources>
