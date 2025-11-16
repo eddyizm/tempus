@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueueAdapter.ViewHolder> {
+public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueueAdapter.ViewHolder> implements PlaybackAdapterInterface {
     private static final String TAG = "PlayerSongQueueAdapter";
     private final ClickCallback click;
 
@@ -180,6 +180,7 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
         this.mediaBrowserListenableFuture = mediaBrowserListenableFuture;
     }
 
+    @Override
     public void setPlaybackState(String mediaId, boolean playing) {
         String oldId = this.currentPlayingId;
         boolean oldPlaying = this.isPlaying;

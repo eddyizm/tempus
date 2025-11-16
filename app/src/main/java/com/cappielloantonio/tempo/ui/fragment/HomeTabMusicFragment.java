@@ -148,8 +148,6 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         initializeMediaBrowser();
 
         MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
-        observeStarredSongsPlayback();
-        observeTopSongsPlayback();
     }
 
     @Override
@@ -601,6 +599,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         bind.topSongsRecyclerView.setHasFixedSize(true);
 
         topSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
+        observeTopSongsPlayback();
+
         bind.topSongsRecyclerView.setAdapter(topSongAdapter);
         setTopSongsMediaBrowserListenableFuture();
         reapplyTopSongsPlayback();
@@ -642,6 +642,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         bind.starredTracksRecyclerView.setHasFixedSize(true);
 
         starredSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
+        observeStarredSongsPlayback();
+
         bind.starredTracksRecyclerView.setAdapter(starredSongAdapter);
         setStarredSongsMediaBrowserListenableFuture();
         reapplyStarredSongsPlayback();
@@ -1178,49 +1180,19 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     }
 
     private void observeStarredSongsPlayback() {
-        playbackViewModel.getCurrentSongId().observe(getViewLifecycleOwner(), id -> {
-            if (starredSongAdapter != null) {
-                Boolean playing = playbackViewModel.getIsPlaying().getValue();
-                starredSongAdapter.setPlaybackState(id, playing != null && playing);
-            }
-        });
-        playbackViewModel.getIsPlaying().observe(getViewLifecycleOwner(), playing -> {
-            if (starredSongAdapter != null) {
-                String id = playbackViewModel.getCurrentSongId().getValue();
-                starredSongAdapter.setPlaybackState(id, playing != null && playing);
-            }
-        });
+        playbackViewModel.observePlayback(starredSongAdapter, getViewLifecycleOwner());
     }
 
     private void observeTopSongsPlayback() {
-        playbackViewModel.getCurrentSongId().observe(getViewLifecycleOwner(), id -> {
-            if (topSongAdapter != null) {
-                Boolean playing = playbackViewModel.getIsPlaying().getValue();
-                topSongAdapter.setPlaybackState(id, playing != null && playing);
-            }
-        });
-        playbackViewModel.getIsPlaying().observe(getViewLifecycleOwner(), playing -> {
-            if (topSongAdapter != null) {
-                String id = playbackViewModel.getCurrentSongId().getValue();
-                topSongAdapter.setPlaybackState(id, playing != null && playing);
-            }
-        });
+        playbackViewModel.observePlayback(topSongAdapter, getViewLifecycleOwner());
     }
 
     private void reapplyStarredSongsPlayback() {
-        if (starredSongAdapter != null) {
-            String id = playbackViewModel.getCurrentSongId().getValue();
-            Boolean playing = playbackViewModel.getIsPlaying().getValue();
-            starredSongAdapter.setPlaybackState(id, playing != null && playing);
-        }
+        playbackViewModel.reapplyPlayback(starredSongAdapter);
     }
 
     private void reapplyTopSongsPlayback() {
-        if (topSongAdapter != null) {
-            String id = playbackViewModel.getCurrentSongId().getValue();
-            Boolean playing = playbackViewModel.getIsPlaying().getValue();
-            topSongAdapter.setPlaybackState(id, playing != null && playing);
-        }
+        playbackViewModel.reapplyPlayback(topSongAdapter);
     }
 
     private void setTopSongsMediaBrowserListenableFuture() {

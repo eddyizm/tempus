@@ -40,7 +40,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @UnstableApi
-public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAdapter.ViewHolder> implements Filterable {
+public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAdapter.ViewHolder> implements Filterable, PlaybackAdapterInterface {
     private final ClickCallback click;
     private final boolean showCoverArt;
     private final boolean showAlbum;
@@ -254,6 +254,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         notifyDataSetChanged();
     }
 
+    @Override
     public void setPlaybackState(String mediaId, boolean playing) {
         String oldId = this.currentPlayingId;
         boolean oldPlaying = this.isPlaying;
