@@ -27,7 +27,13 @@ import com.cappielloantonio.tempo.interfaces.DialogClickCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
+import com.cappielloantonio.tempo.repository.DirectoryRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.Directory;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.MusicDirectoryAdapter;
 import com.cappielloantonio.tempo.ui.dialog.DownloadDirectoryDialog;
@@ -53,6 +59,7 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
     private MusicDirectoryAdapter musicDirectoryAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private DirectoryRepository directoryRepository;
 
     private MenuItem menuItem;
 
@@ -77,6 +84,7 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         bind = FragmentDirectoryBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
         directoryViewModel = new ViewModelProvider(requireActivity()).get(DirectoryViewModel.class);
+        directoryRepository = new DirectoryRepository();
 
         initAppBar();
         initDirectoryListView();
@@ -196,5 +204,58 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
     @Override
     public void onMusicDirectoryClick(Bundle bundle) {
         Navigation.findNavController(requireView()).navigate(R.id.directoryFragment, bundle);
+    }
+
+    @Override
+    public void onMusicDirectoryPlay(Bundle bundle) {
+        String directoryId = bundle.getString(Constants.MUSIC_DIRECTORY_ID);
+        if (directoryId != null) {
+            Toast.makeText(requireContext(), getString(R.string.folder_play_collecting), Toast.LENGTH_SHORT).show();
+            collectAndPlayDirectorySongs(directoryId);
+        }
+    }
+
+    private void collectAndPlayDirectorySongs(String directoryId) {
+        List<Child> allSongs = new ArrayList<>();
+        AtomicInteger pendingRequests = new AtomicInteger(0);
+
+        collectSongsFromDirectory(directoryId, allSongs, pendingRequests, () -> {
+            if (!allSongs.isEmpty()) {
+                activity.runOnUiThread(() -> {
+                    MediaManager.startQueue(mediaBrowserListenableFuture, allSongs, 0);
+                    activity.setBottomSheetInPeek(true);
+                    Toast.makeText(requireContext(), getString(R.string.folder_play_playing, allSongs.size()), Toast.LENGTH_SHORT).show();
+                });
+            } else {
+                activity.runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), getString(R.string.folder_play_no_songs), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void collectSongsFromDirectory(String directoryId, List<Child> allSongs, AtomicInteger pendingRequests, Runnable onComplete) {
+        pendingRequests.incrementAndGet();
+
+        directoryRepository.getMusicDirectory(directoryId).observe(getViewLifecycleOwner(), directory -> {
+            if (directory != null && directory.getChildren() != null) {
+                for (Child child : directory.getChildren()) {
+                    if (child.isDir()) {
+                        // It's a subdirectory, recurse into it
+                        collectSongsFromDirectory(child.getId(), allSongs, pendingRequests, onComplete);
+                    } else if (!child.isVideo()) {
+                        // It's a song, add it to the list
+                        synchronized (allSongs) {
+                            allSongs.add(child);
+                        }
+                    }
+                }
+            }
+
+            // Decrement pending requests and check if we're done
+            if (pendingRequests.decrementAndGet() == 0) {
+                onComplete.run();
+            }
+        });
     }
 }

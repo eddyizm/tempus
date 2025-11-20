@@ -69,6 +69,21 @@ However, if you want to limit or change libraries you could use a workaround, if
 
 You can create multiple users , one for each library, and save each of them in Tempus app.
 
+### Folder or index playback
+
+If your Subsonic-compatible server exposes the folder tree **or** provides an artist index (for example Gonic, Navidrome, or any backend with folder browsing enabled), Tempus lets you play an entire folder from anywhere in the library hierarchy:
+
+<p align="left">
+    <img src="mockup/usage/music_folders_root.png" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/music_folders_playback.png" width=317>
+</p>
+
+- The **Library ▸ Music folders** screen shows each top-level folder with a play icon only after you drill into it. The root entry remains a simple navigator.
+- When viewing **inner folders** **or artist index entries**, tap the new play button to immediately enqueue every audio track inside that folder/index and all nested subfolders.
+- Video files are excluded automatically, so only playable audio ends up in the queue.
+
+No extra config is needed—Tempus adjusts based on the connected backend.
+
 ### Now Playing Screen
 
 On the main player control screen, tapping on the artwork will reveal a small collection of 4 buttons/icons. 
