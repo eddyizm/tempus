@@ -351,7 +351,7 @@
     <string name="settings_audio_quality">Mostra qualità audio</string>
     <string name="settings_audio_quality_summary">Il bitrate e il formato audio saranno mostrati per ogni traccia.</string>
     <string name="settings_song_rating">Mostra valutazione della canzone</string>
-    <string name="settings_song_rating_summary">Se abilitato, mostra la valutazione a 5 stelle per la traccia nella pagina della canzone\n\n*Richiede il riavvio dell'app</string>
+    <string name="settings_song_rating_summary">Se abilitato, mostra la valutazione a 5 stelle per la traccia nella pagina della canzone\n\n*Richiede il riavvio dell\'app</string>
     <string name="settings_item_rating">Mostra valutazione</string>
     <string name="settings_item_rating_summary">Se abilitato, verrà mostrata la valutazione dell\'elemento e se è contrassegnato come preferito.</string>
     <string name="settings_queue_syncing_countdown">Timer sincronizzazione</string>
