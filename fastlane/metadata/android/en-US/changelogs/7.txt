@@ -1,0 +1,5 @@
+* fix: Fix player queue soft-lock
+* chore: Add Catalan i18n
+* chore: Refactor MediaService
+* chore(i18n): Update Spanish translation
+* chore(i18n): Update Italian translation
