@@ -10,13 +10,19 @@ import com.cappielloantonio.tempo.model.Queue;
 
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Single;
+
 @Dao
 public interface QueueDao {
     @Query("SELECT * FROM queue")
-    LiveData<List<Queue>> getAll();
+    Maybe<List<Queue>> getAll();
 
     @Query("SELECT * FROM queue")
-    List<Queue> getAllSimple();
+    LiveData<List<Queue>> getAllLive();
+
+    @Query("SELECT * FROM queue")
+    List<Queue> getAllSync();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Queue songQueueObject);
@@ -31,7 +37,7 @@ public interface QueueDao {
     void deleteAll();
 
     @Query("SELECT COUNT(*) FROM queue")
-    int count();
+    Single<Integer> count();
 
     @Query("UPDATE queue SET last_play=:timestamp WHERE id=:id")
     void setLastPlay(String id, long timestamp);
@@ -40,5 +46,5 @@ public interface QueueDao {
     void setPlayingChanged(String id, long timestamp);
 
     @Query("SELECT * FROM queue ORDER BY last_play DESC LIMIT 1")
-    Queue getLastPlayed();
+    Maybe<Queue> getLastPlayed();
 }

@@ -24,7 +24,6 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.FragmentDirectoryBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.DialogClickCallback;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
@@ -34,7 +33,6 @@ import com.cappielloantonio.tempo.ui.dialog.DownloadDirectoryDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.DirectoryViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -112,10 +110,7 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
                         if (isVisible() && getActivity() != null) {
                             List<Child> songs = directory.getChildren().stream().filter(child -> !child.isDir()).collect(Collectors.toList());
                             if (Preferences.getDownloadDirectoryUri() == null) {
-                                DownloadUtil.getDownloadTracker(requireContext()).download(
-                                        MappingUtil.mapDownloads(songs),
-                                        songs.stream().map(Download::new).collect(Collectors.toList())
-                                );
+                                DownloadUtil.getDownloadTracker(requireContext()).download(songs);
                             } else {
                                 songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
                             }

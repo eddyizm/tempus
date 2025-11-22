@@ -13,14 +13,10 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.DialogStarredSyncBinding;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.StarredSyncViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.stream.Collectors;
 
 @OptIn(markerClass = UnstableApi.class)
 public class StarredSyncDialog extends DialogFragment {
@@ -62,10 +58,7 @@ public class StarredSyncDialog extends DialogFragment {
             positiveButton.setOnClickListener(v -> {
                 starredSyncViewModel.getStarredTracks(requireActivity()).observe(requireActivity(), songs -> {
                     if (songs != null && Preferences.getDownloadDirectoryUri() == null) {
-                        DownloadUtil.getDownloadTracker(context).download(
-                                MappingUtil.mapDownloads(songs),
-                                songs.stream().map(Download::new).collect(Collectors.toList())
-                        );
+                        DownloadUtil.getDownloadTracker(context).download(songs);
                     }
 
                     dialog.dismiss();

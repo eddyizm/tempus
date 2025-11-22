@@ -36,6 +36,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = "HomeViewModel";
 
@@ -87,8 +93,6 @@ public class HomeViewModel extends AndroidViewModel {
 
         albumsSyncViewModel = new StarredAlbumsSyncViewModel(application);
         artistSyncViewModel = new StarredArtistsSyncViewModel(application);
-
-        setOfflineFavorite();
     }
 
     public LiveData<List<Child>> getDiscoverSongSample(LifecycleOwner owner) {
@@ -363,20 +367,25 @@ public class HomeViewModel extends AndroidViewModel {
                 .orElse(null) == null;
     }
 
-    public void setOfflineFavorite() {
-        ArrayList<Favorite> favorites = getFavorites();
-        ArrayList<Favorite> favoritesToSave = getFavoritesToSave(favorites);
-        ArrayList<Favorite> favoritesToDelete = getFavoritesToDelete(favorites, favoritesToSave);
+    public void setOfflineFavorite(CompositeDisposable composite) {
+        Disposable disposable = getFavorites()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(favorites -> {
+                    List<Favorite> favoritesToSave = getFavoritesToSave(favorites);
+                    List<Favorite> favoritesToDelete = getFavoritesToDelete(favorites, favoritesToSave);
 
-        manageFavoriteToSave(favoritesToSave);
-        manageFavoriteToDelete(favoritesToDelete);
+                    manageFavoriteToSave(favoritesToSave);
+                    manageFavoriteToDelete(favoritesToDelete);
+                });
+        composite.add(disposable);
     }
 
-    private ArrayList<Favorite> getFavorites() {
-        return new ArrayList<>(favoriteRepository.getFavorites());
+    private Maybe<List<Favorite>> getFavorites() {
+        return favoriteRepository.getFavorites();
     }
 
-    private ArrayList<Favorite> getFavoritesToSave(ArrayList<Favorite> favorites) {
+    private List<Favorite> getFavoritesToSave(List<Favorite> favorites) {
         HashMap<String, Favorite> filteredMap = new HashMap<>();
 
         for (Favorite favorite : favorites) {
@@ -390,7 +399,7 @@ public class HomeViewModel extends AndroidViewModel {
         return new ArrayList<>(filteredMap.values());
     }
 
-    private ArrayList<Favorite> getFavoritesToDelete(ArrayList<Favorite> favorites, ArrayList<Favorite> favoritesToSave) {
+    private List<Favorite> getFavoritesToDelete(List<Favorite> favorites, List<Favorite> favoritesToSave) {
         ArrayList<Favorite> favoritesToDelete = new ArrayList<>();
 
         for (Favorite favorite : favorites) {
@@ -402,7 +411,7 @@ public class HomeViewModel extends AndroidViewModel {
         return favoritesToDelete;
     }
 
-    private void manageFavoriteToSave(ArrayList<Favorite> favoritesToSave) {
+    private void manageFavoriteToSave(List<Favorite> favoritesToSave) {
         for (Favorite favorite : favoritesToSave) {
             if (favorite.getToStar()) {
                 favoriteToStar(favorite);
@@ -412,7 +421,7 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
-    private void manageFavoriteToDelete(ArrayList<Favorite> favoritesToDelete) {
+    private void manageFavoriteToDelete(List<Favorite> favoritesToDelete) {
         for (Favorite favorite : favoritesToDelete) {
             favoriteRepository.delete(favorite);
         }

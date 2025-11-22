@@ -31,6 +31,10 @@ import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 @UnstableApi
 open class BaseMediaService : MediaLibraryService() {
@@ -49,6 +53,7 @@ open class BaseMediaService : MediaLibraryService() {
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
     }
 
+    private val composite = CompositeDisposable()
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
     private lateinit var networkCallback: CustomNetworkCallback
@@ -94,27 +99,25 @@ open class BaseMediaService : MediaLibraryService() {
         if (player.mediaItemCount > 0) return
 
         val queueRepository = QueueRepository()
-        val storedQueue = queueRepository.media
-        if (storedQueue.isNullOrEmpty()) return
-
-        val mediaItems = MappingUtil.mapMediaItems(storedQueue)
-        if (mediaItems.isEmpty()) return
-
-        val lastIndex = try {
-            queueRepository.lastPlayedMediaIndex
-        } catch (_: Exception) {
-            0
-        }.coerceIn(0, mediaItems.size - 1)
-
-        val lastPosition = try {
-            queueRepository.lastPlayedMediaTimestamp
-        } catch (_: Exception) {
-            0L
-        }.let { if (it < 0L) 0L else it }
-
-        player.setMediaItems(mediaItems, lastIndex, lastPosition)
-        player.prepare()
-        updateWidget(player)
+        val disposable = Maybe.zip(
+            queueRepository.media,
+            Maybe.zip(
+                queueRepository.lastPlayedMediaIndex,
+                queueRepository.lastPlayedMediaTimestamp
+            ) { a, b -> Pair(a, b) }
+        ) { a, b -> Pair(a, b) }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { result ->
+                if (result.first.isEmpty()) return@subscribe
+                val mediaItems = MappingUtil.mapMediaItems(result.first)
+                if (mediaItems.isEmpty()) return@subscribe
+                val lastIndex = result.second.first.coerceIn(0, mediaItems.size - 1)
+                val lastPosition = result.second.second.coerceAtLeast(0L)
+                player.setMediaItems(mediaItems, lastIndex, lastPosition)
+                player.prepare()
+                updateWidget(player)
+            }
+        composite.add(disposable)
     }
 
     fun initializePlayerListener(player: Player) {
@@ -281,6 +284,7 @@ open class BaseMediaService : MediaLibraryService() {
         stopWidgetUpdates()
         releasePlayers()
         mediaLibrarySession.release()
+        composite.clear()
         super.onDestroy()
     }
 

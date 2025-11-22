@@ -9,9 +9,9 @@ import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.Favorite;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.core.Maybe;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -61,80 +61,15 @@ public class FavoriteRepository {
                 });
     }
 
-    public List<Favorite> getFavorites() {
-        List<Favorite> favorites = new ArrayList<>();
-
-        GetAllThreadSafe getAllThreadSafe = new GetAllThreadSafe(favoriteDao);
-        Thread thread = new Thread(getAllThreadSafe);
-        thread.start();
-
-        try {
-            thread.join();
-            favorites = getAllThreadSafe.getFavorites();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return favorites;
-    }
-
-    private static class GetAllThreadSafe implements Runnable {
-        private final FavoriteDao favoriteDao;
-        private List<Favorite> favorites = new ArrayList<>();
-
-        public GetAllThreadSafe(FavoriteDao favoriteDao) {
-            this.favoriteDao = favoriteDao;
-        }
-
-        @Override
-        public void run() {
-            favorites = favoriteDao.getAll();
-        }
-
-        public List<Favorite> getFavorites() {
-            return favorites;
-        }
+    public Maybe<List<Favorite>> getFavorites() {
+        return favoriteDao.getAll();
     }
 
     public void starLater(String id, String albumId, String artistId, boolean toStar) {
-        InsertThreadSafe insert = new InsertThreadSafe(favoriteDao, new Favorite(System.currentTimeMillis(), id, albumId, artistId, toStar));
-        Thread thread = new Thread(insert);
-        thread.start();
-    }
-
-    private static class InsertThreadSafe implements Runnable {
-        private final FavoriteDao favoriteDao;
-        private final Favorite favorite;
-
-        public InsertThreadSafe(FavoriteDao favoriteDao, Favorite favorite) {
-            this.favoriteDao = favoriteDao;
-            this.favorite = favorite;
-        }
-
-        @Override
-        public void run() {
-            favoriteDao.insert(favorite);
-        }
+        App.getExecutor().submit(() -> favoriteDao.insert(new Favorite(System.currentTimeMillis(), id, albumId, artistId, toStar)));
     }
 
     public void delete(Favorite favorite) {
-        DeleteThreadSafe delete = new DeleteThreadSafe(favoriteDao, favorite);
-        Thread thread = new Thread(delete);
-        thread.start();
-    }
-
-    private static class DeleteThreadSafe implements Runnable {
-        private final FavoriteDao favoriteDao;
-        private final Favorite favorite;
-
-        public DeleteThreadSafe(FavoriteDao favoriteDao, Favorite favorite) {
-            this.favoriteDao = favoriteDao;
-            this.favorite = favorite;
-        }
-
-        @Override
-        public void run() {
-            favoriteDao.delete(favorite);
-        }
+        App.getExecutor().submit(() -> favoriteDao.delete(favorite));
     }
 }

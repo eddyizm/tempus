@@ -110,7 +110,7 @@ public class PlaylistRepository {
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId) {
         if (songsId.isEmpty()) {
             Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_all_skipped), Toast.LENGTH_SHORT).show();
-        } else{
+        } else {
             App.getSubsonicClientInstance(false)
                     .getPlaylistClient()
                     .updatePlaylist(playlistId, null, true, songsId, null)
@@ -185,45 +185,11 @@ public class PlaylistRepository {
 
     @androidx.media3.common.util.UnstableApi
     public void insert(Playlist playlist) {
-        InsertThreadSafe insert = new InsertThreadSafe(playlistDao, playlist);
-        Thread thread = new Thread(insert);
-        thread.start();
+        App.getExecutor().submit(() -> playlistDao.insert(playlist));
     }
 
     @androidx.media3.common.util.UnstableApi
     public void delete(Playlist playlist) {
-        DeleteThreadSafe delete = new DeleteThreadSafe(playlistDao, playlist);
-        Thread thread = new Thread(delete);
-        thread.start();
-    }
-
-    private static class InsertThreadSafe implements Runnable {
-        private final PlaylistDao playlistDao;
-        private final Playlist playlist;
-
-        public InsertThreadSafe(PlaylistDao playlistDao, Playlist playlist) {
-            this.playlistDao = playlistDao;
-            this.playlist = playlist;
-        }
-
-        @Override
-        public void run() {
-            playlistDao.insert(playlist);
-        }
-    }
-
-    private static class DeleteThreadSafe implements Runnable {
-        private final PlaylistDao playlistDao;
-        private final Playlist playlist;
-
-        public DeleteThreadSafe(PlaylistDao playlistDao, Playlist playlist) {
-            this.playlistDao = playlistDao;
-            this.playlist = playlist;
-        }
-
-        @Override
-        public void run() {
-            playlistDao.delete(playlist);
-        }
+        App.getExecutor().submit(() -> playlistDao.delete(playlist));
     }
 }

@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.repository;
 
 import androidx.lifecycle.LiveData;
 
+import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ServerDao;
 import com.cappielloantonio.tempo.model.Server;
@@ -18,44 +19,14 @@ public class ServerRepository {
     }
 
     public void insert(Server server) {
-        InsertThreadSafe insert = new InsertThreadSafe(serverDao, server);
-        Thread thread = new Thread(insert);
-        thread.start();
+        App.getExecutor().submit(() -> {
+           serverDao.insert(server);
+        });
     }
 
     public void delete(Server server) {
-        DeleteThreadSafe delete = new DeleteThreadSafe(serverDao, server);
-        Thread thread = new Thread(delete);
-        thread.start();
-    }
-
-    private static class InsertThreadSafe implements Runnable {
-        private final ServerDao serverDao;
-        private final Server server;
-
-        public InsertThreadSafe(ServerDao serverDao, Server server) {
-            this.serverDao = serverDao;
-            this.server = server;
-        }
-
-        @Override
-        public void run() {
-            serverDao.insert(server);
-        }
-    }
-
-    private static class DeleteThreadSafe implements Runnable {
-        private final ServerDao serverDao;
-        private final Server server;
-
-        public DeleteThreadSafe(ServerDao serverDao, Server server) {
-            this.serverDao = serverDao;
-            this.server = server;
-        }
-
-        @Override
-        public void run() {
+        App.getExecutor().submit(() -> {
             serverDao.delete(server);
-        }
+        });
     }
 }

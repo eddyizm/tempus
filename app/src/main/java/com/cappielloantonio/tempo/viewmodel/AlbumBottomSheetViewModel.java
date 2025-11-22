@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
 import com.cappielloantonio.tempo.repository.ArtistRepository;
@@ -20,13 +19,11 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Share;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.NetworkUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AlbumBottomSheetViewModel extends AndroidViewModel {
     private final AlbumRepository albumRepository;
@@ -119,10 +116,7 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
                     @Override
                     public void onChanged(List<Child> songs) {
                         if (songs != null && !songs.isEmpty()) {
-                            DownloadUtil.getDownloadTracker(context).download(
-                                    MappingUtil.mapDownloads(songs),
-                                    songs.stream().map(Download::new).collect(Collectors.toList())
-                            );
+                            DownloadUtil.getDownloadTracker(context).download(songs);
                         }
                         tracksLiveData.removeObserver(this);
                     }

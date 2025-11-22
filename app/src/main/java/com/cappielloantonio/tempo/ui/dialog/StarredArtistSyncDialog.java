@@ -13,14 +13,10 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.DialogStarredArtistSyncBinding;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.StarredArtistsSyncViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.stream.Collectors;
 
 @OptIn(markerClass = UnstableApi.class)
 public class StarredArtistSyncDialog extends DialogFragment {
@@ -62,10 +58,7 @@ public class StarredArtistSyncDialog extends DialogFragment {
             positiveButton.setOnClickListener(v -> {
                 starredArtistsSyncViewModel.getStarredArtistSongs(requireActivity()).observe(this, allSongs -> {
                     if (allSongs != null && !allSongs.isEmpty()) {
-                        DownloadUtil.getDownloadTracker(context).download(
-                                MappingUtil.mapDownloads(allSongs),
-                                allSongs.stream().map(Download::new).collect(Collectors.toList())
-                        );
+                        DownloadUtil.getDownloadTracker(context).download(allSongs);
                     }
                     dialog.dismiss();
                 });
