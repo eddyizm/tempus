@@ -1,12 +1,11 @@
 package com.cappielloantonio.tempo.util;
 
 import androidx.annotation.OptIn;
-import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Metadata;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
 
 import com.cappielloantonio.tempo.model.ReplayGain;
 
@@ -18,7 +17,7 @@ import java.util.Objects;
 public class ReplayGainUtil {
     private static final String[] tags = {"REPLAYGAIN_TRACK_GAIN", "REPLAYGAIN_ALBUM_GAIN", "R128_TRACK_GAIN", "R128_ALBUM_GAIN"};
 
-    public static void setReplayGain(Player player, Tracks tracks) {
+    public static void setReplayGain(ExoPlayer player, Tracks tracks) {
         List<Metadata> metadata = getMetadata(tracks);
         List<ReplayGain> gains = getReplayGains(metadata);
 
@@ -63,7 +62,7 @@ public class ReplayGainUtil {
             }
         }
 
-        if (gains.isEmpty()) gains.add(0, new ReplayGain());
+        if (gains.size() == 0) gains.add(0, new ReplayGain());
         if (gains.size() == 1) gains.add(1, new ReplayGain());
 
         return gains;
@@ -109,7 +108,7 @@ public class ReplayGainUtil {
         }
     }
 
-    private static void applyReplayGain(Player player, List<ReplayGain> gains) {
+    private static void applyReplayGain(ExoPlayer player, List<ReplayGain> gains) {
         if (Objects.equals(Preferences.getReplayGainMode(), "disabled") || gains == null || gains.isEmpty()) {
             setNoReplayGain(player);
             return;
@@ -138,33 +137,33 @@ public class ReplayGainUtil {
         setNoReplayGain(player);
     }
 
-    private static void setNoReplayGain(Player player) {
+    private static void setNoReplayGain(ExoPlayer player) {
         setReplayGain(player, 0f);
     }
 
-    private static void setTrackReplayGain(Player player, List<ReplayGain> gains) {
+    private static void setTrackReplayGain(ExoPlayer player, List<ReplayGain> gains) {
         float trackGain = gains.get(0).getTrackGain() != 0f ? gains.get(0).getTrackGain() : gains.get(1).getTrackGain();
 
         setReplayGain(player, trackGain != 0f ? trackGain : 0f);
     }
 
-    private static void setAlbumReplayGain(Player player, List<ReplayGain> gains) {
+    private static void setAlbumReplayGain(ExoPlayer player, List<ReplayGain> gains) {
         float albumGain = gains.get(0).getAlbumGain() != 0f ? gains.get(0).getAlbumGain() : gains.get(1).getAlbumGain();
 
         setReplayGain(player, albumGain != 0f ? albumGain : 0f);
     }
 
-    private static void setAutoReplayGain(Player player, List<ReplayGain> gains) {
+    private static void setAutoReplayGain(ExoPlayer player, List<ReplayGain> gains) {
         float albumGain = gains.get(0).getAlbumGain() != 0f ? gains.get(0).getAlbumGain() : gains.get(1).getAlbumGain();
         float trackGain = gains.get(0).getTrackGain() != 0f ? gains.get(0).getTrackGain() : gains.get(1).getTrackGain();
 
         setReplayGain(player, albumGain != 0f ? albumGain : trackGain);
     }
 
-    private static boolean areTracksConsecutive(Player player) {
+    private static boolean areTracksConsecutive(ExoPlayer player) {
         MediaItem currentMediaItem = player.getCurrentMediaItem();
-        int prevMediaItemIndex = player.getPreviousMediaItemIndex();
-        MediaItem pastMediaItem = prevMediaItemIndex == C.INDEX_UNSET ? null : player.getMediaItemAt(prevMediaItemIndex);
+        int currentMediaItemIndex = player.getCurrentMediaItemIndex();
+        MediaItem pastMediaItem = currentMediaItemIndex > 0 ? player.getMediaItemAt(currentMediaItemIndex - 1) : null;
 
         return currentMediaItem != null &&
                 pastMediaItem != null &&
@@ -173,7 +172,7 @@ public class ReplayGainUtil {
                 pastMediaItem.mediaMetadata.albumTitle.toString().equals(currentMediaItem.mediaMetadata.albumTitle.toString());
     }
 
-    private static void setReplayGain(Player player, float gain) {
+    private static void setReplayGain(ExoPlayer player, float gain) {
         player.setVolume((float) Math.pow(10f, gain / 20f));
     }
 }
