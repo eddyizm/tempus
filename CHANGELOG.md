@@ -1,8 +1,20 @@
 # Changelog
 
 ## Pending release...
-* feat: Add Catalan i18n (#268)
-* Fix player queue soft-lock (#266)
+
+## [4.2.6](https://github.com/eddyizm/tempo/releases/tag/v4.2.6) (2025-11-22)
+## What's Changed
+* fix: Fix player queue soft-lock by @shrapnelnet in https://github.com/eddyizm/tempus/pull/266
+* chore: Add Catalan i18n by @marcriera in https://github.com/eddyizm/tempus/pull/268
+* chore: Refactor MediaService by @pca006132 in https://github.com/eddyizm/tempus/pull/267
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/272
+* chore(i18n): Update Italian translation by @66Bunz in https://github.com/eddyizm/tempus/pull/278
+
+## New Contributors
+* @marcriera made their first contribution in https://github.com/eddyizm/tempus/pull/268
+* @66Bunz made their first contribution in https://github.com/eddyizm/tempus/pull/278
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.4...v4.2.6
 
 ## [4.2.4](https://github.com/eddyizm/tempo/releases/tag/v4.2.4) (2025-11-15)
 ## What's Changed

@@ -1,5 +1,5 @@
-Update russian strings.xml by @Sevinfolds in https://github.com/eddyizm/tempus/pull/249
-Disallow duplicate songs in queue by @eddyizm in https://github.com/eddyizm/tempus/pull/252
-Fixed crash when viewing share by @drakeerv in https://github.com/eddyizm/tempus/pull/255
-Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/257
-Add podcast channel visible when empty podcasts by @eddyizm in https://github.com/eddyizm/tempus/pull/260
+Update russian strings.xml 
+Disallow duplicate songs in queue
+Fixed crash when viewing share
+Update Polish translation
+Add podcast channel visible when empty podcasts
