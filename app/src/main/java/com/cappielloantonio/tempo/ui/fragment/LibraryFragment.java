@@ -11,7 +11,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.session.MediaBrowser;
+import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
+
+import android.content.ComponentName;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -31,6 +35,8 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.LibraryViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.cappielloantonio.tempo.service.MediaService;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Objects;
 
@@ -49,6 +55,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     private PlaylistHorizontalAdapter playlistHorizontalAdapter;
 
     private MaterialToolbar materialToolbar;
+    private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     @Nullable
     @Override
@@ -79,6 +86,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     @Override
     public void onStart() {
         super.onStart();
+        initializeMediaBrowser();
         activity.setBottomNavigationBarVisibility(true);
     }
 
@@ -291,5 +299,9 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     @Override
     public void onMusicFolderClick(Bundle bundle) {
         Navigation.findNavController(requireView()).navigate(R.id.indexFragment, bundle);
+    }
+
+    private void initializeMediaBrowser() {
+        mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
     }
 }

@@ -76,12 +76,19 @@ public class MusicIndexAdapter extends RecyclerView.Adapter<MusicIndexAdapter.Vi
 
             itemView.setOnClickListener(v -> onClick());
             item.musicIndexMoreButton.setOnClickListener(v -> onClick());
+            item.musicIndexPlayButton.setOnClickListener(v -> onPlayClick());
         }
 
         public void onClick() {
             Bundle bundle = new Bundle();
             bundle.putString(Constants.MUSIC_DIRECTORY_ID, artists.get(getBindingAdapterPosition()).getId());
             click.onMusicIndexClick(bundle);
+        }
+
+        public void onPlayClick() {
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.MUSIC_DIRECTORY_ID, artists.get(getBindingAdapterPosition()).getId());
+            click.onMusicIndexPlay(bundle);
         }
     }
 }
