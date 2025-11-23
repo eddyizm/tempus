@@ -2,6 +2,8 @@ package com.cappielloantonio.tempo.service;
 
 import android.content.ComponentName;
 import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,12 +38,16 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MediaManager {
     private static final String TAG = "MediaManager";
     private static WeakReference<MediaBrowser> attachedBrowserRef = new WeakReference<>(null);
     public static AtomicBoolean justStarted = new AtomicBoolean(false);
+
+    private static final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
     public static void registerPlaybackObserver(
             ListenableFuture<MediaBrowser> browserFuture,
@@ -175,36 +181,43 @@ public class MediaManager {
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex) {
         if (mediaBrowserListenableFuture != null) {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        justStarted.set(true);
-                        browser.setMediaItems(MappingUtil.mapMediaItems(media), startIndex, 0);
-                        browser.prepare();
+                        final MediaBrowser browser = mediaBrowserListenableFuture.get();
 
-                        Player.Listener timelineListener = new Player.Listener() {
-                            @Override
-                            public void onTimelineChanged(Timeline timeline, int reason) {
-                                int itemCount = browser.getMediaItemCount();
-                                if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                    browser.seekTo(startIndex, 0);
-                                    browser.play();
-                                    browser.removeListener(this);
-                                }
-                            }
-                        };
-                        browser.addListener(timelineListener);
-
-                        enqueueDatabase(media, true, 0);
+                        backgroundExecutor.execute(() -> {
+                            final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+                            enqueueDatabase(media, true, 0);
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                justStarted.set(true);
+                                browser.setMediaItems(items, startIndex, 0);
+                                browser.prepare();
+                                Player.Listener timelineListener = new Player.Listener() {
+                                    @Override
+                                    public void onTimelineChanged(Timeline timeline, int reason) {
+                                        int itemCount = browser.getMediaItemCount();
+                                        if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
+                                            browser.seekTo(startIndex, 0);
+                                            browser.play();
+                                            browser.removeListener(this);
+                                        }
+                                    }
+                                };
+                                browser.addListener(timelineListener);
+                            });
+                        });
                     }
                 } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Error executing startQueue logic: " + e.getMessage(), e);
                 }
             }, MoreExecutors.directExecutor());
         }
+
+
     }
 
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, Child media) {
