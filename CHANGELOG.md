@@ -2,6 +2,19 @@
 
 ## Pending release...
 
+## [4.3.0](https://github.com/eddyizm/tempo/releases/tag/v4.3.0) (2025-11-23)
+## What's Changed
+* chore: Add Obtainium badge to README by @mikaeldui in https://github.com/eddyizm/tempus/pull/280
+* fix: Revert "refactor MediaService" by @eddyizm in https://github.com/eddyizm/tempus/pull/282
+* feat: add play functionality to library folder/index items by @antebudimir in https://github.com/eddyizm/tempus/pull/276
+* fix: start queue blocking UI by @eddyizm in https://github.com/eddyizm/tempus/pull/283
+
+## New Contributors
+* @mikaeldui made their first contribution in https://github.com/eddyizm/tempus/pull/280
+* @antebudimir made their first contribution in https://github.com/eddyizm/tempus/pull/276
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.6...v4.3.0
+
 ## [4.2.6](https://github.com/eddyizm/tempo/releases/tag/v4.2.6) (2025-11-22)
 ## What's Changed
 * fix: Fix player queue soft-lock by @shrapnelnet in https://github.com/eddyizm/tempus/pull/266
