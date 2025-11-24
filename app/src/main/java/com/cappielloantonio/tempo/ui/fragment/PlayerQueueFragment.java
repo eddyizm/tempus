@@ -39,6 +39,20 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
     private InnerFragmentPlayerQueueBinding bind;
 
+    private com.google.android.material.floatingactionbutton.FloatingActionButton fabMenuToggle;
+    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabClearQueue;
+    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabShuffleQueue;
+
+
+    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabSaveToPlaylist;
+    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabDownloadAll;
+    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabSaveQueue;
+    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabLoadQueue;
+
+    private boolean isMenuOpen = false;
+    private final int ANIMATION_DURATION = 250; 
+    private final float FAB_VERTICAL_SPACING_DP = 70f;
+
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
     private PlaybackViewModel playbackViewModel;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
@@ -52,6 +66,24 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
+
+        fabMenuToggle = bind.fabMenuToggle;
+        fabClearQueue = bind.fabClearQueue;
+        fabShuffleQueue = bind.fabShuffleQueue;
+
+        fabSaveToPlaylist = bind.fabSaveToPlaylist;
+        fabDownloadAll = bind.fabDownloadAll;
+        fabSaveQueue = bind.fabSaveQueue;
+        fabLoadQueue = bind.fabLoadQueue;
+
+        fabMenuToggle.setOnClickListener(v -> toggleFabMenu());
+        fabClearQueue.setOnClickListener(v -> handleClearQueueClick());
+        fabShuffleQueue.setOnClickListener(v -> handleShuffleQueueClick());
+
+        fabSaveToPlaylist.setOnClickListener(v -> handleSaveToPlaylistClick());
+        fabDownloadAll.setOnClickListener(v -> handleDownloadAllClick());
+        fabSaveQueue.setOnClickListener(v -> handleSaveQueueClick());
+        fabLoadQueue.setOnClickListener(v -> handleLoadQueueClick());
 
         initQueueRecyclerView();
 
@@ -109,8 +141,8 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-                initShuffleButton(mediaBrowser);
-                initCleanButton(mediaBrowser);
+                // initShuffleButton(mediaBrowser);
+                // initCleanButton(mediaBrowser);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -188,45 +220,45 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         }).attachToRecyclerView(bind.playerQueueRecyclerView);
     }
 
-    private void initShuffleButton(MediaBrowser mediaBrowser) {
-        bind.playerShuffleQueueFab.setOnClickListener(view -> {
-            int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
-            int endPosition = playerSongQueueAdapter.getItems().size() - 1;
+    // private void initShuffleButton(MediaBrowser mediaBrowser) {
+    //     bind.playerShuffleQueueFab.setOnClickListener(view -> {
+    //         int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
+    //         int endPosition = playerSongQueueAdapter.getItems().size() - 1;
 
-            if (startPosition < endPosition) {
-                ArrayList<Integer> pool = new ArrayList<>();
+    //         if (startPosition < endPosition) {
+    //             ArrayList<Integer> pool = new ArrayList<>();
 
-                for (int i = startPosition; i <= endPosition; i++) {
-                    pool.add(i);
-                }
+    //             for (int i = startPosition; i <= endPosition; i++) {
+    //                 pool.add(i);
+    //             }
 
-                while (pool.size() >= 2) {
-                    int fromPosition = (int) (Math.random() * (pool.size()));
-                    int positionA = pool.get(fromPosition);
-                    pool.remove(fromPosition);
+    //             while (pool.size() >= 2) {
+    //                 int fromPosition = (int) (Math.random() * (pool.size()));
+    //                 int positionA = pool.get(fromPosition);
+    //                 pool.remove(fromPosition);
 
-                    int toPosition = (int) (Math.random() * (pool.size()));
-                    int positionB = pool.get(toPosition);
-                    pool.remove(toPosition);
+    //                 int toPosition = (int) (Math.random() * (pool.size()));
+    //                 int positionB = pool.get(toPosition);
+    //                 pool.remove(toPosition);
 
-                    Collections.swap(playerSongQueueAdapter.getItems(), positionA, positionB);
-                    bind.playerQueueRecyclerView.getAdapter().notifyItemMoved(positionA, positionB);
-                }
+    //                 Collections.swap(playerSongQueueAdapter.getItems(), positionA, positionB);
+    //                 bind.playerQueueRecyclerView.getAdapter().notifyItemMoved(positionA, positionB);
+    //             }
 
-                MediaManager.shuffle(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
-            }
-        });
-    }
+    //             MediaManager.shuffle(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
+    //         }
+    //     });
+    // }
 
-    private void initCleanButton(MediaBrowser mediaBrowser) {
-        bind.playerCleanQueueButton.setOnClickListener(view -> {
-            int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
-            int endPosition = playerSongQueueAdapter.getItems().size();
+    // private void initCleanButton(MediaBrowser mediaBrowser) {
+    //     bind.playerCleanQueueButton.setOnClickListener(view -> {
+    //         int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
+    //         int endPosition = playerSongQueueAdapter.getItems().size();
 
-            MediaManager.removeRange(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
-            bind.playerQueueRecyclerView.getAdapter().notifyItemRangeRemoved(startPosition, endPosition);
-        });
-    }
+    //         MediaManager.removeRange(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
+    //         bind.playerQueueRecyclerView.getAdapter().notifyItemRangeRemoved(startPosition, endPosition);
+    //     });
+    // }
 
     private void updateNowPlayingItem() {
         playerSongQueueAdapter.notifyDataSetChanged();
@@ -259,4 +291,90 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
             playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
         }
     }
+
+    /**
+     * Toggles the visibility and animates all six secondary FABs.
+     */
+    private void toggleFabMenu() {
+        if (isMenuOpen) {
+            // CLOSE MENU (Reverse order for visual effect)
+            closeFab(fabSaveToPlaylist, 5); 
+            closeFab(fabDownloadAll, 4);
+            closeFab(fabSaveQueue, 3);
+            closeFab(fabLoadQueue, 2);
+            closeFab(fabClearQueue, 1);
+            closeFab(fabShuffleQueue, 0);
+            
+            fabMenuToggle.animate().rotation(0f).setDuration(ANIMATION_DURATION).start();
+        } else {
+            // OPEN MENU (lowest index at bottom)
+            openFab(fabShuffleQueue, 0); 
+            openFab(fabClearQueue, 1);
+            openFab(fabLoadQueue, 2);
+            openFab(fabSaveQueue, 3);
+            openFab(fabDownloadAll, 4);
+            openFab(fabSaveToPlaylist, 5);
+            
+            fabMenuToggle.animate().rotation(45f).setDuration(ANIMATION_DURATION).start();
+        }
+        isMenuOpen = !isMenuOpen;
+    }
+
+    private void openFab(View fab, int index) {
+        final float displacement = getResources().getDisplayMetrics().density * (FAB_VERTICAL_SPACING_DP * (index + 1));
+        
+        fab.setVisibility(View.VISIBLE);
+        fab.setAlpha(0f);
+        fab.setTranslationY(displacement); // Start at the hidden (closed) position
+        
+        fab.animate()
+        .translationY(0f)
+        .alpha(1f)
+        .setDuration(ANIMATION_DURATION)
+        .start();
+    }
+
+    private void closeFab(View fab, int index) {
+        final float displacement = getResources().getDisplayMetrics().density * (FAB_VERTICAL_SPACING_DP * (index + 1));
+
+        fab.animate()
+        .translationY(displacement)
+        .alpha(0f)
+        .setDuration(ANIMATION_DURATION)
+        .withEndAction(() -> fab.setVisibility(View.GONE))
+        .start();
+    }
+
+    private void handleShuffleQueueClick() {
+        Log.d(TAG, "Shuffle Queue Clicked!");
+        toggleFabMenu(); 
+        // TODO: Insert existing shuffle logic here
+    }
+
+    private void handleClearQueueClick() {
+        Log.d(TAG, "Clear Queue Clicked!");
+        toggleFabMenu(); 
+        // TODO: Insert existing clear queue logic here
+    }
+
+    private void handleSaveToPlaylistClick() {
+        Log.d(TAG, "Save to Playlist Clicked! (Placeholder)");
+        toggleFabMenu();
+    }
+
+    private void handleDownloadAllClick() {
+        Log.d(TAG, "Download All Clicked! (Placeholder)");
+        toggleFabMenu();
+    }
+
+    private void handleSaveQueueClick() {
+        Log.d(TAG, "Save Queue Clicked! (Placeholder)");
+        toggleFabMenu();
+    }
+
+    private void handleLoadQueueClick() {
+        Log.d(TAG, "Load Queue Clicked! (Placeholder)");
+        toggleFabMenu();
+    }
+
 }

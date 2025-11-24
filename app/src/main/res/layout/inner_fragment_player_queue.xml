@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -27,14 +29,82 @@
 
     </com.cappielloantonio.tempo.helper.recyclerview.NestedScrollableHost>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/player_shuffle_queue_fab"
+    <LinearLayout
+        android:id="@+id/fab_menu_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="end"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="@string/content_description_shuffle_button"
-        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
-        app:srcCompat="@drawable/ic_shuffle" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior">
 
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_save_to_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:text="Save to Playlist (TODO)"
+            tools:ignore="HardcodedText"
+            app:icon="@android:drawable/ic_menu_edit" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_download_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:text="Download All (TODO)"
+            tools:ignore="HardcodedText"
+            app:icon="@android:drawable/stat_sys_download_done" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_save_queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:text="Save Queue (TODO)"
+            tools:ignore="HardcodedText"
+            app:icon="@android:drawable/ic_menu_save" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_load_queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:text="Load Queue (TODO)"
+            tools:ignore="HardcodedText"
+            app:icon="@android:drawable/ic_menu_revert" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_clear_queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:text="@string/player_queue_clean_all_button"
+            app:icon="@android:drawable/ic_menu_delete" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_shuffle_queue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            android:text="@string/content_description_shuffle_button"
+            app:icon="@drawable/ic_shuffle" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_menu_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Toggle action menu (TODO: Fix Localization)"
+            tools:ignore="HardcodedText"
+            app:srcCompat="@drawable/ic_add" />
+
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
