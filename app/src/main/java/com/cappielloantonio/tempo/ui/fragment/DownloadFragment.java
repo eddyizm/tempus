@@ -162,24 +162,13 @@ public class DownloadFragment extends Fragment implements ClickCallback {
             bind.downloadedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
             DownloadStack lastLevel = stack.get(stack.size() - 1);
-
-            switch (lastLevel.getId()) {
-                case Constants.DOWNLOAD_TYPE_TRACK:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_ALBUM:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_ARTIST:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_GENRE:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_YEAR:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
+            String grouping = lastLevel.getId();
+            if (lastLevel.getView() != null) {
+                grouping = Constants.DOWNLOAD_TYPE_TRACK;
+                if (lastLevel.getId().equals(Constants.DOWNLOAD_TYPE_ARTIST))
+                    grouping = Constants.DOWNLOAD_TYPE_ALBUM;
             }
+            downloadHorizontalAdapter.setItems(grouping, stack, songs);
 
             bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
 
@@ -190,7 +179,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
     private void setupShuffleButton() {
         bind.shuffleDownloadedTextViewClickable.setOnClickListener(view -> {
-            List<Child> songs = downloadHorizontalAdapter.getShuffling();
+            List<Child> songs = downloadHorizontalAdapter.getFiltered();
 
             if (songs != null && !songs.isEmpty()) {
                 Collections.shuffle(songs);
