@@ -141,8 +141,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-                // initShuffleButton(mediaBrowser);
-                // initCleanButton(mediaBrowser);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -181,18 +179,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
                 fromPosition = viewHolder.getBindingAdapterPosition();
                 toPosition = target.getBindingAdapterPosition();
-
-                /*
-                 * Per spostare un elemento nella coda devo:
-                 *    - Spostare graficamente la traccia da una posizione all'altra con Collections.swap()
-                 *    - Spostare nel db la traccia, tramite QueueRepository
-                 *    - Notificare il Service dell'avvenuto spostamento con MusicPlayerRemote.moveSong()
-                 *
-                 * In onMove prendo la posizione di inizio e fine, ma solo al rilascio dell'elemento procedo allo spostamento
-                 * In questo modo evito che ad ogni cambio di posizione vada a riscrivere nel db
-                 * Al rilascio dell'elemento chiamo il metodo clearView()
-                 */
-
                 Collections.swap(playerSongQueueAdapter.getItems(), fromPosition, toPosition);
                 recyclerView.getAdapter().notifyItemMoved(fromPosition, toPosition);
 
@@ -219,46 +205,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
             }
         }).attachToRecyclerView(bind.playerQueueRecyclerView);
     }
-
-    // private void initShuffleButton(MediaBrowser mediaBrowser) {
-    //     bind.playerShuffleQueueFab.setOnClickListener(view -> {
-    //         int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
-    //         int endPosition = playerSongQueueAdapter.getItems().size() - 1;
-
-    //         if (startPosition < endPosition) {
-    //             ArrayList<Integer> pool = new ArrayList<>();
-
-    //             for (int i = startPosition; i <= endPosition; i++) {
-    //                 pool.add(i);
-    //             }
-
-    //             while (pool.size() >= 2) {
-    //                 int fromPosition = (int) (Math.random() * (pool.size()));
-    //                 int positionA = pool.get(fromPosition);
-    //                 pool.remove(fromPosition);
-
-    //                 int toPosition = (int) (Math.random() * (pool.size()));
-    //                 int positionB = pool.get(toPosition);
-    //                 pool.remove(toPosition);
-
-    //                 Collections.swap(playerSongQueueAdapter.getItems(), positionA, positionB);
-    //                 bind.playerQueueRecyclerView.getAdapter().notifyItemMoved(positionA, positionB);
-    //             }
-
-    //             MediaManager.shuffle(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
-    //         }
-    //     });
-    // }
-
-    // private void initCleanButton(MediaBrowser mediaBrowser) {
-    //     bind.playerCleanQueueButton.setOnClickListener(view -> {
-    //         int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
-    //         int endPosition = playerSongQueueAdapter.getItems().size();
-
-    //         MediaManager.removeRange(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
-    //         bind.playerQueueRecyclerView.getAdapter().notifyItemRangeRemoved(startPosition, endPosition);
-    //     });
-    // }
 
     private void updateNowPlayingItem() {
         playerSongQueueAdapter.notifyDataSetChanged();
@@ -347,14 +293,62 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
     private void handleShuffleQueueClick() {
         Log.d(TAG, "Shuffle Queue Clicked!");
-        toggleFabMenu(); 
-        // TODO: Insert existing shuffle logic here
+
+        mediaBrowserListenableFuture.addListener(() -> {
+            try {
+                MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
+                int endPosition = playerSongQueueAdapter.getItems().size() - 1;
+
+                if (startPosition < endPosition) {
+                    ArrayList<Integer> pool = new ArrayList<>();
+
+                    for (int i = startPosition; i <= endPosition; i++) {
+                        pool.add(i);
+                    }
+
+                    while (pool.size() >= 2) {
+                        int fromPosition = (int) (Math.random() * (pool.size()));
+                        int positionA = pool.get(fromPosition);
+                        pool.remove(fromPosition);
+
+                        int toPosition = (int) (Math.random() * (pool.size()));
+                        int positionB = pool.get(toPosition);
+                        pool.remove(toPosition);
+
+                        Collections.swap(playerSongQueueAdapter.getItems(), positionA, positionB);
+                        bind.playerQueueRecyclerView.getAdapter().notifyItemMoved(positionA, positionB);
+                    }
+
+                    MediaManager.shuffle(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
+                }
+
+            } catch (Exception e) {
+                Log.e(TAG, "Error shuffling queue", e);
+            }
+
+            toggleFabMenu();
+        }, MoreExecutors.directExecutor());
     }
 
     private void handleClearQueueClick() {
         Log.d(TAG, "Clear Queue Clicked!");
-        toggleFabMenu(); 
-        // TODO: Insert existing clear queue logic here
+
+        mediaBrowserListenableFuture.addListener(() -> {
+            try {
+                MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
+                int endPosition = playerSongQueueAdapter.getItems().size();
+
+                MediaManager.removeRange(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);
+                bind.playerQueueRecyclerView.getAdapter().notifyItemRangeRemoved(startPosition, endPosition - startPosition);
+
+            } catch (Exception e) {
+                Log.e(TAG, "Error clearing queue", e);
+            }
+
+            toggleFabMenu();
+        }, MoreExecutors.directExecutor());
     }
 
     private void handleSaveToPlaylistClick() {
