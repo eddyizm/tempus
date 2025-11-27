@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
-            android:text="Load Queue (TODO)"
+            android:text="Load Queue"
             tools:ignore="HardcodedText"
             app:icon="@android:drawable/ic_menu_revert" />
 

@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.fragment;
 
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.Observer;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
@@ -23,9 +25,11 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.PlayQueue;
 import com.cappielloantonio.tempo.ui.adapter.PlayerSongQueueAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -45,7 +49,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     private com.google.android.material.floatingactionbutton.FloatingActionButton fabMenuToggle;
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabClearQueue;
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabShuffleQueue;
-
 
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabSaveToPlaylist;
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabDownloadAll;
@@ -84,6 +87,11 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         fabSaveToPlaylist.setOnClickListener(v -> handleSaveToPlaylistClick());
         fabDownloadAll.setOnClickListener(v -> handleDownloadAllClick());
         fabLoadQueue.setOnClickListener(v -> handleLoadQueueClick());
+
+        // Hide Load Queue FAB if sync is disabled
+        if (!Preferences.isSyncronizationEnabled()) {
+            fabLoadQueue.setVisibility(View.GONE);
+        }
 
         initQueueRecyclerView();
 
@@ -244,9 +252,12 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     private void toggleFabMenu() {
         if (isMenuOpen) {
             // CLOSE MENU (Reverse order for visual effect)
-            closeFab(fabSaveToPlaylist, 5); 
-            closeFab(fabDownloadAll, 4);
-            closeFab(fabLoadQueue, 2);
+            if (Preferences.isSyncronizationEnabled()) {
+                closeFab(fabLoadQueue, 4);
+            }
+            closeFab(fabSaveToPlaylist, 3); 
+            closeFab(fabDownloadAll, 2);
+            
             closeFab(fabClearQueue, 1);
             closeFab(fabShuffleQueue, 0);
             
@@ -255,10 +266,11 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
             // OPEN MENU (lowest index at bottom)
             openFab(fabShuffleQueue, 0); 
             openFab(fabClearQueue, 1);
-            openFab(fabLoadQueue, 2);
-            openFab(fabDownloadAll, 4);
-            openFab(fabSaveToPlaylist, 5);
-            
+            openFab(fabDownloadAll, 2);
+            openFab(fabSaveToPlaylist, 3);
+            if (Preferences.isSyncronizationEnabled()) {
+                openFab(fabLoadQueue, 4);
+            }
             fabMenuToggle.animate().rotation(45f).setDuration(ANIMATION_DURATION).start();
         }
         isMenuOpen = !isMenuOpen;
@@ -375,10 +387,46 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         toggleFabMenu();
     }
 
-
     private void handleLoadQueueClick() {
-        Log.d(TAG, "Load Queue Clicked! (Placeholder)");
-        toggleFabMenu();
-    }
+        Log.d(TAG, "Load Queue Clicked!");
 
+        // Double-check that sync is enabled (shouldn't be visible if disabled, but just in case)
+        if (!Preferences.isSyncronizationEnabled()) {
+            toggleFabMenu();
+            return;
+        }
+
+        PlayerBottomSheetViewModel playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
+        
+        playerBottomSheetViewModel.getPlayQueue().observe(getViewLifecycleOwner(), new Observer<PlayQueue>() {
+            @Override
+            public void onChanged(PlayQueue playQueue) {
+                playerBottomSheetViewModel.getPlayQueue().removeObserver(this);
+                
+                if (playQueue != null && playQueue.getEntries() != null && !playQueue.getEntries().isEmpty()) {
+                    int currentIndex = 0;
+                    for (int i = 0; i < playQueue.getEntries().size(); i++) {
+                        if (playQueue.getEntries().get(i).getId().equals(playQueue.getCurrent())) {
+                            currentIndex = i;
+                            break;
+                        }
+                    }
+                    
+                    MediaManager.startQueue(mediaBrowserListenableFuture, playQueue.getEntries(), currentIndex);
+                    
+                    Toast.makeText(requireContext(), "Queue loaded", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "No saved queue found", Toast.LENGTH_SHORT).show();
+                }
+                
+                toggleFabMenu();
+            }
+        });
+
+        new Handler().postDelayed(() -> {
+            if (isMenuOpen) {
+                toggleFabMenu();
+            }
+        }, 1000);
+    }
 }
