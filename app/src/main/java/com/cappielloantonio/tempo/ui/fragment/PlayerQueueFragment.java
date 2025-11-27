@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,6 +24,7 @@ import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.adapter.PlayerSongQueueAdapter;
+import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
@@ -31,6 +33,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @UnstableApi
@@ -46,7 +49,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabSaveToPlaylist;
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabDownloadAll;
-    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabSaveQueue;
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabLoadQueue;
 
     private boolean isMenuOpen = false;
@@ -73,7 +75,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
         fabSaveToPlaylist = bind.fabSaveToPlaylist;
         fabDownloadAll = bind.fabDownloadAll;
-        fabSaveQueue = bind.fabSaveQueue;
         fabLoadQueue = bind.fabLoadQueue;
 
         fabMenuToggle.setOnClickListener(v -> toggleFabMenu());
@@ -82,7 +83,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
         fabSaveToPlaylist.setOnClickListener(v -> handleSaveToPlaylistClick());
         fabDownloadAll.setOnClickListener(v -> handleDownloadAllClick());
-        fabSaveQueue.setOnClickListener(v -> handleSaveQueueClick());
         fabLoadQueue.setOnClickListener(v -> handleLoadQueueClick());
 
         initQueueRecyclerView();
@@ -246,7 +246,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
             // CLOSE MENU (Reverse order for visual effect)
             closeFab(fabSaveToPlaylist, 5); 
             closeFab(fabDownloadAll, 4);
-            closeFab(fabSaveQueue, 3);
             closeFab(fabLoadQueue, 2);
             closeFab(fabClearQueue, 1);
             closeFab(fabShuffleQueue, 0);
@@ -257,7 +256,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
             openFab(fabShuffleQueue, 0); 
             openFab(fabClearQueue, 1);
             openFab(fabLoadQueue, 2);
-            openFab(fabSaveQueue, 3);
             openFab(fabDownloadAll, 4);
             openFab(fabSaveToPlaylist, 5);
             
@@ -352,7 +350,23 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     }
 
     private void handleSaveToPlaylistClick() {
-        Log.d(TAG, "Save to Playlist Clicked! (Placeholder)");
+        Log.d(TAG, "Save to Playlist Clicked!");
+
+        List<Child> queueSongs = playerSongQueueAdapter.getItems();
+
+        if (queueSongs == null || queueSongs.isEmpty()) {
+            Toast.makeText(requireContext(), "Queue is empty", Toast.LENGTH_SHORT).show();
+            toggleFabMenu();
+            return;
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(queueSongs));
+
+        PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+        dialog.setArguments(bundle);
+        dialog.show(requireActivity().getSupportFragmentManager(), null);
+
         toggleFabMenu();
     }
 
@@ -361,10 +375,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         toggleFabMenu();
     }
 
-    private void handleSaveQueueClick() {
-        Log.d(TAG, "Save Queue Clicked! (Placeholder)");
-        toggleFabMenu();
-    }
 
     private void handleLoadQueueClick() {
         Log.d(TAG, "Load Queue Clicked! (Placeholder)");

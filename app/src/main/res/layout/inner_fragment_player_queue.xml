@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
-            android:text="Save to Playlist (TODO)"
+            android:text="Save Queue to Playlist"
             tools:ignore="HardcodedText"
             app:icon="@android:drawable/ic_menu_edit" />
 
@@ -49,15 +49,6 @@
             tools:ignore="HardcodedText"
             app:icon="@android:drawable/stat_sys_download_done" />
 
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/fab_save_queue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"
-            android:text="Save Queue (TODO)"
-            tools:ignore="HardcodedText"
-            app:icon="@android:drawable/ic_menu_save" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_load_queue"
