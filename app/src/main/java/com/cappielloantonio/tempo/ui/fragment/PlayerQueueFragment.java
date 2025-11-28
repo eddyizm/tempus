@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
+import androidx.media3.common.MediaItem;
 import androidx.media3.session.SessionToken;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerQueueBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
+import com.cappielloantonio.tempo.model.Download;
+import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
@@ -29,6 +32,8 @@ import com.cappielloantonio.tempo.subsonic.models.PlayQueue;
 import com.cappielloantonio.tempo.ui.adapter.PlayerSongQueueAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
@@ -383,14 +388,43 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     }
 
     private void handleDownloadAllClick() {
-        Log.d(TAG, "Download All Clicked! (Placeholder)");
+        Log.d(TAG, "Download All Clicked!");
+
+        List<Child> queueSongs = playerSongQueueAdapter.getItems();
+
+        if (queueSongs == null || queueSongs.isEmpty()) {
+            Toast.makeText(requireContext(), "Queue is empty", Toast.LENGTH_SHORT).show();
+            toggleFabMenu();
+            return;
+        }
+
+        List<MediaItem> mediaItemsToDownload = MappingUtil.mapMediaItems(queueSongs);
+
+        List<com.cappielloantonio.tempo.model.Download> downloadModels = new ArrayList<>();
+
+        for (Child child : queueSongs) {
+            com.cappielloantonio.tempo.model.Download downloadModel =
+                    new com.cappielloantonio.tempo.model.Download(child);
+            downloadModel.setArtist(child.getArtist());
+            downloadModel.setAlbum(child.getAlbum());
+            downloadModel.setCoverArtId(child.getCoverArtId());
+            downloadModels.add(downloadModel);
+        }
+
+        DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(requireContext());
+
+        if (downloaderManager != null) {
+            downloaderManager.download(mediaItemsToDownload, downloadModels);
+            Toast.makeText(requireContext(), "Starting download of " + queueSongs.size() + " songs in the background.", Toast.LENGTH_SHORT).show();
+        } else {
+            Log.e(TAG, "DownloaderManager not initialized. Check DownloadUtil.");
+            Toast.makeText(requireContext(), "Download service unavailable.", Toast.LENGTH_SHORT).show();
+        }
         toggleFabMenu();
     }
 
     private void handleLoadQueueClick() {
         Log.d(TAG, "Load Queue Clicked!");
-
-        // Double-check that sync is enabled (shouldn't be visible if disabled, but just in case)
         if (!Preferences.isSyncronizationEnabled()) {
             toggleFabMenu();
             return;

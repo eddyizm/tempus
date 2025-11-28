@@ -35,8 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
-            android:text="Save Queue to Playlist"
-            tools:ignore="HardcodedText"
+            android:text="@string/player_queue_save_to_playlist"
             app:icon="@android:drawable/ic_menu_edit" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -45,8 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
-            android:text="Download All (TODO)"
-            tools:ignore="HardcodedText"
+            android:text="@string/menu_download_all_button"
             app:icon="@android:drawable/stat_sys_download_done" />
 
 
@@ -56,8 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:visibility="gone"
-            android:text="Load Queue"
-            tools:ignore="HardcodedText"
+            android:text="@string/player_queue_load_queue"
             app:icon="@android:drawable/ic_menu_revert" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -82,7 +79,7 @@
             android:id="@+id/fab_menu_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Toggle action menu (TODO: Fix Localization)"
+            android:contentDescription="Toggle FAB Action menu"
             tools:ignore="HardcodedText"
             app:srcCompat="@drawable/ic_add" />
 

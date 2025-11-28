@@ -212,6 +212,8 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
+    <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>
+    <string name="player_queue_load_queue">Load Queue</string>
     <string name="player_lyrics_download_content_description">Download lyrics for offline playback</string>
     <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
     <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
