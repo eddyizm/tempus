@@ -1,14 +1,13 @@
 package com.cappielloantonio.tempo.service;
 
 import android.content.ComponentName;
-import android.util.Log;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
@@ -188,27 +187,28 @@ public class MediaManager {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         final MediaBrowser browser = mediaBrowserListenableFuture.get();
+                        final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            justStarted.set(true);
+                            browser.setMediaItems(items, startIndex, 0);
+                            browser.prepare();
+
+                            Player.Listener timelineListener = new Player.Listener() {
+                                @Override
+                                public void onTimelineChanged(Timeline timeline, int reason) {
+                                    int itemCount = browser.getMediaItemCount();
+                                    if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
+                                        browser.seekTo(startIndex, 0);
+                                        browser.play();
+                                        browser.removeListener(this);
+                                    }
+                                }
+                            };
+                            browser.addListener(timelineListener);
+                        });
 
                         backgroundExecutor.execute(() -> {
-                            final List<MediaItem> items = MappingUtil.mapMediaItems(media);
                             enqueueDatabase(media, true, 0);
-                            new Handler(Looper.getMainLooper()).post(() -> {
-                                justStarted.set(true);
-                                browser.setMediaItems(items, startIndex, 0);
-                                browser.prepare();
-                                Player.Listener timelineListener = new Player.Listener() {
-                                    @Override
-                                    public void onTimelineChanged(Timeline timeline, int reason) {
-                                        int itemCount = browser.getMediaItemCount();
-                                        if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                            browser.seekTo(startIndex, 0);
-                                            browser.play();
-                                            browser.removeListener(this);
-                                        }
-                                    }
-                                };
-                                browser.addListener(timelineListener);
-                            });
                         });
                     }
                 } catch (ExecutionException | InterruptedException e) {
