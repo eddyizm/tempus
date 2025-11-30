@@ -140,6 +140,17 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
+        android:id="@+id/download_indicator_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_download"  app:layout_constraintBottom_toBottomOf="@+id/queue_song_cover_image_view"
+        app:layout_constraintEnd_toStartOf="@+id/queue_song_holder_image"
+        app:layout_constraintTop_toTopOf="@+id/queue_song_cover_image_view"
+        tools:visibility="visible" />
+
+    <ImageView
         android:id="@+id/queue_song_holder_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
