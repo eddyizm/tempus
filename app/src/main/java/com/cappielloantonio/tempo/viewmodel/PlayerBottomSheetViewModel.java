@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.viewmodel;
 import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
@@ -12,6 +13,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.session.MediaBrowser;
 
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.Download;
@@ -291,13 +293,13 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         List<String> ids = queue.stream().map(Child::getId).collect(Collectors.toList());
 
         if (media != null) {
-            queueRepository.savePlayQueue(ids, media.getId(), 0);
+            // TODO: We need to get the actual playback position here
+            Log.d(TAG, "Saving play queue - Current: " + media.getId() + ", Items: " + ids.size());
+            queueRepository.savePlayQueue(ids, media.getId(), 0); // Still hardcoded to 0 for now
             return true;
         }
-
         return false;
     }
-
     private void observeCachedLyrics(LifecycleOwner owner, String songId) {
         if (TextUtils.isEmpty(songId)) {
             return;

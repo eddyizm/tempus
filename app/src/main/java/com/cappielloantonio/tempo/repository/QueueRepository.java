@@ -1,8 +1,11 @@
 package com.cappielloantonio.tempo.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.database.AppDatabase;
@@ -52,6 +55,8 @@ public class QueueRepository {
     public MutableLiveData<PlayQueue> getPlayQueue() {
         MutableLiveData<PlayQueue> playQueue = new MutableLiveData<>();
 
+        Log.d(TAG, "Getting play queue from server...");
+
         App.getSubsonicClientInstance(false)
                 .getBookmarksClient()
                 .getPlayQueue()
@@ -59,12 +64,19 @@ public class QueueRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlayQueue() != null) {
-                            playQueue.setValue(response.body().getSubsonicResponse().getPlayQueue());
+                            PlayQueue serverQueue = response.body().getSubsonicResponse().getPlayQueue();
+                            Log.d(TAG, "Server returned play queue with " +
+                                    (serverQueue.getEntries() != null ? serverQueue.getEntries().size() : 0) + " items");
+                            playQueue.setValue(serverQueue);
+                        } else {
+                            Log.d(TAG, "Server returned no play queue");
+                            playQueue.setValue(null);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "Failed to get play queue", t);
                         playQueue.setValue(null);
                     }
                 });
@@ -73,18 +85,24 @@ public class QueueRepository {
     }
 
     public void savePlayQueue(List<String> ids, String current, long position) {
+        Log.d(TAG, "Saving play queue to server - Items: " + ids.size() + ", Current: " + current);
+
         App.getSubsonicClientInstance(false)
                 .getBookmarksClient()
                 .savePlayQueue(ids, current, position)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
+                        if (response.isSuccessful()) {
+                            Log.d(TAG, "Play queue saved successfully");
+                        } else {
+                            Log.d(TAG, "Play queue save failed with code: " + response.code());
+                        }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        Log.e(TAG, "Play queue save failed", t);
                     }
                 });
     }
@@ -123,10 +141,9 @@ public class QueueRepository {
 
     private boolean isMediaInQueue(List<Queue> queue, Child media) {
         if (queue == null || media == null) return false;
-        
-        return queue.stream().anyMatch(queueItem -> 
-            queueItem != null && media.getId() != null && 
-            queueItem.getId().equals(media.getId())
+        return queue.stream().anyMatch(queueItem ->
+                queueItem != null && media.getId() != null &&
+                        queueItem.getId().equals(media.getId())
         );
     }
 
@@ -146,8 +163,8 @@ public class QueueRepository {
             List<Child> filteredToAdd = toAdd;
             final List<Queue> finalMedia = media;
             filteredToAdd = toAdd.stream()
-                .filter(child -> !isMediaInQueue(finalMedia, child))
-                .collect(Collectors.toList());
+                    .filter(child -> !isMediaInQueue(finalMedia, child))
+                    .collect(Collectors.toList());
 
             for (int i = 0; i < filteredToAdd.size(); i++) {
                 Queue queueItem = new Queue(filteredToAdd.get(i));

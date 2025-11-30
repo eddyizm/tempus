@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.cappielloantonio.tempo.repository.AlbumRepository;
-import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.util.Constants;
@@ -21,7 +20,6 @@ import java.util.List;
 
 public class AlbumListPageViewModel extends AndroidViewModel {
     private final AlbumRepository albumRepository;
-    private final DownloadRepository downloadRepository;
 
     public String title;
     public ArtistID3 artist;
@@ -32,9 +30,7 @@ public class AlbumListPageViewModel extends AndroidViewModel {
 
     public AlbumListPageViewModel(@NonNull Application application) {
         super(application);
-
         albumRepository = new AlbumRepository();
-        downloadRepository = new DownloadRepository();
     }
 
     public LiveData<List<AlbumID3>> getAlbumList(LifecycleOwner owner) {
