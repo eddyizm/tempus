@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerQueueBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
@@ -107,8 +106,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     public void onStart() {
         super.onStart();
         initializeBrowser();
-        bindMediaController();
-
         MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
         observePlayback();
     }
@@ -148,16 +145,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
     private void releaseBrowser() {
         MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
-    }
-
-    private void bindMediaController() {
-        mediaBrowserListenableFuture.addListener(() -> {
-            try {
-                MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-        }, MoreExecutors.directExecutor());
     }
 
     private void setMediaBrowserListenableFuture() {
@@ -261,17 +248,16 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
                 closeFab(fabLoadQueue, 4);
             }
             closeFab(fabSaveToPlaylist, 3); 
-            closeFab(fabDownloadAll, 2);
-            
-            closeFab(fabClearQueue, 1);
+            closeFab(fabClearQueue, 2);
+            closeFab(fabDownloadAll, 1);
             closeFab(fabShuffleQueue, 0);
             
             fabMenuToggle.animate().rotation(0f).setDuration(ANIMATION_DURATION).start();
         } else {
             // OPEN MENU (lowest index at bottom)
-            openFab(fabShuffleQueue, 0); 
-            openFab(fabClearQueue, 1);
-            openFab(fabDownloadAll, 2);
+            openFab(fabShuffleQueue, 0);
+            openFab(fabDownloadAll, 1);
+            openFab(fabClearQueue, 2);
             openFab(fabSaveToPlaylist, 3);
             if (Preferences.isSyncronizationEnabled()) {
                 openFab(fabLoadQueue, 4);
