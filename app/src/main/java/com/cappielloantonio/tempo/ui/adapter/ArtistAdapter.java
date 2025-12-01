@@ -18,7 +18,6 @@ import com.cappielloantonio.tempo.util.MusicUtil;
 import java.util.Collections;
 import java.util.List;
 
-@UnstableApi
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
     private final ClickCallback click;
     private final boolean mix;
@@ -64,16 +63,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     public void setItems(List<ArtistID3> artists) {
         this.artists = artists;
         notifyDataSetChanged();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

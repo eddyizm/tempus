@@ -83,6 +83,7 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
 
         if (artist.getAlbumCount() > 0) {
             holder.item.artistInfoTextView.setText("Album count: " + artist.getAlbumCount());
+            holder.item.artistInfoTextView.setVisibility(View.VISIBLE);
         } else {
             holder.item.artistInfoTextView.setVisibility(View.GONE);
         }
@@ -111,16 +112,6 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
 
     public ArtistID3 getItem(int id) {
         return artists.get(id);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
