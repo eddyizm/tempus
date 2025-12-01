@@ -2,6 +2,11 @@
 
 ## Pending release...
 
+* chore: bringing in media service refactor previously reverted after more testing by @eddyizm in https://github.com/eddyizm/tempus/pull/286
+* fix: refactor start queue to put the db writing in the background by @eddyizm in https://github.com/eddyizm/tempus/pull/287
+* Feat: playerqueue fab allows playqueue actions -> saving to playlist, download all, load queue, shuffle, clean queue by @eddyizm in https://github.com/eddyizm/tempus/pull/288
+
+
 ## [4.3.0](https://github.com/eddyizm/tempo/releases/tag/v4.3.0) (2025-11-23)
 ## What's Changed
 * chore: Add Obtainium badge to README by @mikaeldui in https://github.com/eddyizm/tempus/pull/280
