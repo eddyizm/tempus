@@ -133,6 +133,10 @@
     <string name="home_sync_starred_albums_subtitle">Albums marked with a star will be available offline</string>
     <string name="home_sync_starred_artists_title">Starred Artists Sync</string>
     <string name="home_sync_starred_artists_subtitle">You have starred artists with music not downloaded</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d song needs sync</item>
+        <item quantity="other">%d songs need sync</item>
+    </plurals>
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Discovery</string>
     <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
