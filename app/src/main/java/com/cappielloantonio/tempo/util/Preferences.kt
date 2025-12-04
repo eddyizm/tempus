@@ -70,6 +70,7 @@ object Preferences {
     private const val SONG_RATING_PER_ITEM = "song_rating_per_item"
     private const val RATING_PER_ITEM = "rating_per_item"
     private const val NEXT_UPDATE_CHECK = "next_update_check"
+    private const val GITHUB_UPDATE_CHECK = "github_update_check"
     private const val CONTINUOUS_PLAY = "continuous_play"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
@@ -79,6 +80,7 @@ object Preferences {
     private const val ALBUM_DETAIL = "album_detail"
     private const val ALBUM_SORT_ORDER = "album_sort_order"
     private const val DEFAULT_ALBUM_SORT_ORDER = Constants.ALBUM_ORDER_BY_NAME
+    private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
 
     @JvmStatic
     fun getServer(): String? {
@@ -573,15 +575,21 @@ object Preferences {
         return App.getInstance().preferences.getBoolean(RATING_PER_ITEM, false)
     }
 
+    
     @JvmStatic
-    fun showTempoUpdateDialog(): Boolean {
+    fun isGithubUpdateEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(GITHUB_UPDATE_CHECK, true)
+    }
+
+    @JvmStatic
+    fun showTempusUpdateDialog(): Boolean {
         return App.getInstance().preferences.getLong(
                 NEXT_UPDATE_CHECK, 0
         ) + 86400000 < System.currentTimeMillis()
     }
 
     @JvmStatic
-    fun setTempoUpdateReminder() {
+    fun setTempusUpdateReminder() {
         App.getInstance().preferences.edit().putLong(NEXT_UPDATE_CHECK, System.currentTimeMillis()).apply()
     }
 
@@ -655,5 +663,15 @@ object Preferences {
     @JvmStatic
     fun setAlbumSortOrder(sortOrder: String) {
         App.getInstance().preferences.edit().putString(ALBUM_SORT_ORDER, sortOrder).apply()
+    }
+
+    @JvmStatic
+    fun getArtistSortOrder(): String {
+        val sort_by_album_count = App.getInstance().preferences.getBoolean(ARTIST_SORT_BY_ALBUM_COUNT, false)
+        Log.d("Preferences", "getSortOrder")
+        if (sort_by_album_count)
+            return Constants.ARTIST_ORDER_BY_ALBUM_COUNT
+        else
+            return Constants.ARTIST_ORDER_BY_NAME
     }
 }

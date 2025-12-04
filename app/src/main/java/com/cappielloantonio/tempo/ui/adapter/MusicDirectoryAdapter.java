@@ -53,7 +53,7 @@ public class MusicDirectoryAdapter extends RecyclerView.Adapter<MusicDirectoryAd
                 .into(holder.item.musicDirectoryCoverImageView);
 
         holder.item.musicDirectoryMoreButton.setVisibility(child.isDir() ? View.VISIBLE : View.INVISIBLE);
-        holder.item.musicDirectoryPlayButton.setVisibility(child.isDir() ? View.INVISIBLE : View.VISIBLE);
+        holder.item.musicDirectoryPlayButton.setVisibility(child.isDir() ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -80,6 +80,7 @@ public class MusicDirectoryAdapter extends RecyclerView.Adapter<MusicDirectoryAd
             itemView.setOnLongClickListener(v -> onLongClick());
 
             item.musicDirectoryMoreButton.setOnClickListener(v -> onClick());
+            item.musicDirectoryPlayButton.setOnClickListener(v -> onPlayClick());
         }
 
         public void onClick() {
@@ -105,6 +106,14 @@ public class MusicDirectoryAdapter extends RecyclerView.Adapter<MusicDirectoryAd
                 return true;
             } else {
                 return false;
+            }
+        }
+
+        public void onPlayClick() {
+            if (children.get(getBindingAdapterPosition()).isDir()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.MUSIC_DIRECTORY_ID, children.get(getBindingAdapterPosition()).getId());
+                click.onMusicDirectoryPlay(bundle);
             }
         }
     }

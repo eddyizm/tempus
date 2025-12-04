@@ -201,7 +201,9 @@
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Wyczyść kolejkę odtwarzania</string>
-    <string name="player_queue_save_queue_success">Zapisana kolejka odtwarzania</string>
+    <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
+    <string name="player_queue_save_to_playlist">Zapisz kolejkę do playlisty</string>
+    <string name="player_queue_load_queue">Wczytaj kolejkę</string>
     <string name="player_lyrics_download_content_description">Pobierz teksty do odtwarzania offline</string>
     <string name="player_lyrics_downloaded_content_description">Teksty pobrane do odtwarzania offline</string>
     <string name="player_lyrics_download_success">Zapisano tekst do odtwarzania offline.</string>
@@ -321,6 +323,9 @@
     <string name="settings_github_summary">Śledź tworzenie aplikacji</string>
     <string name="settings_github_title">GitHub</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_github_update">Aktualizacje</string>
+    <string name="settings_github_update_title">Sprawdzaj dostępność nowych aktualizacji na githubie</string>
+    <string name="settings_github_update_summary">Jeżeli używana jest wersja z githuba, domyślnie aplikacja będzie sprawdzać czy są dostępne nowe wydania apk. Kliknij przełącznik aby, wyłączyć automatyczne sprawdzanie</string>
     <string name="settings_support_summary">Dołącz do dyskusji i wsparcia społeczności</string>
     <string name="settings_support_title">Wsparcie użytkowników</string>
     <string name="settings_scan_result">Skanowanie: naliczono %1$d utworów</string>
@@ -400,6 +405,7 @@
     <string name="share_bottom_sheet_delete">Usuń udostępnianie</string>
     <string name="share_bottom_sheet_update">Zaktualizuj udostępnianie</string>
     <string name="share_subtitle_item">Data wygaśnięcia: %1$s</string>
+    <string name="share_no_expiration">Nigdy</string>
     <string name="share_unsupported_error">Udostępnianie nie jest wspierane lub włączone</string>
     <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
     <string name="asset_link_label_song">UID piosenki</string>
@@ -516,4 +522,9 @@
     <string name="settings_app_equalizer_summary">Otwórz wbudowany korektor dźwięku</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>
     <string name="settings_album_detail_summary">Jeżeli włączone, pokaż szczegóły albumu takie jak gatunek, ilość piosenek itp. na stronie albumu</string>
+    <string name="settings_artist_sort_by_album_count">Sortuj wykonawców po ilości albumów</string>
+    <string name="settings_artist_sort_by_album_count_summary">Jeżeli włączone, sortuje wykonawców po ilości albumów. Jeżeli wyłączone, sortuje albumy po nazwach.</string>
+    <string name="folder_play_collecting">Zbieranie piosenek z folderu…</string>
+    <string name="folder_play_playing">Odtwarzanie %d piosenek</string>
+    <string name="folder_play_no_songs">Nie znaleziono piosenek w folderze</string>
 </resources>

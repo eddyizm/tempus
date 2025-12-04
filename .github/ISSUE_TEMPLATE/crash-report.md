@@ -23,10 +23,11 @@ Please provide the steps to reproduce the crash:
  - Android device: [Device Model]
  - Android OS version: [Android Version]
  - App version: [App Version]
+ - App variant: [goole play services, degoogled] 
  - Other relevant details: [e.g., specific network conditions, external dependencies]
 
 ## Crash Logs/Stack trace
-<!-- If available, please provide the crash log or stack trace related to the crash. Include it inside a code block (surround with triple backticks ```). Please use the unsigned apk (app-tempo-debug.apk), as the logs would be illegible and therefore useless for this purpose. -->
+<!-- If available, please provide the crash log or stack trace related to the crash. Include it inside a code block (surround with triple backticks ```). Please use the unsigned apk (app-tempus-debug.apk), as the logs would be illegible and therefore useless for this purpose. -->
 
 ## Screenshots
 <!-- If applicable, add screenshots to help explain the problem. -->

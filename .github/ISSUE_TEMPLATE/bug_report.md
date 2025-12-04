@@ -26,6 +26,7 @@ Outline the steps required to reproduce the bug, including any specific actions,
  - Android device: [Device Model]
  - Android OS version: [Android Version]
  - App version: [App Version]
+ - App variant: [goole play services, degoogled]
  - Other relevant details: [e.g., specific network conditions, external dependencies]
 
 ## Logs or Screenshots

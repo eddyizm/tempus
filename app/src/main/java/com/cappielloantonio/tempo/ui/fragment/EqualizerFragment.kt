@@ -3,7 +3,9 @@ package com.cappielloantonio.tempo.ui.fragment
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.os.IBinder
 import android.view.Gravity
@@ -12,10 +14,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.OptIn
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.service.EqualizerManager
+import com.cappielloantonio.tempo.service.BaseMediaService
 import com.cappielloantonio.tempo.service.MediaService
 import com.cappielloantonio.tempo.util.Preferences
 
@@ -28,10 +32,21 @@ class EqualizerFragment : Fragment() {
     private lateinit var safeSpace: Space
     private val bandSeekBars = mutableListOf<SeekBar>()
 
+    private var receiverRegistered = false
+    private val equalizerUpdatedReceiver = object : BroadcastReceiver() {
+        @OptIn(UnstableApi::class)
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == BaseMediaService.ACTION_EQUALIZER_UPDATED) {
+                initUI()
+                restoreEqualizerPreferences()
+            }
+        }
+    }
+
     private val connection = object : ServiceConnection {
         @OptIn(UnstableApi::class)
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as MediaService.LocalBinder
+            val binder = service as BaseMediaService.LocalBinder
             equalizerManager = binder.getEqualizerManager()
             initUI()
             restoreEqualizerPreferences()
@@ -46,8 +61,17 @@ class EqualizerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Intent(requireContext(), MediaService::class.java).also { intent ->
-            intent.action = MediaService.ACTION_BIND_EQUALIZER
+            intent.action = BaseMediaService.ACTION_BIND_EQUALIZER
             requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+        if (!receiverRegistered) {
+            ContextCompat.registerReceiver(
+                requireContext(),
+                equalizerUpdatedReceiver,
+                IntentFilter(BaseMediaService.ACTION_EQUALIZER_UPDATED),
+                ContextCompat.RECEIVER_NOT_EXPORTED
+            )
+            receiverRegistered = true
         }
     }
 
@@ -55,6 +79,14 @@ class EqualizerFragment : Fragment() {
         super.onStop()
         requireActivity().unbindService(connection)
         equalizerManager = null
+        if (receiverRegistered) {
+            try {
+                requireContext().unregisterReceiver(equalizerUpdatedReceiver)
+            } catch (_: Exception) {
+                // ignore if not registered
+            }
+            receiverRegistered = false
+        }
     }
 
     override fun onCreateView(

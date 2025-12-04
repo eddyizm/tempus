@@ -2,17 +2,28 @@
   <img alt="Tempus" title="Tempus" src="mockup/svg/tempus_horizontal_logo.png" width="250">
 </p>
 
+---
+
 <p align="center">
   <b>Access your music library on all your android devices</b>
 </p>
 
+<div align="center">
+
+  <!-- Reproducible build  -->  
+[<img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status">](https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus) 
+
+</div>
+
 <p align="center">
-    <a href="https://github.com/eddyizm/tempo/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
+    <a href="https://github.com/eddyizm/tempus/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
+    <a href="https://apt.izzysoft.de/fdroid/index/apk/com.eddyizm.degoogled.tempus"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200"></a>
+    <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://app/%7B%22id%22%3A%22com.eddyizm.tempus%22%2C%22url%22%3A%22https%3A%2F%2Fgithub.com%2Feddyizm%2Ftempus%22%2C%22author%22%3A%22eddyizm%22%2C%22name%22%3A%22Tempus%22%2C%22preferredApkIndex%22%3A0%2C%22additionalSettings%22%3A%22%7B%5C%22includePrereleases%5C%22%3Afalse%2C%5C%22fallbackToOlderReleases%5C%22%3Atrue%2C%5C%22filterReleaseTitlesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22filterReleaseNotesByRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22verifyLatestTag%5C%22%3Afalse%2C%5C%22sortMethodChoice%5C%22%3A%5C%22date%5C%22%2C%5C%22useLatestAssetDateAsReleaseDate%5C%22%3Afalse%2C%5C%22releaseTitleAsVersion%5C%22%3Afalse%2C%5C%22trackOnly%5C%22%3Afalse%2C%5C%22versionExtractionRegEx%5C%22%3A%5C%22%5C%22%2C%5C%22matchGroupToUse%5C%22%3A%5C%22%5C%22%2C%5C%22versionDetection%5C%22%3Atrue%2C%5C%22releaseDateAsVersion%5C%22%3Afalse%2C%5C%22useVersionCodeAsOSVersion%5C%22%3Afalse%2C%5C%22apkFilterRegEx%5C%22%3A%5C%22tempus%5C%22%2C%5C%22invertAPKFilter%5C%22%3Afalse%2C%5C%22autoApkFilterByArch%5C%22%3Atrue%2C%5C%22appName%5C%22%3A%5C%22%5C%22%2C%5C%22appAuthor%5C%22%3A%5C%22%5C%22%2C%5C%22shizukuPretendToBeGooglePlay%5C%22%3Afalse%2C%5C%22allowInsecure%5C%22%3Afalse%2C%5C%22exemptFromBackgroundUpdates%5C%22%3Afalse%2C%5C%22skipUpdateNotifications%5C%22%3Afalse%2C%5C%22about%5C%22%3A%5C%22%5C%22%2C%5C%22refreshBeforeDownload%5C%22%3Afalse%2C%5C%22includeZips%5C%22%3Afalse%2C%5C%22zippedApkFilterRegEx%5C%22%3A%5C%22%5C%22%7D%22%2C%22overrideSource%22%3A%22GitHub%22%7D"><img width="200" src="https://github.com/user-attachments/assets/119e7ff4-2636-43cb-ab7f-1b6a58ac3570" /></a>
 </p>
-<!-- <p align="center">
+<!-- 
     <a href="https://f-droid.org/packages/com.cappielloantonio.notquitemy.tempo"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" width="200"></a>
-    <a href="https://apt.izzysoft.de/fdroid/index/apk/com.cappielloantonio.tempo"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="200"></a>
-</p> -->
+-->
+  
 
 **Tempus** is an open-source and lightweight music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device. 
 
@@ -33,12 +44,9 @@ Please note the two variants in the release assets include release/debug and 32/
 
 `app-tempus` <- The github release with all the android auto/chromecast features 
 
-`app-degoogled*` <- The f-droid release that goes without any of the google stuff. It was last released at 3.8.1 from the original repo. Since I don't have access to that original repo, I am releasing the apk's here on github.
+`app-degoogled*` <- The izzyOnDroid release that goes without any of the google stuff. It is now available on izzyOnDroid (64bit) I am releasing the both 32/64bit apk's here on github for those who need a 32bit version.
 
 [CHANGELOG.md](CHANGELOG.md)
-
-[**Buy me a coffee**](https://ko-fi.com/eddyizm)
-
 
 ## Usage
 
@@ -103,6 +111,11 @@ If there is an UI change, please include a before/after screenshot and a short v
 Currently there are no tests but I would love to start on some unit tests. 
 
 Not a hard requirement but any new feature/change should ideally include an update to the nacent documention. 
+
+## Support
+
+[**Buy me a coffee**](https://ko-fi.com/eddyizm)  
+bitcoin: `3QVHSSCJvn6yXEcJ3A3cxYLMmbvFsrnUs5`  
 
 ## License
 

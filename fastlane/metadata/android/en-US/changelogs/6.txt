@@ -1,0 +1,5 @@
+Update russian strings.xml 
+Disallow duplicate songs in queue
+Fixed crash when viewing share
+Update Polish translation
+Add podcast channel visible when empty podcasts

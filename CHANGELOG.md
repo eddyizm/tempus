@@ -1,6 +1,101 @@
 # Changelog
 
-## [4.0.2](https://github.com/eddyizm/tempo/releases/tag/v4.0.2) (2025-10-26)
+## Pending release...
+
+* chore: bringing in media service refactor previously reverted after more testing by @eddyizm in https://github.com/eddyizm/tempus/pull/286
+* fix: refactor start queue to put the db writing in the background by @eddyizm in https://github.com/eddyizm/tempus/pull/287
+* Feat: playerqueue fab allows playqueue actions -> saving to playlist, download all, load queue, shuffle, clean queue by @eddyizm in https://github.com/eddyizm/tempus/pull/288
+
+
+## [4.3.0](https://github.com/eddyizm/tempo/releases/tag/v4.3.0) (2025-11-23)
+## What's Changed
+* chore: Add Obtainium badge to README by @mikaeldui in https://github.com/eddyizm/tempus/pull/280
+* fix: Revert "refactor MediaService" by @eddyizm in https://github.com/eddyizm/tempus/pull/282
+* feat: add play functionality to library folder/index items by @antebudimir in https://github.com/eddyizm/tempus/pull/276
+* fix: start queue blocking UI by @eddyizm in https://github.com/eddyizm/tempus/pull/283
+
+## New Contributors
+* @mikaeldui made their first contribution in https://github.com/eddyizm/tempus/pull/280
+* @antebudimir made their first contribution in https://github.com/eddyizm/tempus/pull/276
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.6...v4.3.0
+
+## [4.2.6](https://github.com/eddyizm/tempo/releases/tag/v4.2.6) (2025-11-22)
+## What's Changed
+* fix: Fix player queue soft-lock by @shrapnelnet in https://github.com/eddyizm/tempus/pull/266
+* chore: Add Catalan i18n by @marcriera in https://github.com/eddyizm/tempus/pull/268
+* chore: Refactor MediaService by @pca006132 in https://github.com/eddyizm/tempus/pull/267
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/272
+* chore(i18n): Update Italian translation by @66Bunz in https://github.com/eddyizm/tempus/pull/278
+
+## New Contributors
+* @marcriera made their first contribution in https://github.com/eddyizm/tempus/pull/268
+* @66Bunz made their first contribution in https://github.com/eddyizm/tempus/pull/278
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.4...v4.2.6
+
+## [4.2.4](https://github.com/eddyizm/tempo/releases/tag/v4.2.4) (2025-11-15)
+## What's Changed
+* chore: Update russian strings.xml by @Sevinfolds in https://github.com/eddyizm/tempus/pull/249
+* fix: disallow duplicate songs in queue by @eddyizm in https://github.com/eddyizm/tempus/pull/252
+* fix:github release check by @eddyizm in https://github.com/eddyizm/tempus/pull/253
+* fix: Fixed crash when viewing share by @drakeerv in https://github.com/eddyizm/tempus/pull/255
+* chore: Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/257
+* fix: add podcast/radio channel visible when empty podcasts/radio by @eddyizm in https://github.com/eddyizm/tempus/pull/260
+
+## New Contributors
+* @Sevinfolds made their first contribution in https://github.com/eddyizm/tempus/pull/249
+* @drakeerv made their first contribution in https://github.com/eddyizm/tempus/pull/255
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.0...v4.2.4
+## [4.2.0](https://github.com/eddyizm/tempo/releases/tag/v4.2.0) (2025-11-09)
+## What's Changed
+* fix: Equalizer fix in main build variant by @jaime-grj in https://github.com/eddyizm/tempus/pull/239
+* fix: Images not filling holder by @eddyizm in https://github.com/eddyizm/tempus/pull/244
+* feat: Make artist and album clickable by @eddyizm in https://github.com/eddyizm/tempus/pull/243
+* feat: implement scroll to currently playing feature by @shrapnelnet in https://github.com/eddyizm/tempus/pull/247
+* fix: shuffling genres only queuing 25 songs by @shrapnelnet in https://github.com/eddyizm/tempus/pull/246
+
+## New Contributors
+* @shrapnelnet made their first contribution in https://github.com/eddyizm/tempus/pull/247
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.1.3...v4.2.0
+
+## [4.1.3](https://github.com/eddyizm/tempo/releases/tag/v4.1.3) (2025-11-06)
+## What's Changed
+* [fix: equalizer missing referenced value](https://github.com/eddyizm/tempus/commit/923cfd5bc97ed7db28c90348e3619d0a784fc434)
+* Fix: Album track list bug by @eddyizm in https://github.com/eddyizm/tempus/pull/237
+* fix: Add listener to enable equalizer when audioSessionId changes by @jaime-grj in https://github.com/eddyizm/tempus/pull/235
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.1.0...v4.1.3
+
+## [4.1.0](https://github.com/eddyizm/tempo/releases/tag/v4.1.0) (2025-11-05)
+## What's Changed
+* chore(i18n): Update Spanish (es-ES) translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/205
+* shuffle for artists without using `getTopSongs` by @pca006132 in https://github.com/eddyizm/tempus/pull/207
+* Update USAGE.md with instant mix details by @zc-devs in https://github.com/eddyizm/tempus/pull/220
+* feat: sort artists by album count by @pca006132 in https://github.com/eddyizm/tempus/pull/206
+* Fix downloaded tab performance by @pca006132 in https://github.com/eddyizm/tempus/pull/210
+* fix: remove NestedScrollViews for fragment_album_page by @pca006132 in https://github.com/eddyizm/tempus/pull/216
+* fix: playlist page should not snap by @pca006132 in https://github.com/eddyizm/tempus/pull/218
+* fix: do not override getItemViewType and getItemId by @pca006132 in https://github.com/eddyizm/tempus/pull/221
+* chore: update media3 dependencies by @pca006132 in https://github.com/eddyizm/tempus/pull/217
+* fix: update MediaItems after network change by @pca006132 in https://github.com/eddyizm/tempus/pull/222
+* fix: skip mapping downloaded item by @pca006132 in https://github.com/eddyizm/tempus/pull/228
+
+## New Contributors
+* @pca006132 made their first contribution in https://github.com/eddyizm/tempus/pull/207
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.0.7...v4.1.0
+
+## [4.0.7](https://github.com/eddyizm/tempo/releases/tag/v4.0.7) (2025-10-28)
+## What's Changed
+* chore: updated tempo references to tempus including github check by @eddyizm in https://github.com/eddyizm/tempus/pull/197
+* fix: Crash on share no expiration date or field returned from api by @eddyizm in https://github.com/eddyizm/tempus/pull/199
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.0.6...v4.0.7
+
+## [4.0.6](https://github.com/eddyizm/tempo/releases/tag/v4.0.6) (2025-10-26)
 ## Attention
 This release will not update previous installs as it is considered a new app, no longer `Tempo`, new icon, new app id, and new app name. Hoping it will not be a huge inconvenience but was necessary in order to publish to app stores like IzzyDroid and FDroid.  
 

@@ -105,7 +105,11 @@ public class UIUtil {
     }
 
     public static String getReadableDate(Date date) {
+        if (date == null) {
+            return App.getContext().getString(R.string.share_no_expiration); 
+        }
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
         return formatter.format(date);
     }
+
 }

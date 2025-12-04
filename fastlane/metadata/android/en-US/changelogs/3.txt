@@ -1,0 +1,10 @@
+Update Spanish (es-ES) translation
+Shuffle for artists without using `getTopSongs` 
+Update USAGE.md with instant mix detils 
+Sort artists by album count 
+Fix downloaded tab performance 
+Remove NestedScrollViews for fragment_album_page 
+Playlist page should not snap 
+Do not override getItemViewType and getItemId
+Update media3 dependencies
+Update MediaItems after network change

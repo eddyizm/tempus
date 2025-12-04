@@ -202,6 +202,7 @@
     <string name="menu_sort_artist">Artist</string>
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_random">Random</string>
+    <string name="menu_sort_album_count">Album Count</string>
     <string name="menu_sort_recently_added">Recently added</string>
     <string name="menu_sort_recently_played">Recently played</string>
     <string name="menu_sort_most_played">Most played</string>
@@ -213,6 +214,8 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
+    <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>
+    <string name="player_queue_load_queue">Load Queue</string>
     <string name="player_lyrics_download_content_description">Download lyrics for offline playback</string>
     <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
     <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
@@ -333,6 +336,9 @@
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_github_update">Updates</string>
+    <string name="settings_github_update_title">Check github for release updates</string>
+    <string name="settings_github_update_summary">If using the github version, by default app will check for new apk release. Toggle to disable automatic github checks</string>
     <string name="settings_support_summary">Join community discussions and support</string>
     <string name="settings_support_title">User support</string>
     <string name="settings_scan_result">Scanning: counting %1$d tracks</string>
@@ -381,7 +387,7 @@
     <string name="settings_summary_syncing">Returns the state of the play queue for this user. This includes the tracks in the play queue, the currently playing track, and the position within this track. The server must support this feature.\n*This setting is not 100% working on all servers/devices.</string>
     <string name="settings_summary_streaming_cache_size">%1$s \nCurrently in use:   %2$s MiB</string>
     <string name="settings_summary_transcoding">Priority given to the transcoding mode. If set to \"Direct play\" the bitrate of the file will not be changed.</string>
-    <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for donwloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
+    <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for downloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_estimate_content_length">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
     <string name="settings_sync_starred_artists_for_offline_use_summary">If enabled, starred artists will be downloaded for offline use.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Sync starred artists for offline use</string>
@@ -412,6 +418,7 @@
     <string name="share_bottom_sheet_delete">Delete share</string>
     <string name="share_bottom_sheet_update">Update share</string>
     <string name="share_subtitle_item">Expiration date: %1$s</string>
+    <string name="share_no_expiration">Never</string>
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
     <string name="asset_link_clipboard_label">Tempus asset link</string>
     <string name="asset_link_label_song">Song UID</string>
@@ -530,4 +537,10 @@
 
     <string name="settings_album_detail">Show album detail</string>
     <string name="settings_album_detail_summary">If enabled, show the album details like genre, song count etc. on the album page</string>
+    <string name="settings_artist_sort_by_album_count">Sort artists by album count</string>
+    <string name="settings_artist_sort_by_album_count_summary">If enabled, sort the artists by album count. Sort by name if disabled.</string>
+
+    <string name="folder_play_collecting">Collecting songs from folder…</string>
+    <string name="folder_play_playing">Playing %d songs</string>
+    <string name="folder_play_no_songs">No songs found in folder</string>
 </resources>

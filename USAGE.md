@@ -6,6 +6,7 @@
 - [Getting Started](#getting-started)
 - [Server Configuration](#server-configuration)
 - [Main Features](#main-features)
+
 - [Navigation](#navigation)
 - [Playback Controls](#playback-controls)
 - [Favorites](#favorites)
@@ -27,6 +28,8 @@ This app works with any service that implements the Subsonic API, including:
 - [LMS - Lightweight Music Server](https://github.com/epoupon/lms) -  *personal fave and my backend*
 - [Navidrome](https://www.navidrome.org/)
 - [Gonic](https://github.com/sentriz/gonic)
+- [Ampache](https://github.com/ampache/ampache)
+- [NextCloud Music](https://apps.nextcloud.com/apps/music)
 
 
 
@@ -66,6 +69,21 @@ However, if you want to limit or change libraries you could use a workaround, if
 
 You can create multiple users , one for each library, and save each of them in Tempus app.
 
+### Folder or index playback
+
+If your Subsonic-compatible server exposes the folder tree **or** provides an artist index (for example Gonic, Navidrome, or any backend with folder browsing enabled), Tempus lets you play an entire folder from anywhere in the library hierarchy:
+
+<p align="left">
+    <img src="mockup/usage/music_folders_root.png" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/music_folders_playback.png" width=317>
+</p>
+
+- The **Library ▸ Music folders** screen shows each top-level folder with a play icon only after you drill into it. The root entry remains a simple navigator.
+- When viewing **inner folders** **or artist index entries**, tap the new play button to immediately enqueue every audio track inside that folder/index and all nested subfolders.
+- Video files are excluded automatically, so only playable audio ends up in the queue.
+
+No extra config is needed—Tempus adjusts based on the connected backend.
+
 ### Now Playing Screen
 
 On the main player control screen, tapping on the artwork will reveal a small collection of 4 buttons/icons. 
@@ -78,9 +96,23 @@ On the main player control screen, tapping on the artwork will reveal a small co
 1. Downloads the track (there is a notification if the android screen but not a pop toast currently )
 2. Adds track to playlist - pops up playlist dialog.
 3. Adds tracks to the queue via instant mix function
+    * TBD: what is the _instant mix function_?
+    * Uses [getSimilarSongs](https://opensubsonic.netlify.app/docs/endpoints/getsimilarsongs/) of OpenSubsonic API.
+      Which tracks to be mixed depends on the server implementation. For example, Navidrome gets 15 similar artists from LastFM, then 20 top songs from each.
 4. Saves play queue (if the feature is enabled in the settings) 
     * if the setting is not enabled, it toggles a view of the lyrics if available (slides to the right) 
 
+### Podcasts  
+If your server supports it - add a podcast rss feed
+<p align="left">
+    <img src="mockup/usage/add_podcast_feed.png" width=317>
+</p>
+
+### Radio Stations
+If your server supports it - add a internet radio station feed
+<p align="left">
+    <img src="mockup/usage/add_radio_station.png" width=326>
+</p>
 
 ## Navigation
 

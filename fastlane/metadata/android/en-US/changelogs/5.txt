@@ -1,0 +1,5 @@
+Equalizer fix in main build variant
+fix Images not filling holder in discovery 
+Make artist and album clickable on home discovery
+Implement scroll to currently playing feature
+Shuffling genres now queuing 500 tracks vs 25

@@ -116,6 +116,12 @@
             android:summary="@string/settings_album_detail_summary"
             android:key="album_detail" />
 
+        <SwitchPreference
+            android:title="@string/settings_artist_sort_by_album_count"
+            android:defaultValue="false"
+            android:summary="@string/settings_artist_sort_by_album_count_summary"
+            android:key="artist_sort_by_album_count" />
+
     </PreferenceCategory>
 
      <PreferenceCategory app:title="@string/settings_title_playlist">
@@ -392,6 +398,18 @@
             app:key="queue_syncing_countdown"
             app:title="@string/settings_queue_syncing_countdown"
             app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory 
+        android:key="settings_github_update_category_key"
+        app:title="@string/settings_github_update">
+        <Preference
+            app:selectable="false"
+            app:summary="@string/settings_github_update_summary" />
+        <SwitchPreference
+            android:title="@string/settings_github_update_title"
+            android:defaultValue="true"
+            android:key="github_update_check" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/settings_about_title">
