@@ -10,8 +10,8 @@
 
 <div align="center">
 
-  <!-- Reproducible build  -->  
-[<img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status">](https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus) 
+  <!-- Reproducible build  -->
+<a href="https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus"><img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status"></a>
 
 </div>
 
