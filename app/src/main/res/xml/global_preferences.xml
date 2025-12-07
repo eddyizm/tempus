@@ -124,7 +124,7 @@
 
         <SwitchPreference
             android:title="@string/search_sort_title"
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:summary="@string/search_sort_summary"
             android:key="sort_search_chronologically" />
 

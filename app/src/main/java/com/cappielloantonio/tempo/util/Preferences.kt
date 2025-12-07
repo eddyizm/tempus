@@ -678,6 +678,6 @@ object Preferences {
 
     @JvmStatic
     fun isSearchSortingChronologicallyEnabled(): Boolean {
-        return App.getInstance().preferences.getBoolean(SORT_SEARCH_CHRONOLOGICALLY, true)
+        return App.getInstance().preferences.getBoolean(SORT_SEARCH_CHRONOLOGICALLY, false)
     }
 }
