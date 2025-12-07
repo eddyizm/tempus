@@ -124,6 +124,10 @@
     <string name="home_sync_starred_albums_subtitle">Albumy oznaczone gwiazdką będą dostępne offline</string>
     <string name="home_sync_starred_artists_title">Synchronizacja wykonawców oznaczonych gwiazdką</string>
     <string name="home_sync_starred_artists_subtitle">Masz wykonawców oznaczonych gwiazdką, bez pobranej muzyki</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d piosenka wymaga synchronizacji</item>
+        <item quantity="other">%d piosenek wymaga synchronizacji</item>
+    </plurals>
     <string name="home_title_best_of">Najlepsze</string>
     <string name="home_title_discovery">Odkrywanie</string>
     <string name="home_title_discovery_shuffle_all_button">Odtwórz wszystkie losowo</string>
