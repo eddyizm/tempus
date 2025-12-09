@@ -298,10 +298,15 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     activity.setBottomSheetInPeek(true);
                 });
+
+                bind.albumPageJukeboxButton.setOnClickListener(v -> {
+                    MediaManager.startQueue(songs, 0);
+                });
             }
 
             if (bind != null && songs.isEmpty()) {
                 bind.albumPagePlayButton.setEnabled(false);
+                bind.albumPageJukeboxButton.setEnabled(false);
                 bind.albumPageShuffleButton.setEnabled(false);
             }
         });

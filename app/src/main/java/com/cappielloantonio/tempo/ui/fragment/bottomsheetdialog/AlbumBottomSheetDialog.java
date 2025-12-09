@@ -170,6 +170,11 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
             dismissBottomSheet();
         }));
 
+        TextView addToQueueJukebox = view.findViewById(R.id.add_to_queue_jukebox_text_view);
+        addToQueueJukebox.setOnClickListener(v -> albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
+            MediaManager.enqueue(songs);
+        }));
+
         TextView downloadAll = view.findViewById(R.id.download_all_text_view);
         albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
             List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);

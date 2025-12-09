@@ -175,6 +175,11 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
+        TextView addToQueueJukebox = view.findViewById(R.id.add_to_queue_jukebox_text_view);
+        addToQueueJukebox.setOnClickListener(v -> {
+            MediaManager.enqueue(song);
+        });
+
         TextView rate = view.findViewById(R.id.rate_text_view);
         rate.setOnClickListener(v -> {
             Bundle bundle = new Bundle();

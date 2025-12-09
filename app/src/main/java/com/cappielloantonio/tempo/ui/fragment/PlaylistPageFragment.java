@@ -220,6 +220,10 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     activity.setBottomSheetInPeek(true);
                 });
+
+                bind.playlistPageJukeboxButton.setOnClickListener(v -> {
+                    MediaManager.startQueue(songs, 0);
+                });
             }
         });
     }
