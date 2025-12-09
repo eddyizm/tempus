@@ -12,8 +12,11 @@ import java.util.List;
 
 @Dao
 public interface RecentSearchDao {
-    @Query("SELECT * FROM recent_search ORDER BY search DESC")
+    @Query("SELECT search FROM recent_search ORDER BY timestamp DESC")
     List<String> getRecent();
+
+    @Query("SELECT search FROM recent_search ORDER BY search DESC")
+    List<String> getAlpha();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(RecentSearch search);

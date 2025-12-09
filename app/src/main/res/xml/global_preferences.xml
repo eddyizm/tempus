@@ -122,6 +122,12 @@
             android:summary="@string/settings_artist_sort_by_album_count_summary"
             android:key="artist_sort_by_album_count" />
 
+        <SwitchPreference
+            android:title="@string/search_sort_title"
+            android:defaultValue="false"
+            android:summary="@string/search_sort_summary"
+            android:key="sort_search_chronologically" />
+
     </PreferenceCategory>
 
      <PreferenceCategory app:title="@string/settings_title_playlist">

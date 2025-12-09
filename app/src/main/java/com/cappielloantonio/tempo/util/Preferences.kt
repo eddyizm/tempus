@@ -81,6 +81,7 @@ object Preferences {
     private const val ALBUM_SORT_ORDER = "album_sort_order"
     private const val DEFAULT_ALBUM_SORT_ORDER = Constants.ALBUM_ORDER_BY_NAME
     private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
+    private const val SORT_SEARCH_CHRONOLOGICALLY= "sort_search_chronologically"
 
     @JvmStatic
     fun getServer(): String? {
@@ -673,5 +674,10 @@ object Preferences {
             return Constants.ARTIST_ORDER_BY_ALBUM_COUNT
         else
             return Constants.ARTIST_ORDER_BY_NAME
+    }
+
+    @JvmStatic
+    fun isSearchSortingChronologicallyEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(SORT_SEARCH_CHRONOLOGICALLY, false)
     }
 }
