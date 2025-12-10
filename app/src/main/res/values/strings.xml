@@ -543,4 +543,7 @@
     <string name="folder_play_collecting">Collecting songs from folder…</string>
     <string name="folder_play_playing">Playing %d songs</string>
     <string name="folder_play_no_songs">No songs found in folder</string>
+
+    <string name="search_sort_title">Sort recent searches chronologically</string>
+    <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
 </resources>

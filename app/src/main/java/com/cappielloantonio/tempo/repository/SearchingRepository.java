@@ -13,6 +13,7 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.SearchResult2;
 import com.cappielloantonio.tempo.subsonic.models.SearchResult3;
+import com.cappielloantonio.tempo.util.Preferences;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -186,7 +187,12 @@ public class SearchingRepository {
 
         @Override
         public void run() {
-            recent = recentSearchDao.getRecent();
+            if(Preferences.isSearchSortingChronologicallyEnabled()){
+                recent = recentSearchDao.getRecent();
+            }
+            else {
+                recent = recentSearchDao.getAlpha();
+            }
         }
 
         public List<String> getRecent() {

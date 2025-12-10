@@ -13,5 +13,8 @@ import kotlinx.parcelize.Parcelize
 data class RecentSearch(
     @PrimaryKey
     @ColumnInfo(name = "search")
-    var search: String
+    var search: String,
+
+    @ColumnInfo(name = "timestamp", defaultValue = "0")
+    var timestamp: Long
 ) : Parcelable
