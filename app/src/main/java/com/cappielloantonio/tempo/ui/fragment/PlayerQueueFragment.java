@@ -107,7 +107,6 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         super.onStart();
         initializeBrowser();
         MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
-        observePlayback();
     }
 
     @Override
@@ -156,6 +155,7 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         bind.playerQueueRecyclerView.setHasFixedSize(true);
 
         playerSongQueueAdapter = new PlayerSongQueueAdapter(this);
+        observePlayback();
         bind.playerQueueRecyclerView.setAdapter(playerSongQueueAdapter);
         reapplyPlayback();
 
@@ -216,26 +216,11 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     }
 
     private void observePlayback() {
-        playbackViewModel.getCurrentSongId().observe(getViewLifecycleOwner(), id -> {
-            if (playerSongQueueAdapter != null) {
-                Boolean playing = playbackViewModel.getIsPlaying().getValue();
-                playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
-            }
-        });
-        playbackViewModel.getIsPlaying().observe(getViewLifecycleOwner(), playing -> {
-            if (playerSongQueueAdapter != null) {
-                String id = playbackViewModel.getCurrentSongId().getValue();
-                playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
-            }
-        });
+        playbackViewModel.observePlayback(playerSongQueueAdapter, getViewLifecycleOwner());
     }
 
     private void reapplyPlayback() {
-        if (playerSongQueueAdapter != null) {
-            String id = playbackViewModel.getCurrentSongId().getValue();
-            Boolean playing = playbackViewModel.getIsPlaying().getValue();
-            playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
-        }
+        playbackViewModel.reapplyPlayback(playerSongQueueAdapter);
     }
 
     /**

@@ -4,113 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/search_result_nested_scroll_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_results_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/searchbar_scrolling_view_behavior">
-
-        <!-- Search result -->
-        <LinearLayout
-            android:id="@+id/search_result_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="64dp"
-            android:paddingBottom="@dimen/global_padding_bottom">
-
-            <!--  Artist  -->
-            <LinearLayout
-                android:id="@+id/search_artist_sector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="8dp"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/TitleLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingTop="20dp"
-                    android:paddingEnd="16dp"
-                    android:text="@string/search_title_artist" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/search_result_artist_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:clipToPadding="false"
-                    android:paddingStart="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="8dp" />
-            </LinearLayout>
-
-            <!--  Album  -->
-            <LinearLayout
-                android:id="@+id/search_album_sector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="8dp"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/TitleLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingTop="20dp"
-                    android:paddingEnd="16dp"
-                    android:text="@string/search_title_album" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/search_result_album_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:clipToPadding="false"
-                    android:paddingStart="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingEnd="8dp"
-                    android:paddingBottom="8dp" />
-            </LinearLayout>
-
-            <!--  Songs  -->
-            <LinearLayout
-                android:id="@+id/search_song_sector"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="8dp"
-                android:visibility="gone">
-
-                <TextView
-                    style="@style/TitleLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="16dp"
-                    android:paddingTop="20dp"
-                    android:paddingEnd="16dp"
-                    android:text="@string/search_title_song" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/search_result_tracks_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:clipToPadding="false"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp" />
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:clipToPadding="false"
+        android:paddingTop="64dp"
+        android:paddingBottom="@dimen/global_padding_bottom" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
