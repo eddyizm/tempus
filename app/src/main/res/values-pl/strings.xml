@@ -531,6 +531,6 @@
     <string name="folder_play_collecting">Zbieranie piosenek z folderu…</string>
     <string name="folder_play_playing">Odtwarzanie %d piosenek</string>
     <string name="folder_play_no_songs">Nie znaleziono piosenek w folderze</string>
-    <string name="search_sort_title">Sort recent searches chronologically Sortuj ostatnie wyszukiwania chronologicznie</string>
+    <string name="search_sort_title">Sortuj ostatnie wyszukiwania chronologicznie</string>
     <string name="search_sort_summary">Jeżeli włączone, sortuje wyszukiwania chronologicznie. Sortuje po naziwe jeżeli wyłączone.</string>    
 </resources>
