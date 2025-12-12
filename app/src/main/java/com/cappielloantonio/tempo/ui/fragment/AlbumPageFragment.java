@@ -4,7 +4,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,12 +61,14 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     private SongHorizontalAdapter songHorizontalAdapter;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
+    /** @noinspection deprecation*/
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    /** @noinspection deprecation*/
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -81,7 +84,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         albumPageViewModel = new ViewModelProvider(requireActivity()).get(AlbumPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        init();
+        init(view);
         initAppBar();
         initAlbumInfoTextButton();
         initAlbumNotes();
@@ -119,12 +122,13 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
+    /** @noinspection deprecation*/
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_rate_album) {
             Bundle bundle = new Bundle();
             AlbumID3 album = albumPageViewModel.getAlbum().getValue();
-            bundle.putParcelable(Constants.ALBUM_OBJECT, (Parcelable) album);
+            bundle.putParcelable(Constants.ALBUM_OBJECT, album);
             RatingDialog dialog = new RatingDialog();
             dialog.setArguments(bundle);
             dialog.show(requireActivity().getSupportFragmentManager(), null);
@@ -159,8 +163,21 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         return false;
     }
 
-    private void init() {
-        albumPageViewModel.setAlbum(getViewLifecycleOwner(), requireArguments().getParcelable(Constants.ALBUM_OBJECT));
+    private void init(View view) {
+        AlbumID3 albumArg = requireArguments().getParcelable(Constants.ALBUM_OBJECT);
+        assert albumArg != null;
+        albumPageViewModel.setAlbum(getViewLifecycleOwner(), albumArg);
+        ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
+        favoriteToggle.setChecked(albumArg.getStarred() != null);
+
+        favoriteToggle.setOnClickListener(v -> {
+            albumPageViewModel.setFavorite();
+        });
+        albumPageViewModel.getAlbum().observe(getViewLifecycleOwner(), album -> {
+            if (album != null) {
+                favoriteToggle.setChecked(album.getStarred() != null);
+            }
+        });
     }
 
     private void initAppBar() {
