@@ -2,10 +2,16 @@
 
 ## Pending release...
 
+## [4.5.0](https://github.com/eddyizm/tempo/releases/tag/v4.5.0) (2025-12-12)
 * fix: updates starred syncing downloads to user defined directory by @eddyizm in https://github.com/eddyizm/tempus/pull/298
 * fix: handle empty albums and null mappings by @eddyizm in https://github.com/eddyizm/tempus/pull/301
 * feat: integrate sort recent searches chronologically by @J4mm3ris in https://github.com/eddyizm/tempus/pull/300
 * feat: add heart to artist/album pages, fixed artist cover art failing by @eddyizm in https://github.com/eddyizm/tempus/pull/303
+
+## New Contributors
+* @J4mm3ris made their first contribution in https://github.com/eddyizm/tempus/pull/300
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.4.0...v4.5.0
 
 ## [4.4.0](https://github.com/eddyizm/tempo/releases/tag/v4.4.0) (2025-11-29)
 ## What's Changed
