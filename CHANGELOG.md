@@ -2,10 +2,19 @@
 
 ## Pending release...
 
-* chore: bringing in media service refactor previously reverted after more testing by @eddyizm in https://github.com/eddyizm/tempus/pull/286
-* fix: refactor start queue to put the db writing in the background by @eddyizm in https://github.com/eddyizm/tempus/pull/287
-* Feat: playerqueue fab allows playqueue actions -> saving to playlist, download all, load queue, shuffle, clean queue by @eddyizm in https://github.com/eddyizm/tempus/pull/288
+* fix: updates starred syncing downloads to user defined directory by @eddyizm in https://github.com/eddyizm/tempus/pull/298
+* fix: handle empty albums and null mappings by @eddyizm in https://github.com/eddyizm/tempus/pull/301
+* feat: integrate sort recent searches chronologically by @J4mm3ris in https://github.com/eddyizm/tempus/pull/300
+* feat: add heart to artist/album pages, fixed artist cover art failing by @eddyizm in https://github.com/eddyizm/tempus/pull/303
 
+## [4.4.0](https://github.com/eddyizm/tempo/releases/tag/v4.4.0) (2025-11-29)
+## What's Changed
+* chore: bringing in media service refactor previously reverted after more testing  by @eddyizm in https://github.com/eddyizm/tempus/pull/286
+* fix: refactor start queue to put the db writing in the background to address instant mix bug by @eddyizm in https://github.com/eddyizm/tempus/pull/287
+* Feat: playerqueue fab allows playqueue actions -> saving to playlist, download all, load queue, shuffle, clean queue  by @eddyizm in https://github.com/eddyizm/tempus/pull/288
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/291
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.3.0...v4.4.0
 
 ## [4.3.0](https://github.com/eddyizm/tempo/releases/tag/v4.3.0) (2025-11-23)
 ## What's Changed
