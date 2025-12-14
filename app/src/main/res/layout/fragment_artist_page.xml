@@ -63,40 +63,67 @@
                 android:layout_marginEnd="18dp" />
 
             <LinearLayout
-                android:id="@+id/album_page_button_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingTop="4dp"
-                android:paddingBottom="4dp">
+                android:paddingBottom="4dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:gravity="center_vertical">
 
-                <Button
-                    android:id="@+id/artist_page_shuffle_button"
+
+                <LinearLayout
+                    android:id="@+id/album_page_button_layout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:padding="10dp"
-                    android:text="@string/artist_page_shuffle_button"
-                    android:textAllCaps="false"
-                    app:icon="@drawable/ic_shuffle"
-                    app:iconGravity="textStart"
-                    app:iconPadding="18dp" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                <Button
-                    android:id="@+id/artist_page_radio_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_weight="1"
-                    android:padding="10dp"
-                    android:text="@string/artist_page_radio_button"
-                    android:textAllCaps="false"
-                    app:icon="@drawable/ic_feed"
-                    app:iconGravity="textStart"
-                    app:iconPadding="18dp" />
+                    <Button
+                        android:id="@+id/artist_page_shuffle_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:padding="10dp"
+                        android:text="@string/artist_page_shuffle_button"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_shuffle"
+                        app:iconGravity="textStart"
+                        app:iconPadding="18dp" />
+
+                    <Button
+                        android:id="@+id/artist_page_radio_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:padding="10dp"
+                        android:text="@string/artist_page_radio_button"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_feed"
+                        app:iconGravity="textStart"
+                        app:iconPadding="18dp" />
+                </LinearLayout>
+
+                <ToggleButton
+                    android:id="@+id/button_favorite"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/button_favorite_selector"
+                    android:checked="false"
+                    android:foreground="?android:attr/selectableItemBackgroundBorderless"
+                    android:gravity="center"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn="" />
+
             </LinearLayout>
 
             <View

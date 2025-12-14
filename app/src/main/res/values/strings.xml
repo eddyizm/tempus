@@ -133,6 +133,10 @@
     <string name="home_sync_starred_albums_subtitle">Albums marked with a star will be available offline</string>
     <string name="home_sync_starred_artists_title">Starred Artists Sync</string>
     <string name="home_sync_starred_artists_subtitle">You have starred artists with music not downloaded</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d song needs sync</item>
+        <item quantity="other">%d songs need sync</item>
+    </plurals>
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Discovery</string>
     <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
@@ -212,6 +216,8 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
+    <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>
+    <string name="player_queue_load_queue">Load Queue</string>
     <string name="player_lyrics_download_content_description">Download lyrics for offline playback</string>
     <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
     <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
@@ -533,4 +539,11 @@
     <string name="settings_album_detail_summary">If enabled, show the album details like genre, song count etc. on the album page</string>
     <string name="settings_artist_sort_by_album_count">Sort artists by album count</string>
     <string name="settings_artist_sort_by_album_count_summary">If enabled, sort the artists by album count. Sort by name if disabled.</string>
+
+    <string name="folder_play_collecting">Collecting songs from folder…</string>
+    <string name="folder_play_playing">Playing %d songs</string>
+    <string name="folder_play_no_songs">No songs found in folder</string>
+
+    <string name="search_sort_title">Sort recent searches chronologically</string>
+    <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
 </resources>

@@ -1,11 +1,68 @@
 # Changelog
 
-## Pending release..
-* chore: Update strings.xml by @Sevinfolds in https://github.com/eddyizm/tempus/pull/249
-* fix: disallow duplicate songs in queue by @eddyizm in https://github.com/eddyizm/tempus/pull/252
-* fix: github release check by @eddyizm in https://github.com/eddyizm/tempus/pull/253
-* fix: Fixed crash when viewing share by @drakeerv in https://github.com/eddyizm/tempus/pull/255
+## Pending release...
 
+## [4.5.0](https://github.com/eddyizm/tempo/releases/tag/v4.5.0) (2025-12-12)
+* fix: updates starred syncing downloads to user defined directory by @eddyizm in https://github.com/eddyizm/tempus/pull/298
+* fix: handle empty albums and null mappings by @eddyizm in https://github.com/eddyizm/tempus/pull/301
+* feat: integrate sort recent searches chronologically by @J4mm3ris in https://github.com/eddyizm/tempus/pull/300
+* feat: add heart to artist/album pages, fixed artist cover art failing by @eddyizm in https://github.com/eddyizm/tempus/pull/303
+
+## New Contributors
+* @J4mm3ris made their first contribution in https://github.com/eddyizm/tempus/pull/300
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.4.0...v4.5.0
+
+## [4.4.0](https://github.com/eddyizm/tempo/releases/tag/v4.4.0) (2025-11-29)
+## What's Changed
+* chore: bringing in media service refactor previously reverted after more testing  by @eddyizm in https://github.com/eddyizm/tempus/pull/286
+* fix: refactor start queue to put the db writing in the background to address instant mix bug by @eddyizm in https://github.com/eddyizm/tempus/pull/287
+* Feat: playerqueue fab allows playqueue actions -> saving to playlist, download all, load queue, shuffle, clean queue  by @eddyizm in https://github.com/eddyizm/tempus/pull/288
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/291
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.3.0...v4.4.0
+
+## [4.3.0](https://github.com/eddyizm/tempo/releases/tag/v4.3.0) (2025-11-23)
+## What's Changed
+* chore: Add Obtainium badge to README by @mikaeldui in https://github.com/eddyizm/tempus/pull/280
+* fix: Revert "refactor MediaService" by @eddyizm in https://github.com/eddyizm/tempus/pull/282
+* feat: add play functionality to library folder/index items by @antebudimir in https://github.com/eddyizm/tempus/pull/276
+* fix: start queue blocking UI by @eddyizm in https://github.com/eddyizm/tempus/pull/283
+
+## New Contributors
+* @mikaeldui made their first contribution in https://github.com/eddyizm/tempus/pull/280
+* @antebudimir made their first contribution in https://github.com/eddyizm/tempus/pull/276
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.6...v4.3.0
+
+## [4.2.6](https://github.com/eddyizm/tempo/releases/tag/v4.2.6) (2025-11-22)
+## What's Changed
+* fix: Fix player queue soft-lock by @shrapnelnet in https://github.com/eddyizm/tempus/pull/266
+* chore: Add Catalan i18n by @marcriera in https://github.com/eddyizm/tempus/pull/268
+* chore: Refactor MediaService by @pca006132 in https://github.com/eddyizm/tempus/pull/267
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/272
+* chore(i18n): Update Italian translation by @66Bunz in https://github.com/eddyizm/tempus/pull/278
+
+## New Contributors
+* @marcriera made their first contribution in https://github.com/eddyizm/tempus/pull/268
+* @66Bunz made their first contribution in https://github.com/eddyizm/tempus/pull/278
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.4...v4.2.6
+
+## [4.2.4](https://github.com/eddyizm/tempo/releases/tag/v4.2.4) (2025-11-15)
+## What's Changed
+* chore: Update russian strings.xml by @Sevinfolds in https://github.com/eddyizm/tempus/pull/249
+* fix: disallow duplicate songs in queue by @eddyizm in https://github.com/eddyizm/tempus/pull/252
+* fix:github release check by @eddyizm in https://github.com/eddyizm/tempus/pull/253
+* fix: Fixed crash when viewing share by @drakeerv in https://github.com/eddyizm/tempus/pull/255
+* chore: Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/257
+* fix: add podcast/radio channel visible when empty podcasts/radio by @eddyizm in https://github.com/eddyizm/tempus/pull/260
+
+## New Contributors
+* @Sevinfolds made their first contribution in https://github.com/eddyizm/tempus/pull/249
+* @drakeerv made their first contribution in https://github.com/eddyizm/tempus/pull/255
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.2.0...v4.2.4
 ## [4.2.0](https://github.com/eddyizm/tempo/releases/tag/v4.2.0) (2025-11-09)
 ## What's Changed
 * fix: Equalizer fix in main build variant by @jaime-grj in https://github.com/eddyizm/tempus/pull/239

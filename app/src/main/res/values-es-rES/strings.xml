@@ -177,6 +177,7 @@
     <string name="menu_filter_download">Descargado</string>
     <string name="menu_group_by_album">Álbum</string>
     <string name="menu_group_by_artist">Artista</string>
+    <string name="settings_github_update_title">Comprobar actualizaciones en GitHub</string>
     <string name="settings_scan_result">Escaneo: hay %1$d pistas</string>
     <string name="settings_support_title">Soporte al usuario</string>
     <string name="settings_image_size">Resolución de la imagen</string>
@@ -185,7 +186,7 @@
     <string name="settings_logout_title">Cerrar sesión</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Siga el desarrollo</string>
-    <string name="settings_github_title">Github</string>
+    <string name="settings_github_title">GitHub</string>
     <string name="menu_group_by_genre">Género</string>
     <string name="menu_group_by_track">Pista</string>
     <string name="menu_group_by_year">Año</string>
@@ -199,6 +200,7 @@
     <string name="menu_sort_artist">Artista</string>
     <string name="menu_sort_name">Nombre</string>
     <string name="menu_sort_random">Aleatorio</string>
+    <string name="menu_sort_album_count">Número de álbumes</string>
     <string name="menu_sort_recently_added">Añadido recientemente</string>
     <string name="menu_sort_recently_played">Reproducido recientemente</string>
     <string name="menu_sort_most_played">Lo más reproducido</string>
@@ -481,6 +483,7 @@
     <string name="player_lyrics_downloaded_content_description">Letras descargadas para uso sin conexión</string>
     <string name="player_lyrics_download_success">Letra guardada para uso sin conexión</string>
     <string name="settings_allow_playlist_duplicates">Permitir añadir pistas repetidas a la lista</string>
+    <string name="settings_github_update_summary">Si se usa la versión de GitHub, la app comprobará nuevas actualizaciones del APK.</string>
     <string name="settings_support_summary">Participa en las discusiones y el soporte de la comunidad</string>
     <string name="settings_show_mini_shuffle_button">Mostrar el botón «Aleatorio»</string>
     <string name="settings_auto_download_lyrics">Descargar automáticamente las letras</string>
@@ -505,4 +508,7 @@
     <string name="asset_link_error_album">No se ha podido abrir el álbum</string>
     <string name="asset_link_error_artist">No se ha podido abrir el artista</string>
     <string name="asset_link_error_playlist">No se ha podido abrir la lista de reproducción</string>
+    <string name="settings_github_update">Actualizaciones</string>
+    <string name="settings_artist_sort_by_album_count">Ordenar artistas por número de álbumes</string>
+    <string name="settings_artist_sort_by_album_count_summary">Ordena los artistas por número de álbumes si la opción está habilitada. Si no, los ordena por nombre.</string>
 </resources>

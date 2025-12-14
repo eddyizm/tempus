@@ -1,0 +1,4 @@
+* chore: Add Obtainium badge to README
+* fix: Revert "refactor MediaService"
+* feat: add play functionality to library folder/index items
+* fix: start queue blocking UI

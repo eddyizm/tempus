@@ -1,8 +1,9 @@
+<?xml version="1.0"?>
 <resources>
     <string-array name="theme_list_titles">
-        <item>Chiaro</item>
-        <item>Scuro</item>
-        <item>Predefinito del sistema</item>
+        <item>Clar</item>
+        <item>Fosc</item>
+        <item>Valor per defecte del sistema</item>
     </string-array>
     <string-array name="theme_list_values">
         <item>light</item>
@@ -11,9 +12,9 @@
     </string-array>
 
     <string-array name="pref_cache_size_titles">
-        <item>Alto</item>
-        <item>Medio</item>
-        <item>Basso</item>
+        <item>Alta</item>
+        <item>Mitjana</item>
+        <item>Baixa</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
@@ -22,9 +23,9 @@
     </string-array>
 
     <string-array name="pref_image_size_titles">
-        <item>Alto</item>
-        <item>Medio</item>
-        <item>Basso</item>
+        <item>Alta</item>
+        <item>Mitjana</item>
+        <item>Baixa</item>
     </string-array>
     <string-array name="pref_image_size_values">
         <item>-1</item>
@@ -33,7 +34,7 @@
     </string-array>
 
     <string-array name="streaming_cache_size_titles">
-        <item>Disabilitato</item>
+        <item>Inhabilitada</item>
         <item>128 MiB</item>
         <item>256 MiB</item>
         <item>512 MiB</item>
@@ -48,7 +49,7 @@
     </string-array>
 
     <string-array name="max_bitrate_wifi_list_titles">
-        <item>Originale</item>
+        <item>Original</item>
         <item>32 kbps</item>
         <item>48 kbps</item>
         <item>64 kbps</item>
@@ -77,7 +78,7 @@
     </string-array>
 
     <string-array name="max_bitrate_mobile_list_titles">
-        <item>Originale</item>
+        <item>Original</item>
         <item>32 kbps</item>
         <item>48 kbps</item>
         <item>64 kbps</item>
@@ -106,7 +107,7 @@
     </string-array>
 
     <string-array name="max_bitrate_download_list_titles">
-        <item>Originale</item>
+        <item>Original</item>
         <item>32 kbps</item>
         <item>48 kbps</item>
         <item>64 kbps</item>
@@ -135,11 +136,11 @@
     </string-array>
 
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>Riproduzione diretta</item>
+        <item>Reproducció directa</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_wifi_list_values">
         <item>raw</item>
@@ -150,11 +151,11 @@
     </string-array>
 
     <string-array name="audio_transcode_format_mobile_list_titles">
-        <item>Riproduzione diretta</item>
+        <item>Reproducció directa</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_mobile_list_values">
         <item>raw</item>
@@ -165,11 +166,11 @@
     </string-array>
 
     <string-array name="audio_transcode_format_download_list_titles">
-        <item>Download diretto</item>
+        <item>Baixada directa</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_download_list_values">
         <item>raw</item>
@@ -180,9 +181,9 @@
     </string-array>
 
     <string-array name="queue_syncing_countdown_titles">
-        <item>Dieci secondi</item>
-        <item>Cinque secondi</item>
-        <item>Due secondi</item>
+        <item>10 segons</item>
+        <item>5 segons</item>
+        <item>2 segons</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
         <item>10</item>
@@ -191,9 +192,9 @@
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
-        <item>Alto</item>
-        <item>Medio</item>
-        <item>Basso</item>
+        <item>Alta</item>
+        <item>Mitjana</item>
+        <item>Baixa</item>
     </string-array>
     <string-array name="rounded_corner_size_values">
         <item>18</item>
@@ -202,10 +203,10 @@
     </string-array>
 
     <string-array name="replay_gain_titles">
-        <item>Disabilitato</item>
-        <item>Traccia</item>
-        <item>Album</item>
-        <item>Auto</item>
+        <item>Inhabilitat</item>
+        <item>Pista</item>
+        <item>Àlbum</item>
+        <item>Automàtic</item>
     </string-array>
     <string-array name="replay_gain_values">
         <item>disabled</item>
@@ -215,10 +216,10 @@
     </string-array>
 
     <string-array name="transcoded_download_option_list_titles">
-        <item>Non transcodificare</item>
-        <item>Impostazioni del server</item>
-        <item>Formato transcodifica Wi-Fi</item>
-        <item>Formato transcodifica mobile</item>
+        <item>Sense transcodificació</item>
+        <item>Paràmetres del servidor</item>
+        <item>Format de transcodificació amb wifi</item>
+        <item>Format de transcodificació amb dades mòbils</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
         <item>0</item>
@@ -228,10 +229,10 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>Minimo</item>
-        <item>Moderato</item>
-        <item>Aggressivo</item>
-        <item>Estremo</item>
+        <item>Mínima</item>
+        <item>Moderada</item>
+        <item>Agressiva</item>
+        <item>Extrema</item>
     </string-array>
     <string-array name="buffering_strategy_values">
         <item>.1</item>
@@ -239,13 +240,13 @@
         <item>4</item>
         <item>8</item>
     </string-array>
-    
+
     <string-array name="skip_min_star_rating_titles">
-        <item>Minimo 0 stelle</item>
-        <item>Minimo 1 stella</item>
-        <item>Minimo 2 stelle</item>
-        <item>Minimo 3 stelle</item>
-        <item>Minimo 4 stelle</item>
+        <item>Mínim 0 estrelles</item>
+        <item>Mínim 1 estrella</item>
+        <item>Mínim 2 estrelles</item>
+        <item>Mínim 3 estrelles</item>
+        <item>Mínim 4 estrelles</item>
     </string-array>
     <string-array name="skip_min_star_rating_values">
         <item>0</item>

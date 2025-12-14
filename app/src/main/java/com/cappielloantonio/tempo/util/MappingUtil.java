@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.util;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LifecycleOwner;
@@ -35,84 +36,106 @@ public class MappingUtil {
         return mediaItems;
     }
 
+    private static final String TAG = "MappingUtil";
+
     public static MediaItem mapMediaItem(Child media) {
-        Uri uri = getUri(media);
-        Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(media.getCoverArtId(), Preferences.getImageSize()));
+        try {
+            Uri uri = getUri(media);
+            String coverArtId = media.getCoverArtId();
+            Uri artworkUri = null;
 
-        Bundle bundle = new Bundle();
-        bundle.putString("id", media.getId());
-        bundle.putString("parentId", media.getParentId());
-        bundle.putBoolean("isDir", media.isDir());
-        bundle.putString("title", media.getTitle());
-        bundle.putString("album", media.getAlbum());
-        bundle.putString("artist", media.getArtist());
-        bundle.putInt("track", media.getTrack() != null ? media.getTrack() : 0);
-        bundle.putInt("year", media.getYear() != null ? media.getYear() : 0);
-        bundle.putString("genre", media.getGenre());
-        bundle.putString("coverArtId", media.getCoverArtId());
-        bundle.putLong("size", media.getSize() != null ? media.getSize() : 0);
-        bundle.putString("contentType", media.getContentType());
-        bundle.putString("suffix", media.getSuffix());
-        bundle.putString("transcodedContentType", media.getTranscodedContentType());
-        bundle.putString("transcodedSuffix", media.getTranscodedSuffix());
-        bundle.putInt("duration", media.getDuration() != null ? media.getDuration() : 0);
-        bundle.putInt("bitrate", media.getBitrate() != null ? media.getBitrate() : 0);
-        bundle.putInt("samplingRate", media.getSamplingRate() != null ? media.getSamplingRate() : 0);
-        bundle.putInt("bitDepth", media.getBitDepth() != null ? media.getBitDepth() : 0);
-        bundle.putString("path", media.getPath());
-        bundle.putBoolean("isVideo", media.isVideo());
-        bundle.putInt("userRating", media.getUserRating() != null ? media.getUserRating() : 0);
-        bundle.putDouble("averageRating", media.getAverageRating() != null ? media.getAverageRating() : 0);
-        bundle.putLong("playCount", media.getPlayCount() != null ? media.getPlayCount() : 0);
-        bundle.putInt("discNumber", media.getDiscNumber() != null ? media.getDiscNumber() : 0);
-        bundle.putLong("created", media.getCreated() != null ? media.getCreated().getTime() : 0);
-        bundle.putLong("starred", media.getStarred() != null ? media.getStarred().getTime() : 0);
-        bundle.putString("albumId", media.getAlbumId());
-        bundle.putString("artistId", media.getArtistId());
-        bundle.putString("type", Constants.MEDIA_TYPE_MUSIC);
-        bundle.putLong("bookmarkPosition", media.getBookmarkPosition() != null ? media.getBookmarkPosition() : 0);
-        bundle.putInt("originalWidth", media.getOriginalWidth() != null ? media.getOriginalWidth() : 0);
-        bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
-        bundle.putString("uri", uri.toString());
-        bundle.putString("assetLinkSong", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()));
-        bundle.putString("assetLinkAlbum", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()));
-        bundle.putString("assetLinkArtist", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()));
-        bundle.putString("assetLinkGenre", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_GENRE, media.getGenre()));
-        Integer year = media.getYear();
-        bundle.putString("assetLinkYear", year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year)) : null);
+            if (coverArtId != null) {
+                artworkUri = Uri.parse(CustomGlideRequest.createUrl(coverArtId, Preferences.getImageSize()));
+            }
 
-        return new MediaItem.Builder()
-                .setMediaId(media.getId())
-                .setMediaMetadata(
-                        new MediaMetadata.Builder()
-                                .setTitle(media.getTitle())
-                                .setTrackNumber(media.getTrack() != null ? media.getTrack() : 0)
-                                .setDiscNumber(media.getDiscNumber() != null ? media.getDiscNumber() : 0)
-                                .setReleaseYear(media.getYear() != null ? media.getYear() : 0)
-                                .setAlbumTitle(media.getAlbum())
-                                .setArtist(media.getArtist())
-                                .setArtworkUri(artworkUri)
-                                .setUserRating(new HeartRating(media.getStarred() != null))
-                                .setSupportedCommands(
+            Bundle bundle = new Bundle();
+            bundle.putString("id", media.getId());
+            bundle.putString("parentId", media.getParentId());
+            bundle.putBoolean("isDir", media.isDir());
+            
+            bundle.putString("title", media.getTitle());
+            bundle.putString("album", media.getAlbum());
+            bundle.putString("artist", media.getArtist());
+
+            bundle.putInt("track", media.getTrack() != null ? media.getTrack() : 0);
+            bundle.putInt("year", media.getYear() != null ? media.getYear() : 0);
+            bundle.putString("genre", media.getGenre());
+            bundle.putString("coverArtId", coverArtId);
+            bundle.putLong("size", media.getSize() != null ? media.getSize() : 0);
+            bundle.putString("contentType", media.getContentType());
+            bundle.putString("suffix", media.getSuffix());
+            bundle.putString("transcodedContentType", media.getTranscodedContentType());
+            bundle.putString("transcodedSuffix", media.getTranscodedSuffix());
+            bundle.putInt("duration", media.getDuration() != null ? media.getDuration() : 0);
+            bundle.putInt("bitrate", media.getBitrate() != null ? media.getBitrate() : 0);
+            bundle.putInt("samplingRate", media.getSamplingRate() != null ? media.getSamplingRate() : 0);
+            bundle.putInt("bitDepth", media.getBitDepth() != null ? media.getBitDepth() : 0);
+            bundle.putString("path", media.getPath());
+            bundle.putBoolean("isVideo", media.isVideo());
+            bundle.putInt("userRating", media.getUserRating() != null ? media.getUserRating() : 0);
+            bundle.putDouble("averageRating", media.getAverageRating() != null ? media.getAverageRating() : 0);
+            bundle.putLong("playCount", media.getPlayCount() != null ? media.getPlayCount() : 0);
+            bundle.putInt("discNumber", media.getDiscNumber() != null ? media.getDiscNumber() : 0);
+            bundle.putLong("created", media.getCreated() != null ? media.getCreated().getTime() : 0);
+            bundle.putLong("starred", media.getStarred() != null ? media.getStarred().getTime() : 0);
+            bundle.putString("albumId", media.getAlbumId());
+            bundle.putString("artistId", media.getArtistId());
+            bundle.putString("type", Constants.MEDIA_TYPE_MUSIC);
+            bundle.putLong("bookmarkPosition", media.getBookmarkPosition() != null ? media.getBookmarkPosition() : 0);
+            bundle.putInt("originalWidth", media.getOriginalWidth() != null ? media.getOriginalWidth() : 0);
+            bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
+            bundle.putString("uri", uri.toString());
+            
+            bundle.putString("assetLinkSong", media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
+            bundle.putString("assetLinkAlbum", media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()) : null);
+            bundle.putString("assetLinkArtist", media.getArtistId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()) : null);
+            bundle.putString("assetLinkGenre", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_GENRE, media.getGenre()));
+            Integer year = media.getYear();
+            bundle.putString("assetLinkYear", year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year)) : null);
+
+            return new MediaItem.Builder()
+                    .setMediaId(media.getId())
+                    .setMediaMetadata(
+                            new MediaMetadata.Builder()
+                                    .setTitle(media.getTitle())
+                                    .setTrackNumber(media.getTrack() != null ? media.getTrack() : 0)
+                                    .setDiscNumber(media.getDiscNumber() != null ? media.getDiscNumber() : 0)
+                                    .setReleaseYear(media.getYear() != null ? media.getYear() : 0)
+                                    .setAlbumTitle(media.getAlbum())
+                                    .setArtist(media.getArtist())
+                                    .setArtworkUri(artworkUri)
+                                    .setUserRating(new HeartRating(media.getStarred() != null))
+                                    .setSupportedCommands(
                                         ImmutableList.of(
                                                 Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
                                                 Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
                                         )
-                                )
-                                .setExtras(bundle)
-                                .setIsBrowsable(false)
-                                .setIsPlayable(true)
-                                .build()
-                )
-                .setRequestMetadata(
-                        new MediaItem.RequestMetadata.Builder()
-                                .setMediaUri(uri)
-                                .setExtras(bundle)
-                                .build()
-                )
-                .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
-                .setUri(uri)
-                .build();
+                                    )
+                                    .setExtras(bundle)
+                                    .setIsBrowsable(false)
+                                    .setIsPlayable(true)
+                                    .build()
+                    )
+                    .setRequestMetadata(
+                            new MediaItem.RequestMetadata.Builder()
+                                    .setMediaUri(uri)
+                                    .setExtras(bundle)
+                                    .build()
+                    )
+                    .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
+                    .setUri(uri)
+                    .build();
+
+        } catch (Exception e) {
+            String id = media != null ? media.getId() : "NULL_MEDIA_OBJECT";
+            String title = media != null ? media.getTitle() : "N/A";
+            
+            Log.e(TAG, "Instant Mix CRASH! Failed to map song to MediaItem. " +
+                       "Problematic Song ID: " + id + 
+                       ", Title: " + title + 
+                       ". Inspect this song's Subsonic data for missing fields.", e);
+            throw new RuntimeException("Mapping failed for song ID: " + id, e);
+        }
     }
 
     public static MediaItem mapMediaItem(MediaItem old) {

@@ -48,11 +48,11 @@ public class SearchViewModel extends AndroidViewModel {
     }
 
     public void insertNewSearch(String search) {
-        searchingRepository.insert(new RecentSearch(search));
+        searchingRepository.insert(new RecentSearch(search, System.currentTimeMillis() / 1000L));
     }
 
     public void deleteRecentSearch(String search) {
-        searchingRepository.delete(new RecentSearch(search));
+        searchingRepository.delete(new RecentSearch(search, 0));
     }
 
     public LiveData<List<String>> getSearchSuggestion(String query) {

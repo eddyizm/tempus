@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.service.EqualizerManager
+import com.cappielloantonio.tempo.service.BaseMediaService
 import com.cappielloantonio.tempo.service.MediaService
 import com.cappielloantonio.tempo.util.Preferences
 
@@ -35,7 +36,7 @@ class EqualizerFragment : Fragment() {
     private val equalizerUpdatedReceiver = object : BroadcastReceiver() {
         @OptIn(UnstableApi::class)
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == MediaService.ACTION_EQUALIZER_UPDATED) {
+            if (intent?.action == BaseMediaService.ACTION_EQUALIZER_UPDATED) {
                 initUI()
                 restoreEqualizerPreferences()
             }
@@ -45,7 +46,7 @@ class EqualizerFragment : Fragment() {
     private val connection = object : ServiceConnection {
         @OptIn(UnstableApi::class)
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val binder = service as MediaService.LocalBinder
+            val binder = service as BaseMediaService.LocalBinder
             equalizerManager = binder.getEqualizerManager()
             initUI()
             restoreEqualizerPreferences()
@@ -60,14 +61,14 @@ class EqualizerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Intent(requireContext(), MediaService::class.java).also { intent ->
-            intent.action = MediaService.ACTION_BIND_EQUALIZER
+            intent.action = BaseMediaService.ACTION_BIND_EQUALIZER
             requireActivity().bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
         if (!receiverRegistered) {
             ContextCompat.registerReceiver(
                 requireContext(),
                 equalizerUpdatedReceiver,
-                IntentFilter(MediaService.ACTION_EQUALIZER_UPDATED),
+                IntentFilter(BaseMediaService.ACTION_EQUALIZER_UPDATED),
                 ContextCompat.RECEIVER_NOT_EXPORTED
             )
             receiverRegistered = true

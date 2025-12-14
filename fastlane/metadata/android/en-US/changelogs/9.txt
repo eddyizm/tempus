@@ -1,0 +1,3 @@
+* chore: bringing in media service refactor previously reverted after more testing 
+* fix: refactor start queue to put the db writing in the background to address instant mix bug
+* Feat: playerqueue fab allows playqueue actions -> saving to playlist, download all, load queue, shuffle, clean queue 

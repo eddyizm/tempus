@@ -18,8 +18,10 @@ import com.cappielloantonio.tempo.databinding.ItemPlayerQueueSongBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
+import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -93,6 +95,20 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
                 }
             }
         });
+
+        DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(holder.itemView.getContext());
+
+        if (downloaderManager != null) {
+            boolean isDownloaded = downloaderManager.isDownloaded(song.getId());
+
+            if (isDownloaded) {
+                holder.item.downloadIndicatorIcon.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.downloadIndicatorIcon.setVisibility(View.GONE);
+            }
+        } else {
+            holder.item.downloadIndicatorIcon.setVisibility(View.GONE);
+        }
 
         if (Preferences.showItemRating()) {
             if (song.getStarred() == null && song.getUserRating() == null) {
