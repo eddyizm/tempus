@@ -2,14 +2,18 @@ package com.cappielloantonio.tempo.ui.fragment;
 
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -40,6 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @UnstableApi
 public class ArtistPageFragment extends Fragment implements ClickCallback {
@@ -63,7 +68,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         artistPageViewModel = new ViewModelProvider(requireActivity()).get(ArtistPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        init();
+        init(view);
         initAppBar();
         initArtistInfo();
         initPlayButtons();
@@ -100,7 +105,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
-    private void init() {
+    private void init(View view) {
         artistPageViewModel.setArtist(requireArguments().getParcelable(Constants.ARTIST_OBJECT));
 
         bind.mostStreamedSongTextViewClickable.setOnClickListener(v -> {
@@ -109,6 +114,10 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             bundle.putParcelable(Constants.ARTIST_OBJECT, artistPageViewModel.getArtist());
             activity.navController.navigate(R.id.action_artistPageFragment_to_songListPageFragment, bundle);
         });
+
+        ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
+        favoriteToggle.setChecked(artistPageViewModel.getArtist().getStarred() != null);
+        favoriteToggle.setOnClickListener(v -> artistPageViewModel.setFavorite(requireContext()));
     }
 
     private void initAppBar() {
@@ -133,10 +142,54 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                 if (bind != null)
                     bind.bioMoreTextViewClickable.setVisibility(artistInfo.getLastFmUrl() != null ? View.VISIBLE : View.GONE);
 
-                if (getContext() != null && bind != null) CustomGlideRequest.Builder
-                        .from(requireContext(), artistPageViewModel.getArtist().getId(), CustomGlideRequest.ResourceType.Artist)
-                        .build()
-                        .into(bind.artistBackdropImageView);
+                if (getContext() != null && bind != null) {
+                    ArtistID3 currentArtist = artistPageViewModel.getArtist();
+                        String primaryId = currentArtist.getCoverArtId() != null && !currentArtist.getCoverArtId().trim().isEmpty()
+                            ? currentArtist.getCoverArtId()
+                            : currentArtist.getId();
+                    
+                    final String fallbackId = (Objects.requireNonNull(primaryId).equals(currentArtist.getCoverArtId()) &&
+                                            currentArtist.getId() != null && 
+                                            !currentArtist.getId().equals(primaryId))
+                            ? currentArtist.getId()
+                            : null;
+                    
+                    CustomGlideRequest.Builder
+                            .from(requireContext(), primaryId, CustomGlideRequest.ResourceType.Artist)
+                            .build()
+                            .listener(new com.bumptech.glide.request.RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable com.bumptech.glide.load.engine.GlideException e,
+                                                            Object model,
+                                                            @NonNull com.bumptech.glide.request.target.Target<Drawable> target,
+                                                            boolean isFirstResource) {
+                                    if (e != null) {
+                                        e.getMessage();
+                                        if (e.getMessage().contains("400") && fallbackId != null) {
+
+                                            Log.d("ArtistCover", "Primary ID failed (400), trying fallback: " + fallbackId);
+
+                                            CustomGlideRequest.Builder
+                                                    .from(requireContext(), fallbackId, CustomGlideRequest.ResourceType.Artist)
+                                                    .build()
+                                                    .into(bind.artistBackdropImageView);
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(@NonNull Drawable resource,
+                                                               @NonNull Object model,
+                                                               com.bumptech.glide.request.target.Target<Drawable> target,
+                                                               @NonNull com.bumptech.glide.load.DataSource dataSource,
+                                                               boolean isFirstResource) {
+                                    return false;
+                                }
+                            })
+                            .into(bind.artistBackdropImageView);
+                }
 
                 if (bind != null) bind.bioTextView.setText(normalizedBio);
 
@@ -150,29 +203,24 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             }
         });
     }
-
     private void initPlayButtons() {
-        bind.artistPageShuffleButton.setOnClickListener(v -> {
-            artistPageViewModel.getArtistShuffleList().observe(getViewLifecycleOwner(), songs -> {
-                if (!songs.isEmpty()) {
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                    activity.setBottomSheetInPeek(true);
-                } else {
-                    Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_tracks), Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+        bind.artistPageShuffleButton.setOnClickListener(v -> artistPageViewModel.getArtistShuffleList().observe(getViewLifecycleOwner(), songs -> {
+            if (!songs.isEmpty()) {
+                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                activity.setBottomSheetInPeek(true);
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_tracks), Toast.LENGTH_SHORT).show();
+            }
+        }));
 
-        bind.artistPageRadioButton.setOnClickListener(v -> {
-            artistPageViewModel.getArtistInstantMix().observe(getViewLifecycleOwner(), songs -> {
-                if (songs != null && !songs.isEmpty()) {
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                    activity.setBottomSheetInPeek(true);
-                } else {
-                    Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_radio), Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
+        bind.artistPageRadioButton.setOnClickListener(v -> artistPageViewModel.getArtistInstantMix().observe(getViewLifecycleOwner(), songs -> {
+            if (songs != null && !songs.isEmpty()) {
+                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                activity.setBottomSheetInPeek(true);
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_radio), Toast.LENGTH_SHORT).show();
+            }
+        }));
     }
 
     private void initTopSongsView() {
