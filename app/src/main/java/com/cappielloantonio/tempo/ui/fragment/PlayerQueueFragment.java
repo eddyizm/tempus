@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerQueueBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.service.DownloaderManager;
@@ -32,6 +33,8 @@ import com.cappielloantonio.tempo.ui.adapter.PlayerSongQueueAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -384,28 +387,62 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
             return;
         }
 
-        List<MediaItem> mediaItemsToDownload = MappingUtil.mapMediaItems(queueSongs);
+        int downloadCount = 0;
+        
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            List<MediaItem> mediaItemsToDownload = MappingUtil.mapMediaItems(queueSongs);
+            List<com.cappielloantonio.tempo.model.Download> downloadModels = new ArrayList<>();
 
-        List<com.cappielloantonio.tempo.model.Download> downloadModels = new ArrayList<>();
+            for (Child child : queueSongs) {
+                com.cappielloantonio.tempo.model.Download downloadModel =
+                        new com.cappielloantonio.tempo.model.Download(child);
+                downloadModel.setArtist(child.getArtist());
+                downloadModel.setAlbum(child.getAlbum());
+                downloadModel.setCoverArtId(child.getCoverArtId());
+                downloadModels.add(downloadModel);
+            }
 
-        for (Child child : queueSongs) {
-            com.cappielloantonio.tempo.model.Download downloadModel =
-                    new com.cappielloantonio.tempo.model.Download(child);
-            downloadModel.setArtist(child.getArtist());
-            downloadModel.setAlbum(child.getAlbum());
-            downloadModel.setCoverArtId(child.getCoverArtId());
-            downloadModels.add(downloadModel);
-        }
+            DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(requireContext());
 
-        DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(requireContext());
-
-        if (downloaderManager != null) {
-            downloaderManager.download(mediaItemsToDownload, downloadModels);
-            Toast.makeText(requireContext(), "Starting download of " + queueSongs.size() + " songs in the background.", Toast.LENGTH_SHORT).show();
+            if (downloaderManager != null) {
+                downloaderManager.download(mediaItemsToDownload, downloadModels);
+                downloadCount = queueSongs.size();
+                Toast.makeText(requireContext(), 
+                    getResources().getQuantityString(R.plurals.songs_download_started, downloadCount, downloadCount), 
+                    Toast.LENGTH_SHORT).show();
+                    
+                new Handler().postDelayed(() -> {
+                    if (playerSongQueueAdapter != null) {
+                        playerSongQueueAdapter.notifyDataSetChanged();
+                    }
+                }, 1000);
+            } else {
+                Log.e(TAG, "DownloaderManager not initialized. Check DownloadUtil.");
+                Toast.makeText(requireContext(), "Download service unavailable.", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Log.e(TAG, "DownloaderManager not initialized. Check DownloadUtil.");
-            Toast.makeText(requireContext(), "Download service unavailable.", Toast.LENGTH_SHORT).show();
+            for (Child song : queueSongs) {
+                if (ExternalAudioReader.getUri(song) == null) {
+                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                    downloadCount++;
+                }
+            }
+            
+            if (downloadCount > 0) {
+                Toast.makeText(requireContext(),
+                    getResources().getQuantityString(R.plurals.songs_download_started, downloadCount, downloadCount),
+                    Toast.LENGTH_SHORT).show();
+                    
+                new Handler().postDelayed(() -> {
+                    if (playerSongQueueAdapter != null) {
+                        playerSongQueueAdapter.notifyDataSetChanged();
+                    }
+                }, 2000);
+            } else {
+                Toast.makeText(requireContext(), "All songs already downloaded", Toast.LENGTH_SHORT).show();
+            }
         }
+        
         toggleFabMenu();
     }
 

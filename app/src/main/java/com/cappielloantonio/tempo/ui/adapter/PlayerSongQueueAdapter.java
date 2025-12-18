@@ -23,6 +23,7 @@ import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -31,7 +32,9 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueueAdapter.ViewHolder> {
     private static final String TAG = "PlayerSongQueueAdapter";
@@ -39,7 +42,7 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
     private List<Child> songs;
-
+    private final Map<String, Boolean> downloadStatusCache = new ConcurrentHashMap<>();
     private String currentPlayingId;
     private boolean isPlaying;
     private List<Integer> currentPlayingPositions = Collections.emptyList();
@@ -80,7 +83,6 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
                 .build()
                 .thumbnail(thumbnail)
                 .into(holder.item.queueSongCoverImageView);
-
         MediaManager.getCurrentIndex(mediaBrowserListenableFuture, new MediaIndexCallback() {
             @Override
             public void onRecovery(int index) {
@@ -96,16 +98,19 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
             }
         });
 
-        DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(holder.itemView.getContext());
+        boolean isDownloaded = false;
 
-        if (downloaderManager != null) {
-            boolean isDownloaded = downloaderManager.isDownloaded(song.getId());
-
-            if (isDownloaded) {
-                holder.item.downloadIndicatorIcon.setVisibility(View.VISIBLE);
-            } else {
-                holder.item.downloadIndicatorIcon.setVisibility(View.GONE);
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(holder.itemView.getContext());
+            if (downloaderManager != null) {
+                isDownloaded = downloaderManager.isDownloaded(song.getId());
             }
+        } else {
+            isDownloaded = ExternalAudioReader.getUri(song) != null;
+        }
+
+        if (isDownloaded) {
+            holder.item.downloadIndicatorIcon.setVisibility(View.VISIBLE);
         } else {
             holder.item.downloadIndicatorIcon.setVisibility(View.GONE);
         }
@@ -169,7 +174,7 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
             holder.item.coverArtOverlay.setVisibility(View.INVISIBLE);
         }
     }
-
+    
     public List<Child> getItems() {
         return this.songs;
     }
