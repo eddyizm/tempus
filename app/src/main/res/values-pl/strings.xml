@@ -61,7 +61,7 @@
     <string name="delete_download_storage_dialog_positive_button">Kontynuuj</string>
     <string name="delete_download_storage_dialog_summary">Miej na uwadze to że kontynuowanie tej operacji spowoduje usunięcie wszystkich pobranych plików z wszystkich serwerów.</string>
     <string name="delete_download_storage_dialog_title">Usuwanie zapisanych plików</string>
-    <string name="description_empty_title">Brak opisu</string>
+    <string name="description_empty_title">Brak tekstu</string>
     <string name="disc_titlefull">Płyta %1$s - %2$s</string>
     <string name="disc_titleless">Płyta %1$s</string>
     <string name="download_directory_dialog_negative_button">Anuluj</string>
