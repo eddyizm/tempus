@@ -61,7 +61,7 @@
     <string name="delete_download_storage_dialog_positive_button">Kontynuuj</string>
     <string name="delete_download_storage_dialog_summary">Miej na uwadze to że kontynuowanie tej operacji spowoduje usunięcie wszystkich pobranych plików z wszystkich serwerów.</string>
     <string name="delete_download_storage_dialog_title">Usuwanie zapisanych plików</string>
-    <string name="description_empty_title">Brak opisu</string>
+    <string name="description_empty_title">Brak tekstu</string>
     <string name="disc_titlefull">Płyta %1$s - %2$s</string>
     <string name="disc_titleless">Płyta %1$s</string>
     <string name="download_directory_dialog_negative_button">Anuluj</string>
@@ -124,6 +124,10 @@
     <string name="home_sync_starred_albums_subtitle">Albumy oznaczone gwiazdką będą dostępne offline</string>
     <string name="home_sync_starred_artists_title">Synchronizacja wykonawców oznaczonych gwiazdką</string>
     <string name="home_sync_starred_artists_subtitle">Masz wykonawców oznaczonych gwiazdką, bez pobranej muzyki</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d piosenka wymaga synchronizacji</item>
+        <item quantity="other">%d piosenek wymaga synchronizacji</item>
+    </plurals>
     <string name="home_title_best_of">Najlepsze</string>
     <string name="home_title_discovery">Odkrywanie</string>
     <string name="home_title_discovery_shuffle_all_button">Odtwórz wszystkie losowo</string>
@@ -527,4 +531,6 @@
     <string name="folder_play_collecting">Zbieranie piosenek z folderu…</string>
     <string name="folder_play_playing">Odtwarzanie %d piosenek</string>
     <string name="folder_play_no_songs">Nie znaleziono piosenek w folderze</string>
+    <string name="search_sort_title">Sortuj ostatnie wyszukiwania chronologicznie</string>
+    <string name="search_sort_summary">Jeżeli włączone, sortuje wyszukiwania chronologicznie. Sortuje po naziwe jeżeli wyłączone.</string>    
 </resources>
