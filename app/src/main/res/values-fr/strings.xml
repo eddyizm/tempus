@@ -61,7 +61,7 @@
     <string name="delete_download_storage_dialog_positive_button">Continuer</string>
     <string name="delete_download_storage_dialog_summary">Attention, la poursuite de cette action entraînera la suppression définitive de tous les éléments sauvegardés et téléchargés à partir de tous les serveurs</string>
     <string name="delete_download_storage_dialog_title">Supprimer les éléments téléchargés</string>
-    <string name="description_empty_title">Aucune description disponible</string>
+    <string name="description_empty_title">Paroles non disponibles</string>
     <string name="disc_titlefull">Disque %1$s - %2$s</string>
     <string name="disc_titleless">Disque %1$s</string>
     <string name="download_directory_dialog_negative_button">Annuler</string>
