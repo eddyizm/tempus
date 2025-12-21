@@ -2,7 +2,19 @@
 
 ## Pending release...
 
+* chore: Update description_empty_title in English and Polish by @tyren234 in https://github.com/eddyizm/tempus/pull/307
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/310
+* fix: checks preference and writes files externally, updates the ui by @eddyizm in https://github.com/eddyizm/tempus/pull/312
+* chore: Update description_empty_title in Italian by @pochopsp in https://github.com/eddyizm/tempus/pull/314
+* chore: Update description_empty_title in French and Spanish by @pochopsp in https://github.com/eddyizm/tempus/pull/315
+
+## New Contributors
+* @tyren234 made their first contribution in https://github.com/eddyizm/tempus/pull/307
+* @pochopsp made their first contribution in https://github.com/eddyizm/tempus/pull/314
+
+
 ## [4.5.0](https://github.com/eddyizm/tempo/releases/tag/v4.5.0) (2025-12-12)
+## What's Changed
 * fix: updates starred syncing downloads to user defined directory by @eddyizm in https://github.com/eddyizm/tempus/pull/298
 * fix: handle empty albums and null mappings by @eddyizm in https://github.com/eddyizm/tempus/pull/301
 * feat: integrate sort recent searches chronologically by @J4mm3ris in https://github.com/eddyizm/tempus/pull/300
