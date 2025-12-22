@@ -248,15 +248,15 @@ public class HomeViewModel extends AndroidViewModel {
         pinnedPlaylists.setValue(Collections.emptyList());
 
         playlistRepository.getPlaylists(false, -1).observe(owner, remotes -> {
-            playlistRepository.getPinnedPlaylists().observe(owner, locals -> {
-                if (remotes != null && locals != null) {
-                    List<Playlist> toReturn = remotes.stream()
-                            .filter(remote -> locals.stream().anyMatch(local -> local.getId().equals(remote.getId())))
-                            .collect(Collectors.toList());
+            if (remotes != null && !remotes.isEmpty()) {
+                List<Playlist> playlists = new ArrayList<>(remotes);
+                Collections.shuffle(playlists);
+                List<Playlist> randomPlaylists = playlists.size() > 5
+                        ? playlists.subList(0, 5)
+                        : playlists;
 
-                    pinnedPlaylists.setValue(toReturn);
-                }
-            });
+                pinnedPlaylists.setValue(randomPlaylists);
+            }
         });
 
         return pinnedPlaylists;

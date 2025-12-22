@@ -228,6 +228,12 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             activity.navController.navigate(R.id.action_homeFragment_to_albumListPageFragment, bundle);
         });
 
+        bind.playlistCatalogueTextViewClickable.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.PLAYLIST_ALL, Constants.PLAYLIST_ALL);
+            activity.navController.navigate(R.id.action_homeFragment_to_playlistCatalogueFragment, bundle);
+        });
+
         bind.recentlyPlayedAlbumsTextViewClickable.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString(Constants.ALBUM_RECENTLY_PLAYED, Constants.ALBUM_RECENTLY_PLAYED);
