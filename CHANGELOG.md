@@ -7,6 +7,7 @@
 * fix: checks preference and writes files externally, updates the ui by @eddyizm in https://github.com/eddyizm/tempus/pull/312
 * chore: Update description_empty_title in Italian by @pochopsp in https://github.com/eddyizm/tempus/pull/314
 * chore: Update description_empty_title in French and Spanish by @pochopsp in https://github.com/eddyizm/tempus/pull/315
+* feat: added regular playlist to home view by @eddyizm in https://github.com/eddyizm/tempus/pull/322
 
 ## New Contributors
 * @tyren234 made their first contribution in https://github.com/eddyizm/tempus/pull/307
