@@ -2,6 +2,7 @@
 
 ## Pending release...
 
+## [4.6.0](https://github.com/eddyizm/tempo/releases/tag/v4.6.0) (2025-12-22)
 * chore: Update description_empty_title in English and Polish by @tyren234 in https://github.com/eddyizm/tempus/pull/307
 * chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/310
 * fix: checks preference and writes files externally, updates the ui by @eddyizm in https://github.com/eddyizm/tempus/pull/312
