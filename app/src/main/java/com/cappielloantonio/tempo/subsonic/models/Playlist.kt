@@ -22,6 +22,7 @@ open class Playlist(
     var name: String? = null,
     @ColumnInfo(name = "duration")
     var duration: Long = 0,
+    @SerializedName("coverArt")
     @ColumnInfo(name = "coverArt")
     var coverArtId: String? = null,
 ) : Parcelable {
