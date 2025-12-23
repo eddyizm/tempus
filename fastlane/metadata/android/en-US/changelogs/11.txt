@@ -1,0 +1,3 @@
+* fix: checks preference and writes files externally, updates the ui when downloading from the directories 
+* chore: Update description_empty_title in English, Italian, French, Polish and Spanish
+* feat: added regular playlist to home view
