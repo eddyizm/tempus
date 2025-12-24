@@ -30,7 +30,7 @@ This app works with any service that implements the Subsonic API, including:
 - [Gonic](https://github.com/sentriz/gonic)
 - [Ampache](https://github.com/ampache/ampache)
 - [NextCloud Music](https://apps.nextcloud.com/apps/music)
-
+- [Airsonic Advanced](https://github.com/kagemomiji/airsonic-advanced)
 
 
 

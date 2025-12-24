@@ -566,6 +566,7 @@
                 android:paddingBottom="8dp" />
         </LinearLayout>
 
+        <!--Starred Albums-->
         <LinearLayout
             android:id="@+id/starred_albums_sector"
             android:layout_width="match_parent"
@@ -615,6 +616,7 @@
                 android:paddingBottom="8dp" />
         </LinearLayout>
 
+        <!--Starred Artists-->
         <LinearLayout
             android:id="@+id/starred_artists_sector"
             android:layout_width="match_parent"
