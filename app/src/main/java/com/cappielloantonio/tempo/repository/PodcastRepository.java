@@ -66,88 +66,33 @@ public class PodcastRepository {
         return liveNewestPodcastEpisodes;
     }
 
-    public void refreshPodcasts() {
-        App.getSubsonicClientInstance(false)
+    public Call<ApiResponse> refreshPodcasts() {
+        return App.getSubsonicClientInstance(false)
                 .getPodcastClient()
-                .refreshPodcasts()
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .refreshPodcasts();
     }
 
-    public void createPodcastChannel(String url) {
-        App.getSubsonicClientInstance(false)
+    public Call<ApiResponse> createPodcastChannel(String url) {
+        return App.getSubsonicClientInstance(false)
                 .getPodcastClient()
-                .createPodcastChannel(url)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .createPodcastChannel(url);
     }
 
-    public void deletePodcastChannel(String channelId) {
-        App.getSubsonicClientInstance(false)
+    public Call<ApiResponse> deletePodcastChannel(String channelId) {
+        return App.getSubsonicClientInstance(false)
                 .getPodcastClient()
-                .deletePodcastChannel(channelId)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .deletePodcastChannel(channelId);
     }
 
-    public void deletePodcastEpisode(String episodeId) {
-        App.getSubsonicClientInstance(false)
+    public Call<ApiResponse> deletePodcastEpisode(String episodeId) {
+        return App.getSubsonicClientInstance(false)
                 .getPodcastClient()
-                .deletePodcastEpisode(episodeId)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .deletePodcastEpisode(episodeId);
     }
 
-    public void downloadPodcastEpisode(String episodeId) {
-        App.getSubsonicClientInstance(false)
+    public Call<ApiResponse> downloadPodcastEpisode(String episodeId) {
+        return App.getSubsonicClientInstance(false)
                 .getPodcastClient()
-                .downloadPodcastEpisode(episodeId)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .downloadPodcastEpisode(episodeId);
     }
 }
