@@ -7,6 +7,7 @@ import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
+import com.cappielloantonio.tempo.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,16 +57,26 @@ public class SongRepository {
     /**
      * Used by ViewModels. Updates the LiveData list incrementally as songs are found.
      */
-    public MutableLiveData<List<Child>> getInstantMix(String id, int count) {
+    public MutableLiveData<List<Child>> getInstantMix(String id, Constants.SEEDTYPE type, int count) {
         MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(new ArrayList<>());
 
-        performSmartMix(id, count, songs -> {
+        performSmartMix(id, type, count, songs -> {
             List<Child> current = instantMix.getValue();
             if (current != null) {
                 for (Child s : songs) {
                     if (!current.contains(s)) current.add(s);
                 }
-                instantMix.postValue(current);
+                
+                if (current.size() < count / 2) {
+                    fillWithRandom(count - current.size(), remainder -> {
+                        for (Child r : remainder) {
+                            if (!current.contains(r)) current.add(r);
+                        }
+                        instantMix.postValue(current);
+                    });
+                } else {
+                    instantMix.postValue(current);
+                }
             }
         });
 
@@ -75,57 +86,79 @@ public class SongRepository {
     /**
      * Overloaded method used by other Repositories
      */
-    public void getInstantMix(String id, int count, MediaCallbackInternal callback) {
-        performSmartMix(id, count, callback);
+    public void getInstantMix(String id, Constants.SEEDTYPE type, int count, MediaCallbackInternal callback) {
+        performSmartMix(id, type, count, callback);
     }
 
-    private void performSmartMix(final String id, final int count, final MediaCallbackInternal callback) {
-        App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getSimilarSongs(id, count)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        List<Child> songs = extractSongs(response, "similarSongs");
-                        if (!songs.isEmpty()) {
-                            callback.onSongsAvailable(songs);
-                        }
-                        if (songs.size() < count / 2) {
-                            fetchContextAndSeed(id, count, callback);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        fetchContextAndSeed(id, count, callback);
-                    }
-                });
+    private void performSmartMix(final String id, final Constants.SEEDTYPE type, final int count, final MediaCallbackInternal callback) {
+        switch (type) {
+            case ARTIST:
+                fetchSimilarByArtist(id, count, callback);
+                break;
+            case ALBUM:
+                fetchAlbumSongsThenSimilar(id, count, callback);
+                break;
+            case TRACK:
+                fetchSingleTrackThenSimilar(id, count, callback);
+                break;
+        }
     }
 
-    private void fetchContextAndSeed(final String id, final int count, final MediaCallbackInternal callback) {
-        App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getAlbum(id)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null) {
-                            List<Child> albumSongs = response.body().getSubsonicResponse().getAlbum().getSongs();
-                            if (albumSongs != null && !albumSongs.isEmpty()) {
-                                callback.onSongsAvailable(new ArrayList<>(albumSongs));
-                                String seedArtistId = albumSongs.get(0).getArtistId();
-                                fetchSimilarByArtist(seedArtistId, count, callback);
-                                return;
-                            }
-                        }
-                        fillWithRandom(count, callback);
+    private void fetchAlbumSongsThenSimilar(String albumId, int count, MediaCallbackInternal callback) {
+        App.getSubsonicClientInstance(false).getBrowsingClient().getAlbum(albumId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null) {
+                    List<Child> albumSongs = response.body().getSubsonicResponse().getAlbum().getSongs();
+                    if (albumSongs != null && !albumSongs.isEmpty()) {
+                        callback.onSongsAvailable(new ArrayList<>(albumSongs));
+                        fetchSimilarByArtist(albumSongs.get(0).getArtistId(), count, callback);
+                        return;
                     }
+                }
+                fillWithRandom(count, callback);
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                fillWithRandom(count, callback);
+            }
+        });
+    }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        fillWithRandom(count, callback);
+    private void fetchSingleTrackThenSimilar(String trackId, int count, MediaCallbackInternal callback) {
+        App.getSubsonicClientInstance(false).getBrowsingClient().getSong(trackId).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Child song = response.body().getSubsonicResponse().getSong();
+                    if (song != null) {
+                        callback.onSongsAvailable(Collections.singletonList(song));
+                        fetchSimilarOnly(trackId, count, callback);
+                        return;
                     }
-                });
+                }
+                fillWithRandom(count, callback);
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                fillWithRandom(count, callback);
+            }
+        });
+    }
+
+    private void fetchSimilarOnly(String id, int count, MediaCallbackInternal callback) {
+        App.getSubsonicClientInstance(false).getBrowsingClient().getSimilarSongs(id, count).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                List<Child> songs = extractSongs(response, "similarSongs");
+                if (!songs.isEmpty()) {
+                    callback.onSongsAvailable(songs);
+                } else {
+                    fillWithRandom(count, callback);
+                }
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                fillWithRandom(count, callback);
+            }
+        });
     }
 
     private void fetchSimilarByArtist(String artistId, final int count, final MediaCallbackInternal callback) {
@@ -138,9 +171,14 @@ public class SongRepository {
                         List<Child> similar = extractSongs(response, "similarSongs2");
                         if (!similar.isEmpty()) {
                             callback.onSongsAvailable(similar);
+                        } else {
+                            fillWithRandom(count, callback);
                         }
                     }
-                    @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
+                    @Override 
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        fillWithRandom(count, callback);
+                    }
                 });
     }
 

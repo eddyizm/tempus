@@ -26,6 +26,7 @@ import com.cappielloantonio.tempo.repository.SongRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -442,7 +443,7 @@ public class MediaManager {
         if (mediaItem != null && Preferences.isContinuousPlayEnabled() && Preferences.isInstantMixUsable()) {
             Preferences.setLastInstantMix();
 
-            LiveData<List<Child>> instantMix = getSongRepository().getInstantMix(mediaItem.mediaId, 10);
+            LiveData<List<Child>> instantMix = getSongRepository().getInstantMix(mediaItem.mediaId, Constants.SEEDTYPE.TRACK, 10);
             instantMix.observeForever(new Observer<List<Child>>() {
                 @Override
                 public void onChanged(List<Child> media) {
