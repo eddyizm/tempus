@@ -133,4 +133,7 @@ object Constants {
     const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF = "android.media3.session.demo.REPEAT_OFF"
     const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE = "android.media3.session.demo.REPEAT_ONE"
     const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL = "android.media3.session.demo.REPEAT_ALL"
+    enum class SEEDTYPE {
+        ARTIST, ALBUM, TRACK
+    }
 }
