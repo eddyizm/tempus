@@ -43,7 +43,6 @@ import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.viewmodel.AlbumBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -114,33 +113,36 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(albumBottomSheetViewModel.getAlbum().getStarred() != null);
-        favoriteToggle.setOnClickListener(v -> {
-            albumBottomSheetViewModel.setFavorite(requireContext());
-        });
+        favoriteToggle.setOnClickListener(v -> albumBottomSheetViewModel.setFavorite(requireContext()));
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-            AlbumRepository albumRepository = new AlbumRepository();
-            albumRepository.getInstantMix(album, 20, new MediaCallback() {
-                @Override
-                public void onError(Exception exception) {
-                    exception.printStackTrace();
+        AlbumRepository albumRepository = new AlbumRepository();
+        albumRepository.getInstantMix(album, 20, new MediaCallback() {
+            @Override
+            public void onError(Exception exception) {
+                exception.printStackTrace();
+            }
+
+            @Override
+            public void onLoadMedia(List<?> media) {
+                if (!isAdded() || getActivity() == null) {
+                    return;
                 }
 
-                @Override
-                public void onLoadMedia(List<?> media) {
-                    MusicUtil.ratingFilter((ArrayList<Child>) media);
+                MusicUtil.ratingFilter((ArrayList<Child>) media);
 
-                    if (!media.isEmpty()) {
-                        MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
-                        ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                if (!media.isEmpty()) {
+                    MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
+                    if (getActivity() instanceof MainActivity) {
+                        ((MainActivity) getActivity()).setBottomSheetInPeek(true);
                     }
-
-                    dismissBottomSheet();
                 }
-            });
-        });
 
+                dismissBottomSheet();
+            }
+        });
+    });
         TextView playRandom = view.findViewById(R.id.play_random_text_view);
         playRandom.setOnClickListener(v -> {
             AlbumRepository albumRepository = new AlbumRepository();
@@ -186,18 +188,16 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         });
 
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
-        addToPlaylist.setOnClickListener(v -> {
-            albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
+        addToPlaylist.setOnClickListener(v -> albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
 
-                PlaylistChooserDialog dialog = new PlaylistChooserDialog();
-                dialog.setArguments(bundle);
-                dialog.show(requireActivity().getSupportFragmentManager(), null);
+            PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+            dialog.setArguments(bundle);
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
 
-                dismissBottomSheet();
-            });
-        });
+            dismissBottomSheet();
+        }));
 
         removeAllTextView = view.findViewById(R.id.remove_all_text_view);
         albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
