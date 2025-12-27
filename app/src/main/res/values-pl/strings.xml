@@ -246,6 +246,7 @@
     <string name="podcast_channel_catalogue_title_expanded">Przeglądaj Kanały</string>
     <string name="podcast_channel_editor_dialog_hint_rss_url">Url RSS</string>
     <string name="podcast_channel_editor_dialog_title">Kanał Podcastu</string>
+    <string name="podcast_channel_not_supported_snackbar">Podcasty nie są obsługiwane przez ten serwer.</string>
     <string name="podcast_channel_page_title_description_section">Opis</string>
     <string name="podcast_channel_page_title_episode_section">Odcinki</string>
     <string name="podcast_channel_page_title_no_episode_available">Brak dostępnych odcinków</string>
@@ -260,10 +261,13 @@
     <string name="radio_editor_dialog_negative_button">Anuluj</string>
     <string name="radio_editor_dialog_neutral_button">Usuń</string>
     <string name="radio_editor_dialog_positive_button">Zapisz</string>
+    <string name="radio_editor_dialog_added">Radio station added Dodano stację radiową</string>
+    <string name="radio_editor_dialog_updated">Stacja radiowa uaktualniona</string>
     <string name="radio_editor_dialog_title">Internetowa Stacja Radiowa</string>
     <string name="radio_station_info_empty_button">Naciśnij aby ukryć tę sekcję\nEfekty będą widoczne po restarcie</string>
     <string name="radio_station_info_empty_subtitle">Gdy dodasz stację radiową, znajdziesz ją tutaj</string>
     <string name="radio_station_info_empty_title">Nie znaleziono stacji!</string>
+    <string name="radio_dialog_not_supported_snackbar">Zarządzanie internetowymi stacjami radiowymi nie jest obsługiwane przez ten serwer.</string>
     <string name="rating_dialog_negative_button">Anuluj</string>
     <string name="rating_dialog_positive_button">Zapisz</string>
     <string name="rating_dialog_title">Oceń</string>
