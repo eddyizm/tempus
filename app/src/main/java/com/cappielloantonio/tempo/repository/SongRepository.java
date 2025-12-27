@@ -172,6 +172,7 @@ public class SongRepository {
         }
         return new ArrayList<>();
     }
+
     public MutableLiveData<List<Child>> getRandomSample(int number, Integer fromYear, Integer toYear) {
         MutableLiveData<List<Child>> randomSongsSample = new MutableLiveData<>();
         App.getSubsonicClientInstance(false).getAlbumSongListClient().getRandomSongs(number, fromYear, toYear).enqueue(new Callback<ApiResponse>() {
