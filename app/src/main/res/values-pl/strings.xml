@@ -261,7 +261,7 @@
     <string name="radio_editor_dialog_negative_button">Anuluj</string>
     <string name="radio_editor_dialog_neutral_button">Usuń</string>
     <string name="radio_editor_dialog_positive_button">Zapisz</string>
-    <string name="radio_editor_dialog_added">Radio station added Dodano stację radiową</string>
+    <string name="radio_editor_dialog_added">Dodano stację radiową</string>
     <string name="radio_editor_dialog_updated">Stacja radiowa uaktualniona</string>
     <string name="radio_editor_dialog_title">Internetowa Stacja Radiowa</string>
     <string name="radio_station_info_empty_button">Naciśnij aby ukryć tę sekcję\nEfekty będą widoczne po restarcie</string>
