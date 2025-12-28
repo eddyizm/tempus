@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -32,6 +31,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumCatalogueAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistCatalogueAdapter;
@@ -203,22 +203,27 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             }
         });
     }
+    
     private void initPlayButtons() {
-        bind.artistPageShuffleButton.setOnClickListener(v -> artistPageViewModel.getArtistShuffleList().observe(getViewLifecycleOwner(), songs -> {
-            if (!songs.isEmpty()) {
-                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                activity.setBottomSheetInPeek(true);
-            } else {
-                Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_tracks), Toast.LENGTH_SHORT).show();
+        bind.artistPageShuffleButton.setOnClickListener(v -> artistPageViewModel.getArtistShuffleList().observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
+            @Override
+            public void onChanged(List<Child> songs) {
+                if (songs != null && !songs.isEmpty()) {
+                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                    activity.setBottomSheetInPeek(true);
+                    artistPageViewModel.getArtistShuffleList().removeObserver(this);
+                }
             }
         }));
 
-        bind.artistPageRadioButton.setOnClickListener(v -> artistPageViewModel.getArtistInstantMix().observe(getViewLifecycleOwner(), songs -> {
-            if (songs != null && !songs.isEmpty()) {
-                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                activity.setBottomSheetInPeek(true);
-            } else {
-                Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_radio), Toast.LENGTH_SHORT).show();
+        bind.artistPageRadioButton.setOnClickListener(v -> artistPageViewModel.getArtistInstantMix().observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
+            @Override
+            public void onChanged(List<Child> songs) {
+                if (songs != null && !songs.isEmpty()) {
+                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                    activity.setBottomSheetInPeek(true);
+                    artistPageViewModel.getArtistInstantMix().removeObserver(this);
+                }
             }
         }));
     }
