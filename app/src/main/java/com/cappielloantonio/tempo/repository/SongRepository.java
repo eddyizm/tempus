@@ -7,7 +7,7 @@ import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
-import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Constants.SeedType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class SongRepository {
     /**
      * Used by ViewModels. Updates the LiveData list incrementally as songs are found.
      */
-    public MutableLiveData<List<Child>> getInstantMix(String id, Constants.SEEDTYPE type, int count) {
+    public MutableLiveData<List<Child>> getInstantMix(String id, SeedType type, int count) {
         MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(new ArrayList<>());
 
         performSmartMix(id, type, count, songs -> {
@@ -86,11 +86,11 @@ public class SongRepository {
     /**
      * Overloaded method used by other Repositories
      */
-    public void getInstantMix(String id, Constants.SEEDTYPE type, int count, MediaCallbackInternal callback) {
+    public void getInstantMix(String id, SeedType type, int count, MediaCallbackInternal callback) {
         performSmartMix(id, type, count, callback);
     }
 
-    private void performSmartMix(final String id, final Constants.SEEDTYPE type, final int count, final MediaCallbackInternal callback) {
+    private void performSmartMix(final String id, final SeedType type, final int count, final MediaCallbackInternal callback) {
         switch (type) {
             case ARTIST:
                 fetchSimilarByArtist(id, count, callback);

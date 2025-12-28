@@ -24,7 +24,7 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.Share;
-import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Constants.SeedType;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = "HomeViewModel";
@@ -224,7 +223,7 @@ public class HomeViewModel extends AndroidViewModel {
     public LiveData<List<Child>> getMediaInstantMix(LifecycleOwner owner, Child media) {
         mediaInstantMix.setValue(Collections.emptyList());
 
-        songRepository.getInstantMix(media.getId(), Constants.SEEDTYPE.TRACK, 20).observe(owner, mediaInstantMix::postValue);
+        songRepository.getInstantMix(media.getId(), SeedType.TRACK, 20).observe(owner, mediaInstantMix::postValue);
 
         return mediaInstantMix;
     }
