@@ -14,6 +14,7 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -205,7 +206,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     }
     
     private void initPlayButtons() {
-        bind.artistPageShuffleButton.setOnClickListener(v -> artistPageViewModel.getArtistShuffleList().observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
+        bind.artistPageShuffleButton.setOnClickListener(v -> artistPageViewModel.getArtistShuffleList().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> songs) {
                 if (songs != null && !songs.isEmpty()) {
@@ -216,7 +217,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             }
         }));
 
-        bind.artistPageRadioButton.setOnClickListener(v -> artistPageViewModel.getArtistInstantMix().observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
+        bind.artistPageRadioButton.setOnClickListener(v -> artistPageViewModel.getArtistInstantMix().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> songs) {
                 if (songs != null && !songs.isEmpty()) {
