@@ -87,7 +87,45 @@ public class SongRepository {
      * Overloaded method used by other Repositories
      */
     public void getInstantMix(String id, SeedType type, int count, MediaCallbackInternal callback) {
-        performSmartMix(id, type, count, callback);
+        new MediaCallbackAccumulator(callback, count).start(id, type);
+    }
+
+    private class MediaCallbackAccumulator {
+        private final MediaCallbackInternal originalCallback;
+        private final int targetCount;
+        private final List<Child> accumulatedSongs = new ArrayList<>();
+        private boolean isComplete = false;
+        
+        MediaCallbackAccumulator(MediaCallbackInternal callback, int count) {
+            this.originalCallback = callback;
+            this.targetCount = count;
+        }
+        
+        void start(String id, SeedType type) {
+            performSmartMix(id, type, targetCount, this::onBatchReceived);
+        }
+        
+        private void onBatchReceived(List<Child> batch) {
+            if (isComplete || batch == null || batch.isEmpty()) {
+                return;
+            }
+
+            int added = 0;
+            for (Child s : batch) {
+                if (!accumulatedSongs.contains(s) && accumulatedSongs.size() < targetCount) {
+                    accumulatedSongs.add(s);
+                    added++;
+                }
+            }
+            
+            if (added > 0) {
+                originalCallback.onSongsAvailable(new ArrayList<>(accumulatedSongs));
+                if (accumulatedSongs.size() >= targetCount) {
+                    isComplete = true;
+                    android.util.Log.d("SongRepository", "Reached target of " + targetCount + " songs");
+                }
+            }
+        }
     }
 
     private void performSmartMix(final String id, final SeedType type, final int count, final MediaCallbackInternal callback) {
@@ -111,8 +149,14 @@ public class SongRepository {
                 if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null) {
                     List<Child> albumSongs = response.body().getSubsonicResponse().getAlbum().getSongs();
                     if (albumSongs != null && !albumSongs.isEmpty()) {
-                        callback.onSongsAvailable(new ArrayList<>(albumSongs));
-                        fetchSimilarByArtist(albumSongs.get(0).getArtistId(), count, callback);
+                        List<Child> limitedAlbumSongs = albumSongs.subList(0, Math.min(count, albumSongs.size()));
+                        callback.onSongsAvailable(new ArrayList<>(limitedAlbumSongs));
+                       
+                        // If we need more, get similar songs
+                        int remaining = count - limitedAlbumSongs.size();
+                        if (remaining > 0) {
+                            fetchSimilarByArtist(albumSongs.get(0).getArtistId(), remaining, callback);
+                        }
                         return;
                     }
                 }
@@ -132,7 +176,10 @@ public class SongRepository {
                     Child song = response.body().getSubsonicResponse().getSong();
                     if (song != null) {
                         callback.onSongsAvailable(Collections.singletonList(song));
-                        fetchSimilarOnly(trackId, count, callback);
+                        int remaining = count - 1;
+                        if (remaining > 0) {
+                            fetchSimilarOnly(trackId, remaining, callback);
+                        }
                         return;
                     }
                 }
@@ -144,23 +191,23 @@ public class SongRepository {
         });
     }
 
-    private void fetchSimilarOnly(String id, int count, MediaCallbackInternal callback) {
-        App.getSubsonicClientInstance(false).getBrowsingClient().getSimilarSongs(id, count).enqueue(new Callback<ApiResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                List<Child> songs = extractSongs(response, "similarSongs");
-                if (!songs.isEmpty()) {
-                    callback.onSongsAvailable(songs);
-                } else {
-                    fillWithRandom(count, callback);
-                }
-            }
-            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+private void fetchSimilarOnly(String id, int count, MediaCallbackInternal callback) {
+    App.getSubsonicClientInstance(false).getBrowsingClient().getSimilarSongs(id, count).enqueue(new Callback<ApiResponse>() {
+        @Override
+        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+            List<Child> songs = extractSongs(response, "similarSongs");
+            if (!songs.isEmpty()) {
+                List<Child> limitedSongs = songs.subList(0, Math.min(count, songs.size()));
+                callback.onSongsAvailable(limitedSongs);
+            } else {
                 fillWithRandom(count, callback);
             }
-        });
-    }
-
+        }
+        @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+            fillWithRandom(count, callback);
+        }
+    });
+}
     private void fetchSimilarByArtist(String artistId, final int count, final MediaCallbackInternal callback) {
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
@@ -170,7 +217,8 @@ public class SongRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         List<Child> similar = extractSongs(response, "similarSongs2");
                         if (!similar.isEmpty()) {
-                            callback.onSongsAvailable(similar);
+                            List<Child> limitedSimilar = similar.subList(0, Math.min(count, similar.size()));
+                            callback.onSongsAvailable(limitedSimilar);
                         } else {
                             fillWithRandom(count, callback);
                         }
@@ -189,9 +237,17 @@ public class SongRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        callback.onSongsAvailable(extractSongs(response, "randomSongs"));
+                        List<Child> random = extractSongs(response, "randomSongs");
+                        if (!random.isEmpty()) {
+                            List<Child> limitedRandom = random.subList(0, Math.min(target, random.size()));
+                            callback.onSongsAvailable(limitedRandom);
+                        } else {
+                            callback.onSongsAvailable(new ArrayList<>());
+                        }
                     }
-                    @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
+                    @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        callback.onSongsAvailable(new ArrayList<>());
+                    }
                 });
     }
 
