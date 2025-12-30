@@ -2,11 +2,13 @@ package com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog;
 
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
@@ -89,21 +91,43 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
+                Log.d(TAG, "Artist instant mix clicked");
+    
             ArtistRepository artistRepository = new ArtistRepository();
-            Observer<List<Child>> observer = new Observer<List<Child>>() {
-                @Override
-                public void onChanged(List<Child> songs) {
-                    if (songs != null && !songs.isEmpty() && isAdded()) {
-                        MusicUtil.ratingFilter(songs);
-                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                        ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
-                        artistRepository.getInstantMix(artist, 20).removeObserver(this);
+            artistRepository.getInstantMix(artist, 20)
+                .observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
+                    @Override
+                    public void onChanged(List<Child> songs) {
+                        if (songs != null && !songs.isEmpty()) {
+                            Log.d(TAG, "Starting queue with " + songs.size() + " songs");
+                            MusicUtil.ratingFilter(songs);
+                            MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                            ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                            artistRepository.getInstantMix(artist, 20)
+                                .removeObserver(this);
+                            view.postDelayed(() -> {
+                                try {
+                                    if (mediaBrowserListenableFuture.isDone()) {
+                                        MediaBrowser browser = mediaBrowserListenableFuture.get();
+                                        if (browser != null && browser.isPlaying()) {
+                                            dismissBottomSheet();
+                                            return;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    // Ignore
+                                }
+                                view.postDelayed(() -> dismissBottomSheet(), 200);
+                            }, 300);
+                        } else {
+                        // No songs at all - all attempts failed
+                        Toast.makeText(requireContext(), 
+                            "Could not load songs. Please check your connection.", 
+                            Toast.LENGTH_SHORT).show();
                         dismissBottomSheet();
                     }
-                }
-            };
-
-            artistRepository.getInstantMix(artist, 20).observe(getViewLifecycleOwner(), observer);
+                    }
+                });
         });
 
         TextView playRandom = view.findViewById(R.id.play_random_text_view);

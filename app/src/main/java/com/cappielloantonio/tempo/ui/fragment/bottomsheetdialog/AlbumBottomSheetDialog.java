@@ -116,33 +116,47 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         favoriteToggle.setOnClickListener(v -> albumBottomSheetViewModel.setFavorite(requireContext()));
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
-        playRadio.setOnClickListener(v -> {
-        AlbumRepository albumRepository = new AlbumRepository();
-        albumRepository.getInstantMix(album, 20, new MediaCallback() {
-            @Override
-            public void onError(Exception exception) {
-                exception.printStackTrace();
-            }
-
-            @Override
-            public void onLoadMedia(List<?> media) {
-                if (!isAdded() || getActivity() == null) {
-                    return;
+            playRadio.setOnClickListener(v -> {
+            AlbumRepository albumRepository = new AlbumRepository();
+            albumRepository.getInstantMix(album, 20, new MediaCallback() {
+                @Override
+                public void onError(Exception exception) {
+                    exception.printStackTrace();
                 }
 
-                MusicUtil.ratingFilter((ArrayList<Child>) media);
-
-                if (!media.isEmpty()) {
-                    MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
-                    if (getActivity() instanceof MainActivity) {
-                        ((MainActivity) getActivity()).setBottomSheetInPeek(true);
+                @Override
+                public void onLoadMedia(List<?> media) {
+                    if (!isAdded() || getActivity() == null) {
+                        return;
                     }
-                }
 
-                dismissBottomSheet();
-            }
+                    MusicUtil.ratingFilter((ArrayList<Child>) media);
+
+                    if (!media.isEmpty()) {
+                        MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
+                        if (getActivity() instanceof MainActivity) {
+                            ((MainActivity) getActivity()).setBottomSheetInPeek(true);
+                        }
+                    }
+
+                    view.postDelayed(() -> {
+                                try {
+                                    if (mediaBrowserListenableFuture.isDone()) {
+                                        MediaBrowser browser = mediaBrowserListenableFuture.get();
+                                        if (browser != null && browser.isPlaying()) {
+                                            dismissBottomSheet();
+                                            return;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    // Ignore
+                                }
+                                view.postDelayed(() -> dismissBottomSheet(), 200);
+                            }, 300);
+                }
+            });
         });
-    });
+
         TextView playRandom = view.findViewById(R.id.play_random_text_view);
         playRandom.setOnClickListener(v -> {
             AlbumRepository albumRepository = new AlbumRepository();
