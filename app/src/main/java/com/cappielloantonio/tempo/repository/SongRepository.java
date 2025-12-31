@@ -11,8 +11,10 @@ import com.cappielloantonio.tempo.util.Constants.SeedType;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -94,6 +96,7 @@ public class SongRepository {
         private final MediaCallbackInternal originalCallback;
         private final int targetCount;
         private final List<Child> accumulatedSongs = new ArrayList<>();
+        private final Set<String> trackIds = new HashSet<>();
         private boolean isComplete = false;
         
         MediaCallbackAccumulator(MediaCallbackInternal callback, int count) {
@@ -113,6 +116,7 @@ public class SongRepository {
             int added = 0;
             for (Child s : batch) {
                 if (!accumulatedSongs.contains(s) && accumulatedSongs.size() < targetCount) {
+                    trackIds.add(s.getId());
                     accumulatedSongs.add(s);
                     added++;
                 }

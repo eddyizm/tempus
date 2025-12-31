@@ -8,11 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -119,13 +117,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
                                 }
                                 view.postDelayed(() -> dismissBottomSheet(), 200);
                             }, 300);
-                        } else {
-                        // No songs at all - all attempts failed
-                        Toast.makeText(requireContext(), 
-                            "Could not load songs. Please check your connection.", 
-                            Toast.LENGTH_SHORT).show();
-                        dismissBottomSheet();
-                    }
+                        }
                     }
                 });
         });
