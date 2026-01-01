@@ -13,7 +13,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.session.MediaBrowser;
 
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.Download;
@@ -278,7 +277,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     public LiveData<List<Child>> getMediaInstantMix(LifecycleOwner owner, Child media) {
         instantMix.setValue(Collections.emptyList());
 
-        songRepository.getInstantMix(media.getId(), 20).observe(owner, instantMix::postValue);
+        songRepository.getInstantMix(media.getId(), Constants.SeedType.TRACK, 20).observe(owner, instantMix::postValue);
 
         return instantMix;
     }

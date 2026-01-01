@@ -11,6 +11,7 @@ import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistInfo2;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.IndexID3;
+import com.cappielloantonio.tempo.util.Constants.SeedType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -149,7 +150,7 @@ public class ArtistRepository {
 
                             if(response.body().getSubsonicResponse().getArtists() != null && response.body().getSubsonicResponse().getArtists().getIndices() != null) {
                                 for (IndexID3 index : response.body().getSubsonicResponse().getArtists().getIndices()) {
-                                    if(index != null && index.getArtists() != null) {
+                                    if(index.getArtists() != null) {
                                         artists.addAll(index.getArtists());
                                     }
                                 }
@@ -287,26 +288,8 @@ public class ArtistRepository {
     }
 
     public MutableLiveData<List<Child>> getInstantMix(ArtistID3 artist, int count) {
-        MutableLiveData<List<Child>> instantMix = new MutableLiveData<>();
-
-        App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getSimilarSongs2(artist.getId(), count)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSimilarSongs2() != null) {
-                            instantMix.setValue(response.body().getSubsonicResponse().getSimilarSongs2().getSongs());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
-
-        return instantMix;
+        // Delegate to the centralized SongRepository
+        return new SongRepository().getInstantMix(artist.getId(), SeedType.ARTIST, count);
     }
 
     public MutableLiveData<List<Child>> getRandomSong(ArtistID3 artist, int count) {

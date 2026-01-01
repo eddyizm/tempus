@@ -2,12 +2,12 @@ package com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog;
 
 import android.content.ComponentName;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
@@ -22,12 +22,15 @@ import com.cappielloantonio.tempo.repository.ArtistRepository;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.viewmodel.ArtistBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.List;
 
 @UnstableApi
 public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
@@ -86,21 +89,37 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
+            Log.d(TAG, "Artist instant mix clicked");
+    
             ArtistRepository artistRepository = new ArtistRepository();
-
-            artistRepository.getInstantMix(artist, 20).observe(getViewLifecycleOwner(), songs -> {
-                // navidrome may return null for this
-                if (songs == null)
-                    return;
-                MusicUtil.ratingFilter(songs);
-
-                if (!songs.isEmpty()) {
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                    ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
-                }
-
-                dismissBottomSheet();
-            });
+            artistRepository.getInstantMix(artist, 20)
+                .observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
+                    @Override
+                    public void onChanged(List<Child> songs) {
+                        if (songs != null && !songs.isEmpty()) {
+                            Log.d(TAG, "Starting queue with " + songs.size() + " songs");
+                            MusicUtil.ratingFilter(songs);
+                            MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                            ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                            artistRepository.getInstantMix(artist, 20)
+                                .removeObserver(this);
+                            view.postDelayed(() -> {
+                                try {
+                                    if (mediaBrowserListenableFuture.isDone()) {
+                                        MediaBrowser browser = mediaBrowserListenableFuture.get();
+                                        if (browser != null && browser.isPlaying()) {
+                                            dismissBottomSheet();
+                                            return;
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    // Ignore
+                                }
+                                view.postDelayed(() -> dismissBottomSheet(), 200);
+                            }, 300);
+                        }
+                    }
+                });
         });
 
         TextView playRandom = view.findViewById(R.id.play_random_text_view);
@@ -108,16 +127,10 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
             ArtistRepository artistRepository = new ArtistRepository();
             artistRepository.getRandomSong(artist, 50).observe(getViewLifecycleOwner(), songs -> {
                 MusicUtil.ratingFilter(songs);
-
                 if (!songs.isEmpty()) {
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
-
-                    dismissBottomSheet();
-                } else {
-                    Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_tracks), Toast.LENGTH_SHORT).show();
                 }
-
                 dismissBottomSheet();
             });
         });

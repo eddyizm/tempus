@@ -26,6 +26,7 @@ import com.cappielloantonio.tempo.repository.SongRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.cappielloantonio.tempo.util.Constants.SeedType;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -183,11 +184,13 @@ public class MediaManager {
     @OptIn(markerClass = UnstableApi.class)
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex) {
         if (mediaBrowserListenableFuture != null) {
+
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         final MediaBrowser browser = mediaBrowserListenableFuture.get();
                         final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+                        
                         new Handler(Looper.getMainLooper()).post(() -> {
                             justStarted.set(true);
                             browser.setMediaItems(items, startIndex, 0);
@@ -196,28 +199,31 @@ public class MediaManager {
                             Player.Listener timelineListener = new Player.Listener() {
                                 @Override
                                 public void onTimelineChanged(Timeline timeline, int reason) {
+                                    
                                     int itemCount = browser.getMediaItemCount();
                                     if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
                                         browser.seekTo(startIndex, 0);
                                         browser.play();
                                         browser.removeListener(this);
+                                    } else {
+                                        Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
                                     }
                                 }
                             };
+                            
                             browser.addListener(timelineListener);
                         });
 
                         backgroundExecutor.execute(() -> {
+                            Log.d(TAG, "Background: enqueuing to database");
                             enqueueDatabase(media, true, 0);
                         });
                     }
                 } catch (ExecutionException | InterruptedException e) {
-                    Log.e(TAG, "Error executing startQueue logic: " + e.getMessage(), e);
+                    Log.e(TAG, "Error in startQueue: " + e.getMessage(), e);
                 }
             }, MoreExecutors.directExecutor());
         }
-
-
     }
 
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, Child media) {
@@ -442,7 +448,7 @@ public class MediaManager {
         if (mediaItem != null && Preferences.isContinuousPlayEnabled() && Preferences.isInstantMixUsable()) {
             Preferences.setLastInstantMix();
 
-            LiveData<List<Child>> instantMix = getSongRepository().getInstantMix(mediaItem.mediaId, 10);
+            LiveData<List<Child>> instantMix = getSongRepository().getInstantMix(mediaItem.mediaId, SeedType.TRACK, 10);
             instantMix.observeForever(new Observer<List<Child>>() {
                 @Override
                 public void onChanged(List<Child> media) {
