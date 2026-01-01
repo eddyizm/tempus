@@ -1,5 +1,7 @@
 package com.cappielloantonio.tempo.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
@@ -22,6 +24,7 @@ import retrofit2.Response;
 
 public class SongRepository {
 
+    private static final String TAG = "SongRepository";
     public interface MediaCallbackInternal {
         void onSongsAvailable(List<Child> songs);
     }
@@ -126,7 +129,6 @@ public class SongRepository {
                 originalCallback.onSongsAvailable(new ArrayList<>(accumulatedSongs));
                 if (accumulatedSongs.size() >= targetCount) {
                     isComplete = true;
-                    android.util.Log.d("SongRepository", "Reached target of " + targetCount + " songs");
                 }
             }
         }
@@ -150,26 +152,59 @@ public class SongRepository {
         App.getSubsonicClientInstance(false).getBrowsingClient().getAlbum(albumId).enqueue(new Callback<ApiResponse>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null) {
+                if (response.isSuccessful() && response.body() != null && 
+                    response.body().getSubsonicResponse().getAlbum() != null) {
                     List<Child> albumSongs = response.body().getSubsonicResponse().getAlbum().getSongs();
                     if (albumSongs != null && !albumSongs.isEmpty()) {
-                        List<Child> limitedAlbumSongs = albumSongs.subList(0, Math.min(count, albumSongs.size()));
+                        int fromAlbum = Math.min(count, albumSongs.size());
+                        List<Child> limitedAlbumSongs = albumSongs.subList(0, fromAlbum);
                         callback.onSongsAvailable(new ArrayList<>(limitedAlbumSongs));
-                       
-                        // If we need more, get similar songs
-                        int remaining = count - limitedAlbumSongs.size();
-                        if (remaining > 0) {
+                    
+                        int remaining = count - fromAlbum;
+                        if (remaining > 0 && albumSongs.get(0).getArtistId() != null) {
                             fetchSimilarByArtist(albumSongs.get(0).getArtistId(), remaining, callback);
+                        } else if (remaining > 0) {
+                            Log.d(TAG, "No artistId available, skipping similar artist fetch");
                         }
                         return;
                     }
                 }
+                
+                Log.d(TAG, "Album fetch failed or empty, calling fillWithRandom");
                 fillWithRandom(count, callback);
             }
-            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+            
+            @Override 
+            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                Log.d(TAG, "Album fetch failed: " + t.getMessage());
                 fillWithRandom(count, callback);
             }
         });
+    }
+
+    private void fetchSimilarByArtist(String artistId, final int count, final MediaCallbackInternal callback) {
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getSimilarSongs2(artistId, count)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        List<Child> similar = extractSongs(response, "similarSongs2");
+                        if (!similar.isEmpty()) {
+                            List<Child> limitedSimilar = similar.subList(0, Math.min(count, similar.size()));
+                            callback.onSongsAvailable(limitedSimilar);
+                        } else {
+                            Log.d(TAG, "No similar songs, calling fillWithRandom");
+                            fillWithRandom(count, callback);
+                        }
+                    }
+                    
+                    @Override 
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.d(TAG, "getSimilarSongs2 failed: " + t.getMessage());
+                        fillWithRandom(count, callback);
+                    }
+                });
     }
 
     private void fetchSingleTrackThenSimilar(String trackId, int count, MediaCallbackInternal callback) {
@@ -195,44 +230,24 @@ public class SongRepository {
         });
     }
 
-private void fetchSimilarOnly(String id, int count, MediaCallbackInternal callback) {
-    App.getSubsonicClientInstance(false).getBrowsingClient().getSimilarSongs(id, count).enqueue(new Callback<ApiResponse>() {
-        @Override
-        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-            List<Child> songs = extractSongs(response, "similarSongs");
-            if (!songs.isEmpty()) {
-                List<Child> limitedSongs = songs.subList(0, Math.min(count, songs.size()));
-                callback.onSongsAvailable(limitedSongs);
-            } else {
+    private void fetchSimilarOnly(String id, int count, MediaCallbackInternal callback) {
+        App.getSubsonicClientInstance(false).getBrowsingClient().getSimilarSongs(id, count).enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                List<Child> songs = extractSongs(response, "similarSongs");
+                if (!songs.isEmpty()) {
+                    List<Child> limitedSongs = songs.subList(0, Math.min(count, songs.size()));
+                    callback.onSongsAvailable(limitedSongs);
+                } else {
+                    fillWithRandom(count, callback);
+                }
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
                 fillWithRandom(count, callback);
             }
-        }
-        @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-            fillWithRandom(count, callback);
-        }
-    });
-}
-    private void fetchSimilarByArtist(String artistId, final int count, final MediaCallbackInternal callback) {
-        App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getSimilarSongs2(artistId, count)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        List<Child> similar = extractSongs(response, "similarSongs2");
-                        if (!similar.isEmpty()) {
-                            List<Child> limitedSimilar = similar.subList(0, Math.min(count, similar.size()));
-                            callback.onSongsAvailable(limitedSimilar);
-                        } else {
-                            fillWithRandom(count, callback);
-                        }
-                    }
-                    @Override 
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        fillWithRandom(count, callback);
-                    }
-                });
+        });
     }
+
 
     private void fillWithRandom(int target, final MediaCallbackInternal callback) {
         App.getSubsonicClientInstance(false)

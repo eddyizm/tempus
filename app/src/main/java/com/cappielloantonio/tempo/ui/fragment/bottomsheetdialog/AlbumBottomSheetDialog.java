@@ -5,6 +5,8 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +63,7 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     private List<MediaItem> currentAlbumMediaItems = Collections.emptyList();
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private static final String TAG = "AlbumBottomSheetDialog";
 
     @Nullable
     @Override
@@ -116,12 +119,11 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         favoriteToggle.setOnClickListener(v -> albumBottomSheetViewModel.setFavorite(requireContext()));
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
-            playRadio.setOnClickListener(v -> {
-            AlbumRepository albumRepository = new AlbumRepository();
-            albumRepository.getInstantMix(album, 20, new MediaCallback() {
+        playRadio.setOnClickListener(v -> {
+            new AlbumRepository().getInstantMix(album, 20, new MediaCallback() {
                 @Override
                 public void onError(Exception exception) {
-                    exception.printStackTrace();
+                    Log.e(TAG, "Error: " + exception.getMessage());
                 }
 
                 @Override
@@ -140,19 +142,19 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                     }
 
                     view.postDelayed(() -> {
-                                try {
-                                    if (mediaBrowserListenableFuture.isDone()) {
-                                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                                        if (browser != null && browser.isPlaying()) {
-                                            dismissBottomSheet();
-                                            return;
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    // Ignore
+                        try {
+                            if (mediaBrowserListenableFuture.isDone()) {
+                                MediaBrowser browser = mediaBrowserListenableFuture.get();
+                                if (browser != null && browser.isPlaying()) {
+                                    dismissBottomSheet();
+                                    return;
                                 }
-                                view.postDelayed(() -> dismissBottomSheet(), 200);
-                            }, 300);
+                            }
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error checking playback: " + e.getMessage());
+                        }
+                        view.postDelayed(() -> dismissBottomSheet(), 200);
+                    }, 300);
                 }
             });
         });

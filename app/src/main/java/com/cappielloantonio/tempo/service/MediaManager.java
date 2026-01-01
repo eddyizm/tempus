@@ -184,44 +184,33 @@ public class MediaManager {
     @OptIn(markerClass = UnstableApi.class)
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex) {
         if (mediaBrowserListenableFuture != null) {
-            Log.d(TAG, "startQueue called with " + (media != null ? media.size() : 0) + " songs");
-            
+
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        Log.d(TAG, "MediaBrowser future is done");
                         final MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        Log.d(TAG, "Got MediaBrowser, connected: " + browser.isConnected());
-                        
                         final List<MediaItem> items = MappingUtil.mapMediaItems(media);
-                        Log.d(TAG, "Mapped " + items.size() + " media items");
                         
                         new Handler(Looper.getMainLooper()).post(() -> {
-                            Log.d(TAG, "Setting " + items.size() + " media items at index " + startIndex);
                             justStarted.set(true);
                             browser.setMediaItems(items, startIndex, 0);
                             browser.prepare();
-                            Log.d(TAG, "setMediaItems and prepare called");
 
                             Player.Listener timelineListener = new Player.Listener() {
                                 @Override
                                 public void onTimelineChanged(Timeline timeline, int reason) {
-                                    Log.d(TAG, "onTimelineChanged: itemCount=" + browser.getMediaItemCount() + ", reason=" + reason);
                                     
                                     int itemCount = browser.getMediaItemCount();
                                     if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                        Log.d(TAG, "Seeking to " + startIndex + " and playing");
                                         browser.seekTo(startIndex, 0);
                                         browser.play();
                                         browser.removeListener(this);
-                                        Log.d(TAG, "Playback started");
                                     } else {
                                         Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
                                     }
                                 }
                             };
                             
-                            Log.d(TAG, "Adding timeline listener");
                             browser.addListener(timelineListener);
                         });
 

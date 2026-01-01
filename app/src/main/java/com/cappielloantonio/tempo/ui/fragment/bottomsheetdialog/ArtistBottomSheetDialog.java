@@ -89,7 +89,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-                Log.d(TAG, "Artist instant mix clicked");
+            Log.d(TAG, "Artist instant mix clicked");
     
             ArtistRepository artistRepository = new ArtistRepository();
             artistRepository.getInstantMix(artist, 20)

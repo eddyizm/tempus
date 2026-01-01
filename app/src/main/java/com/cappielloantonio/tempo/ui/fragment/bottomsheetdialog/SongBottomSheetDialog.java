@@ -5,6 +5,8 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,21 +145,36 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-            MediaManager.startQueue(mediaBrowserListenableFuture, song);
             ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
 
+            final boolean[] playbackStarted = {false};
+
             songBottomSheetViewModel.getInstantMix(getViewLifecycleOwner(), song).observe(getViewLifecycleOwner(), songs -> {
-                MusicUtil.ratingFilter(songs);
+                if (playbackStarted[0] || songs == null || songs.isEmpty()) return;
 
-                if (songs == null) {
-                    dismissBottomSheet();
-                    return;
-                }
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    if (playbackStarted[0]) return;
 
-                if (!songs.isEmpty()) {
-                    MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
-                    dismissBottomSheet();
-                }
+                    MusicUtil.ratingFilter(songs);
+
+                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                    playbackStarted[0] = true;
+
+                    view.postDelayed(() -> {
+                        try {
+                            if (mediaBrowserListenableFuture.isDone()) {
+                                MediaBrowser browser = mediaBrowserListenableFuture.get();
+                                if (browser != null && browser.isPlaying()) {
+                                    dismissBottomSheet();
+                                    return;
+                                }
+                            }
+                        } catch (Exception e) {
+                            // Ignore
+                        }
+                        view.postDelayed(() -> dismissBottomSheet(), 200);
+                    }, 300);
+                }, 300);
             });
         });
 
