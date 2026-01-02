@@ -17,11 +17,13 @@ import androidx.media3.session.MediaBrowser;
 
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.Download;
+import com.cappielloantonio.tempo.lyrics.lrclib.LrcLibLyricsResult;
 import com.cappielloantonio.tempo.model.LyricsCache;
 import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
 import com.cappielloantonio.tempo.repository.ArtistRepository;
 import com.cappielloantonio.tempo.repository.FavoriteRepository;
+import com.cappielloantonio.tempo.repository.LrcLibRepository;
 import com.cappielloantonio.tempo.repository.LyricsRepository;
 import com.cappielloantonio.tempo.repository.OpenRepository;
 import com.cappielloantonio.tempo.repository.QueueRepository;
@@ -55,6 +57,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     private final FavoriteRepository favoriteRepository;
     private final OpenRepository openRepository;
     private final LyricsRepository lyricsRepository;
+    private final LrcLibRepository lrcLibRepository;
     private final MutableLiveData<String> lyricsLiveData = new MutableLiveData<>(null);
     private final MutableLiveData<LyricsList> lyricsListLiveData = new MutableLiveData<>(null);
     private final MutableLiveData<Boolean> lyricsCachedLiveData = new MutableLiveData<>(false);
@@ -80,6 +83,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         favoriteRepository = new FavoriteRepository();
         openRepository = new OpenRepository();
         lyricsRepository = new LyricsRepository();
+        lrcLibRepository = new LrcLibRepository();
     }
 
     public LiveData<List<Queue>> getQueueSong() {
@@ -197,6 +201,8 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
                 }
             });
         }
+
+        requestFallbackLyrics(owner, media);
     }
 
     public LiveData<Child> getLiveMedia() {
@@ -405,5 +411,48 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
 
     public boolean getSyncLyricsState() {
         return lyricsSyncState;
+    }
+
+    private void requestFallbackLyrics(LifecycleOwner owner, Child media) {
+        if (owner == null || media == null) {
+            return;
+        }
+
+        lrcLibRepository.getSyncedLyrics(media).observe(owner, new Observer<LrcLibLyricsResult>() {
+            @Override
+            public void onChanged(LrcLibLyricsResult result) {
+                if (result == null || !shouldAcceptFallbackLyrics()) {
+                    return;
+                }
+
+                LyricsList fallbackStructured = result.getLyricsList();
+
+                if (hasStructuredLyrics(fallbackStructured)) {
+                    lyricsListLiveData.postValue(fallbackStructured);
+                    lyricsLiveData.postValue(null);
+
+                    if (shouldAutoDownloadLyrics()) {
+                        saveLyricsToCache(media, null, fallbackStructured);
+                    }
+
+                    return;
+                }
+
+                String plainLyrics = result.getPlainLyrics();
+
+                if (!TextUtils.isEmpty(plainLyrics) && TextUtils.isEmpty(lyricsLiveData.getValue())) {
+                    lyricsLiveData.postValue(plainLyrics);
+                    lyricsListLiveData.postValue(null);
+
+                    if (shouldAutoDownloadLyrics()) {
+                        saveLyricsToCache(media, plainLyrics, null);
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean shouldAcceptFallbackLyrics() {
+        return !hasStructuredLyrics(lyricsListLiveData.getValue()) && TextUtils.isEmpty(lyricsLiveData.getValue());
     }
 }
