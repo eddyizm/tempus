@@ -154,7 +154,7 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                             Log.e(TAG, "Error checking playback: " + e.getMessage());
                         }
                         view.postDelayed(() -> dismissBottomSheet(), 200);
-                    }, 300);
+                    }, 1200);
                 }
             });
         });
