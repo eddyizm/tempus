@@ -117,19 +117,17 @@ public class SongRepository {
             }
 
             int added = 0;
-            for (Child s : batch) {
-                if (!accumulatedSongs.contains(s) && accumulatedSongs.size() < targetCount) {
-                    trackIds.add(s.getId());
-                    accumulatedSongs.add(s);
+            for (Child song : batch) {
+                if (!trackIds.contains(song.getId()) && accumulatedSongs.size() < targetCount) {
+                    trackIds.add(song.getId());
+                    accumulatedSongs.add(song);
                     added++;
                 }
             }
             
-            if (added > 0) {
+            if (accumulatedSongs.size() >= targetCount) {
                 originalCallback.onSongsAvailable(new ArrayList<>(accumulatedSongs));
-                if (accumulatedSongs.size() >= targetCount) {
-                    isComplete = true;
-                }
+                isComplete = true;
             }
         }
     }
@@ -194,14 +192,12 @@ public class SongRepository {
                             List<Child> limitedSimilar = similar.subList(0, Math.min(count, similar.size()));
                             callback.onSongsAvailable(limitedSimilar);
                         } else {
-                            Log.d(TAG, "No similar songs, calling fillWithRandom");
                             fillWithRandom(count, callback);
                         }
                     }
                     
                     @Override 
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        Log.d(TAG, "getSimilarSongs2 failed: " + t.getMessage());
                         fillWithRandom(count, callback);
                     }
                 });
