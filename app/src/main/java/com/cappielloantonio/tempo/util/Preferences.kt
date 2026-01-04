@@ -82,6 +82,7 @@ object Preferences {
     private const val DEFAULT_ALBUM_SORT_ORDER = Constants.ALBUM_ORDER_BY_NAME
     private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
     private const val SORT_SEARCH_CHRONOLOGICALLY= "sort_search_chronologically"
+    private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
 
     @JvmStatic
     fun getServer(): String? {
@@ -679,5 +680,15 @@ object Preferences {
     @JvmStatic
     fun isSearchSortingChronologicallyEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(SORT_SEARCH_CHRONOLOGICALLY, false)
+    }
+
+    @JvmStatic
+    fun getArtistDisplayBiography(): Boolean {
+        return App.getInstance().preferences.getBoolean(ARTIST_DISPLAY_BIOGRAPHY, true)
+    }
+
+    @JvmStatic
+    fun setArtistDisplayBiography(displayBiographyEnabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(ARTIST_DISPLAY_BIOGRAPHY, displayBiographyEnabled).apply()
     }
 }
