@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
+import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
@@ -132,6 +133,17 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         songRepository.getInstantMix(media.getId(), SeedType.TRACK, 20).observe(owner, instantMix::postValue);
 
         return instantMix;
+    }
+
+    public void getInstantMix(Child media, int count, MediaCallback callback) {
+        
+        songRepository.getInstantMix(media.getId(), SeedType.TRACK, count, songs -> {
+            if (songs != null && !songs.isEmpty()) {
+                callback.onLoadMedia(songs);
+            } else {
+                callback.onLoadMedia(Collections.emptyList());
+            }
+        });
     }
 
     public MutableLiveData<Share> shareTrack() {
