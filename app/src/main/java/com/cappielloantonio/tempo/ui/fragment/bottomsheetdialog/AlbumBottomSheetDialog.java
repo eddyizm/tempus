@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +44,6 @@ import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.viewmodel.AlbumBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -61,7 +61,11 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     private List<Child> currentAlbumTracks = Collections.emptyList();
     private List<MediaItem> currentAlbumMediaItems = Collections.emptyList();
 
+    private boolean playbackStarted = false;
+    private boolean dismissalScheduled = false;
+
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private static final String TAG = "AlbumBottomSheetDialog";
 
     @Nullable
     @Override
@@ -114,32 +118,73 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(albumBottomSheetViewModel.getAlbum().getStarred() != null);
-        favoriteToggle.setOnClickListener(v -> {
-            albumBottomSheetViewModel.setFavorite(requireContext());
-        });
+        favoriteToggle.setOnClickListener(v -> albumBottomSheetViewModel.setFavorite(requireContext()));
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-            AlbumRepository albumRepository = new AlbumRepository();
-            albumRepository.getInstantMix(album, 20, new MediaCallback() {
+            playbackStarted = false;
+            dismissalScheduled = false;
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
+            final Runnable failsafeTimeout = () -> {
+                if (!playbackStarted && !dismissalScheduled) {
+                    Log.w(TAG, "No response received within 3 seconds");
+                    if (isAdded() && getActivity() != null) {
+                        Toast.makeText(getContext(), 
+                            R.string.bottom_sheet_problem_generating_instant_mix, 
+                            Toast.LENGTH_SHORT).show();
+                        dismissBottomSheet();
+                    }
+                }
+            };
+            view.postDelayed(failsafeTimeout, 3000);
+            
+            new AlbumRepository().getInstantMix(album, 20, new MediaCallback() {
                 @Override
                 public void onError(Exception exception) {
-                    exception.printStackTrace();
+                    view.removeCallbacks(failsafeTimeout);
+                    Log.e(TAG, "Error: " + exception.getMessage());
+                    if (isAdded() && getActivity() != null) {
+                        String message = isOffline(exception) ? 
+                            "You're offline" : "Network error";
+                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                    if (!playbackStarted && !dismissalScheduled) {
+                        scheduleDelayedDismissal(v);
+                    }
                 }
 
                 @Override
                 public void onLoadMedia(List<?> media) {
+                    view.removeCallbacks(failsafeTimeout);
+                    if (!isAdded() || getActivity() == null) {
+                        return;
+                    }
+
                     MusicUtil.ratingFilter((ArrayList<Child>) media);
 
                     if (!media.isEmpty()) {
+                        boolean isFirstBatch = !playbackStarted;
                         MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
-                        ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                        playbackStarted = true;
+                        
+                        if (getActivity() instanceof MainActivity) {
+                            ((MainActivity) getActivity()).setBottomSheetInPeek(true);
+                        }
+                        if (isFirstBatch && !dismissalScheduled) {
+                            scheduleDelayedDismissal(v);
+                        }
+                    } else {
+                        Toast.makeText(getContext(), 
+                            R.string.bottom_sheet_problem_generating_instant_mix, 
+                            Toast.LENGTH_SHORT).show();
+                        if (!playbackStarted && !dismissalScheduled) {
+                            scheduleDelayedDismissal(v);
+                        }
                     }
-
-                    dismissBottomSheet();
                 }
             });
         });
+
 
         TextView playRandom = view.findViewById(R.id.play_random_text_view);
         playRandom.setOnClickListener(v -> {
@@ -186,18 +231,16 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         });
 
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
-        addToPlaylist.setOnClickListener(v -> {
-            albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
+        addToPlaylist.setOnClickListener(v -> albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
 
-                PlaylistChooserDialog dialog = new PlaylistChooserDialog();
-                dialog.setArguments(bundle);
-                dialog.show(requireActivity().getSupportFragmentManager(), null);
+            PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+            dialog.setArguments(bundle);
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
 
-                dismissBottomSheet();
-            });
-        });
+            dismissBottomSheet();
+        }));
 
         removeAllTextView = view.findViewById(R.id.remove_all_text_view);
         albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
@@ -290,5 +333,32 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
     private void refreshShares() {
         homeViewModel.refreshShares(requireActivity());
+    }
+
+    private void scheduleDelayedDismissal(View view) {
+        if (dismissalScheduled) return;
+        dismissalScheduled = true;
+        
+        view.postDelayed(() -> {
+            try {
+                if (mediaBrowserListenableFuture.isDone()) {
+                    MediaBrowser browser = mediaBrowserListenableFuture.get();
+                    if (browser != null && browser.isPlaying()) {
+                        dismissBottomSheet();
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error checking playback: " + e.getMessage());
+            }
+            view.postDelayed(() -> dismissBottomSheet(), 200);
+        }, 300);
+    }
+
+    private boolean isOffline(Exception exception) {
+        return exception != null && exception.getMessage() != null && 
+            (exception.getMessage().contains("Network") || 
+                exception.getMessage().contains("timeout") ||
+                exception.getMessage().contains("offline"));
     }
 }

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1253,20 +1255,25 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
     }
 
-    @Override
     public void onMediaClick(Bundle bundle) {
         if (bundle.containsKey(Constants.MEDIA_MIX)) {
-            MediaManager.startQueue(mediaBrowserListenableFuture, bundle.getParcelable(Constants.TRACK_OBJECT));
+            Child track = bundle.getParcelable(Constants.TRACK_OBJECT);
             activity.setBottomSheetInPeek(true);
 
             if (mediaBrowserListenableFuture != null) {
-                homeViewModel.getMediaInstantMix(getViewLifecycleOwner(), bundle.getParcelable(Constants.TRACK_OBJECT)).observe(getViewLifecycleOwner(), songs -> {
-                    MusicUtil.ratingFilter(songs);
+                final boolean[] playbackStarted = {false};
 
-                    if (songs != null && !songs.isEmpty()) {
-                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
-                    }
-                });
+                homeViewModel.getMediaInstantMix(getViewLifecycleOwner(), track)
+                        .observe(getViewLifecycleOwner(), songs -> {
+                            if (playbackStarted[0] || songs == null || songs.isEmpty()) return;
+
+                            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                                if (playbackStarted[0]) return;
+
+                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                                playbackStarted[0] = true;
+                            }, 300);
+                        });
             }
         } else if (bundle.containsKey(Constants.MEDIA_CHRONOLOGY)) {
             List<Child> media = bundle.getParcelableArrayList(Constants.TRACKS_OBJECT);

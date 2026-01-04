@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
+import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
@@ -21,6 +22,7 @@ import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Share;
+import com.cappielloantonio.tempo.util.Constants.SeedType;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.NetworkUtil;
@@ -128,9 +130,20 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
     public LiveData<List<Child>> getInstantMix(LifecycleOwner owner, Child media) {
         instantMix.setValue(Collections.emptyList());
 
-        songRepository.getInstantMix(media.getId(), 20).observe(owner, instantMix::postValue);
+        songRepository.getInstantMix(media.getId(), SeedType.TRACK, 20).observe(owner, instantMix::postValue);
 
         return instantMix;
+    }
+
+    public void getInstantMix(Child media, int count, MediaCallback callback) {
+        
+        songRepository.getInstantMix(media.getId(), SeedType.TRACK, count, songs -> {
+            if (songs != null && !songs.isEmpty()) {
+                callback.onLoadMedia(songs);
+            } else {
+                callback.onLoadMedia(Collections.emptyList());
+            }
+        });
     }
 
     public MutableLiveData<Share> shareTrack() {
