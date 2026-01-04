@@ -125,10 +125,29 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
             playbackStarted = false;
             dismissalScheduled = false;
             Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
+            final Runnable failsafeTimeout = () -> {
+                if (!playbackStarted && !dismissalScheduled) {
+                    Log.w(TAG, "No response received within 3 seconds");
+                    if (isAdded() && getActivity() != null) {
+                        Toast.makeText(getContext(), 
+                            R.string.bottom_sheet_problem_generating_instant_mix, 
+                            Toast.LENGTH_SHORT).show();
+                        dismissBottomSheet();
+                    }
+                }
+            };
+            view.postDelayed(failsafeTimeout, 3000);
+            
             new AlbumRepository().getInstantMix(album, 20, new MediaCallback() {
                 @Override
                 public void onError(Exception exception) {
+                    view.removeCallbacks(failsafeTimeout);
                     Log.e(TAG, "Error: " + exception.getMessage());
+                    if (isAdded() && getActivity() != null) {
+                        String message = isOffline(exception) ? 
+                            "You're offline" : "Network error";
+                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    }
                     if (!playbackStarted && !dismissalScheduled) {
                         scheduleDelayedDismissal(v);
                     }
@@ -136,6 +155,7 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
                 @Override
                 public void onLoadMedia(List<?> media) {
+                    view.removeCallbacks(failsafeTimeout);
                     if (!isAdded() || getActivity() == null) {
                         return;
                     }
@@ -154,6 +174,9 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                             scheduleDelayedDismissal(v);
                         }
                     } else {
+                        Toast.makeText(getContext(), 
+                            R.string.bottom_sheet_problem_generating_instant_mix, 
+                            Toast.LENGTH_SHORT).show();
                         if (!playbackStarted && !dismissalScheduled) {
                             scheduleDelayedDismissal(v);
                         }
@@ -330,5 +353,12 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
             }
             view.postDelayed(() -> dismissBottomSheet(), 200);
         }, 300);
+    }
+
+    private boolean isOffline(Exception exception) {
+        return exception != null && exception.getMessage() != null && 
+            (exception.getMessage().contains("Network") || 
+                exception.getMessage().contains("timeout") ||
+                exception.getMessage().contains("offline"));
     }
 }
