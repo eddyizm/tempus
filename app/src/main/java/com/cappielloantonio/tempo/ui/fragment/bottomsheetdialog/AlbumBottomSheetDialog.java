@@ -120,6 +120,7 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
             new AlbumRepository().getInstantMix(album, 20, new MediaCallback() {
                 @Override
                 public void onError(Exception exception) {
@@ -153,8 +154,8 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                         } catch (Exception e) {
                             Log.e(TAG, "Error checking playback: " + e.getMessage());
                         }
-                        view.postDelayed(() -> dismissBottomSheet(), 200);
-                    }, 1200);
+                        view.postDelayed(() -> dismissBottomSheet(), 300);
+                    }, 300);
                 }
             });
         });

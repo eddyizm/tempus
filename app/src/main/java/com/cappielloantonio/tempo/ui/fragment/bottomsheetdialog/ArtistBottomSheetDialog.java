@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
@@ -90,7 +91,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
             Log.d(TAG, "Artist instant mix clicked");
-    
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_LONG).show();
             ArtistRepository artistRepository = new ArtistRepository();
             artistRepository.getInstantMix(artist, 20)
                 .observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
@@ -115,7 +116,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
                                 } catch (Exception e) {
                                     // Ignore
                                 }
-                                view.postDelayed(() -> dismissBottomSheet(), 200);
+                                view.postDelayed(() -> dismissBottomSheet(), 300);
                             }, 300);
                         }
                     }
