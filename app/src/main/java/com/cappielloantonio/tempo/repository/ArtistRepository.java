@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
@@ -291,6 +292,18 @@ public class ArtistRepository {
         // Delegate to the centralized SongRepository
         return new SongRepository().getInstantMix(artist.getId(), SeedType.ARTIST, count);
     }
+
+    public void getInstantMix(ArtistID3 artist, int count, final MediaCallback callback) {
+        // Delegate to the centralized SongRepository
+        new SongRepository().getInstantMix(artist.getId(), SeedType.ARTIST, count, songs -> {
+            if (songs != null && !songs.isEmpty()) {
+                callback.onLoadMedia(songs);
+            } else {
+                callback.onLoadMedia(Collections.emptyList());
+            }
+        });
+    }
+
 
     public MutableLiveData<List<Child>> getRandomSong(ArtistID3 artist, int count) {
         MutableLiveData<List<Child>> randomSongs = new MutableLiveData<>();

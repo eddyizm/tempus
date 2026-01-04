@@ -4,10 +4,12 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.interfaces.StarCallback;
@@ -33,7 +35,6 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
     private final SharingRepository sharingRepository;
-
     private AlbumID3 album;
 
     public AlbumBottomSheetViewModel(@NonNull Application application) {
@@ -116,6 +117,7 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
                 MutableLiveData<List<Child>> tracksLiveData = albumRepository.getAlbumTracks(album.getId());
                 
                 tracksLiveData.observeForever(new Observer<List<Child>>() {
+                    @OptIn(markerClass = UnstableApi.class)
                     @Override
                     public void onChanged(List<Child> songs) {
                         if (songs != null && !songs.isEmpty()) {

@@ -5,7 +5,6 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,6 +60,9 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     private TextView removeAllTextView;
     private List<Child> currentAlbumTracks = Collections.emptyList();
     private List<MediaItem> currentAlbumMediaItems = Collections.emptyList();
+
+    private boolean playbackStarted = false;
+    private boolean dismissalScheduled = false;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
     private static final String TAG = "AlbumBottomSheetDialog";
@@ -120,11 +122,16 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
+            playbackStarted = false;
+            dismissalScheduled = false;
             Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
             new AlbumRepository().getInstantMix(album, 20, new MediaCallback() {
                 @Override
                 public void onError(Exception exception) {
                     Log.e(TAG, "Error: " + exception.getMessage());
+                    if (!playbackStarted && !dismissalScheduled) {
+                        scheduleDelayedDismissal(v);
+                    }
                 }
 
                 @Override
@@ -136,29 +143,25 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                     MusicUtil.ratingFilter((ArrayList<Child>) media);
 
                     if (!media.isEmpty()) {
+                        boolean isFirstBatch = !playbackStarted;
                         MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
+                        playbackStarted = true;
+                        
                         if (getActivity() instanceof MainActivity) {
                             ((MainActivity) getActivity()).setBottomSheetInPeek(true);
                         }
-                    }
-
-                    view.postDelayed(() -> {
-                        try {
-                            if (mediaBrowserListenableFuture.isDone()) {
-                                MediaBrowser browser = mediaBrowserListenableFuture.get();
-                                if (browser != null && browser.isPlaying()) {
-                                    dismissBottomSheet();
-                                    return;
-                                }
-                            }
-                        } catch (Exception e) {
-                            Log.e(TAG, "Error checking playback: " + e.getMessage());
+                        if (isFirstBatch && !dismissalScheduled) {
+                            scheduleDelayedDismissal(v);
                         }
-                        view.postDelayed(() -> dismissBottomSheet(), 300);
-                    }, 300);
+                    } else {
+                        if (!playbackStarted && !dismissalScheduled) {
+                            scheduleDelayedDismissal(v);
+                        }
+                    }
                 }
             });
         });
+
 
         TextView playRandom = view.findViewById(R.id.play_random_text_view);
         playRandom.setOnClickListener(v -> {
@@ -307,5 +310,25 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
     private void refreshShares() {
         homeViewModel.refreshShares(requireActivity());
+    }
+
+    private void scheduleDelayedDismissal(View view) {
+        if (dismissalScheduled) return;
+        dismissalScheduled = true;
+        
+        view.postDelayed(() -> {
+            try {
+                if (mediaBrowserListenableFuture.isDone()) {
+                    MediaBrowser browser = mediaBrowserListenableFuture.get();
+                    if (browser != null && browser.isPlaying()) {
+                        dismissBottomSheet();
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error checking playback: " + e.getMessage());
+            }
+            view.postDelayed(() -> dismissBottomSheet(), 200);
+        }, 300);
     }
 }

@@ -19,6 +19,7 @@ import androidx.media3.session.SessionToken;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
+import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.repository.ArtistRepository;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
@@ -31,6 +32,7 @@ import com.cappielloantonio.tempo.viewmodel.ArtistBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @UnstableApi
@@ -41,6 +43,9 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
     private ArtistID3 artist;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+
+    private boolean playbackStarted = false;
+    private boolean dismissalScheduled = false;
 
     @Nullable
     @Override
@@ -91,36 +96,48 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
             Log.d(TAG, "Artist instant mix clicked");
-            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_LONG).show();
-            ArtistRepository artistRepository = new ArtistRepository();
-            artistRepository.getInstantMix(artist, 20)
-                .observe(getViewLifecycleOwner(), new androidx.lifecycle.Observer<List<Child>>() {
-                    @Override
-                    public void onChanged(List<Child> songs) {
-                        if (songs != null && !songs.isEmpty()) {
-                            Log.d(TAG, "Starting queue with " + songs.size() + " songs");
-                            MusicUtil.ratingFilter(songs);
-                            MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                            ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
-                            artistRepository.getInstantMix(artist, 20)
-                                .removeObserver(this);
-                            view.postDelayed(() -> {
-                                try {
-                                    if (mediaBrowserListenableFuture.isDone()) {
-                                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                                        if (browser != null && browser.isPlaying()) {
-                                            dismissBottomSheet();
-                                            return;
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    // Ignore
-                                }
-                                view.postDelayed(() -> dismissBottomSheet(), 300);
-                            }, 300);
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
+            playbackStarted = false;
+            dismissalScheduled = false;
+
+            new ArtistRepository().getInstantMix(artist, 20, new MediaCallback() {
+                @Override
+                public void onError(Exception exception) {
+                    Log.e(TAG, "Error: " + exception.getMessage());
+
+                    if (!playbackStarted && !dismissalScheduled) {
+                        scheduleDelayedDismissal(v);
+                    }
+                }
+
+                @Override
+                public void onLoadMedia(List<?> media) {
+                    if (!isAdded() || getActivity() == null) {
+                        return;
+                    }
+
+                    Log.d(TAG, "Received " + media.size() + " songs for artist");
+
+                    MusicUtil.ratingFilter((ArrayList<Child>) media);
+
+                    if (!media.isEmpty()) {
+                        boolean isFirstBatch = !playbackStarted;
+                        MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
+                        playbackStarted = true;
+
+                        if (getActivity() instanceof MainActivity) {
+                            ((MainActivity) getActivity()).setBottomSheetInPeek(true);
+                        }
+                        if (isFirstBatch && !dismissalScheduled) {
+                            scheduleDelayedDismissal(v);
+                        }
+                    } else {
+                        if (!playbackStarted && !dismissalScheduled) {
+                            scheduleDelayedDismissal(v);
                         }
                     }
-                });
+                }
+            });
         });
 
         TextView playRandom = view.findViewById(R.id.play_random_text_view);
@@ -153,4 +170,25 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
     private void releaseMediaBrowser() {
         MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
     }
+
+    private void scheduleDelayedDismissal(View view) {
+        if (dismissalScheduled) return;
+        dismissalScheduled = true;
+
+        view.postDelayed(() -> {
+            try {
+                if (mediaBrowserListenableFuture.isDone()) {
+                    MediaBrowser browser = mediaBrowserListenableFuture.get();
+                    if (browser != null && browser.isPlaying()) {
+                        dismissBottomSheet();
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error checking playback: " + e.getMessage());
+            }
+            view.postDelayed(() -> dismissBottomSheet(), 200);
+        }, 300);
+    }
+
 }
