@@ -51,6 +51,8 @@
     <string name="battery_optimization_negative_button">Ignoruj</string>
     <string name="battery_optimization_neutral_button">Nie pytaj ponownie</string>
     <string name="battery_optimization_positive_button">Wyłącz</string>
+    <string name="bottom_sheet_generating_instant_mix">Generowanie natychmiastowego mixu...</string>
+    <string name="bottom_sheet_problem_generating_instant_mix">Nie udało się pobrać utworów z serwera subsonic.</string>
     <string name="connection_alert_dialog_negative_button">Anuluj</string>
     <string name="connection_alert_dialog_neutral_button">Włącz oszczędzanie danych</string>
     <string name="connection_alert_dialog_positive_button">OK</string>
