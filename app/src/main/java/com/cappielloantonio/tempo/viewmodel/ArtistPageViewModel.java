@@ -128,7 +128,6 @@ public class ArtistPageViewModel extends AndroidViewModel {
                                 MappingUtil.mapDownloads(songs),
                                 songs.stream().map(Download::new).collect(Collectors.toList())
                         );
-                    } else {
                     }
                 }
             });

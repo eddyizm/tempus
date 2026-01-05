@@ -51,6 +51,8 @@
     <string name="battery_optimization_negative_button">Ignore</string>
     <string name="battery_optimization_neutral_button">Don\'t ask again</string>
     <string name="battery_optimization_positive_button">Disable</string>
+    <string name="bottom_sheet_generating_instant_mix">Generating instant mix...</string>
+    <string name="bottom_sheet_problem_generating_instant_mix">Could not retrieve tracks from subsonic server.</string>
     <string name="connection_alert_dialog_negative_button">Cancel</string>
     <string name="connection_alert_dialog_neutral_button">Enable data saver</string>
     <string name="connection_alert_dialog_positive_button">OK</string>
