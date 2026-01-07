@@ -1,0 +1,5 @@
+* fix: give user feedback when trying to add podcast/radio on unsupported backends
+* docs: Clarify Android Auto enablement
+* fix: instant mix gets a big refactor, with cascading fallbacks to produce a larger queue
+* chore(i18n): add missing keys, update Chinese translation and alphabetize
+* chore(i18n): Update Polish translation
