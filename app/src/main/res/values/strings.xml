@@ -39,6 +39,7 @@
     <string name="artist_list_page_downloaded">Downloaded artists</string>
     <string name="artist_list_page_starred">Starred artists</string>
     <string name="artist_list_page_title">Artists</string>
+    <string name="artist_no_artist_info_toast">No additional artist info</string>
     <string name="artist_page_radio_button">Radio</string>
     <string name="artist_page_shuffle_button">Shuffle</string>
     <string name="artist_page_switch_layout_button">Switch layout</string>

@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -39,6 +41,7 @@ import com.cappielloantonio.tempo.ui.adapter.ArtistCatalogueAdapter;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.ArtistPageViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -119,6 +122,10 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(artistPageViewModel.getArtist().getStarred() != null);
         favoriteToggle.setOnClickListener(v -> artistPageViewModel.setFavorite(requireContext()));
+
+        Button bioToggle = view.findViewById(R.id.button_toggle_bio);
+        bioToggle.setOnClickListener(v ->
+                Toast.makeText(getActivity(), R.string.artist_no_artist_info_toast, Toast.LENGTH_SHORT).show());
     }
 
     private void initAppBar() {
@@ -136,13 +143,6 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             if (artistInfo == null) {
                 if (bind != null) bind.artistPageBioSector.setVisibility(View.GONE);
             } else {
-                String normalizedBio = MusicUtil.forceReadableString(artistInfo.getBiography());
-
-                if (bind != null)
-                    bind.artistPageBioSector.setVisibility(!normalizedBio.trim().isEmpty() ? View.VISIBLE : View.GONE);
-                if (bind != null)
-                    bind.bioMoreTextViewClickable.setVisibility(artistInfo.getLastFmUrl() != null ? View.VISIBLE : View.GONE);
-
                 if (getContext() != null && bind != null) {
                     ArtistID3 currentArtist = artistPageViewModel.getArtist();
                         String primaryId = currentArtist.getCoverArtId() != null && !currentArtist.getCoverArtId().trim().isEmpty()
@@ -192,19 +192,47 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                             .into(bind.artistBackdropImageView);
                 }
 
-                if (bind != null) bind.bioTextView.setText(normalizedBio);
+                if (bind != null) {
+                    String normalizedBio = MusicUtil.forceReadableString(artistInfo.getBiography()).trim();
+                    String lastFmUrl = artistInfo.getLastFmUrl();
 
-                if (bind != null) bind.bioMoreTextViewClickable.setOnClickListener(v -> {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(artistInfo.getLastFmUrl()));
-                    startActivity(intent);
-                });
+                    if (normalizedBio.isEmpty()) {
+                        bind.bioTextView.setVisibility(View.GONE);
+                    } else {
+                        bind.bioTextView.setText(normalizedBio);
+                    }
 
-                if (bind != null) bind.artistPageBioSector.setVisibility(View.VISIBLE);
+                    if (lastFmUrl == null) {
+                        bind.bioMoreTextViewClickable.setVisibility(View.GONE);
+                    } else {
+                        bind.bioMoreTextViewClickable.setOnClickListener(v -> {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(Uri.parse(artistInfo.getLastFmUrl()));
+                            startActivity(intent);
+                        });
+                        bind.bioMoreTextViewClickable.setVisibility(View.VISIBLE);
+                    }
+
+                    if (!normalizedBio.isEmpty() || lastFmUrl != null) {
+                        View view = bind.getRoot();
+
+                        Button bioToggle = view.findViewById(R.id.button_toggle_bio);
+                        bioToggle.setOnClickListener(v -> {
+                            if (bind != null) {
+                                boolean displayBio = Preferences.getArtistDisplayBiography();
+                                Preferences.setArtistDisplayBiography(!displayBio);
+                                bind.artistPageBioSector.setVisibility(displayBio ? View.GONE : View.VISIBLE);
+                            }
+                        });
+
+                        boolean displayBio = Preferences.getArtistDisplayBiography();
+                        bind.artistPageBioSector.setVisibility(displayBio ? View.VISIBLE : View.GONE);
+                    }
+                }
             }
         });
     }
-    
+
     private void initPlayButtons() {
         bind.artistPageShuffleButton.setOnClickListener(v -> artistPageViewModel.getArtistShuffleList().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
             @Override
