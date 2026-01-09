@@ -5,8 +5,6 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +24,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
@@ -48,13 +45,10 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import android.content.Intent;
-import androidx.media3.common.MediaItem;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @UnstableApi
 public class SongBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
@@ -72,9 +66,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     private AssetLinkUtil.AssetLink currentAlbumLink;
     private AssetLinkUtil.AssetLink currentArtistLink;
 
-    private boolean playbackStarted = false;
-    private boolean dismissalScheduled = false;
-
+    private boolean isFirstBatch = true;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
     private static final String TAG = "SongBottomSheetDialog";
 
@@ -152,68 +144,36 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-            playbackStarted = false;
-            dismissalScheduled = false;
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity == null) return;
+
+            ListenableFuture<MediaBrowser> activityBrowserFuture = activity.getMediaBrowserListenableFuture();
+            if (activityBrowserFuture == null) {
+                Log.e(TAG, "MediaBrowser Future is null in MainActivity");
+                return;
+            }
+
+            isFirstBatch = true;
             Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
 
-            final Runnable failsafeTimeout = () -> {
-                if (!playbackStarted && !dismissalScheduled) {
-                    Log.w(TAG, "No response received within 3 seconds");
-                    if (isAdded() && getActivity() != null) {
-                        Toast.makeText(getContext(), 
-                            R.string.bottom_sheet_problem_generating_instant_mix, 
-                            Toast.LENGTH_SHORT).show();
+            songBottomSheetViewModel.getInstantMix(activity, song).observe(activity, media -> {
+
+                if (media == null || media.isEmpty()) return;
+                if (getActivity() == null) return;
+
+                MusicUtil.ratingFilter(media);
+
+                if (isFirstBatch) {
+                    isFirstBatch = false;
+                    MediaManager.startQueue(activityBrowserFuture, media, 0);
+                    activity.setBottomSheetInPeek(true);
+                    if (isAdded()) {
                         dismissBottomSheet();
                     }
-                }
-            };
-            view.postDelayed(failsafeTimeout, 3000);
-            songBottomSheetViewModel.getInstantMix(song, 20, new MediaCallback() {
-                @Override
-                public void onError(Exception exception) {
-                    view.removeCallbacks(failsafeTimeout);
-                    Log.e(TAG, "Error: " + exception.getMessage());
-                    if (isAdded() && getActivity() != null) {
-                        String message = isOffline(exception) ? 
-                            "You're offline" : "Network error";
-                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                    }
-                    if (!playbackStarted && !dismissalScheduled) {
-                        scheduleDelayedDismissal(v);
-                    }
-                }
-
-                @Override
-                public void onLoadMedia(List<?> media) {
-                    view.removeCallbacks(failsafeTimeout);
-                    if (!isAdded() || getActivity() == null) {
-                        return;
-                    }
-
-                    MusicUtil.ratingFilter((ArrayList<Child>) media);
-
-                    if (!media.isEmpty()) {
-                        boolean isFirstBatch = !playbackStarted;
-                        MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
-                        playbackStarted = true;
-                        
-                        if (getActivity() instanceof MainActivity) {
-                            ((MainActivity) getActivity()).setBottomSheetInPeek(true);
-                        }
-                        if (isFirstBatch && !dismissalScheduled) {
-                            scheduleDelayedDismissal(v);
-                        }
-                    } else {
-                        Toast.makeText(getContext(), 
-                            R.string.bottom_sheet_problem_generating_instant_mix, 
-                            Toast.LENGTH_SHORT).show();
-                        if (!playbackStarted && !dismissalScheduled) {
-                            scheduleDelayedDismissal(v);
-                        }
-                    }
+                } else {
+                    MediaManager.enqueue(activityBrowserFuture, media, true);
                 }
             });
-            
         });
 
         TextView playNext = view.findViewById(R.id.play_next_text_view);
@@ -382,16 +342,12 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         chip.setVisibility(View.VISIBLE);
 
         chip.setOnClickListener(v -> {
-            if (assetLink != null) {
-                ((MainActivity) requireActivity()).openAssetLink(assetLink);
-            }
+            ((MainActivity) requireActivity()).openAssetLink(assetLink);
         });
 
         chip.setOnLongClickListener(v -> {
-            if (assetLink != null) {
-                AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
-                Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, id), Toast.LENGTH_SHORT).show();
-            }
+            AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
+            Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, id), Toast.LENGTH_SHORT).show();
             return true;
         });
 
@@ -453,30 +409,4 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         homeViewModel.refreshShares(requireActivity());
     }
 
-    private void scheduleDelayedDismissal(View view) {
-        if (dismissalScheduled) return;
-        dismissalScheduled = true;
-        
-        view.postDelayed(() -> {
-            try {
-                if (mediaBrowserListenableFuture.isDone()) {
-                    MediaBrowser browser = mediaBrowserListenableFuture.get();
-                    if (browser != null && browser.isPlaying()) {
-                        dismissBottomSheet();
-                        return;
-                    }
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Error checking playback: " + e.getMessage());
-            }
-            view.postDelayed(() -> dismissBottomSheet(), 200);
-        }, 300);
-    }
-
-    private boolean isOffline(Exception exception) {
-        return exception != null && exception.getMessage() != null && 
-            (exception.getMessage().contains("Network") || 
-                exception.getMessage().contains("timeout") ||
-                exception.getMessage().contains("offline"));
-    }
 }
