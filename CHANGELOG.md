@@ -1,11 +1,12 @@
 # Changelog
 
-## Pending release...
+## [4.6.3](https://github.com/eddyizm/tempo/releases/tag/v4.6.3) (2026-01-10)
 * fix: give user feedback when trying to add podcast/radio on unsupport… by @eddyizm in https://github.com/eddyizm/tempus/pull/328
 * docs: Clarify Android Auto enablement by @Forage in https://github.com/eddyizm/tempus/pull/336
 * fix: instant mix gets a big refactor, with cascading fallbacks to produce a larger queue by @eddyizm in https://github.com/eddyizm/tempus/pull/330
 * chore(i18n): add missing keys, update Chinese translation and alphabetize by @hongwei1203 in https://github.com/eddyizm/tempus/pull/332
 * chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/339
+* feat: Ability to toggle visibility of artist biography by @kmarius in https://github.com/eddyizm/tempus/pull/338
 
 ## [4.6.0](https://github.com/eddyizm/tempo/releases/tag/v4.6.0) (2025-12-22)
 * chore: Update description_empty_title in English and Polish by @tyren234 in https://github.com/eddyizm/tempus/pull/307
