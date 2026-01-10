@@ -293,18 +293,6 @@ public class ArtistRepository {
         return new SongRepository().getInstantMix(artist.getId(), SeedType.ARTIST, count);
     }
 
-    public void getInstantMix(ArtistID3 artist, int count, final MediaCallback callback) {
-        // Delegate to the centralized SongRepository
-        new SongRepository().getInstantMix(artist.getId(), SeedType.ARTIST, count, songs -> {
-            if (songs != null && !songs.isEmpty()) {
-                callback.onLoadMedia(songs);
-            } else {
-                callback.onLoadMedia(Collections.emptyList());
-            }
-        });
-    }
-
-
     public MutableLiveData<List<Child>> getRandomSong(ArtistID3 artist, int count) {
         MutableLiveData<List<Child>> randomSongs = new MutableLiveData<>();
 

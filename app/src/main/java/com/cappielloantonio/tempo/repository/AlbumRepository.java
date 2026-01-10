@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.interfaces.DecadesCallback;
-import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.AlbumInfo;
@@ -206,16 +205,11 @@ public class AlbumRepository {
         return albumInfo;
     }
 
-    public void getInstantMix(AlbumID3 album, int count, final MediaCallback callback) {
-        Log.d("AlbumRepository", "Starting Instant Mix for album: " + album.getName());
-
-        new SongRepository().getInstantMix(album.getId(), SeedType.ALBUM, count, songs -> {
-
-            if (songs != null && !songs.isEmpty()) {
-                callback.onLoadMedia(songs);
-            }
-        });
+    public MutableLiveData<List<Child>> getInstantMix(AlbumID3 album, int count) {
+        // Delegate to the centralized SongRepository
+        return new SongRepository().getInstantMix(album.getId(), SeedType.ALBUM, count);
     }
+
 
     public MutableLiveData<List<Integer>> getDecades() {
         MutableLiveData<List<Integer>> decades = new MutableLiveData<>();
