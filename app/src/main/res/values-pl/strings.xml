@@ -39,6 +39,7 @@
     <string name="artist_list_page_downloaded">Pobrani wykonawcy</string>
     <string name="artist_list_page_starred">Wykonawcy oznaczeni gwiazdką</string>
     <string name="artist_list_page_title">Wykonawcy</string>
+    <string name="artist_no_artist_info_toast">Brak dodatkowych informacji o wykonawcy</string>
     <string name="artist_page_radio_button">Radio</string>
     <string name="artist_page_shuffle_button">Odtwarzanie losowe</string>
     <string name="artist_page_switch_layout_button">Zmień układ</string>
