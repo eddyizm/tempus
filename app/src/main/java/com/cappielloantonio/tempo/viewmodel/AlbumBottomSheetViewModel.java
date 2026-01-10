@@ -6,6 +6,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -26,6 +27,7 @@ import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.NetworkUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +38,7 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
     private final FavoriteRepository favoriteRepository;
     private final SharingRepository sharingRepository;
     private AlbumID3 album;
+    private final MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(null);
 
     public AlbumBottomSheetViewModel(@NonNull Application application) {
         super(application);
@@ -130,5 +133,13 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
                     }
                 });
             }
+    }
+
+    public LiveData<List<Child>> getAlbumInstantMix(LifecycleOwner owner, AlbumID3 album) {
+        instantMix.setValue(Collections.emptyList());
+
+        albumRepository.getInstantMix(album, 20).observe(owner, instantMix::postValue);
+
+        return instantMix;
     }
 }
