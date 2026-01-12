@@ -23,6 +23,9 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
 import androidx.media3.session.*
 import androidx.media3.session.MediaSession.ControllerInfo
+import androidx.media3.extractor.metadata.icy.IcyInfo
+import androidx.media3.extractor.metadata.id3.TextInformationFrame
+import androidx.media3.extractor.metadata.vorbis.VorbisComment
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
@@ -31,6 +34,12 @@ import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
 @UnstableApi
 open class BaseMediaService : MediaLibraryService() {
@@ -65,6 +74,13 @@ open class BaseMediaService : MediaLibraryService() {
             updateWidget(player)
             widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
         }
+    }
+
+    private val radioHeaderCheckExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+    private var radioHeaderCheckScheduled = false
+    private var radioHeaderCheckFuture: ScheduledFuture<*>? = null
+    private val radioHeaderCheckRunnable = Runnable {
+        checkRadioHttpHeaders()
     }
 
     private val binder = LocalBinder()
@@ -117,6 +133,9 @@ open class BaseMediaService : MediaLibraryService() {
         updateWidget(player)
     }
 
+    private var lastRadioArtist: String? = null
+    private var lastRadioTitle: String? = null
+
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -126,6 +145,16 @@ open class BaseMediaService : MediaLibraryService() {
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
                 }
+                
+                // Restart header checks for radio streams when media item changes
+                val mediaType = mediaItem.mediaMetadata.extras?.getString("type")
+                if (mediaType == Constants.MEDIA_TYPE_RADIO && player.isPlaying) {
+                    stopRadioHeaderChecks()
+                    scheduleRadioHeaderChecks()
+                } else if (mediaType != Constants.MEDIA_TYPE_RADIO) {
+                    stopRadioHeaderChecks()
+                }
+                
                 updateWidget(player)
             }
 
@@ -162,6 +191,103 @@ open class BaseMediaService : MediaLibraryService() {
                 }
             }
 
+            override fun onMetadata(metadata: Metadata) {
+                // Handle streaming metadata (ICY, ID3) for radio / streaming content
+                val currentItem = player.currentMediaItem ?: return
+                val extras = currentItem.mediaMetadata.extras
+                val mediaType = extras?.getString("type")
+                if (mediaType != Constants.MEDIA_TYPE_RADIO) return
+
+                var artist: String? = null
+                var title: String? = null
+
+                for (i in 0 until metadata.length()) {
+                    when (val entry = metadata[i]) {
+                        is IcyInfo -> {
+                            // Common format: "Artist - Title"
+                            val icyTitle = entry.title ?: continue
+                            val parts = icyTitle.split(" - ", limit = 2)
+                            if (parts.size == 2) {
+                                artist = parts[0].trim().ifEmpty { null } ?: artist
+                                title = parts[1].trim().ifEmpty { null } ?: title
+                            } else {
+                                title = icyTitle.trim().ifEmpty { null } ?: title
+                            }
+                        }
+                        is TextInformationFrame -> {
+                            @Suppress("DEPRECATION")
+                            val value = entry.value
+                            when (entry.id) {
+                                "TPE1" -> if (!value.isNullOrBlank()) {
+                                    artist = value
+                                }
+                                "TIT2" -> if (!value.isNullOrBlank()) {
+                                    title = value
+                                }
+                            }
+                        }
+                        is VorbisComment -> {
+                            // OGG Vorbis/Opus metadata
+                            @Suppress("DEPRECATION")
+                            val value = entry.value
+                            when (entry.key) {
+                                "ARTIST" -> if (!value.isNullOrBlank()) {
+                                    artist = value
+                                }
+                                "TITLE" -> if (!value.isNullOrBlank()) {
+                                    title = value
+                                }
+                                "ALBUM" -> {
+                                    // Store album if needed, but not used for radio display
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (artist.isNullOrBlank() && title.isNullOrBlank()) return
+
+                // Deduplicate consecutive identical metadata
+                if (artist == lastRadioArtist && title == lastRadioTitle) return
+                lastRadioArtist = artist
+                lastRadioTitle = title
+
+                val currentIndex = player.currentMediaItemIndex
+                if (currentIndex == C.INDEX_UNSET) return
+
+                val metadataBuilder = currentItem.mediaMetadata.buildUpon()
+                val newExtras = Bundle(currentItem.mediaMetadata.extras ?: Bundle())
+
+                artist?.let {
+                    metadataBuilder.setArtist(it)
+                    newExtras.putString("radioArtist", it)
+                }
+                title?.let {
+                    metadataBuilder.setTitle(it)
+                    newExtras.putString("radioTitle", it)
+                }
+
+                // Preserve station name separately (fallback to static title if needed)
+                if (!newExtras.containsKey("stationName")) {
+                    val stationName =
+                        currentItem.mediaMetadata.extras?.getString("stationName")
+                            ?: currentItem.mediaMetadata.title?.toString()
+                    stationName?.let { newExtras.putString("stationName", it) }
+                }
+
+                metadataBuilder.setExtras(newExtras)
+
+                val updatedItem = currentItem.buildUpon()
+                    .setMediaMetadata(metadataBuilder.build())
+                    .build()
+
+                (player as? ExoPlayer)?.let { exo ->
+                    exo.replaceMediaItem(currentIndex, updatedItem)
+                    updateWidget(exo)
+                    // Media3 notification will automatically update via MediaMetadata changes
+                }
+            }
+
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 Log.d(javaClass.toString(), "onIsPlayingChanged " + player.currentMediaItemIndex)
                 if (!isPlaying) {
@@ -174,8 +300,10 @@ open class BaseMediaService : MediaLibraryService() {
                 }
                 if (isPlaying) {
                     scheduleWidgetUpdates()
+                    scheduleRadioHeaderChecks()
                 } else {
                     stopWidgetUpdates()
+                    stopRadioHeaderChecks()
                 }
                 updateWidget(player)
             }
@@ -279,6 +407,8 @@ open class BaseMediaService : MediaLibraryService() {
         releaseNetworkCallback()
         equalizerManager.release()
         stopWidgetUpdates()
+        stopRadioHeaderChecks()
+        radioHeaderCheckExecutor.shutdown()
         releasePlayers()
         mediaLibrarySession.release()
         super.onDestroy()
@@ -395,6 +525,226 @@ open class BaseMediaService : MediaLibraryService() {
         if (!widgetUpdateScheduled) return
         widgetUpdateHandler.removeCallbacks(widgetUpdateRunnable)
         widgetUpdateScheduled = false
+    }
+
+    private fun scheduleRadioHeaderChecks() {
+        val player = mediaLibrarySession.player
+        val currentItem = player.currentMediaItem ?: return
+        val mediaType = currentItem.mediaMetadata.extras?.getString("type")
+        if (mediaType != Constants.MEDIA_TYPE_RADIO) return
+        
+        if (radioHeaderCheckScheduled) return
+        
+        // Check immediately, then periodically
+        checkRadioHttpHeaders()
+        radioHeaderCheckFuture = radioHeaderCheckExecutor.scheduleWithFixedDelay(
+            radioHeaderCheckRunnable,
+            RADIO_HEADER_CHECK_INTERVAL_SECONDS,
+            RADIO_HEADER_CHECK_INTERVAL_SECONDS,
+            TimeUnit.SECONDS
+        )
+        radioHeaderCheckScheduled = true
+    }
+
+    private fun stopRadioHeaderChecks() {
+        if (!radioHeaderCheckScheduled) return
+        radioHeaderCheckFuture?.cancel(false)
+        radioHeaderCheckFuture = null
+        radioHeaderCheckScheduled = false
+    }
+
+    private fun checkRadioHttpHeaders() {
+        val player = mediaLibrarySession.player
+        val currentItem = player.currentMediaItem ?: return
+        val extras = currentItem.mediaMetadata.extras
+        val mediaType = extras?.getString("type")
+        if (mediaType != Constants.MEDIA_TYPE_RADIO) return
+        
+        val streamUrl = extras?.getString("uri") ?: currentItem.requestMetadata.mediaUri?.toString()
+        if (streamUrl.isNullOrBlank()) return
+
+        try {
+            val url = URL(streamUrl)
+            val connection = url.openConnection() as? HttpURLConnection ?: run {
+                Log.d(javaClass.toString(), "Failed to create HTTP connection for: $streamUrl")
+                return
+            }
+            
+            // Try HEAD request first (more efficient)
+            connection.requestMethod = "HEAD"
+            connection.setRequestProperty("Icy-MetaData", "1")
+            connection.setRequestProperty("User-Agent", "Tempus/1.0")
+            connection.connectTimeout = 5000
+            connection.readTimeout = 5000
+            
+            try {
+                connection.connect()
+            } catch (e: Exception) {
+                Log.d(javaClass.toString(), "HEAD request failed, trying GET: ${e.message}")
+                connection.disconnect()
+                // Fallback to GET request with Range header (some servers don't support HEAD)
+                val getConnection = url.openConnection() as? HttpURLConnection ?: return
+                getConnection.requestMethod = "GET"
+                getConnection.setRequestProperty("Icy-MetaData", "1")
+                getConnection.setRequestProperty("User-Agent", "Tempus/1.0")
+                getConnection.setRequestProperty("Range", "bytes=0-1") // Request minimal data
+                getConnection.connectTimeout = 5000
+                getConnection.readTimeout = 5000
+                
+                try {
+                    getConnection.connect()
+                    val responseCode = getConnection.responseCode
+                    if (responseCode >= 400) {
+                        Log.d(javaClass.toString(), "GET request failed with code: $responseCode")
+                        getConnection.disconnect()
+                        return
+                    }
+                    
+                    // Check for various HTTP header formats that contain metadata
+                    val streamTitle = getConnection.getHeaderField("icy-name")
+                        ?: getConnection.getHeaderField("StreamTitle")
+                        ?: getConnection.getHeaderField("stream-title")
+                        ?: getConnection.getHeaderField("X-StreamTitle")
+                    
+                    getConnection.inputStream?.close()
+                    getConnection.disconnect()
+                    
+                    if (streamTitle.isNullOrBlank()) {
+                        Log.d(javaClass.toString(), "No HTTP header metadata found in GET response")
+                        return
+                    }
+                    
+                    Log.d(javaClass.toString(), "Found HTTP header metadata via GET: $streamTitle")
+                    processStreamTitle(streamTitle, player)
+                    return
+                } catch (e2: Exception) {
+                    Log.d(javaClass.toString(), "GET request also failed: ${e2.message}")
+                    getConnection.disconnect()
+                    return
+                }
+            }
+            
+            val responseCode = connection.responseCode
+            if (responseCode >= 400) {
+                Log.d(javaClass.toString(), "HEAD request failed with code: $responseCode")
+                connection.disconnect()
+                return
+            }
+            
+            // Check for various HTTP header formats that contain metadata
+            // Radio Bob and similar stations send metadata in HTTP headers like:
+            // - icy-name: "Artist - Song Title"
+            // - StreamTitle: "Artist - Song Title"
+            val streamTitle = connection.getHeaderField("icy-name")
+                ?: connection.getHeaderField("StreamTitle")
+                ?: connection.getHeaderField("stream-title")
+                ?: connection.getHeaderField("X-StreamTitle")
+            
+            connection.disconnect()
+            
+            if (streamTitle.isNullOrBlank()) {
+                Log.d(javaClass.toString(), "No HTTP header metadata found for radio stream")
+                return
+            }
+            
+            Log.d(javaClass.toString(), "Found HTTP header metadata via HEAD: $streamTitle")
+            processStreamTitle(streamTitle, player)
+        } catch (e: Exception) {
+            Log.d(javaClass.toString(), "Failed to fetch radio HTTP headers: ${e.message ?: e.javaClass.simpleName}", e)
+            // Silently fail - this is a fallback mechanism
+        }
+    }
+    
+    private fun processStreamTitle(streamTitle: String, player: Player) {
+        // Parse the stream title (could be "Artist - Title" or just "Title")
+        // Radio Bob format: "Artist - Song Title"
+        var artist: String? = null
+        val title: String?
+        
+        val parts = streamTitle.split(" - ", limit = 2)
+        if (parts.size == 2) {
+            artist = parts[0].trim().ifEmpty { null }
+            title = parts[1].trim().ifEmpty { null }
+            Log.d(javaClass.toString(), "Parsed HTTP metadata - Artist: $artist, Title: $title")
+        } else {
+            title = streamTitle.trim().ifEmpty { null }
+            Log.d(javaClass.toString(), "Parsed HTTP metadata - Title only: $title")
+        }
+        
+        if (artist.isNullOrBlank() && title.isNullOrBlank()) return
+        
+        // Deduplicate consecutive identical metadata
+        if (artist == lastRadioArtist && title == lastRadioTitle) {
+            Log.d(javaClass.toString(), "Skipping duplicate metadata")
+            return
+        }
+        
+        // Update on main thread
+        widgetUpdateHandler.post {
+            val currentItemNow = player.currentMediaItem ?: return@post
+            val currentIndex = player.currentMediaItemIndex
+            if (currentIndex == C.INDEX_UNSET) return@post
+            
+            val currentExtras = currentItemNow.mediaMetadata.extras
+            val currentMediaType = currentExtras?.getString("type")
+            if (currentMediaType != Constants.MEDIA_TYPE_RADIO) return@post
+            
+            // Check if we already have metadata from embedded sources (ICY, ID3, etc.)
+            // HTTP headers are used as fallback when embedded metadata is not available
+            val hasEmbeddedMetadata = !currentItemNow.mediaMetadata.artist.isNullOrBlank() ||
+                    !currentItemNow.mediaMetadata.title.isNullOrBlank() ||
+                    (currentExtras != null && !currentExtras.getString("radioArtist").isNullOrBlank()) ||
+                    (currentExtras != null && !currentExtras.getString("radioTitle").isNullOrBlank())
+            
+            // Only use HTTP header metadata if we don't have embedded metadata
+            // This preserves the original way while adding HTTP header support as fallback
+            if (!hasEmbeddedMetadata) {
+                Log.d(javaClass.toString(), "Updating radio metadata from HTTP headers - Artist: $artist, Title: $title")
+                lastRadioArtist = artist
+                lastRadioTitle = title
+                
+                val metadataBuilder = currentItemNow.mediaMetadata.buildUpon()
+                val newExtras = if (currentExtras != null) {
+                    Bundle(currentExtras)
+                } else {
+                    Bundle()
+                }
+                
+                // Set artist and title in MediaMetadata
+                // The UI will read these and display "Artist - Title" in the main title label
+                artist?.let {
+                    metadataBuilder.setArtist(it)
+                    newExtras.putString("radioArtist", it)
+                }
+                title?.let {
+                    metadataBuilder.setTitle(it)
+                    newExtras.putString("radioTitle", it)
+                }
+                
+                // Preserve station name separately (shown in artist label)
+                if (!newExtras.containsKey("stationName")) {
+                    val stationName = currentExtras?.getString("stationName")
+                        ?: currentItemNow.mediaMetadata.title?.toString()
+                    stationName?.let { newExtras.putString("stationName", it) }
+                }
+                
+                metadataBuilder.setExtras(newExtras)
+                
+                val updatedItem = currentItemNow.buildUpon()
+                    .setMediaMetadata(metadataBuilder.build())
+                    .build()
+                
+                (player as? ExoPlayer)?.let { exo ->
+                    // replaceMediaItem triggers onMediaMetadataChanged in UI listeners
+                    // This will update the player display automatically
+                    exo.replaceMediaItem(currentIndex, updatedItem)
+                    updateWidget(exo)
+                    Log.d(javaClass.toString(), "Radio metadata updated in player")
+                }
+            } else {
+                Log.d(javaClass.toString(), "Skipping HTTP header metadata - embedded metadata already exists")
+            }
+        }
     }
 
     private fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
@@ -587,4 +937,5 @@ open class BaseMediaService : MediaLibraryService() {
 }
 
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
+private const val RADIO_HEADER_CHECK_INTERVAL_SECONDS = 10L
 

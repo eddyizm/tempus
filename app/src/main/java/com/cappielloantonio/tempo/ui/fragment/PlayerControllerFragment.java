@@ -213,12 +213,52 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMetadata(MediaMetadata mediaMetadata) {
+        String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
+
+        if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)) {
+            String stationName = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("stationName",
+                    mediaMetadata.title != null ? String.valueOf(mediaMetadata.title) : "")
+                    : mediaMetadata.title != null ? String.valueOf(mediaMetadata.title) : "";
+
+            String artist = mediaMetadata.artist != null
+                    ? String.valueOf(mediaMetadata.artist)
+                    : mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioArtist", "")
+                    : "";
+
+            String title = mediaMetadata.title != null
+                    ? String.valueOf(mediaMetadata.title)
+                    : mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioTitle", "")
+                    : "";
+
+            String mainTitle;
+            if (!TextUtils.isEmpty(artist) && !TextUtils.isEmpty(title)) {
+                mainTitle = artist + " - " + title;
+            } else if (!TextUtils.isEmpty(title)) {
+                mainTitle = title;
+            } else {
+                mainTitle = stationName;
+            }
+
+            playerMediaTitleLabel.setText(mainTitle);
+            playerArtistNameLabel.setText(stationName);
+
+            playerMediaTitleLabel.setSelected(true);
+            playerArtistNameLabel.setSelected(true);
+
+            playerMediaTitleLabel.setVisibility(!TextUtils.isEmpty(mainTitle) ? View.VISIBLE : View.GONE);
+            playerArtistNameLabel.setVisibility(!TextUtils.isEmpty(stationName) ? View.VISIBLE : View.GONE);
+
+            updateAssetLinkChips(mediaMetadata);
+            return;
+        }
+
         playerMediaTitleLabel.setText(String.valueOf(mediaMetadata.title));
         playerArtistNameLabel.setText(
                 mediaMetadata.artist != null
                         ? String.valueOf(mediaMetadata.artist)
-                        : mediaMetadata.extras != null && Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO)
-                        ? mediaMetadata.extras.getString("uri", getString(R.string.label_placeholder))
                         : "");
 
         playerMediaTitleLabel.setSelected(true);

@@ -61,13 +61,47 @@ public class TrackInfoDialog extends DialogFragment {
     private void setTrackInfo() {
         genreLink = null;
         yearLink = null;
-        bind.trakTitleInfoTextView.setText(mediaMetadata.title);
-        bind.trakArtistInfoTextView.setText(
-                mediaMetadata.artist != null
-                        ? mediaMetadata.artist
-                        : mediaMetadata.extras != null && Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO)
-                        ? mediaMetadata.extras.getString("uri", getString(R.string.label_placeholder))
-                        : "");
+        
+        String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
+        boolean isRadio = Objects.equals(type, Constants.MEDIA_TYPE_RADIO);
+        
+        if (isRadio) {
+            // For radio: show "Artist - Title" or just title in header, station name as artist
+            String stationName = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("stationName",
+                    mediaMetadata.title != null ? String.valueOf(mediaMetadata.title) : "")
+                    : mediaMetadata.title != null ? String.valueOf(mediaMetadata.title) : "";
+            
+            String artist = mediaMetadata.artist != null
+                    ? String.valueOf(mediaMetadata.artist)
+                    : mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioArtist", "")
+                    : "";
+            
+            String title = mediaMetadata.title != null
+                    ? String.valueOf(mediaMetadata.title)
+                    : mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioTitle", "")
+                    : "";
+            
+            String mainTitle;
+            if (!android.text.TextUtils.isEmpty(artist) && !android.text.TextUtils.isEmpty(title)) {
+                mainTitle = artist + " - " + title;
+            } else if (!android.text.TextUtils.isEmpty(title)) {
+                mainTitle = title;
+            } else {
+                mainTitle = stationName;
+            }
+            
+            bind.trakTitleInfoTextView.setText(mainTitle);
+            bind.trakArtistInfoTextView.setText(stationName);
+        } else {
+            bind.trakTitleInfoTextView.setText(mediaMetadata.title);
+            bind.trakArtistInfoTextView.setText(
+                    mediaMetadata.artist != null
+                            ? mediaMetadata.artist
+                            : "");
+        }
 
         if (mediaMetadata.extras != null) {
             songLink = AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_SONG, mediaMetadata.extras.getString("id"));
@@ -90,6 +124,27 @@ public class TrackInfoDialog extends DialogFragment {
             String artistValue = mediaMetadata.extras.getString("artist", getString(R.string.label_placeholder));
             String genreValue = mediaMetadata.extras.getString("genre", getString(R.string.label_placeholder));
             int yearValue = mediaMetadata.extras.getInt("year", 0);
+            
+            // Handle radio-specific metadata
+            if (isRadio) {
+                String stationName = mediaMetadata.extras.getString("stationName", getString(R.string.label_placeholder));
+                String radioArtist = mediaMetadata.extras.getString("radioArtist", "");
+                String radioTitle = mediaMetadata.extras.getString("radioTitle", "");
+                
+                // Show station name in station section
+                bind.stationInfoSector.setVisibility(android.view.View.VISIBLE);
+                bind.stationValueSector.setText(stationName);
+                
+                // Use radio metadata for title/artist if available
+                if (!android.text.TextUtils.isEmpty(radioTitle)) {
+                    titleValue = radioTitle;
+                }
+                if (!android.text.TextUtils.isEmpty(radioArtist)) {
+                    artistValue = radioArtist;
+                }
+            } else {
+                bind.stationInfoSector.setVisibility(android.view.View.GONE);
+            }
 
             if (genreLink == null && genreValue != null && !genreValue.isEmpty() && !getString(R.string.label_placeholder).contentEquals(genreValue)) {
                 genreLink = AssetLinkUtil.buildAssetLink(AssetLinkUtil.TYPE_GENRE, genreValue);
