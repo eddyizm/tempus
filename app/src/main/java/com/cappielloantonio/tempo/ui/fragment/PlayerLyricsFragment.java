@@ -37,6 +37,10 @@ import com.google.android.material.button.MaterialButton;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @OptIn(markerClass = UnstableApi.class)
@@ -53,12 +57,16 @@ public class PlayerLyricsFragment extends Fragment {
     private LyricsList currentLyricsList;
     private String currentDescription;
 
+    private Map<Integer, List<Line>> lineMap;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         bind = InnerFragmentPlayerLyricsBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
+
+        initLyricsLineMap(playerBottomSheetViewModel.getLiveLyricsList().getValue());
 
         initOverlay();
 
@@ -109,6 +117,16 @@ public class PlayerLyricsFragment extends Fragment {
         currentLyrics = null;
         currentLyricsList = null;
         currentDescription = null;
+    }
+
+    private synchronized void initLyricsLineMap(LyricsList lyricsList){
+
+        if (hasStructuredLyrics(lyricsList)){
+            lineMap = Objects.requireNonNull(Objects.requireNonNull(lyricsList.getStructuredLyrics()).get(0).getLine())
+                    .stream().filter(line -> Objects.nonNull(line) && Objects.nonNull(line.getStart()))
+                    .collect(Collectors.groupingBy(line -> line.getStart() == null? 0 : line.getStart()));
+        }
+
     }
 
     private void initOverlay() {
@@ -232,12 +250,11 @@ public class PlayerLyricsFragment extends Fragment {
     }
 
     private boolean hasStructuredLyrics(LyricsList lyricsList) {
-        return lyricsList != null
-                && lyricsList.getStructuredLyrics() != null
-                && !lyricsList.getStructuredLyrics().isEmpty()
-                && lyricsList.getStructuredLyrics().get(0) != null
-                && lyricsList.getStructuredLyrics().get(0).getLine() != null
-                && !lyricsList.getStructuredLyrics().get(0).getLine().isEmpty();
+        if (lyricsList == null
+                || lyricsList.getStructuredLyrics() == null
+                || lyricsList.getStructuredLyrics().isEmpty()) return false;
+        lyricsList.getStructuredLyrics();
+        return lyricsList.getStructuredLyrics().get(0).getLine() != null && !Objects.requireNonNull(lyricsList.getStructuredLyrics().get(0).getLine()).isEmpty();
     }
 
     @SuppressLint("DefaultLocale")
@@ -289,7 +306,7 @@ public class PlayerLyricsFragment extends Fragment {
 
         if (hasStructuredLyrics(lyricsList)) {
             StringBuilder lyricsBuilder = new StringBuilder();
-            List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
+            List<Line> lines = Objects.requireNonNull(lyricsList.getStructuredLyrics()).get(0).getLine();
 
             if (lines == null || lines.isEmpty()) return;
 
@@ -297,14 +314,20 @@ public class PlayerLyricsFragment extends Fragment {
                 lyricsBuilder.append(line.getValue().trim()).append("\n");
             }
 
-            Line toHighlight = lines.stream().filter(line -> line != null && line.getStart() != null && line.getStart() < timestamp).reduce((first, second) -> second).orElse(null);
+            Optional<Integer> currentLineStart = lineMap.keySet().stream().filter(start -> start!=null && start < timestamp ).max(Integer::compareTo);
 
-            if (toHighlight != null) {
+            if (currentLineStart.isEmpty()){
+                return;
+            }
+
+            List<Line> currentLines = lineMap.get(currentLineStart.get());
+
+           if (currentLines != null && !currentLines.isEmpty()) {
                 String lyrics = lyricsBuilder.toString();
                 Spannable spannableString = new SpannableString(lyrics);
 
-                int startingPosition = getStartPosition(lines, toHighlight);
-                int endingPosition = startingPosition + toHighlight.getValue().length();
+                int startingPosition = getStartPosition(lines, currentLines.get(0));
+                int endingPosition = startingPosition + currentLines.stream().mapToInt(line -> line.getValue().length() + 1).sum() -1;
 
                 spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.shadowsLyricsTextColor, null)), 0, lyrics.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.lyricsTextColor, null)), startingPosition, endingPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -312,7 +335,7 @@ public class PlayerLyricsFragment extends Fragment {
                 bind.nowPlayingSongLyricsTextView.setText(spannableString);
 
                 if (playerBottomSheetViewModel.getSyncLyricsState()) {
-                    bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(lines, toHighlight));
+                    bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(lines, currentLines));
                 }
             }
         }
@@ -347,14 +370,15 @@ public class PlayerLyricsFragment extends Fragment {
         return start;
     }
 
-    private int getScroll(List<Line> lines, Line toHighlight) {
-        int startIndex = getStartPosition(lines, toHighlight);
+    private int getScroll(List<Line> lines, List<Line> toHighlight) {
+        int startIndex = getStartPosition(lines, toHighlight.get(0));
         Layout layout = bind.nowPlayingSongLyricsTextView.getLayout();
         if (layout == null) return 0;
 
         int line = layout.getLineForOffset(startIndex);
         int lineTop = layout.getLineTop(line);
-        int lineBottom = layout.getLineBottom(line);
+        int lastLineNum = lines.size() ==1 ? line : layout.getLineForOffset(getStartPosition(lines, toHighlight.get(lines.size()-1)));
+        int lineBottom = layout.getLineBottom(lastLineNum);
         int lineCenter = (lineTop + lineBottom) / 2;
 
         int scrollViewHeight = bind.nowPlayingSongLyricsSrollView.getHeight();
