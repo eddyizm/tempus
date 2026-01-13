@@ -66,29 +66,29 @@ public class TrackInfoDialog extends DialogFragment {
         boolean isRadio = Objects.equals(type, Constants.MEDIA_TYPE_RADIO);
         
         if (isRadio) {
-            // For radio: show "Artist - Title" or just title in header, station name as artist
+            // For radio: always read from extras first (radioArtist, radioTitle, stationName)
+            // MediaMetadata.title/artist are formatted for notification
             String stationName = mediaMetadata.extras != null
                     ? mediaMetadata.extras.getString("stationName",
-                    mediaMetadata.title != null ? String.valueOf(mediaMetadata.title) : "")
-                    : mediaMetadata.title != null ? String.valueOf(mediaMetadata.title) : "";
+                    mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "")
+                    : mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "";
             
-            String artist = mediaMetadata.artist != null
-                    ? String.valueOf(mediaMetadata.artist)
-                    : mediaMetadata.extras != null
+            String artist = mediaMetadata.extras != null
                     ? mediaMetadata.extras.getString("radioArtist", "")
                     : "";
             
-            String title = mediaMetadata.title != null
-                    ? String.valueOf(mediaMetadata.title)
-                    : mediaMetadata.extras != null
+            String title = mediaMetadata.extras != null
                     ? mediaMetadata.extras.getString("radioTitle", "")
                     : "";
             
+            // Format: "Artist - Song" or fallback to title or station name
             String mainTitle;
             if (!android.text.TextUtils.isEmpty(artist) && !android.text.TextUtils.isEmpty(title)) {
                 mainTitle = artist + " - " + title;
             } else if (!android.text.TextUtils.isEmpty(title)) {
                 mainTitle = title;
+            } else if (!android.text.TextUtils.isEmpty(artist)) {
+                mainTitle = artist;
             } else {
                 mainTitle = stationName;
             }
