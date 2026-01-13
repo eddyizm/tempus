@@ -30,7 +30,7 @@ This app works with any service that implements the Subsonic API, including:
 - [Gonic](https://github.com/sentriz/gonic)
 - [Ampache](https://github.com/ampache/ampache)
 - [NextCloud Music](https://apps.nextcloud.com/apps/music)
-
+- [Airsonic Advanced](https://github.com/kagemomiji/airsonic-advanced)
 
 
 
@@ -160,7 +160,23 @@ If your server supports it - add a internet radio station feed
 ## Android Auto
 
 ### Enabling on your head unit
-- You have to enable Android Auto developer options, which are different from actual Android dev options. Then you have to enable "Unknown sources" in Android Auto, otherwise the app won't appear as it isn't downloaded from Play Store. (screenshots needed)
+To allow the Tempus app on your car's head unit, "Unknown sources" needs to be enabled in the Android Auto "Developer settings". This is because Tempus isn't installed through Play Store. Note that the Android Auto developer settings are different from the global Android "Developer options".
+1. Switch to developer mode in the Android Auto settings by tapping ten times on the "Version" item at the bottom, followed by giving your permission.
+<p align="left">
+   <img width="270" height="600" alt="1a" src="https://github.com/user-attachments/assets/f09f6999-9761-4b05-8ec7-bf221a15dda3" />
+   <img width="270" height="600" alt="1b" src="https://github.com/user-attachments/assets/0795e508-ba01-41c5-96a7-7c03b0156591" />
+   <img width="270" height="600" alt="1c" src="https://github.com/user-attachments/assets/51c15f67-fddb-452e-b5d3-5092edeab390" />
+</p>
+   
+2. Go to the "Developer settings" by the menu at the top right.
+<p align="left">
+   <img width="270" height="600" alt="2" src="https://github.com/user-attachments/assets/1ecd1f3e-026d-4d25-87f2-be7f12efbac6" />
+</p>
+
+3. Scroll down to the bottom and check "Unknown sources".
+<p align="left">
+   <img width="270" height="600" alt="3" src="https://github.com/user-attachments/assets/37db88e9-1b76-417f-9c47-da9f3a750fff" />
+</p>
 
 
 ### Server Settings

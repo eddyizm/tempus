@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +45,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import android.content.Intent;
-import androidx.media3.common.MediaItem;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
 import java.util.ArrayList;
@@ -67,7 +66,9 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     private AssetLinkUtil.AssetLink currentAlbumLink;
     private AssetLinkUtil.AssetLink currentArtistLink;
 
+    private boolean isFirstBatch = true;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private static final String TAG = "SongBottomSheetDialog";
 
     @Nullable
     @Override
@@ -143,20 +144,34 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-            MediaManager.startQueue(mediaBrowserListenableFuture, song);
-            ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity == null) return;
 
-            songBottomSheetViewModel.getInstantMix(getViewLifecycleOwner(), song).observe(getViewLifecycleOwner(), songs -> {
-                MusicUtil.ratingFilter(songs);
+            ListenableFuture<MediaBrowser> activityBrowserFuture = activity.getMediaBrowserListenableFuture();
+            if (activityBrowserFuture == null) {
+                Log.e(TAG, "MediaBrowser Future is null in MainActivity");
+                return;
+            }
 
-                if (songs == null) {
-                    dismissBottomSheet();
-                    return;
-                }
+            isFirstBatch = true;
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
 
-                if (!songs.isEmpty()) {
-                    MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
-                    dismissBottomSheet();
+            songBottomSheetViewModel.getInstantMix(activity, song).observe(activity, media -> {
+
+                if (media == null || media.isEmpty()) return;
+                if (getActivity() == null) return;
+
+                MusicUtil.ratingFilter(media);
+
+                if (isFirstBatch) {
+                    isFirstBatch = false;
+                    MediaManager.startQueue(activityBrowserFuture, media, 0);
+                    activity.setBottomSheetInPeek(true);
+                    if (isAdded()) {
+                        dismissBottomSheet();
+                    }
+                } else {
+                    MediaManager.enqueue(activityBrowserFuture, media, true);
                 }
             });
         });
@@ -327,16 +342,12 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         chip.setVisibility(View.VISIBLE);
 
         chip.setOnClickListener(v -> {
-            if (assetLink != null) {
-                ((MainActivity) requireActivity()).openAssetLink(assetLink);
-            }
+            ((MainActivity) requireActivity()).openAssetLink(assetLink);
         });
 
         chip.setOnLongClickListener(v -> {
-            if (assetLink != null) {
-                AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
-                Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, id), Toast.LENGTH_SHORT).show();
-            }
+            AssetLinkUtil.copyToClipboard(requireContext(), assetLink);
+            Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, id), Toast.LENGTH_SHORT).show();
             return true;
         });
 
@@ -397,4 +408,5 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     private void refreshShares() {
         homeViewModel.refreshShares(requireActivity());
     }
+
 }

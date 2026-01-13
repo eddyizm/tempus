@@ -2,15 +2,16 @@ package com.cappielloantonio.tempo.repository;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+
 import android.util.Log;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.interfaces.DecadesCallback;
-import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.AlbumInfo;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.util.Constants.SeedType;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -204,39 +205,11 @@ public class AlbumRepository {
         return albumInfo;
     }
 
-    public void getInstantMix(AlbumID3 album, int count, MediaCallback callback) {
-        Log.d("AlbumRepository", "Attempting getInstantMix for AlbumID: " + album.getId());
-        
-        App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getSimilarSongs2(album.getId(), count)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        List<Child> songs = new ArrayList<>();
-
-                        if (response.isSuccessful() 
-                            && response.body() != null 
-                            && response.body().getSubsonicResponse().getSimilarSongs2() != null) {
-                            
-                            List<Child> similarSongs = response.body().getSubsonicResponse().getSimilarSongs2().getSongs();
-                            
-                            if (similarSongs == null) {
-                                Log.w("AlbumRepository", "API successful but 'songs' list was NULL for AlbumID: " + album.getId());
-                            } else {
-                                songs.addAll(similarSongs);
-                            }
-                        }
-
-                        callback.onLoadMedia(songs);
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        callback.onLoadMedia(new ArrayList<>());
-                    }
-                });
+    public MutableLiveData<List<Child>> getInstantMix(AlbumID3 album, int count) {
+        // Delegate to the centralized SongRepository
+        return new SongRepository().getInstantMix(album.getId(), SeedType.ALBUM, count);
     }
+
 
     public MutableLiveData<List<Integer>> getDecades() {
         MutableLiveData<List<Integer>> decades = new MutableLiveData<>();
@@ -248,7 +221,7 @@ public class AlbumRepository {
                     @Override
                     public void onLoadYear(int last) {
                         if (first != -1 && last != -1) {
-                            List<Integer> decadeList = new ArrayList();
+                            List<Integer> decadeList = new ArrayList<>();
 
                             int startDecade = first - (first % 10);
                             int lastDecade = last - (last % 10);

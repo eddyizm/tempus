@@ -4,7 +4,12 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.interfaces.StarCallback;
@@ -17,6 +22,7 @@ import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -24,6 +30,7 @@ import java.util.List;
 public class ArtistBottomSheetViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
+    private final MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(null);
 
     private ArtistID3 artist;
 
@@ -95,6 +102,7 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
             Log.d("ArtistSync", "Starting artist sync for: " + artist.getName());
             
             artistRepository.getArtistAllSongs(artist.getId(), new ArtistRepository.ArtistSongsCallback() {
+                @OptIn(markerClass = UnstableApi.class)
                 @Override
                 public void onSongsCollected(List<Child> songs) {
                     Log.d("ArtistSync", "Callback triggered with songs: " + (songs != null ? songs.size() : 0));
@@ -114,5 +122,12 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
             Log.d("ArtistSync", "Artist sync preference is disabled");
         }
     }
-    ///
+    
+    public LiveData<List<Child>> getArtistInstantMix(LifecycleOwner owner, ArtistID3 artist) {
+        instantMix.setValue(Collections.emptyList());
+
+        artistRepository.getInstantMix(artist, 20).observe(owner, instantMix::postValue);
+
+        return instantMix;
+    }
 }

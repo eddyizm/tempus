@@ -27,7 +27,7 @@
 
 **Tempus** is an open-source and lightweight music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device. 
 
-Tempus does not rely on magic algorithms to decide what you should listen to. Instead, the interface is built around your listening history, randomness, and optionally integrates with services like Last.fm to personalize your music experience.
+Tempus does not rely on magic algorithms to decide what you should listen to. Instead, the interface is built around your listening history, randomness, and optionally integrates with services like Listenbrainz.org and Last.fm to personalize your music experience (These must be supported by your backend). 
 
 The project is a fork of [Tempo](#credits).
 
@@ -59,16 +59,19 @@ Please note the two variants in the release assets include release/debug and 32/
 - **Streaming and Offline Mode**: Stream music directly from your Subsonic server. Offline mode is currently under active development and may have limitations when using multiple servers.
 - **Playlist Management**: Create, edit, and manage playlists to curate your perfect music collection.
 - **Gapless Playback**: Experience uninterrupted playback with gapless listening mode.
-- **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.
+- **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.*
 - **Scrobbling Integration**: Optionally integrate Tempus with Last.fm or Listenbrainz.org to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
 - **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
+- **Instant Mix**: Full refactor of instant mix function which leverages subsonics similar songs by artist/album and randomSongs endpoints to server a larger play queue more reliably.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
-- **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.
+- **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.* 
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
 - **Equalizer**: Option to use in app equalizer.
 - **Widget**: New widget to keeping the basic controls on your screen at all times.
 - **Available in 11 languages**: Currently in Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish and Turkish
 
+ **Github version only*
+ 
 ## Screenshot
 
 <p align="center">

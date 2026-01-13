@@ -38,54 +38,22 @@ public class RadioRepository {
         return radioStation;
     }
 
-    public void createInternetRadioStation(String name, String streamURL, String homepageURL) {
-        App.getSubsonicClientInstance(false)
+        public Call<ApiResponse> createInternetRadioStation(String name, String streamURL, String homepageURL) {
+        return App.getSubsonicClientInstance(false)
                 .getInternetRadioClient()
-                .createInternetRadioStation(streamURL, name, homepageURL)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .createInternetRadioStation(streamURL, name, homepageURL);
     }
 
-    public void updateInternetRadioStation(String id, String name, String streamURL, String homepageURL) {
-        App.getSubsonicClientInstance(false)
+    public Call<ApiResponse> updateInternetRadioStation(String id, String name, String streamURL, String homepageURL) {
+        return App.getSubsonicClientInstance(false)
                 .getInternetRadioClient()
-                .updateInternetRadioStation(id, streamURL, name, homepageURL)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .updateInternetRadioStation(id, streamURL, name, homepageURL);
     }
 
-    public void deleteInternetRadioStation(String id) {
-        App.getSubsonicClientInstance(false)
+    public Call<ApiResponse> deleteInternetRadioStation(String id) {
+        return App.getSubsonicClientInstance(false)
                 .getInternetRadioClient()
-                .deleteInternetRadioStation(id)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
-                    }
-                });
+                .deleteInternetRadioStation(id);
     }
+
 }

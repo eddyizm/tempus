@@ -24,7 +24,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.interfaces.MediaCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
 import com.cappielloantonio.tempo.service.MediaManager;
@@ -43,7 +42,6 @@ import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.viewmodel.AlbumBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -61,7 +59,10 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     private List<Child> currentAlbumTracks = Collections.emptyList();
     private List<MediaItem> currentAlbumMediaItems = Collections.emptyList();
 
+    private boolean isFirstBatch = true;
+
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private static final String TAG = "AlbumBottomSheetDialog";
 
     @Nullable
     @Override
@@ -114,32 +115,40 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(albumBottomSheetViewModel.getAlbum().getStarred() != null);
-        favoriteToggle.setOnClickListener(v -> {
-            albumBottomSheetViewModel.setFavorite(requireContext());
-        });
+        favoriteToggle.setOnClickListener(v -> albumBottomSheetViewModel.setFavorite(requireContext()));
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-            AlbumRepository albumRepository = new AlbumRepository();
-            albumRepository.getInstantMix(album, 20, new MediaCallback() {
-                @Override
-                public void onError(Exception exception) {
-                    exception.printStackTrace();
-                }
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity == null) return;
 
-                @Override
-                public void onLoadMedia(List<?> media) {
-                    MusicUtil.ratingFilter((ArrayList<Child>) media);
+            ListenableFuture<MediaBrowser> activityBrowserFuture = activity.getMediaBrowserListenableFuture();
+            if (activityBrowserFuture == null) return;
 
-                    if (!media.isEmpty()) {
-                        MediaManager.startQueue(mediaBrowserListenableFuture, (ArrayList<Child>) media, 0);
-                        ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+            isFirstBatch = true;
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
+
+            albumBottomSheetViewModel.getAlbumInstantMix(activity, album).observe(activity, media -> {
+                if (media == null || media.isEmpty()) return;
+                if (getActivity() == null) return;
+
+                MusicUtil.ratingFilter(media);
+
+                if (isFirstBatch) {
+                    isFirstBatch = false;
+                    
+                    MediaManager.startQueue(activityBrowserFuture, media, 0);
+                    activity.setBottomSheetInPeek(true);
+                    
+                    if (isAdded()) {
+                        dismissBottomSheet();
                     }
-
-                    dismissBottomSheet();
+                } else {
+                    MediaManager.enqueue(activityBrowserFuture, media, true);
                 }
             });
         });
+
 
         TextView playRandom = view.findViewById(R.id.play_random_text_view);
         playRandom.setOnClickListener(v -> {
@@ -186,18 +195,16 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         });
 
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
-        addToPlaylist.setOnClickListener(v -> {
-            albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
+        addToPlaylist.setOnClickListener(v -> albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
 
-                PlaylistChooserDialog dialog = new PlaylistChooserDialog();
-                dialog.setArguments(bundle);
-                dialog.show(requireActivity().getSupportFragmentManager(), null);
+            PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+            dialog.setArguments(bundle);
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
 
-                dismissBottomSheet();
-            });
-        });
+            dismissBottomSheet();
+        }));
 
         removeAllTextView = view.findViewById(R.id.remove_all_text_view);
         albumBottomSheetViewModel.getAlbumTracks().observe(getViewLifecycleOwner(), songs -> {
@@ -291,4 +298,5 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     private void refreshShares() {
         homeViewModel.refreshShares(requireActivity());
     }
+
 }

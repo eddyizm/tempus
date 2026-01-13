@@ -29,6 +29,7 @@ import com.cappielloantonio.tempo.viewmodel.ArtistBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.util.concurrent.ListenableFuture;
 
+
 @UnstableApi
 public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
     private static final String TAG = "AlbumBottomSheetDialog";
@@ -37,6 +38,8 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
     private ArtistID3 artist;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+
+    private boolean isFirstBatch = true;
 
     @Nullable
     @Override
@@ -86,20 +89,31 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);
         playRadio.setOnClickListener(v -> {
-            ArtistRepository artistRepository = new ArtistRepository();
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity == null) return;
 
-            artistRepository.getInstantMix(artist, 20).observe(getViewLifecycleOwner(), songs -> {
-                // navidrome may return null for this
-                if (songs == null)
-                    return;
-                MusicUtil.ratingFilter(songs);
+            ListenableFuture<MediaBrowser> activityBrowserFuture = activity.getMediaBrowserListenableFuture();
+            if (activityBrowserFuture == null) return;
 
-                if (!songs.isEmpty()) {
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                    ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+            isFirstBatch = true;
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
+
+            artistBottomSheetViewModel.getArtistInstantMix(activity, artist).observe(activity, media -> {
+                if (media == null || media.isEmpty()) return;
+                if (getActivity() == null) return;
+
+                MusicUtil.ratingFilter(media);
+
+                if (isFirstBatch) {
+                    isFirstBatch = false;
+                    MediaManager.startQueue(activityBrowserFuture, media, 0);
+                    activity.setBottomSheetInPeek(true);
+                    if (isAdded()) {
+                        dismissBottomSheet();
+                    }
+                } else {
+                    MediaManager.enqueue(activityBrowserFuture, media, true);
                 }
-
-                dismissBottomSheet();
             });
         });
 
@@ -108,16 +122,10 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
             ArtistRepository artistRepository = new ArtistRepository();
             artistRepository.getRandomSong(artist, 50).observe(getViewLifecycleOwner(), songs -> {
                 MusicUtil.ratingFilter(songs);
-
                 if (!songs.isEmpty()) {
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
-
-                    dismissBottomSheet();
-                } else {
-                    Toast.makeText(requireContext(), getString(R.string.artist_error_retrieving_tracks), Toast.LENGTH_SHORT).show();
                 }
-
                 dismissBottomSheet();
             });
         });
@@ -139,4 +147,5 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
     private void releaseMediaBrowser() {
         MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
     }
+
 }

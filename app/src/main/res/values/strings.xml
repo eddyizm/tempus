@@ -39,6 +39,7 @@
     <string name="artist_list_page_downloaded">Downloaded artists</string>
     <string name="artist_list_page_starred">Starred artists</string>
     <string name="artist_list_page_title">Artists</string>
+    <string name="artist_no_artist_info_toast">No additional artist info</string>
     <string name="artist_page_radio_button">Radio</string>
     <string name="artist_page_shuffle_button">Shuffle</string>
     <string name="artist_page_switch_layout_button">Switch layout</string>
@@ -51,6 +52,8 @@
     <string name="battery_optimization_negative_button">Ignore</string>
     <string name="battery_optimization_neutral_button">Don\'t ask again</string>
     <string name="battery_optimization_positive_button">Disable</string>
+    <string name="bottom_sheet_generating_instant_mix">Generating instant mix...</string>
+    <string name="bottom_sheet_problem_generating_instant_mix">Could not retrieve tracks from subsonic server.</string>
     <string name="connection_alert_dialog_negative_button">Cancel</string>
     <string name="connection_alert_dialog_neutral_button">Enable data saver</string>
     <string name="connection_alert_dialog_positive_button">OK</string>
@@ -256,6 +259,7 @@
     <string name="podcast_channel_catalogue_title_expanded">Browse Channels</string>
     <string name="podcast_channel_editor_dialog_hint_rss_url">RSS Url</string>
     <string name="podcast_channel_editor_dialog_title">Podcast Channel</string>
+    <string name="podcast_channel_not_supported_snackbar">Podcasts are not supported by this server.</string>
     <string name="podcast_channel_page_title_description_section">Description</string>
     <string name="podcast_channel_page_title_episode_section">Episodes</string>
     <string name="podcast_channel_page_title_no_episode_available">No episodes available</string>
@@ -270,10 +274,13 @@
     <string name="radio_editor_dialog_negative_button">Cancel</string>
     <string name="radio_editor_dialog_neutral_button">Delete</string>
     <string name="radio_editor_dialog_positive_button">Save</string>
+    <string name="radio_editor_dialog_added">Radio station added</string>
+    <string name="radio_editor_dialog_updated">Radio station updated</string>
     <string name="radio_editor_dialog_title">Internet Radio Station</string>
     <string name="radio_station_info_empty_button">Click to hide the section\nThe effects will be visible on restart</string>
     <string name="radio_station_info_empty_subtitle">Once you add a radio station, you\'ll find it here</string>
     <string name="radio_station_info_empty_title">No stations found!</string>
+    <string name="radio_dialog_not_supported_snackbar">Internet radio management are not supported by this server.</string>
     <string name="rating_dialog_negative_button">Cancel</string>
     <string name="rating_dialog_positive_button">Save</string>
     <string name="rating_dialog_title">Rate</string>
