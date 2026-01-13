@@ -32,7 +32,10 @@ class DynamicMediaSourceFactory(
             else -> true
         }
 
-        val dataSourceFactory: DataSource.Factory = if (useUpstream) {
+        val dataSourceFactory: DataSource.Factory = if (bypassCache) {
+            // For radio streams, use a DataSourceFactory with ICY metadata support
+            DownloadUtil.getUpstreamDataSourceFactoryForRadio(context)
+        } else if (useUpstream) {
             DownloadUtil.getUpstreamDataSourceFactory(context)
         } else {
             DownloadUtil.getCacheDataSourceFactory(context)
