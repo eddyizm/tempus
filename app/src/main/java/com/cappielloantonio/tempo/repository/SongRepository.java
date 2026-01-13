@@ -288,7 +288,10 @@ public class SongRepository {
             @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                 List<Child> songs = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getRandomSongs() != null) {
-                    songs.addAll(Objects.requireNonNull(response.body().getSubsonicResponse().getRandomSongs().getSongs()));
+                    List<Child> randomSongs = response.body().getSubsonicResponse().getRandomSongs().getSongs();
+                    if (randomSongs != null) {
+                        songs.addAll(randomSongs);
+                    }
                 }
                 randomSongsSample.setValue(songs);
             }
@@ -303,7 +306,10 @@ public class SongRepository {
             @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                 List<Child> songs = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getRandomSongs() != null) {
-                    songs.addAll(Objects.requireNonNull(response.body().getSubsonicResponse().getRandomSongs().getSongs()));
+                    List<Child> randomSongs = response.body().getSubsonicResponse().getRandomSongs().getSongs();
+                    if (randomSongs != null) {
+                        songs.addAll(randomSongs);
+                    }
                 }
                 randomSongsSample.setValue(songs);
             }
@@ -343,13 +349,16 @@ public class SongRepository {
         MutableLiveData<List<Child>> songsByGenre = new MutableLiveData<>();
         for (String id : genresId) {
             App.getSubsonicClientInstance(false).getAlbumSongListClient().getSongsByGenre(id, 500, 0).enqueue(new Callback<ApiResponse>() {
-                @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                    List<Child> songs = new ArrayList<>();
-                    if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
-                        songs.addAll(Objects.requireNonNull(response.body().getSubsonicResponse().getSongsByGenre().getSongs()));
+            @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                List<Child> songs = new ArrayList<>();
+                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
+                    List<Child> genreSongs = response.body().getSubsonicResponse().getSongsByGenre().getSongs();
+                    if (genreSongs != null) {
+                        songs.addAll(genreSongs);
                     }
-                    songsByGenre.setValue(songs);
                 }
+                songsByGenre.setValue(songs);
+            }
                 @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
             });
         }
