@@ -395,9 +395,11 @@
     <string name="settings_summary_transcoding">Le mode de transcodage à prioriser. Si réglé sur \"Lecture directe\", le débit binaire du fichier ne sera pas modifié.</string>
     <string name="settings_summary_transcoding_download">Télécharge les médias transcodés. Si activé, les paramètres de transcodage suivants seront utilisés pour les téléchargements.\n\n Si le format de transcodage est reglé à \"Téléchargement direct\", le débit binaire du fichier ne sera pas modifé.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Quand le fichier est transcodé à la volée, en général, le client n\'affiche pas la durée de la piste. Il est possible de demander aux serveurs qui le supportent d\'estimer la durée de la piste écoutée, mais les temps de réponses peuvent être plus longs.</string>
-    <string name="settings_sync_starred_albums_for_offline_use_summary">Si activé, les albums favoris seront téléchargés pour l\'écoute hors-ligne</string>
+    <string name="settings_sync_starred_artists_for_offline_use_summary">Si activé, la musique des artistes favoris sera téléchargée pour l\'écoute hors-ligne.</string>
+    <string name="settings_sync_starred_artists_for_offline_use_title">Synchronisation des artistes favoris pour écoute hors-ligne</string>
+    <string name="settings_sync_starred_albums_for_offline_use_summary">Si activé, les albums favoris seront téléchargés pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronisation des albums favoris pour écoute hors-ligne</string>
-    <string name="settings_sync_starred_tracks_for_offline_use_summary">Si activé, les pistes favorites seront téléchargées pour l\'écoute hors-ligne</string>
+    <string name="settings_sync_starred_tracks_for_offline_use_summary">Si activé, les pistes favorites seront téléchargées pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Synchronisation des pistes favorites pour écoute hors-ligne</string>
     <string name="settings_theme">Thème</string>
     <string name="settings_title_data">Données</string>
