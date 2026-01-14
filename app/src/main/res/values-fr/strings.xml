@@ -84,6 +84,13 @@
     <string name="download_storage_internal_dialog_negative_button">Interne</string>
     <string name="download_storage_directory_dialog_neutral_button">Répertoire</string>
     <string name="download_title_section">Téléchargements</string>
+    <string name="download_refresh_no_directory">Sélectionner un répertoire pour rafraîchir vos téléchargements.</string>
+    <string name="download_refresh_no_changes">Aucun téléchargement manquant détecté.</string>
+    <plurals name="download_refresh_removed">
+        <item quantity="one">%d téléchargement manquant retiré.</item>
+        <item quantity="other">%d téléchargements manquants retirés.</item>
+    </plurals>
+    <string name="download_refresh_button_content_description">Rafraîchir les téléchargements</string>
     <string name="downloaded_bottom_sheet_add_to_queue">Ajouter à la liste d\'attente</string>
     <string name="downloaded_bottom_sheet_play_next">Lire juste après</string>
     <string name="downloaded_bottom_sheet_remove">Retirer</string>
