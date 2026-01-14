@@ -82,6 +82,7 @@
     <string name="download_storage_dialog_title">Sélectionnez l\'option de stockage</string>
     <string name="download_storage_external_dialog_positive_button">Externe</string>
     <string name="download_storage_internal_dialog_negative_button">Interne</string>
+    <string name="download_storage_directory_dialog_neutral_button">Répertoire</string>
     <string name="download_title_section">Téléchargements</string>
     <string name="downloaded_bottom_sheet_add_to_queue">Ajouter à la liste d\'attente</string>
     <string name="downloaded_bottom_sheet_play_next">Lire juste après</string>
