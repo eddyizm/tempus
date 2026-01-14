@@ -306,6 +306,8 @@
     <string name="settings_about_summary">Tempus est un client open source et léger pour Subsonic, développé et compilé nativement pour Android.</string>
     <string name="settings_about_title">À propos</string>
     <string name="settings_always_on_display">Toujours visible</string>
+    <string name="settings_allow_playlist_duplicates">Autoriser l\'ajout de doublons à une playlist</string>
+    <string name="settings_allow_playlist_duplicates_summary">Si activé, les doublons ne seront pas détectés à l\'ajout d\'un titre à une playlist.</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>
     <string name="settings_audio_transcode_download_priority_summary">Si activé, Tempus ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioriser les paramètres du serveurs, utilisés pour le streaming, dans les téléchargements</string>
