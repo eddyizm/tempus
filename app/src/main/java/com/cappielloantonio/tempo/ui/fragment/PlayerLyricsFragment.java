@@ -342,7 +342,11 @@ public class PlayerLyricsFragment extends Fragment {
             }
         }
         if (lastIndex == 0){
-            return new ArrayList<>(0);
+            if (firstIndex > 0){
+                lastIndex = lines.size();
+            }else{
+                return new ArrayList<>(0);
+            }
         }
         return lines.subList(firstIndex, lastIndex);
     }
