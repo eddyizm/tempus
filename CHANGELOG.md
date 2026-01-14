@@ -1,5 +1,12 @@
 # Changelog
 
+## What's Changed
+## [4.6.4](https://github.com/eddyizm/tempo/releases/tag/v4.6.4) (2026-01-13)
+* fix: instant mix random songs and broken continuous play by @eddyizm in https://github.com/eddyizm/tempus/pull/354
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.6.3...v4.6.4
+
+## What's Changed
 ## [4.6.3](https://github.com/eddyizm/tempo/releases/tag/v4.6.3) (2026-01-10)
 * fix: give user feedback when trying to add podcast/radio on unsupport… by @eddyizm in https://github.com/eddyizm/tempus/pull/328
 * docs: Clarify Android Auto enablement by @Forage in https://github.com/eddyizm/tempus/pull/336
@@ -8,7 +15,10 @@
 * chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/339
 * feat: Ability to toggle visibility of artist biography by @kmarius in https://github.com/eddyizm/tempus/pull/338
 
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.6.0...v4.6.3
+
 ## [4.6.0](https://github.com/eddyizm/tempo/releases/tag/v4.6.0) (2025-12-22)
+## What's Changed
 * chore: Update description_empty_title in English and Polish by @tyren234 in https://github.com/eddyizm/tempus/pull/307
 * chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/310
 * fix: checks preference and writes files externally, updates the ui by @eddyizm in https://github.com/eddyizm/tempus/pull/312
@@ -20,6 +30,7 @@
 * @tyren234 made their first contribution in https://github.com/eddyizm/tempus/pull/307
 * @pochopsp made their first contribution in https://github.com/eddyizm/tempus/pull/314
 
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.5.0...v4.6.0
 
 ## [4.5.0](https://github.com/eddyizm/tempo/releases/tag/v4.5.0) (2025-12-12)
 ## What's Changed
