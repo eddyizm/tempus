@@ -36,6 +36,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.android.material.button.MaterialButton;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -57,16 +58,12 @@ public class PlayerLyricsFragment extends Fragment {
     private LyricsList currentLyricsList;
     private String currentDescription;
 
-    private Map<Integer, List<Line>> lineMap;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         bind = InnerFragmentPlayerLyricsBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
-
-        initLyricsLineMap(playerBottomSheetViewModel.getLiveLyricsList().getValue());
 
         initOverlay();
 
@@ -117,16 +114,6 @@ public class PlayerLyricsFragment extends Fragment {
         currentLyrics = null;
         currentLyricsList = null;
         currentDescription = null;
-    }
-
-    private synchronized void initLyricsLineMap(LyricsList lyricsList){
-
-        if (hasStructuredLyrics(lyricsList)){
-            lineMap = Objects.requireNonNull(Objects.requireNonNull(lyricsList.getStructuredLyrics()).get(0).getLine())
-                    .stream().filter(line -> Objects.nonNull(line) && Objects.nonNull(line.getStart()))
-                    .collect(Collectors.groupingBy(line -> line.getStart() == null? 0 : line.getStart()));
-        }
-
     }
 
     private void initOverlay() {
@@ -310,19 +297,9 @@ public class PlayerLyricsFragment extends Fragment {
 
             if (lines == null || lines.isEmpty()) return;
 
-            for (Line line : lines) {
-                lyricsBuilder.append(line.getValue().trim()).append("\n");
-            }
+            List<Line> currentLines = getLines(lines, lyricsBuilder, timestamp);
 
-            Optional<Integer> currentLineStart = lineMap.keySet().stream().filter(start -> start!=null && start < timestamp ).max(Integer::compareTo);
-
-            if (currentLineStart.isEmpty()){
-                return;
-            }
-
-            List<Line> currentLines = lineMap.get(currentLineStart.get());
-
-           if (currentLines != null && !currentLines.isEmpty()) {
+            if (!currentLines.isEmpty()) {
                 String lyrics = lyricsBuilder.toString();
                 Spannable spannableString = new SpannableString(lyrics);
 
@@ -339,6 +316,36 @@ public class PlayerLyricsFragment extends Fragment {
                 }
             }
         }
+    }
+
+    @NonNull
+    private static List<Line> getLines(List<Line> lines, StringBuilder lyricsBuilder, int timestamp) {
+        int curTIme = 0;
+        int startIndex = 0, endIndex = 0;
+
+        for (int i = 0; i < lines.size(); i++) {
+            Line line = lines.get(i);
+            lyricsBuilder.append(line.getValue().trim()).append("\n");
+            if (line.getStart() == null){
+                continue;
+            }
+            if ( line.getStart() < timestamp) {
+                if (curTIme < line.getStart()){
+                    curTIme = line.getStart();
+                    startIndex = i;
+                }
+            }else{
+                if (endIndex == 0){
+                    endIndex = i;
+                }
+            }
+        }
+
+        if (curTIme == 0 || endIndex == 0){
+            return new ArrayList<>();
+        }
+
+        return lines.subList(startIndex, endIndex);
     }
 
     private int getStartPosition(List<Line> lines, Line toHighlight) {
