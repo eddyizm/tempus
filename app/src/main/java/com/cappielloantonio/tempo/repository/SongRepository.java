@@ -65,18 +65,25 @@ public class SongRepository {
      */
     public MutableLiveData<List<Child>> getInstantMix(String id, SeedType type, int count) {
         MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(new ArrayList<>());
+        Set<String> trackIds = new HashSet<>();
 
         performSmartMix(id, type, count, songs -> {
             List<Child> current = instantMix.getValue();
             if (current != null) {
                 for (Child s : songs) {
-                    if (!current.contains(s)) current.add(s);
+                    if (!trackIds.contains(s.getId())) {
+                        current.add(s);
+                        trackIds.add(s.getId());
+                    }
                 }
-                
+
                 if (current.size() < count / 2) {
                     fetchSimilarOnly(id, count, remainder -> {
                         for (Child r : remainder) {
-                            if (!current.contains(r)) current.add(r);
+                            if (!trackIds.contains(r.getId())) {
+                                current.add(r);
+                                trackIds.add(r.getId());
+                            }
                         }
                         instantMix.postValue(current);
                     });
