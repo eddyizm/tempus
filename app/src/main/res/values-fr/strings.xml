@@ -39,6 +39,7 @@
     <string name="artist_list_page_downloaded">Artistes téléchargés</string>
     <string name="artist_list_page_starred">Artistes favoris</string>
     <string name="artist_list_page_title">Artistes</string>
+    <string name="artist_no_artist_info_toast">Pas d\'autre information sur l\'artiste</string>
     <string name="artist_page_radio_button">Radio</string>
     <string name="artist_page_shuffle_button">Mélanger</string>
     <string name="artist_page_switch_layout_button">Changer la disposition</string>
