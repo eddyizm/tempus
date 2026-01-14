@@ -137,8 +137,8 @@
     <string name="home_sync_starred_artists_title">Synchroniser les artistes favoris</string>
     <string name="home_sync_starred_artists_subtitle">Pour certains de vos artistes favoris, il reste de la musique à télécharger</string>
     <plurals name="home_sync_starred_songs_count">
-        <item quantity="one">%d piste doit être synchronisée</item>
-        <item quantity="other">%d pistes doivent être synchronisées</item>
+        <item quantity="one">%d titre doit être synchronisé</item>
+        <item quantity="other">%d titres doivent être synchronisés</item>
     </plurals>
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Découverte</string>
@@ -217,7 +217,7 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Vider la file d\'attente</string>
     <string name="player_queue_save_queue_success">File d\'attente sauvegardée</string>
-    <string name="player_queue_save_to_playlist">Sauvegarder la file d\'attente dans une liste de lecture</string>
+    <string name="player_queue_save_to_playlist">Sauvegarder la file d\'attente dans une playlist</string>
     <string name="player_queue_load_queue">Charger la file d\'attente</string>
     <string name="player_lyrics_download_content_description">Télécharger les paroles pour lecture hors-ligne</string>
     <string name="player_lyrics_downloaded_content_description">Paroles téléchargées pour lecture hors-ligne</string>
@@ -235,6 +235,7 @@
     <string name="playlist_chooser_dialog_title">Ajouter à une playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Titre ajouté à la playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Échec d\'ajout du titre à la playlist</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">Tous les titres ont été traités comme des doublons et ignorés</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>
