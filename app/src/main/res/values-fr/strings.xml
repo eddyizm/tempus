@@ -341,6 +341,13 @@
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Suivre le développement</string>
     <string name="settings_github_title">Github</string>
+    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_github_update">Mises à jour</string>
+    <string name="settings_github_update_title">Vérifier les mises à jour sur Github</string>
+    <string name="settings_github_update_summary">Si vous utilisez l\'app publiée sur Github, elle vérifiera par défaut les sorties de nouvelles versions. Cliquer ici pour désactiver les vérifications automatiques</string>
+    <string name="settings_support_summary">Rejoindre les discussions et le support de la communauté</string>
+    <string name="settings_support_title">Support utilisateur</string>
+    <string name="settings_scan_result">Analyse : comptage de %1$d pistes</string>
     <string name="settings_image_size">Définir la résolution des images</string>
     <string name="settings_language">Langue</string>
     <string name="settings_logout_title">Se déconnecter</string>
