@@ -371,12 +371,14 @@
     <string name="settings_show_mini_shuffle_button">Afficher le bouton Mélanger</string>
     <string name="settings_show_mini_shuffle_button_summary">Si activé, le bouton Mélanger sera visible et le bouton Cœur caché sur le mini-lecteur</string>
     <string name="settings_radio">Voir les radios</string>
-    <string name="settings_radio_summary">Si activé, rend visible la section Radio</string>
+    <string name="settings_radio_summary">Si activé, rend visible la section Radio. Redémarrez l\'application pour appliquer ce paramètre.</string>
+    <string name="settings_auto_download_lyrics">Téléchargement automatique des paroles</string>
+    <string name="settings_auto_download_lyrics_summary">Ce paramètre active la sauvegarde automatique des paroles pour affichage hors-ligne, si elles sont disponibles.</string>
     <string name="settings_replay_gain">Ajuster le Replay Gain</string>
     <string name="settings_rounded_corner">Coins arrondis</string>
     <string name="settings_rounded_corner_size">Taille des arrondis</string>
     <string name="settings_rounded_corner_size_summary">Définit l\'ampleur de l\'angle de courbure.</string>
-    <string name="settings_rounded_corner_summary">Si activé, arrondi les angles des illustrations. Les modifications prendront effet au redémarrage.</string>
+    <string name="settings_rounded_corner_summary">Si activé, arrondit les angles des illustrations. Les modifications prendront effet au redémarrage.</string>
     <string name="settings_scan_title">Scanner la bibliothèque</string>
     <string name="settings_scrobble_title">Activer le scrobbling</string>
     <string name="settings_system_language">Langue du système</string>
