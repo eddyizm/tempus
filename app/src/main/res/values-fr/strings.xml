@@ -333,7 +333,10 @@
     <string name="settings_delete_download_storage_summary">Continuer entraînera la suppression irréversible de tous les éléments sauvegardés.</string>
     <string name="settings_delete_download_storage_title">Supprimer les éléments sauvegardés</string>
     <string name="settings_download_storage_title">Stockage des téléchargements</string>
-    <string name="settings_system_equalizer_summary">Ajuster les paramètres audios</string>
+    <string name="settings_download_folder_cleared">Répertoire de téléchargement vidé.</string>
+    <string name="settings_download_folder_set">Répertoire de téléchargement réglé</string>
+    <string name="settings_set_download_folder">Régler le répertoire de téléchargement</string>
+    <string name="settings_system_equalizer_summary">Ajuster les paramètres audio</string>
     <string name="settings_system_equalizer_title">Égaliseur du système</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Suivre le développement</string>
