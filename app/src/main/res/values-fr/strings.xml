@@ -52,6 +52,8 @@
     <string name="battery_optimization_negative_button">Ignorer</string>
     <string name="battery_optimization_neutral_button">Ne pas me redemander</string>
     <string name="battery_optimization_positive_button">Désactiver</string>
+    <string name="bottom_sheet_generating_instant_mix">Génération du mix instantané…</string>
+    <string name="bottom_sheet_problem_generating_instant_mix">Echec de récupération de pistes du serveur Subsonic.</string>
     <string name="connection_alert_dialog_negative_button">Annuler</string>
     <string name="connection_alert_dialog_neutral_button">Activer l\'économie de données</string>
     <string name="connection_alert_dialog_positive_button">OK</string>
