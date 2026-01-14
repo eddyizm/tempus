@@ -38,10 +38,6 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @OptIn(markerClass = UnstableApi.class)
@@ -237,11 +233,12 @@ public class PlayerLyricsFragment extends Fragment {
     }
 
     private boolean hasStructuredLyrics(LyricsList lyricsList) {
-        if (lyricsList == null
-                || lyricsList.getStructuredLyrics() == null
-                || lyricsList.getStructuredLyrics().isEmpty()) return false;
-        lyricsList.getStructuredLyrics();
-        return lyricsList.getStructuredLyrics().get(0).getLine() != null && !Objects.requireNonNull(lyricsList.getStructuredLyrics().get(0).getLine()).isEmpty();
+        return lyricsList != null
+                && lyricsList.getStructuredLyrics() != null
+                && !lyricsList.getStructuredLyrics().isEmpty()
+                && lyricsList.getStructuredLyrics().get(0) != null
+                && lyricsList.getStructuredLyrics().get(0).getLine() != null
+                && !lyricsList.getStructuredLyrics().get(0).getLine().isEmpty();
     }
 
     @SuppressLint("DefaultLocale")
@@ -293,18 +290,22 @@ public class PlayerLyricsFragment extends Fragment {
 
         if (hasStructuredLyrics(lyricsList)) {
             StringBuilder lyricsBuilder = new StringBuilder();
-            List<Line> lines = Objects.requireNonNull(lyricsList.getStructuredLyrics()).get(0).getLine();
+            List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
 
             if (lines == null || lines.isEmpty()) return;
 
-            List<Line> currentLines = getLines(lines, lyricsBuilder, timestamp);
+            List<Line> curLines = getCurerntLyricsLine(lines, lyricsBuilder, timestamp);
 
-            if (!currentLines.isEmpty()) {
+            if (!curLines.isEmpty()) {
+                Line toHighlight = curLines.get(0);
                 String lyrics = lyricsBuilder.toString();
                 Spannable spannableString = new SpannableString(lyrics);
 
-                int startingPosition = getStartPosition(lines, currentLines.get(0));
-                int endingPosition = startingPosition + currentLines.stream().mapToInt(line -> line.getValue().length() + 1).sum() -1;
+                int startingPosition = getStartPosition(lines, toHighlight);
+                int endingPosition = startingPosition + toHighlight.getValue().length();
+                if (curLines.size() >1){
+                    endingPosition = curLines.stream().mapToInt(line -> line.getValue().length() + 1).sum() + startingPosition -1;
+                }
 
                 spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.shadowsLyricsTextColor, null)), 0, lyrics.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.lyricsTextColor, null)), startingPosition, endingPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -312,40 +313,38 @@ public class PlayerLyricsFragment extends Fragment {
                 bind.nowPlayingSongLyricsTextView.setText(spannableString);
 
                 if (playerBottomSheetViewModel.getSyncLyricsState()) {
-                    bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(lines, currentLines));
+                    bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(lines, toHighlight));
                 }
             }
         }
     }
 
     @NonNull
-    private static List<Line> getLines(List<Line> lines, StringBuilder lyricsBuilder, int timestamp) {
-        int curTIme = 0;
-        int startIndex = 0, endIndex = 0;
-
+    private List<Line> getCurerntLyricsLine(List<Line> lines, StringBuilder lyricsBuilder, int timestamp){
+        lyricsBuilder.setLength(0);
+        int currentLineStart = 0;
+        int firstIndex = 0, lastIndex = 0;
         for (int i = 0; i < lines.size(); i++) {
             Line line = lines.get(i);
             lyricsBuilder.append(line.getValue().trim()).append("\n");
-            if (line.getStart() == null){
+
+            if (line.getStart() == null || lastIndex > 0){
                 continue;
             }
-            if ( line.getStart() < timestamp) {
-                if (curTIme < line.getStart()){
-                    curTIme = line.getStart();
-                    startIndex = i;
+
+            if (line.getStart() < timestamp) {
+                if (currentLineStart < line.getStart()){
+                    currentLineStart = line.getStart();
+                    firstIndex = i;
                 }
             }else{
-                if (endIndex == 0){
-                    endIndex = i;
-                }
+                lastIndex = i;
             }
         }
-
-        if (curTIme == 0 || endIndex == 0){
-            return new ArrayList<>();
+        if (lastIndex == 0){
+            return new ArrayList<>(0);
         }
-
-        return lines.subList(startIndex, endIndex);
+        return lines.subList(firstIndex, lastIndex);
     }
 
     private int getStartPosition(List<Line> lines, Line toHighlight) {
@@ -377,15 +376,14 @@ public class PlayerLyricsFragment extends Fragment {
         return start;
     }
 
-    private int getScroll(List<Line> lines, List<Line> toHighlight) {
-        int startIndex = getStartPosition(lines, toHighlight.get(0));
+    private int getScroll(List<Line> lines, Line toHighlight) {
+        int startIndex = getStartPosition(lines, toHighlight);
         Layout layout = bind.nowPlayingSongLyricsTextView.getLayout();
         if (layout == null) return 0;
 
         int line = layout.getLineForOffset(startIndex);
         int lineTop = layout.getLineTop(line);
-        int lastLineNum = lines.size() ==1 ? line : layout.getLineForOffset(getStartPosition(lines, toHighlight.get(lines.size()-1)));
-        int lineBottom = layout.getLineBottom(lastLineNum);
+        int lineBottom = layout.getLineBottom(line);
         int lineCenter = (lineTop + lineBottom) / 2;
 
         int scrollViewHeight = bind.nowPlayingSongLyricsSrollView.getHeight();
