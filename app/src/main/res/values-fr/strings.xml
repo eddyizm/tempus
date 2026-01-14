@@ -257,13 +257,14 @@
     <string name="podcast_channel_catalogue_title_expanded">Parcourir les chaînes</string>
     <string name="podcast_channel_editor_dialog_hint_rss_url">Url RSS</string>
     <string name="podcast_channel_editor_dialog_title">Chaîne</string>
+    <string name="podcast_channel_not_supported_snackbar">Ce serveur ne supporte pas les podcasts.</string>
     <string name="podcast_channel_page_title_description_section">Description</string>
     <string name="podcast_channel_page_title_episode_section">Épisodes</string>
     <string name="podcast_channel_page_title_no_episode_available">Aucun épisode disponible</string>
     <string name="podcast_episode_download_request_snackbar">Votre requête a été envoyée au serveur</string>
     <string name="podcast_info_empty_button">Cliquez pour cacher la section\nLes changements seront visibles au redémarrage de l\'app</string>
     <string name="podcast_info_empty_subtitle">Dès que vous ajouterez une chaîne, vous la retrouverez ici</string>
-    <string name="podcast_info_empty_title">Aucun podcast trouvé!</string>
+    <string name="podcast_info_empty_title">Aucun podcast trouvé !</string>
     <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
     <string name="radio_editor_dialog_hint_homepage_url">URL de la page d\'accueil de la radio</string>
     <string name="radio_editor_dialog_hint_name">Nom de la radio</string>
