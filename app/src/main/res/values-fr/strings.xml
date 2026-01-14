@@ -217,6 +217,12 @@
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Vider la file d\'attente</string>
     <string name="player_queue_save_queue_success">File d\'attente sauvegardée</string>
+    <string name="player_queue_save_to_playlist">Sauvegarder la file d\'attente dans une liste de lecture</string>
+    <string name="player_queue_load_queue">Charger la file d\'attente</string>
+    <string name="player_lyrics_download_content_description">Télécharger les paroles pour lecture hors-ligne</string>
+    <string name="player_lyrics_downloaded_content_description">Paroles téléchargées pour lecture hors-ligne</string>
+    <string name="player_lyrics_download_success">Paroles sauvegardées pour lecture hors-ligne.</string>
+    <string name="player_lyrics_download_failure">Impossible de télécharger les paroles.</string>
     <string name="player_server_priority">Priorité serveur</string>
     <string name="player_unknown_format">Format inconnu</string>
     <string name="player_transcoding">Transcodage</string>
