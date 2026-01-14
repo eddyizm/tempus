@@ -272,10 +272,13 @@
     <string name="radio_editor_dialog_negative_button">Annuler</string>
     <string name="radio_editor_dialog_neutral_button">Supprimer</string>
     <string name="radio_editor_dialog_positive_button">Enregistrer</string>
-    <string name="radio_editor_dialog_title">Station Radio Internet</string>
+    <string name="radio_editor_dialog_added">Station de radio ajoutée</string>
+    <string name="radio_editor_dialog_updated">Station de radio modifiée</string>
+    <string name="radio_editor_dialog_title">Station de radio Internet</string>
     <string name="radio_station_info_empty_button">Cliquez pour cacher la section\nLes changements seront visibles au redémarrage de l\'app</string>
     <string name="radio_station_info_empty_subtitle">Dès que vous ajouterez une station radio, vous la retrouverez ici</string>
-    <string name="radio_station_info_empty_title">Aucune station trouvée!</string>
+    <string name="radio_station_info_empty_title">Aucune station trouvée !</string>
+    <string name="radio_dialog_not_supported_snackbar">Ce serveur ne supporte pas la gestion de radios Internet.</string>
     <string name="rating_dialog_negative_button">Annuler</string>
     <string name="rating_dialog_positive_button">Enregistrer</string>
     <string name="rating_dialog_title">Noter</string>
