@@ -100,8 +100,8 @@
     <string name="error_required">Requis</string>
     <string name="error_server_prefix">préfixe http ou https requis</string>
     <string name="exo_download_notification_channel_name">Téléchargements</string>
-    <string name="exo_controls_heart_off_description">Désactiver les cœurs</string>
-    <string name="exo_controls_heart_on_description">Activer les cœurs</string>
+    <string name="exo_controls_heart_off_description">Désactiver les boutons Cœur</string>
+    <string name="exo_controls_heart_on_description">Activer les boutons Cœur</string>
     <string name="cast_expanded_controller_loading">Chargement…</string>
     <string name="filter_info_selection">Sélectionnez deux filtres ou plus</string>
     <string name="filter_title">Filtrer</string>
@@ -352,7 +352,7 @@
     <string name="settings_language">Langue</string>
     <string name="settings_logout_title">Se déconnecter</string>
     <string name="settings_max_bitrate_download">Débit binaire pour les téléchargements</string>
-    <string name="settings_max_bitrate_mobile">Débit binaire en données mobile</string>
+    <string name="settings_max_bitrate_mobile">Débit binaire en données mobiles</string>
     <string name="settings_max_bitrate_wifi">Débit binaire en Wi-Fi</string>
     <string name="settings_media_cache">Taille du cache des fichiers audio</string>
     <string name="settings_music_directory">Afficher les dossiers</string>
@@ -367,7 +367,9 @@
     <string name="settings_item_rating_summary">Si activé, la note et le statut de mise en favori de l\'élément seront affichés.</string>
     <string name="settings_queue_syncing_countdown">Minuteur de synchronisation</string>
     <string name="settings_queue_syncing_summary">Si activé, l\'utilisateur pourra sauvegarder sa file d\'attente et la recharger au démarrage de l\'application.</string>
-    <string name="settings_queue_syncing_title">Synchroniser la file d\'attente pour cet utilisateur</string>
+    <string name="settings_queue_syncing_title">Synchroniser la file d\'attente pour cet utilisateur [fonctionnalité en évolution]</string>
+    <string name="settings_show_mini_shuffle_button">Afficher le bouton Mélanger</string>
+    <string name="settings_show_mini_shuffle_button_summary">Si activé, le bouton Mélanger sera visible et le bouton Cœur caché sur le mini-lecteur</string>
     <string name="settings_radio">Voir les radios</string>
     <string name="settings_radio_summary">Si activé, rend visible la section Radio</string>
     <string name="settings_replay_gain">Ajuster le Replay Gain</string>
