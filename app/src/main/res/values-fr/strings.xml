@@ -71,6 +71,7 @@
     <string name="download_directory_dialog_positive_button">Télécharger</string>
     <string name="download_directory_dialog_summary">Toutes les pistes dans ce dossier seront téléchargées. Les pistes dans les sous-dossiers ne seront pas téléchargées.</string>
     <string name="download_directory_dialog_title">Télécharger toutes les pistes.</string>
+    <string name="download_directory_set">Répertoire de téléchargement de la musique</string>
     <string name="download_info_empty_subtitle">Dès que vous téléchargerez une musique, vous la trouverez ici</string>
     <string name="download_info_empty_title">Aucun téléchargement pour l\'instant</string>
     <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s éléments</string>
