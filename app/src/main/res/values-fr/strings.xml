@@ -404,6 +404,7 @@
     <string name="settings_theme">Thème</string>
     <string name="settings_title_data">Données</string>
     <string name="settings_title_general">Géneral</string>
+    <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Note</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_title_scrobble">Scrobble</string>
