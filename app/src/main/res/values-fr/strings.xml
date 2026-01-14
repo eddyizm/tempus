@@ -509,9 +509,28 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">Un grand merci à unDraw, nous n\'aurions pas pu rendre cette application aussi belle sans leurs illustrations.</string>
     <string name="undraw_url">https://undraw.co/</string>
+    <string name="widget_label">Widget Tempus</string>
+    <string name="widget_not_playing">Pas de lecture</string>
+    <string name="widget_placeholder_subtitle">Ouvrir Tempus</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
+    <string name="widget_time_duration_placeholder">0:00</string>
+    <string name="widget_content_desc_album_art">Couverture de l\'album</string>
+    <string name="widget_content_desc_play_pause">Lecture ou pause</string>
+    <string name="widget_content_desc_next">Piste suivante</string>
+    <string name="widget_content_desc_prev">Piste précédente</string>
+    <string name="widget_content_desc_shuffle">Activer/désactiver le mélange</string>
+    <string name="widget_content_desc_repeat">Changer le mode de répétition</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d album à synchroniser</item>
         <item quantity="other">%d albums à synchroniser</item>
+    </plurals>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d artiste à synchroniser</item>
+        <item quantity="other">%d artistes à synchroniser</item>
+    </plurals>
+    <plurals name="songs_download_started">
+        <item quantity="one">Téléchargement de %d titre</item>
+        <item quantity="other">Téléchargement de %d titres</item>
     </plurals>
     <string name="equalizer_fragment_title">Égaliseur</string>
     <string name="equalizer_reset">Réinitialiser</string>
@@ -519,4 +538,16 @@
     <string name="equalizer_not_supported">Non supporté sur cet appareil</string>
     <string name="settings_app_equalizer">Égaliseur</string>
     <string name="settings_app_equalizer_summary">Ouvrir l\'égaliseur intégré</string>
+
+    <string name="settings_album_detail">Afficher les détails de l\'album</string>
+    <string name="settings_album_detail_summary">Si activé, affiche les détails de l\'album tels que le genre, le nombre de titres etc. sur l\'écran de l\'album</string>
+    <string name="settings_artist_sort_by_album_count">Trier les artistes par nombre d\'albums</string>
+    <string name="settings_artist_sort_by_album_count_summary">Si activé, les artistes seront triés par ordre des nombres d\'albums. Si désactivé, ils le seront par ordre alphabétique.</string>
+
+    <string name="folder_play_collecting">Collecte des titres du répertoire…</string>
+    <string name="folder_play_playing">Lecture de %d titres</string>
+    <string name="folder_play_no_songs">Aucun titre trouvé dans le répertoire</string>
+
+    <string name="search_sort_title">Trier les recherches récentes par ordre chronologique</string>
+    <string name="search_sort_summary">Si activé, les recherches récentes seront triées par ordre chronologique. Si désactivé, elles le seront par ordre alphabétique.</string>
 </resources>
