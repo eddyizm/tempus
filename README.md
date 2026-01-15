@@ -62,7 +62,7 @@ Please note the two variants in the release assets include release/debug and 32/
 - **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.*
 - **Scrobbling Integration**: Optionally integrate Tempus with Last.fm or Listenbrainz.org to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
 - **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
-- **Instant Mix**: Full refactor of instant mix function which leverages subsonics similar songs by artist/album and randomSongs endpoints to server a larger play queue more reliably.
+- **Instant Mix**: Full refactor of instant mix function which leverages subsonics similarSongs2 by artist/album and similarSongs endpoints to server a larger play queue more reliably.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
 - **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.* 
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
