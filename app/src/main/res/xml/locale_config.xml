@@ -11,6 +11,6 @@
     <locale android:name="es-ES"/>         <!-- Spanish (Spain) -->
     <locale android:name="pl-PL"/>         <!-- Polish -->
     <locale android:name="tr-TR"/>         <!-- Turkish -->
-    <locale android:name="ca-ES"/>         <!-- Catalan -->
-    <locale android:name="ro-RO"/>         <!-- Romanian -->
+    <locale android:name="ca"/>            <!-- Catalan -->
+    <locale android:name="ro"/>            <!-- Romanian -->
 </locale-config>
