@@ -10,10 +10,16 @@
 
 <div align="center">
 
+<a href="https://github.com/eddyizm/tempus/releases/">
+    <img alt="Releases" src="https://img.shields.io/github/downloads/eddyizm/tempus/total.svg?color=4B95DE&style=flat">
+</a>
   <!-- Reproducible build  -->
 <a href="https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus"><img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status"></a>
-
+<a href="https://www.gnu.org/licenses/gpl-3.0">
+    <img src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
+</a>
 </div>
+<h4 align="center"><a href="/CHANGELOG.md">Changelog</a> | <a href="/USAGE.md">Wiki</a> | <a href="https://github.com/eddyizm/tempus#Support">Support</a></h4>
 
 <p align="center">
     <a href="https://github.com/eddyizm/tempus/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
@@ -46,11 +52,6 @@ Please note the two variants in the release assets include release/debug and 32/
 
 `app-degoogled*` <- The izzyOnDroid release that goes without any of the google stuff. It is now available on izzyOnDroid (64bit) I am releasing the both 32/64bit apk's here on github for those who need a 32bit version.
 
-[CHANGELOG.md](CHANGELOG.md)
-
-## Usage
-
-[Documentation](USAGE.md) (work in progress)
 
 ## Features
 - **Subsonic Integration**: Tempus seamlessly integrates with your Subsonic server, providing you with easy access to your entire music collection on the go.
