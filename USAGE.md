@@ -6,14 +6,13 @@
 - [Getting Started](#getting-started)
 - [Server Configuration](#server-configuration)
 - [Main Features](#main-features)
-
 - [Navigation](#navigation)
 - [Playback Controls](#playback-controls)
 - [Favorites](#favorites)
 - [Playlist Management](#playlist-management)
 - [Android Auto](#android-auto)
 - [Settings](#settings)
-- [Troubleshooting](#troubleshooting)
+- [Known Issues](#known-issues)
 
 ## Prerequisites
 
@@ -193,15 +192,12 @@ To allow the Tempus app on your car's head unit, "Unknown sources" needs to be e
 ### Appearance
 **TODO**
 
-## Troubleshooting
+## Known Issues
 
-### Connection Issues
+### Airsonic Distorted Playback
 
-**TODO**
-
-### Common Issues
-
-**TODO**
+First reported in issue [#226](https://github.com/eddyizm/tempus/issues/226)  
+The work around is to disable the cache in the settings, (set to 0), and if needed, cleaning the (Android) cache fixes the problem.
 
 ### Support
 For additional help:
