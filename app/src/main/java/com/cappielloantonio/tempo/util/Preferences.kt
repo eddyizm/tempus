@@ -74,6 +74,8 @@ object Preferences {
     private const val CONTINUOUS_PLAY = "continuous_play"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
+    private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
+    private const val DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER = Constants.PLAYLIST_ORDER_BY_RANDOM
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
     private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
@@ -623,6 +625,16 @@ object Preferences {
     @JvmStatic
     fun allowPlaylistDuplicates(): Boolean {
         return App.getInstance().preferences.getBoolean(ALLOW_PLAYLIST_DUPLICATES, false)
+    }
+
+    @JvmStatic
+    fun getHomeSortPlaylists(): String {
+        return App.getInstance().preferences.getString(HOME_SORT_PLAYLISTS, DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER) ?: DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER
+    }
+
+        @JvmStatic
+    fun getHomeSortPlaylists(sortOrder: String) {
+        App.getInstance().preferences.edit().putString(HOME_SORT_PLAYLISTS, sortOrder).apply()
     }
 
     @JvmStatic
