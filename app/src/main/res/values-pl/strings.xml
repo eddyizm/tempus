@@ -351,6 +351,7 @@
     <string name="settings_music_directory_summary">Jeżeli włączone, widoczna będzie sekcja z folderami z muzyką. Weź pod uwagę że żeby funkcja nawigacji po folderach działała poprawnie, serwer musi wspierać tę funkcję.</string>
     <string name="settings_podcast">Pokazuj podcasty</string>
     <string name="settings_podcast_summary">Jeżeli włączone, widoczna będzie sekcja z podcastami. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
+    <string name="settings_playlist_sort">Sortowanie playlist</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
