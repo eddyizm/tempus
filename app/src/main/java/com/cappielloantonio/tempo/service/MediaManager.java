@@ -448,7 +448,8 @@ public class MediaManager {
         if (mediaItem != null && Preferences.isContinuousPlayEnabled() && Preferences.isInstantMixUsable()) {
             Preferences.setLastInstantMix();
 
-            LiveData<List<Child>> instantMix = getSongRepository().getInstantMix(mediaItem.mediaId, SeedType.TRACK, 10);
+            LiveData<List<Child>> instantMix = getSongRepository().getContinuousMix(mediaItem.mediaId,25);
+
             instantMix.observeForever(new Observer<List<Child>>() {
                 @Override
                 public void onChanged(List<Child> media) {

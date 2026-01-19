@@ -361,6 +361,7 @@
     <string name="settings_music_directory_summary">If enabled, show the music directory section. Please note that for folder navigation to work properly, the server must support this feature.</string>
     <string name="settings_podcast">Show podcast</string>
     <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
+    <string name="settings_playlist_sort">Playlist sorting</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>

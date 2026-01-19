@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="theme_list_titles">
-        <item>Light</item>
-        <item>Dark</item>
-        <item>System default</item>
+        <item>Luminos</item>
+        <item>Întunecat</item>
+        <item>Setare implicită sistem</item>
     </string-array>
     <string-array name="theme_list_values">
         <item>light</item>
@@ -11,9 +12,9 @@
     </string-array>
 
     <string-array name="pref_cache_size_titles">
-        <item>High</item>
-        <item>Medium</item>
-        <item>Low</item>
+        <item>Înalt</item>
+        <item>Mediu</item>
+        <item>Scăzut</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
@@ -22,9 +23,9 @@
     </string-array>
 
     <string-array name="pref_image_size_titles">
-        <item>High</item>
-        <item>Medium</item>
-        <item>Low</item>
+        <item>Înalt</item>
+        <item>Mediu</item>
+        <item>Scăzut</item>
     </string-array>
     <string-array name="pref_image_size_values">
         <item>-1</item>
@@ -33,7 +34,7 @@
     </string-array>
 
     <string-array name="streaming_cache_size_titles">
-        <item>Disabled</item>
+        <item>Dezactivat</item>
         <item>128 MiB</item>
         <item>256 MiB</item>
         <item>512 MiB</item>
@@ -135,7 +136,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>Direct play</item>
+        <item>Redare directă</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -150,7 +151,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_mobile_list_titles">
-        <item>Direct play</item>
+        <item>Redare directă</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -165,7 +166,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_download_list_titles">
-        <item>Direct download</item>
+        <item>Descărcare directă</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -180,9 +181,9 @@
     </string-array>
 
     <string-array name="queue_syncing_countdown_titles">
-        <item>Ten seconds</item>
-        <item>Five seconds</item>
-        <item>Two seconds</item>
+        <item>Zece secunde</item>
+        <item>Cinci secunde</item>
+        <item>Două secunde</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
         <item>10</item>
@@ -191,9 +192,9 @@
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
-        <item>High</item>
-        <item>Medium</item>
-        <item>Low</item>
+        <item>Înalt</item>
+        <item>Mediu</item>
+        <item>Scăzut</item>
     </string-array>
     <string-array name="rounded_corner_size_values">
         <item>18</item>
@@ -202,10 +203,10 @@
     </string-array>
 
     <string-array name="replay_gain_titles">
-        <item>Disabled</item>
-        <item>Track</item>
+        <item>Dezactivat</item>
+        <item>Piesă</item>
         <item>Album</item>
-        <item>Auto</item>
+        <item>Automat</item>
     </string-array>
     <string-array name="replay_gain_values">
         <item>disabled</item>
@@ -215,10 +216,10 @@
     </string-array>
 
     <string-array name="transcoded_download_option_list_titles">
-        <item>Do not transcode</item>
-        <item>Server settings</item>
-        <item>Wi-Fi Transcode format</item>
-        <item>Mobile Transcode format</item>
+        <item>Nu transcodaţi</item>
+        <item>Setări server</item>
+        <item>Format transcodare Wi-Fi</item>
+        <item>Format transcodare mobil</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
         <item>0</item>
@@ -228,10 +229,10 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>Minimum</item>
-        <item>Moderate</item>
-        <item>Aggressive</item>
-        <item>Extreme</item>
+        <item>Minim</item>
+        <item>Moderat</item>
+        <item>Agresiv</item>
+        <item>Extrem</item>
     </string-array>
     <string-array name="buffering_strategy_values">
         <item>.1</item>
@@ -240,22 +241,12 @@
         <item>8</item>
     </string-array>
 
-    <string-array name="playlist_sort_option_titles">
-        <item>Name</item>
-        <item>Random</item>
-    </string-array>
-    <string-array name="playlist_sort_option_values">
-        <item>ORDER_BY_NAME</item>
-        <item>ORDER_BY_RANDOM</item>
-    </string-array>
-
-
     <string-array name="skip_min_star_rating_titles">
-        <item>0 star minimum</item>
-        <item>1 star minimum</item>
-        <item>2 stars minimum</item>
-        <item>3 stars minimum</item>
-        <item>4 stars minimum</item>
+        <item>0 stele minim</item>
+        <item>1 stea minim</item>
+        <item>2 stele minim</item>
+        <item>3 stele minim</item>
+        <item>4 stele minim</item>
     </string-array>
     <string-array name="skip_min_star_rating_values">
         <item>0</item>

@@ -138,7 +138,7 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
     public LiveData<List<Child>> getAlbumInstantMix(LifecycleOwner owner, AlbumID3 album) {
         instantMix.setValue(Collections.emptyList());
 
-        albumRepository.getInstantMix(album, 20).observe(owner, instantMix::postValue);
+        albumRepository.getInstantMix(album, 30).observe(owner, instantMix::postValue);
 
         return instantMix;
     }

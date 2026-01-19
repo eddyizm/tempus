@@ -156,10 +156,10 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
 
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == R.id.menu_playlist_sort_name) {
-                playlistHorizontalAdapter.sort(Constants.GENRE_ORDER_BY_NAME);
+                playlistHorizontalAdapter.sort(Constants.PLAYLIST_ORDER_BY_NAME);
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_playlist_sort_random) {
-                playlistHorizontalAdapter.sort(Constants.GENRE_ORDER_BY_RANDOM);
+                playlistHorizontalAdapter.sort(Constants.PLAYLIST_ORDER_BY_RANDOM);
                 return true;
             }
 

@@ -136,6 +136,14 @@
             android:defaultValue="false"
             android:summary="@string/settings_allow_playlist_duplicates_summary"
             android:key="allow_playlist_duplicates" />
+         <ListPreference
+             app:defaultValue="ORDER_BY_NAME"
+             app:dialogTitle="@string/settings_playlist_sort"
+             app:entries="@array/playlist_sort_option_titles"
+             app:entryValues="@array/playlist_sort_option_values"
+             app:key="home_sort_playlists"
+             app:title="@string/settings_playlist_sort"
+             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     

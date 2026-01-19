@@ -3,3 +3,4 @@
 * fix: instant mix gets a big refactor, with cascading fallbacks to produce a larger queue
 * chore(i18n): add missing keys, update Chinese translation and alphabetize
 * chore(i18n): Update Polish translation
+* feat: Ability to toggle visibility of artist biography
