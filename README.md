@@ -10,10 +10,16 @@
 
 <div align="center">
 
+<a href="https://github.com/eddyizm/tempus/releases/">
+    <img alt="Releases" src="https://img.shields.io/github/downloads/eddyizm/tempus/total.svg?color=4B95DE&style=flat">
+</a>
   <!-- Reproducible build  -->
 <a href="https://shields.rbtlog.dev/com.eddyizm.degoogled.tempus"><img src="https://shields.rbtlog.dev/simple/com.eddyizm.degoogled.tempus" alt="RB Status"></a>
-
+<a href="https://www.gnu.org/licenses/gpl-3.0">
+    <img src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
+</a>
 </div>
+<h4 align="center"><a href="/CHANGELOG.md">Changelog</a> | <a href="/USAGE.md">Wiki</a> | <a href="https://github.com/eddyizm/tempus#Support">Support</a></h4>
 
 <p align="center">
     <a href="https://github.com/eddyizm/tempus/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
@@ -46,11 +52,6 @@ Please note the two variants in the release assets include release/debug and 32/
 
 `app-degoogled*` <- The izzyOnDroid release that goes without any of the google stuff. It is now available on izzyOnDroid (64bit) I am releasing the both 32/64bit apk's here on github for those who need a 32bit version.
 
-[CHANGELOG.md](CHANGELOG.md)
-
-## Usage
-
-[Documentation](USAGE.md) (work in progress)
 
 ## Features
 - **Subsonic Integration**: Tempus seamlessly integrates with your Subsonic server, providing you with easy access to your entire music collection on the go.
@@ -62,7 +63,7 @@ Please note the two variants in the release assets include release/debug and 32/
 - **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.*
 - **Scrobbling Integration**: Optionally integrate Tempus with Last.fm or Listenbrainz.org to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
 - **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
-- **Instant Mix**: Full refactor of instant mix function which leverages subsonics similar songs by artist/album and randomSongs endpoints to server a larger play queue more reliably.
+- **Instant Mix**: Full refactor of instant mix function which leverages subsonics similarSongs2 by artist/album and similarSongs endpoints to server a larger play queue more reliably.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
 - **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.* 
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
