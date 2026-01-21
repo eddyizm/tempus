@@ -61,13 +61,6 @@ object Constants {
     const val MEDIA_TYPE_VIDEO = "video"
     const val MEDIA_TYPE_RADIO = "radio"
 
-    const val MEDIA_PLAYBACK_SPEED_080 = 0.8f
-    const val MEDIA_PLAYBACK_SPEED_100 = 1.0f
-    const val MEDIA_PLAYBACK_SPEED_125 = 1.25f
-    const val MEDIA_PLAYBACK_SPEED_150 = 1.50f
-    const val MEDIA_PLAYBACK_SPEED_175 = 1.75f
-    const val MEDIA_PLAYBACK_SPEED_200 = 2.0f
-
     const val MEDIA_RECENTLY_PLAYED = "MEDIA_RECENTLY_PLAYED"
     const val MEDIA_MOST_PLAYED = "MEDIA_MOST_PLAYED"
     const val MEDIA_RECENTLY_ADDED = "MEDIA_RECENTLY_ADDED"

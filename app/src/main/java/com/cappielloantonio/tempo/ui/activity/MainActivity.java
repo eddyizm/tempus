@@ -354,7 +354,7 @@ public class MainActivity extends BaseActivity {
 
         // TODO Enter all settings to be reset
         Preferences.setOpenSubsonic(false);
-        Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_100);
+        Preferences.setPlaybackSpeed(1.0f);
         Preferences.setSkipSilenceMode(false);
         Preferences.setDataSavingMode(false);
         Preferences.setStarredSyncEnabled(false);
