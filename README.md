@@ -19,7 +19,7 @@
     <img src="https://img.shields.io/badge/license-GPL%20v3-2B6DBE.svg?style=flat">
 </a>
 </div>
-<h4 align="center"><a href="/CHANGELOG.md">Changelog</a> | <a href="/USAGE.md">Wiki</a> | <a href="https://github.com/eddyizm/tempus#Support">Support</a></h4>
+<h4 align="center"><a href="CHANGELOG.md">Changelog</a> | <a href="USAGE.md">Wiki</a> | <a href="https://github.com/eddyizm/tempus#Support">Support</a></h4>
 
 <p align="center">
     <a href="https://github.com/eddyizm/tempus/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
