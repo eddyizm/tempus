@@ -20,11 +20,11 @@
 </a>
 </div>
 
-<h4 align="center">
+<div style="text-align: center;" markdown="1">
 
 [Changelog](CHANGELOG.md) | [Wiki](USAGE.md) | [Support](https://github.com/eddyizm/tempus#Support)
 
-</h4>
+</div>
 
 <p align="center">
     <a href="https://github.com/eddyizm/tempus/releases"><img src="https://i.ibb.co/q0mdc4Z/get-it-on-github.png" width="200"></a>
