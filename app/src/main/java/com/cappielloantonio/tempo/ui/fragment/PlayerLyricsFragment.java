@@ -7,7 +7,9 @@ import android.os.Handler;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.TextUtils;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +53,7 @@ public class PlayerLyricsFragment extends Fragment {
     private Runnable syncLyricsRunnable;
     private String currentLyrics;
     private LyricsList currentLyricsList;
+    private Line currentLyricsLine;
     private String currentDescription;
 
     @Override
@@ -109,6 +112,7 @@ public class PlayerLyricsFragment extends Fragment {
         currentLyrics = null;
         currentLyricsList = null;
         currentDescription = null;
+        currentLyricsLine = null;
     }
 
     private void initOverlay() {
@@ -162,6 +166,7 @@ public class PlayerLyricsFragment extends Fragment {
 
         playerBottomSheetViewModel.getLiveLyricsList().observe(getViewLifecycleOwner(), lyricsList -> {
             currentLyricsList = lyricsList;
+            currentLyricsLine = null;
             updatePanelContent();
         });
 
@@ -194,7 +199,7 @@ public class PlayerLyricsFragment extends Fragment {
         bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, 0);
 
         if (hasStructuredLyrics(currentLyricsList)) {
-            setSyncLirics(currentLyricsList);
+            setSyncLyrics(currentLyricsList);
             bind.nowPlayingSongLyricsTextView.setVisibility(View.VISIBLE);
             bind.emptyDescriptionImageView.setVisibility(View.GONE);
             bind.titleEmptyDescriptionLabel.setVisibility(View.GONE);
@@ -241,7 +246,7 @@ public class PlayerLyricsFragment extends Fragment {
     }
 
     @SuppressLint("DefaultLocale")
-    private void setSyncLirics(LyricsList lyricsList) {
+    private void setSyncLyrics(LyricsList lyricsList) {
         if (lyricsList.getStructuredLyrics() != null && !lyricsList.getStructuredLyrics().isEmpty() && lyricsList.getStructuredLyrics().get(0).getLine() != null) {
             StringBuilder lyricsBuilder = new StringBuilder();
             List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
@@ -288,67 +293,61 @@ public class PlayerLyricsFragment extends Fragment {
         int timestamp = (int) (mediaBrowser.getCurrentPosition());
 
         if (hasStructuredLyrics(lyricsList)) {
-            StringBuilder lyricsBuilder = new StringBuilder();
             List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
+            Line toHighlight = lines.stream().filter(line -> line != null && line.getStart() != null && line.getStart() < timestamp).reduce((first, second) -> second).orElse(null);
 
-            if (lines == null || lines.isEmpty()) return;
-
+            StringBuilder lyricsBuilder = new StringBuilder();
             for (Line line : lines) {
                 lyricsBuilder.append(line.getValue().trim()).append("\n");
             }
+            String lyrics = lyricsBuilder.toString();
+            Spannable spannableString = new SpannableString(lyrics);
 
-            Line toHighlight = lines.stream().filter(line -> line != null && line.getStart() != null && line.getStart() < timestamp).reduce((first, second) -> second).orElse(null);
+            // Make each line clickable for navigation and highlight the current one
+            int offset = 0;
+            int highlightStart = 0;
+            for (int i = 0; i < lines.size(); ++i) {
+                boolean highlight = lines.get(i) == toHighlight;
+                if (highlight) highlightStart = offset;
 
-            if (toHighlight != null) {
-                String lyrics = lyricsBuilder.toString();
-                Spannable spannableString = new SpannableString(lyrics);
+                int len = lines.get(i).getValue().length() + 1;
+                final int lineStart = lines.get(i).getStart();
+                spannableString.setSpan(new ClickableSpan() {
+                    @Override
+                    public void onClick(@NonNull View view) {
+                        // Seeking to 1ms after the actual start prevents scrolling / highlighting artifacts
+                        mediaBrowser.seekTo(lineStart + 1);
+                    }
 
-                int startingPosition = getStartPosition(lines, toHighlight);
-                int endingPosition = startingPosition + toHighlight.getValue().length();
+                    @Override
+                    public void updateDrawState(@NonNull TextPaint ds) {
+                        super.updateDrawState(ds);
+                        ds.setUnderlineText(false);
+                        if (highlight) {
+                            ds.setColor(requireContext().getResources().getColor(R.color.lyricsTextColor, null));
+                        } else {
+                            ds.setColor(requireContext().getResources().getColor(R.color.shadowsLyricsTextColor, null));
+                        }
+                    }
+                }, offset, offset + len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                offset += len;
+            }
 
-                spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.shadowsLyricsTextColor, null)), 0, lyrics.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.lyricsTextColor, null)), startingPosition, endingPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            bind.nowPlayingSongLyricsTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            bind.nowPlayingSongLyricsTextView.setText(spannableString);
 
-                bind.nowPlayingSongLyricsTextView.setText(spannableString);
+            // Only update scroll position if the highlighted line has changed
+            if (toHighlight == currentLyricsLine)
+                return;
+            currentLyricsLine = toHighlight;
 
-                if (playerBottomSheetViewModel.getSyncLyricsState()) {
-                    bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(lines, toHighlight));
-                }
+            if (playerBottomSheetViewModel.getSyncLyricsState()) {
+                bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(highlightStart));
             }
         }
     }
 
-    private int getStartPosition(List<Line> lines, Line toHighlight) {
-        int start = 0;
-
-        for (Line line : lines) {
-            if (line != toHighlight) {
-                start = start + line.getValue().length() + 1;
-            } else {
-                break;
-            }
-        }
-
-        return start;
-    }
-
-    private int getLineCount(List<Line> lines, Line toHighlight) {
-        int start = 0;
-
-        for (Line line : lines) {
-            if (line != toHighlight) {
-                bind.tempLyricsLineTextView.setText(line.getValue());
-                start = start + bind.tempLyricsLineTextView.getLineCount();
-            } else {
-                break;
-            }
-        }
-
-        return start;
-    }
-
-    private int getScroll(List<Line> lines, Line toHighlight) {
-        int startIndex = getStartPosition(lines, toHighlight);
+    private int getScroll(int startIndex) {
         Layout layout = bind.nowPlayingSongLyricsTextView.getLayout();
         if (layout == null) return 0;
 
