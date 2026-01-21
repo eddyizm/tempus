@@ -20,7 +20,7 @@
 </a>
 </div>
 
-<div style="text-align: center;">
+<div style="text-align: center;" markdown="1">
 
 [Changelog](CHANGELOG.md)| [Wiki](USAGE.md)| [Support](https://github.com/eddyizm/tempus#Support)
 
