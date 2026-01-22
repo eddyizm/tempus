@@ -53,7 +53,7 @@ public class PlayerLyricsFragment extends Fragment {
     private Runnable syncLyricsRunnable;
     private String currentLyrics;
     private LyricsList currentLyricsList;
-    private Line currentLyricsLine;
+    private Integer lastLineIdx;
     private String currentDescription;
 
     @Override
@@ -112,7 +112,7 @@ public class PlayerLyricsFragment extends Fragment {
         currentLyrics = null;
         currentLyricsList = null;
         currentDescription = null;
-        currentLyricsLine = null;
+        lastLineIdx = null;
     }
 
     private void initOverlay() {
@@ -166,7 +166,7 @@ public class PlayerLyricsFragment extends Fragment {
 
         playerBottomSheetViewModel.getLiveLyricsList().observe(getViewLifecycleOwner(), lyricsList -> {
             currentLyricsList = lyricsList;
-            currentLyricsLine = null;
+            lastLineIdx = null;
             updatePanelContent();
         });
 
@@ -294,7 +294,25 @@ public class PlayerLyricsFragment extends Fragment {
 
         if (hasStructuredLyrics(lyricsList)) {
             List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
-            Line toHighlight = lines.stream().filter(line -> line != null && line.getStart() != null && line.getStart() < timestamp).reduce((first, second) -> second).orElse(null);
+            if (lines == null || lines.isEmpty()) {
+                return;
+            }
+
+            // Find the index of the currently playing line
+            int curIdx = 0;
+            for (; curIdx < lines.size(); ++curIdx) {
+                Integer start = lines.get(curIdx).getStart();
+                if (start != null && start > timestamp) {
+                    curIdx--; // Found the first line that starts after the current timestamp
+                    break;
+                }
+            }
+
+            // Only update if the highlighted line has changed
+            if (lastLineIdx != null && curIdx == lastLineIdx) {
+                return;
+            }
+            lastLineIdx = curIdx;
 
             StringBuilder lyricsBuilder = new StringBuilder();
             for (Line line : lines) {
@@ -307,7 +325,7 @@ public class PlayerLyricsFragment extends Fragment {
             int offset = 0;
             int highlightStart = 0;
             for (int i = 0; i < lines.size(); ++i) {
-                boolean highlight = lines.get(i) == toHighlight;
+                boolean highlight = i == curIdx;
                 if (highlight) highlightStart = offset;
 
                 int len = lines.get(i).getValue().length() + 1;
@@ -335,11 +353,6 @@ public class PlayerLyricsFragment extends Fragment {
 
             bind.nowPlayingSongLyricsTextView.setMovementMethod(LinkMovementMethod.getInstance());
             bind.nowPlayingSongLyricsTextView.setText(spannableString);
-
-            // Only update scroll position if the highlighted line has changed
-            if (toHighlight == currentLyricsLine)
-                return;
-            currentLyricsLine = toHighlight;
 
             if (playerBottomSheetViewModel.getSyncLyricsState()) {
                 bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(highlightStart));
