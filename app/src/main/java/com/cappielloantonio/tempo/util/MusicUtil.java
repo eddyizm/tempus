@@ -31,7 +31,7 @@ public class MusicUtil {
     private static final Pattern BITRATE_PATTERN = Pattern.compile("&maxBitRate=\\d+");
     private static final Pattern FORMAT_PATTERN = Pattern.compile("&format=\\w+");
 
-    public static Uri getStreamUri(String id) {
+    public static Uri getStreamUri(String id, int timeOffset) {
         Map<String, String> params = App.getSubsonicClientInstance(false).getParams();
 
         StringBuilder uri = new StringBuilder();
@@ -58,12 +58,18 @@ public class MusicUtil {
             uri.append("&format=").append(getTranscodingFormatPreference());
         if (Preferences.askForEstimateContentLength())
             uri.append("&estimateContentLength=true");
+        if (timeOffset > 0)
+            uri.append("&timeOffset=").append(timeOffset);
 
         uri.append("&id=").append(id);
 
         Log.d(TAG, "getStreamUri: " + uri);
 
         return Uri.parse(uri.toString());
+    }
+
+    public static Uri getStreamUri(String id) {
+        return getStreamUri(id, 0);
     }
 
     public static Uri updateStreamUri(Uri uri) {
