@@ -333,6 +333,7 @@
     <string name="settings_music_directory_summary">Si se habilita, se mostrará la sección de carpetas de música. Tenga en cuenta que para que la navegación funcione correctamente, el servidor debe soportar esta característica.</string>
     <string name="settings_podcast">Mostrar pódcasts</string>
     <string name="settings_podcast_summary">Si se habilita, se mostrará la sección de pódcasts. Reinicia la aplicación para que los cambios surtan efecto.</string>
+    <string name="settings_playlist_sort">Ordenar listas de reproducción</string>
     <string name="settings_audio_quality">Mostrar calidad de audio</string>
     <string name="settings_audio_quality_summary">La tasa de bits y el formato de audio se mostrarán para cada pista de audio.</string>
     <string name="settings_song_rating_summary">Si se habilita, muestra la valoración de la pista como barra de 5 estrellas en la página del control de reproducción.\n\n*Requiere reiniciar la aplicación</string>
