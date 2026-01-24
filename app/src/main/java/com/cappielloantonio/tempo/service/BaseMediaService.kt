@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -138,8 +139,13 @@ open class BaseMediaService : MediaLibraryService() {
                     if (item.mediaMetadata.extras != null)
                         MediaManager.scrobble(item, false)
 
-                    if (player.nextMediaItemIndex == C.INDEX_UNSET)
-                        MediaManager.continuousPlay(player.currentMediaItem)
+                    if (player.nextMediaItemIndex == C.INDEX_UNSET) {
+                        val browserFuture = MediaBrowser.Builder(
+                            this@BaseMediaService,
+                            SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
+                        ).buildAsync()
+                        MediaManager.continuousPlay(player.currentMediaItem, browserFuture)
+                    }
                 }
 
                 if (player is ExoPlayer) {

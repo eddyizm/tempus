@@ -239,7 +239,16 @@
         <item>4</item>
         <item>8</item>
     </string-array>
-
+    
+   <string-array name="playlist_sort_option_titles">
+        <item>Po nazwie</item>
+        <item>Losowo</item>
+    </string-array>
+    <string-array name="playlist_sort_option_values">
+        <item>ORDER_BY_NAME</item>
+        <item>ORDER_BY_RANDOM</item>
+    </string-array>
+    
     <string-array name="skip_min_star_rating_titles">
         <item>Minimum 0 gwiazdek</item>
         <item>Minimum 1 gwiazdka</item>
