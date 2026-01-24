@@ -3,7 +3,7 @@
 ## Pending release
 
 ## What's Changed
-## [4.9.0](https://github.com/eddyizm/tempo/releases/tag/v4.9.0) (2026-01-24)
+## [4.9.1](https://github.com/eddyizm/tempo/releases/tag/v4.9.1) (2026-01-24)
 * chore: i18n: Add Romanian translation (including locale_config this time!) by @DevMatei in https://github.com/eddyizm/tempus/pull/357
 * French localization update by @benoit-smith in https://github.com/eddyizm/tempus/pull/356
 * chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/364
@@ -20,7 +20,7 @@
 ## New Contributors
 * @pgrit made their first contribution in https://github.com/eddyizm/tempus/pull/375
 
-**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.6.4...v4.9.0
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.6.4...v4.9.1
 
 ## What's Changed
 ## [4.6.4](https://github.com/eddyizm/tempo/releases/tag/v4.6.4) (2026-01-13)
