@@ -24,6 +24,7 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.Share;
+import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Constants.SeedType;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.reflect.TypeToken;
@@ -100,7 +101,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Child>> getRandomShuffleSample() {
-        return songRepository.getRandomSample(1000, null, null);
+        return songRepository.getRandomSample(100, null, null);
     }
 
     public LiveData<List<Chronology>> getChronologySample(LifecycleOwner owner) {
@@ -250,12 +251,19 @@ public class HomeViewModel extends AndroidViewModel {
         playlistRepository.getPlaylists(false, -1).observe(owner, remotes -> {
             if (remotes != null && !remotes.isEmpty()) {
                 List<Playlist> playlists = new ArrayList<>(remotes);
-                Collections.shuffle(playlists);
-                List<Playlist> randomPlaylists = playlists.size() > 5
+                String result = Preferences.getHomeSortPlaylists();
+                if (Preferences.getHomeSortPlaylists().equals(Constants.PLAYLIST_ORDER_BY_RANDOM))
+                {
+                    Collections.shuffle(playlists);
+                }
+                else {
+                    playlists.sort(Comparator.comparing(Playlist::getName));
+                }
+                List<Playlist> subsetPlaylists = playlists.size() > 5
                         ? playlists.subList(0, 5)
                         : playlists;
 
-                pinnedPlaylists.setValue(randomPlaylists);
+                pinnedPlaylists.setValue(subsetPlaylists);
             }
         });
 

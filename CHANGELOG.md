@@ -1,5 +1,14 @@
 # Changelog
 
+## Pending release
+* i18n: Add Romanian translation (including locale_config this time!) by @DevMatei in https://github.com/eddyizm/tempus/pull/357
+* French localization update by @benoit-smith in https://github.com/eddyizm/tempus/pull/356
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/364
+* chore: updated readme and added known issues for airsonic work around by @eddyizm in https://github.com/eddyizm/tempus/pull/366
+* fix: toast for made for you click indication by @eddyizm in https://github.com/eddyizm/tempus/pull/365
+* fix: sort playlist view  by @eddyizm in https://github.com/eddyizm/tempus/pull/368
+* feat: sort preference for playlists by @eddyizm in https://github.com/eddyizm/tempus/pull/370
+
 ## What's Changed
 ## [4.6.4](https://github.com/eddyizm/tempo/releases/tag/v4.6.4) (2026-01-13)
 * fix: instant mix random songs and broken continuous play by @eddyizm in https://github.com/eddyizm/tempus/pull/354

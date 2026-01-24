@@ -444,25 +444,20 @@ public class MediaManager {
     }
 
     @OptIn(markerClass = UnstableApi.class)
-    public static void continuousPlay(MediaItem mediaItem) {
+    public static void continuousPlay(MediaItem mediaItem, ListenableFuture<MediaBrowser> existingBrowserFuture) {
         if (mediaItem != null && Preferences.isContinuousPlayEnabled() && Preferences.isInstantMixUsable()) {
             Preferences.setLastInstantMix();
 
-            LiveData<List<Child>> instantMix = getSongRepository().getContinuousMix(mediaItem.mediaId,25);
+            LiveData<List<Child>> instantMix = getSongRepository().getContinuousMix(mediaItem.mediaId, 25);
 
             instantMix.observeForever(new Observer<List<Child>>() {
                 @Override
                 public void onChanged(List<Child> media) {
-                    if (media != null) {
-                        Log.e(TAG, "continuous play");
-                        ListenableFuture<MediaBrowser> mediaBrowserListenableFuture = new MediaBrowser.Builder(
-                                App.getContext(),
-                                new SessionToken(App.getContext(), new ComponentName(App.getContext(), MediaService.class))
-                        ).buildAsync();
-
-                        enqueue(mediaBrowserListenableFuture, media, true);
+                    if (media != null && existingBrowserFuture != null) {
+                        Log.d(TAG, "Continuous play: adding " + media.size() + " tracks");
+                        enqueue(existingBrowserFuture, media, false);
                     }
-
+                    
                     instantMix.removeObserver(this);
                 }
             });
