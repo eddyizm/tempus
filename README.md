@@ -39,7 +39,7 @@ The project is a fork of [Tempo](#credits).
 
 [Changelog](CHANGELOG.md)  
 [Wiki](USAGE.md)  
-[Donate](https://github.com/eddyizm/tempus#Support)
+[Donate](https://github.com/eddyizm/tempus#donate)
 
 **If you find Tempus useful, please consider starring the project on GitHub. It would mean a lot to me and help promote the app to a wider audience.**
 
