@@ -16,6 +16,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <Button
+            android:id="@+id/player_playback_speed_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="80dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="30dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:tint="?attr/colorOnPrimaryContainer" />
+
         <com.google.android.material.chip.Chip
             android:id="@+id/player_media_extension"
             style="@style/Widget.Material3.Chip.Suggestion"
@@ -252,23 +269,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/placeholder_view_middle_right"
         app:layout_constraintTop_toTopOf="@+id/placeholder_view_middle_right" />
-
-    <Button
-        android:id="@+id/player_playback_speed_button"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="24dp"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
-        android:insetBottom="0dp"
-        app:cornerRadius="30dp"
-        app:layout_constraintBottom_toBottomOf="@+id/placeholder_view_middle_left"
-        app:layout_constraintEnd_toStartOf="@+id/placeholder_view_middle_left"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/placeholder_view_middle_left"
-        app:tint="?attr/colorOnPrimaryContainer" />
 
     <ImageButton
         android:id="@+id/exo_shuffle"

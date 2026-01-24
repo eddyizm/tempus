@@ -39,6 +39,7 @@
     <string name="artist_list_page_downloaded">Pobrani wykonawcy</string>
     <string name="artist_list_page_starred">Wykonawcy oznaczeni gwiazdką</string>
     <string name="artist_list_page_title">Wykonawcy</string>
+    <string name="artist_no_artist_info_toast">Brak dodatkowych informacji o wykonawcy</string>
     <string name="artist_page_radio_button">Radio</string>
     <string name="artist_page_shuffle_button">Odtwarzanie losowe</string>
     <string name="artist_page_switch_layout_button">Zmień układ</string>
@@ -350,6 +351,7 @@
     <string name="settings_music_directory_summary">Jeżeli włączone, widoczna będzie sekcja z folderami z muzyką. Weź pod uwagę że żeby funkcja nawigacji po folderach działała poprawnie, serwer musi wspierać tę funkcję.</string>
     <string name="settings_podcast">Pokazuj podcasty</string>
     <string name="settings_podcast_summary">Jeżeli włączone, widoczna będzie sekcja z podcastami. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
+    <string name="settings_playlist_sort">Sortowanie playlist</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>

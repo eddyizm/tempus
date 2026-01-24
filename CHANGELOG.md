@@ -1,13 +1,26 @@
 # Changelog
 
 ## Pending release
-* i18n: Add Romanian translation (including locale_config this time!) by @DevMatei in https://github.com/eddyizm/tempus/pull/357
+
+## What's Changed
+## [4.9.0](https://github.com/eddyizm/tempo/releases/tag/v4.9.0) (2026-01-24)
+* chore: i18n: Add Romanian translation (including locale_config this time!) by @DevMatei in https://github.com/eddyizm/tempus/pull/357
 * French localization update by @benoit-smith in https://github.com/eddyizm/tempus/pull/356
 * chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/364
-* chore: updated readme and added known issues for airsonic work around by @eddyizm in https://github.com/eddyizm/tempus/pull/366
+* docs: updated readme and added known issues for airsonic work around by @eddyizm in https://github.com/eddyizm/tempus/pull/366
 * fix: toast for made for you click indication by @eddyizm in https://github.com/eddyizm/tempus/pull/365
 * fix: sort playlist view  by @eddyizm in https://github.com/eddyizm/tempus/pull/368
 * feat: sort preference for playlists by @eddyizm in https://github.com/eddyizm/tempus/pull/370
+* fix: use existing future when adding tracks, dialed random album tracks off in instant mix by @eddyizm in https://github.com/eddyizm/tempus/pull/373
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/374
+* fix: Check for OpenSubsonic extensions also with password authentication by @pgrit in https://github.com/eddyizm/tempus/pull/375
+* feat: Implement duration and seeking for transcodes by @drakeerv in https://github.com/eddyizm/tempus/pull/358
+* feat: Playback speed controls for music by @pgrit in https://github.com/eddyizm/tempus/pull/376
+
+## New Contributors
+* @pgrit made their first contribution in https://github.com/eddyizm/tempus/pull/375
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.6.4...v4.9.0
 
 ## What's Changed
 ## [4.6.4](https://github.com/eddyizm/tempo/releases/tag/v4.6.4) (2026-01-13)
