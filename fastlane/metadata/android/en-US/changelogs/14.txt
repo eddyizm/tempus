@@ -1,0 +1,12 @@
+chore: i18n: Add Romanian translation (including locale_config this time!) 
+chore: French localization update
+chore(i18n): Update Spanish translation 
+docs: updated readme and added known issues for airsonic work around
+fix: toast for made for you click indication
+fix: sort playlist view 
+feat: sort preference for playlists
+fix: use existing future when adding tracks, dialed random album tracks off in instant mix
+chore(i18n): Update Polish translation
+fix: Check for OpenSubsonic extensions also with password authentication, addressing lyric sync
+feat: Implement duration and seeking for transcodes
+feat: Playback speed controls for music
