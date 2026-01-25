@@ -29,6 +29,8 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 @UnstableApi
@@ -78,10 +80,31 @@ public final class DownloadUtil {
         return httpDataSourceFactory;
     }
 
+    public static synchronized DataSource.Factory getHttpDataSourceFactoryForRadio() {
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+        CookieHandler.setDefault(cookieManager);
+        
+        // Create a factory with ICY metadata support for radio streams
+        Map<String, String> defaultRequestProperties = new HashMap<>();
+        defaultRequestProperties.put("Icy-MetaData", "1");
+        defaultRequestProperties.put("User-Agent", "Tempus/1.0");
+        
+        return new DefaultHttpDataSource
+                .Factory()
+                .setAllowCrossProtocolRedirects(true)
+                .setDefaultRequestProperties(defaultRequestProperties);
+    }
+
     public static synchronized DataSource.Factory getUpstreamDataSourceFactory(Context context) {
         DefaultDataSource.Factory upstreamFactory = new DefaultDataSource.Factory(context, getHttpDataSourceFactory());
         dataSourceFactory = buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache(context));
         return dataSourceFactory;
+    }
+
+    public static synchronized DataSource.Factory getUpstreamDataSourceFactoryForRadio(Context context) {
+        DefaultDataSource.Factory upstreamFactory = new DefaultDataSource.Factory(context, getHttpDataSourceFactoryForRadio());
+        return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache(context));
     }
 
     public static synchronized DataSource.Factory getCacheDataSourceFactory(Context context) {
