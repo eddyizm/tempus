@@ -353,6 +353,9 @@
     <string name="settings_image_size">Set image resolution</string>
     <string name="settings_language">Language</string>
     <string name="settings_logout_title">Log out</string>
+    <string name="settings_ping_timeout_title">Server Ping Timeout</string>
+    <string name="settings_ping_timeout_summary">Set Local URL timeout. Default 2 seconds. (Remote server will use this value x3 up to 10 seconds max.)</string>
+    <string name="settings_ping_timeout_dialog">Set base timeout in seconds.</string>
     <string name="settings_max_bitrate_download">Bitrate for downloads</string>
     <string name="settings_max_bitrate_mobile">Bitrate in mobile</string>
     <string name="settings_max_bitrate_wifi">Bitrate in Wi-Fi</string>
