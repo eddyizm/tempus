@@ -3,6 +3,15 @@
 ## Pending release
 
 ## What's Changed
+## [4.9.3](https://github.com/eddyizm/tempo/releases/tag/v4.9.3) (2026-01-25)
+* fix: Proper raw stream detection by @jaime-grj in https://github.com/eddyizm/tempus/pull/382
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/381
+* feat: add configurable timeout by @eddyizm in https://github.com/eddyizm/tempus/pull/386
+
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.1...v4.9.3
+
+## What's Changed
 ## [4.9.1](https://github.com/eddyizm/tempo/releases/tag/v4.9.1) (2026-01-24)
 * chore: i18n: Add Romanian translation (including locale_config this time!) by @DevMatei in https://github.com/eddyizm/tempus/pull/357
 * French localization update by @benoit-smith in https://github.com/eddyizm/tempus/pull/356
