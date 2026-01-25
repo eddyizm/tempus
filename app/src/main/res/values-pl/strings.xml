@@ -343,6 +343,9 @@
     <string name="settings_image_size">Rozdzielczość obrazów</string>
     <string name="settings_language">Język</string>
     <string name="settings_logout_title">Wyloguj</string>
+    <string name="settings_ping_timeout_title">Timeout pingów serwera</string>
+    <string name="settings_ping_timeout_summary">Timeout lokalnego adresu URL. Domyślnie to 2 sekundy. (Serwer zdalny będzie używał trzykrotności tej wartości maksymalnie do 10 sekund.)</string>
+    <string name="settings_ping_timeout_dialog">Bazowy timeout w sekundach.</string>
     <string name="settings_max_bitrate_download">Bitrate dla pobierania</string>
     <string name="settings_max_bitrate_mobile">Bitrate dla danych komórkowych</string>
     <string name="settings_max_bitrate_wifi">Bitrate dla Wi-Fi</string>
