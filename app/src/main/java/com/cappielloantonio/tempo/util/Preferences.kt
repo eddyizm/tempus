@@ -85,6 +85,8 @@ object Preferences {
     private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
     private const val SORT_SEARCH_CHRONOLOGICALLY= "sort_search_chronologically"
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
+    private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
+    
 
     @JvmStatic
     fun getServer(): String? {
@@ -95,6 +97,19 @@ object Preferences {
     fun setServer(server: String?) {
         App.getInstance().preferences.edit().putString(SERVER, server).apply()
     }
+
+    @JvmStatic
+    fun getNetworkPingTimeout(): Int {
+        val timeoutString = App.getInstance().preferences.getString(NETWORK_PING_TIMEOUT, "2") ?: "2"
+        return (timeoutString.toIntOrNull() ?: 2).coerceAtLeast(1)
+    }
+
+    @JvmStatic
+    fun setNetworkPingTimeout(pingTimeout: String?) {
+        App.getInstance().preferences.edit().putString(NETWORK_PING_TIMEOUT, pingTimeout).apply()
+    }
+
+    
 
     @JvmStatic
     fun getUser(): String? {

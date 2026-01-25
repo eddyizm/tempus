@@ -17,6 +17,15 @@
             android:key="scan_library"
             android:title="@string/settings_scan_title" />
 
+        <EditTextPreference
+            android:key="network_ping_timeout_base"
+            android:title="@string/settings_ping_timeout_title"
+            app:summary="@string/settings_ping_timeout_summary"
+            android:dialogTitle="@string/settings_ping_timeout_dialog"
+            android:inputType="number"
+            android:singleLine="true"
+            android:defaultValue="2" />
+
         <Preference
             android:key="logout"
             android:title="@string/settings_logout_title"/>
