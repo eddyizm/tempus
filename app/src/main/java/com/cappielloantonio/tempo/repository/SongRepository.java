@@ -283,7 +283,10 @@ public class SongRepository {
             @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                 List<Child> songs = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getRandomSongs() != null) {
-                    songs.addAll(Objects.requireNonNull(response.body().getSubsonicResponse().getRandomSongs().getSongs()));
+                    List<Child> returned = response.body().getSubsonicResponse().getRandomSongs().getSongs();
+                    if (returned != null) {
+                        songs.addAll(returned);
+                    }
                 }
                 randomSongsSample.setValue(songs);
             }
@@ -299,7 +302,10 @@ public class SongRepository {
             @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                 List<Child> songs = new ArrayList<>();
                 if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getRandomSongs() != null) {
-                    songs.addAll(Objects.requireNonNull(response.body().getSubsonicResponse().getRandomSongs().getSongs()));
+                    List<Child> returned = response.body().getSubsonicResponse().getRandomSongs().getSongs();
+                    if (returned != null) {
+                        songs.addAll(returned);
+                    }
                 }
                 randomSongsSample.setValue(songs);
             }
@@ -342,7 +348,10 @@ public class SongRepository {
                 @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                     List<Child> songs = new ArrayList<>();
                     if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
-                        songs.addAll(Objects.requireNonNull(response.body().getSubsonicResponse().getSongsByGenre().getSongs()));
+                        List<Child> returned = response.body().getSubsonicResponse().getSongsByGenre().getSongs();
+                        if (returned != null) {
+                            songs.addAll(returned);
+                        }
                     }
                     songsByGenre.setValue(songs);
                 }
