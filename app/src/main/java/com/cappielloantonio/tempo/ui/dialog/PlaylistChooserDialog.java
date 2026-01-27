@@ -20,6 +20,7 @@ import com.cappielloantonio.tempo.viewmodel.PlaylistChooserViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlaylistChooserDialog extends DialogFragment implements ClickCallback {
     private DialogPlaylistChooserBinding bind;
@@ -35,9 +36,19 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
 
+        String[] playlistVisibilityChoice = {"Public", "Private"};
+        AtomicInteger selectedPlaylistVisibility = new AtomicInteger();
+
         return new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
                 .setTitle(R.string.playlist_chooser_dialog_title)
+                .setSingleChoiceItems(
+                        playlistVisibilityChoice,
+                        0,
+                        (dialog, which) -> {
+                                boolean isPublic = (which == 0);
+                                playlistChooserViewModel.setIsPlaylistPublic(isPublic);
+                        })
                 .setNeutralButton(R.string.playlist_chooser_dialog_neutral_button, (dialog, id) -> { })
                 .setNegativeButton(R.string.playlist_chooser_dialog_negative_button, (dialog, id) -> dialog.cancel())
                 .create();
@@ -101,7 +112,7 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
     public void onPlaylistClick(Bundle bundle) {
         if (playlistChooserViewModel.getSongsToAdd() != null && !playlistChooserViewModel.getSongsToAdd().isEmpty()) {
             Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-            playlistChooserViewModel.addSongsToPlaylist(this, getDialog(), playlist.getId());
+            playlistChooserViewModel.addSongsToPlaylist(this, getDialog(), playlist.getId(), );
         } else {
             Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_add_failure, Toast.LENGTH_SHORT).show();
         }
