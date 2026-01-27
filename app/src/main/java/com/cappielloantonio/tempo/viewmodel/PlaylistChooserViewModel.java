@@ -2,7 +2,6 @@ package com.cappielloantonio.tempo.viewmodel;
 
 import android.app.Application;
 import android.app.Dialog;
-import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -21,8 +20,17 @@ import java.util.List;
 
 public class PlaylistChooserViewModel extends AndroidViewModel {
     private final PlaylistRepository playlistRepository;
-
     private final MutableLiveData<List<Playlist>> playlists = new MutableLiveData<>(null);
+    private final MutableLiveData<Boolean> playlistIsPublic = new MutableLiveData<>(false);
+
+    public Boolean getIsPlaylistPublic() {
+        return playlistIsPublic.getValue();
+    }
+
+    public void setIsPlaylistPublic(boolean isPublic) {
+        playlistIsPublic.setValue(isPublic);
+    }
+
     private ArrayList<Child> toAdd = new ArrayList<>();
 
     public PlaylistChooserViewModel(@NonNull Application application) {
@@ -39,7 +47,7 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
     public void addSongsToPlaylist(LifecycleOwner owner, Dialog dialog, String playlistId) {
         List<String> songIds = Lists.transform(toAdd, Child::getId);
         if (Preferences.allowPlaylistDuplicates()) {
-            playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds));
+            playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), getIsPlaylistPublic());
             dialog.dismiss();
         } else {
             playlistRepository.getPlaylistSongs(playlistId).observe(owner, playlistSongs -> {
@@ -47,7 +55,7 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
                     List<String> playlistSongIds = Lists.transform(playlistSongs, Child::getId);
                     songIds.removeAll(playlistSongIds);
                 }
-                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds));
+                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), getIsPlaylistPublic());
                 dialog.dismiss();
             });
         }

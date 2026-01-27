@@ -1,8 +1,5 @@
 package com.cappielloantonio.tempo.repository;
 
-import static android.provider.Settings.System.getString;
-
-import android.provider.Settings;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -107,13 +104,13 @@ public class PlaylistRepository {
         return playlistLiveData;
     }
 
-    public void addSongToPlaylist(String playlistId, ArrayList<String> songsId) {
+    public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic) {
         if (songsId.isEmpty()) {
             Toast.makeText(App.getContext(), App.getContext().getString(R.string.playlist_chooser_dialog_toast_all_skipped), Toast.LENGTH_SHORT).show();
         } else{
             App.getSubsonicClientInstance(false)
                     .getPlaylistClient()
-                    .updatePlaylist(playlistId, null, true, songsId, null)
+                    .updatePlaylist(playlistId, null, playlistVisibilityIsPublic, songsId, null)
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
