@@ -1,6 +1,6 @@
 package com.cappielloantonio.tempo.ui.dialog;
 
-import android.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
