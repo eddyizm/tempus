@@ -323,7 +323,7 @@ public class PlayerLyricsFragment extends Fragment {
 
             // Make each line clickable for navigation and highlight the current one
             int offset = 0;
-            int highlightStart = 0;
+            int highlightStart = -1;
             for (int i = 0; i < lines.size(); ++i) {
                 boolean highlight = i == curIdx;
                 if (highlight) highlightStart = offset;
@@ -354,7 +354,8 @@ public class PlayerLyricsFragment extends Fragment {
             bind.nowPlayingSongLyricsTextView.setMovementMethod(LinkMovementMethod.getInstance());
             bind.nowPlayingSongLyricsTextView.setText(spannableString);
 
-            if (playerBottomSheetViewModel.getSyncLyricsState()) {
+            // Scroll to the highlighted line, but only if there is one
+            if (highlightStart >= 0 && playerBottomSheetViewModel.getSyncLyricsState()) {
                 bind.nowPlayingSongLyricsSrollView.smoothScrollTo(0, getScroll(highlightStart));
             }
         }
