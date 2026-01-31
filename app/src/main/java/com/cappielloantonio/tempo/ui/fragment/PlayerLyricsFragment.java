@@ -36,6 +36,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.android.material.button.MaterialButton;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -293,18 +294,18 @@ public class PlayerLyricsFragment extends Fragment {
 
             if (lines == null || lines.isEmpty()) return;
 
-            for (Line line : lines) {
-                lyricsBuilder.append(line.getValue().trim()).append("\n");
-            }
+            List<Line> curLines = getCurerntLyricsLine(lines, lyricsBuilder, timestamp);
 
-            Line toHighlight = lines.stream().filter(line -> line != null && line.getStart() != null && line.getStart() < timestamp).reduce((first, second) -> second).orElse(null);
-
-            if (toHighlight != null) {
+            if (!curLines.isEmpty()) {
+                Line toHighlight = curLines.get(0);
                 String lyrics = lyricsBuilder.toString();
                 Spannable spannableString = new SpannableString(lyrics);
 
                 int startingPosition = getStartPosition(lines, toHighlight);
                 int endingPosition = startingPosition + toHighlight.getValue().length();
+                if (curLines.size() >1){
+                    endingPosition = curLines.stream().mapToInt(line -> line.getValue().length() + 1).sum() + startingPosition -1;
+                }
 
                 spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.shadowsLyricsTextColor, null)), 0, lyrics.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 spannableString.setSpan(new ForegroundColorSpan(requireContext().getResources().getColor(R.color.lyricsTextColor, null)), startingPosition, endingPosition, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -316,6 +317,38 @@ public class PlayerLyricsFragment extends Fragment {
                 }
             }
         }
+    }
+
+    @NonNull
+    private List<Line> getCurerntLyricsLine(List<Line> lines, StringBuilder lyricsBuilder, int timestamp){
+        lyricsBuilder.setLength(0);
+        int currentLineStart = 0;
+        int firstIndex = 0, lastIndex = 0;
+        for (int i = 0; i < lines.size(); i++) {
+            Line line = lines.get(i);
+            lyricsBuilder.append(line.getValue().trim()).append("\n");
+
+            if (line.getStart() == null || lastIndex > 0){
+                continue;
+            }
+
+            if (line.getStart() < timestamp) {
+                if (currentLineStart < line.getStart()){
+                    currentLineStart = line.getStart();
+                    firstIndex = i;
+                }
+            }else{
+                lastIndex = i;
+            }
+        }
+        if (lastIndex == 0){
+            if (firstIndex > 0){
+                lastIndex = lines.size();
+            }else{
+                return new ArrayList<>(0);
+            }
+        }
+        return lines.subList(firstIndex, lastIndex);
     }
 
     private int getStartPosition(List<Line> lines, Line toHighlight) {
