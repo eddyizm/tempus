@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -36,8 +37,10 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
 
-        String[] playlistVisibilityChoice = {"Public", "Private"};
-        AtomicInteger selectedPlaylistVisibility = new AtomicInteger();
+        String[] playlistVisibilityChoice = {
+                getString(R.string.playlist_chooser_dialog_visibility_public),
+                getString(R.string.playlist_chooser_dialog_visibility_private)
+        };
 
         return new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
