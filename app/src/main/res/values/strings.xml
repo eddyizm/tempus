@@ -343,7 +343,7 @@
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_support_discussion_link" translatable="false">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_github_update">Updates</string>
     <string name="settings_github_update_title">Check github for release updates</string>
     <string name="settings_github_update_summary">If using the github version, by default app will check for new apk release. Toggle to disable automatic github checks</string>
@@ -487,7 +487,7 @@
     <string name="streaming_cache_storage_dialog_title">Select storage option</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">External</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Internal</string>
-    <string name="support_url">https://ko-fi.com/eddyizm</string>
+    <string name="support_url" translatable="false">https://ko-fi.com/eddyizm</string>
     <string name="track_info_album">Album</string>
     <string name="track_info_artist">Artist</string>
     <string name="track_info_bit_depth">Bit depth</string>
@@ -515,7 +515,7 @@
     <string name="track_info_year">Year</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
-    <string name="undraw_url">https://undraw.co/</string>
+    <string name="undraw_url" translatable="false">https://undraw.co/</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Not playing</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>
