@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import com.cappielloantonio.tempo.viewmodel.PlaylistChooserViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlaylistChooserDialog extends DialogFragment implements ClickCallback {
     private DialogPlaylistChooserBinding bind;
@@ -35,9 +37,21 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
 
+        String[] playlistVisibilityChoice = {
+                getString(R.string.playlist_chooser_dialog_visibility_public),
+                getString(R.string.playlist_chooser_dialog_visibility_private)
+        };
+
         return new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
                 .setTitle(R.string.playlist_chooser_dialog_title)
+                .setSingleChoiceItems(
+                        playlistVisibilityChoice,
+                        0,
+                        (dialog, which) -> {
+                                boolean isPublic = (which == 0);
+                                playlistChooserViewModel.setIsPlaylistPublic(isPublic);
+                        })
                 .setNeutralButton(R.string.playlist_chooser_dialog_neutral_button, (dialog, id) -> { })
                 .setNegativeButton(R.string.playlist_chooser_dialog_negative_button, (dialog, id) -> dialog.cancel())
                 .create();

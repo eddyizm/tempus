@@ -236,6 +236,8 @@
     <string name="playlist_chooser_dialog_toast_add_success">Titre ajouté à la playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Échec d\'ajout du titre à la playlist</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Tous les titres ont été traités comme des doublons et ignorés</string>
+    <string name="playlist_chooser_dialog_visibility_public">Publique</string>
+    <string name="playlist_chooser_dialog_visibility_private">Privé</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>
