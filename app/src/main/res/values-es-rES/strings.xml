@@ -227,6 +227,8 @@
     <string name="playlist_chooser_dialog_title">Añadir a una lista de reproducción</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Error al añadir a la lista</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Todas las pistas se han descartado porque están repetidas</string>
+    <string name="playlist_chooser_dialog_visibility_public">Público</string>
+    <string name="playlist_chooser_dialog_visibility_private">Privado</string>
     <string name="playlist_counted_tracks">%1$d pistas •  %2$s</string>
     <string name="playlist_duration">Duración  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Pulsación larga para eliminar</string>

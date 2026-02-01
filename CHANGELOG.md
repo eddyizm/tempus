@@ -3,11 +3,17 @@
 ## Pending release
 
 ## What's Changed
+## [4.9.5](https://github.com/eddyizm/tempo/releases/tag/v4.9.5) (2026-01-26)
+* fix: Avoid crash when server has no songs by @jaime-grj in https://github.com/eddyizm/tempus/pull/389
+* fix: updated dialog import to address crashing on android 15 by @eddyizm in https://github.com/eddyizm/tempus/pull/392
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.3...v4.9.5
+
+## What's Changed
 ## [4.9.3](https://github.com/eddyizm/tempo/releases/tag/v4.9.3) (2026-01-25)
 * fix: Proper raw stream detection by @jaime-grj in https://github.com/eddyizm/tempus/pull/382
 * chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/381
 * feat: add configurable timeout by @eddyizm in https://github.com/eddyizm/tempus/pull/386
-
 
 **Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.1...v4.9.3
 

@@ -164,6 +164,8 @@
     <string name="playlist_chooser_dialog_title">Adicionar a uma playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Adicionada playlist de reprodução</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Falha ao adicionar uma playlist de reprodução</string>
+    <string name="playlist_chooser_dialog_visibility_public">Pública</string>
+    <string name="playlist_chooser_dialog_visibility_private">Privada</string>
     <string name="playlist_counted_tracks">%1$d faixas •  %2$s</string>
     <string name="playlist_duration">Duração  •  %1$s</string>
     <string name="playlist_editor_dialog_hint_name">Nome da playlist</string>
