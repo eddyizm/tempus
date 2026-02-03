@@ -16,7 +16,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,8 +32,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/album_info_sector"
-                android:layout_width="461dp"
-                android:layout_height="476dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:background="?attr/colorSurface"
                 android:paddingStart="20dp"
                 app:layout_scrollFlags="exitUntilCollapsed">
@@ -292,7 +292,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/song_recycler_view"
             android:layout_width="0dp"
-            android:layout_height="542dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:nestedScrollingEnabled="false"
             android:paddingTop="0dp"
