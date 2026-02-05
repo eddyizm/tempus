@@ -217,6 +217,8 @@
     <string name="menu_unpin_button">Remove from home screen</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
+    <string name="playback_speed_dialog_title">Playback Speed</string>
+    <string name="playback_speed_dialog_negative_button">Cancel</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
     <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>

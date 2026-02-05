@@ -39,6 +39,7 @@ import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBindi
 import com.cappielloantonio.tempo.service.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
 import com.cappielloantonio.tempo.ui.dialog.TrackInfoDialog;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerHorizontalPager;
@@ -522,13 +523,12 @@ public class PlayerControllerFragment extends Fragment {
 
     private void initPlaybackSpeedButton(MediaBrowser mediaBrowser) {
         playbackSpeedButton.setOnClickListener(view -> {
-            float currentSpeed = Preferences.getPlaybackSpeed();
-
-            currentSpeed += 0.25f;
-            if (currentSpeed > 2.0f) currentSpeed = 0.5f;
-            mediaBrowser.setPlaybackParameters(new PlaybackParameters(currentSpeed));
-            playbackSpeedButton.setText(getString(R.string.player_playback_speed, currentSpeed));
-            Preferences.setPlaybackSpeed(currentSpeed);
+            PlaybackSpeedDialog dialog = new PlaybackSpeedDialog();
+            dialog.setPlaybackSpeedListener(speed -> {
+                mediaBrowser.setPlaybackParameters(new PlaybackParameters(speed));
+                playbackSpeedButton.setText(getString(R.string.player_playback_speed, speed));
+            });
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
         });
 
         skipSilenceToggleButton.setOnClickListener(view -> {
