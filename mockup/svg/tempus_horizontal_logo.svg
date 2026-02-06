@@ -18,8 +18,5 @@
 		<circle cx="241" cy="42" r="6" fill="#e6e9ed"/>
 	</g>
 	<style>@media (prefers-color-scheme: dark) { text { fill: #fff; } }</style>
-	<text y="157" font-family="'DejaVu Sans'" font-size="189px" font-weight="800">
-		<tspan x="1">T</tspan>
-		<tspan x="118" letter-spacing="-13px">empus</tspan>
-	</text>
+	<text x="4" y="162" font-family="'DejaVu Sans'" font-size="189px" font-weight="800" letter-spacing="-10px">Tempus</text>
 </svg>
