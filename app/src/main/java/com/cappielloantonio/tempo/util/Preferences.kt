@@ -307,7 +307,7 @@ object Preferences {
 
     @JvmStatic
     fun getLandscapeItemsPerRow(): Int {
-        return App.getInstance().preferences.getString(LANDSCAPE_ITEMS_PER_ROW, "5")!!.toInt()
+        return App.getInstance().preferences.getString(LANDSCAPE_ITEMS_PER_ROW, "4")!!.toInt()
     }
 
     @JvmStatic
