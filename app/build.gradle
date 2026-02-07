@@ -17,7 +17,7 @@ android {
         versionCode 17
         versionName '4.9.8'
         if (abiFilter) {
-            def abiCodeMap = ["armeabi-v7a": 1, "arm64-v8a": 2]
+            def abiCodeMap = ["arm64-v8a": 1, "armeabi-v7a": 2]
             versionCode = versionCode * 10 + abiCodeMap[abiFilter]
         }
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
