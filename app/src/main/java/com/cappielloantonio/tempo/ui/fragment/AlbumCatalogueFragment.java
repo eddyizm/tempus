@@ -93,7 +93,7 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
         View view = bind.getRoot();
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = 4;
+            spanCount = Preferences.getLandscapeItemsPerRow();
         }
 
         initAppBar();

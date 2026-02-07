@@ -33,6 +33,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.GenreCatalogueAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.GenreCatalogueViewModel;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -59,7 +60,7 @@ public class GenreCatalogueFragment extends Fragment implements ClickCallback {
         genreCatalogueViewModel = new ViewModelProvider(requireActivity()).get(GenreCatalogueViewModel.class);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = 4;
+            spanCount = Preferences.getLandscapeItemsPerRow();
         }
 
         init();
