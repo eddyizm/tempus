@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +33,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.GenreCatalogueAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.GenreCatalogueViewModel;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -41,6 +43,7 @@ public class GenreCatalogueFragment extends Fragment implements ClickCallback {
     private GenreCatalogueViewModel genreCatalogueViewModel;
 
     private GenreCatalogueAdapter genreCatalogueAdapter;
+    private int spanCount = 2;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +58,10 @@ public class GenreCatalogueFragment extends Fragment implements ClickCallback {
         bind = FragmentGenreCatalogueBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
         genreCatalogueViewModel = new ViewModelProvider(requireActivity()).get(GenreCatalogueViewModel.class);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            spanCount = Preferences.getLandscapeItemsPerRow();
+        }
 
         init();
         initAppBar();
@@ -97,8 +104,8 @@ public class GenreCatalogueFragment extends Fragment implements ClickCallback {
 
     @SuppressLint("ClickableViewAccessibility")
     private void initGenreCatalogueView() {
-        bind.genreCatalogueRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), 2));
-        bind.genreCatalogueRecyclerView.addItemDecoration(new GridItemDecoration(2, 16, false));
+        bind.genreCatalogueRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
+        bind.genreCatalogueRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, 16, false));
         bind.genreCatalogueRecyclerView.setHasFixedSize(true);
 
         genreCatalogueAdapter = new GenreCatalogueAdapter(this);
