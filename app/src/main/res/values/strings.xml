@@ -403,6 +403,7 @@
     <string name="settings_summary_transcoding">Priority given to the transcoding mode. If set to \"Direct play\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for downloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_estimate_content_length">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
+    <string name="settings_summary_landscape_items_per_row">Applies to all album and artist listings.</string>
     <string name="settings_sync_starred_artists_for_offline_use_summary">If enabled, starred artists will be downloaded for offline use.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Sync starred artists for offline use</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">If enabled, starred albums will be downloaded for offline use.</string>
@@ -423,6 +424,8 @@
     <string name="settings_title_transcoding">Transcoding</string>
     <string name="settings_title_transcoding_download">Transcoding Download</string>
     <string name="settings_title_ui">UI</string>
+    <string name="settings_title_ui_landscape_items_per_row">Items per row on landscape</string>
+    <string name="settings_title_ui_landscape_items_per_row_dialog">Number of items per row</string>
     <string name="settings_transcoded_download">Transcoded download</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
     <string name="settings_version_title">Version</string>
