@@ -229,6 +229,8 @@
     <string name="playlist_chooser_dialog_toast_add_success">Aggiunta di un brano alla playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Impossibile aggiungere un brano alla playlist</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Tutte le canzoni sono state saltate perché duplicate</string>
+    <string name="playlist_chooser_dialog_visibility_public">Pubblico</string>
+    <string name="playlist_chooser_dialog_visibility_private">Privato</string>
     <string name="playlist_counted_tracks">%1$d brani • %2$s</string>
     <string name="playlist_duration">Durata  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Premi a lungo per eliminare</string>
