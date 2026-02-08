@@ -38,6 +38,7 @@ cd "${FFMPEG_MODULE_PATH}/jni" && \
 
 cd ../../../../../../ 
 
+cd media
 ./gradlew :media-lib-decoder-ffmpeg:bundleReleaseAar
 cd ..
 cp media/libraries/decoder_ffmpeg/buildout/outputs/aar/lib-decoder-ffmpeg-release.aar libs/
