@@ -1,17 +1,25 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+}
 
 android {
     compileSdk 35
+    ndkVersion '29.0.14206865'
     buildToolsVersion = '35.0.0'
 
     defaultConfig {
+        def abiFilter = project.findProperty("abiFilter")
         minSdkVersion 24
         targetSdk 35
 
         versionCode 17
         versionName '4.9.8'
+        if (abiFilter) {
+            def abiCodeMap = ["arm64-v8a": 1, "armeabi-v7a": 2]
+            versionCode = versionCode * 10 + abiCodeMap[abiFilter]
+        }
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -89,6 +97,8 @@ android {
 }
 
 dependencies {
+    def media3_version = '1.9.2'
+
     implementation files('../libs/lib-decoder-ffmpeg-release.aar')
 
     // AndroidX
@@ -110,12 +120,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:annotations:4.16.0'
 
     // Media3
-    implementation 'androidx.media3:media3-session:1.8.0'
-    implementation 'androidx.media3:media3-common:1.8.0'
-    implementation 'androidx.media3:media3-exoplayer:1.8.0'
-    implementation 'androidx.media3:media3-ui:1.8.0'
-    implementation 'androidx.media3:media3-exoplayer-hls:1.8.0'
-    tempusImplementation 'androidx.media3:media3-cast:1.8.0'
+    implementation "androidx.media3:media3-session:$media3_version"
+    implementation "androidx.media3:media3-common:$media3_version"
+    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    implementation "androidx.media3:media3-ui:$media3_version"
+    implementation "androidx.media3:media3-exoplayer-hls:$media3_version"
+    tempusImplementation "androidx.media3:media3-cast:$media3_version"
 
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
@@ -125,9 +135,4 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14'
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
-}
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
 }
