@@ -253,7 +253,7 @@ public class PlayerLyricsFragment extends Fragment {
 
             if (lines != null) {
                 for (Line line : lines) {
-                    lyricsBuilder.append(line.getValue().trim()).append("\n");
+                    lyricsBuilder.append(line.getValue().trim()).append("\n\n");
                 }
             }
 
@@ -316,7 +316,7 @@ public class PlayerLyricsFragment extends Fragment {
 
             StringBuilder lyricsBuilder = new StringBuilder();
             for (Line line : lines) {
-                lyricsBuilder.append(line.getValue().trim()).append("\n");
+                lyricsBuilder.append(line.getValue().trim()).append("\n\n");
             }
             String lyrics = lyricsBuilder.toString();
             Spannable spannableString = new SpannableString(lyrics);
@@ -328,7 +328,7 @@ public class PlayerLyricsFragment extends Fragment {
                 boolean highlight = i == curIdx;
                 if (highlight) highlightStart = offset;
 
-                int len = lines.get(i).getValue().length() + 1;
+                int len = lines.get(i).getValue().length() + 2;
                 final int lineStart = lines.get(i).getStart();
                 spannableString.setSpan(new ClickableSpan() {
                     @Override
