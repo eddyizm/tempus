@@ -76,7 +76,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = 4;
+            spanCount = Preferences.getLandscapeItemsPerRow();
         }
 
         init(view);
