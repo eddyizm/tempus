@@ -3,6 +3,18 @@
 ## Pending release
 
 ## What's Changed
+* fix: Addressing some UI/UX quirks by @tiltshiftfocus in https://github.com/eddyizm/tempus/pull/413
+* fix: keep observer until data is received on continuousPlay bug by @eddyizm in https://github.com/eddyizm/tempus/pull/421
+* fix: album art now displays on android auto by @trobinson in https://github.com/eddyizm/tempus/pull/414
+* feat: improve landscape view and increase items per row on landscape view by @tvillega in https://github.com/eddyizm/tempus/pull/411
+
+## New Contributors
+* @tiltshiftfocus made their first contribution in https://github.com/eddyizm/tempus/pull/413
+* @trobinson made their first contribution in https://github.com/eddyizm/tempus/pull/414
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.8...v4.10.0
+
+## What's Changed
 ## [4.9.8](https://github.com/eddyizm/tempo/releases/tag/v4.9.8) (2026-02-02)
 * fix: missing Replay Gain metadata from .m4a files by @pgrit in https://github.com/eddyizm/tempus/pull/396
 * fix: Improve Synced Lyrics by @pgrit in https://github.com/eddyizm/tempus/pull/384
