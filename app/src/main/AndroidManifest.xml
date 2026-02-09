@@ -98,7 +98,7 @@
 
         <provider
             android:name=".provider.AlbumArtContentProvider"
-            android:authorities="com.cappielloantonio.tempo.provider"
+            android:authorities="${applicationId}.albumart.provider"
             android:enabled="true"
             android:exported="true"
         />
