@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/now_playing_media_controller_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -61,6 +62,20 @@
             app:layout_constraintBottom_toBottomOf="@id/player_media_extension"
             app:srcCompat="@drawable/ic_info_stream"
             app:tint="?attr/colorOnPrimaryContainer" />
+
+        <Button
+            android:id="@+id/player_playback_speed_button"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="30dp"
+            app:tint="?attr/colorOnPrimaryContainer"
+            tools:layout_editor_absoluteX="36dp"
+            tools:layout_editor_absoluteY="2dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -243,23 +258,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/placeholder_view_middle_right"
         app:layout_constraintTop_toTopOf="@+id/placeholder_view_middle_right" />
-
-    <Button
-        android:id="@+id/player_playback_speed_button"
-        style="@style/Widget.Material3.Button.TextButton"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_marginStart="24dp"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
-        android:insetBottom="0dp"
-        app:cornerRadius="30dp"
-        app:layout_constraintBottom_toBottomOf="@+id/placeholder_view_middle_left"
-        app:layout_constraintEnd_toStartOf="@+id/placeholder_view_middle_left"
-        app:layout_constraintStart_toEndOf="@+id/vertical_guideline"
-        app:layout_constraintTop_toTopOf="@+id/placeholder_view_middle_left"
-        app:tint="?attr/colorOnPrimaryContainer" />
 
     <ImageButton
         android:id="@+id/exo_shuffle"
