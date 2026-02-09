@@ -444,24 +444,33 @@ public class MediaManager {
     }
 
     @OptIn(markerClass = UnstableApi.class)
-    public static void continuousPlay(MediaItem mediaItem, ListenableFuture<MediaBrowser> existingBrowserFuture) {
-        if (mediaItem != null && Preferences.isContinuousPlayEnabled() && Preferences.isInstantMixUsable()) {
-            Preferences.setLastInstantMix();
-
-            LiveData<List<Child>> instantMix = getSongRepository().getContinuousMix(mediaItem.mediaId, 25);
-
-            instantMix.observeForever(new Observer<List<Child>>() {
-                @Override
-                public void onChanged(List<Child> media) {
-                    if (media != null && existingBrowserFuture != null) {
-                        Log.d(TAG, "Continuous play: adding " + media.size() + " tracks");
-                        enqueue(existingBrowserFuture, media, false);
-                    }
-                    
-                    instantMix.removeObserver(this);
-                }
-            });
+    public static void continuousPlay(MediaItem mediaItem,
+                                    ListenableFuture<MediaBrowser> existingBrowserFuture) {
+        if (mediaItem == null
+                || !Preferences.isContinuousPlayEnabled()
+                || !Preferences.isInstantMixUsable()) {
+            return;
         }
+
+        Preferences.setLastInstantMix();
+
+        LiveData<List<Child>> instantMix =
+                getSongRepository().getContinuousMix(mediaItem.mediaId, 25);
+
+        instantMix.observeForever(new Observer<List<Child>>() {
+            @Override
+            public void onChanged(List<Child> media) {
+                if (media == null || media.isEmpty()) {
+                    return;
+                }
+
+                if (existingBrowserFuture != null) {
+                    Log.d(TAG, "Continuous play: adding " + media.size() + " tracks");
+                    enqueue(existingBrowserFuture, media, true);
+                }
+                instantMix.removeObserver(this);
+            }
+        });
     }
 
     public static void saveChronology(MediaItem mediaItem) {

@@ -1,0 +1,4 @@
+fix: Addressing some UI/UX quirks
+fix: keep observer until data is received on continuousPlay bug
+fix: album art now displays on android auto
+feat: improve landscape view and increase items per row on landscape view

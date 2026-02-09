@@ -3,6 +3,31 @@
 ## Pending release
 
 ## What's Changed
+## [4.10.1](https://github.com/eddyizm/tempo/releases/tag/v4.10.1) (2026-02-08)
+* fix: Addressing some UI/UX quirks by @tiltshiftfocus in https://github.com/eddyizm/tempus/pull/413
+* fix: keep observer until data is received on continuousPlay bug by @eddyizm in https://github.com/eddyizm/tempus/pull/421
+* fix: album art now displays on android auto by @trobinson in https://github.com/eddyizm/tempus/pull/414
+* feat: improve landscape view and increase items per row on landscape view by @tvillega in https://github.com/eddyizm/tempus/pull/411
+
+## New Contributors
+* @tiltshiftfocus made their first contribution in https://github.com/eddyizm/tempus/pull/413
+* @trobinson made their first contribution in https://github.com/eddyizm/tempus/pull/414
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.8...v4.10.1
+
+## What's Changed
+## [4.9.8](https://github.com/eddyizm/tempo/releases/tag/v4.9.8) (2026-02-02)
+* fix: missing Replay Gain metadata from .m4a files by @pgrit in https://github.com/eddyizm/tempus/pull/396
+* fix: Improve Synced Lyrics by @pgrit in https://github.com/eddyizm/tempus/pull/384
+* fix: Add selector for playlist visibility by @tvillega in https://github.com/eddyizm/tempus/pull/394
+* chore(i18n): set links as untranslatable by @tvillega in https://github.com/eddyizm/tempus/pull/400
+
+## New Contributors
+* @tvillega made their first contribution in https://github.com/eddyizm/tempus/pull/394
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.5...v4.5.8
+
+## What's Changed
 ## [4.9.5](https://github.com/eddyizm/tempo/releases/tag/v4.9.5) (2026-01-26)
 * fix: Avoid crash when server has no songs by @jaime-grj in https://github.com/eddyizm/tempus/pull/389
 * fix: updated dialog import to address crashing on android 15 by @eddyizm in https://github.com/eddyizm/tempus/pull/392

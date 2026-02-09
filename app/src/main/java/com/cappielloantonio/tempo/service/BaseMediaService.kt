@@ -33,6 +33,8 @@ import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 
+private const val TAG = "BaseMediaService"
+
 @UnstableApi
 open class BaseMediaService : MediaLibraryService() {
     companion object {
@@ -82,7 +84,7 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     fun updateMediaItems(player: Player) {
-        Log.d(javaClass.toString(), "update items")
+        Log.d(TAG, "update items")
         val n = player.mediaItemCount
         val k = player.currentMediaItemIndex
         val current = player.currentPosition
@@ -121,7 +123,7 @@ open class BaseMediaService : MediaLibraryService() {
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                Log.d(javaClass.toString(), "onMediaItemTransition" + player.currentMediaItemIndex)
+                Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
 
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
@@ -131,7 +133,7 @@ open class BaseMediaService : MediaLibraryService() {
             }
 
             override fun onTracksChanged(tracks: Tracks) {
-                Log.d(javaClass.toString(), "onTracksChanged " + player.currentMediaItemIndex)
+                Log.d(TAG, "onTracksChanged " + player.currentMediaItemIndex)
                 ReplayGainUtil.setReplayGain(player, tracks)
                 val currentMediaItem = player.currentMediaItem
                 if (currentMediaItem != null) {
@@ -151,7 +153,7 @@ open class BaseMediaService : MediaLibraryService() {
                 if (player is ExoPlayer) {
                     // https://stackoverflow.com/questions/56937283/exoplayer-shuffle-doesnt-reproduce-all-the-songs
                     if (MediaManager.justStarted.get()) {
-                        Log.d(javaClass.toString(), "update shuffle order")
+                        Log.d(TAG, "update shuffle order")
                         MediaManager.justStarted.set(false)
                         val shuffledList = IntArray(player.mediaItemCount) { i -> i }
                         shuffledList.shuffle()
@@ -169,7 +171,7 @@ open class BaseMediaService : MediaLibraryService() {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                Log.d(javaClass.toString(), "onIsPlayingChanged " + player.currentMediaItemIndex)
+                Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex)
                 if (!isPlaying) {
                     MediaManager.setPlayingPausedTimestamp(
                         player.currentMediaItem,
@@ -187,7 +189,7 @@ open class BaseMediaService : MediaLibraryService() {
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
-                Log.d(javaClass.toString(), "onPlaybackStateChanged")
+                Log.d(TAG, "onPlaybackStateChanged")
                 super.onPlaybackStateChanged(playbackState)
                 if (!player.hasNextMediaItem() &&
                     playbackState == Player.STATE_ENDED &&
@@ -204,7 +206,7 @@ open class BaseMediaService : MediaLibraryService() {
                 newPosition: Player.PositionInfo,
                 reason: Int
             ) {
-                Log.d(javaClass.toString(), "onPositionDiscontinuity")
+                Log.d(TAG, "onPositionDiscontinuity")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
 
                 if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
@@ -228,7 +230,7 @@ open class BaseMediaService : MediaLibraryService() {
             }
 
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
-                Log.d(javaClass.toString(), "onAudioSessionIdChanged")
+                Log.d(TAG, "onAudioSessionIdChanged")
                 attachEqualizerIfPossible(audioSessionId)
             }
         })
@@ -320,7 +322,7 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private fun initializeMediaLibrarySession(player: Player) {
-        Log.d(javaClass.toString(), "initializeMediaLibrarySession")
+        Log.d(TAG, "initializeMediaLibrarySession")
         val sessionActivityPendingIntent =
             TaskStackBuilder.create(this).run {
                 addNextIntent(Intent(baseContext, MainActivity::class.java))
@@ -467,7 +469,7 @@ open class BaseMediaService : MediaLibraryService() {
             customCommand: SessionCommand,
             args: Bundle
         ): ListenableFuture<SessionResult> {
-            Log.d(javaClass.toString(), "onCustomCommand")
+            Log.d(TAG, "onCustomCommand")
             when (customCommand.customAction) {
                 CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON -> session.player.shuffleModeEnabled = true
                 CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF -> session.player.shuffleModeEnabled = false
@@ -492,7 +494,7 @@ open class BaseMediaService : MediaLibraryService() {
             controller: ControllerInfo,
             mediaItems: List<MediaItem>
         ): ListenableFuture<List<MediaItem>> {
-            Log.d(javaClass.toString(), "onAddMediaItems")
+            Log.d(TAG, "onAddMediaItems")
             val updatedMediaItems = mediaItems.map { mediaItem ->
                 val mediaMetadata = mediaItem.mediaMetadata
                 val newMetadata = mediaMetadata.buildUpon()

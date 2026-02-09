@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.model
 
+import android.content.ContentResolver
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.Keep
@@ -13,6 +14,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.cappielloantonio.tempo.glide.CustomGlideRequest
+import com.cappielloantonio.tempo.provider.AlbumArtContentProvider
 import com.cappielloantonio.tempo.subsonic.models.Child
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode
@@ -197,7 +199,7 @@ class SessionMediaItem() {
 
     fun getMediaItem(): MediaItem {
         val uri: Uri = getStreamUri()
-        val artworkUri = Uri.parse(CustomGlideRequest.createUrl(coverArtId, getImageSize()))
+        val artworkUri = AlbumArtContentProvider.contentUri(coverArtId)
 
         val bundle = Bundle()
         bundle.putString("id", id)
