@@ -3,6 +3,7 @@
 ## Pending release
 
 ## What's Changed
+## [4.10.1](https://github.com/eddyizm/tempo/releases/tag/v4.10.1) (2026-02-08)
 * fix: Addressing some UI/UX quirks by @tiltshiftfocus in https://github.com/eddyizm/tempus/pull/413
 * fix: keep observer until data is received on continuousPlay bug by @eddyizm in https://github.com/eddyizm/tempus/pull/421
 * fix: album art now displays on android auto by @trobinson in https://github.com/eddyizm/tempus/pull/414
@@ -12,7 +13,7 @@
 * @tiltshiftfocus made their first contribution in https://github.com/eddyizm/tempus/pull/413
 * @trobinson made their first contribution in https://github.com/eddyizm/tempus/pull/414
 
-**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.8...v4.10.0
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.8...v4.10.1
 
 ## What's Changed
 ## [4.9.8](https://github.com/eddyizm/tempo/releases/tag/v4.9.8) (2026-02-02)
