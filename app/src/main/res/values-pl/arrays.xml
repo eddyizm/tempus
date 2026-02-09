@@ -263,4 +263,18 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3"</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
 </resources>
