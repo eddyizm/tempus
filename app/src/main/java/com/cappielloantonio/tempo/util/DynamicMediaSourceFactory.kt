@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.util
 import android.content.Context
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSource
@@ -20,10 +21,10 @@ class DynamicMediaSourceFactory(
 ) : MediaSource.Factory {
 
     override fun createMediaSource(mediaItem: MediaItem): MediaSource {
-        val mediaType: String? = mediaItem.mediaMetadata.extras?.getString("type", "")
+        val mediaId = mediaItem.mediaId
 
         val streamingCacheSize = Preferences.getStreamingCacheSize()
-        val bypassCache = mediaType == Constants.MEDIA_TYPE_RADIO
+        val bypassCache = mediaId.startsWith("ir-")
 
         val useUpstream = when {
             streamingCacheSize.toInt() == 0 -> true
