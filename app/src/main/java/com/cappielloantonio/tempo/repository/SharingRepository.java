@@ -41,7 +41,7 @@ public class SharingRepository {
     public MutableLiveData<Share> createShare(String id, String description, Long expires) {
         MutableLiveData<Share> share = new MutableLiveData<>();
 
-        App.getSubsonicClientInstance(false)
+        App.getSubsonicPublicClientInstance(false)
                 .getSharingClient()
                 .createShare(id, description, expires)
                 .enqueue(new Callback<ApiResponse>() {
@@ -64,7 +64,7 @@ public class SharingRepository {
     }
 
     public void updateShare(String id, String description, Long expires) {
-        App.getSubsonicClientInstance(false)
+        App.getSubsonicPublicClientInstance(false)
                 .getSharingClient()
                 .updateShare(id, description, expires)
                 .enqueue(new Callback<ApiResponse>() {
