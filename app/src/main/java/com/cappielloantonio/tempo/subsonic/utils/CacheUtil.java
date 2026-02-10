@@ -62,7 +62,8 @@ public class CacheUtil {
 
         boolean hasAppropriateTransport = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
                 || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
+                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH);
         if (!hasAppropriateTransport) {
             return false;
         }
