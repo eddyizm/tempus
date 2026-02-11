@@ -2,6 +2,8 @@ package com.cappielloantonio.tempo.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,6 +13,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
@@ -62,6 +65,7 @@ public class MainActivity extends BaseActivity {
     private BottomNavigationView bottomNavigationView;
     public NavController navController;
     private BottomSheetBehavior bottomSheetBehavior;
+    private boolean isLandscape = false;
     private AssetLinkNavigator assetLinkNavigator;
     private AssetLinkUtil.AssetLink pendingAssetLink;
 
@@ -84,6 +88,8 @@ public class MainActivity extends BaseActivity {
 
         connectivityStatusBroadcastReceiver = new ConnectivityStatusBroadcastReceiver(this);
         connectivityStatusReceiverManager(true);
+
+        isLandscape = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
 
         init();
         checkConnectionType();
@@ -140,6 +146,15 @@ public class MainActivity extends BaseActivity {
             goFromLogin();
         } else {
             goToLogin();
+        }
+
+        // Set bottom navigation height
+        if (isLandscape) {
+            ViewGroup.LayoutParams layoutParams = bottomNavigationView.getLayoutParams();
+            Rect windowRect = new Rect();
+            bottomNavigationView.getWindowVisibleDisplayFrame(windowRect);
+            layoutParams.width = windowRect.height();
+            bottomNavigationView.setLayoutParams(layoutParams);
         }
     }
 
@@ -215,7 +230,9 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onSlide(@NonNull View view, float slideOffset) {
                     animateBottomSheet(slideOffset);
-                    animateBottomNavigation(slideOffset, navigationHeight);
+                    if (!isLandscape) {
+                         animateBottomNavigation(slideOffset, navigationHeight);
+                    }
                 }
             };
 
@@ -354,7 +371,7 @@ public class MainActivity extends BaseActivity {
 
         // TODO Enter all settings to be reset
         Preferences.setOpenSubsonic(false);
-        Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_100);
+        Preferences.setPlaybackSpeed(1.0f);
         Preferences.setSkipSilenceMode(false);
         Preferences.setDataSavingMode(false);
         Preferences.setStarredSyncEnabled(false);
@@ -384,7 +401,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void pingServer() {
-        if (Preferences.getToken() == null) return;
+        if (Preferences.getToken() == null && Preferences.getPassword() == null) return;
 
         if (Preferences.isInUseServerAddressLocal()) {
             mainViewModel.ping().observe(this, subsonicResponse -> {
@@ -428,7 +445,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void getOpenSubsonicExtensions() {
-        if (Preferences.getToken() != null) {
+        if (Preferences.getToken() != null || Preferences.getPassword() != null) {
             mainViewModel.getOpenSubsonicExtensions().observe(this, openSubsonicExtensions -> {
                 if (openSubsonicExtensions != null) {
                     Preferences.setOpenSubsonicExtensions(openSubsonicExtensions);

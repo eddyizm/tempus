@@ -217,6 +217,8 @@
     <string name="menu_unpin_button">Remove from home screen</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
+    <string name="playback_speed_dialog_title">Playback Speed</string>
+    <string name="playback_speed_dialog_negative_button">Cancel</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
     <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>
@@ -238,6 +240,8 @@
     <string name="playlist_chooser_dialog_toast_add_success">Added song(s) to playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song(s) to playlist</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">All songs were skipped as duplicates</string>
+    <string name="playlist_chooser_dialog_visibility_public">Public</string>
+    <string name="playlist_chooser_dialog_visibility_private">Private</string>
     <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
     <string name="playlist_duration">Duration  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Long press to delete</string>
@@ -343,7 +347,7 @@
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Follow the development</string>
     <string name="settings_github_title">Github</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_support_discussion_link" translatable="false">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_github_update">Updates</string>
     <string name="settings_github_update_title">Check github for release updates</string>
     <string name="settings_github_update_summary">If using the github version, by default app will check for new apk release. Toggle to disable automatic github checks</string>
@@ -353,6 +357,9 @@
     <string name="settings_image_size">Set image resolution</string>
     <string name="settings_language">Language</string>
     <string name="settings_logout_title">Log out</string>
+    <string name="settings_ping_timeout_title">Server Ping Timeout</string>
+    <string name="settings_ping_timeout_summary">Set Local URL timeout. Default 2 seconds. (Remote server will use this value x3 up to 10 seconds max.)</string>
+    <string name="settings_ping_timeout_dialog">Set base timeout in seconds.</string>
     <string name="settings_max_bitrate_download">Bitrate for downloads</string>
     <string name="settings_max_bitrate_mobile">Bitrate in mobile</string>
     <string name="settings_max_bitrate_wifi">Bitrate in Wi-Fi</string>
@@ -361,6 +368,7 @@
     <string name="settings_music_directory_summary">If enabled, show the music directory section. Please note that for folder navigation to work properly, the server must support this feature.</string>
     <string name="settings_podcast">Show podcast</string>
     <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
+    <string name="settings_playlist_sort">Playlist sorting</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
@@ -397,6 +405,7 @@
     <string name="settings_summary_transcoding">Priority given to the transcoding mode. If set to \"Direct play\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for downloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_estimate_content_length">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
+    <string name="settings_summary_landscape_items_per_row">Applies to all album and artist listings. Defaults to 4</string>
     <string name="settings_sync_starred_artists_for_offline_use_summary">If enabled, starred artists will be downloaded for offline use.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Sync starred artists for offline use</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">If enabled, starred albums will be downloaded for offline use.</string>
@@ -417,6 +426,8 @@
     <string name="settings_title_transcoding">Transcoding</string>
     <string name="settings_title_transcoding_download">Transcoding Download</string>
     <string name="settings_title_ui">UI</string>
+    <string name="settings_title_ui_landscape_items_per_row">Items per row on landscape</string>
+    <string name="settings_title_ui_landscape_items_per_row_dialog">Number of items per row</string>
     <string name="settings_transcoded_download">Transcoded download</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
     <string name="settings_version_title">Version</string>
@@ -483,7 +494,7 @@
     <string name="streaming_cache_storage_dialog_title">Select storage option</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">External</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Internal</string>
-    <string name="support_url">https://ko-fi.com/eddyizm</string>
+    <string name="support_url" translatable="false">https://ko-fi.com/eddyizm</string>
     <string name="track_info_album">Album</string>
     <string name="track_info_artist">Artist</string>
     <string name="track_info_bit_depth">Bit depth</string>
@@ -512,7 +523,7 @@
     <string name="track_info_year">Year</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
-    <string name="undraw_url">https://undraw.co/</string>
+    <string name="undraw_url" translatable="false">https://undraw.co/</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Not playing</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>

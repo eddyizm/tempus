@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.util;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +16,7 @@ import androidx.media3.common.HeartRating;
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.model.Download;
+import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
 import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
@@ -45,7 +47,7 @@ public class MappingUtil {
             Uri artworkUri = null;
 
             if (coverArtId != null) {
-                artworkUri = Uri.parse(CustomGlideRequest.createUrl(coverArtId, Preferences.getImageSize()));
+                artworkUri = AlbumArtContentProvider.contentUri(coverArtId);
             }
 
             Bundle bundle = new Bundle();
@@ -237,7 +239,7 @@ public class MappingUtil {
 
     public static MediaItem mapMediaItem(PodcastEpisode podcastEpisode) {
         Uri uri = getUri(podcastEpisode);
-        Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(podcastEpisode.getCoverArtId(), Preferences.getImageSize()));
+        Uri artworkUri = AlbumArtContentProvider.contentUri(podcastEpisode.getCoverArtId());
 
         Bundle bundle = new Bundle();
         bundle.putString("id", podcastEpisode.getId());

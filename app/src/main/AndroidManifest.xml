@@ -96,7 +96,12 @@
                 android:resource="@xml/widget_info"/>
         </receiver>
 
-
+        <provider
+            android:name=".provider.AlbumArtContentProvider"
+            android:authorities="${applicationId}.albumart.provider"
+            android:enabled="true"
+            android:exported="true"
+        />
 
     </application>
 </manifest>

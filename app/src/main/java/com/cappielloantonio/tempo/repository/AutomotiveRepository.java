@@ -1,6 +1,7 @@
 package com.cappielloantonio.tempo.repository;
 
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.view.View;
 
@@ -22,6 +23,7 @@ import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
+import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
 import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
@@ -70,7 +72,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(album.getCoverArtId(), Preferences.getImageSize()));
+                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
 
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(album.getName())
@@ -217,7 +219,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(album.getCoverArtId(), Preferences.getImageSize()));
+                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
 
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(album.getName())
@@ -272,7 +274,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (ArtistID3 artist : artists) {
-                                Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(artist.getCoverArtId(), Preferences.getImageSize()));
+                                Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
 
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(artist.getName())
@@ -397,7 +399,7 @@ public class AutomotiveRepository {
                                 List<Child> children = response.body().getSubsonicResponse().getIndexes().getChildren();
 
                                 for (Child song : children) {
-                                    Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(song.getCoverArtId(), Preferences.getImageSize()));
+                                    Uri artworkUri = AlbumArtContentProvider.contentUri(song.getCoverArtId());
 
                                     MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                             .setTitle(song.getTitle())
@@ -451,7 +453,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (Child child : directory.getChildren()) {
-                                Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(child.getCoverArtId(), Preferences.getImageSize()));
+                                Uri artworkUri = AlbumArtContentProvider.contentUri(child.getCoverArtId());
 
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(child.getTitle())
@@ -550,7 +552,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (PodcastEpisode episode : episodes) {
-                                Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(episode.getCoverArtId(), Preferences.getImageSize()));
+                                Uri artworkUri = AlbumArtContentProvider.contentUri(episode.getCoverArtId());
 
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(episode.getTitle())
@@ -604,20 +606,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (InternetRadioStation radioStation : radioStations) {
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(radioStation.getName())
-                                        .setIsBrowsable(false)
-                                        .setIsPlayable(true)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_RADIO_STATION)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(radioStation.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri(radioStation.getStreamUrl())
-                                        .build();
-
-                                mediaItems.add(mediaItem);
+                                mediaItems.add(MappingUtil.mapInternetRadioStation(radioStation));
                             }
 
                             setInternetRadioStationsMetadata(radioStations);
@@ -687,7 +676,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(album.getCoverArtId(), Preferences.getImageSize()));
+                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
 
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(album.getName())
@@ -800,7 +789,7 @@ public class AutomotiveRepository {
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getArtists() != null) {
                                 for (ArtistID3 artist : response.body().getSubsonicResponse().getSearchResult3().getArtists()) {
-                                    Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(artist.getCoverArtId(), Preferences.getImageSize()));
+                                    Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
 
                                     MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                             .setTitle(artist.getName())
@@ -822,7 +811,7 @@ public class AutomotiveRepository {
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getAlbums() != null) {
                                 for (AlbumID3 album : response.body().getSubsonicResponse().getSearchResult3().getAlbums()) {
-                                    Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(album.getCoverArtId(), Preferences.getImageSize()));
+                                    Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
 
                                     MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                             .setTitle(album.getName())

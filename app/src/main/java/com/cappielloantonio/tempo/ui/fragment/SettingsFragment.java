@@ -9,6 +9,8 @@ import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.preference.EditTextPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -141,6 +144,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setStreamingCacheSize();
         setAppLanguage();
         setVersion();
+        setNetorkPingTimeoutBase();
 
         actionLogout();
         actionScan();
@@ -258,6 +262,30 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             } else {
                 directory.setVisible(false);
             }
+        }
+    }
+
+    private void setNetorkPingTimeoutBase() {
+        EditTextPreference networkPingTimeoutBase = findPreference("network_ping_timeout_base");
+
+        if (networkPingTimeoutBase != null) {
+            networkPingTimeoutBase.setSummaryProvider(EditTextPreference.SimpleSummaryProvider.getInstance());
+            networkPingTimeoutBase.setOnBindEditTextListener(editText -> {
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText.setFilters(new InputFilter[]{ (source, start, end, dest, dstart, dend) -> {
+                    for (int i = start; i < end; i++) {
+                        if (!Character.isDigit(source.charAt(i))) {
+                            return "";
+                        }
+                    }
+                    return null;
+            }});
+        });
+
+        networkPingTimeoutBase.setOnPreferenceChangeListener((preference, newValue) -> {
+            String input = (String) newValue;
+            return input != null && !input.isEmpty();
+        });
         }
     }
 

@@ -29,6 +29,7 @@ object Preferences {
     private const val REPEAT_MODE = "repeat_mode"
     private const val IMAGE_CACHE_SIZE = "image_cache_size"
     private const val STREAMING_CACHE_SIZE = "streaming_cache_size"
+    private const val LANDSCAPE_ITEMS_PER_ROW = "landscape_items_per_row"
     private const val IMAGE_SIZE = "image_size"
     private const val MAX_BITRATE_WIFI = "max_bitrate_wifi"
     private const val MAX_BITRATE_MOBILE = "max_bitrate_mobile"
@@ -74,6 +75,8 @@ object Preferences {
     private const val CONTINUOUS_PLAY = "continuous_play"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
+    private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
+    private const val DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER = Constants.PLAYLIST_ORDER_BY_RANDOM
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
     private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
@@ -83,6 +86,8 @@ object Preferences {
     private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
     private const val SORT_SEARCH_CHRONOLOGICALLY= "sort_search_chronologically"
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
+    private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
+    
 
     @JvmStatic
     fun getServer(): String? {
@@ -93,6 +98,19 @@ object Preferences {
     fun setServer(server: String?) {
         App.getInstance().preferences.edit().putString(SERVER, server).apply()
     }
+
+    @JvmStatic
+    fun getNetworkPingTimeout(): Int {
+        val timeoutString = App.getInstance().preferences.getString(NETWORK_PING_TIMEOUT, "2") ?: "2"
+        return (timeoutString.toIntOrNull() ?: 2).coerceAtLeast(1)
+    }
+
+    @JvmStatic
+    fun setNetworkPingTimeout(pingTimeout: String?) {
+        App.getInstance().preferences.edit().putString(NETWORK_PING_TIMEOUT, pingTimeout).apply()
+    }
+
+    
 
     @JvmStatic
     fun getUser(): String? {
@@ -285,6 +303,11 @@ object Preferences {
     @JvmStatic
     fun getImageCacheSize(): Int {
         return App.getInstance().preferences.getString(IMAGE_CACHE_SIZE, "500")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getLandscapeItemsPerRow(): Int {
+        return App.getInstance().preferences.getString(LANDSCAPE_ITEMS_PER_ROW, "4")!!.toInt()
     }
 
     @JvmStatic
@@ -623,6 +646,16 @@ object Preferences {
     @JvmStatic
     fun allowPlaylistDuplicates(): Boolean {
         return App.getInstance().preferences.getBoolean(ALLOW_PLAYLIST_DUPLICATES, false)
+    }
+
+    @JvmStatic
+    fun getHomeSortPlaylists(): String {
+        return App.getInstance().preferences.getString(HOME_SORT_PLAYLISTS, DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER) ?: DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER
+    }
+
+        @JvmStatic
+    fun getHomeSortPlaylists(sortOrder: String) {
+        App.getInstance().preferences.edit().putString(HOME_SORT_PLAYLISTS, sortOrder).apply()
     }
 
     @JvmStatic

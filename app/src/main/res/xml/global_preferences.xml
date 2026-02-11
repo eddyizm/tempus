@@ -17,6 +17,15 @@
             android:key="scan_library"
             android:title="@string/settings_scan_title" />
 
+        <EditTextPreference
+            android:key="network_ping_timeout_base"
+            android:title="@string/settings_ping_timeout_title"
+            app:summary="@string/settings_ping_timeout_summary"
+            android:dialogTitle="@string/settings_ping_timeout_dialog"
+            android:inputType="number"
+            android:singleLine="true"
+            android:defaultValue="2" />
+
         <Preference
             android:key="logout"
             android:title="@string/settings_logout_title"/>
@@ -128,6 +137,15 @@
             android:summary="@string/search_sort_summary"
             android:key="sort_search_chronologically" />
 
+        <ListPreference
+            app:defaultValue="4"
+            app:dialogTitle="@string/settings_title_ui_landscape_items_per_row_dialog"
+            app:entries="@array/landscape_items_per_row"
+            app:entryValues="@array/landscape_items_per_row_values"
+            app:key="landscape_items_per_row"
+            android:summary="@string/settings_summary_landscape_items_per_row"
+            app:title="@string/settings_title_ui_landscape_items_per_row" />
+
     </PreferenceCategory>
 
      <PreferenceCategory app:title="@string/settings_title_playlist">
@@ -136,6 +154,14 @@
             android:defaultValue="false"
             android:summary="@string/settings_allow_playlist_duplicates_summary"
             android:key="allow_playlist_duplicates" />
+         <ListPreference
+             app:defaultValue="ORDER_BY_NAME"
+             app:dialogTitle="@string/settings_playlist_sort"
+             app:entries="@array/playlist_sort_option_titles"
+             app:entryValues="@array/playlist_sort_option_values"
+             app:key="home_sort_playlists"
+             app:title="@string/settings_playlist_sort"
+             app:useSimpleSummaryProvider="true" />
     </PreferenceCategory>
 
     

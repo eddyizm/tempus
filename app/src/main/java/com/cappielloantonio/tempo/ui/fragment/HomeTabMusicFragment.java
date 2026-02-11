@@ -1262,7 +1262,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
             if (mediaBrowserListenableFuture != null) {
                 final boolean[] playbackStarted = {false};
-
+                Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
                 homeViewModel.getMediaInstantMix(getViewLifecycleOwner(), track)
                         .observe(getViewLifecycleOwner(), songs -> {
                             if (playbackStarted[0] || songs == null || songs.isEmpty()) return;

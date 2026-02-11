@@ -39,6 +39,7 @@ import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBindi
 import com.cappielloantonio.tempo.service.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
 import com.cappielloantonio.tempo.ui.dialog.TrackInfoDialog;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerHorizontalPager;
@@ -454,10 +455,10 @@ public class PlayerControllerFragment extends Fragment {
                     bind.getRoot().setShowNextButton(true);
                     bind.getRoot().setShowFastForwardButton(false);
                     bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL | RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
-                    bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.GONE);
+                    bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.VISIBLE);
                     bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button).setVisibility(View.GONE);
                     bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.VISIBLE);
-                    resetPlaybackParameters(mediaBrowser);
+                    setPlaybackParameters(mediaBrowser);
                     break;
             }
         }
@@ -563,33 +564,12 @@ public class PlayerControllerFragment extends Fragment {
 
     private void initPlaybackSpeedButton(MediaBrowser mediaBrowser) {
         playbackSpeedButton.setOnClickListener(view -> {
-            float currentSpeed = Preferences.getPlaybackSpeed();
-
-            if (currentSpeed == Constants.MEDIA_PLAYBACK_SPEED_080) {
-                mediaBrowser.setPlaybackParameters(new PlaybackParameters(Constants.MEDIA_PLAYBACK_SPEED_100));
-                playbackSpeedButton.setText(getString(R.string.player_playback_speed, Constants.MEDIA_PLAYBACK_SPEED_100));
-                Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_100);
-            } else if (currentSpeed == Constants.MEDIA_PLAYBACK_SPEED_100) {
-                mediaBrowser.setPlaybackParameters(new PlaybackParameters(Constants.MEDIA_PLAYBACK_SPEED_125));
-                playbackSpeedButton.setText(getString(R.string.player_playback_speed, Constants.MEDIA_PLAYBACK_SPEED_125));
-                Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_125);
-            } else if (currentSpeed == Constants.MEDIA_PLAYBACK_SPEED_125) {
-                mediaBrowser.setPlaybackParameters(new PlaybackParameters(Constants.MEDIA_PLAYBACK_SPEED_150));
-                playbackSpeedButton.setText(getString(R.string.player_playback_speed, Constants.MEDIA_PLAYBACK_SPEED_150));
-                Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_150);
-            } else if (currentSpeed == Constants.MEDIA_PLAYBACK_SPEED_150) {
-                mediaBrowser.setPlaybackParameters(new PlaybackParameters(Constants.MEDIA_PLAYBACK_SPEED_175));
-                playbackSpeedButton.setText(getString(R.string.player_playback_speed, Constants.MEDIA_PLAYBACK_SPEED_175));
-                Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_175);
-            } else if (currentSpeed == Constants.MEDIA_PLAYBACK_SPEED_175) {
-                mediaBrowser.setPlaybackParameters(new PlaybackParameters(Constants.MEDIA_PLAYBACK_SPEED_200));
-                playbackSpeedButton.setText(getString(R.string.player_playback_speed, Constants.MEDIA_PLAYBACK_SPEED_200));
-                Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_200);
-            } else if (currentSpeed == Constants.MEDIA_PLAYBACK_SPEED_200) {
-                mediaBrowser.setPlaybackParameters(new PlaybackParameters(Constants.MEDIA_PLAYBACK_SPEED_080));
-                playbackSpeedButton.setText(getString(R.string.player_playback_speed, Constants.MEDIA_PLAYBACK_SPEED_080));
-                Preferences.setPlaybackSpeed(Constants.MEDIA_PLAYBACK_SPEED_080);
-            }
+            PlaybackSpeedDialog dialog = new PlaybackSpeedDialog();
+            dialog.setPlaybackSpeedListener(speed -> {
+                mediaBrowser.setPlaybackParameters(new PlaybackParameters(speed));
+                playbackSpeedButton.setText(getString(R.string.player_playback_speed, speed));
+            });
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
         });
 
         skipSilenceToggleButton.setOnClickListener(view -> {
@@ -641,7 +621,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void resetPlaybackParameters(MediaBrowser mediaBrowser) {
-        mediaBrowser.setPlaybackParameters(new PlaybackParameters(Constants.MEDIA_PLAYBACK_SPEED_100));
+        mediaBrowser.setPlaybackParameters(new PlaybackParameters(1.0f));
         // TODO Resettare lo skip del silenzio
     }
 

@@ -24,13 +24,15 @@ public class SystemClient {
 
     public Call<ApiResponse> ping() {
         Log.d(TAG, "ping()");
+        int timeoutSeconds = Preferences.getNetworkPingTimeout();
         Call<ApiResponse> pingCall = systemService.ping(subsonic.getParams());
         if (Preferences.isInUseServerAddressLocal()) {
             pingCall.timeout()
-                    .timeout(1, TimeUnit.SECONDS);
+                    .timeout(timeoutSeconds, TimeUnit.SECONDS);
         } else {
+            int finalTimeout = Math.min(timeoutSeconds * 2, 10);
             pingCall.timeout()
-                    .timeout(3, TimeUnit.SECONDS);
+                    .timeout(finalTimeout, TimeUnit.SECONDS);
         }
         return pingCall;
     }

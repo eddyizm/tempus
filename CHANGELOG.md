@@ -1,5 +1,67 @@
 # Changelog
 
+## Pending release
+
+## What's Changed
+## [4.10.1](https://github.com/eddyizm/tempo/releases/tag/v4.10.1) (2026-02-08)
+* fix: Addressing some UI/UX quirks by @tiltshiftfocus in https://github.com/eddyizm/tempus/pull/413
+* fix: keep observer until data is received on continuousPlay bug by @eddyizm in https://github.com/eddyizm/tempus/pull/421
+* fix: album art now displays on android auto by @trobinson in https://github.com/eddyizm/tempus/pull/414
+* feat: improve landscape view and increase items per row on landscape view by @tvillega in https://github.com/eddyizm/tempus/pull/411
+
+## New Contributors
+* @tiltshiftfocus made their first contribution in https://github.com/eddyizm/tempus/pull/413
+* @trobinson made their first contribution in https://github.com/eddyizm/tempus/pull/414
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.8...v4.10.1
+
+## What's Changed
+## [4.9.8](https://github.com/eddyizm/tempo/releases/tag/v4.9.8) (2026-02-02)
+* fix: missing Replay Gain metadata from .m4a files by @pgrit in https://github.com/eddyizm/tempus/pull/396
+* fix: Improve Synced Lyrics by @pgrit in https://github.com/eddyizm/tempus/pull/384
+* fix: Add selector for playlist visibility by @tvillega in https://github.com/eddyizm/tempus/pull/394
+* chore(i18n): set links as untranslatable by @tvillega in https://github.com/eddyizm/tempus/pull/400
+
+## New Contributors
+* @tvillega made their first contribution in https://github.com/eddyizm/tempus/pull/394
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.5...v4.5.8
+
+## What's Changed
+## [4.9.5](https://github.com/eddyizm/tempo/releases/tag/v4.9.5) (2026-01-26)
+* fix: Avoid crash when server has no songs by @jaime-grj in https://github.com/eddyizm/tempus/pull/389
+* fix: updated dialog import to address crashing on android 15 by @eddyizm in https://github.com/eddyizm/tempus/pull/392
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.3...v4.9.5
+
+## What's Changed
+## [4.9.3](https://github.com/eddyizm/tempo/releases/tag/v4.9.3) (2026-01-25)
+* fix: Proper raw stream detection by @jaime-grj in https://github.com/eddyizm/tempus/pull/382
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/381
+* feat: add configurable timeout by @eddyizm in https://github.com/eddyizm/tempus/pull/386
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.9.1...v4.9.3
+
+## What's Changed
+## [4.9.1](https://github.com/eddyizm/tempo/releases/tag/v4.9.1) (2026-01-24)
+* chore: i18n: Add Romanian translation (including locale_config this time!) by @DevMatei in https://github.com/eddyizm/tempus/pull/357
+* French localization update by @benoit-smith in https://github.com/eddyizm/tempus/pull/356
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/364
+* docs: updated readme and added known issues for airsonic work around by @eddyizm in https://github.com/eddyizm/tempus/pull/366
+* fix: toast for made for you click indication by @eddyizm in https://github.com/eddyizm/tempus/pull/365
+* fix: sort playlist view  by @eddyizm in https://github.com/eddyizm/tempus/pull/368
+* feat: sort preference for playlists by @eddyizm in https://github.com/eddyizm/tempus/pull/370
+* fix: use existing future when adding tracks, dialed random album tracks off in instant mix by @eddyizm in https://github.com/eddyizm/tempus/pull/373
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/374
+* fix: Check for OpenSubsonic extensions also with password authentication by @pgrit in https://github.com/eddyizm/tempus/pull/375
+* feat: Implement duration and seeking for transcodes by @drakeerv in https://github.com/eddyizm/tempus/pull/358
+* feat: Playback speed controls for music by @pgrit in https://github.com/eddyizm/tempus/pull/376
+
+## New Contributors
+* @pgrit made their first contribution in https://github.com/eddyizm/tempus/pull/375
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.6.4...v4.9.1
+
 ## What's Changed
 ## [4.6.4](https://github.com/eddyizm/tempo/releases/tag/v4.6.4) (2026-01-13)
 * fix: instant mix random songs and broken continuous play by @eddyizm in https://github.com/eddyizm/tempus/pull/354

@@ -1,0 +1,2 @@
+fix: Avoid crash when server has no songs
+fix: updated dialog import to address crashing on android 15

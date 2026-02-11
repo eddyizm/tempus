@@ -7,6 +7,7 @@ import androidx.media3.common.Metadata;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.Player;
+import androidx.media3.extractor.metadata.id3.InternalFrame;
 
 import com.cappielloantonio.tempo.model.ReplayGain;
 
@@ -82,26 +83,32 @@ public class ReplayGainUtil {
     private static ReplayGain setReplayGains(Metadata.Entry entry) {
         ReplayGain replayGain = new ReplayGain();
 
-        if (entry.toString().contains(tags[0])) {
-            replayGain.setTrackGain(parseReplayGainTag(entry));
+        // The logic below assumes .toString() contains the dB value. That's not the case for InternalFrame
+        String str = entry.toString();
+        if (entry instanceof InternalFrame) {
+            str = ((InternalFrame) entry).description + ((InternalFrame) entry).text;
         }
 
-        if (entry.toString().contains(tags[1])) {
-            replayGain.setAlbumGain(parseReplayGainTag(entry));
+        if (str.contains(tags[0])) {
+            replayGain.setTrackGain(parseReplayGainTag(str));
         }
 
-        if (entry.toString().contains(tags[2])) {
-            replayGain.setTrackGain(parseReplayGainTag(entry) / 256f);
+        if (str.contains(tags[1])) {
+            replayGain.setAlbumGain(parseReplayGainTag(str));
         }
 
-        if (entry.toString().contains(tags[3])) {
-            replayGain.setAlbumGain(parseReplayGainTag(entry) / 256f);
+        if (str.contains(tags[2])) {
+            replayGain.setTrackGain(parseReplayGainTag(str) / 256f);
+        }
+
+        if (str.contains(tags[3])) {
+            replayGain.setAlbumGain(parseReplayGainTag(str) / 256f);
         }
 
         return replayGain;
     }
 
-    private static Float parseReplayGainTag(Metadata.Entry entry) {
+    private static Float parseReplayGainTag(String entry) {
         try {
             return Float.parseFloat(entry.toString().replaceAll("[^\\d.-]", ""));
         } catch (NumberFormatException exception) {

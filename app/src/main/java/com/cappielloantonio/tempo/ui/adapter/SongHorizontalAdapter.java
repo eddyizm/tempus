@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.ui.adapter;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -66,8 +67,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
                 currentFilter = filterPattern;
 
                 for (Child item : songsFull) {
-                    String title = item.getTitle();
-                    if (title != null && title.toLowerCase().contains(filterPattern)) {
+                    if (item.getTitle().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);
                     }
                 }
@@ -80,11 +80,8 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            @SuppressWarnings("unchecked")
-            List<Child> filteredList = (List<Child>) results.values;
-            songs = filteredList != null ? filteredList : Collections.emptyList();
+            songs = (List<Child>) results.values;
             notifyDataSetChanged();
 
             for (int pos : currentPlayingPositions) {
@@ -172,18 +169,16 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
                         (position > 0 && songs.get(position - 1) != null &&
                                 songs.get(position - 1).getDiscNumber() != null &&
                                 songs.get(position).getDiscNumber() != null &&
-                                Objects.compare(songs.get(position - 1).getDiscNumber(), songs.get(position).getDiscNumber(), Comparator.naturalOrder()) < 0
+                                songs.get(position - 1).getDiscNumber() < songs.get(position).getDiscNumber()
                         )
                 )
         ) {
-            holder.item.differentDiskDividerSector.setVisibility(View.VISIBLE);
 
-            Integer discNumber = songs.get(position).getDiscNumber();
-            if (discNumber != null) {
-                String discNumberStr = discNumber.toString();
-                if (!discNumberStr.isBlank()) {
-                    holder.item.discTitleTextView.setText(holder.itemView.getContext().getString(R.string.disc_titleless, discNumberStr));
-                }
+            if (songs.get(position).getDiscNumber() != null && !Objects.requireNonNull(songs.get(position).getDiscNumber()).toString().isBlank()) {
+                holder.item.discTitleTextView.setText(holder.itemView.getContext().getString(R.string.disc_titleless, songs.get(position).getDiscNumber().toString()));
+                holder.item.differentDiskDividerSector.setVisibility(View.VISIBLE);
+            } else {
+                holder.item.differentDiskDividerSector.setVisibility(View.GONE);
             }
 
             if (album.getDiscTitles() != null) {
