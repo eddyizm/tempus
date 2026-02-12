@@ -41,8 +41,8 @@ import retrofit2.Callback
 import retrofit2.Response
 
 open class MediaLibrarySessionCallback(
-    context: Context,
-    automotiveRepository: AutomotiveRepository
+    private val context: Context,
+    private val automotiveRepository: AutomotiveRepository
 ) :
     MediaLibraryService.MediaLibrarySession.Callback {
 
@@ -375,7 +375,7 @@ open class MediaLibrarySessionCallback(
                 automotiveRepository.internetRadioStations,
                 { result ->
                     val stations = result?.value
-                    val selected = stations?.find { it.mediaId == firstItem?.mediaId }
+                    val selected = stations?.find { item -> item.mediaId == firstItem?.mediaId }
                     if (selected != null) {
                         val updatedSelected = selected.buildUpon()
                             .setMimeType(selected.localConfiguration?.mimeType)
