@@ -88,8 +88,14 @@ object Preferences {
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
     
-
-    @JvmStatic
+    private const val AA_ALBUM_VIEW = "androidauto_album_view"
+	private const val AA_HOME_VIEW = "androidauto_home_view"
+	private const val AA_FIRST_TAB = "androidauto_first_tab"
+	private const val AA_SECOND_TAB = "androidauto_second_tab"
+	private const val AA_THIRD_TAB = "androidauto_third_tab"
+	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
+    
+	@JvmStatic
     fun getServer(): String? {
         return App.getInstance().preferences.getString(SERVER, null)
     }
@@ -724,4 +730,35 @@ object Preferences {
     fun setArtistDisplayBiography(displayBiographyEnabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(ARTIST_DISPLAY_BIOGRAPHY, displayBiographyEnabled).apply()
     }
+
+    @JvmStatic
+    fun isAndroidAutoAlbumViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoHomeViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_HOME_VIEW, false)
+    }
+
+    @JvmStatic
+    fun getAndroidAutoFirstTab(): Int {
+        return App.getInstance().preferences.getString(AA_FIRST_TAB, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getAndroidAutoSecondTab(): Int {
+        return App.getInstance().preferences.getString(AA_SECOND_TAB, "1")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getAndroidAutoThirdTab(): Int {
+        return App.getInstance().preferences.getString(AA_THIRD_TAB, "2")!!.toInt()
+    }
+	
+    @JvmStatic
+    fun getAndroidAutoFourthTab(): Int {
+        return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
+    }
+	
 }

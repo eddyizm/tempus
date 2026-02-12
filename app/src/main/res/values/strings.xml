@@ -1,4 +1,22 @@
 <resources>
+    <string name="aa_albums">Albums</string>
+    <string name="aa_album_most_played">Albums most played</string>
+	<string name="aa_album_recently_added">Albums added</string>
+    <string name="aa_artists">Artists</string>
+    <string name="aa_home">Home</string>
+	<string name="aa_made_for_you">For you</string>
+    <string name="aa_more">More</string>
+    <string name="aa_music_folder">Folder</string>
+    <string name="aa_playlists">Playlists</string>
+	<string name="aa_podcast">Podcast</string>
+	<string name="aa_radio">Radio</string>
+    <string name="aa_random">Random</string>
+    <string name="aa_recent_albums">Recent</string>
+    <string name="aa_song_recently_played">Song played</string>
+    <string name="aa_starred_albums">★ Albums</string>
+    <string name="aa_starred_artists">★ Artists</string>
+    <string name="aa_starred_tracks">★ Tracks</string>
+	
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>
     <string name="activity_battery_optimizations_title">Battery Optimizations</string>
@@ -369,6 +387,13 @@
     <string name="settings_podcast">Show podcast</string>
     <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
     <string name="settings_playlist_sort">Playlist sorting</string>
+	<string name="settings_androidauto">Android Auto</string>
+	<string name="settings_androidauto_album_view">Grid view for albums</string>
+	<string name="settings_androidauto_home_view">Grid view for home</string>
+	<string name="settings_androidauto_first_tab">First tab display</string>
+	<string name="settings_androidauto_second_tab">Second tab display</string>
+	<string name="settings_androidauto_third_tab">Third tab display</string>
+	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
