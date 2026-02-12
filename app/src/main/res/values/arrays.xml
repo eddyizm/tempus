@@ -278,4 +278,46 @@
         <item>6</item>
         <item>7</item>
     </string-array>
+		
+	<!-- Add by MFO -->
+    <string-array name="aa_tab_titles">
+        <item>Do not display</item>
+        <item>Home</item>
+        <item>Recent</item>
+        <item>Albums</item>
+        <item>Artists</item>
+        <item>Playlists</item>
+        <item>Podcast</item>
+        <item>Radio</item>
+        <item>Folder</item>
+        <item>Albums most played</item>
+    <!--    <item>Tracks played</item> -->
+        <item>Albums added</item>
+    <!--    <item>For you</item> -->
+        <item>Star tracks</item>
+        <item>Star albums</item>
+        <item>Star artistes</item>
+        <item>Random</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+    </string-array>
+	<!-- end Add by MFO -->
+	
 </resources>
