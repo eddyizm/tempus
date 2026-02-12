@@ -288,13 +288,24 @@ public class MappingUtil {
     }
 
     private static Uri getUri(Child media) {
+        // Check if it's in our local SQL Database
+        DownloadRepository repo = new DownloadRepository();
+        Download localDownload = repo.getDownload(media.getId());
+
+        if (localDownload != null && localDownload.getDownloadUri() != null && !localDownload.getDownloadUri().isEmpty()) {
+            Log.d(TAG, "Playing local file for: " + media.getTitle());
+            return Uri.parse(localDownload.getDownloadUri());
+        }
+
+        // Legacy check for external directory, i think this was broken/buggy
         if (Preferences.getDownloadDirectoryUri() != null) {
             Uri local = ExternalAudioReader.getUri(media);
-            return local != null ? local : MusicUtil.getStreamUri(media.getId());
+            if (local != null) return local;
         }
-        return DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(media.getId())
-                ? getDownloadUri(media.getId())
-                : MusicUtil.getStreamUri(media.getId());
+
+        // Fallback to streaming
+        Log.d(TAG, "No local file found. Streaming: " + media.getTitle());
+        return MusicUtil.getStreamUri(media.getId());
     }
 
     private static Uri getUri(PodcastEpisode podcastEpisode) {
