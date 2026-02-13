@@ -39,23 +39,9 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
 
-        String[] playlistVisibilityChoice = {
-                getString(R.string.playlist_chooser_dialog_visibility_public),
-                getString(R.string.playlist_chooser_dialog_visibility_private)
-        };
-
         AlertDialog d = new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
                 .setTitle(R.string.playlist_chooser_dialog_title)
-                .setSingleChoiceItems(
-                        playlistVisibilityChoice,
-                        0,
-                        (dialog, which) -> {
-                                boolean isPublic = (which == 0);
-                                playlistChooserViewModel.setIsPlaylistPublic(isPublic);
-                        })
-                .setNeutralButton(R.string.playlist_chooser_dialog_neutral_button, (dialog, id) -> { })
-                .setNegativeButton(R.string.playlist_chooser_dialog_negative_button, (dialog, id) -> dialog.cancel())
                 .create();
 
         d.setOnShowListener(diag -> setButtonAction());
@@ -75,7 +61,6 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
         initPlaylistView();
         setSongInfo();
-        setButtonAction();
     }
 
     private void setSongInfo() {

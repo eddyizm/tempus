@@ -242,6 +242,8 @@
     <string name="playlist_chooser_dialog_toast_all_skipped">All songs were skipped as duplicates</string>
     <string name="playlist_chooser_dialog_visibility_public">Public</string>
     <string name="playlist_chooser_dialog_visibility_private">Private</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Mark the playlist as public</string>
+    <string name="playlist_chooser_dialog_visibility_summary">The server updates the visibility on each request. By default it is set to private.</string>
     <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
     <string name="playlist_duration">Duration  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Long press to delete</string>

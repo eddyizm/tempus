@@ -3,6 +3,26 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/playlist_dialog_chooser_visibility_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:checked="false"
+        android:showText="false"
+        android:text="@string/playlist_chooser_dialog_visibility_switch_label" />
+
+    <TextView
+        android:id="@+id/playlist_dialog_chooser_visibility_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:text="@string/playlist_chooser_dialog_visibility_summary"
+        android:layout_marginTop="8dp"/>
+
     <TextView
         android:id="@+id/no_playlists_created_text_view"
         style="@style/TitleMedium"
