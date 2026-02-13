@@ -55,23 +55,23 @@
         android:layout_marginTop="16dp">
 
         <Button
-            android:id="@+id/playlist_chooser_dialog_neutral_button"
+            android:id="@+id/playlist_chooser_dialog_create_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="start"
-            android:text="@string/playlist_chooser_dialog_neutral_button" />
+            android:text="@string/playlist_chooser_dialog_create_button" />
 
         <Button
-            android:id="@+id/playlist_chooser_dialog_negative_button"
+            android:id="@+id/playlist_chooser_dialog_cancel_button"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:layout_gravity="end"
-            android:text="@string/playlist_chooser_dialog_negative_button"/>
+            android:text="@string/playlist_chooser_dialog_cancel_button"/>
     </LinearLayout>
 
 </LinearLayout>

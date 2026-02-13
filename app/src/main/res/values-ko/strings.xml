@@ -172,8 +172,8 @@
     <string name="playlist_catalogue_title">플레이리스트 카탈로그</string>
     <string name="playlist_catalogue_title_expanded">플레이리스트 찾아보기</string>
     <string name="playlist_chooser_dialog_empty">플레이리스트가 없습니다.</string>
-    <string name="playlist_chooser_dialog_negative_button">취소</string>
-    <string name="playlist_chooser_dialog_neutral_button">생성</string>
+    <string name="playlist_chooser_dialog_cancel_button">취소</string>
+    <string name="playlist_chooser_dialog_create_button">생성</string>
     <string name="playlist_chooser_dialog_title">플레이리스트 추가</string>
     <string name="playlist_chooser_dialog_toast_add_success">재생 목록에 음악 추가</string>
     <string name="playlist_chooser_dialog_toast_add_failure">재생 목록에 음악을 추가하지 못했습니다.</string>

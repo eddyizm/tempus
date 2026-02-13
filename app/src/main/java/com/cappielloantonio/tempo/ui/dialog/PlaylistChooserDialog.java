@@ -3,12 +3,9 @@ package com.cappielloantonio.tempo.ui.dialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,31 +19,28 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.viewmodel.PlaylistChooserViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class PlaylistChooserDialog extends DialogFragment implements ClickCallback {
     private DialogPlaylistChooserBinding bind;
     private PlaylistChooserViewModel playlistChooserViewModel;
-
     private PlaylistDialogHorizontalAdapter playlistDialogHorizontalAdapter;
-
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        DialogPlaylistChooserBinding.inflate(getLayoutInflater());
         bind = DialogPlaylistChooserBinding.inflate(getLayoutInflater());
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
 
-        AlertDialog d = new MaterialAlertDialogBuilder(getActivity())
-                .setView(bind.getRoot())
-                .setTitle(R.string.playlist_chooser_dialog_title)
-                .create();
+        bind.playlistDialogChooserVisibilitySwitch.setOnCheckedChangeListener(
+                (buttonView,
+                 isChecked) -> playlistChooserViewModel.setIsPlaylistPublic(isChecked)
+        );
+        bind.playlistChooserDialogCreateButton.setOnClickListener(v -> launchPlaylistEditor());
+        bind.playlistChooserDialogCancelButton.setOnClickListener(v -> dismiss());
 
-        d.setOnShowListener(diag -> setButtonAction());
-
-        return d;
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext()).setView(bind.getRoot());
+        return builder.create();
     }
 
     @Override
@@ -67,27 +61,20 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
         playlistChooserViewModel.setSongsToAdd(requireArguments().getParcelableArrayList(Constants.TRACKS_OBJECT));
     }
 
-    private void setButtonAction() {
-        AlertDialog dialog = (AlertDialog) getDialog();
+    private void launchPlaylistEditor() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(
+                Constants.TRACKS_OBJECT,
+                playlistChooserViewModel.getSongsToAdd()
+        );
 
-        Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
-        neutralButton.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList(
-                    Constants.TRACKS_OBJECT,
-                    playlistChooserViewModel.getSongsToAdd()
-            );
-            PlaylistEditorDialog editorDialog = new PlaylistEditorDialog(null);
-            editorDialog.setArguments(bundle);
-            editorDialog.show(
-                    requireActivity().getSupportFragmentManager(),
-                    null);
+        PlaylistEditorDialog editorDialog = new PlaylistEditorDialog(null);
+        editorDialog.setArguments(bundle);
+        editorDialog.show(
+                requireActivity().getSupportFragmentManager(),
+                null);
 
-            Objects.requireNonNull(getDialog()).dismiss();
-        });
-
-        Button negativeBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        negativeBtn.setOnClickListener(v -> Objects.requireNonNull(getDialog()).cancel());
+        dismiss();
     }
 
     private void initPlaylistView() {

@@ -188,8 +188,8 @@
     <string name="playlist_catalogue_title">Playlisten</string>
     <string name="playlist_catalogue_title_expanded">Playlisten durchsuchen</string>
     <string name="playlist_chooser_dialog_empty">Keine Playlisten erstellt</string>
-    <string name="playlist_chooser_dialog_negative_button">Abbrechen</string>
-    <string name="playlist_chooser_dialog_neutral_button">Erstellen</string>
+    <string name="playlist_chooser_dialog_cancel_button">Abbrechen</string>
+    <string name="playlist_chooser_dialog_create_button">Erstellen</string>
     <string name="playlist_chooser_dialog_title">Zu einer Playliste hinzufügen</string>
     <string name="playlist_chooser_dialog_toast_add_success">Lied zu Playlist hinzugefügt</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Titel kann nicht zur Playlist hinzugefügt werden</string>
