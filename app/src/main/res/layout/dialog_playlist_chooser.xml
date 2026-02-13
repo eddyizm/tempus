@@ -23,4 +23,35 @@
         android:layout_weight="1"
         android:layout_marginTop="8dp"
         android:clipToPadding="false" />
+
+    <LinearLayout
+        android:id="@+id/button_bar"
+        style="?android:attr/buttonBarStyle"
+        android:orientation="horizontal"
+        android:gravity="bottom|center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="2"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/playlist_chooser_dialog_neutral_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="start"
+            android:text="@string/playlist_chooser_dialog_neutral_button" />
+
+        <Button
+            android:id="@+id/playlist_chooser_dialog_negative_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:layout_gravity="end"
+            android:text="@string/playlist_chooser_dialog_negative_button"/>
+    </LinearLayout>
+
 </LinearLayout>

@@ -3,10 +3,12 @@ package com.cappielloantonio.tempo.ui.dialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,7 +44,7 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
                 getString(R.string.playlist_chooser_dialog_visibility_private)
         };
 
-        return new MaterialAlertDialogBuilder(getActivity())
+        AlertDialog d = new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
                 .setTitle(R.string.playlist_chooser_dialog_title)
                 .setSingleChoiceItems(
@@ -55,6 +57,10 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
                 .setNeutralButton(R.string.playlist_chooser_dialog_neutral_button, (dialog, id) -> { })
                 .setNegativeButton(R.string.playlist_chooser_dialog_negative_button, (dialog, id) -> dialog.cancel())
                 .create();
+
+        d.setOnShowListener(diag -> setButtonAction());
+
+        return d;
     }
 
     @Override
@@ -77,17 +83,26 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
     }
 
     private void setButtonAction() {
-        androidx.appcompat.app.AlertDialog alertDialog = (androidx.appcompat.app.AlertDialog) Objects.requireNonNull(getDialog());
-        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, playlistChooserViewModel.getSongsToAdd());
+        AlertDialog dialog = (AlertDialog) getDialog();
 
-            PlaylistEditorDialog dialog = new PlaylistEditorDialog(null);
-            dialog.setArguments(bundle);
-            dialog.show(requireActivity().getSupportFragmentManager(), null);
+        Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
+        neutralButton.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(
+                    Constants.TRACKS_OBJECT,
+                    playlistChooserViewModel.getSongsToAdd()
+            );
+            PlaylistEditorDialog editorDialog = new PlaylistEditorDialog(null);
+            editorDialog.setArguments(bundle);
+            editorDialog.show(
+                    requireActivity().getSupportFragmentManager(),
+                    null);
 
             Objects.requireNonNull(getDialog()).dismiss();
         });
+
+        Button negativeBtn = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        negativeBtn.setOnClickListener(v -> Objects.requireNonNull(getDialog()).cancel());
     }
 
     private void initPlaylistView() {
