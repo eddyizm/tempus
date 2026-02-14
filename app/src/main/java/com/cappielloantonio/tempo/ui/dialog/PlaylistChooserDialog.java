@@ -39,7 +39,9 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
         bind.playlistChooserDialogCreateButton.setOnClickListener(v -> launchPlaylistEditor());
         bind.playlistChooserDialogCancelButton.setOnClickListener(v -> dismiss());
 
-        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext()).setView(bind.getRoot());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
+                .setView(bind.getRoot())
+                .setTitle(R.string.playlist_chooser_dialog_title);
         return builder.create();
     }
 
