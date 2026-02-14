@@ -280,11 +280,11 @@
     </string-array>
 		
     <string-array name="tile_size_titles">
-        <item>Xtra Small</item>
+        <item>Tiny</item>
         <item>Small</item>
         <item>Medium</item>
         <item>Large</item>
-        <item>Xtra Large</item>
+        <item>Default</item>
     </string-array>
     <string-array name="tile_size_divisor">
         <item>6</item>
