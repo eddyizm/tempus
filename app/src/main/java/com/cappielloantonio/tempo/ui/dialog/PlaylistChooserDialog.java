@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.StringRes;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,41 +19,30 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.viewmodel.PlaylistChooserViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class PlaylistChooserDialog extends DialogFragment implements ClickCallback {
     private DialogPlaylistChooserBinding bind;
     private PlaylistChooserViewModel playlistChooserViewModel;
-
     private PlaylistDialogHorizontalAdapter playlistDialogHorizontalAdapter;
-
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        DialogPlaylistChooserBinding.inflate(getLayoutInflater());
         bind = DialogPlaylistChooserBinding.inflate(getLayoutInflater());
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
 
-        String[] playlistVisibilityChoice = {
-                getString(R.string.playlist_chooser_dialog_visibility_public),
-                getString(R.string.playlist_chooser_dialog_visibility_private)
-        };
+        bind.playlistDialogChooserVisibilitySwitch.setOnCheckedChangeListener(
+                (buttonView,
+                 isChecked) -> playlistChooserViewModel.setIsPlaylistPublic(isChecked)
+        );
+        bind.playlistChooserDialogCreateButton.setOnClickListener(v -> launchPlaylistEditor());
+        bind.playlistChooserDialogCancelButton.setOnClickListener(v -> dismiss());
 
-        return new MaterialAlertDialogBuilder(getActivity())
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext())
                 .setView(bind.getRoot())
-                .setTitle(R.string.playlist_chooser_dialog_title)
-                .setSingleChoiceItems(
-                        playlistVisibilityChoice,
-                        0,
-                        (dialog, which) -> {
-                                boolean isPublic = (which == 0);
-                                playlistChooserViewModel.setIsPlaylistPublic(isPublic);
-                        })
-                .setNeutralButton(R.string.playlist_chooser_dialog_neutral_button, (dialog, id) -> { })
-                .setNegativeButton(R.string.playlist_chooser_dialog_negative_button, (dialog, id) -> dialog.cancel())
-                .create();
+                .setTitle(R.string.playlist_chooser_dialog_title);
+        return builder.create();
     }
 
     @Override
@@ -69,25 +57,26 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
         initPlaylistView();
         setSongInfo();
-        setButtonAction();
     }
 
     private void setSongInfo() {
         playlistChooserViewModel.setSongsToAdd(requireArguments().getParcelableArrayList(Constants.TRACKS_OBJECT));
     }
 
-    private void setButtonAction() {
-        androidx.appcompat.app.AlertDialog alertDialog = (androidx.appcompat.app.AlertDialog) Objects.requireNonNull(getDialog());
-        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, playlistChooserViewModel.getSongsToAdd());
+    private void launchPlaylistEditor() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(
+                Constants.TRACKS_OBJECT,
+                playlistChooserViewModel.getSongsToAdd()
+        );
 
-            PlaylistEditorDialog dialog = new PlaylistEditorDialog(null);
-            dialog.setArguments(bundle);
-            dialog.show(requireActivity().getSupportFragmentManager(), null);
+        PlaylistEditorDialog editorDialog = new PlaylistEditorDialog(null);
+        editorDialog.setArguments(bundle);
+        editorDialog.show(
+                requireActivity().getSupportFragmentManager(),
+                null);
 
-            Objects.requireNonNull(getDialog()).dismiss();
-        });
+        dismiss();
     }
 
     private void initPlaylistView() {
