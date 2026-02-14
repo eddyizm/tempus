@@ -13,6 +13,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,8 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     private final ClickCallback click;
 
     private List<AlbumID3> albums;
+
+    private int sizePx = 400;
 
     public AlbumAdapter(ClickCallback click) {
         this.click = click;
@@ -31,11 +34,20 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemLibraryAlbumBinding view = ItemLibraryAlbumBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        TileSizeManager.getInstance().calculateTileSize(parent.getContext());
+        sizePx = TileSizeManager.getInstance().getTileSizePx(parent.getContext());
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        ViewGroup.LayoutParams lp = holder.item.albumCoverImageView.getLayoutParams();
+        lp.width = sizePx;
+        lp.height = sizePx;
+        holder.item.albumCoverImageView.setLayoutParams(lp);
+
         AlbumID3 album = albums.get(position);
 
         holder.item.albumNameLabel.setText(album.getName());

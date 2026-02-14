@@ -64,6 +64,7 @@ import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -683,6 +684,11 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_DISCOVERY)) return;
 
         bind.discoverSongViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+
+        TileSizeManager.getInstance().calculateDiscoverSize(requireContext());
+        ViewGroup.LayoutParams lp = bind.discoverSongViewPager.getLayoutParams();
+        lp.height = TileSizeManager.getInstance().getDiscoverHeightPx(requireContext());
+        bind.discoverSongViewPager.setLayoutParams(lp);
 
         discoverSongAdapter = new DiscoverSongAdapter(this);
         bind.discoverSongViewPager.setAdapter(discoverSongAdapter);

@@ -43,6 +43,7 @@ import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 import com.cappielloantonio.tempo.viewmodel.ArtistPageViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -65,6 +66,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     private int spanCount = 2;
+    private int tileSpacing = 20;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,9 +77,9 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         artistPageViewModel = new ViewModelProvider(requireActivity()).get(ArtistPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = Preferences.getLandscapeItemsPerRow();
-        }
+        TileSizeManager.getInstance().calculateTileSize( requireContext() );
+        spanCount = TileSizeManager.getInstance().getTileSpanCount( requireContext() );
+        tileSpacing = TileSizeManager.getInstance().getTileSpacing( requireContext() );
 
         init(view);
         initAppBar();
@@ -285,7 +287,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
 
     private void initAlbumsView() {
         bind.albumsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
-        bind.albumsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, 20, false));
+        bind.albumsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
         bind.albumsRecyclerView.setHasFixedSize(true);
 
         albumCatalogueAdapter = new AlbumCatalogueAdapter(this, false);
@@ -304,7 +306,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
 
     private void initSimilarArtistsView() {
         bind.similarArtistsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
-        bind.similarArtistsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, 20, false));
+        bind.similarArtistsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
         bind.similarArtistsRecyclerView.setHasFixedSize(true);
 
         artistCatalogueAdapter = new ArtistCatalogueAdapter(this);

@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.adapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
@@ -14,6 +15,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +34,17 @@ public class DiscoverSongAdapter extends RecyclerView.Adapter<DiscoverSongAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemHomeDiscoverSongBinding view = ItemHomeDiscoverSongBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        TileSizeManager.getInstance().calculateDiscoverSize(parent.getContext());
+        View root = view.getRoot();
+        root.post(() -> {
+            ViewGroup.LayoutParams lp = root.getLayoutParams();
+            if (lp != null) {
+                lp.width = TileSizeManager.getInstance().getDiscoverWidthPx(parent.getContext());;
+                root.setLayoutParams(lp);
+            }
+        });
+
         return new ViewHolder(view);
     }
 
