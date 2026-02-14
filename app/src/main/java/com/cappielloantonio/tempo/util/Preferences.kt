@@ -88,8 +88,9 @@ object Preferences {
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
     
-
-    @JvmStatic
+    private const val TILE_SIZE = "tile_size"
+    
+	@JvmStatic
     fun getServer(): String? {
         return App.getInstance().preferences.getString(SERVER, null)
     }
@@ -723,5 +724,12 @@ object Preferences {
     @JvmStatic
     fun setArtistDisplayBiography(displayBiographyEnabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(ARTIST_DISPLAY_BIOGRAPHY, displayBiographyEnabled).apply()
+    }
+
+    @JvmStatic
+    fun getTileSize(): Int {
+        val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
+        return parsed?.takeIf { it in 2..6 } ?: 2
+        //return App.getInstance().preferences.getString(TILE_SIZE, "2")!!.toInt()
     }
 }

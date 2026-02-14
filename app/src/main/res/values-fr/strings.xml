@@ -404,6 +404,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Si activé, les pistes favorites seront téléchargées pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Synchronisation des pistes favorites pour écoute hors-ligne</string>
     <string name="settings_theme">Thème</string>
+	<string name="settings_tile_size">Taille des vignettes</string>
     <string name="settings_title_data">Données</string>
     <string name="settings_title_general">Géneral</string>
     <string name="settings_title_playlist">Playlist</string>
@@ -463,7 +464,7 @@
     <string name="song_list_page_downloaded">Téléchargé</string>
     <string name="song_list_page_most_played">Titres les plus joués</string>
     <string name="song_list_page_recently_added">Titres ajoutés récemment</string>
-    <string name="song_list_page_recently_played">Titrés joués récemment</string>
+    <string name="song_list_page_recently_played">Titres joués récemment</string>
     <string name="song_list_page_starred">Titres favoris</string>
     <string name="song_list_page_top">Les meilleurs titres de %1$s</string>
     <string name="song_list_page_year">Année %1$d</string>
