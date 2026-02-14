@@ -725,10 +725,11 @@ object Preferences {
     fun setArtistDisplayBiography(displayBiographyEnabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(ARTIST_DISPLAY_BIOGRAPHY, displayBiographyEnabled).apply()
     }
-		
+
     @JvmStatic
     fun getTileSize(): Int {
-        return App.getInstance().preferences.getString(TILE_SIZE, "2")!!.toInt()
+        val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
+        return parsed?.takeIf { it in 2..6 } ?: 2
+        //return App.getInstance().preferences.getString(TILE_SIZE, "2")!!.toInt()
     }
-	
 }

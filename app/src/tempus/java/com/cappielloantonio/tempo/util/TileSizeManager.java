@@ -77,7 +77,7 @@ public class TileSizeManager {
         float screenHeight = metrics.heightPixels;
 
         // retrieve the divisor in the preferences
-        int userTileSize = Preferences.getTileSize();
+        int userTileSize = Math.max(2, Math.min(6, Preferences.getTileSize()));
         float divisor = (float)userTileSize;
 
         // little pading = 10
@@ -111,9 +111,7 @@ public class TileSizeManager {
         float screenHeight = metrics.heightPixels;
 
         // retrieve the divisor in the preferences
-        int userTileSize = Preferences.getTileSize();
-        if(userTileSize>3)
-            userTileSize=3;
+        int userTileSize = Math.max(2, Math.min(3, Preferences.getTileSize()));
         float divisor = (float)userTileSize;
 
         // little pading = 10
@@ -148,7 +146,7 @@ public class TileSizeManager {
         float discoverDivisor;
 
         // retrieve the divisor in the preferences
-        int userTileSize = Preferences.getTileSize();
+        int userTileSize = Math.max(2, Math.min(6, Preferences.getTileSize()));
 
         switch (userTileSize) {
             default:
