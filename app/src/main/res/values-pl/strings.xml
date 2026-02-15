@@ -207,7 +207,7 @@
     <string name="menu_unpin_button">Usuń z ekranu głównego</string>
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
-    <string name="playback_speed_dialog_title">Predkość odtwarzania</string>
+    <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
     <string name="playback_speed_dialog_negative_button">Anuluj</string>
     <string name="player_queue_clean_all_button">Wyczyść kolejkę odtwarzania</string>
     <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
