@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/homeFragment"
-        android:icon="@drawable/ic_home_land"
-        android:title="@string/menu_home_label" />
+        android:icon="@drawable/ic_home_land" />
     <item
         android:id="@+id/libraryFragment"
-        android:icon="@drawable/ic_graphic_eq_land"
-        android:title="@string/menu_library_label" />
+        android:icon="@drawable/ic_graphic_eq_land" />
     <item
         android:id="@+id/downloadFragment"
-        android:icon="@drawable/ic_play_for_work_land"
-        android:title="@string/menu_download_label" />
+        android:icon="@drawable/ic_play_for_work_land" />
 </menu>

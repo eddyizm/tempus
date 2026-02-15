@@ -212,6 +212,7 @@
     <string name="menu_unpin_button">Eliminar de la pantalla de inicio</string>
     <string name="menu_sort_year">Año</string>
     <string name="player_playback_speed">%1$.2fx</string>
+    <string name="playback_speed_dialog_negative_button">Cancelar</string>
     <string name="player_queue_clean_all_button">Limpiar la cola de reproducción</string>
     <string name="player_queue_save_queue_success">Cola de reproducción guardada</string>
     <string name="player_lyrics_download_failure">La letra no se puede descargar</string>
@@ -222,8 +223,8 @@
     <string name="playlist_catalogue_title">Catálogo de listas de reproducción</string>
     <string name="playlist_catalogue_title_expanded">Explorar listas de reproducción</string>
     <string name="playlist_chooser_dialog_empty">No hay listas de reproducción</string>
-    <string name="playlist_chooser_dialog_negative_button">Cancelar</string>
-    <string name="playlist_chooser_dialog_neutral_button">Crear</string>
+    <string name="playlist_chooser_dialog_cancel_button">Cancelar</string>
+    <string name="playlist_chooser_dialog_create_button">Crear</string>
     <string name="playlist_chooser_dialog_title">Añadir a una lista de reproducción</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Error al añadir a la lista</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Todas las pistas se han descartado porque están repetidas</string>
@@ -327,6 +328,8 @@
     <string name="settings_delete_download_storage_summary">Al continuar se eliminarán de forma irreversible todos los elementos guardados.</string>
     <string name="settings_delete_download_storage_title">Eliminar elementos guardados</string>
     <string name="settings_download_storage_title">Almacenamiento de descargas</string>
+    <string name="settings_ping_timeout_summary">Establece el tiempo de espera de la URL local. Por defecto son 2 segundos (el servidor remoto usará este valor x3 hasta un máximo de 10 segundos).</string>
+    <string name="settings_ping_timeout_dialog">Establece el tiempo de espera base en segundos</string>
     <string name="settings_max_bitrate_download">Tasa de bits para las descargas</string>
     <string name="settings_max_bitrate_mobile">Tasa de bits en datos móviles</string>
     <string name="settings_max_bitrate_wifi">Tasa de bits en Wi-Fi</string>
@@ -406,6 +409,7 @@
     <string name="settings_title_transcoding">Transcodificación</string>
     <string name="settings_title_transcoding_download">Transcodificación en descargas</string>
     <string name="settings_title_ui">Interfaz de usuario</string>
+    <string name="settings_title_ui_landscape_items_per_row_dialog">Número de elementos por fila</string>
     <string name="settings_transcoded_download">Descargas transcodificadas</string>
     <string name="settings_version_title">Versión</string>
     <string name="settings_wifi_only_title">Aviso de streaming solo por Wi-Fi</string>
@@ -497,6 +501,7 @@
     <string name="settings_show_mini_shuffle_button">Mostrar el botón «Aleatorio»</string>
     <string name="settings_auto_download_lyrics">Descargar automáticamente las letras</string>
     <string name="starred_artist_sync_dialog_summary">Descargar los artistas destacados podría consumir una gran cantidad de datos.</string>
+    <string name="settings_summary_landscape_items_per_row">Aplica a todos los listados de álbumes y artistas. Por defecto es 4</string>
     <string name="settings_sync_starred_artists_for_offline_use_summary">Si se habilita, los artistas destacados se descargarán para uso sin conexión.</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="exo_controls_heart_off_description">Eliminar de favoritos</string>
@@ -528,4 +533,7 @@
     <string name="folder_play_no_songs">No se encontraron pistas en la carpeta</string>
     <string name="search_sort_title">Ordenar las búsquedas recientes cronológicamente</string>
     <string name="search_sort_summary">Si se habilita, se ordenan las búsquedas en orden cronológico. En caso contrario, se ordenan por nombre.</string>
+    <string name="settings_ping_timeout_title">Tiempo de espera de ping al servidor</string>
+    <string name="playback_speed_dialog_title">Velocidad de reproducción</string>
+    <string name="settings_title_ui_landscape_items_per_row">Elementos por fila en modo horizontal</string>
 </resources>

@@ -32,6 +32,7 @@ import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MO
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON
 import com.google.common.collect.ImmutableList
+import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.Preferences
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -40,8 +41,8 @@ import retrofit2.Callback
 import retrofit2.Response
 
 open class MediaLibrarySessionCallback(
-    context: Context,
-    automotiveRepository: AutomotiveRepository
+    private val context: Context,
+    private val automotiveRepository: AutomotiveRepository
 ) :
     MediaLibraryService.MediaLibrarySession.Callback {
 
@@ -366,11 +367,31 @@ open class MediaLibrarySessionCallback(
         controller: MediaSession.ControllerInfo,
         mediaItems: List<MediaItem>
     ): ListenableFuture<List<MediaItem>> {
-        return super.onAddMediaItems(
-            mediaSession,
-            controller,
-            MediaBrowserTree.getItems(mediaItems)
-        )
+        val firstItem = mediaItems.firstOrNull()
+        val isRadio = firstItem?.mediaId?.startsWith("ir-") == true
+
+        if (isRadio) {
+            return Futures.transformAsync(
+                automotiveRepository.internetRadioStations,
+                { result ->
+                    val stations = result?.value
+                    val selected = stations?.find { it.mediaId == firstItem?.mediaId }
+                    if (selected != null) {
+                        val updatedSelected = selected.buildUpon()
+                            .setMimeType(selected.localConfiguration?.mimeType)
+                            .build()
+
+                        Futures.immediateFuture(listOf(updatedSelected))
+                    } else {
+                        Futures.immediateFuture(emptyList())
+                    }
+                },
+                androidx.core.content.ContextCompat.getMainExecutor(context)
+            )
+        }
+
+        val resolvedItems = MediaBrowserTree.getItems(mediaItems)
+        return super.onAddMediaItems(mediaSession, controller, resolvedItems)
     }
 
     override fun onSearch(

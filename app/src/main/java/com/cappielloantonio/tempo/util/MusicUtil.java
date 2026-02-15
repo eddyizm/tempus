@@ -52,6 +52,10 @@ public class MusicUtil {
         if (params.containsKey("c") && params.get("c") != null)
             uri.append("&c=").append(params.get("c"));
 
+        String selectedBitrate = getBitratePreference();
+        String selectedFormat = getTranscodingFormatPreference();
+        Log.i(TAG, "DEBUG: Requesting Format: " + selectedFormat + " at Bitrate: " + selectedBitrate);
+        
         if (!Preferences.isServerPrioritized())
             uri.append("&maxBitRate=").append(getBitratePreference());
         if (!Preferences.isServerPrioritized())
@@ -73,7 +77,17 @@ public class MusicUtil {
     }
 
     public static Uri updateStreamUri(Uri uri) {
+        if (uri == null) return null;
+
+        String scheme = uri.getScheme();
+        // If it is local (content:// or file://), return it IMMEDIATELY.
+        // This prevents the code below from appending &maxBitRate to a local path.
+        if (scheme != null && (scheme.equals("content") || scheme.equals("file"))) {
+            return uri;
+        }
+        
         String s = uri.toString();
+
         Matcher m1 = BITRATE_PATTERN.matcher(s);
         s = m1.replaceAll("");
         Matcher m2 = FORMAT_PATTERN.matcher(s);
@@ -156,7 +170,6 @@ public class MusicUtil {
 
         return Uri.parse(uri.toString());
     }
-
 
     public static String getReadableDurationString(Long duration, boolean millis) {
         long lenght = duration != null ? duration : 0;
@@ -303,13 +316,17 @@ public class MusicUtil {
 
         if (network == null || networkCapabilities == null) return "raw";
 
+        String format;
         if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-            return Preferences.getAudioTranscodeFormatWifi();
+            format = Preferences.getAudioTranscodeFormatWifi();
+            Log.d(TAG, "DEBUG: Using WIFI Format: " + format);
         } else if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-            return Preferences.getAudioTranscodeFormatMobile();
+            format = Preferences.getAudioTranscodeFormatMobile();
+            Log.d(TAG, "DEBUG: Using MOBILE Format: " + format);
         } else {
-            return Preferences.getAudioTranscodeFormatWifi();
+            format = Preferences.getAudioTranscodeFormatWifi();
         }
+        return format;
     }
 
     public static String getBitratePreferenceForDownload() {

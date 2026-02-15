@@ -18,18 +18,17 @@
             android:orientation="horizontal">
 
             <FrameLayout
-                android:layout_width="75dp"
+                android:layout_width="55dp"
                 android:layout_height="match_parent">
 
                 <com.google.android.material.bottomnavigation.BottomNavigationView
                     android:id="@+id/bottom_navigation"
-                    android:layout_width="250dp"
-                    android:layout_height="75dp"
-                    android:rotation="90"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
                     android:layout_gravity="center"
                     android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:visibility="gone"
+                    android:paddingEnd="68dp"
+                    android:rotation="90"
                     app:menu="@menu/bottom_nav_menu" />
 
             </FrameLayout>

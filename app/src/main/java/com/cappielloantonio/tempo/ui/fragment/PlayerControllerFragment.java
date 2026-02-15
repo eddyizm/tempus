@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -214,12 +215,53 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMetadata(MediaMetadata mediaMetadata) {
+        String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
+
+        if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)) {
+            // For radio: always read from extras first (radioArtist, radioTitle, stationName)
+            // MediaMetadata.title/artist are formatted for notification
+            String stationName = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("stationName",
+                    mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "")
+                    : mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "";
+
+            String artist = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioArtist", "")
+                    : "";
+
+            String title = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioTitle", "")
+                    : "";
+
+            // Format: "Artist - Song" or fallback to title or station name
+            String mainTitle;
+            if (!TextUtils.isEmpty(artist) && !TextUtils.isEmpty(title)) {
+                mainTitle = artist + " - " + title;
+            } else if (!TextUtils.isEmpty(title)) {
+                mainTitle = title;
+            } else if (!TextUtils.isEmpty(artist)) {
+                mainTitle = artist;
+            } else {
+                mainTitle = stationName;
+            }
+
+            playerMediaTitleLabel.setText(mainTitle);
+            playerArtistNameLabel.setText(stationName);
+
+            playerMediaTitleLabel.setSelected(true);
+            playerArtistNameLabel.setSelected(true);
+
+            playerMediaTitleLabel.setVisibility(!TextUtils.isEmpty(mainTitle) ? View.VISIBLE : View.GONE);
+            playerArtistNameLabel.setVisibility(!TextUtils.isEmpty(stationName) ? View.VISIBLE : View.GONE);
+
+            updateAssetLinkChips(mediaMetadata);
+            return;
+        }
+
         playerMediaTitleLabel.setText(String.valueOf(mediaMetadata.title));
         playerArtistNameLabel.setText(
                 mediaMetadata.artist != null
                         ? String.valueOf(mediaMetadata.artist)
-                        : mediaMetadata.extras != null && Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO)
-                        ? mediaMetadata.extras.getString("uri", getString(R.string.label_placeholder))
                         : "");
 
         playerMediaTitleLabel.setSelected(true);
@@ -236,43 +278,64 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
+        boolean isLocal = false;
+        
+        if (mediaBrowserListenableFuture != null && mediaBrowserListenableFuture.isDone()) {
+            try {
+                MediaBrowser browser = mediaBrowserListenableFuture.get();
+                if (browser != null && browser.getCurrentMediaItem() != null) {
+                    android.net.Uri currentUri = browser.getCurrentMediaItem().requestMetadata.mediaUri;
+                    if (currentUri != null) {
+                        String scheme = currentUri.getScheme();
+                        isLocal = "content".equals(scheme) || "file".equals(scheme);
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("DEBUG_PLAYER", "Error getting browser for UI update", e);
+            }
+        }
+
         if (mediaMetadata.extras != null) {
             String extension = mediaMetadata.extras.getString("suffix", getString(R.string.player_unknown_format));
-            String bitrate = mediaMetadata.extras.getInt("bitrate", 0) != 0 ? mediaMetadata.extras.getInt("bitrate", 0) + "kbps" : "Original";
-            String samplingRate = mediaMetadata.extras.getInt("samplingRate", 0) != 0 ? new DecimalFormat("0.#").format(mediaMetadata.extras.getInt("samplingRate", 0) / 1000.0) + "kHz" : "";
+            int rawBitrate = mediaMetadata.extras.getInt("bitrate", 0);
+            String bitrate = rawBitrate != 0 ? rawBitrate + "kbps" : "Original";
+            String samplingRate = mediaMetadata.extras.getInt("samplingRate", 0) != 0 ? 
+                    new java.text.DecimalFormat("0.#").format(mediaMetadata.extras.getInt("samplingRate", 0) / 1000.0) + "kHz" : "";
             String bitDepth = mediaMetadata.extras.getInt("bitDepth", 0) != 0 ? mediaMetadata.extras.getInt("bitDepth", 0) + "b" : "";
 
             playerMediaExtension.setText(extension);
 
-            if (bitrate.equals("Original")) {
+            if (bitrate.equals("Original") && !isLocal) {
                 playerMediaBitrate.setVisibility(View.GONE);
             } else {
-                List<String> mediaQualityItems = new ArrayList<>();
-
-                if (!bitrate.trim().isEmpty()) mediaQualityItems.add(bitrate);
-                if (!bitDepth.trim().isEmpty()) mediaQualityItems.add(bitDepth);
-                if (!samplingRate.trim().isEmpty()) mediaQualityItems.add(samplingRate);
-
-                String mediaQuality = TextUtils.join(" • ", mediaQualityItems);
+                List<String> items = new ArrayList<>();
+                if (!bitrate.trim().isEmpty()) items.add(bitrate);
+                if (!bitDepth.trim().isEmpty()) items.add(bitDepth);
+                if (!samplingRate.trim().isEmpty()) items.add(samplingRate);
+                String mediaQuality = TextUtils.join(" • ", items);
+                
                 playerMediaBitrate.setVisibility(View.VISIBLE);
-                playerMediaBitrate.setText(mediaQuality);
+                playerMediaBitrate.setText(isLocal ? mediaQuality : mediaQuality);
             }
         }
 
-        boolean isTranscodingExtension = !MusicUtil.getTranscodingFormatPreference().equals("raw");
-        boolean isTranscodingBitrate = !MusicUtil.getBitratePreference().equals("0");
+        
+        if (!isLocal) {
+            boolean isTranscodingExtension = !MusicUtil.getTranscodingFormatPreference().equals("raw");
+            boolean isTranscodingBitrate = !MusicUtil.getBitratePreference().equals("0");
+            if (isTranscodingExtension || isTranscodingBitrate) {
+                playerMediaExtension.setText(MusicUtil.getTranscodingFormatPreference() + " (" + getString(R.string.player_transcoding) + ")");
+                playerMediaBitrate.setText(!MusicUtil.getBitratePreference().equals("0") ? 
+                        MusicUtil.getBitratePreference() + "kbps" : getString(R.string.player_transcoding_requested));
+            }
 
-        if (isTranscodingExtension || isTranscodingBitrate) {
-            playerMediaExtension.setText(MusicUtil.getTranscodingFormatPreference() + " (" + getString(R.string.player_transcoding) + ")");
-            playerMediaBitrate.setText(!MusicUtil.getBitratePreference().equals("0") ? MusicUtil.getBitratePreference() + "kbps" : getString(R.string.player_transcoding_requested));
         }
 
         playerTrackInfo.setOnClickListener(view -> {
             TrackInfoDialog dialog = new TrackInfoDialog(mediaMetadata);
             dialog.show(activity.getSupportFragmentManager(), null);
-        });
+            });
     }
-
     private void updateAssetLinkChips(MediaMetadata mediaMetadata) {
         if (assetLinkChipGroup == null) return;
         String mediaType = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type", Constants.MEDIA_TYPE_MUSIC) : Constants.MEDIA_TYPE_MUSIC;

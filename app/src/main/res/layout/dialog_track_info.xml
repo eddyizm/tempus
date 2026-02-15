@@ -137,6 +137,33 @@
             android:layout_marginVertical="8dp" />
 
         <LinearLayout
+            android:id="@+id/station_info_sector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/station_key_sector"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="4"
+                android:paddingEnd="8dp"
+                android:text="@string/track_info_station" />
+
+            <TextView
+                android:id="@+id/station_value_sector"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:text="@string/label_placeholder" />
+        </LinearLayout>
+
+        <View
+            style="@style/Divider"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="8dp" />
+
+        <LinearLayout
             android:id="@+id/track_number_info_sector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

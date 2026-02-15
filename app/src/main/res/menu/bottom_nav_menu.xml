@@ -4,6 +4,7 @@
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_home"
         android:title="@string/menu_home_label" />
+
     <item
         android:id="@+id/libraryFragment"
         android:icon="@drawable/ic_graphic_eq"

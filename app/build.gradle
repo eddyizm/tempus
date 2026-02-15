@@ -11,7 +11,7 @@ android {
         targetSdk 35
 
         versionCode 19
-        versionName '4.10.1'
+        versionName '4.10.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {

@@ -55,6 +55,48 @@ public class App extends Application {
         }
         return subsonic;
     }
+    
+    public static Subsonic getSubsonicPublicClientInstance(boolean override) {
+
+        /*
+        If I do the shortcut that the IDE suggests:
+            SubsonicPreferences preferences = getSubsonicPreferences1();
+        During the chain of calls it will run the following:
+            String server = Preferences.getInUseServerAddress();
+        Which could return Local URL, causing issues like generating public shares with Local URL
+
+        To prevent this I just replicated the entire chain of functions here,
+        if you need a call to Subsonic using the Server (Public) URL use this function.
+         */
+
+        String server = Preferences.getServer();
+        String username = Preferences.getUser();
+        String password = Preferences.getPassword();
+        String token = Preferences.getToken();
+        String salt = Preferences.getSalt();
+        boolean isLowSecurity = Preferences.isLowScurity();
+
+        SubsonicPreferences preferences = new SubsonicPreferences();
+        preferences.setServerUrl(server);
+        preferences.setUsername(username);
+        preferences.setAuthentication(password, token, salt, isLowSecurity);
+
+        if (subsonic == null || override) {
+            
+            if (preferences.getAuthentication() != null) {
+                if (preferences.getAuthentication().getPassword() != null)
+                    Preferences.setPassword(preferences.getAuthentication().getPassword());
+                if (preferences.getAuthentication().getToken() != null)
+                    Preferences.setToken(preferences.getAuthentication().getToken());
+                if (preferences.getAuthentication().getSalt() != null)
+                    Preferences.setSalt(preferences.getAuthentication().getSalt());
+            }
+
+            
+        }
+        
+        return new Subsonic(preferences);
+    }
 
     public static Github getGithubClientInstance() {
         if (github == null) {

@@ -606,20 +606,7 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (InternetRadioStation radioStation : radioStations) {
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(radioStation.getName())
-                                        .setIsBrowsable(false)
-                                        .setIsPlayable(true)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_RADIO_STATION)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(radioStation.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri(radioStation.getStreamUrl())
-                                        .build();
-
-                                mediaItems.add(mediaItem);
+                                mediaItems.add(MappingUtil.mapInternetRadioStation(radioStation));
                             }
 
                             setInternetRadioStationsMetadata(radioStations);

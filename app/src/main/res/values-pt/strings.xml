@@ -159,8 +159,8 @@
     <string name="playlist_catalogue_title">Catálogo de Playlists</string>
     <string name="playlist_catalogue_title_expanded">Navegar pelas Playlists</string>
     <string name="playlist_chooser_dialog_empty">Nenhuma playlist criada</string>
-    <string name="playlist_chooser_dialog_negative_button">Cancelar</string>
-    <string name="playlist_chooser_dialog_neutral_button">Criar</string>
+    <string name="playlist_chooser_dialog_cancel_button">Cancelar</string>
+    <string name="playlist_chooser_dialog_create_button">Criar</string>
     <string name="playlist_chooser_dialog_title">Adicionar a uma playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Adicionada playlist de reprodução</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Falha ao adicionar uma playlist de reprodução</string>
