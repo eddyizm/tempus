@@ -211,6 +211,7 @@ public class MappingUtil {
         Bundle bundle = new Bundle();
         bundle.putString("id", internetRadioStation.getId());
         bundle.putString("title", internetRadioStation.getName());
+        bundle.putString("stationName", internetRadioStation.getName());
         bundle.putString("uri", uri.toString());
         bundle.putString("type", Constants.MEDIA_TYPE_RADIO);
 
@@ -219,6 +220,7 @@ public class MappingUtil {
                 .setMediaMetadata(
                         new MediaMetadata.Builder()
                                 .setTitle(internetRadioStation.getName())
+                                .setMediaType(MediaMetadata.MEDIA_TYPE_RADIO_STATION)
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)

@@ -215,12 +215,53 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMetadata(MediaMetadata mediaMetadata) {
+        String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
+
+        if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)) {
+            // For radio: always read from extras first (radioArtist, radioTitle, stationName)
+            // MediaMetadata.title/artist are formatted for notification
+            String stationName = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("stationName",
+                    mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "")
+                    : mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : "";
+
+            String artist = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioArtist", "")
+                    : "";
+
+            String title = mediaMetadata.extras != null
+                    ? mediaMetadata.extras.getString("radioTitle", "")
+                    : "";
+
+            // Format: "Artist - Song" or fallback to title or station name
+            String mainTitle;
+            if (!TextUtils.isEmpty(artist) && !TextUtils.isEmpty(title)) {
+                mainTitle = artist + " - " + title;
+            } else if (!TextUtils.isEmpty(title)) {
+                mainTitle = title;
+            } else if (!TextUtils.isEmpty(artist)) {
+                mainTitle = artist;
+            } else {
+                mainTitle = stationName;
+            }
+
+            playerMediaTitleLabel.setText(mainTitle);
+            playerArtistNameLabel.setText(stationName);
+
+            playerMediaTitleLabel.setSelected(true);
+            playerArtistNameLabel.setSelected(true);
+
+            playerMediaTitleLabel.setVisibility(!TextUtils.isEmpty(mainTitle) ? View.VISIBLE : View.GONE);
+            playerArtistNameLabel.setVisibility(!TextUtils.isEmpty(stationName) ? View.VISIBLE : View.GONE);
+
+            updateAssetLinkChips(mediaMetadata);
+            return;
+        }
+
         playerMediaTitleLabel.setText(String.valueOf(mediaMetadata.title));
         playerArtistNameLabel.setText(
                 mediaMetadata.artist != null
                         ? String.valueOf(mediaMetadata.artist)
-                        : mediaMetadata.extras != null && Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO)
-                        ? mediaMetadata.extras.getString("uri", getString(R.string.label_placeholder))
                         : "");
 
         playerMediaTitleLabel.setSelected(true);

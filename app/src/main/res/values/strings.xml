@@ -517,6 +517,7 @@
     <string name="track_info_summary_transcoding_codec">The application will request the server to transcode the file. The requested codec by the user is %1$s, while the bitrate will be the same as the source file. The potential transcoding of the file into the chosen format is dependent on the server, as it may or may not support the operation.</string>
     <string name="track_info_title">Title</string>
     <string name="track_info_track_number">Track number</string>
+    <string name="track_info_station">Station</string>
     <string name="track_info_transcoded_content_type">Transcoded content type</string>
     <string name="track_info_transcoded_suffix">Transcoded suffix</string>
     <string name="track_info_year">Year</string>
