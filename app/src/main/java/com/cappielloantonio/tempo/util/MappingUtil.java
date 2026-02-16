@@ -89,6 +89,7 @@ public class MappingUtil {
             bundle.putInt("originalWidth", media.getOriginalWidth() != null ? media.getOriginalWidth() : 0);
             bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
             bundle.putString("uri", uri.toString());
+            
             bundle.putString("assetLinkSong", media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
             bundle.putString("assetLinkAlbum", media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()) : null);
             bundle.putString("assetLinkArtist", media.getArtistId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()) : null);
@@ -132,6 +133,7 @@ public class MappingUtil {
         } catch (Exception e) {
             String id = media != null ? media.getId() : "NULL_MEDIA_OBJECT";
             String title = media != null ? media.getTitle() : "N/A";
+            
             Log.e(TAG, "Instant Mix CRASH! Failed to map song to MediaItem. " +
                        "Problematic Song ID: " + id + 
                        ", Title: " + title + 
