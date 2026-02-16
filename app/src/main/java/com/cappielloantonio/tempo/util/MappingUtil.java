@@ -110,10 +110,10 @@ public class MappingUtil {
                                     .setArtworkUri(artworkUri)
                                     .setUserRating(new HeartRating(media.getStarred() != null))
                                     .setSupportedCommands(
-                                            ImmutableList.of(
-                                                    Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
-                                                    Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
-                                            )
+                                        ImmutableList.of(
+                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
+                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
+                                        )
                                     )
                                     .setExtras(bundle)
                                     .setIsBrowsable(false)
@@ -133,11 +133,10 @@ public class MappingUtil {
         } catch (Exception e) {
             String id = media != null ? media.getId() : "NULL_MEDIA_OBJECT";
             String title = media != null ? media.getTitle() : "N/A";
-
             Log.e(TAG, "Instant Mix CRASH! Failed to map song to MediaItem. " +
-                    "Problematic Song ID: " + id +
-                    ", Title: " + title +
-                    ". Inspect this song's Subsonic data for missing fields.", e);
+                       "Problematic Song ID: " + id +
+                       ", Title: " + title +
+                       ". Inspect this song's Subsonic data for missing fields.", e);
             throw new RuntimeException("Mapping failed for song ID: " + id, e);
         }
     }
@@ -194,7 +193,8 @@ public class MappingUtil {
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
-                                .build())
+                                .build()
+                )
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setExtras(bundle)
@@ -317,8 +317,7 @@ public class MappingUtil {
         DownloadRepository repo = new DownloadRepository();
         Download localDownload = repo.getDownload(media.getId());
 
-        if (localDownload != null && localDownload.getDownloadUri() != null
-                && !localDownload.getDownloadUri().isEmpty()) {
+        if (localDownload != null && localDownload.getDownloadUri() != null && !localDownload.getDownloadUri().isEmpty()) {
             Log.d(TAG, "Playing local file for: " + media.getTitle());
             return Uri.parse(localDownload.getDownloadUri());
         }
@@ -326,8 +325,7 @@ public class MappingUtil {
         // Legacy check for external directory, i think this was broken/buggy
         if (Preferences.getDownloadDirectoryUri() != null) {
             Uri local = ExternalAudioReader.getUri(media);
-            if (local != null)
-                return local;
+            if (local != null) return local;
         }
 
         // Fallback to streaming
@@ -347,8 +345,7 @@ public class MappingUtil {
 
     private static Uri getDownloadUri(String id) {
         Download download = new DownloadRepository().getDownload(id);
-        return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri())
-                : MusicUtil.getDownloadUri(id);
+        return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri()) : MusicUtil.getDownloadUri(id);
     }
 
     public static void observeExternalAudioRefresh(LifecycleOwner owner, Runnable onRefresh) {
