@@ -90,20 +90,12 @@ public class MappingUtil {
             bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
             bundle.putString("uri", uri.toString());
 
-            bundle.putString("assetLinkSong",
-                    media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
-            bundle.putString("assetLinkAlbum",
-                    media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId())
-                            : null);
-            bundle.putString("assetLinkArtist",
-                    media.getArtistId() != null
-                            ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId())
-                            : null);
+            bundle.putString("assetLinkSong", media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
+            bundle.putString("assetLinkAlbum", media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()) : null);
+            bundle.putString("assetLinkArtist", media.getArtistId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()) : null);
             bundle.putString("assetLinkGenre", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_GENRE, media.getGenre()));
             Integer year = media.getYear();
-            bundle.putString("assetLinkYear",
-                    year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year))
-                            : null);
+            bundle.putString("assetLinkYear", year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year)) : null);
 
             return new MediaItem.Builder()
                     .setMediaId(media.getId())
@@ -120,16 +112,20 @@ public class MappingUtil {
                                     .setSupportedCommands(
                                             ImmutableList.of(
                                                     Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
-                                                    Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF))
+                                                    Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
+                                            )
+                                    )
                                     .setExtras(bundle)
                                     .setIsBrowsable(false)
                                     .setIsPlayable(true)
-                                    .build())
+                                    .build()
+                    )
                     .setRequestMetadata(
                             new MediaItem.RequestMetadata.Builder()
                                     .setMediaUri(uri)
                                     .setExtras(bundle)
-                                    .build())
+                                    .build()
+                    )
                     .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                     .setUri(uri)
                     .build();
@@ -162,7 +158,8 @@ public class MappingUtil {
                         new MediaItem.RequestMetadata.Builder()
                                 .setMediaUri(uri)
                                 .setExtras(old.requestMetadata.extras)
-                                .build())
+                                .build()
+                )
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
                 .build();
@@ -201,13 +198,11 @@ public class MappingUtil {
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setExtras(bundle)
-                                .setMediaUri(Preferences.preferTranscodedDownload()
-                                        ? MusicUtil.getTranscodedDownloadUri(media.getId())
-                                        : MusicUtil.getDownloadUri(media.getId()))
-                                .build())
+                                .setMediaUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
+                                .build()
+                )
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
-                .setUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId())
-                        : MusicUtil.getDownloadUri(media.getId()))
+                .setUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
                 .build();
     }
 
@@ -241,12 +236,14 @@ public class MappingUtil {
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
-                                .build())
+                                .build()
+                )
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setMediaUri(uri)
                                 .setExtras(bundle)
-                                .build())
+                                .build()
+                )
                 // .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
                 .build();
@@ -300,12 +297,14 @@ public class MappingUtil {
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
-                                .build())
+                                .build()
+                )
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setMediaUri(uri)
                                 .setExtras(bundle)
-                                .build())
+                                .build()
+                )
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
                 .build();
