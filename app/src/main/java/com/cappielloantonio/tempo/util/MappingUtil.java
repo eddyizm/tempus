@@ -56,7 +56,7 @@ public class MappingUtil {
             bundle.putString("id", media.getId());
             bundle.putString("parentId", media.getParentId());
             bundle.putBoolean("isDir", media.isDir());
-            
+
             bundle.putString("title", media.getTitle());
             bundle.putString("album", media.getAlbum());
             bundle.putString("artist", media.getArtist());
@@ -89,13 +89,21 @@ public class MappingUtil {
             bundle.putInt("originalWidth", media.getOriginalWidth() != null ? media.getOriginalWidth() : 0);
             bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
             bundle.putString("uri", uri.toString());
-            
-            bundle.putString("assetLinkSong", media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
-            bundle.putString("assetLinkAlbum", media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()) : null);
-            bundle.putString("assetLinkArtist", media.getArtistId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId()) : null);
+
+            bundle.putString("assetLinkSong",
+                    media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
+            bundle.putString("assetLinkAlbum",
+                    media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId())
+                            : null);
+            bundle.putString("assetLinkArtist",
+                    media.getArtistId() != null
+                            ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ARTIST, media.getArtistId())
+                            : null);
             bundle.putString("assetLinkGenre", AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_GENRE, media.getGenre()));
             Integer year = media.getYear();
-            bundle.putString("assetLinkYear", year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year)) : null);
+            bundle.putString("assetLinkYear",
+                    year != null && year != 0 ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_YEAR, String.valueOf(year))
+                            : null);
 
             return new MediaItem.Builder()
                     .setMediaId(media.getId())
@@ -110,22 +118,18 @@ public class MappingUtil {
                                     .setArtworkUri(artworkUri)
                                     .setUserRating(new HeartRating(media.getStarred() != null))
                                     .setSupportedCommands(
-                                        ImmutableList.of(
-                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
-                                                Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
-                                        )
-                                    )
+                                            ImmutableList.of(
+                                                    Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
+                                                    Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF))
                                     .setExtras(bundle)
                                     .setIsBrowsable(false)
                                     .setIsPlayable(true)
-                                    .build()
-                    )
+                                    .build())
                     .setRequestMetadata(
                             new MediaItem.RequestMetadata.Builder()
                                     .setMediaUri(uri)
                                     .setExtras(bundle)
-                                    .build()
-                    )
+                                    .build())
                     .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                     .setUri(uri)
                     .build();
@@ -133,11 +137,11 @@ public class MappingUtil {
         } catch (Exception e) {
             String id = media != null ? media.getId() : "NULL_MEDIA_OBJECT";
             String title = media != null ? media.getTitle() : "N/A";
-            
+
             Log.e(TAG, "Instant Mix CRASH! Failed to map song to MediaItem. " +
-                       "Problematic Song ID: " + id + 
-                       ", Title: " + title + 
-                       ". Inspect this song's Subsonic data for missing fields.", e);
+                    "Problematic Song ID: " + id +
+                    ", Title: " + title +
+                    ". Inspect this song's Subsonic data for missing fields.", e);
             throw new RuntimeException("Mapping failed for song ID: " + id, e);
         }
     }
@@ -158,8 +162,7 @@ public class MappingUtil {
                         new MediaItem.RequestMetadata.Builder()
                                 .setMediaUri(uri)
                                 .setExtras(old.requestMetadata.extras)
-                                .build()
-                )
+                                .build())
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
                 .build();
@@ -194,16 +197,17 @@ public class MappingUtil {
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
-                                .build()
-                )
+                                .build())
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setExtras(bundle)
-                                .setMediaUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
-                                .build()
-                )
+                                .setMediaUri(Preferences.preferTranscodedDownload()
+                                        ? MusicUtil.getTranscodedDownloadUri(media.getId())
+                                        : MusicUtil.getDownloadUri(media.getId()))
+                                .build())
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
-                .setUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
+                .setUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId())
+                        : MusicUtil.getDownloadUri(media.getId()))
                 .build();
     }
 
@@ -213,7 +217,8 @@ public class MappingUtil {
         String homePageUrl = internetRadioStation.getHomePageUrl();
 
         if (homePageUrl != null && !homePageUrl.isEmpty() && isImageUrl(homePageUrl)) {
-            String encodedUrl = Base64.encodeToString(homePageUrl.getBytes(StandardCharsets.UTF_8), Base64.URL_SAFE | Base64.NO_WRAP);
+            String encodedUrl = Base64.encodeToString(homePageUrl.getBytes(StandardCharsets.UTF_8),
+                    Base64.URL_SAFE | Base64.NO_WRAP);
             artworkUri = AlbumArtContentProvider.contentUri("ir_" + encodedUrl);
         }
 
@@ -232,29 +237,24 @@ public class MappingUtil {
                 .setMediaMetadata(
                         new MediaMetadata.Builder()
                                 .setTitle(internetRadioStation.getName())
-<<<<<<< HEAD
                                 .setArtworkUri(artworkUri)
-=======
-                                .setMediaType(MediaMetadata.MEDIA_TYPE_RADIO_STATION)
->>>>>>> development
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
-                                .build()
-                )
+                                .build())
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setMediaUri(uri)
                                 .setExtras(bundle)
-                                .build()
-                )
+                                .build())
                 // .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
                 .build();
     }
-    
+
     private static boolean isImageUrl(String url) {
-        if (url == null || url.isEmpty()) return false;
+        if (url == null || url.isEmpty())
+            return false;
         String path = url.toLowerCase().trim().split("\\?")[0];
 
         return path.endsWith(".jpg") || path.endsWith(".jpeg") ||
@@ -300,14 +300,12 @@ public class MappingUtil {
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)
-                                .build()
-                )
+                                .build())
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setMediaUri(uri)
                                 .setExtras(bundle)
-                                .build()
-                )
+                                .build())
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
                 .build();
@@ -320,7 +318,8 @@ public class MappingUtil {
         DownloadRepository repo = new DownloadRepository();
         Download localDownload = repo.getDownload(media.getId());
 
-        if (localDownload != null && localDownload.getDownloadUri() != null && !localDownload.getDownloadUri().isEmpty()) {
+        if (localDownload != null && localDownload.getDownloadUri() != null
+                && !localDownload.getDownloadUri().isEmpty()) {
             Log.d(TAG, "Playing local file for: " + media.getTitle());
             return Uri.parse(localDownload.getDownloadUri());
         }
@@ -328,7 +327,8 @@ public class MappingUtil {
         // Legacy check for external directory, i think this was broken/buggy
         if (Preferences.getDownloadDirectoryUri() != null) {
             Uri local = ExternalAudioReader.getUri(media);
-            if (local != null) return local;
+            if (local != null)
+                return local;
         }
 
         // Fallback to streaming
@@ -348,7 +348,8 @@ public class MappingUtil {
 
     private static Uri getDownloadUri(String id) {
         Download download = new DownloadRepository().getDownload(id);
-        return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri()) : MusicUtil.getDownloadUri(id);
+        return download != null && !download.getDownloadUri().isEmpty() ? Uri.parse(download.getDownloadUri())
+                : MusicUtil.getDownloadUri(id);
     }
 
     public static void observeExternalAudioRefresh(LifecycleOwner owner, Runnable onRefresh) {
