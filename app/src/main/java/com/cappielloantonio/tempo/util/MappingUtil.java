@@ -56,6 +56,7 @@ public class MappingUtil {
             bundle.putString("id", media.getId());
             bundle.putString("parentId", media.getParentId());
             bundle.putBoolean("isDir", media.isDir());
+            
             bundle.putString("title", media.getTitle());
             bundle.putString("album", media.getAlbum());
             bundle.putString("artist", media.getArtist());
