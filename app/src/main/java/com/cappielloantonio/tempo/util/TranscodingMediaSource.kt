@@ -33,12 +33,18 @@ class TranscodingMediaSource(
 
     init {
         val extras = mediaItem.mediaMetadata.extras
-        if (extras != null && extras.containsKey("duration")) {
+        val uri = mediaItem.localConfiguration?.uri
+        val isLocal = uri?.scheme == "content" || uri?.scheme == "file"
+
+        // Only apply the override if it's NOT a local file
+        if (!isLocal && extras != null && extras.containsKey("duration")) {
             val seconds = extras.getInt("duration")
             if (seconds > 0) {
                 durationUs = Util.msToUs(seconds * 1000L)
             }
         }
+
+        currentSource = progressiveMediaSourceFactory.createMediaSource(mediaItem)
     }
 
     override fun getMediaItem() = mediaItem

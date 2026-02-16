@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.ui.fragment;
 import android.content.ComponentName;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -173,25 +174,54 @@ public class PlayerBottomSheetFragment extends Fragment {
             playerBottomSheetViewModel.setLiveArtist(getViewLifecycleOwner(), mediaMetadata.extras.getString("type"), mediaMetadata.extras.getString("artistId"));
             playerBottomSheetViewModel.setLiveDescription(mediaMetadata.extras.getString("description", null));
 
-            bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setText(mediaMetadata.extras.getString("title"));
-            bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setText(
-                    mediaMetadata.artist != null
-                            ? mediaMetadata.artist
-                            : Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO)
-                            ? mediaMetadata.extras.getString("uri", getString(R.string.label_placeholder))
-                            : "");
+            String type = mediaMetadata.extras.getString("type");
+
+            if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)) {
+                // For radio: keep header consistent with full player
+                String stationName = mediaMetadata.extras.getString(
+                        "stationName",
+                        mediaMetadata.artist != null ? String.valueOf(mediaMetadata.artist) : ""
+                );
+
+                String artist = mediaMetadata.extras.getString("radioArtist", "");
+                String title = mediaMetadata.extras.getString("radioTitle", "");
+
+                String mainTitle;
+                if (!TextUtils.isEmpty(artist) && !TextUtils.isEmpty(title)) {
+                    mainTitle = artist + " - " + title;
+                } else if (!TextUtils.isEmpty(title)) {
+                    mainTitle = title;
+                } else if (!TextUtils.isEmpty(artist)) {
+                    mainTitle = artist;
+                } else {
+                    mainTitle = stationName;
+                }
+
+                bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setText(mainTitle);
+                bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setText(stationName);
+
+                bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setVisibility(!TextUtils.isEmpty(mainTitle) ? View.VISIBLE : View.GONE);
+                bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setVisibility(!TextUtils.isEmpty(stationName) ? View.VISIBLE : View.GONE);
+            } else {
+                // Default (music, podcast, etc.)
+                bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setText(mediaMetadata.extras.getString("title"));
+                bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setText(
+                        mediaMetadata.artist != null
+                                ? mediaMetadata.artist
+                                : ""
+                );
+
+                bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setVisibility(mediaMetadata.extras.getString("title") != null && !Objects.equals(mediaMetadata.extras.getString("title"), "") ? View.VISIBLE : View.GONE);
+                bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setVisibility(
+                        mediaMetadata.extras.getString("artist") != null && !Objects.equals(mediaMetadata.extras.getString("artist"), "")
+                                ? View.VISIBLE
+                                : View.GONE);
+            }
 
             CustomGlideRequest.Builder
                     .from(requireContext(), mediaMetadata.extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
                     .build()
                     .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
-
-            bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setVisibility(mediaMetadata.extras.getString("title") != null && !Objects.equals(mediaMetadata.extras.getString("title"), "") ? View.VISIBLE : View.GONE);
-            bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setVisibility(
-                    (mediaMetadata.extras.getString("artist") != null && !Objects.equals(mediaMetadata.extras.getString("artist"), ""))
-                            || (Objects.equals(mediaMetadata.extras.getString("type"), Constants.MEDIA_TYPE_RADIO) && mediaMetadata.extras.getString("uri") != null)
-                            ? View.VISIBLE
-                            : View.GONE);
         }
     }
 

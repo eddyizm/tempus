@@ -233,8 +233,8 @@
     <string name="playlist_catalogue_title">Catalogul Playlisturi</string>
     <string name="playlist_catalogue_title_expanded">Răsfoiți Playlisturi</string>
     <string name="playlist_chooser_dialog_empty">Niciun playlist creat</string>
-    <string name="playlist_chooser_dialog_negative_button">Anulati</string>
-    <string name="playlist_chooser_dialog_neutral_button">Creaţi</string>
+    <string name="playlist_chooser_dialog_cancel_button">Anulati</string>
+    <string name="playlist_chooser_dialog_create_button">Creaţi</string>
     <string name="playlist_chooser_dialog_title">Adăugați la un playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Piesa(e) adăugată(e) la playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Eșec la adăugarea piese(lor) la playlist</string>
