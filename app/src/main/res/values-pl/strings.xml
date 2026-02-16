@@ -207,6 +207,8 @@
     <string name="menu_unpin_button">Usuń z ekranu głównego</string>
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
+    <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
+    <string name="playback_speed_dialog_negative_button">Anuluj</string>
     <string name="player_queue_clean_all_button">Wyczyść kolejkę odtwarzania</string>
     <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
     <string name="player_queue_save_to_playlist">Zapisz kolejkę do playlisty</string>
@@ -393,6 +395,7 @@
     <string name="settings_summary_transcoding">Priorytet dawany trybowi transkodowania. Jeżeli ustawiony na \"Odtwarzanie bezpośrednie\" bitrate pliku nie zostanie zmieniony.</string>
     <string name="settings_summary_transcoding_download">Pobieraj transkdowane media. Jeżeli włączone, endpoint pobierania nie będzie używnany, poza następującymi ustawieniami. \n\n Jeżeli \"Format transkodowania dla pobierania\" jest ustawiony na \"Pobieranie bezpośrednie\" bitrate pliku nie zostanie zmieniony.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Kiedy plik jest transkodowany w locie, klient nie pokazuje zwykle długości utworu.Jest możliwe odpytanie serwera który wspiera tą funkcjonalność aby oszacował długość odtwarzanego utworu, ale czasy odpowiedzi mogą być dłuższe.</string>
+    <string name="settings_summary_landscape_items_per_row">Ma zastosowanie do wszystkich list albumów i wykonawców. Domyślnie to 4</string>
     <string name="settings_sync_starred_artists_for_offline_use_summary">Jeżeli włączone, utwory wykonawców oznaczonych gwiazdką będą pobierane do użycia offline.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Synchronizuj wykonawców oznacznych gwiazdką do użycia offline</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Jeżeli włączone, albumy oznaczone gwiazdką będą pobieranew do użycia offline.</string>
@@ -413,6 +416,8 @@
     <string name="settings_title_transcoding">Transkodowanie</string>
     <string name="settings_title_transcoding_download">Transkodowanie Pobrań</string>
     <string name="settings_title_ui">Interfejs</string>
+    <string name="settings_title_ui_landscape_items_per_row">Elementów na wiersz w poziomie</string>
+    <string name="settings_title_ui_landscape_items_per_row_dialog">Liczba elementów na wiersz</string>
     <string name="settings_transcoded_download">Transkodowane pobieranie</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
     <string name="settings_version_title">Wersja</string>
