@@ -11,6 +11,6 @@ class InternetRadioStation(
     var id: String? = null,
     var name: String? = null,
     var streamUrl: String? = null,
-    @SerializedName("homepageUrl")
+    @SerializedName("homePageUrl", alternate = ["homepageUrl"])
     var homePageUrl: String? = null,
 ) : Parcelable
