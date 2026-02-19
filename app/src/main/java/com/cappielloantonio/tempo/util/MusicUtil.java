@@ -55,7 +55,7 @@ public class MusicUtil {
         String selectedBitrate = getBitratePreference();
         String selectedFormat = getTranscodingFormatPreference();
         Log.i(TAG, "DEBUG: Requesting Format: " + selectedFormat + " at Bitrate: " + selectedBitrate);
-
+        
         if (!Preferences.isServerPrioritized())
             uri.append("&maxBitRate=").append(getBitratePreference());
         if (!Preferences.isServerPrioritized())
@@ -85,6 +85,7 @@ public class MusicUtil {
         if (scheme != null && (scheme.equals("content") || scheme.equals("file"))) {
             return uri;
         }
+        
         String s = uri.toString();
 
         Matcher m1 = BITRATE_PATTERN.matcher(s);
