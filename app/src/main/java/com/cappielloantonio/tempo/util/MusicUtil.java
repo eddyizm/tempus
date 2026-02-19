@@ -55,7 +55,7 @@ public class MusicUtil {
         String selectedBitrate = getBitratePreference();
         String selectedFormat = getTranscodingFormatPreference();
         Log.i(TAG, "DEBUG: Requesting Format: " + selectedFormat + " at Bitrate: " + selectedBitrate);
-        
+
         if (!Preferences.isServerPrioritized())
             uri.append("&maxBitRate=").append(getBitratePreference());
         if (!Preferences.isServerPrioritized())
@@ -85,7 +85,7 @@ public class MusicUtil {
         if (scheme != null && (scheme.equals("content") || scheme.equals("file"))) {
             return uri;
         }
-        
+
         String s = uri.toString();
 
         Matcher m1 = BITRATE_PATTERN.matcher(s);
@@ -210,7 +210,7 @@ public class MusicUtil {
                 (child.getBitDepth() != null && child.getBitDepth() != 0
                         ? child.getBitDepth() + "/" + (child.getSamplingRate() != null ? child.getSamplingRate() / 1000 : "")
                         : (child.getSamplingRate() != null
-                        ? new DecimalFormat("0.#").format(child.getSamplingRate() / 1000.0) + "kHz"
+                                ? new DecimalFormat("0.#").format(child.getSamplingRate() / 1000.0) + "kHz"
                         : "")) +
                 " " +
                 child.getSuffix();
@@ -376,5 +376,16 @@ public class MusicUtil {
         toFilter.clear();
 
         toFilter.addAll(filtered);
+    }
+
+    public static boolean isImageUrl(String url) {
+        if (url == null || url.isEmpty())
+            return false;
+        String path = url.toLowerCase().trim().split("\\?")[0];
+
+        return path.endsWith(".jpg") || path.endsWith(".jpeg") ||
+                path.endsWith(".png") || path.endsWith(".webp") ||
+                path.endsWith(".gif") || path.endsWith(".bmp") ||
+                path.endsWith(".svg");
     }
 }
