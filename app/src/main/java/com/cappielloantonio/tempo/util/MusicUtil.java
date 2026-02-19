@@ -85,7 +85,6 @@ public class MusicUtil {
         if (scheme != null && (scheme.equals("content") || scheme.equals("file"))) {
             return uri;
         }
-
         String s = uri.toString();
 
         Matcher m1 = BITRATE_PATTERN.matcher(s);
@@ -210,7 +209,7 @@ public class MusicUtil {
                 (child.getBitDepth() != null && child.getBitDepth() != 0
                         ? child.getBitDepth() + "/" + (child.getSamplingRate() != null ? child.getSamplingRate() / 1000 : "")
                         : (child.getSamplingRate() != null
-                                ? new DecimalFormat("0.#").format(child.getSamplingRate() / 1000.0) + "kHz"
+                        ? new DecimalFormat("0.#").format(child.getSamplingRate() / 1000.0) + "kHz"
                         : "")) +
                 " " +
                 child.getSuffix();
