@@ -165,12 +165,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        activity.setBottomSheetVisibility(true);
-    }
-
-    @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.global_preferences, rootKey);
         ListPreference themePreference = findPreference(Preferences.THEME);
