@@ -130,6 +130,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         super.onStart();
         activity.setBottomNavigationBarVisibility(false);
         activity.setBottomSheetVisibility(false);
+        activity.setNavigationDrawerLock(true);
+        activity.setSystemBarsVisibility(!activity.isLandscape);
     }
 
     @Override
@@ -167,6 +169,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onStop() {
         super.onStop();
         activity.setBottomSheetVisibility(true);
+        activity.toggleNavigationDrawerLockOnOrientationChange();
+        activity.setSystemBarsVisibility(!activity.isLandscape);
     }
 
     @Override

@@ -83,7 +83,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         super.onStart();
 
         initializeMediaBrowser();
-        activity.setBottomNavigationBarVisibility(true);
+        activity.toggleBottomNavigationBarVisibilityOnOrientationChange();
         activity.setBottomSheetVisibility(true);
     }
 

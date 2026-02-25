@@ -3,7 +3,6 @@ package com.cappielloantonio.tempo.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,12 +10,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -26,7 +25,6 @@ import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.BuildConfig;
@@ -34,6 +32,8 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.broadcast.receiver.ConnectivityStatusBroadcastReceiver;
 import com.cappielloantonio.tempo.databinding.ActivityMainBinding;
 import com.cappielloantonio.tempo.github.utils.UpdateUtil;
+import com.cappielloantonio.tempo.navigation.NavigationController;
+import com.cappielloantonio.tempo.navigation.NavigationHelper;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.ui.activity.base.BaseActivity;
 import com.cappielloantonio.tempo.ui.dialog.ConnectionAlertDialog;
@@ -61,16 +61,20 @@ public class MainActivity extends BaseActivity {
     private MainViewModel mainViewModel;
 
     private FragmentManager fragmentManager;
-    private NavHostFragment navHostFragment;
-    private BottomNavigationView bottomNavigationView;
+
     public NavController navController;
-    private BottomSheetBehavior bottomSheetBehavior;
-    private boolean isLandscape = false;
+    private NavigationController navigationController;
+    public BottomSheetBehavior bottomSheetBehavior;
+    public boolean isLandscape = false;
     private AssetLinkNavigator assetLinkNavigator;
     private AssetLinkUtil.AssetLink pendingAssetLink;
 
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
     private Intent pendingDownloadPlaybackIntent;
+
+    public ActivityMainBinding getBinding() {
+        return bind;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +115,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         pingServer();
+        toggleNavigationDrawerLockOnOrientationChange();
     }
 
     @Override
@@ -148,14 +153,34 @@ public class MainActivity extends BaseActivity {
             goToLogin();
         }
 
-        // Set bottom navigation height
-        if (isLandscape) {
-            ViewGroup.LayoutParams layoutParams = bottomNavigationView.getLayoutParams();
-            Rect windowRect = new Rect();
-            bottomNavigationView.getWindowVisibleDisplayFrame(windowRect);
-            layoutParams.width = windowRect.height();
-            bottomNavigationView.setLayoutParams(layoutParams);
-        }
+        toggleNavigationDrawerLockOnOrientationChange();
+
+    }
+
+    private void initNavigation() {
+        // We link the nav_graph.xml with our navigationController
+        NavHostFragment navHostFragment = (NavHostFragment) this
+                .getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        navController = Objects.requireNonNull(navHostFragment).getNavController();
+        /*
+        navController is currently global since some legacy code still invokes it directly
+        the MainActivity methods that use it must be converted to NavigationHelper methods
+        */
+
+        // Helper
+        NavigationHelper navigationHelper =
+                new NavigationHelper(
+                        findViewById(R.id.bottom_navigation),
+                        findViewById(R.id.bottom_navigation_frame),
+                        findViewById(R.id.drawer_layout),
+                        findViewById(R.id.nav_view),
+                        navHostFragment
+                );
+
+        // Controller
+        navigationController = new NavigationController(navigationHelper);
+        navigationController.syncWithBottomSheetBehavior(bottomSheetBehavior, navController);
     }
 
     // BOTTOM SHEET/NAVIGATION
@@ -257,34 +282,51 @@ public class MainActivity extends BaseActivity {
         bind.bottomNavigation.setTranslationY(slideY);
     }
 
-    private void initNavigation() {
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        navHostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.nav_host_fragment);
-        navController = Objects.requireNonNull(navHostFragment).getNavController();
-
-        /*
-         * In questo modo intercetto il cambio schermata tramite navbar e se il bottom sheet è aperto,
-         * lo chiudo
-         */
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && (
-                    destination.getId() == R.id.homeFragment ||
-                            destination.getId() == R.id.libraryFragment ||
-                            destination.getId() == R.id.downloadFragment)
-            ) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
-
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+    public void setBottomNavigationBarVisibility(boolean visibility) {
+        navigationController.setNavbarVisibility(visibility);
     }
 
-    public void setBottomNavigationBarVisibility(boolean visibility) {
-        if (visibility) {
-            bottomNavigationView.setVisibility(View.VISIBLE);
-        } else {
-            bottomNavigationView.setVisibility(View.GONE);
+    public void toggleBottomNavigationBarVisibilityOnOrientationChange() {
+        // Ignore orientation change, bottom navbar always hidden
+        if (Preferences.getHideBottomNavbarOnPortrait()) {
+            navigationController.setNavbarVisibility(false);
+            setPortraitPlayerBottomSheetPeekHeight(56);
+            navigationController.setSystemBarsVisibility(this, !isLandscape);
+            return;
         }
+
+        if (!isLandscape) {
+            // Show app navbar + show system bars
+            setPortraitPlayerBottomSheetPeekHeight(136);
+            navigationController.setNavbarVisibility(true);
+            navigationController.setSystemBarsVisibility(this, true);
+        } else {
+            // Hide app navbar + hide system bars
+            setPortraitPlayerBottomSheetPeekHeight(56);
+            navigationController.setNavbarVisibility(false);
+            navigationController.setSystemBarsVisibility(this, false);
+        }
+    }
+
+    public void setNavigationDrawerLock(boolean locked) {
+        navigationController.setDrawerLock(locked);
+    }
+
+    public void toggleNavigationDrawerLockOnOrientationChange() {
+        navigationController.toggleDrawerLockOnOrientation(this);
+    }
+
+    public void setSystemBarsVisibility(boolean visibility) {
+        navigationController.setSystemBarsVisibility(this, visibility);
+    }
+
+    private void setPortraitPlayerBottomSheetPeekHeight(int peekHeight) {
+        FrameLayout bottomSheet = findViewById(R.id.player_bottom_sheet);
+        BottomSheetBehavior<FrameLayout> behavior =
+                BottomSheetBehavior.from(bottomSheet);
+
+        int newPeekPx = (int) (peekHeight * getResources().getDisplayMetrics().density);
+        behavior.setPeekHeight(newPeekPx);
     }
 
     private void initService() {
@@ -321,7 +363,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void goToHome() {
-        bottomNavigationView.setVisibility(View.VISIBLE);
+        setBottomNavigationBarVisibility(true);
 
         if (Objects.requireNonNull(navController.getCurrentDestination()).getId() == R.id.landingFragment) {
             navController.navigate(R.id.action_landingFragment_to_homeFragment);
