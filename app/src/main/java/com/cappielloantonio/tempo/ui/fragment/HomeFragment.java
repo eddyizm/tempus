@@ -53,7 +53,7 @@ public class HomeFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        activity.setBottomNavigationBarVisibility(true);
+        activity.toggleBottomNavigationBarVisibilityOnOrientationChange();
         activity.setBottomSheetVisibility(true);
     }
 
