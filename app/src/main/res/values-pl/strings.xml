@@ -374,6 +374,10 @@
     <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
     <string name="settings_radio">Pokaż radio</string>
     <string name="settings_radio_summary">Jeżeli włączone, widoczna będzie sekcja radia. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
+    <string name="settings_enable_drawer_on_landscape">Włącz szufladę w trybie pionowym [Eksperymentalne]</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Odblokowywuje boczną szufladę trybu poziomego w trybie pionowym. Zmiany przyniosą efekt po restarcie.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Ukryj dolny pasek nawigacji w trybie pionowym [Eksperymentalne]</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Eksperymentalne. Zwiększa ilość miejsca w pionie przez usunięcie dolnego paska nawigacji. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
     <string name="settings_auto_download_lyrics_summary">Automatycznie zapisuj teksty jeżeli, są dostępne aby, mogły być wyświetlane offline.</string>
     <string name="settings_replay_gain">Tryb wzmocnienia głośności przy ponownym odtwarzaniu</string>
