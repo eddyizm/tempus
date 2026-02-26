@@ -3,7 +3,6 @@ package com.cappielloantonio.tempo.ui.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -11,12 +10,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -48,6 +51,7 @@ import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.Objects;
@@ -63,9 +67,12 @@ public class MainActivity extends BaseActivity {
     private FragmentManager fragmentManager;
     private NavHostFragment navHostFragment;
     private BottomNavigationView bottomNavigationView;
+    private FrameLayout bottomNavigationViewFrame;
     public NavController navController;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private BottomSheetBehavior bottomSheetBehavior;
-    private boolean isLandscape = false;
+    public boolean isLandscape = false;
     private AssetLinkNavigator assetLinkNavigator;
     private AssetLinkUtil.AssetLink pendingAssetLink;
 
@@ -111,6 +118,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         pingServer();
+        toggleNavigationDrawerLockOnOrientationChange();
     }
 
     @Override
@@ -148,14 +156,8 @@ public class MainActivity extends BaseActivity {
             goToLogin();
         }
 
-        // Set bottom navigation height
-        if (isLandscape) {
-            ViewGroup.LayoutParams layoutParams = bottomNavigationView.getLayoutParams();
-            Rect windowRect = new Rect();
-            bottomNavigationView.getWindowVisibleDisplayFrame(windowRect);
-            layoutParams.width = windowRect.height();
-            bottomNavigationView.setLayoutParams(layoutParams);
-        }
+        toggleNavigationDrawerLockOnOrientationChange();
+
     }
 
     // BOTTOM SHEET/NAVIGATION
@@ -259,8 +261,12 @@ public class MainActivity extends BaseActivity {
 
     private void initNavigation() {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationViewFrame = findViewById(R.id.bottom_navigation_frame);
         navHostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.nav_host_fragment);
         navController = Objects.requireNonNull(navHostFragment).getNavController();
+        // This is the lateral slide-in drawer
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
 
         /*
          * In questo modo intercetto il cambio schermata tramite navbar e se il bottom sheet è aperto,
@@ -277,14 +283,88 @@ public class MainActivity extends BaseActivity {
         });
 
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        NavigationUI.setupWithNavController(navigationView, navController);
     }
 
     public void setBottomNavigationBarVisibility(boolean visibility) {
         if (visibility) {
             bottomNavigationView.setVisibility(View.VISIBLE);
+            bottomNavigationViewFrame.setVisibility(View.VISIBLE);
         } else {
             bottomNavigationView.setVisibility(View.GONE);
+            bottomNavigationViewFrame.setVisibility(View.GONE);
         }
+    }
+
+    public void toggleBottomNavigationBarVisibilityOnOrientationChange() {
+        // Ignore orientation change, bottom navbar always hidden
+        if (Preferences.getHideBottomNavbarOnPortrait()) {
+            setBottomNavigationBarVisibility(false);
+            setPortraitPlayerBottomSheetPeekHeight(56);
+            setSystemBarsVisibility(!isLandscape);
+            return;
+        }
+
+        if (!isLandscape) {
+            // Show app navbar + show system bars
+            setPortraitPlayerBottomSheetPeekHeight(136);
+            setBottomNavigationBarVisibility(true);
+            setSystemBarsVisibility(true);
+        } else {
+            // Hide app navbar + hide system bars
+            setPortraitPlayerBottomSheetPeekHeight(56);
+            setBottomNavigationBarVisibility(false);
+            setSystemBarsVisibility(false);
+        }
+    }
+
+    public void setNavigationDrawerLock(boolean locked) {
+        int mode = locked
+                ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+                : DrawerLayout.LOCK_MODE_UNLOCKED;
+        drawerLayout.setDrawerLockMode(mode);
+    }
+
+    public void toggleNavigationDrawerLockOnOrientationChange() {
+        // Ignore orientation check, drawer always unlocked
+        if (Preferences.getEnableDrawerOnPortrait()) {
+            setNavigationDrawerLock(false);
+            return;
+        }
+        if (!isLandscape) {
+            setNavigationDrawerLock(true);
+        } else {
+            setNavigationDrawerLock(false);
+        }
+    }
+
+    public void setSystemBarsVisibility(boolean visibility) {
+        WindowInsetsControllerCompat insetsController;
+        View decorView = getWindow().getDecorView();
+        insetsController = new WindowInsetsControllerCompat(getWindow(), decorView);
+
+        if (visibility) {
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+            insetsController.show(WindowInsetsCompat.Type.navigationBars());
+            insetsController.show(WindowInsetsCompat.Type.statusBars());
+            insetsController.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_DEFAULT);
+        } else {
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+            insetsController.hide(WindowInsetsCompat.Type.navigationBars());
+            insetsController.hide(WindowInsetsCompat.Type.statusBars());
+            insetsController.setSystemBarsBehavior(
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        }
+    }
+
+    private void setPortraitPlayerBottomSheetPeekHeight(int peekHeight) {
+        FrameLayout bottomSheet = findViewById(R.id.player_bottom_sheet);
+        BottomSheetBehavior<FrameLayout> behavior =
+                BottomSheetBehavior.from(bottomSheet);
+
+        int newPeekPx = (int) (peekHeight * getResources().getDisplayMetrics().density);
+        behavior.setPeekHeight(newPeekPx);
     }
 
     private void initService() {

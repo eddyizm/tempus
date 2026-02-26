@@ -45,9 +45,12 @@
     <string name="artist_page_switch_layout_button">Switch layout</string>
     <string name="artist_page_title_album_more_like_this_button">More like this</string>
     <string name="artist_page_title_album_section">Albums</string>
+    <string name="artist_page_title_ep_section">EPs</string>
+    <string name="artist_page_title_single_section">Singles</string>
+    <string name="artist_page_title_appears_on_section">Appears On</string>
     <string name="artist_page_title_biography_more_button">More</string>
     <string name="artist_page_title_biography_section">Biography</string>
-    <string name="artist_page_title_most_streamed_song_section">Most Streamed Songs</string>
+    <string name="artist_page_title_most_streamed_song_section">Top Songs</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">See all</string>
     <string name="battery_optimization_negative_button">Ignore</string>
     <string name="battery_optimization_neutral_button">Don\'t ask again</string>
@@ -386,6 +389,10 @@
     <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
     <string name="settings_radio">Show radio</string>
     <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
+    <string name="settings_enable_drawer_on_landscape">Enable drawer on portrait</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Unlocks the lateral landscape menu drawer on portrait. The changes will take effect on restart.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Hide bottom navbar on portrait</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Increases vertical space by removing the bottom navbar. The changes will take effect on restart.</string>
     <string name="settings_auto_download_lyrics">Auto download lyrics</string>
     <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
     <string name="settings_replay_gain">Set replay gain mode</string>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/artist_cover_image_view"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/CircleShapeAppearance" />
+
+    <TextView
+        android:id="@+id/artist_name_label"
+        style="@style/LabelMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:maxWidth="120dp"
+        android:paddingTop="8dp"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="@+id/artist_cover_image_view"
+        app:layout_constraintStart_toStartOf="@+id/artist_cover_image_view"
+        app:layout_constraintTop_toBottomOf="@+id/artist_cover_image_view" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

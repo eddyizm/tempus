@@ -21,10 +21,12 @@ import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.service.EqualizerManager
 import com.cappielloantonio.tempo.service.BaseMediaService
 import com.cappielloantonio.tempo.service.MediaService
+import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.Preferences
 
 class EqualizerFragment : Fragment() {
 
+    private lateinit var activity: MainActivity
     private var equalizerManager: EqualizerManager? = null
     private lateinit var eqBandsContainer: LinearLayout
     private lateinit var eqSwitch: Switch
@@ -33,6 +35,13 @@ class EqualizerFragment : Fragment() {
     private val bandSeekBars = mutableListOf<SeekBar>()
 
     private var receiverRegistered = false
+
+    @OptIn(UnstableApi::class)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity = requireActivity() as MainActivity
+    }
+
     private val equalizerUpdatedReceiver = object : BroadcastReceiver() {
         @OptIn(UnstableApi::class)
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -73,8 +82,13 @@ class EqualizerFragment : Fragment() {
             )
             receiverRegistered = true
         }
+        activity.setBottomNavigationBarVisibility(false)
+        activity.setBottomSheetVisibility(false)
+        activity.setNavigationDrawerLock(true)
+        activity.setSystemBarsVisibility(!activity.isLandscape)
     }
 
+    @OptIn(UnstableApi::class)
     override fun onStop() {
         super.onStop()
         requireActivity().unbindService(connection)
@@ -87,6 +101,8 @@ class EqualizerFragment : Fragment() {
             }
             receiverRegistered = false
         }
+
+        activity.setBottomSheetVisibility(true);
     }
 
     override fun onCreateView(
