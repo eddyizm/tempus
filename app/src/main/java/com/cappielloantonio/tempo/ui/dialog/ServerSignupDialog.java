@@ -2,8 +2,8 @@ package com.cappielloantonio.tempo.ui.dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.security.KeyChain;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,11 +32,21 @@ public class ServerSignupDialog extends DialogFragment {
     private String server;
     private String localAddress;
     private boolean lowSecurity = false;
+    private String clientCertAlias;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         bind = DialogServerSignupBinding.inflate(getLayoutInflater());
+        bind.clientCertTextView.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(bind.clientCertTextView.getText())) {
+                KeyChain.choosePrivateKeyAlias(requireActivity(), alias -> {
+                    bind.clientCertTextView.setText(alias);
+                }, null, null, null, null);
+            } else {
+                bind.clientCertTextView.setText(null);
+            }
+        });
 
         loginViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
 
@@ -74,6 +84,7 @@ public class ServerSignupDialog extends DialogFragment {
                 bind.serverTextView.setText(loginViewModel.getServerToEdit().getAddress());
                 bind.localAddressTextView.setText(loginViewModel.getServerToEdit().getLocalAddress());
                 bind.lowSecurityCheckbox.setChecked(loginViewModel.getServerToEdit().isLowSecurity());
+                bind.clientCertTextView.setText(loginViewModel.getServerToEdit().getClientCert());
             }
         } else {
             loginViewModel.setServerToEdit(null);
@@ -106,6 +117,7 @@ public class ServerSignupDialog extends DialogFragment {
         server = bind.serverTextView.getText() != null && !bind.serverTextView.getText().toString().trim().isBlank() ? bind.serverTextView.getText().toString().trim() : null;
         localAddress = bind.localAddressTextView.getText() != null && !bind.localAddressTextView.getText().toString().trim().isBlank() ? bind.localAddressTextView.getText().toString().trim() : null;
         lowSecurity = bind.lowSecurityCheckbox.isChecked();
+        clientCertAlias = bind.clientCertTextView.getText() != null && !bind.clientCertTextView.getText().toString().trim().isBlank() ? bind.clientCertTextView.getText().toString().trim() : null;
 
         if (TextUtils.isEmpty(serverName)) {
             bind.serverNameTextView.setError(getString(R.string.error_required));
@@ -137,6 +149,6 @@ public class ServerSignupDialog extends DialogFragment {
 
     private void saveServerPreference() {
         String serverID = loginViewModel.getServerToEdit() != null ? loginViewModel.getServerToEdit().getServerId() : UUID.randomUUID().toString();
-        loginViewModel.addServer(new Server(serverID, this.serverName, this.username, this.password, this.server, this.localAddress, System.currentTimeMillis(), this.lowSecurity));
+        loginViewModel.addServer(new Server(serverID, this.serverName, this.username, this.password, this.server, this.localAddress, System.currentTimeMillis(), this.lowSecurity, this.clientCertAlias));
     }
 }

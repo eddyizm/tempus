@@ -254,4 +254,46 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+			
+	<!-- Add by MFO -->
+    <string-array name="aa_tab_titles">
+        <item>Ne pas afficher</item>
+        <item>Accueil</item>
+        <item>Récent</item>
+        <item>Albums</item>
+        <item>Artists</item>
+        <item>Playlists</item>
+        <item>Podcast</item>
+        <item>Radio</item>
+        <item>Dossiers</item>
+        <item>Albums plus joués</item>
+	<!--	<item>Titres joués</item> -->
+        <item>Albums ajouté</item>
+    <!--    <item>Pour vous</item> -->
+        <item>Titres favoris</item>
+        <item>Albums favoris</item>
+        <item>Artistes favoris</item>
+        <item>Aléatoire</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+    </string-array>
+	<!-- end Add by MFO -->
+	
 </resources>
