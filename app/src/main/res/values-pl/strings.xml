@@ -292,6 +292,7 @@
     <string name="server_signup_dialog_hint_password">Hasło</string>
     <string name="server_signup_dialog_hint_url">URL Serwera</string>
     <string name="server_signup_dialog_hint_username">Nazwa użytkownika</string>
+    <string name="server_signup_dialog_hint_client_certificate">Certyfikat klienta (opcjonalny)</string>
     <string name="server_signup_dialog_negative_button">Anuluj</string>
     <string name="server_signup_dialog_neutral_button">Usuń</string>
     <string name="server_signup_dialog_positive_button">Zapisz</string>
