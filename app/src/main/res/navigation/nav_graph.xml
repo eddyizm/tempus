@@ -220,6 +220,10 @@
         <action
             android:id="@+id/action_playlistCatalogueFragment_to_playlistPageFragment"
             app:destination="@id/playlistPageFragment" />
+        <argument
+            android:name="playlist_all"
+            app:argType="string"
+            android:defaultValue="ALL" />
     </fragment>
 
     <fragment

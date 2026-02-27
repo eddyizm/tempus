@@ -87,7 +87,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     public void onStart() {
         super.onStart();
         initializeMediaBrowser();
-        activity.setBottomNavigationBarVisibility(true);
+        activity.toggleBottomNavigationBarVisibilityOnOrientationChange();
     }
 
     @Override

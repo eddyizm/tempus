@@ -31,6 +31,8 @@ object Preferences {
     private const val IMAGE_CACHE_SIZE = "image_cache_size"
     private const val STREAMING_CACHE_SIZE = "streaming_cache_size"
     private const val LANDSCAPE_ITEMS_PER_ROW = "landscape_items_per_row"
+    private const val ENABLE_DRAWER_ON_PORTRAIT = "enable_drawer_on_portrait"
+    private const val HIDE_BOTTOM_NAVBAR_ON_PORTRAIT = "hide_bottom_navbar_on_portrait"
     private const val IMAGE_SIZE = "image_size"
     private const val MAX_BITRATE_WIFI = "max_bitrate_wifi"
     private const val MAX_BITRATE_MOBILE = "max_bitrate_mobile"
@@ -89,8 +91,17 @@ object Preferences {
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
     
-
-    @JvmStatic
+    private const val AA_ALBUM_VIEW = "androidauto_album_view"
+	private const val AA_HOME_VIEW = "androidauto_home_view"
+    private const val AA_PLAYLIST_VIEW = "androidauto_playlist_view"
+    private const val AA_PODCAST_VIEW = "androidauto_podcast_view"
+    private const val AA_RADIO_VIEW = "androidauto_radio_view"
+	private const val AA_FIRST_TAB = "androidauto_first_tab"
+	private const val AA_SECOND_TAB = "androidauto_second_tab"
+	private const val AA_THIRD_TAB = "androidauto_third_tab"
+	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
+    
+	@JvmStatic
     fun getServer(): String? {
         return App.getInstance().preferences.getString(SERVER, null)
     }
@@ -319,6 +330,16 @@ object Preferences {
     @JvmStatic
     fun getLandscapeItemsPerRow(): Int {
         return App.getInstance().preferences.getString(LANDSCAPE_ITEMS_PER_ROW, "4")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getEnableDrawerOnPortrait(): Boolean {
+        return App.getInstance().preferences.getBoolean(ENABLE_DRAWER_ON_PORTRAIT, false)
+    }
+
+    @JvmStatic
+    fun getHideBottomNavbarOnPortrait(): Boolean {
+        return App.getInstance().preferences.getBoolean(HIDE_BOTTOM_NAVBAR_ON_PORTRAIT, false)
     }
 
     @JvmStatic
@@ -735,4 +756,50 @@ object Preferences {
     fun setArtistDisplayBiography(displayBiographyEnabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(ARTIST_DISPLAY_BIOGRAPHY, displayBiographyEnabled).apply()
     }
+
+    @JvmStatic
+    fun isAndroidAutoAlbumViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoHomeViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_HOME_VIEW, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoPlaylistViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_PLAYLIST_VIEW, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoPodcastViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_PODCAST_VIEW, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoRadioViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_RADIO_VIEW, false)
+    }
+
+    @JvmStatic
+    fun getAndroidAutoFirstTab(): Int {
+        return App.getInstance().preferences.getString(AA_FIRST_TAB, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getAndroidAutoSecondTab(): Int {
+        return App.getInstance().preferences.getString(AA_SECOND_TAB, "1")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getAndroidAutoThirdTab(): Int {
+        return App.getInstance().preferences.getString(AA_THIRD_TAB, "2")!!.toInt()
+    }
+	
+    @JvmStatic
+    fun getAndroidAutoFourthTab(): Int {
+        return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
+    }
+	
 }

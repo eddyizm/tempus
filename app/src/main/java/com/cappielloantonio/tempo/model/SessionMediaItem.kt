@@ -195,11 +195,20 @@ class SessionMediaItem() {
         title = internetRadioStation.name
         streamUrl = internetRadioStation.streamUrl
         type = Constants.MEDIA_TYPE_RADIO
+
+        val homePageUrl = internetRadioStation.homePageUrl
+        if (homePageUrl != null && homePageUrl.isNotEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
+            val encodedUrl = android.util.Base64.encodeToString(
+                homePageUrl.toByteArray(java.nio.charset.StandardCharsets.UTF_8),
+                android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP
+            )
+            coverArtId = "ir_$encodedUrl"
+        }
     }
 
     fun getMediaItem(): MediaItem {
         val uri: Uri = getStreamUri()
-        val artworkUri = AlbumArtContentProvider.contentUri(coverArtId)
+        val artworkUri = if (coverArtId != null) AlbumArtContentProvider.contentUri(coverArtId!!) else null
 
         val bundle = Bundle()
         bundle.putString("id", id)
@@ -229,7 +238,7 @@ class SessionMediaItem() {
         bundle.putLong("starred", starred?.time ?: 0)
         bundle.putString("albumId", albumId)
         bundle.putString("artistId", artistId)
-        bundle.putString("type", Constants.MEDIA_TYPE_MUSIC)
+        bundle.putString("type", type)
         bundle.putLong("bookmarkPosition", bookmarkPosition ?: 0)
         bundle.putInt("originalWidth", originalWidth ?: 0)
         bundle.putInt("originalHeight", originalHeight ?: 0)

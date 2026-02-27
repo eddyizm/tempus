@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Base64;
 
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LifecycleOwner;
@@ -25,6 +26,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
 
 @OptIn(markerClass = UnstableApi.class)
 public class MappingUtil {
@@ -207,6 +209,16 @@ public class MappingUtil {
 
     public static MediaItem mapInternetRadioStation(InternetRadioStation internetRadioStation) {
         Uri uri = Uri.parse(internetRadioStation.getStreamUrl());
+        Uri artworkUri = null;
+        String homePageUrl = internetRadioStation.getHomePageUrl();
+        String coverArtId = null;
+
+        if (homePageUrl != null && !homePageUrl.isEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
+                String encodedUrl = Base64.encodeToString(homePageUrl.getBytes(StandardCharsets.UTF_8),
+                                Base64.URL_SAFE | Base64.NO_WRAP);
+                coverArtId = "ir_" + encodedUrl;
+                artworkUri = AlbumArtContentProvider.contentUri(coverArtId);
+        }
 
         Bundle bundle = new Bundle();
         bundle.putString("id", internetRadioStation.getId());
@@ -214,13 +226,17 @@ public class MappingUtil {
         bundle.putString("stationName", internetRadioStation.getName());
         bundle.putString("uri", uri.toString());
         bundle.putString("type", Constants.MEDIA_TYPE_RADIO);
+        bundle.putString("coverArtId", coverArtId);
+        if (homePageUrl != null) {
+                bundle.putString("homepageUrl", homePageUrl);
+        }
 
         return new MediaItem.Builder()
                 .setMediaId(internetRadioStation.getId())
                 .setMediaMetadata(
                         new MediaMetadata.Builder()
                                 .setTitle(internetRadioStation.getName())
-                                .setMediaType(MediaMetadata.MEDIA_TYPE_RADIO_STATION)
+                                .setArtworkUri(artworkUri)
                                 .setExtras(bundle)
                                 .setIsBrowsable(false)
                                 .setIsPlayable(true)

@@ -19,6 +19,9 @@ public interface PlaylistDao {
     @Query("SELECT * FROM playlist")
     LiveData<List<Playlist>> getAll();
 
+    @Query("SELECT * FROM playlist")
+    List<Playlist> getAllSync();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Playlist playlist);
 

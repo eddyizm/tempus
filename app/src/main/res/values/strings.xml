@@ -1,4 +1,22 @@
 <resources>
+    <string name="aa_albums">Albums</string>
+    <string name="aa_album_most_played">Albums most played</string>
+	<string name="aa_album_recently_added">Albums added</string>
+    <string name="aa_artists">Artists</string>
+    <string name="aa_home">Home</string>
+	<string name="aa_made_for_you">For you</string>
+    <string name="aa_more">More</string>
+    <string name="aa_music_folder">Folder</string>
+    <string name="aa_playlists">Playlists</string>
+	<string name="aa_podcast">Podcast</string>
+	<string name="aa_radio">Radio</string>
+    <string name="aa_random">Random</string>
+    <string name="aa_recent_albums">Recent</string>
+    <string name="aa_song_recently_played">Song played</string>
+    <string name="aa_starred_albums">★ Albums</string>
+    <string name="aa_starred_artists">★ Artists</string>
+    <string name="aa_starred_tracks">★ Tracks</string>
+	
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>
     <string name="activity_battery_optimizations_title">Battery Optimizations</string>
@@ -239,6 +257,8 @@
     <string name="playlist_chooser_dialog_title">Add to a playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Added song(s) to playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song(s) to playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Removed song from playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Failed to remove song from playlist</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">All songs were skipped as duplicates</string>
     <string name="playlist_chooser_dialog_visibility_public">Public</string>
     <string name="playlist_chooser_dialog_visibility_private">Private</string>
@@ -372,6 +392,16 @@
     <string name="settings_podcast">Show podcast</string>
     <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
     <string name="settings_playlist_sort">Playlist sorting</string>
+	<string name="settings_androidauto">Android Auto</string>
+	<string name="settings_androidauto_album_view">Grid view for albums</string>
+	<string name="settings_androidauto_home_view">Grid view for home</string>
+    <string name="settings_androidauto_playlist_view">Grid view for playlists</string>
+    <string name="settings_androidauto_podcast_view">Grid view for podcast</string>
+    <string name="settings_androidauto_radio_view">Grid view for radio</string>
+	<string name="settings_androidauto_first_tab">First tab display</string>
+	<string name="settings_androidauto_second_tab">Second tab display</string>
+	<string name="settings_androidauto_third_tab">Third tab display</string>
+	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
@@ -385,6 +415,10 @@
     <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
     <string name="settings_radio">Show radio</string>
     <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
+    <string name="settings_enable_drawer_on_landscape">Enable drawer on portrait [Experimental]</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Unlocks the lateral landscape menu drawer on portrait. The changes will take effect on restart.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Hide bottom navbar on portrait [Experimental]</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Experimental.Increases vertical space by removing the bottom navbar. The changes will take effect on restart.</string>
     <string name="settings_auto_download_lyrics">Auto download lyrics</string>
     <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
     <string name="settings_replay_gain">Set replay gain mode</string>
@@ -473,7 +507,8 @@
     <string name="song_bottom_sheet_instant_mix">Instant mix</string>
     <string name="song_bottom_sheet_play_next">Play next</string>
     <string name="song_bottom_sheet_rate">Rate</string>
-    <string name="song_bottom_sheet_remove">Remove</string>
+    <string name="song_bottom_sheet_remove">Remove from device</string>
+    <string name="song_bottom_sheet_remove_from_playlist">Remove from playlist</string>
     <string name="song_bottom_sheet_share">Share</string>
     <string name="song_list_page_downloaded">Downloaded</string>
     <string name="song_list_page_most_played">Most played tracks</string>

@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.repository;
 
-
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.view.View;
@@ -68,6 +67,16 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbumList2() != null && response.body().getSubsonicResponse().getAlbumList2().getAlbums() != null) {
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getAlbumList2().getAlbums();
+
+                            // add by MFO
+                            // Hack for artist view
+                            if("alphabeticalByArtist".equals(type))for(AlbumID3 album : albums){
+                                String artistName = album.getArtist();
+                                String albumName = album.getName();
+                                album.setName(artistName);
+                                album.setArtist(albumName);
+                            }
+                            // end add by MFO
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 

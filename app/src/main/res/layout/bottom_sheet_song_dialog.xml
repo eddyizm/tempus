@@ -165,6 +165,20 @@
             android:text="@string/song_bottom_sheet_remove" />
 
         <TextView
+            android:id="@+id/remove_from_playlist_text_view"
+            style="@style/LabelMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:paddingStart="20dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="12dp"
+            android:text="@string/song_bottom_sheet_remove_from_playlist"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/add_to_playlist_text_view"
             style="@style/LabelMedium"
             android:layout_width="match_parent"
