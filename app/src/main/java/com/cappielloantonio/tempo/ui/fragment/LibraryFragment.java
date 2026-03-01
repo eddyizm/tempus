@@ -18,6 +18,8 @@ import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
 
 import android.content.ComponentName;
+import android.widget.Toast;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -46,6 +48,7 @@ import java.util.Objects;
 @UnstableApi
 public class LibraryFragment extends Fragment implements ClickCallback {
     private static final String TAG = "LibraryFragment";
+    private static final String TOAST_MSG = "Long press to refresh" ;
 
     private FragmentLibraryBinding bind;
     private MainActivity activity;
@@ -116,22 +119,41 @@ public class LibraryFragment extends Fragment implements ClickCallback {
             activity.navController.navigate(R.id.action_libraryFragment_to_playlistCatalogueFragment, bundle);
         });
 
+        // Album
         bind.albumCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshAlbumSample(getViewLifecycleOwner());
             return true;
         });
+        bind.albumCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
+
+        // Artist
         bind.artistCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshArtistSample(getViewLifecycleOwner());
             return true;
         });
+        bind.artistCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
+
+        // Genre
         bind.genreCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshGenreSample(getViewLifecycleOwner());
             return true;
         });
+        bind.genreCatalogueSampleTextViewRefreshable.setOnClickListener(v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
+
+        // Playlist
         bind.playlistCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshPlaylistSample(getViewLifecycleOwner());
             return true;
         });
+        bind.playlistCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
     }
 
     private void initAppBar() {
