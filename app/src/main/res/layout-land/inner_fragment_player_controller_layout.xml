@@ -70,8 +70,8 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitCenter"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/player_media_extension"
-            app:layout_constraintBottom_toBottomOf="@id/player_media_extension"
+            app:layout_constraintTop_toTopOf="@id/player_media_quality_sector_center"
+            app:layout_constraintBottom_toBottomOf="@id/player_media_quality_sector_center"
             app:srcCompat="@drawable/ic_info_stream"
             app:tint="?attr/colorOnPrimaryContainer" />
 
