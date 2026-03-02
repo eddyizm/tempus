@@ -1,6 +1,22 @@
 # Changelog
 
 ## What's Changed
+## [4.12.0](https://github.com/eddyizm/tempo/releases/tag/v4.12.0) (2026-02-28)
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/441
+* feat: radio logos support for AndroidAuto by @dmachard in https://github.com/eddyizm/tempus/pull/435
+* feat: Port remove song of playlist from tempus ng by @tvillega in https://github.com/eddyizm/tempus/pull/457
+* fix: artist sort by name case sensitive by @tvillega in https://github.com/eddyizm/tempus/pull/462
+* feat: added slide out enhanced navigation for tab mode and optionally portrait mode by @tvillega in https://github.com/eddyizm/tempus/pull/450
+* feat: Android Auto: improve media service browsing by @MaFo-28 in https://github.com/eddyizm/tempus/pull/437
+* feat: Support specifying a client certificate for mTLS auth by @tinsukE in https://github.com/eddyizm/tempus/pull/458
+
+## New Contributors
+* @MaFo-28 made their first contribution in https://github.com/eddyizm/tempus/pull/437
+* @tinsukE made their first contribution in https://github.com/eddyizm/tempus/pull/458
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.11.0...v4.12.0
+
+## What's Changed
 ## [4.11.0](https://github.com/eddyizm/tempo/releases/tag/v4.11.0) (2026-02-15)
 * fix: added dynamic application id from gradle variant by @eddyizm in https://github.com/eddyizm/tempus/pull/425
 * fix: Use Bluetooth tethering connection by @jaime-grj in https://github.com/eddyizm/tempus/pull/428
