@@ -1,7 +1,7 @@
 # Changelog
 
 ## What's Changed
-## [4.12.3](https://github.com/eddyizm/tempo/releases/tag/v4.12.3) (2026-03-01)
+## [4.12.4](https://github.com/eddyizm/tempo/releases/tag/v4.12.4) (2026-03-01)
 * feat: advertise existing long press to refresh per section on library page by @tvillega in https://github.com/eddyizm/tempus/pull/467
 * fix: playlist filter returns properly filtered list and reset correctly by @eddyizm in https://github.com/eddyizm/tempus/pull/476
 * feat: toggle player bitrate visibility on touch by @tvillega in https://github.com/eddyizm/tempus/pull/466
