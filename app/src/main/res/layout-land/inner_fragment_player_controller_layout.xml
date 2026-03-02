@@ -24,30 +24,42 @@
         app:layout_constraintStart_toEndOf="@+id/vertical_guideline"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/player_media_extension"
-            style="@style/Widget.Material3.Chip.Suggestion"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/player_media_quality_sector_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:clickable="false"
-            android:text="Unknown"
-            app:chipStrokeWidth="0dp"
+            android:layout_marginVertical="8dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/player_media_bitrate"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintHorizontal_chainStyle="packed"/>
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/player_media_bitrate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            app:layout_constraintTop_toTopOf="@id/player_media_extension"
-            app:layout_constraintBottom_toBottomOf="@id/player_media_extension"
-            app:layout_constraintStart_toEndOf="@id/player_media_extension"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            <TextView
+                android:id="@+id/player_media_bitrate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintTop_toTopOf="@id/player_media_extension"
+                app:layout_constraintBottom_toBottomOf="@id/player_media_extension"
+                app:layout_constraintStart_toEndOf="@id/player_media_extension"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/player_media_extension"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:checked="true"
+                android:focusable="true"
+                android:text="Unknown"
+                app:chipStrokeWidth="0dp"
+                app:chipBackgroundColor="@color/material_dynamic_secondary40"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/player_media_bitrate"
+                app:layout_constraintHorizontal_chainStyle="packed"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
             android:id="@+id/player_info_track"
