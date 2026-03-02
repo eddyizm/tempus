@@ -25,6 +25,7 @@ object Preferences {
     private const val IN_USE_SERVER_ADDRESS = "in_use_server_address"
     private const val NEXT_SERVER_SWITCH = "next_server_switch"
     private const val PLAYBACK_SPEED = "playback_speed"
+    private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -290,6 +291,16 @@ object Preferences {
     @JvmStatic
     fun setPlaybackSpeed(playbackSpeed: Float) {
         App.getInstance().preferences.edit().putFloat(PLAYBACK_SPEED, playbackSpeed).apply()
+    }
+
+    @JvmStatic
+    fun getBitrateVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(BITRATE_VISIBLE, true)
+    }
+
+    @JvmStatic
+    fun setBitrateVisible(bitrateVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(BITRATE_VISIBLE, bitrateVisible).apply()
     }
 
     @JvmStatic
