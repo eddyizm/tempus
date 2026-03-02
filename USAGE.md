@@ -158,7 +158,7 @@ If your server supports it - add a internet radio station feed
 
 ## Android Auto
 
-### Enabling on your head unit
+**Enabling on your head unit**
 To allow the Tempus app on your car's head unit, "Unknown sources" needs to be enabled in the Android Auto "Developer settings". This is because Tempus isn't installed through Play Store. Note that the Android Auto developer settings are different from the global Android "Developer options".
 1. Switch to developer mode in the Android Auto settings by tapping ten times on the "Version" item at the bottom, followed by giving your permission.
 <p align="left">
@@ -177,6 +177,60 @@ To allow the Tempus app on your car's head unit, "Unknown sources" needs to be e
    <img width="270" height="600" alt="3" src="https://github.com/user-attachments/assets/37db88e9-1b76-417f-9c47-da9f3a750fff" />
 </p>
 
+**Interface Configuration**
+
+The Android Auto interface can be configured by user to best suit their preferences.
+
+<p align="left">
+    <img src="mockup/usage/aa_preferences.png" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_functions.png" width=317>
+</p>
+
+4 tabs can be configured with the following functions:
+- Do not display : This tab is not used
+- Home : Displays all functions not used in other tabs
+- Recent : The 15 most recently listened-to albums
+- Albums : Albums sorted by name
+- Artists : Albums sorted by artist
+- Playlists
+- Podcast : The 100 podcasts recently added
+- Radio
+- Folder : Navigation through music directories
+- Albums most played : The 15 most played albums
+- Albums added : The 15 recently added albums
+- Star tracks
+- Star albums
+- Star artists
+- Random : 100 random songs
+
+If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
+
+If "Home" is selected after another tab, it becomes "More"
+
+In addition, you can choose to display the following functions as thumbnails or lists:
+- Home
+- Albums (Last played, Most played, Recently added, Artists, Star tracks, Star albums, Star artists, Random)
+- Playlists
+- Radio
+- Podcast
+
+<p align="left">
+    <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_list.jpg" width=317>
+</p>
+
+The A-Z button allows you to jump to items starting with the chosen letter.
+
+Search button returns albums or artists, even if they are not displayed by the selected function.
+
+Results of the A-Z jump or search will always be displayed as a list.
+
+<p align="left">
+    <img src="mockup/usage/aa_AZ.jpg" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_search.jpg" width=317>
+</p>
+
+Display of albums and artists is limited to 500. For large libraries, it's preferable to use star albums or star artists.
 
 ### Server Settings
 **IN PROGRESS**
