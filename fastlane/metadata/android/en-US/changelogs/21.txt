@@ -1,0 +1,7 @@
+chore(i18n): Update Polish translation 
+feat: radio logos support for AndroidAuto 
+feat: Port remove song of playlist from tempus ng 
+fix: artist sort by name case sensitive 
+feat: added slide out enhanced navigation for tab mode and optionally portrait mode
+feat: Android Auto: improve media service browsing 
+feat: Support specifying a client certificate for mTLS auth 
