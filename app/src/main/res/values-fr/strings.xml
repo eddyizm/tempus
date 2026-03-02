@@ -1,4 +1,22 @@
 <resources>
+    <string name="aa_albums">Albums</string>
+    <string name="aa_album_most_played">Albums plus joués</string>
+	<string name="aa_album_recently_added">Albums ajoutés</string>
+    <string name="aa_artists">Artistes</string>
+    <string name="aa_home">Accueil</string>
+	<string name="aa_made_for_you">Pour vous</string>
+    <string name="aa_more">Plus</string>
+    <string name="aa_music_folder">Dossiers</string>
+    <string name="aa_playlists">Playlists</string>
+	<string name="aa_podcast">Podcast</string>
+	<string name="aa_radio">Radio</string>
+    <string name="aa_random">Aléatoire</string>
+    <string name="aa_recent_albums">Récents</string>
+    <string name="aa_song_recently_played">Titres joués</string>
+    <string name="aa_starred_albums">★ Albums</string>
+    <string name="aa_starred_artists">★ Artistes</string>
+    <string name="aa_starred_tracks">★ Titres</string>
+	
     <string name="activity_battery_optimizations_conclusion">Si vous rencontrez un problème, visitez https://dontkillmyapp.com. Des instructions pour désactiver les fonctions de sauvegarde d\'énergie qui pourrait affecter les performance de l\'app y sont disponibles.</string>
     <string name="activity_battery_optimizations_summary">Veuillez désactiver les optimisations de la batterie pour permettre la lecture des médias lorsque l\'écran est éteint.</string>
     <string name="activity_battery_optimizations_title">Optimisations de la batterie</string>
@@ -310,6 +328,16 @@
     <string name="settings_always_on_display">Toujours visible</string>
     <string name="settings_allow_playlist_duplicates">Autoriser l\'ajout de doublons à une playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">Si activé, les doublons ne seront pas détectés à l\'ajout d\'un titre à une playlist.</string>
+	<string name="settings_androidauto">Android Auto</string>
+	<string name="settings_androidauto_album_view">Vue en grille des albums</string>
+	<string name="settings_androidauto_home_view">Vue en grille du menu accueil</string>
+    <string name="settings_androidauto_playlist_view">Vue en grille des playlists</string>
+    <string name="settings_androidauto_podcast_view">Vue en grille des podcasts</string>
+    <string name="settings_androidauto_radio_view">Vue en grille des radios</string>
+	<string name="settings_androidauto_first_tab">Affichage du premier onglet</string>
+	<string name="settings_androidauto_second_tab">Affichage du deuxième onglet</string>
+	<string name="settings_androidauto_third_tab">Affichage du troisième onglet</string>
+	<string name="settings_androidauto_fourth_tab">Affichage du quatrième onglet</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>
     <string name="settings_audio_transcode_download_priority_summary">Si activé, Tempus ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioriser les paramètres du serveurs, utilisés pour le streaming, dans les téléchargements</string>
@@ -404,7 +432,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Si activé, les pistes favorites seront téléchargées pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Synchronisation des pistes favorites pour écoute hors-ligne</string>
     <string name="settings_theme">Thème</string>
-    <string name="settings_title_data">Données</string>
+	<string name="settings_title_data">Données</string>
     <string name="settings_title_general">Géneral</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Note</string>
@@ -463,7 +491,7 @@
     <string name="song_list_page_downloaded">Téléchargé</string>
     <string name="song_list_page_most_played">Titres les plus joués</string>
     <string name="song_list_page_recently_added">Titres ajoutés récemment</string>
-    <string name="song_list_page_recently_played">Titrés joués récemment</string>
+    <string name="song_list_page_recently_played">Titres joués récemment</string>
     <string name="song_list_page_starred">Titres favoris</string>
     <string name="song_list_page_top">Les meilleurs titres de %1$s</string>
     <string name="song_list_page_year">Année %1$d</string>

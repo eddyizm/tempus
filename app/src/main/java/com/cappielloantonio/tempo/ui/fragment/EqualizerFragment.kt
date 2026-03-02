@@ -21,18 +21,26 @@ import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.service.EqualizerManager
 import com.cappielloantonio.tempo.service.BaseMediaService
 import com.cappielloantonio.tempo.service.MediaService
+import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.Preferences
 
 class EqualizerFragment : Fragment() {
 
+    private lateinit var activity: MainActivity
     private var equalizerManager: EqualizerManager? = null
     private lateinit var eqBandsContainer: LinearLayout
     private lateinit var eqSwitch: Switch
     private lateinit var resetButton: Button
     private lateinit var safeSpace: Space
     private val bandSeekBars = mutableListOf<SeekBar>()
-
     private var receiverRegistered = false
+
+    @OptIn(UnstableApi::class)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        activity = requireActivity() as MainActivity
+    }
+
     private val equalizerUpdatedReceiver = object : BroadcastReceiver() {
         @OptIn(UnstableApi::class)
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -73,6 +81,8 @@ class EqualizerFragment : Fragment() {
             )
             receiverRegistered = true
         }
+        val showBottomBar = !Preferences.getHideBottomNavbarOnPortrait()
+        activity.setBottomNavigationBarVisibility(showBottomBar)
     }
 
     override fun onStop() {

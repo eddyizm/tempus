@@ -11,6 +11,7 @@ import com.cappielloantonio.tempo.github.Github;
 import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.SubsonicPreferences;
+import com.cappielloantonio.tempo.util.ClientCertManager;
 import com.cappielloantonio.tempo.util.Preferences;
 
 public class App extends Application {
@@ -31,6 +32,8 @@ public class App extends Application {
         instance = new App();
         context = getApplicationContext();
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        ClientCertManager.setupSslSocketFactory(context);
     }
 
     public static App getInstance() {

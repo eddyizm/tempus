@@ -377,4 +377,15 @@ public class MusicUtil {
 
         toFilter.addAll(filtered);
     }
+
+    public static boolean isImageUrl(String url) {
+        if (url == null || url.isEmpty())
+            return false;
+        String path = url.toLowerCase().trim().split("\\?")[0];
+
+        return path.endsWith(".jpg") || path.endsWith(".jpeg") ||
+                path.endsWith(".png") || path.endsWith(".webp") ||
+                path.endsWith(".gif") || path.endsWith(".bmp") ||
+                path.endsWith(".svg");
+    }
 }

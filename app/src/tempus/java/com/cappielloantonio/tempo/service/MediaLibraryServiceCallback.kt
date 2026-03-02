@@ -47,7 +47,8 @@ open class MediaLibrarySessionCallback(
     MediaLibraryService.MediaLibrarySession.Callback {
 
     init {
-        MediaBrowserTree.initialize(automotiveRepository)
+        // modified by MFO
+        MediaBrowserTree.initialize(context, automotiveRepository)
     }
 
     private val customCommandToggleShuffleModeOn = CommandButton.Builder()
@@ -348,6 +349,8 @@ open class MediaLibrarySessionCallback(
         browser: MediaSession.ControllerInfo,
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<MediaItem>> {
+        // added by MFO
+        MediaBrowserTree.buildTree()
         return Futures.immediateFuture(LibraryResult.ofItem(MediaBrowserTree.getRootItem(), params))
     }
 
@@ -375,7 +378,7 @@ open class MediaLibrarySessionCallback(
                 automotiveRepository.internetRadioStations,
                 { result ->
                     val stations = result?.value
-                    val selected = stations?.find { it.mediaId == firstItem?.mediaId }
+                    val selected = stations?.find { item -> item.mediaId == firstItem?.mediaId }
                     if (selected != null) {
                         val updatedSelected = selected.buildUpon()
                             .setMimeType(selected.localConfiguration?.mimeType)

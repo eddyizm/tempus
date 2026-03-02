@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/searchFragment"
+        android:icon="@drawable/ic_search"
+        android:title="@string/menu_search_button" />
+
+    <item android:title="Index" >
+        <menu>
+            <item
+                android:id="@+id/homeFragment"
+                android:icon="@drawable/ic_home"
+                android:title="@string/menu_home_label" />
+
+            <item
+                android:id="@+id/libraryFragment"
+                android:icon="@drawable/ic_graphic_eq"
+                android:title="@string/menu_library_label" />
+
+            <item
+                android:id="@+id/downloadFragment"
+                android:icon="@drawable/ic_play_for_work"
+                android:title="@string/menu_download_label" />
+
+            <item
+                android:id="@+id/settingsFragment"
+                android:icon="@drawable/ic_settings"
+                android:title="@string/menu_settings_button" />
+        </menu>
+
+    </item>
+
+    <item android:title="All" >
+        <menu>
+            <item
+                android:id="@+id/albumCatalogueFragment"
+                android:icon="@drawable/ic_albums"
+                android:title="Albums" />
+
+            <item
+                android:id="@+id/artistCatalogueFragment"
+                android:icon="@drawable/ic_artists"
+                android:title="Artists" />
+
+
+            <item
+                android:id="@+id/genreCatalogueFragment"
+                android:icon="@drawable/ic_genres"
+                android:title="Genres" />
+
+            <item
+                android:id="@+id/playlistCatalogueFragment"
+                android:icon="@drawable/ic_playlist"
+                android:title="Playlists"
+                android:defaultValue="ALL"/>
+
+        </menu>
+    </item>
+</menu>

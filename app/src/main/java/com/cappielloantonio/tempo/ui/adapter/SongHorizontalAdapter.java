@@ -359,6 +359,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         private boolean onLongClick() {
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.TRACK_OBJECT, songs.get(getBindingAdapterPosition()));
+            bundle.putInt(Constants.ITEM_POSITION, getBindingAdapterPosition());
 
             click.onMediaLongClick(bundle);
 

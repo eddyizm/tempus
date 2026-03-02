@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -16,8 +18,11 @@ import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
 
 import android.content.ComponentName;
+import android.widget.Toast;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.FragmentLibraryBinding;
@@ -43,6 +48,7 @@ import java.util.Objects;
 @UnstableApi
 public class LibraryFragment extends Fragment implements ClickCallback {
     private static final String TAG = "LibraryFragment";
+    private static final String TOAST_MSG = "Long press to refresh" ;
 
     private FragmentLibraryBinding bind;
     private MainActivity activity;
@@ -81,13 +87,14 @@ public class LibraryFragment extends Fragment implements ClickCallback {
         initArtistView();
         initGenreView();
         initPlaylistView();
+        initSwipeToRefresh();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         initializeMediaBrowser();
-        activity.setBottomNavigationBarVisibility(true);
+        activity.toggleBottomNavigationBarVisibilityOnOrientationChange();
     }
 
     @Override
@@ -112,22 +119,41 @@ public class LibraryFragment extends Fragment implements ClickCallback {
             activity.navController.navigate(R.id.action_libraryFragment_to_playlistCatalogueFragment, bundle);
         });
 
+        // Album
         bind.albumCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshAlbumSample(getViewLifecycleOwner());
             return true;
         });
+        bind.albumCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
+
+        // Artist
         bind.artistCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshArtistSample(getViewLifecycleOwner());
             return true;
         });
+        bind.artistCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
+
+        // Genre
         bind.genreCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshGenreSample(getViewLifecycleOwner());
             return true;
         });
+        bind.genreCatalogueSampleTextViewRefreshable.setOnClickListener(v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
+
+        // Playlist
         bind.playlistCatalogueSampleTextViewRefreshable.setOnLongClickListener(view -> {
             libraryViewModel.refreshPlaylistSample(getViewLifecycleOwner());
             return true;
         });
+        bind.playlistCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
+            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+        );
     }
 
     private void initAppBar() {
@@ -303,5 +329,21 @@ public class LibraryFragment extends Fragment implements ClickCallback {
 
     private void initializeMediaBrowser() {
         mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
+    }
+
+    public void initSwipeToRefresh() {
+        bind.swipeLibraryToRefresh.setOnRefreshListener(() -> {
+            pullToRefresh();
+            bind.swipeLibraryToRefresh.setRefreshing(false);
+        });
+    }
+
+    private void pullToRefresh() {
+        LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
+        libraryViewModel.refreshAlbumSample(lifecycleOwner);
+        libraryViewModel.refreshGenreSample(lifecycleOwner);
+        libraryViewModel.refreshArtistSample(lifecycleOwner);
+        libraryViewModel.refreshPlaylistSample(lifecycleOwner);
+
     }
 }
