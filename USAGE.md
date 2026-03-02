@@ -159,6 +159,7 @@ If your server supports it - add a internet radio station feed
 ## Android Auto
 
 **Enabling on your head unit**
+
 To allow the Tempus app on your car's head unit, "Unknown sources" needs to be enabled in the Android Auto "Developer settings". This is because Tempus isn't installed through Play Store. Note that the Android Auto developer settings are different from the global Android "Developer options".
 1. Switch to developer mode in the Android Auto settings by tapping ten times on the "Version" item at the bottom, followed by giving your permission.
 <p align="left">
