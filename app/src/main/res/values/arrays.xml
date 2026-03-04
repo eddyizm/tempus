@@ -228,16 +228,18 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>Minimum</item>
-        <item>Moderate</item>
-        <item>Aggressive</item>
-        <item>Extreme</item>
+        <item>5 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
     </string-array>
     <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
     </string-array>
 
     <string-array name="playlist_sort_option_titles">

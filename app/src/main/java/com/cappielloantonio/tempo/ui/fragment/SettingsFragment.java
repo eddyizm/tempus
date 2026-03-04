@@ -25,6 +25,7 @@ import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
@@ -34,6 +35,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreference;
 
 import com.cappielloantonio.tempo.BuildConfig;
@@ -109,6 +111,42 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         }
                     }
                 });
+
+        ListPreference bufferingPref = findPreference("buffering_strategy");
+
+        Context ctx = requireContext();
+        String selectedValue = PreferenceManager
+                .getDefaultSharedPreferences(ctx)
+                .getString("buffering_strategy", "1");
+
+        String[] titles = ctx.getResources().getStringArray(R.array.buffering_strategy_titles);
+        String[] values = ctx.getResources().getStringArray(R.array.buffering_strategy_values);
+
+        String title;
+        switch (selectedValue) {
+            case "5":
+                title = titles[0];
+                break;
+            case "30":
+                title = titles[1];
+                break;
+            case "60":
+                title = titles[2];
+                break;
+            case "180":
+                title = titles[3];
+                break;
+            case "300":
+                title = titles[4];
+                break;
+            default:
+                title = titles[2];
+                Log.e(TAG, "This is not working");
+                break;
+        }
+
+        String newSummary = ctx.getString(R.string.settings_buffering_strategy_summary, title);
+        bufferingPref.setSummary(newSummary);
     }
 
     @Override

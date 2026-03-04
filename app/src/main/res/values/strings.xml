@@ -350,8 +350,8 @@
     <string name="settings_audio_transcode_priority_summary">If enabled, Tempus will not force stream the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_priority_title">Prioritize server transcode settings</string>
     <string name="settings_audio_transcode_priority_toast">Priority on transcoding of track given to server</string>
-    <string name="settings_buffering_strategy">Buffering strategy</string>
-    <string name="settings_buffering_strategy_summary">For the change to take effect you must manually restart the app.</string>
+    <string name="settings_buffering_strategy">Song preload buffer</string>
+    <string name="settings_buffering_strategy_summary">Current selected value: %1$s\nFor the change to take effect you must manually restart the app.</string>
     <string name="settings_choose_download_folder">Choose a folder for downloaded music files</string>
     <string name="settings_clear_download_folder">Clear download folder</string>
     <string name="settings_continuous_play_summary">Allows music to keep playing after a playlist has ended, playing similar songs</string>

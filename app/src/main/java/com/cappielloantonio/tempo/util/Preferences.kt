@@ -605,7 +605,7 @@ object Preferences {
 
     @JvmStatic
     fun getBufferingStrategy(): Double {
-        return App.getInstance().preferences.getString(BUFFERING_STRATEGY, "1")!!.toDouble()
+        return App.getInstance().preferences.getString(BUFFERING_STRATEGY, "60")!!.toDouble()
     }
 
     @JvmStatic
