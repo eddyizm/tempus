@@ -229,6 +229,34 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         });
 
         updateDownloadButtons();
+        
+        String playlistId = requireArguments().getString(Constants.PLAYLIST_ID);
+        int itemPosition = requireArguments().getInt(Constants.ITEM_POSITION, -1);
+
+        TextView removeFromPlaylist = view.findViewById(R.id.remove_from_playlist_text_view);
+        if (playlistId != null && itemPosition != -1) {
+            removeFromPlaylist.setVisibility(View.VISIBLE);
+            removeFromPlaylist.setOnClickListener(v -> {
+                songBottomSheetViewModel.removeFromPlaylist(playlistId, itemPosition, new com.cappielloantonio.tempo.repository.PlaylistRepository.AddToPlaylistCallback() {
+                    @Override
+                    public void onSuccess() {
+                        Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_remove_success, Toast.LENGTH_SHORT).show();
+                        dismissBottomSheet();
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_remove_failure, Toast.LENGTH_SHORT).show();
+                        dismissBottomSheet();
+                    }
+
+                    @Override
+                    public void onAllSkipped() {
+                        dismissBottomSheet();
+                    }
+                });
+            });
+        }
 
         TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
         addToPlaylist.setOnClickListener(v -> {

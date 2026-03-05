@@ -16,6 +16,7 @@ import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.repository.AlbumRepository;
 import com.cappielloantonio.tempo.repository.ArtistRepository;
 import com.cappielloantonio.tempo.repository.FavoriteRepository;
+import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.repository.SharingRepository;
 import com.cappielloantonio.tempo.repository.SongRepository;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
@@ -39,6 +40,7 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
     private final SharingRepository sharingRepository;
+    private final PlaylistRepository playlistRepository;
 
     private Child song;
 
@@ -52,6 +54,7 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         artistRepository = new ArtistRepository();
         favoriteRepository = new FavoriteRepository();
         sharingRepository = new SharingRepository();
+        playlistRepository = new PlaylistRepository();
     }
 
     public Child getSong() {
@@ -60,6 +63,10 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
 
     public void setSong(Child song) {
         this.song = song;
+    }
+
+    public void removeFromPlaylist(String playlistId, int index, PlaylistRepository.AddToPlaylistCallback callback) {
+        playlistRepository.removeSongFromPlaylist(playlistId, index, callback);
     }
 
     public void setFavorite(Context context) {

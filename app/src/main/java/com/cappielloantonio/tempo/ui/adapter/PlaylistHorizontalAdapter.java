@@ -47,6 +47,7 @@ public class PlaylistHorizontalAdapter extends RecyclerView.Adapter<PlaylistHori
 
             FilterResults results = new FilterResults();
             results.values = filteredList;
+            results.count = filteredList.size();
 
             return results;
         }
@@ -54,7 +55,9 @@ public class PlaylistHorizontalAdapter extends RecyclerView.Adapter<PlaylistHori
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             playlists.clear();
-            if (results.count > 0) playlists.addAll((List) results.values);
+            if (results.values != null) {
+                playlists.addAll((List<Playlist>) results.values);
+            }
             notifyDataSetChanged();
         }
     };

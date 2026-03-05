@@ -20,14 +20,36 @@ public class PlaylistPageViewModel extends AndroidViewModel {
     private Playlist playlist;
     private boolean isOffline;
 
+    private final MutableLiveData<List<Child>> songLiveList = new MutableLiveData<>();
+
     public PlaylistPageViewModel(@NonNull Application application) {
         super(application);
 
         playlistRepository = new PlaylistRepository();
+        playlistRepository.getPlaylistUpdateTrigger().observeForever(needsRefresh -> {
+            if (needsRefresh != null && needsRefresh && playlist != null) {
+                refreshSongs();
+            }
+        });
     }
 
     public LiveData<List<Child>> getPlaylistSongLiveList() {
-        return playlistRepository.getPlaylistSongs(playlist.getId());
+        if (songLiveList.getValue() == null && playlist != null) {
+            refreshSongs();
+        }
+        return songLiveList;
+    }
+
+    private void refreshSongs() {
+        if (playlist == null) return;
+        LiveData<List<Child>> remoteData = playlistRepository.getPlaylistSongs(playlist.getId());
+        remoteData.observeForever(new androidx.lifecycle.Observer<List<Child>>() {
+            @Override
+            public void onChanged(List<Child> songs) {
+                songLiveList.postValue(songs);
+                remoteData.removeObserver(this);
+            }
+        });
     }
 
     public Playlist getPlaylist() {
@@ -35,7 +57,10 @@ public class PlaylistPageViewModel extends AndroidViewModel {
     }
 
     public void setPlaylist(Playlist playlist) {
-        this.playlist = playlist;
+        if (this.playlist == null || !this.playlist.getId().equals(playlist.getId())) {
+            this.playlist = playlist;
+            this.songLiveList.setValue(null); // Clear old data immediately
+        }
     }
 
     public LiveData<Boolean> isPinned(LifecycleOwner owner) {

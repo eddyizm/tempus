@@ -64,6 +64,16 @@
             app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference
+            android:title="@string/settings_enable_drawer_on_landscape"
+            android:key="enable_drawer_on_portrait"
+            android:summary="@string/settings_enable_drawer_on_landscape_summary"/>
+
+        <SwitchPreference
+            android:title="@string/settings_hide_bottom_navbar_on_portrait"
+            android:key="hide_bottom_navbar_on_portrait"
+            android:summary="@string/settings_hide_bottom_navbar_on_portrait_summary"/>
+
+        <SwitchPreference
             android:layout_height="match_parent"
             android:defaultValue="true"
             android:key="rounded_corner"
@@ -443,6 +453,76 @@
             android:defaultValue="true"
             android:key="github_update_check" />
     </PreferenceCategory>
+
+	<!-- Android Auto configuration -->
+    <PreferenceCategory app:title="@string/settings_androidauto">
+         <Preference
+            app:selectable="false"
+            app:summary="@string/home_rearrangement_dialog_subtitle" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_home_view"
+            android:defaultValue="false"
+            android:key="androidauto_home_view" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_album_view"
+            android:defaultValue="true"
+            android:key="androidauto_album_view" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_playlist_view"
+            android:defaultValue="false"
+            android:key="androidauto_playlist_view" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_radio_view"
+            android:defaultValue="false"
+            android:key="androidauto_radio_view" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_podcast_view"
+            android:defaultValue="false"
+            android:key="androidauto_podcast_view" />
+
+        <ListPreference
+            app:defaultValue="0"
+            app:dialogTitle="@string/settings_androidauto_first_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_first_tab"
+            app:title="@string/settings_androidauto_first_tab"
+            app:useSimpleSummaryProvider="true" />
+			
+	    <ListPreference
+            app:defaultValue="1"
+            app:dialogTitle="@string/settings_androidauto_second_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_second_tab"
+            app:title="@string/settings_androidauto_second_tab"
+            app:useSimpleSummaryProvider="true" />
+			
+	    <ListPreference
+            app:defaultValue="2"
+            app:dialogTitle="@string/settings_androidauto_third_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_third_tab"
+            app:title="@string/settings_androidauto_third_tab"
+            app:useSimpleSummaryProvider="true" />
+			
+	    <ListPreference
+            app:defaultValue="3"
+            app:dialogTitle="@string/settings_androidauto_fourth_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_fourth_tab"
+            app:title="@string/settings_androidauto_fourth_tab"
+            app:useSimpleSummaryProvider="true" />	
+			
+	</PreferenceCategory>
+	<!-- end Add by MFO -->
 
     <PreferenceCategory app:title="@string/settings_about_title">
         <Preference
