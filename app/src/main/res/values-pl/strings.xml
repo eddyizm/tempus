@@ -229,6 +229,8 @@
     <string name="playlist_chooser_dialog_title">Dodaj do playlisty</string>
     <string name="playlist_chooser_dialog_toast_add_success">Dodano piosenki do playlisty</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Nie udało się dodać piosenek do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Usunięto piosenkę z playlisty</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Nie udało się usunąć piosenki z playlisty</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Pominięto wszystkie piosenki jako duplikaty</string>
     <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
@@ -290,6 +292,7 @@
     <string name="server_signup_dialog_hint_password">Hasło</string>
     <string name="server_signup_dialog_hint_url">URL Serwera</string>
     <string name="server_signup_dialog_hint_username">Nazwa użytkownika</string>
+    <string name="server_signup_dialog_hint_client_certificate">Certyfikat klienta (opcjonalny)</string>
     <string name="server_signup_dialog_negative_button">Anuluj</string>
     <string name="server_signup_dialog_neutral_button">Usuń</string>
     <string name="server_signup_dialog_positive_button">Zapisz</string>
@@ -372,6 +375,10 @@
     <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
     <string name="settings_radio">Pokaż radio</string>
     <string name="settings_radio_summary">Jeżeli włączone, widoczna będzie sekcja radia. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
+    <string name="settings_enable_drawer_on_landscape">Włącz szufladę w trybie pionowym [Eksperymentalne]</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Odblokowywuje boczną szufladę trybu poziomego w trybie pionowym. Zmiany przyniosą efekt po restarcie.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Ukryj dolny pasek nawigacji w trybie pionowym [Eksperymentalne]</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Eksperymentalne. Zwiększa ilość miejsca w pionie przez usunięcie dolnego paska nawigacji. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
     <string name="settings_auto_download_lyrics_summary">Automatycznie zapisuj teksty jeżeli, są dostępne aby, mogły być wyświetlane offline.</string>
     <string name="settings_replay_gain">Tryb wzmocnienia głośności przy ponownym odtwarzaniu</string>
@@ -460,7 +467,8 @@
     <string name="song_bottom_sheet_instant_mix">Natychmiastowy miks</string>
     <string name="song_bottom_sheet_play_next">Odtwarzaj jako następne</string>
     <string name="song_bottom_sheet_rate">Oceń</string>
-    <string name="song_bottom_sheet_remove">Usuń</string>
+    <string name="song_bottom_sheet_remove">Usuń z urządzenia</string>
+    <string name="song_bottom_sheet_remove_from_playlist">Usuń z playlisty</string>
     <string name="song_bottom_sheet_share">Udostępnij</string>
     <string name="song_list_page_downloaded">Pobrane</string>
     <string name="song_list_page_most_played">Najczęściej odtwarzane utwory</string>
