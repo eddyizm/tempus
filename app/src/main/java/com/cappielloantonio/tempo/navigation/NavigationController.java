@@ -3,12 +3,8 @@ package com.cappielloantonio.tempo.navigation;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
-
-import com.cappielloantonio.tempo.navigation.NavigationHelper;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -32,6 +28,10 @@ public class NavigationController {
 
     public void setDrawerLock(boolean visibility) {
         helper.setNavigationDrawerLock(visibility);
+    }
+
+    public boolean isNavigationDrawerLocked() {
+        return helper.isNavigationDrawerLocked();
     }
 
     public void toggleDrawerLockOnOrientation(AppCompatActivity activity) {

@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.navigation;
 
-import android.content.Context;
 import android.content.res.Configuration;
 import android.view.View;
 import android.view.Window;
@@ -20,15 +19,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 
 import org.jetbrains.annotations.Contract;
-
-import java.util.Objects;
 
 public class NavigationHelper {
     /* UI components */
@@ -103,6 +99,10 @@ public class NavigationHelper {
                 ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED
                 : DrawerLayout.LOCK_MODE_UNLOCKED;
         drawerLayout.setDrawerLockMode(mode);
+    }
+
+    public boolean isNavigationDrawerLocked() {
+        return drawerLayout.getDrawerLockMode(navigationView) != DrawerLayout.LOCK_MODE_UNLOCKED;
     }
 
     @OptIn(markerClass = UnstableApi.class)
