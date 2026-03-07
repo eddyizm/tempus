@@ -278,7 +278,11 @@ public class MainActivity extends BaseActivity {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && (
                     destination.getId() == R.id.homeFragment ||
                             destination.getId() == R.id.libraryFragment ||
-                            destination.getId() == R.id.downloadFragment)
+                            destination.getId() == R.id.downloadFragment ||
+                            destination.getId() == R.id.albumCatalogueFragment ||
+                            destination.getId() == R.id.artistCatalogueFragment ||
+                            destination.getId() == R.id.genreCatalogueFragment ||
+                            destination.getId() == R.id.playlistCatalogueFragment)
             ) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
