@@ -605,7 +605,17 @@ object Preferences {
 
     @JvmStatic
     fun getBufferingStrategy(): Double {
-        return App.getInstance().preferences.getString(BUFFERING_STRATEGY, "1")!!.toDouble()
+        // The line below must be used after users migrate
+        // return App.getInstance().preferences.getString(BUFFERING_STRATEGY, "60")!!.toDouble()
+        // Fallback logic for migration
+        val raw = App.getInstance().preferences.getString(BUFFERING_STRATEGY, "60")!!
+        val value = raw.toDoubleOrNull() ?: 60.0 // In case user didn't configure it
+        return if (value < 5.0) {
+            App.getInstance().preferences.edit().putString(BUFFERING_STRATEGY, "60").apply()
+            60.0
+        } else {
+            value
+        }
     }
 
     @JvmStatic

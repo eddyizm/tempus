@@ -229,16 +229,18 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>Mínima</item>
-        <item>Moderada</item>
-        <item>Agressiva</item>
-        <item>Extrema</item>
+        <item>5 segons</item>
+        <item>30 segons</item>
+        <item>1 minuts</item>
+        <item>3 minuts</item>
+        <item>5 minuts</item>
     </string-array>
     <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>300</item>
     </string-array>
 
     <string-array name="skip_min_star_rating_titles">

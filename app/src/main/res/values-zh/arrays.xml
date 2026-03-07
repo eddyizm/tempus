@@ -228,16 +228,18 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>最小</item>
-        <item>适中</item>
-        <item>积极</item>
-        <item>极端</item>
+        <item>5秒</item>
+        <item>30秒</item>
+        <item>1分钟</item>
+        <item>3分钟</item>
+        <item>5分钟</item>
     </string-array>
     <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>300</item>
     </string-array>
 
     <string-array name="skip_min_star_rating_titles">

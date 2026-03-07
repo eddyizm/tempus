@@ -239,7 +239,7 @@
             android:key="sync_starred_artists_for_offline_use" />
 
         <ListPreference
-            app:defaultValue="1"
+            app:defaultValue="60"
             app:dialogTitle="@string/settings_buffering_strategy"
             app:entries="@array/buffering_strategy_titles"
             app:entryValues="@array/buffering_strategy_values"

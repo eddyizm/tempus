@@ -41,6 +41,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.logging.Logger
 
 private const val TAG = "BaseMediaService"
 
@@ -467,10 +468,11 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private fun initializeLoadControl(): DefaultLoadControl {
+        val  miliseconds: Int = TimeUnit.SECONDS.toMillis(Preferences.getBufferingStrategy().toLong()).toInt()
         return DefaultLoadControl.Builder()
             .setBufferDurationsMs(
-                (DefaultLoadControl.DEFAULT_MIN_BUFFER_MS * Preferences.getBufferingStrategy()).toInt(),
-                (DefaultLoadControl.DEFAULT_MAX_BUFFER_MS * Preferences.getBufferingStrategy()).toInt(),
+                miliseconds,
+                miliseconds,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
             )
