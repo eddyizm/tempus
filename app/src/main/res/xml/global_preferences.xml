@@ -522,7 +522,6 @@
             app:useSimpleSummaryProvider="true" />	
 			
 	</PreferenceCategory>
-	<!-- end Add by MFO -->
 
     <PreferenceCategory app:title="@string/settings_about_title">
         <Preference

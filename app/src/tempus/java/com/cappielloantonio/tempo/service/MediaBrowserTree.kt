@@ -26,11 +26,6 @@ object MediaBrowserTree {
 
     private var isInitialized = false
 
-/*	data class FunctionItem(
-		val id: String,
-		var isDisplayed: Boolean
-	)
-*/
     // Root
     private const val ROOT_ID = "[rootID]"
 	// Available functions
@@ -552,10 +547,7 @@ object MediaBrowserTree {
                 val sessionMediaItem = automotiveRepository.getSessionMediaItem(it.mediaId)
 
                 if (sessionMediaItem != null) {
-                    var toAdd = automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
-                    val index = toAdd.indexOfFirst { mediaItem -> mediaItem.mediaId == it.mediaId }
-
-                    toAdd = toAdd.subList(index, toAdd.size)
+                    val toAdd = automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
 
                     updatedMediaItems.addAll(toAdd)
                 }
@@ -568,7 +560,6 @@ object MediaBrowserTree {
     fun search(query: String): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
         return automotiveRepository.search(
             query,
-       //     ALBUM_ID,
             ALBUM_ID,
             ARTIST_ID
         )
