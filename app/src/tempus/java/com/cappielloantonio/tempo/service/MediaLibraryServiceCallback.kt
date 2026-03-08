@@ -47,7 +47,6 @@ open class MediaLibrarySessionCallback(
     MediaLibraryService.MediaLibrarySession.Callback {
 
     init {
-        // modified by MFO
         MediaBrowserTree.initialize(context, automotiveRepository)
     }
 
@@ -349,7 +348,6 @@ open class MediaLibrarySessionCallback(
         browser: MediaSession.ControllerInfo,
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<MediaItem>> {
-        // added by MFO
         MediaBrowserTree.buildTree()
         return Futures.immediateFuture(LibraryResult.ofItem(MediaBrowserTree.getRootItem(), params))
     }
@@ -370,8 +368,8 @@ open class MediaLibrarySessionCallback(
         controller: MediaSession.ControllerInfo,
         mediaItems: List<MediaItem>
     ): ListenableFuture<List<MediaItem>> {
-        val firstItem = mediaItems.firstOrNull()
-        val isRadio = firstItem?.mediaId?.startsWith("ir-") == true
+        val firstItem = mediaItems.firstOrNull() ?: return Futures.immediateFuture(mediaItems)
+        val isRadio = firstItem?.mediaId?.startsWith("ir-") == true || firstItem?.mediaMetadata?.extras?.getString("type", "") == Constants.MEDIA_TYPE_RADIO
 
         if (isRadio) {
             return Futures.transformAsync(
@@ -394,7 +392,28 @@ open class MediaLibrarySessionCallback(
         }
 
         val resolvedItems = MediaBrowserTree.getItems(mediaItems)
-        return super.onAddMediaItems(mediaSession, controller, resolvedItems)
+        val requestedId = firstItem?.mediaId
+
+        if (requestedId == null || resolvedItems.isEmpty()) {
+            return super.onAddMediaItems(mediaSession, controller, resolvedItems)
+        }
+
+        val startIndex = resolvedItems.indexOfFirst { it.mediaId == requestedId }
+
+        if (startIndex < 0) {
+            return super.onAddMediaItems(mediaSession, controller, resolvedItems)
+        }
+        val firstResolved = resolvedItems[0]
+        val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {
+            putInt("aa_start_index", startIndex)
+        }
+        val newFirstResolved = firstResolved.buildUpon()
+            .setMediaMetadata(firstResolved.mediaMetadata.buildUpon().setExtras(extras).build())
+            .build()
+
+        val updatedResolved = resolvedItems.toMutableList()
+        updatedResolved[0] = newFirstResolved
+        return Futures.immediateFuture(updatedResolved)
     }
 
     override fun onSearch(

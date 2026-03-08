@@ -69,7 +69,6 @@ public class AutomotiveRepository {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbumList2() != null && response.body().getSubsonicResponse().getAlbumList2().getAlbums() != null) {
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getAlbumList2().getAlbums();
 
-                            // add by MFO
                             // Hack for artist view
                             if("alphabeticalByArtist".equals(type))for(AlbumID3 album : albums){
                                 String artistName = album.getArtist();
@@ -77,7 +76,6 @@ public class AutomotiveRepository {
                                 album.setName(artistName);
                                 album.setArtist(albumName);
                             }
-                            // end add by MFO
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
