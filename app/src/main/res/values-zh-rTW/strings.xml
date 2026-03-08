@@ -140,7 +140,7 @@
     <string name="home_rearrangement_dialog_negative_button">取消</string>
     <string name="home_rearrangement_dialog_neutral_button">重置</string>
     <string name="home_rearrangement_dialog_positive_button">儲存</string>
-    <string name="home_rearrangement_dialog_subtitle">請重啟應用程式以應用程式更改。</string>
+    <string name="home_rearrangement_dialog_subtitle">請重啟應用程式以套用更改。</string>
     <string name="home_rearrangement_dialog_title">首頁排序</string>
     <string name="home_section_music">音樂</string>
     <string name="home_section_podcast">播客</string>
