@@ -31,10 +31,10 @@ object MediaBrowserTree {
 	// Available functions
     private const val HOME_ID = "[homeID]"
     private const val LAST_PLAYED_ID = "[lastPlayedID]"
-    private const val ALBUMS_ID = "[albumsID]"
+    public  const val ALBUMS_ID = "[albumsID]"
     private const val ARTISTS_ID = "[artistsID]"
     private const val MOST_PLAYED_ID = "[mostPlayedID]"
-    private const val PLAYLIST_ID = "[playlistID]"
+    public  const val PLAYLIST_ID = "[playlistID]"
     private const val PODCAST_ID = "[podcastID]"
     private const val RADIO_ID = "[radioID]"
     private const val RECENTLY_ADDED_ID = "[recentlyAddedID]"
@@ -534,27 +534,6 @@ object MediaBrowserTree {
                 return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE))
             }
         }
-    }
-
-    // https://github.com/androidx/media/issues/156
-    fun getItems(mediaItems: List<MediaItem>): List<MediaItem> {
-        val updatedMediaItems = ArrayList<MediaItem>()
-
-        mediaItems.forEach {
-            if (it.localConfiguration?.uri != null) {
-                updatedMediaItems.add(it)
-            } else {
-                val sessionMediaItem = automotiveRepository.getSessionMediaItem(it.mediaId)
-
-                if (sessionMediaItem != null) {
-                    val toAdd = automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
-
-                    updatedMediaItems.addAll(toAdd)
-                }
-            }
-        }
-
-        return updatedMediaItems
     }
 
     fun search(query: String): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
