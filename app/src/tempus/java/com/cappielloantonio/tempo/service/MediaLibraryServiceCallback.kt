@@ -397,17 +397,17 @@ open class MediaLibrarySessionCallback(
                 ?: firstItem.mediaMetadata.extras?.getString("parent_id")
 
         val futureQueue: ListenableFuture<List<MediaItem>> = when {
-            parentId?.startsWith(MediaBrowserTree.ALBUMS_ID) == true -> {
+            parentId?.startsWith(AutomotiveRepository.ALBUM) == true -> {
                 Futures.transform(
-                    automotiveRepository.getAlbumTracks(parentId.removePrefix(MediaBrowserTree.ALBUMS_ID)),
+                    automotiveRepository.getAlbumTracks(parentId.removePrefix(AutomotiveRepository.ALBUM)),
                     { result -> result.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
             }
 
-            parentId?.startsWith(MediaBrowserTree.PLAYLIST_ID) == true -> {
+            parentId?.startsWith(AutomotiveRepository.PLAYLIST) == true -> {
                 Futures.transform(
-                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(MediaBrowserTree.PLAYLIST_ID)),
+                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(AutomotiveRepository.PLAYLIST)),
                     { result -> result.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
