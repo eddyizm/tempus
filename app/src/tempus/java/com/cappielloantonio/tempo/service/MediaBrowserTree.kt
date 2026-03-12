@@ -26,11 +26,6 @@ object MediaBrowserTree {
 
     private var isInitialized = false
 
-/*	data class FunctionItem(
-		val id: String,
-		var isDisplayed: Boolean
-	)
-*/
     // Root
     private const val ROOT_ID = "[rootID]"
 	// Available functions
@@ -43,8 +38,8 @@ object MediaBrowserTree {
     private const val PODCAST_ID = "[podcastID]"
     private const val RADIO_ID = "[radioID]"
     private const val RECENTLY_ADDED_ID = "[recentlyAddedID]"
-    private const val RECENT_SONGS_ID = "[recentSongsID]"
-    private const val MADE_FOR_YOU_ID = "[madeForYouID]"
+    //private const val RECENT_SONGS_ID = "[recentSongsID]"
+    //private const val MADE_FOR_YOU_ID = "[madeForYouID]"
     private const val STARRED_TRACKS_ID = "[starredTracksID]"
     private const val STARRED_ALBUMS_ID = "[starredAlbumsID]"
     private const val STARRED_ARTISTS_ID = "[starredArtistsID]"
@@ -152,7 +147,7 @@ object MediaBrowserTree {
         val podcastView: Boolean = Preferences.isAndroidAutoPodcastViewEnabled()
         val radioView: Boolean = Preferences.isAndroidAutoRadioViewEnabled()
 
-		val tabIndex = listOf(
+        val tabIndex = listOf(
 			Preferences.getAndroidAutoFirstTab(),
 			Preferences.getAndroidAutoSecondTab(),
 			Preferences.getAndroidAutoThirdTab(),
@@ -327,7 +322,7 @@ object MediaBrowserTree {
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS
                 )
             )
-		
+		/*
         treeNodes[RECENT_SONGS_ID] =
             MediaItemNode(
                 buildMediaItem(
@@ -340,7 +335,8 @@ object MediaBrowserTree {
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
                 )
             )
-		
+		*/
+		/*
         treeNodes[MADE_FOR_YOU_ID] =
             MediaItemNode(
                 buildMediaItem(
@@ -353,7 +349,7 @@ object MediaBrowserTree {
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_PLAYLISTS
                 )
             )
-
+		*/
         treeNodes[STARRED_TRACKS_ID] =
             MediaItemNode(
                 buildMediaItem(
@@ -459,59 +455,28 @@ object MediaBrowserTree {
             ROOT_ID -> treeNodes[ROOT_ID]?.getChildren()!!
 
             HOME_ID -> treeNodes[HOME_ID]?.getChildren()!!
-            LAST_PLAYED_ID -> automotiveRepository.getAlbums(id, "recent", 15)
-            ALBUMS_ID -> automotiveRepository.getAlbums(id, "alphabeticalByName", 500)
-            ARTISTS_ID -> automotiveRepository.getAlbums(id, "alphabeticalByArtist", 500)
-            PLAYLIST_ID -> automotiveRepository.getPlaylists(id)
+            LAST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "recent", 15)
+            ALBUMS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByName", 500)
+            ARTISTS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByArtist", 500)
+            PLAYLIST_ID -> automotiveRepository.getPlaylists(PLAYLIST_ID)
             PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
             RADIO_ID -> automotiveRepository.internetRadioStations
-            FOLDER_ID -> automotiveRepository.getMusicFolders(id)
-            MOST_PLAYED_ID -> automotiveRepository.getAlbums(id, "frequent", 15)
-            RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
-            RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(id, "newest", 15)
-            MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
+            FOLDER_ID -> automotiveRepository.getMusicFolders(FOLDER_ID)
+            MOST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "frequent", 15)
+            //RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
+            RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "newest", 15)
+            //MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
             STARRED_TRACKS_ID -> automotiveRepository.starredSongs
-            STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(id)
-            STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(id)
+            STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(ALBUM_ID)
+            STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(ARTIST_ID)
             RANDOM_ID -> automotiveRepository.getRandomSongs(100)
 
             else -> {
-                if (id.startsWith(LAST_PLAYED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(LAST_PLAYED_ID))
-                }
-
-                if (id.startsWith(ALBUMS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(ALBUMS_ID))
-                }
-
-                if (id.startsWith(ARTISTS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(ARTISTS_ID))
-                }
-
-                if (id.startsWith(HOME_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(HOME_ID))
-                }
-
-                if (id.startsWith(MOST_PLAYED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(MOST_PLAYED_ID))
-                }
-
-                if (id.startsWith(RECENTLY_ADDED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(RECENTLY_ADDED_ID))
-                }
-
+				/*
                 if (id.startsWith(MADE_FOR_YOU_ID)) {
                     return automotiveRepository.getMadeForYou(id.removePrefix(MADE_FOR_YOU_ID),20)
                 }
-
-                if (id.startsWith(STARRED_ALBUMS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(STARRED_ALBUMS_ID))
-                }
-
-                if (id.startsWith(STARRED_ARTISTS_ID)) {
-                    return automotiveRepository.getArtistAlbum(STARRED_ALBUMS_ID,id.removePrefix(STARRED_ARTISTS_ID))
-                }
-
+				*/
                 if (id.startsWith(PLAYLIST_ID)) {
                     return automotiveRepository.getPlaylistSongs(id.removePrefix(PLAYLIST_ID))
                 }
@@ -541,34 +506,9 @@ object MediaBrowserTree {
         }
     }
 
-    // https://github.com/androidx/media/issues/156
-    fun getItems(mediaItems: List<MediaItem>): List<MediaItem> {
-        val updatedMediaItems = ArrayList<MediaItem>()
-
-        mediaItems.forEach {
-            if (it.localConfiguration?.uri != null) {
-                updatedMediaItems.add(it)
-            } else {
-                val sessionMediaItem = automotiveRepository.getSessionMediaItem(it.mediaId)
-
-                if (sessionMediaItem != null) {
-                    var toAdd = automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
-                    val index = toAdd.indexOfFirst { mediaItem -> mediaItem.mediaId == it.mediaId }
-
-                    toAdd = toAdd.subList(index, toAdd.size)
-
-                    updatedMediaItems.addAll(toAdd)
-                }
-            }
-        }
-
-        return updatedMediaItems
-    }
-
     fun search(query: String): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
         return automotiveRepository.search(
             query,
-       //     ALBUM_ID,
             ALBUM_ID,
             ARTIST_ID
         )

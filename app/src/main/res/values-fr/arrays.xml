@@ -255,7 +255,6 @@
         <item>4</item>
     </string-array>
 			
-	<!-- Add by MFO -->
     <string-array name="aa_tab_titles">
         <item>Ne pas afficher</item>
         <item>Accueil</item>
@@ -294,6 +293,5 @@
         <item>14</item>
         <item>15</item>
     </string-array>
-	<!-- end Add by MFO -->
-	
+
 </resources>
