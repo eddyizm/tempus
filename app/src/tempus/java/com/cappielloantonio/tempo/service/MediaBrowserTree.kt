@@ -31,10 +31,10 @@ object MediaBrowserTree {
 	// Available functions
     private const val HOME_ID = "[homeID]"
     private const val LAST_PLAYED_ID = "[lastPlayedID]"
-    public  const val ALBUMS_ID = "[albumsID]"
+    private const val ALBUMS_ID = "[albumsID]"
     private const val ARTISTS_ID = "[artistsID]"
     private const val MOST_PLAYED_ID = "[mostPlayedID]"
-    public  const val PLAYLIST_ID = "[playlistID]"
+    private const val PLAYLIST_ID = "[playlistID]"
     private const val PODCAST_ID = "[podcastID]"
     private const val RADIO_ID = "[radioID]"
     private const val RECENTLY_ADDED_ID = "[recentlyAddedID]"
@@ -469,48 +469,25 @@ object MediaBrowserTree {
             ROOT_ID -> treeNodes[ROOT_ID]?.getChildren()!!
 
             HOME_ID -> treeNodes[HOME_ID]?.getChildren()!!
-            LAST_PLAYED_ID -> automotiveRepository.getAlbums(id, "recent", 15)
-            ALBUMS_ID -> automotiveRepository.getAlbums(id, "alphabeticalByName", 500)
-            ARTISTS_ID -> automotiveRepository.getAlbums(id, "alphabeticalByArtist", 500)
-            PLAYLIST_ID -> automotiveRepository.getPlaylists(id)
+            LAST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "recent", 15)
+            ALBUMS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByName", 500)
+            ARTISTS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByArtist", 500)
+            PLAYLIST_ID -> automotiveRepository.getPlaylists(PLAYLIST_ID)
             PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
             RADIO_ID -> automotiveRepository.internetRadioStations
-            FOLDER_ID -> automotiveRepository.getMusicFolders(id)
-            MOST_PLAYED_ID -> automotiveRepository.getAlbums(id, "frequent", 15)
-            RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
-            RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(id, "newest", 15)
-            MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
+            FOLDER_ID -> automotiveRepository.getMusicFolders(FOLDER_ID)
+            MOST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "frequent", 15)
+            //RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
+            RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "newest", 15)
+            //MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
             STARRED_TRACKS_ID -> automotiveRepository.starredSongs
-            STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(id)
-            STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(id)
+            STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(ALBUM_ID)
+            STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(ARTIST_ID)
             RANDOM_ID -> automotiveRepository.getRandomSongs(100)
             GENRES_ID -> automotiveRepository.getGenres(id)
 
             else -> {
-                if (id.startsWith(LAST_PLAYED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(LAST_PLAYED_ID))
-                }
-
-                if (id.startsWith(ALBUMS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(ALBUMS_ID))
-                }
-
-                if (id.startsWith(ARTISTS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(ARTISTS_ID))
-                }
-
-                if (id.startsWith(HOME_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(HOME_ID))
-                }
-
-                if (id.startsWith(MOST_PLAYED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(MOST_PLAYED_ID))
-                }
-
-                if (id.startsWith(RECENTLY_ADDED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(RECENTLY_ADDED_ID))
-                }
-
+				/*
                 if (id.startsWith(MADE_FOR_YOU_ID)) {
                     return automotiveRepository.getMadeForYou(id.removePrefix(MADE_FOR_YOU_ID),20)
                 }
@@ -530,6 +507,7 @@ object MediaBrowserTree {
                     return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), count, shuffle)
                 }
 
+				*/
                 if (id.startsWith(PLAYLIST_ID)) {
                     return automotiveRepository.getPlaylistSongs(id.removePrefix(PLAYLIST_ID))
                 }
