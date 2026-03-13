@@ -4,7 +4,7 @@
     <string name="aa_album_recently_added">Добавленные альбомы</string>
     <string name="aa_artists">Артисты</string>
     <string name="aa_home">Главная</string>
-    <string name="aa_made_for_you">Для вас</string>
+    <string name="aa_made_for_you">Персональная подборка</string>
     <string name="aa_more">Еще</string>
     <string name="aa_music_folder">Папка</string>
     <string name="aa_playlists">Плейлисты</string>
@@ -168,7 +168,7 @@
     <string name="home_title_last_week">Прошлая неделя</string>
     <string name="home_title_last_month">Прошлый месяц</string>
     <string name="home_title_last_year">Прошлый год</string>
-    <string name="home_title_made_for_you">Для вас</string>
+    <string name="home_title_made_for_you">Персональная подборка</string>
     <string name="home_title_most_played">Популярные</string>
     <string name="home_title_most_played_see_all_button">Все</string>
     <string name="home_title_new_releases">Новые релизы</string>
