@@ -410,6 +410,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
     <string name="settings_theme">Motyw</string>
+    <string name="settings_tile_size">Rozmiar kafelków</string>
     <string name="settings_title_data">Dane</string>
     <string name="settings_title_general">Ogólne</string>
     <string name="settings_title_playlist">Playlisty</string>
