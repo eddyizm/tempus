@@ -10,7 +10,7 @@
         android:scaleY="0.16"
         android:translateX="14.0"
         android:translateY="14.0">
-
+        
         <path
             android:pathData="M250,0c138.07,0 250,111.93 250,250S388.07,500 250,500 0,388.07 0,250 111.93,0 250,0ZM250,235c-8.28,0 -15,6.72 -15,15c0,8.28 6.72,15 15,15c8.28,0 15,-6.72 15,-15c0,-8.28 -6.72,-15 -15,-15Z">
             <aapt:attr name="android:fillColor">
@@ -20,8 +20,8 @@
                     android:endX="377.69"
                     android:endY="465.83"
                     android:type="linear">
-                    <item android:offset="0.0" android:color="#FFEC4A4A" />
-                    <item android:offset="1.0" android:color="#FFEC4A4A" />
+                    <item android:offset="0.0" android:color="#FF4AECEC" />
+                    <item android:offset="1.0" android:color="#FF4AECEC" />
                 </gradient>
             </aapt:attr>
         </path>
