@@ -64,6 +64,7 @@ import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -682,11 +683,12 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private void initDiscoverSongSlideView() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_DISCOVERY)) return;
 
-        bind.discoverSongViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+        bind.discoverSongRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.discoverSongRecyclerView.setHasFixedSize(true);
 
         discoverSongAdapter = new DiscoverSongAdapter(this);
-        bind.discoverSongViewPager.setAdapter(discoverSongAdapter);
-        bind.discoverSongViewPager.setOffscreenPageLimit(1);
+        bind.discoverSongRecyclerView.setAdapter(discoverSongAdapter);
+
         homeViewModel.getDiscoverSongSample(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), songs -> {
             MusicUtil.ratingFilter(songs);
 
@@ -699,8 +701,6 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                 discoverSongAdapter.setItems(songs);
             }
         });
-
-        setSlideViewOffset(bind.discoverSongViewPager, 20, 16);
     }
 
     private void initSimilarSongView() {

@@ -52,7 +52,7 @@
                 android:focusable="true"
                 android:text="Unknown"
                 app:chipStrokeWidth="0dp"
-                app:chipBackgroundColor="@color/material_dynamic_secondary40"
+                app:chipBackgroundColor="?attr/colorSecondaryContainer"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -1,6 +1,15 @@
 # Changelog
 
 ## What's Changed
+## [4.12.6](https://github.com/eddyizm/tempo/releases/tag/v4.12.6) (2026-03-06)
+* doc: update USAGE with android auto configuration by @MaFo-28 in https://github.com/eddyizm/tempus/pull/481
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/483
+* fix: remove material you dynamic theming by @tvillega in https://github.com/eddyizm/tempus/pull/484
+* fix: collapse sheet on navitation change by @tvillega in https://github.com/eddyizm/tempus/pull/482
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.12.4...v4.12.5
+
+## What's Changed
 ## [4.12.4](https://github.com/eddyizm/tempo/releases/tag/v4.12.4) (2026-03-01)
 * feat: advertise existing long press to refresh per section on library page by @tvillega in https://github.com/eddyizm/tempus/pull/467
 * fix: playlist filter returns properly filtered list and reset correctly by @eddyizm in https://github.com/eddyizm/tempus/pull/476
