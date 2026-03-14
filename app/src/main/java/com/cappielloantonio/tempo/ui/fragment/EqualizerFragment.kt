@@ -81,10 +81,13 @@ class EqualizerFragment : Fragment() {
             )
             receiverRegistered = true
         }
-        val showBottomBar = !Preferences.getHideBottomNavbarOnPortrait()
-        activity.setBottomNavigationBarVisibility(showBottomBar)
+        activity.setBottomNavigationBarVisibility(false)
+        activity.setBottomSheetVisibility(false)
+        activity.setNavigationDrawerLock(true)
+        activity.setSystemBarsVisibility(!activity.isLandscape)
     }
 
+    @OptIn(UnstableApi::class)
     override fun onStop() {
         super.onStop()
         requireActivity().unbindService(connection)
@@ -97,6 +100,8 @@ class EqualizerFragment : Fragment() {
             }
             receiverRegistered = false
         }
+
+        activity.setBottomSheetVisibility(true);
     }
 
     override fun onCreateView(
