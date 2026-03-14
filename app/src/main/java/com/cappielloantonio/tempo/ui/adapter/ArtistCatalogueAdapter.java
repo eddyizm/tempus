@@ -146,7 +146,7 @@ public class ArtistCatalogueAdapter extends RecyclerView.Adapter<ArtistCatalogue
     public void sort(String order) {
         switch (order) {
             case Constants.ARTIST_ORDER_BY_NAME:
-                artists.sort(Comparator.comparing(ArtistID3::getName));
+                artists.sort(Comparator.comparing(ArtistID3::getName,String.CASE_INSENSITIVE_ORDER));
                 break;
             case Constants.ARTIST_ORDER_BY_RANDOM:
                 Collections.shuffle(artists);

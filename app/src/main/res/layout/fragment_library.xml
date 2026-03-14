@@ -11,6 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_library_to_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
     <androidx.core.widget.NestedScrollView
         android:id="@+id/fragment_library_nested_scroll_view"
         android:layout_width="match_parent"
@@ -30,7 +36,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="8dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -77,21 +82,41 @@
                     android:paddingEnd="8dp"
                     android:paddingBottom="8dp">
 
-                    <TextView
+                    <!-- Refreshable area -->
+                    <LinearLayout
                         android:id="@+id/album_catalogue_sample_text_view_refreshable"
-                        style="@style/TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            style="@style/TitleLarge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="@string/library_title_album" />
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="2dp"
+                            android:alpha="0.4"
+                            android:src="@drawable/ic_refresh"/>
+
+                    </LinearLayout>
+
+                    <View
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:text="@string/library_title_album" />
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/album_catalogue_text_view_clickable"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
                         android:text="@string/library_title_album_see_all_button" />
@@ -130,22 +155,41 @@
                     android:paddingEnd="8dp"
                     android:paddingBottom="8dp">
 
-                    <TextView
+                    <!-- Refreshable area -->
+                    <LinearLayout
                         android:id="@+id/artist_catalogue_sample_text_view_refreshable"
-                        style="@style/TitleLarge"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:text="@string/library_title_artist" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
 
+                        <TextView
+                            style="@style/TitleLarge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="@string/library_title_artist" />
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="2dp"
+                            android:alpha="0.4"
+                            android:src="@drawable/ic_refresh"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/artist_catalogue_text_view_clickable"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
                         android:text="@string/library_title_artist_see_all_button" />
@@ -184,25 +228,45 @@
                     android:paddingEnd="8dp"
                     android:paddingBottom="8dp">
 
-                    <TextView
+                    <!-- Refreshable area -->
+                    <LinearLayout
                         android:id="@+id/genre_catalogue_sample_text_view_refreshable"
-                        style="@style/TitleLarge"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:text="@string/library_title_genre" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
 
+                        <TextView
+                            style="@style/TitleLarge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="@string/library_title_genre" />
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="2dp"
+                            android:alpha="0.4"
+                            android:src="@drawable/ic_refresh"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/genre_catalogue_text_view_clickable"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
                         android:text="@string/library_title_genre_see_all_button" />
+
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -236,21 +300,41 @@
                     android:paddingEnd="8dp"
                     android:paddingBottom="8dp">
 
-                    <TextView
+                    <!-- Refreshable area -->
+                    <LinearLayout
                         android:id="@+id/playlist_catalogue_sample_text_view_refreshable"
-                        style="@style/TitleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            style="@style/TitleLarge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="8dp"
+                            android:paddingEnd="8dp"
+                            android:text="@string/library_title_playlist" />
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="bottom"
+                            android:layout_marginBottom="2dp"
+                            android:alpha="0.4"
+                            android:src="@drawable/ic_refresh"/>
+
+                    </LinearLayout>
+
+                    <View
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:text="@string/library_title_playlist" />
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/playlist_catalogue_text_view_clickable"
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end|center_vertical"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
                         android:text="@string/library_title_playlist_see_all_button" />
@@ -270,4 +354,5 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

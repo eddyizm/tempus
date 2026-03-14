@@ -16,6 +16,7 @@ object Preferences {
     private const val TOKEN = "token"
     private const val SALT = "salt"
     private const val LOW_SECURITY = "low_security"
+    private const val CLIENT_CERT = "client_cert"
     private const val BATTERY_OPTIMIZATION = "battery_optimization"
     private const val SERVER_ID = "server_id"
     private const val OPEN_SUBSONIC = "open_subsonic"
@@ -24,6 +25,7 @@ object Preferences {
     private const val IN_USE_SERVER_ADDRESS = "in_use_server_address"
     private const val NEXT_SERVER_SWITCH = "next_server_switch"
     private const val PLAYBACK_SPEED = "playback_speed"
+    private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -90,8 +92,18 @@ object Preferences {
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
     
-
-    @JvmStatic
+    private const val TILE_SIZE = "tile_size"
+    private const val AA_ALBUM_VIEW = "androidauto_album_view"
+	private const val AA_HOME_VIEW = "androidauto_home_view"
+    private const val AA_PLAYLIST_VIEW = "androidauto_playlist_view"
+    private const val AA_PODCAST_VIEW = "androidauto_podcast_view"
+    private const val AA_RADIO_VIEW = "androidauto_radio_view"
+	private const val AA_FIRST_TAB = "androidauto_first_tab"
+	private const val AA_SECOND_TAB = "androidauto_second_tab"
+	private const val AA_THIRD_TAB = "androidauto_third_tab"
+	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
+    
+	@JvmStatic
     fun getServer(): String? {
         return App.getInstance().preferences.getString(SERVER, null)
     }
@@ -162,6 +174,16 @@ object Preferences {
     @JvmStatic
     fun setLowSecurity(isLowSecurity: Boolean) {
         App.getInstance().preferences.edit().putBoolean(LOW_SECURITY, isLowSecurity).apply()
+    }
+
+    @JvmStatic
+    fun getClientCert(): String? {
+        return App.getInstance().preferences.getString(CLIENT_CERT, null)
+    }
+
+    @JvmStatic
+    fun setClientCert(clientCert: String?) {
+        App.getInstance().preferences.edit().putString(CLIENT_CERT, clientCert).apply()
     }
 
     @JvmStatic
@@ -270,6 +292,16 @@ object Preferences {
     @JvmStatic
     fun setPlaybackSpeed(playbackSpeed: Float) {
         App.getInstance().preferences.edit().putFloat(PLAYBACK_SPEED, playbackSpeed).apply()
+    }
+
+    @JvmStatic
+    fun getBitrateVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(BITRATE_VISIBLE, true)
+    }
+
+    @JvmStatic
+    fun setBitrateVisible(bitrateVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(BITRATE_VISIBLE, bitrateVisible).apply()
     }
 
     @JvmStatic
@@ -736,4 +768,54 @@ object Preferences {
     fun setArtistDisplayBiography(displayBiographyEnabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(ARTIST_DISPLAY_BIOGRAPHY, displayBiographyEnabled).apply()
     }
+
+    @JvmStatic
+    fun getTileSize(): Int {
+        val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
+        return parsed?.takeIf { it in 2..6 } ?: 2
+    }
+    fun isAndroidAutoAlbumViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoHomeViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_HOME_VIEW, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoPlaylistViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_PLAYLIST_VIEW, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoPodcastViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_PODCAST_VIEW, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoRadioViewEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_RADIO_VIEW, false)
+    }
+
+    @JvmStatic
+    fun getAndroidAutoFirstTab(): Int {
+        return App.getInstance().preferences.getString(AA_FIRST_TAB, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getAndroidAutoSecondTab(): Int {
+        return App.getInstance().preferences.getString(AA_SECOND_TAB, "1")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getAndroidAutoThirdTab(): Int {
+        return App.getInstance().preferences.getString(AA_THIRD_TAB, "2")!!.toInt()
+    }
+	
+    @JvmStatic
+    fun getAndroidAutoFourthTab(): Int {
+        return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
+    }
+	
 }

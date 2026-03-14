@@ -1,0 +1,4 @@
+doc: update USAGE with android auto configuration
+chore(i18n): Update Polish translation 
+fix: remove material you dynamic theming 
+fix: collapse sheet on navitation change

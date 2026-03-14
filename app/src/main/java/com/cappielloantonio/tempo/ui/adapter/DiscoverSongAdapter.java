@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.adapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
@@ -14,6 +15,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +24,9 @@ public class DiscoverSongAdapter extends RecyclerView.Adapter<DiscoverSongAdapte
     private final ClickCallback click;
 
     private List<Child> songs;
+
+    private int widthPx = 800;
+    private int heightPx = 400;
 
     public DiscoverSongAdapter(ClickCallback click) {
         this.click = click;
@@ -32,11 +37,21 @@ public class DiscoverSongAdapter extends RecyclerView.Adapter<DiscoverSongAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemHomeDiscoverSongBinding view = ItemHomeDiscoverSongBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        TileSizeManager.getInstance().calculateDiscoverSize(parent.getContext());
+        widthPx  = TileSizeManager.getInstance().getDiscoverWidthPx(parent.getContext());;
+        heightPx = TileSizeManager.getInstance().getDiscoverHeightPx(parent.getContext());;
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        ViewGroup.LayoutParams lp = holder.item.discoverSongCoverImageView.getLayoutParams();
+        lp.width = widthPx;
+        lp.height = heightPx;
+        holder.item.discoverSongCoverImageView.setLayoutParams(lp);
+
         Child song = songs.get(position);
 
         holder.item.titleDiscoverSongLabel.setText(song.getTitle());

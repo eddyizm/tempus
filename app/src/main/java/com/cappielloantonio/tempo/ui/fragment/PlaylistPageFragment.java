@@ -216,8 +216,9 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                 });
 
                 bind.playlistPageShuffleButton.setOnClickListener(v -> {
-                    Collections.shuffle(songs);
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                    java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> shuffledSongs = new java.util.ArrayList<>(songs);
+                    java.util.Collections.shuffle(shuffledSongs);
+                    MediaManager.startQueue(mediaBrowserListenableFuture, shuffledSongs, 0);
                     activity.setBottomSheetInPeek(true);
                 });
             }
@@ -227,32 +228,33 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     private void initBackCover() {
         playlistPageViewModel.getPlaylistSongLiveList().observe(requireActivity(), songs -> {
             if (bind != null && songs != null && !songs.isEmpty()) {
-                Collections.shuffle(songs);
+                java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> randomSongs = new java.util.ArrayList<>(songs);
+                java.util.Collections.shuffle(randomSongs);
 
                 // Pic top-left
                 CustomGlideRequest.Builder
-                        .from(requireContext(), !songs.isEmpty() ? songs.get(0).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
+                        .from(requireContext(), !randomSongs.isEmpty() ? randomSongs.get(0).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
                         .build()
                         .transform(new GranularRoundedCorners(CustomGlideRequest.CORNER_RADIUS, 0, 0, 0))
                         .into(bind.playlistCoverImageViewTopLeft);
 
                 // Pic top-right
                 CustomGlideRequest.Builder
-                        .from(requireContext(), songs.size() > 1 ? songs.get(1).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
+                        .from(requireContext(), randomSongs.size() > 1 ? randomSongs.get(1).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
                         .build()
                         .transform(new GranularRoundedCorners(0, CustomGlideRequest.CORNER_RADIUS, 0, 0))
                         .into(bind.playlistCoverImageViewTopRight);
 
                 // Pic bottom-left
                 CustomGlideRequest.Builder
-                        .from(requireContext(), songs.size() > 2 ? songs.get(2).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
+                        .from(requireContext(), randomSongs.size() > 2 ? randomSongs.get(2).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
                         .build()
                         .transform(new GranularRoundedCorners(0, 0, 0, CustomGlideRequest.CORNER_RADIUS))
                         .into(bind.playlistCoverImageViewBottomLeft);
 
                 // Pic bottom-right
                 CustomGlideRequest.Builder
-                        .from(requireContext(), songs.size() > 3 ? songs.get(3).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
+                        .from(requireContext(), randomSongs.size() > 3 ? randomSongs.get(3).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
                         .build()
                         .transform(new GranularRoundedCorners(0, 0, CustomGlideRequest.CORNER_RADIUS, 0))
                         .into(bind.playlistCoverImageViewBottomRight);
@@ -271,6 +273,11 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
         playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
             songHorizontalAdapter.setItems(songs);
+            if (songs != null) {
+                bind.playlistSongCountLabel.setText(getString(R.string.playlist_song_count, songs.size()));
+                long totalDuration = songs.stream().mapToLong(s -> s.getDuration() != null ? s.getDuration() : 0).sum();
+                bind.playlistDurationLabel.setText(getString(R.string.playlist_duration, MusicUtil.getReadableDurationString(totalDuration, false)));
+            }
             reapplyPlayback();
         });
     }
@@ -291,6 +298,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
     @Override
     public void onMediaLongClick(Bundle bundle) {
+        bundle.putString(Constants.PLAYLIST_ID, playlistPageViewModel.getPlaylist().getId());
         Navigation.findNavController(requireView()).navigate(R.id.songBottomSheetDialog, bundle);
     }
 

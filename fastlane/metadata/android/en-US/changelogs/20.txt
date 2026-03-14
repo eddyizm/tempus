@@ -1,0 +1,10 @@
+fix: added dynamic application id from gradle variant 
+fix: Use Bluetooth tethering connection 
+chore(i18n): Update Spanish translation 
+fix: visual glitches on landscape navbar 
+fix: radio playback "source error" on android auto 
+fix: speed button overlaps with shuffle on landscape 
+fix: local url used in share link instead of server url 
+Feat: prefer downloaded files 
+fix: radio metadata displayed
+feat: improve playlist chooser dialog UI

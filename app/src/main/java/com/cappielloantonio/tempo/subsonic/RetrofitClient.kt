@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.subsonic
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.subsonic.utils.CacheUtil
 import com.cappielloantonio.tempo.subsonic.utils.EmptyDateTypeAdapter
+import com.cappielloantonio.tempo.util.ClientCertManager
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -13,7 +14,7 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 class RetrofitClient(subsonic: Subsonic) {
-    var retrofit: Retrofit
+    val retrofit: Retrofit
 
     init {
         val gson = GsonBuilder()
@@ -50,6 +51,7 @@ class RetrofitClient(subsonic: Subsonic) {
             .addInterceptor(cacheUtil.offlineInterceptor)
             // .addNetworkInterceptor(cacheUtil.onlineInterceptor)
             .cache(getCache())
+            .setupSsl()
             .build()
     }
 
@@ -62,5 +64,12 @@ class RetrofitClient(subsonic: Subsonic) {
     private fun getCache(): Cache {
         val cacheSize = 10 * 1024 * 1024
         return Cache(App.getContext().cacheDir, cacheSize.toLong())
+    }
+
+    private fun OkHttpClient.Builder.setupSsl(): OkHttpClient.Builder {
+        ClientCertManager.sslSocketFactory?.let { sslSocketFactory ->
+            sslSocketFactory(sslSocketFactory, ClientCertManager.trustManager)
+        }
+        return this
     }
 }

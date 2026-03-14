@@ -33,7 +33,6 @@ class EqualizerFragment : Fragment() {
     private lateinit var resetButton: Button
     private lateinit var safeSpace: Space
     private val bandSeekBars = mutableListOf<SeekBar>()
-
     private var receiverRegistered = false
 
     @OptIn(UnstableApi::class)

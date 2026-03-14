@@ -14,6 +14,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     private final boolean mix;
     private final boolean bestOf;
 
+    private int sizePx = 400;
     private List<ArtistID3> artists;
 
     public ArtistAdapter(ClickCallback click, Boolean mix, Boolean bestOf) {
@@ -37,11 +39,20 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemLibraryArtistBinding view = ItemLibraryArtistBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        TileSizeManager.getInstance().calculateTileSize(parent.getContext());
+        sizePx = TileSizeManager.getInstance().getTileSizePx(parent.getContext());
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        ViewGroup.LayoutParams lp = holder.item.artistCoverImageView.getLayoutParams();
+        lp.width = sizePx;
+        lp.height = sizePx;
+        holder.item.artistCoverImageView.setLayoutParams(lp);
+
         ArtistID3 artist = artists.get(position);
 
         holder.item.artistNameLabel.setText(artist.getName());

@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -24,8 +25,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
-import androidx.media3.common.Player;
 import androidx.media3.common.MimeTypes;
+import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
@@ -276,7 +277,11 @@ public class MainActivity extends BaseActivity {
             if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && (
                     destination.getId() == R.id.homeFragment ||
                             destination.getId() == R.id.libraryFragment ||
-                            destination.getId() == R.id.downloadFragment)
+                            destination.getId() == R.id.downloadFragment ||
+                            destination.getId() == R.id.albumCatalogueFragment ||
+                            destination.getId() == R.id.artistCatalogueFragment ||
+                            destination.getId() == R.id.genreCatalogueFragment ||
+                            destination.getId() == R.id.playlistCatalogueFragment)
             ) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
@@ -448,6 +453,7 @@ public class MainActivity extends BaseActivity {
         Preferences.setServer(null);
         Preferences.setLocalAddress(null);
         Preferences.setUser(null);
+        Preferences.setClientCert(null);
 
         // TODO Enter all settings to be reset
         Preferences.setOpenSubsonic(false);

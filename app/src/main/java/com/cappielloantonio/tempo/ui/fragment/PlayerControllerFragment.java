@@ -8,9 +8,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -33,6 +35,10 @@ import androidx.media3.session.SessionToken;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.transition.ChangeBounds;
+import androidx.transition.Slide;
+import androidx.transition.TransitionManager;
+import androidx.transition.TransitionSet;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
@@ -56,7 +62,6 @@ import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -314,7 +319,7 @@ public class PlayerControllerFragment extends Fragment {
                 if (!samplingRate.trim().isEmpty()) items.add(samplingRate);
                 String mediaQuality = TextUtils.join(" • ", items);
                 
-                playerMediaBitrate.setVisibility(View.VISIBLE);
+                playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.VISIBLE : View.GONE);
                 playerMediaBitrate.setText(isLocal ? mediaQuality : mediaQuality);
             }
         }
@@ -335,7 +340,25 @@ public class PlayerControllerFragment extends Fragment {
             TrackInfoDialog dialog = new TrackInfoDialog(mediaMetadata);
             dialog.show(activity.getSupportFragmentManager(), null);
             });
+
+        playerMediaExtension.setOnClickListener( v -> toggleBitrateVisibility() );
+        playerMediaBitrate.setOnClickListener(v -> toggleBitrateVisibility() );
     }
+
+    private void toggleBitrateVisibility() {
+        ViewGroup parent = (ViewGroup) playerMediaBitrate.getParent();
+
+        TransitionSet transition = new TransitionSet()
+                .addTransition(new Slide(Gravity.START))
+                .addTransition(new ChangeBounds())
+                .setDuration(500)
+                .setInterpolator(new AccelerateDecelerateInterpolator());
+        TransitionManager.beginDelayedTransition(parent, transition);
+
+        playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.GONE : View.VISIBLE);
+        Preferences.setBitrateVisible(!Preferences.getBitrateVisible());
+    }
+
     private void updateAssetLinkChips(MediaMetadata mediaMetadata) {
         if (assetLinkChipGroup == null) return;
         String mediaType = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type", Constants.MEDIA_TYPE_MUSIC) : Constants.MEDIA_TYPE_MUSIC;

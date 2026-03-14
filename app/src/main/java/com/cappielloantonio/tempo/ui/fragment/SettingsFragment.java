@@ -120,9 +120,42 @@ public class SettingsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        checkSystemEqualizer();
+        checkCacheStorage();
+        checkStorage();
+        checkDownloadDirectory();
+
+        setStreamingCacheSize();
+        setAppLanguage();
+        setVersion();
+        setNetorkPingTimeoutBase();
+
+        actionLogout();
+        actionScan();
+        actionSyncStarredAlbums();
+        actionSyncStarredTracks();
+        actionSyncStarredArtists();
+        actionChangeStreamingCacheStorage();
+        actionChangeDownloadStorage();
+        actionSetDownloadDirectory();
+        actionDeleteDownloadStorage();
+        actionKeepScreenOn();
+        actionAutoDownloadLyrics();
+        actionMiniPlayerHeart();
+
+        bindMediaService();
+        actionAppEqualizer();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         activity.setBottomSheetVisibility(true);
+        activity.toggleNavigationDrawerLockOnOrientationChange();
+        activity.setSystemBarsVisibility(!activity.isLandscape);
     }
 
     private void initAppBar() {

@@ -228,6 +228,8 @@
     <string name="playlist_chooser_dialog_title">Aggiungi a una playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Aggiunta di un brano alla playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Impossibile aggiungere un brano alla playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Canzone rimossa dalla playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Impossibile rimuovere la canzone dalla playlist</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Tutte le canzoni sono state saltate perché duplicate</string>
     <string name="playlist_chooser_dialog_visibility_public">Pubblico</string>
     <string name="playlist_chooser_dialog_visibility_private">Privato</string>
@@ -448,7 +450,8 @@
     <string name="song_bottom_sheet_instant_mix">Mix istantaneo</string>
     <string name="song_bottom_sheet_play_next">Riproduci dopo</string>
     <string name="song_bottom_sheet_rate">Valuta</string>
-    <string name="song_bottom_sheet_remove">Rimuovi</string>
+    <string name="song_bottom_sheet_remove">Rimuovi dal dispositivo</string>
+    <string name="song_bottom_sheet_remove_from_playlist">Rimuovi dalla playlist</string>
     <string name="song_bottom_sheet_share">Condividi</string>
     <string name="song_list_page_downloaded">Scaricato</string>
     <string name="song_list_page_most_played">Tracce più riprodotte</string>
