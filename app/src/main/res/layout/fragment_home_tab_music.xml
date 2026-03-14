@@ -330,13 +330,13 @@
             </LinearLayout>
 
             <!--  slideview  -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/discover_song_view_pager"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/discover_song_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="212dp"
+                android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:paddingTop="8dp"
-                android:paddingBottom="16dp" />
+                android:paddingBottom="8dp" />
         </LinearLayout>
 
         <!--  Similar tracks -->
