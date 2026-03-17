@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.repository;
 
 import android.content.ContentResolver;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
+import androidx.media3.session.MediaConstants;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.BuildConfig;
@@ -33,6 +35,7 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Directory;
 import com.cappielloantonio.tempo.subsonic.models.Index;
+import com.cappielloantonio.tempo.subsonic.models.IndexID3;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
@@ -59,6 +62,16 @@ import retrofit2.Response;
 public class AutomotiveRepository {
     private final SessionMediaItemDao sessionMediaItemDao = AppDatabase.getInstance().sessionMediaItemDao();
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
+
+    private Bundle createContentStyleExtras(boolean gridView) {
+        Bundle extras = new Bundle();
+        int contentStyle = gridView
+                ? MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
+                : MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM;
+        extras.putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE, contentStyle);
+        extras.putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_PLAYABLE, contentStyle);
+        return extras;
+    }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
@@ -119,6 +132,69 @@ public class AutomotiveRepository {
                     }
                 });
 
+        return listenableFuture;
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getArtists(String prefix, int size) {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+        if (size > 500) size = 500;
+        final int maxSize = size;
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getArtists()
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getSubsonicResponse().getArtists() != null
+                                && response.body().getSubsonicResponse().getArtists().getIndices() != null) {
+
+                            List<IndexID3> indices = response.body().getSubsonicResponse().getArtists().getIndices();
+                            List<MediaItem> mediaItems = new ArrayList<>();
+
+                            int count = 0;
+                            for (IndexID3 index : indices) {
+                                if (index.getArtists() != null && count < maxSize) {
+                                    for (ArtistID3 artist : index.getArtists()) {
+                                        if (count >= maxSize) break;
+
+                                        Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
+
+                                        Bundle extras = createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled());
+
+                                        MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                                                .setTitle(artist.getName())
+                                                .setIsBrowsable(true)
+                                                .setIsPlayable(false)
+                                                .setMediaType(MediaMetadata.MEDIA_TYPE_ARTIST)
+                                                .setArtworkUri(artworkUri)
+                                                .setExtras(extras)
+                                                .build();
+
+                                        MediaItem mediaItem = new MediaItem.Builder()
+                                                .setMediaId(prefix + artist.getId())
+                                                .setMediaMetadata(mediaMetadata)
+                                                .setUri("")
+                                                .build();
+
+                                        mediaItems.add(mediaItem);
+                                        count++;
+                                    }
+                                }
+                            }
+                            LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+
+                            listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        listenableFuture.setException(t);
+                    }
+                });
         return listenableFuture;
     }
 
@@ -810,12 +886,15 @@ public class AutomotiveRepository {
                                 for (ArtistID3 artist : response.body().getSubsonicResponse().getSearchResult3().getArtists()) {
                                     Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
 
+                                    Bundle extras = createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled());
+
                                     MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                             .setTitle(artist.getName())
                                             .setIsBrowsable(true)
                                             .setIsPlayable(false)
                                             .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
                                             .setArtworkUri(artworkUri)
+                                            .setExtras(extras)
                                             .build();
 
                                     MediaItem mediaItem = new MediaItem.Builder()

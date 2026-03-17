@@ -399,7 +399,7 @@
     <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
     <string name="settings_playlist_sort">Playlist sorting</string>
 	<string name="settings_androidauto">Android Auto</string>
-	<string name="settings_androidauto_album_view">Grid view for albums</string>
+	<string name="settings_androidauto_album_view">Grid view for albums and artists</string>
 	<string name="settings_androidauto_home_view">Grid view for home</string>
     <string name="settings_androidauto_playlist_view">Grid view for playlists</string>
     <string name="settings_androidauto_podcast_view">Grid view for podcast</string>

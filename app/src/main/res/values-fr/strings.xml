@@ -337,7 +337,7 @@
     <string name="settings_allow_playlist_duplicates">Autoriser l\'ajout de doublons à une playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">Si activé, les doublons ne seront pas détectés à l\'ajout d\'un titre à une playlist.</string>
 	<string name="settings_androidauto">Android Auto</string>
-	<string name="settings_androidauto_album_view">Vue en grille des albums</string>
+	<string name="settings_androidauto_album_view">Vue en grille des albums et des artistes</string>
 	<string name="settings_androidauto_home_view">Vue en grille du menu accueil</string>
     <string name="settings_androidauto_playlist_view">Vue en grille des playlists</string>
     <string name="settings_androidauto_podcast_view">Vue en grille des podcasts</string>

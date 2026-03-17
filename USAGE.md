@@ -194,7 +194,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Home : Displays all functions not used in other tabs
 - Recent : The 15 most recently listened-to albums
 - Albums : Albums sorted by name
-- Artists : Albums sorted by artist
+- Artists : Albums sorted by artist or Artists, selected by preference
 - Playlists
 - Podcast : The 100 podcasts recently added
 - Radio
@@ -223,11 +223,16 @@ In addition, you can choose to display the following functions as thumbnails or 
     <img src="mockup/usage/aa_list.jpg" width=317>
 </p>
 
+<p align="left">
+    <img src="mockup/usage/aa_artists_view1.jpg width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_artists_view2.jpg" width=317>
+</p>
+
 The A-Z button allows you to jump to items starting with the chosen letter.
 
 Search button returns albums or artists, even if they are not displayed by the selected function.
 
-Results of the A-Z jump or search will always be displayed as a list.
+Results of the A-Z jump will always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_AZ.jpg" width=317 style="margin-right:16px;">
