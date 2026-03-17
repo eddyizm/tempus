@@ -102,6 +102,7 @@ object Preferences {
 	private const val AA_SECOND_TAB = "androidauto_second_tab"
 	private const val AA_THIRD_TAB = "androidauto_third_tab"
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
+    private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
     
 	@JvmStatic
     fun getServer(): String? {
@@ -816,6 +817,16 @@ object Preferences {
     @JvmStatic
     fun getAndroidAutoFourthTab(): Int {
         return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
+    }
+	
+    @JvmStatic
+    fun isAndroidAutoShuffleGenreSongsEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_GENRE_SONGS, false)
+    }
+
+    @JvmStatic
+    fun setAndroidAutoShuffleGenreSongsEnabled(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
     }
 	
 }

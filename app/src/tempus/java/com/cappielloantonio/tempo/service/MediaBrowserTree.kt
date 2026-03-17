@@ -529,7 +529,10 @@ object MediaBrowserTree {
                 }
 
                 if (id.startsWith(GENRES_ID)) {
-                    return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), 100)
+                    val shuffle = Preferences.isAndroidAutoShuffleGenreSongsEnabled()
+                    // If the user doesn't want random songs, it's likely it's for perusing them, so provide as many as possible
+                    val count = if (shuffle) 100 else 500
+                    return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), count, shuffle)
                 }
 
                 if (id.startsWith(PLAYLIST_ID)) {

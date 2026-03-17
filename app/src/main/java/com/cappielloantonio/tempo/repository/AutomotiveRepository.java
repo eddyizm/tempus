@@ -1008,37 +1008,59 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getSongsByGenre(String genre, int count) {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getSongsByGenre(String genre, int count, boolean shuffle) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
-        App.getSubsonicClientInstance(false)
-                .getAlbumSongListClient()
-                .getSongsByGenre(genre, count, 0)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null && response.body().getSubsonicResponse().getSongsByGenre().getSongs() != null) {
-                            List<com.cappielloantonio.tempo.subsonic.models.Child> songs = response.body().getSubsonicResponse().getSongsByGenre().getSongs();
+        Call<ApiResponse> call;
+        if (shuffle) {
+            call = App.getSubsonicClientInstance(false)
+                    .getAlbumSongListClient()
+                    .getRandomSongs(count, null, null, genre);
+        } else {
+            call = App.getSubsonicClientInstance(false)
+                    .getAlbumSongListClient()
+                    .getSongsByGenre(genre, count, 0);
+        }
 
-                            setChildrenMetadata(songs);
-
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
-
-                            LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
-
-                            listenableFuture.set(libraryResult);
-                        } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
-                        }
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<com.cappielloantonio.tempo.subsonic.models.Child> songs;
+                    if (shuffle) {
+                        songs = response.body().getSubsonicResponse().getRandomSongs() != null 
+                                ? response.body().getSubsonicResponse().getRandomSongs().getSongs() 
+                                : null;
+                    } else {
+                        songs = response.body().getSubsonicResponse().getSongsByGenre() != null 
+                                ? response.body().getSubsonicResponse().getSongsByGenre().getSongs() 
+                                : null;
                     }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        listenableFuture.setException(t);
+                    if (songs != null) {
+                        setChildrenMetadata(songs);
+                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                        LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+                        listenableFuture.set(libraryResult);
+                    } else {
+                        listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
                     }
-                });
+                } else {
+                    listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                listenableFuture.setException(t);
+            }
+        });
 
         return listenableFuture;
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getSongsByGenre(String genre, int count) {
+        return getSongsByGenre(genre, count, false);
     }
 
     private static class GetMediaItemThreadSafe implements Runnable {
