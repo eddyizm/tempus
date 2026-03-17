@@ -224,7 +224,7 @@ In addition, you can choose to display the following functions as thumbnails or 
 </p>
 
 <p align="left">
-    <img src="mockup/usage/aa_artists_view1.jpg width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_artists_view1.jpg" width=317 style="margin-right:16px;">
     <img src="mockup/usage/aa_artists_view2.jpg" width=317>
 </p>
 
