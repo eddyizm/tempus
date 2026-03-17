@@ -36,6 +36,7 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.ArtistCatalogueAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 import com.cappielloantonio.tempo.viewmodel.ArtistCatalogueViewModel;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 
@@ -51,7 +52,9 @@ public class ArtistCatalogueFragment extends Fragment implements ClickCallback {
     private ArtistCatalogueViewModel artistCatalogueViewModel;
 
     private ArtistCatalogueAdapter artistAdapter;
+
     private int spanCount = 2;
+    private int tileSpacing = 20;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,9 +71,9 @@ public class ArtistCatalogueFragment extends Fragment implements ClickCallback {
         bind = FragmentArtistCatalogueBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = Preferences.getLandscapeItemsPerRow();
-        }
+        TileSizeManager.getInstance().calculateTileSize( requireContext() );
+        spanCount = TileSizeManager.getInstance().getTileSpanCount( requireContext() );
+        tileSpacing = TileSizeManager.getInstance().getTileSpacing( requireContext() );
 
         initAppBar();
         initArtistCatalogueView();
@@ -115,7 +118,7 @@ public class ArtistCatalogueFragment extends Fragment implements ClickCallback {
     @SuppressLint("ClickableViewAccessibility")
     private void initArtistCatalogueView() {
         bind.artistCatalogueRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
-        bind.artistCatalogueRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, 20, false));
+        bind.artistCatalogueRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
         bind.artistCatalogueRecyclerView.setHasFixedSize(true);
 
         artistAdapter = new ArtistCatalogueAdapter(this);
