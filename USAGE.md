@@ -233,7 +233,7 @@ The A-Z button allows you to jump to items starting with the chosen letter.
 
 Search button returns albums or artists, even if they are not displayed by the selected function.
 
-Results of the A-Z jump will always be displayed as a list.
+Results of the A-Z jump or search will always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_AZ.jpg" width=317 style="margin-right:16px;">
