@@ -35,6 +35,7 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumCatalogueAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 import com.cappielloantonio.tempo.viewmodel.AlbumCatalogueViewModel;
 
 import java.util.ArrayList;
@@ -48,9 +49,9 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
     private FragmentAlbumCatalogueBinding bind;
     private MainActivity activity;
     private AlbumCatalogueViewModel albumCatalogueViewModel;
-
-    private AlbumCatalogueAdapter albumAdapter;
     private int spanCount = 2;
+    private int tileSpacing = 20;
+    private AlbumCatalogueAdapter albumAdapter;
     private String currentSortOrder;
     private List<com.cappielloantonio.tempo.subsonic.models.AlbumID3> originalAlbums;
 
@@ -92,9 +93,9 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
         bind = FragmentAlbumCatalogueBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            spanCount = Preferences.getLandscapeItemsPerRow();
-        }
+        TileSizeManager.getInstance().calculateTileSize( requireContext() );
+        spanCount = TileSizeManager.getInstance().getTileSpanCount( requireContext() );
+        tileSpacing = TileSizeManager.getInstance().getTileSpacing( requireContext() );
 
         initAppBar();
         initAlbumCatalogueView();
@@ -140,7 +141,7 @@ public class AlbumCatalogueFragment extends Fragment implements ClickCallback {
     @SuppressLint("ClickableViewAccessibility")
     private void initAlbumCatalogueView() {
         bind.albumCatalogueRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
-        bind.albumCatalogueRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, 20, false));
+        bind.albumCatalogueRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
         bind.albumCatalogueRecyclerView.setHasFixedSize(true);
 
         albumAdapter = new AlbumCatalogueAdapter(this, true);

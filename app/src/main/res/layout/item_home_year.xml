@@ -4,13 +4,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingEnd="12dp"
-    android:paddingBottom="8dp">
+    android:paddingEnd="8dp"
+    android:paddingBottom="4dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
-        android:layout_width="172dp"
-        android:layout_height="72dp"
+        android:layout_width="120dp"
+        android:layout_height="54dp"
         android:layout_gravity="center"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="2dp"

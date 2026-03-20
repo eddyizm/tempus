@@ -92,6 +92,7 @@ object Preferences {
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
     
+    private const val TILE_SIZE = "tile_size"
     private const val AA_ALBUM_VIEW = "androidauto_album_view"
 	private const val AA_HOME_VIEW = "androidauto_home_view"
     private const val AA_PLAYLIST_VIEW = "androidauto_playlist_view"
@@ -769,6 +770,10 @@ object Preferences {
     }
 
     @JvmStatic
+    fun getTileSize(): Int {
+        val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
+        return parsed?.takeIf { it in 2..6 } ?: 2
+    }
     fun isAndroidAutoAlbumViewEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
     }
