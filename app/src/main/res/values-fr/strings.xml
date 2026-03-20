@@ -432,7 +432,8 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Si activé, les pistes favorites seront téléchargées pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Synchronisation des pistes favorites pour écoute hors-ligne</string>
     <string name="settings_theme">Thème</string>
-	<string name="settings_title_data">Données</string>
+	<string name="settings_tile_size">Taille des vignettes</string>
+    <string name="settings_title_data">Données</string>
     <string name="settings_title_general">Géneral</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Note</string>

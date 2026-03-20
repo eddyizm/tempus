@@ -1,8 +1,8 @@
 <resources>
     <string-array name="theme_list_titles">
-        <item>Clair</item>
-        <item>Sombre</item>
-        <item>Système</item>
+        <item>淺色</item>
+        <item>深色</item>
+        <item>跟隨系統</item>
     </string-array>
     <string-array name="theme_list_values">
         <item>light</item>
@@ -11,9 +11,9 @@
     </string-array>
 
     <string-array name="pref_cache_size_titles">
-        <item>Grand</item>
-        <item>Moyen</item>
-        <item>Petit</item>
+        <item>高</item>
+        <item>中</item>
+        <item>低</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
@@ -22,9 +22,9 @@
     </string-array>
 
     <string-array name="pref_image_size_titles">
-        <item>Haute</item>
-        <item>Moyenne</item>
-        <item>Basse</item>
+        <item>高</item>
+        <item>中</item>
+        <item>低</item>
     </string-array>
     <string-array name="pref_image_size_values">
         <item>-1</item>
@@ -33,7 +33,7 @@
     </string-array>
 
     <string-array name="streaming_cache_size_titles">
-        <item>Désactivé</item>
+        <item>禁用</item>
         <item>128 MiB</item>
         <item>256 MiB</item>
         <item>512 MiB</item>
@@ -48,7 +48,7 @@
     </string-array>
 
     <string-array name="max_bitrate_wifi_list_titles">
-        <item>Original</item>
+        <item>原始</item>
         <item>32 kbps</item>
         <item>48 kbps</item>
         <item>64 kbps</item>
@@ -77,7 +77,7 @@
     </string-array>
 
     <string-array name="max_bitrate_mobile_list_titles">
-        <item>Original</item>
+        <item>原始</item>
         <item>32 kbps</item>
         <item>48 kbps</item>
         <item>64 kbps</item>
@@ -106,7 +106,7 @@
     </string-array>
 
     <string-array name="max_bitrate_download_list_titles">
-        <item>Original</item>
+        <item>原始</item>
         <item>32 kbps</item>
         <item>48 kbps</item>
         <item>64 kbps</item>
@@ -135,7 +135,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>Lecture directe</item>
+        <item>播放原始</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -150,7 +150,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_mobile_list_titles">
-        <item>Lecture directe</item>
+        <item>播放原始</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -165,7 +165,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_download_list_titles">
-        <item>Téléchargement direct</item>
+        <item>下載原始</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -180,9 +180,9 @@
     </string-array>
 
     <string-array name="queue_syncing_countdown_titles">
-        <item>Dix secondes</item>
-        <item>Cinq secondes</item>
-        <item>Deux secondes</item>
+        <item>10秒</item>
+        <item>5秒</item>
+        <item>2秒</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
         <item>10</item>
@@ -191,9 +191,9 @@
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
-        <item>Grand</item>
-        <item>Moyen</item>
-        <item>Petit</item>
+        <item>高</item>
+        <item>中</item>
+        <item>低</item>
     </string-array>
     <string-array name="rounded_corner_size_values">
         <item>18</item>
@@ -202,10 +202,10 @@
     </string-array>
 
     <string-array name="replay_gain_titles">
-        <item>Désactivé</item>
-        <item>Piste</item>
-        <item>Album</item>
-        <item>Auto</item>
+        <item>禁用</item>
+        <item>曲目</item>
+        <item>專輯</item>
+        <item>自動</item>
     </string-array>
     <string-array name="replay_gain_values">
         <item>disabled</item>
@@ -215,10 +215,10 @@
     </string-array>
 
     <string-array name="transcoded_download_option_list_titles">
-        <item>Ne pas transcoder</item>
-        <item>Réglages du serveur</item>
-        <item>Format de transcodage (Wi-FI)</item>
-        <item>Format de transcodage (Mobile)</item>
+        <item>不轉碼</item>
+        <item>伺服器設定</item>
+        <item>Wi-Fi轉碼設定</item>
+        <item>行動資料轉碼設定</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
         <item>0</item>
@@ -228,10 +228,10 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>Minimum</item>
-        <item>Modérée</item>
-        <item>Agressive</item>
-        <item>Extrême</item>
+        <item>最小</item>
+        <item>適中</item>
+        <item>積極</item>
+        <item>極端</item>
     </string-array>
     <string-array name="buffering_strategy_values">
         <item>.1</item>
@@ -241,11 +241,11 @@
     </string-array>
 
     <string-array name="skip_min_star_rating_titles">
-        <item>0 étoile minimum</item>
-        <item>1 étoile minimum</item>
-        <item>2 étoiles minimum</item>
-        <item>3 étoiles minimum</item>
-        <item>4 étoiles minimum</item>
+        <item>不篩選評分</item>
+        <item>1 星及以上</item>
+        <item>2 星及以上</item>
+        <item>3 星及以上</item>
+        <item>4 星及以上</item>
     </string-array>
     <string-array name="skip_min_star_rating_values">
         <item>0</item>
@@ -254,60 +254,4 @@
         <item>3</item>
         <item>4</item>
     </string-array>
-			
-    <string-array name="tile_size_titles">
-        <item>Minuscule</item>
-        <item>Petite</item>
-        <item>Moyenne</item>
-        <item>Large</item>
-        <item>Défaut</item>
-    </string-array>
-    <string-array name="tile_size_divisor">
-        <item>6</item>
-        <item>5</item>
-        <item>4</item>
-        <item>3</item>
-        <item>2</item>
-    </string-array>
-	<!-- Add by MFO -->
-    <string-array name="aa_tab_titles">
-        <item>Ne pas afficher</item>
-        <item>Accueil</item>
-        <item>Récent</item>
-        <item>Albums</item>
-        <item>Artists</item>
-        <item>Playlists</item>
-        <item>Podcast</item>
-        <item>Radio</item>
-        <item>Dossiers</item>
-        <item>Albums plus joués</item>
-	<!--	<item>Titres joués</item> -->
-        <item>Albums ajouté</item>
-    <!--    <item>Pour vous</item> -->
-        <item>Titres favoris</item>
-        <item>Albums favoris</item>
-        <item>Artistes favoris</item>
-        <item>Aléatoire</item>
-    </string-array>
-    <string-array name="aa_tab_values">
-        <item>-1</item>
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-        <item>10</item>
-        <item>11</item>
-        <item>12</item>
-        <item>13</item>
-        <item>14</item>
-        <item>15</item>
-    </string-array>
-	<!-- end Add by MFO -->
-	
 </resources>
