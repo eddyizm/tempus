@@ -261,8 +261,10 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         bind.albumOtherInfoButton.setOnClickListener(v -> {
             if (bind.albumDetailView.getVisibility() == View.GONE) {
                 bind.albumDetailView.setVisibility(View.VISIBLE);
+                bind.albumNameLabel.setMaxLines(Integer.MAX_VALUE);
             } else if (bind.albumDetailView.getVisibility() == View.VISIBLE) {
                 bind.albumDetailView.setVisibility(View.GONE);
+                bind.albumNameLabel.setMaxLines(2);
             }
         });
 
