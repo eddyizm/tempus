@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.concurrent.futures.CallbackToFutureAdapter
+import androidx.media3.common.C
 import androidx.media3.common.HeartRating
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -364,42 +365,89 @@ open class MediaLibrarySessionCallback(
         return MediaBrowserTree.getChildren(parentId)
     }
 
+    @OptIn(UnstableApi::class)
+    override fun onSetMediaItems(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        mediaItems: MutableList<MediaItem>,
+        startIndex: Int,
+        startPositionMs: Long
+    ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+
+        val firstItem = mediaItems.firstOrNull()
+            ?: return Futures.immediateFuture(
+                MediaSession.MediaItemsWithStartPosition(
+                    emptyList(),
+                    C.INDEX_UNSET,
+                    C.TIME_UNSET
+                )
+            )
+
+        return Futures.transform(
+            resolveQueue(firstItem),
+            { resolved ->
+                if (resolved.isEmpty()) {
+                    MediaSession.MediaItemsWithStartPosition(
+                        resolved,
+                        C.INDEX_UNSET,
+                        C.TIME_UNSET
+                    )
+                } else {
+                    val idx = resolved.indexOfFirst { it.mediaId == firstItem.mediaId }
+                    val startIdx = if (idx >= 0) idx else 0
+                    MediaSession.MediaItemsWithStartPosition(
+                        resolved,
+                        startIdx,
+                        0L
+                    )
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
+    }
+
     override fun onAddMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
         mediaItems: List<MediaItem>
     ): ListenableFuture<List<MediaItem>> {
         val firstItem = mediaItems.firstOrNull() ?: return Futures.immediateFuture(mediaItems)
-        val isRadio = firstItem?.mediaId?.startsWith("ir-") == true || firstItem?.mediaMetadata?.extras?.getString("type", "") == Constants.MEDIA_TYPE_RADIO
+        val isRadio = firstItem.mediaId?.startsWith("ir-") == true ||
+                firstItem.mediaMetadata.extras?.getString("type", "") == Constants.MEDIA_TYPE_RADIO
 
-        if (isRadio) {
-            return Futures.transformAsync(
-                automotiveRepository.internetRadioStations,
-                { result ->
-                    val stations = result?.value
-                    val selected = stations?.find { item -> item.mediaId == firstItem?.mediaId }
-                    if (selected != null) {
-                        val updatedSelected = selected.buildUpon()
-                            .setMimeType(selected.localConfiguration?.mimeType)
-                            .build()
-
-                        Futures.immediateFuture(listOf(updatedSelected))
-                    } else {
-                        Futures.immediateFuture(emptyList())
-                    }
-                },
-                androidx.core.content.ContextCompat.getMainExecutor(context)
-            )
+        if (!isRadio) {
+            return Futures.immediateFuture(mediaItems)
         }
 
-        val parentId =
-            firstItem.requestMetadata.extras?.getString("parent_id")
-                ?: firstItem.mediaMetadata.extras?.getString("parent_id")
+        return Futures.transformAsync(
+            automotiveRepository.internetRadioStations,
+            { result ->
+                val stations = result?.value
+                val selected = stations?.find { item -> item.mediaId == firstItem?.mediaId }
+                if (selected != null) {
+                    val updatedSelected = selected.buildUpon()
+                        .setMimeType(selected.localConfiguration?.mimeType)
+                        .build()
 
-        val futureQueue: ListenableFuture<List<MediaItem>> = when {
+                    Futures.immediateFuture(listOf(updatedSelected))
+                } else {
+                    Futures.immediateFuture(emptyList())
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun resolveQueue(firstItem: MediaItem): ListenableFuture<List<MediaItem>> {
+        val extras = firstItem.requestMetadata.extras ?: firstItem.mediaMetadata.extras
+        val parentId = extras?.getString("parent_id")
+
+        return when {
             parentId?.startsWith(AutomotiveRepository.ALBUM) == true -> {
                 Futures.transform(
-                    automotiveRepository.getAlbumTracks(parentId.removePrefix(AutomotiveRepository.ALBUM)),
+                    automotiveRepository.getAlbumTracks(parentId.removePrefix(AutomotiveRepository.ALBUM)
+                    ),
                     { result -> result.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
@@ -407,7 +455,8 @@ open class MediaLibrarySessionCallback(
 
             parentId?.startsWith(AutomotiveRepository.PLAYLIST) == true -> {
                 Futures.transform(
-                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(AutomotiveRepository.PLAYLIST)),
+                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(AutomotiveRepository.PLAYLIST)
+                    ),
                     { result -> result.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
@@ -416,16 +465,15 @@ open class MediaLibrarySessionCallback(
             else -> {
                 val updatedMediaItems = ArrayList<MediaItem>()
 
-                mediaItems.forEach { item ->
-                    if (item.localConfiguration?.uri != null) {
-                        updatedMediaItems.add(item)
-                    } else {
-                        val sessionMediaItem = automotiveRepository.getSessionMediaItem(item.mediaId)
-
-                        if (sessionMediaItem != null) {
-                            val toAdd = automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
-                            updatedMediaItems.addAll(toAdd)
-                        }
+                if (firstItem.localConfiguration?.uri != null) {
+                    updatedMediaItems.add(firstItem)
+                } else {
+                    val sessionMediaItem =
+                        automotiveRepository.getSessionMediaItem(firstItem.mediaId)
+                    if (sessionMediaItem != null) {
+                        val toAdd =
+                            automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
+                        updatedMediaItems.addAll(toAdd)
                     }
                 }
 
@@ -436,38 +484,6 @@ open class MediaLibrarySessionCallback(
                 Futures.immediateFuture(updatedMediaItems)
             }
         }
-
-        return Futures.transform(
-            futureQueue,
-            { resolvedItems ->
-                if (resolvedItems.isEmpty()) return@transform resolvedItems
-
-                val requestedId = firstItem.mediaId
-                val startIndex = resolvedItems.indexOfFirst {
-                    it.mediaId == requestedId
-                }
-
-                if (startIndex < 0) return@transform resolvedItems
-
-                val firstResolved = resolvedItems[0]
-                val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {
-                    putInt("aa_start_index", startIndex)
-                }
-                val newFirstResolved = firstResolved.buildUpon()
-                    .setMediaMetadata(
-                        firstResolved.mediaMetadata.buildUpon()
-                            .setExtras(extras)
-                            .build()
-                    )
-                    .build()
-
-                val updatedResolved = resolvedItems.toMutableList()
-                updatedResolved[0] = newFirstResolved
-
-                updatedResolved
-            },
-            MoreExecutors.directExecutor()
-        )
     }
 
     override fun onSearch(
