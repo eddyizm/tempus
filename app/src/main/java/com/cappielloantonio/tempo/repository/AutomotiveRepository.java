@@ -356,12 +356,18 @@ public class AutomotiveRepository {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getStarred2() != null && response.body().getSubsonicResponse().getStarred2().getArtists() != null) {
                             List<ArtistID3> artists = response.body().getSubsonicResponse().getStarred2().getArtists();
 
-                            Collections.shuffle(artists);
+                            artists.sort((a1, a2) -> {
+                                String name1 = a1.getName() != null ? a1.getName() : "";
+                                String name2 = a2.getName() != null ? a2.getName() : "";
+                                return name1.compareToIgnoreCase(name2);
+                            });
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (ArtistID3 artist : artists) {
                                 Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
+
+                                Bundle extras = createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled());
 
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(artist.getName())
@@ -369,6 +375,7 @@ public class AutomotiveRepository {
                                         .setIsPlayable(false)
                                         .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
                                         .setArtworkUri(artworkUri)
+                                        .setExtras(extras)
                                         .build();
 
                                 MediaItem mediaItem = new MediaItem.Builder()
