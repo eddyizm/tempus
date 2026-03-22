@@ -603,4 +603,7 @@
 
     <string name="search_sort_title">Sort recent searches chronologically</string>
     <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
+    <string name="search_all_songs_loading">Getting all songs ...</string>
+    <string name="search_all_songs">all %1$s songs</string>
+    <string name="search_all_songs_play">Play %1$s</string>
 </resources>
