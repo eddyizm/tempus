@@ -4,23 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.graphics.Rect;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,7 +24,6 @@ import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.BuildConfig;
@@ -39,8 +31,12 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.broadcast.receiver.ConnectivityStatusBroadcastReceiver;
 import com.cappielloantonio.tempo.databinding.ActivityMainBinding;
 import com.cappielloantonio.tempo.github.utils.UpdateUtil;
+import com.cappielloantonio.tempo.navigation.NavigationController;
+import com.cappielloantonio.tempo.navigation.NavigationHelper;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.ui.activity.base.BaseActivity;
+import com.cappielloantonio.tempo.ui.controller.BottomSheetController;
+import com.cappielloantonio.tempo.ui.controller.BottomSheetHelper;
 import com.cappielloantonio.tempo.ui.dialog.ConnectionAlertDialog;
 import com.cappielloantonio.tempo.ui.dialog.GithubTempoUpdateDialog;
 import com.cappielloantonio.tempo.ui.dialog.ServerUnreachableDialog;
@@ -70,16 +66,22 @@ public class MainActivity extends BaseActivity {
     private NavHostFragment navHostFragment;
     private BottomNavigationView bottomNavigationView;
     private FrameLayout bottomNavigationViewFrame;
-    public NavController navController;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private BottomSheetBehavior bottomSheetBehavior;
+    public NavController navController;
+    private NavigationController navigationController;
+    private BottomSheetController bottomSheetController;
+    public BottomSheetBehavior bottomSheetBehavior;
     public boolean isLandscape = false;
     private AssetLinkNavigator assetLinkNavigator;
     private AssetLinkUtil.AssetLink pendingAssetLink;
 
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
     private Intent pendingDownloadPlaybackIntent;
+
+    public ActivityMainBinding getBinding() {
+        return bind;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +149,6 @@ public class MainActivity extends BaseActivity {
     }
 
     public void init() {
-        fragmentManager = getSupportFragmentManager();
 
         initBottomSheet();
         initNavigation();
@@ -162,49 +163,74 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    // BOTTOM SHEET/NAVIGATION
-    private void initBottomSheet() {
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.player_bottom_sheet));
-        bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback);
-        fragmentManager.beginTransaction().replace(R.id.player_bottom_sheet, new PlayerBottomSheetFragment(), "PlayerBottomSheet").commit();
+    private void initNavigation() {
+        // We link the nav_graph.xml with our navigationController
+        NavHostFragment navHostFragment = (NavHostFragment) this
+                .getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        navController = Objects.requireNonNull(navHostFragment).getNavController();
+        /*
+        navController is currently global since some legacy code still invokes it directly
+        the MainActivity methods that use it must be converted to NavigationHelper methods
+        */
 
-        checkBottomSheetAfterStateChanged();
+        // Helper
+        NavigationHelper navigationHelper =
+                new NavigationHelper(
+                        findViewById(R.id.bottom_navigation),
+                        findViewById(R.id.bottom_navigation_frame),
+                        findViewById(R.id.drawer_layout),
+                        findViewById(R.id.nav_view),
+                        navHostFragment
+                );
+
+        // Controller
+        navigationController = new NavigationController(navigationHelper);
+        navigationController.syncWithBottomSheetBehavior(bottomSheetBehavior, navController);
+    }
+
+    private void initBottomSheet() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        View bottomSheetView = findViewById(R.id.player_bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView);
+        /*
+        bottomSheetBehavior is currently global since some legacy code still invokes it directly
+        the MainActivity methods that use it must be converted to BottomSheetHelper methods
+        */
+
+        // Helper
+        BottomSheetHelper bottomSheetHelper =
+                new BottomSheetHelper(
+                        bottomSheetBehavior,
+                        bottomSheetView,
+                        fragmentManager
+                );
+
+        // Controller
+        bottomSheetController = new BottomSheetController(bottomSheetHelper);
+        bottomSheetController.addCallback(bottomSheetCallback);
+        bottomSheetController.replaceFragment(R.id.player_bottom_sheet);
+        bottomSheetController.checkAfterStateChanged(mainViewModel);
     }
 
     public void setBottomSheetInPeek(Boolean isVisible) {
-        if (isVisible) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-        }
+        bottomSheetController.setStateInPeek(isVisible);
     }
 
     public void setBottomSheetVisibility(boolean visibility) {
-        if (visibility) {
-            findViewById(R.id.player_bottom_sheet).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.player_bottom_sheet).setVisibility(View.GONE);
-        }
-    }
-
-    private void checkBottomSheetAfterStateChanged() {
-        final Handler handler = new Handler();
-        final Runnable runnable = () -> setBottomSheetInPeek(mainViewModel.isQueueLoaded());
-        handler.postDelayed(runnable, 100);
+        bottomSheetController.setVisibility(visibility);
     }
 
     public void collapseBottomSheetDelayed() {
-        final Handler handler = new Handler();
-        final Runnable runnable = () -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        handler.postDelayed(runnable, 100);
+        bottomSheetController.collapseDelayed();
     }
 
     public void expandBottomSheet() {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        bottomSheetController.expand();
     }
 
     public void setBottomSheetDraggableState(Boolean isDraggable) {
-        bottomSheetBehavior.setDraggable(isDraggable);
+        bottomSheetController.setDraggable(isDraggable);
     }
 
     private final BottomSheetBehavior.BottomSheetCallback bottomSheetCallback =
@@ -217,7 +243,7 @@ public class MainActivity extends BaseActivity {
 
                     switch (state) {
                         case BottomSheetBehavior.STATE_HIDDEN:
-                            resetMusicSession();
+                            resetMusicSession(); // I can't put the callback inside BottomSheetHelper because of this line
                             break;
                         case BottomSheetBehavior.STATE_COLLAPSED:
                             if (playerBottomSheetFragment != null)
@@ -241,12 +267,7 @@ public class MainActivity extends BaseActivity {
             };
 
     private void animateBottomSheet(float slideOffset) {
-        PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
-        if (playerBottomSheetFragment != null) {
-            float condensedSlideOffset = Math.max(0.0f, Math.min(0.2f, slideOffset - 0.2f)) / 0.2f;
-            playerBottomSheetFragment.getPlayerHeader().setAlpha(1 - condensedSlideOffset);
-            playerBottomSheetFragment.getPlayerHeader().setVisibility(condensedSlideOffset > 0.99 ? View.GONE : View.VISIBLE);
-        }
+        bottomSheetController.animate(slideOffset);
     }
 
     private void animateBottomNavigation(float slideOffset, int navigationHeight) {
@@ -261,117 +282,56 @@ public class MainActivity extends BaseActivity {
         bind.bottomNavigation.setTranslationY(slideY);
     }
 
-    private void initNavigation() {
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationViewFrame = findViewById(R.id.bottom_navigation_frame);
-        navHostFragment = (NavHostFragment) fragmentManager.findFragmentById(R.id.nav_host_fragment);
-        navController = Objects.requireNonNull(navHostFragment).getNavController();
-        // This is the lateral slide-in drawer
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-
-        /*
-         * In questo modo intercetto il cambio schermata tramite navbar e se il bottom sheet è aperto,
-         * lo chiudo
-         */
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED && (
-                    destination.getId() == R.id.homeFragment ||
-                            destination.getId() == R.id.libraryFragment ||
-                            destination.getId() == R.id.downloadFragment ||
-                            destination.getId() == R.id.albumCatalogueFragment ||
-                            destination.getId() == R.id.artistCatalogueFragment ||
-                            destination.getId() == R.id.genreCatalogueFragment ||
-                            destination.getId() == R.id.playlistCatalogueFragment)
-            ) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
-
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        NavigationUI.setupWithNavController(navigationView, navController);
-    }
-
     public void setBottomNavigationBarVisibility(boolean visibility) {
-        if (visibility) {
-            bottomNavigationView.setVisibility(View.VISIBLE);
-            bottomNavigationViewFrame.setVisibility(View.VISIBLE);
-        } else {
-            bottomNavigationView.setVisibility(View.GONE);
-            bottomNavigationViewFrame.setVisibility(View.GONE);
-        }
+        navigationController.setNavbarVisibility(visibility);
     }
 
     public void toggleBottomNavigationBarVisibilityOnOrientationChange() {
+        float displayDensity = getResources().getDisplayMetrics().density;
         // Ignore orientation change, bottom navbar always hidden
         if (Preferences.getHideBottomNavbarOnPortrait()) {
-            setBottomNavigationBarVisibility(false);
-            setPortraitPlayerBottomSheetPeekHeight(56);
-            setSystemBarsVisibility(!isLandscape);
+            navigationController.setNavbarVisibility(false);
+            bottomSheetController.setPeekHeight(56, displayDensity);
+            navigationController.setSystemBarsVisibility(this, !isLandscape);
             return;
         }
 
         if (!isLandscape) {
             // Show app navbar + show system bars
-            setPortraitPlayerBottomSheetPeekHeight(136);
-            setBottomNavigationBarVisibility(true);
-            setSystemBarsVisibility(true);
+            bottomSheetController.setPeekHeight(136, displayDensity);
+            navigationController.setNavbarVisibility(true);
+            navigationController.setSystemBarsVisibility(this, true);
         } else {
             // Hide app navbar + hide system bars
-            setPortraitPlayerBottomSheetPeekHeight(56);
-            setBottomNavigationBarVisibility(false);
-            setSystemBarsVisibility(false);
+            bottomSheetController.setPeekHeight(56, displayDensity);
+            navigationController.setNavbarVisibility(false);
+            navigationController.setSystemBarsVisibility(this, false);
         }
     }
 
     public void setNavigationDrawerLock(boolean locked) {
-        int mode = locked
-                ? DrawerLayout.LOCK_MODE_LOCKED_CLOSED
-                : DrawerLayout.LOCK_MODE_UNLOCKED;
-        drawerLayout.setDrawerLockMode(mode);
+        navigationController.setDrawerLock(locked);
+    }
+
+    public boolean isNavigationDrawerLocked() {
+        return navigationController.isNavigationDrawerLocked();
     }
 
     public void toggleNavigationDrawerLockOnOrientationChange() {
-        // Ignore orientation check, drawer always unlocked
-        if (Preferences.getEnableDrawerOnPortrait()) {
-            setNavigationDrawerLock(false);
-            return;
-        }
-        if (!isLandscape) {
-            setNavigationDrawerLock(true);
-        } else {
-            setNavigationDrawerLock(false);
-        }
+        navigationController.toggleDrawerLockOnOrientation(this);
     }
 
     public void setSystemBarsVisibility(boolean visibility) {
-        WindowInsetsControllerCompat insetsController;
-        View decorView = getWindow().getDecorView();
-        insetsController = new WindowInsetsControllerCompat(getWindow(), decorView);
-
-        if (visibility) {
-            WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
-            insetsController.show(WindowInsetsCompat.Type.navigationBars());
-            insetsController.show(WindowInsetsCompat.Type.statusBars());
-            insetsController.setSystemBarsBehavior(
-                    WindowInsetsControllerCompat.BEHAVIOR_DEFAULT);
-        } else {
-            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
-            insetsController.hide(WindowInsetsCompat.Type.navigationBars());
-            insetsController.hide(WindowInsetsCompat.Type.statusBars());
-            insetsController.setSystemBarsBehavior(
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-        }
+        navigationController.setSystemBarsVisibility(this, visibility);
     }
 
-    private void setPortraitPlayerBottomSheetPeekHeight(int peekHeight) {
-        FrameLayout bottomSheet = findViewById(R.id.player_bottom_sheet);
-        BottomSheetBehavior<FrameLayout> behavior =
-                BottomSheetBehavior.from(bottomSheet);
-
-        int newPeekPx = (int) (peekHeight * getResources().getDisplayMetrics().density);
-        behavior.setPeekHeight(newPeekPx);
-    }
+    /*
+    There are only 4 init functions that must exist up to here
+    1. init()
+    2. initNavigation()
+    3. initBottomSheet()
+    4. bottomSheetCallback = new BottomSheetBehavior.BottomSheetCallback() { ... }
+     */
 
     private void initService() {
         MediaManager.check(getMediaBrowserListenableFuture());
@@ -407,7 +367,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void goToHome() {
-        bottomNavigationView.setVisibility(View.VISIBLE);
+        setBottomNavigationBarVisibility(true);
 
         if (Objects.requireNonNull(navController.getCurrentDestination()).getId() == R.id.landingFragment) {
             navController.navigate(R.id.action_landingFragment_to_homeFragment);

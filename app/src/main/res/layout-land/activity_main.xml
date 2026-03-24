@@ -47,6 +47,19 @@
             app:behavior_hideable="true"
             app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
             app:layout_behavior="@string/bottom_sheet_behavior" />
+
+        <TextView
+            android:id="@+id/offline_mode_text_view"
+            style="@style/NoConnectionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="top"
+            android:padding="2dp"
+            android:text="@string/activity_info_offline_mode"
+            android:textSize="11sp"
+            android:visibility="gone" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -57,13 +70,4 @@
         app:menu="@menu/nav_drawer"
         app:headerLayout="@layout/nav_drawer_header" />
 
-    <TextView
-        android:id="@+id/offline_mode_text_view"
-        style="@style/NoConnectionTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/activity_info_offline_mode"
-        android:textSize="6sp"
-        android:visibility="gone" />
 </androidx.drawerlayout.widget.DrawerLayout>

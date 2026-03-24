@@ -1,4 +1,21 @@
 <resources>
+    <string name="aa_albums">Albumy</string>
+    <string name="aa_album_most_played">Najczęściej odtwarzane albumy</string>
+	<string name="aa_album_recently_added">Dodane albumy</string>
+    <string name="aa_artists">Wykonawcy</string>
+    <string name="aa_home">Strona główna</string>
+	<string name="aa_made_for_you">Dla ciebie</string>
+    <string name="aa_more">Więcej</string>
+    <string name="aa_music_folder">Foldery</string>
+    <string name="aa_playlists">Playlisty</string>
+	<string name="aa_podcast">Podcasty</string>
+	<string name="aa_radio">Radio</string>
+    <string name="aa_random">Losowe</string>
+    <string name="aa_recent_albums">Ostatnie</string>
+    <string name="aa_song_recently_played">Odtwarzane piosenki</string>
+    <string name="aa_starred_albums">★ Albumy</string>
+    <string name="aa_starred_artists">★ Wykonawcy</string>
+    <string name="aa_starred_tracks">★ Utwory</string>
     <string name="activity_battery_optimizations_conclusion">Jeżeli masz problemy odwiedź stronę https://dontkillmyapp.com. Podaje ona dokładne instrukcje na temat tego jak wyłączyć funkcje oszczędzania energii które mogą wpływać na wydajność aplikacji.</string>
     <string name="activity_battery_optimizations_summary">Wyłącz optymalizacje baterii aby odtwarzać media przy wyłączonym ekranie.</string>
     <string name="activity_battery_optimizations_title">Optymalizcje Baterii</string>
@@ -362,6 +379,16 @@
     <string name="settings_podcast">Pokazuj podcasty</string>
     <string name="settings_podcast_summary">Jeżeli włączone, widoczna będzie sekcja z podcastami. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_playlist_sort">Sortowanie playlist</string>
+    <string name="settings_androidauto">Android Auto</string>
+	<string name="settings_androidauto_album_view">Układ siatki dla albumów</string>
+	<string name="settings_androidauto_home_view">Układ siatki dla strony głównej</string>
+    <string name="settings_androidauto_playlist_view">Układ siatki dla playlist</string>
+    <string name="settings_androidauto_podcast_view">Układ siatki dla podcastów</string>
+    <string name="settings_androidauto_radio_view">Układ siatki dla radia</string>
+	<string name="settings_androidauto_first_tab">Pierwsza zakładka</string>
+	<string name="settings_androidauto_second_tab">Druga zakładka</string>
+	<string name="settings_androidauto_third_tab">Trzecia zakładka</string>
+	<string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
@@ -410,6 +437,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
     <string name="settings_theme">Motyw</string>
+    <string name="settings_tile_size">Rozmiar kafelków</string>
     <string name="settings_title_data">Dane</string>
     <string name="settings_title_general">Ogólne</string>
     <string name="settings_title_playlist">Playlisty</string>
