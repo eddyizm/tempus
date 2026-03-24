@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Tempus" title="Tempus" src="mockup/svg/tempus_horizontal_logo.png" width="250">
+  <img alt="Tempus" title="Tempus" src="mockup/svg/tempus-horizontal-banner.png" width="250">
 </p>
 
 ---
@@ -136,4 +136,4 @@ Tempus is released under the [GNU General Public License v3.0](LICENSE). Feel fr
 ## Credits
 Thanks to the original repo/creator [CappielloAntonio](https://github.com/CappielloAntonio) (forked from v3.9.0)
 
-[Opensvg.org](https://opensvg.org) for the new turntable logo. 
+[SeattleGuy](https://github.com/SeattleGuy) for the new logo design. 
