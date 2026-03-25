@@ -297,6 +297,7 @@
         <item>Избранные альбомы</item>
         <item>Избранные артисты</item>
         <item>Случайное</item>
+        <item>Жанры</item>
     </string-array>
     <string-array name="aa_tab_values">
         <item>-1</item>
@@ -316,6 +317,7 @@
         <item>13</item>
         <item>14</item>
         <item>15</item>
+        <item>16</item>
     </string-array>
 	<!-- end Add by MFO -->
 

@@ -35,6 +35,7 @@ import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.cappielloantonio.tempo.subsonic.models.Genre;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
@@ -950,6 +951,116 @@ public class AutomotiveRepository {
         DeleteAllThreadSafe delete = new DeleteAllThreadSafe(sessionMediaItemDao);
         Thread thread = new Thread(delete);
         thread.start();
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getGenres(String prefix) {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getGenres()
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getGenres() != null && response.body().getSubsonicResponse().getGenres().getGenres() != null) {
+                            List<Genre> genres = response.body().getSubsonicResponse().getGenres().getGenres();
+
+                            // Sort genres alphabetically by name
+                            genres.sort((g1, g2) -> {
+                                String name1 = g1.getGenre() != null ? g1.getGenre() : "";
+                                String name2 = g2.getGenre() != null ? g2.getGenre() : "";
+                                return name1.compareToIgnoreCase(name2);
+                            });
+
+                            List<MediaItem> mediaItems = new ArrayList<>();
+
+                            for (Genre genre : genres) {
+                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                                        .setTitle(genre.getGenre())
+                                        .setIsBrowsable(true)
+                                        .setIsPlayable(false)
+                                        .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
+                                        .build();
+
+                                MediaItem mediaItem = new MediaItem.Builder()
+                                        .setMediaId(prefix + genre.getGenre())
+                                        .setMediaMetadata(mediaMetadata)
+                                        .setUri("")
+                                        .build();
+
+                                mediaItems.add(mediaItem);
+                            }
+
+                            LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+
+                            listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        listenableFuture.setException(t);
+                    }
+                });
+
+        return listenableFuture;
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getSongsByGenre(String genre, int count, boolean shuffle) {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+
+        Call<ApiResponse> call;
+        if (shuffle) {
+            call = App.getSubsonicClientInstance(false)
+                    .getAlbumSongListClient()
+                    .getRandomSongs(count, null, null, genre);
+        } else {
+            call = App.getSubsonicClientInstance(false)
+                    .getAlbumSongListClient()
+                    .getSongsByGenre(genre, count, 0);
+        }
+
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<com.cappielloantonio.tempo.subsonic.models.Child> songs;
+                    if (shuffle) {
+                        songs = response.body().getSubsonicResponse().getRandomSongs() != null 
+                                ? response.body().getSubsonicResponse().getRandomSongs().getSongs() 
+                                : null;
+                    } else {
+                        songs = response.body().getSubsonicResponse().getSongsByGenre() != null 
+                                ? response.body().getSubsonicResponse().getSongsByGenre().getSongs() 
+                                : null;
+                    }
+
+                    if (songs != null) {
+                        setChildrenMetadata(songs);
+                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                        LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+                        listenableFuture.set(libraryResult);
+                    } else {
+                        listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                    }
+                } else {
+                    listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                listenableFuture.setException(t);
+            }
+        });
+
+        return listenableFuture;
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getSongsByGenre(String genre, int count) {
+        return getSongsByGenre(genre, count, false);
     }
 
     private static class GetMediaItemThreadSafe implements Runnable {

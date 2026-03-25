@@ -203,6 +203,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Star albums
 - Star artists
 - Random : 100 random songs
+- Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
 
 If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
 
