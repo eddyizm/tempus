@@ -1123,12 +1123,12 @@ public class AutomotiveRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     List<com.cappielloantonio.tempo.subsonic.models.Child> songs;
                     if (shuffle) {
-                        songs = response.body().getSubsonicResponse().getRandomSongs() != null 
-                                ? response.body().getSubsonicResponse().getRandomSongs().getSongs() 
+                        songs = response.body().getSubsonicResponse().getRandomSongs() != null
+                                ? response.body().getSubsonicResponse().getRandomSongs().getSongs()
                                 : null;
                     } else {
-                        songs = response.body().getSubsonicResponse().getSongsByGenre() != null 
-                                ? response.body().getSubsonicResponse().getSongsByGenre().getSongs() 
+                        songs = response.body().getSubsonicResponse().getSongsByGenre() != null
+                                ? response.body().getSubsonicResponse().getSongsByGenre().getSongs()
                                 : null;
                     }
 
