@@ -147,6 +147,8 @@
     <string name="home_sync_starred_artists_subtitle">Masz wykonawców oznaczonych gwiazdką, bez pobranej muzyki</string>
     <plurals name="home_sync_starred_songs_count">
         <item quantity="one">%d piosenka wymaga synchronizacji</item>
+		<item quantity="few">%d piosenki wymagają synchronizacji</item>
+        <item quantity="many">%d piosenek wymaga synchronizacji</item>
         <item quantity="other">%d piosenek wymaga synchronizacji</item>
     </plurals>
     <string name="home_title_best_of">Najlepsze</string>
@@ -565,6 +567,8 @@
     <string name="widget_content_desc_repeat">Zmień tryb powtarzania</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d album do zsynchronizowania </item>
+		<item quantity="few">%d albumy do zsynchronizowania</item>
+        <item quantity="many">%d albumów do zsynchronizowania</item>
         <item quantity="other">%d albumów do zsynchrpnizowania</item>
     </plurals>
     <plurals name="home_sync_starred_artists_count">
