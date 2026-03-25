@@ -50,6 +50,7 @@ object MediaBrowserTree {
     private const val STARRED_ARTISTS_ID = "[starredArtistsID]"
     private const val RANDOM_ID = "[randomID]"
     private const val FOLDER_ID = "[folderID]"
+    private const val GENRES_ID = "[genresID]"
 
 	// System functions
     private const val INDEX_ID = "[indexID]"
@@ -178,7 +179,8 @@ object MediaBrowserTree {
             STARRED_TRACKS_ID,
             STARRED_ALBUMS_ID,
             STARRED_ARTISTS_ID,
-            RANDOM_ID
+            RANDOM_ID,
+            GENRES_ID
         )
 
         // Root level
@@ -419,6 +421,19 @@ object MediaBrowserTree {
                 )
             )
 
+        treeNodes[GENRES_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = albumView,
+                    title = appContext.getString(R.string.aa_genres),
+                    mediaId = GENRES_ID,
+                    isPlayable = false,
+                    isBrowsable = true,
+                    imageUri = iconUri(R.drawable.ic_aa_genres),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+                )
+            )
+
         val root = treeNodes[ROOT_ID]!!
         val selectedIds = mutableSetOf<String>()
 
@@ -474,6 +489,7 @@ object MediaBrowserTree {
             STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(id)
             STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(id)
             RANDOM_ID -> automotiveRepository.getRandomSongs(100)
+            GENRES_ID -> automotiveRepository.getGenres(id)
 
             else -> {
                 if (id.startsWith(LAST_PLAYED_ID)) {
@@ -510,6 +526,13 @@ object MediaBrowserTree {
 
                 if (id.startsWith(STARRED_ARTISTS_ID)) {
                     return automotiveRepository.getArtistAlbum(STARRED_ALBUMS_ID,id.removePrefix(STARRED_ARTISTS_ID))
+                }
+
+                if (id.startsWith(GENRES_ID)) {
+                    val shuffle = Preferences.isAndroidAutoShuffleGenreSongsEnabled()
+                    // If the user doesn't want random songs, it's likely it's for perusing them, so provide as many as possible
+                    val count = if (shuffle) 100 else 500
+                    return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), count, shuffle)
                 }
 
                 if (id.startsWith(PLAYLIST_ID)) {
