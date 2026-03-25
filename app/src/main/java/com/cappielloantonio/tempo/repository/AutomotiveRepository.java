@@ -790,7 +790,7 @@ public class AutomotiveRepository {
 
         App.getSubsonicClientInstance(false)
                 .getSearchingClient()
-                .search3(query, 20, 20, 20)
+                .search3(query, 20, 0, 20, 0, 20, 0)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {

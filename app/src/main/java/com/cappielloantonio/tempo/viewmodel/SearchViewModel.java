@@ -5,11 +5,13 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.model.RecentSearch;
 import com.cappielloantonio.tempo.repository.SearchingRepository;
 import com.cappielloantonio.tempo.subsonic.models.SearchResult2;
 import com.cappielloantonio.tempo.subsonic.models.SearchResult3;
+import com.cappielloantonio.tempo.ui.fragment.SearchFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +45,9 @@ public class SearchViewModel extends AndroidViewModel {
         return searchingRepository.search2(title);
     }
 
-    public LiveData<SearchResult3> search3(String title) {
-        return searchingRepository.search3(title);
+    @UnstableApi
+    public LiveData<SearchResult3> search3(SearchFragment sf, String title) {
+        return searchingRepository.search3(sf, title);
     }
 
     public void insertNewSearch(String search) {
