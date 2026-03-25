@@ -11,6 +11,7 @@
 	<string name="aa_podcast">Podcasty</string>
 	<string name="aa_radio">Radio</string>
     <string name="aa_random">Losowe</string>
+	<string name="aa_genres">Gatunki</string>
     <string name="aa_recent_albums">Ostatnie</string>
     <string name="aa_song_recently_played">Odtwarzane piosenki</string>
     <string name="aa_starred_albums">★ Albumy</string>
@@ -389,6 +390,8 @@
 	<string name="settings_androidauto_second_tab">Druga zakładka</string>
 	<string name="settings_androidauto_third_tab">Trzecia zakładka</string>
 	<string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
+	<string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
+    <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
