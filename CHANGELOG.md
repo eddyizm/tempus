@@ -1,6 +1,28 @@
 # Changelog
 
 ## What's Changed
+## [4.13.0](https://github.com/eddyizm/tempo/releases/tag/v4.13.0) (2026-03-25)
+* chore(i18n): Improve Russian translation by @NikkoFox in https://github.com/eddyizm/tempus/pull/503
+* feat: tile size manager by @MaFo-28 in https://github.com/eddyizm/tempus/pull/440
+* chore(i18n): Translated to zh_TW by @olivertzeng in https://github.com/eddyizm/tempus/pull/494
+* fix: Show full album name when displaying details by @jaime-grj in https://github.com/eddyizm/tempus/pull/508
+* chore(i18n): Update Spanish translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/509
+* fix: Relocate "Offline mode" text by @jaime-grj in https://github.com/eddyizm/tempus/pull/510
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/516
+* refactor: navigation and bottom sheet by @tvillega in https://github.com/eddyizm/tempus/pull/491
+* feat: Logo refresh by @eddyizm in https://github.com/eddyizm/tempus/pull/498
+* feat: Add 'genres' page/function to Android Auto by @Jorilx in https://github.com/eddyizm/tempus/pull/505
+* feat: Added all-songs feature by @unknown0816 in https://github.com/eddyizm/tempus/pull/517
+
+## New Contributors
+* @NikkoFox made their first contribution in https://github.com/eddyizm/tempus/pull/503
+* @olivertzeng made their first contribution in https://github.com/eddyizm/tempus/pull/494
+* @Jorilx made their first contribution in https://github.com/eddyizm/tempus/pull/505
+* @unknown0816 made their first contribution in https://github.com/eddyizm/tempus/pull/517
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.12.6...v4.13.0
+
+## What's Changed
 ## [4.12.6](https://github.com/eddyizm/tempo/releases/tag/v4.12.6) (2026-03-06)
 * doc: update USAGE with android auto configuration by @MaFo-28 in https://github.com/eddyizm/tempus/pull/481
 * chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/483
