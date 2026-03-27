@@ -406,7 +406,7 @@ object MediaBrowserTree {
         treeNodes[RANDOM_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = false,
                     title = appContext.getString(R.string.aa_random),
                     mediaId = RANDOM_ID,
                     isPlayable = false,
@@ -419,7 +419,7 @@ object MediaBrowserTree {
         treeNodes[GENRES_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = false,
                     title = appContext.getString(R.string.aa_genres),
                     mediaId = GENRES_ID,
                     isPlayable = false,
@@ -491,14 +491,7 @@ object MediaBrowserTree {
                 if (id.startsWith(MADE_FOR_YOU_ID)) {
                     return automotiveRepository.getMadeForYou(id.removePrefix(MADE_FOR_YOU_ID),20)
                 }
-
-                if (id.startsWith(STARRED_ALBUMS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(STARRED_ALBUMS_ID))
-                }
-
-                if (id.startsWith(STARRED_ARTISTS_ID)) {
-                    return automotiveRepository.getArtistAlbum(STARRED_ALBUMS_ID,id.removePrefix(STARRED_ARTISTS_ID))
-                }
+                */
 
                 if (id.startsWith(GENRES_ID)) {
                     val shuffle = Preferences.isAndroidAutoShuffleGenreSongsEnabled()
@@ -506,8 +499,6 @@ object MediaBrowserTree {
                     val count = if (shuffle) 100 else 500
                     return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), count, shuffle)
                 }
-
-				*/
                 if (id.startsWith(PLAYLIST_ID)) {
                     return automotiveRepository.getPlaylistSongs(id.removePrefix(PLAYLIST_ID))
                 }
