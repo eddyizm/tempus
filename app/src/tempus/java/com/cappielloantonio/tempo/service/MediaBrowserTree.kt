@@ -328,7 +328,7 @@ object MediaBrowserTree {
         treeNodes[RECENT_SONGS_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = false,
                     title = appContext.getString(R.string.aa_song_recently_played),
                     mediaId = RECENT_SONGS_ID,
                     isPlayable = false,
@@ -474,7 +474,7 @@ object MediaBrowserTree {
             ARTISTS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByArtist", 500)
             PLAYLIST_ID -> automotiveRepository.getPlaylists(PLAYLIST_ID)
             PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
-            RADIO_ID -> automotiveRepository.internetRadioStations
+            RADIO_ID -> automotiveRepository.getInternetRadioStations() //internetRadioStations
             FOLDER_ID -> automotiveRepository.getMusicFolders(FOLDER_ID)
             MOST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "frequent", 15)
             //RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
@@ -484,7 +484,7 @@ object MediaBrowserTree {
             STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(ALBUM_ID)
             STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(ARTIST_ID)
             RANDOM_ID -> automotiveRepository.getRandomSongs(100)
-            GENRES_ID -> automotiveRepository.getGenres(id)
+            GENRES_ID -> automotiveRepository.getGenres(GENRES_ID)
 
             else -> {
 				/*
@@ -499,6 +499,7 @@ object MediaBrowserTree {
                     val count = if (shuffle) 100 else 500
                     return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), count, shuffle)
                 }
+
                 if (id.startsWith(PLAYLIST_ID)) {
                     return automotiveRepository.getPlaylistSongs(id.removePrefix(PLAYLIST_ID))
                 }
