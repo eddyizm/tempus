@@ -565,6 +565,8 @@ object MediaBrowserTree {
     }
 
     // https://github.com/androidx/media/issues/156
+    // Fix for issue #500: Return only the selected track to avoid loading wrong queue context
+    // (e.g., playlist instead of album) when the same track exists in multiple contexts.
     fun getItems(mediaItems: List<MediaItem>): List<MediaItem> {
         val updatedMediaItems = ArrayList<MediaItem>()
 
@@ -572,16 +574,11 @@ object MediaBrowserTree {
             if (it.localConfiguration?.uri != null) {
                 updatedMediaItems.add(it)
             } else {
-                val sessionMediaItem = automotiveRepository.getSessionMediaItem(it.mediaId)
-
-                if (sessionMediaItem != null) {
-                    var toAdd = automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
-                    val index = toAdd.indexOfFirst { mediaItem -> mediaItem.mediaId == it.mediaId }
-
-                    toAdd = toAdd.subList(index, toAdd.size)
-
-                    updatedMediaItems.addAll(toAdd)
-                }
+                // Simply return the track as-is without timestamp-based expansion.
+                // The timestamp-based lookup was causing the wrong queue context to be loaded
+                // when the same track existed in multiple sources (album, playlist, etc.).
+                // The queue expansion should be handled by the browsing context, not by timestamp lookup.
+                updatedMediaItems.add(it)
             }
         }
 
