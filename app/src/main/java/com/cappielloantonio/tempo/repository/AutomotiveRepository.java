@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
 import androidx.media3.session.MediaConstants;
@@ -47,14 +48,21 @@ import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -777,6 +785,8 @@ public class AutomotiveRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getArtist() != null && response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+                            boolean InstantMixEnabled = Preferences.isAndroidAutoArtistInstantMixEnabled();
+
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
 
                             List<MediaItem> mediaItems = new ArrayList<>();
@@ -810,11 +820,11 @@ public class AutomotiveRepository {
 
                             Uri artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_radio);
 
-                            if (albums.size() >= 2 && totalTracks >= 20) {
+                            if (InstantMixEnabled && albums.size() >= 2 && totalTracks >= 20) {
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle("Instant mix")
-                                        .setIsBrowsable(false)
-                                        .setIsPlayable(true)
+                                        .setIsBrowsable(true)
+                                        .setIsPlayable(false)
                                         .setArtworkUri(artworkUri)
                                         .build();
 
@@ -842,8 +852,11 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getInstantMix(String artistId) {
-        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> future = SettableFuture.create();
+    private static final String TAG = "InstantMix";
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getInstantMix(String artistId, int maxTracks) {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+
+        Log.d(TAG, "Starting instant mix for artistId=" + artistId);
 
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
@@ -851,68 +864,64 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse().getArtist() != null
+                                && response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
 
-                        if (!response.isSuccessful()
-                                || response.body() == null
-                                || response.body().getSubsonicResponse().getArtist() == null
-                                || response.body().getSubsonicResponse().getArtist().getAlbums() == null) {
-                            future.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
-                            return;
+                            List<AlbumID3> albums = new ArrayList<>(
+                                    response.body().getSubsonicResponse().getArtist().getAlbums()
+                            );
+
+                            Log.d(TAG, "Found " + albums.size() + " albums");
+
+                            List<Child> mixTracks = new ArrayList<>();
+                            Set<String> usedTrackIds = new HashSet<>();
+                            Random random = new Random();
+
+                            fetchNextTrackForMix(albums, 0, mixTracks, usedTrackIds, random, maxTracks, listenableFuture);
+
+                        } else {
+                            Log.e(TAG, "Failed to retrieve artist albums for artistId=" + artistId);
+                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
                         }
-
-                        List<AlbumID3> albums = new ArrayList<>(response.body()
-                                .getSubsonicResponse()
-                                .getArtist()
-                                .getAlbums());
-
-                        if (albums.isEmpty()) {
-                            future.set(LibraryResult.ofItemList(ImmutableList.of(), null));
-                            return;
-                        }
-
-                        Collections.shuffle(albums);
-
-                        List<MediaItem> result = new ArrayList<>();
-                        Set<String> usedSongIds = new HashSet<>();
-
-                        fetchNextTrack(albums, 0, result, usedSongIds, future);
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        future.setException(t);
+                        Log.e(TAG, "Network failure while fetching artist: " + t.getMessage());
+                        listenableFuture.setException(t);
                     }
                 });
 
-        return future;
+        return listenableFuture;
     }
 
-    private void fetchNextTrack(
+    private void fetchNextTrackForMix(
             List<AlbumID3> albums,
-            int index,
-            List<MediaItem> result,
-            Set<String> usedSongIds,
-            SettableFuture<LibraryResult<ImmutableList<MediaItem>>> future
-    ) {
-        if (result.size() >= 10) {
-            future.set(LibraryResult.ofItemList(ImmutableList.copyOf(result), null));
+            int albumIndex,
+            List<Child> mixTracks,
+            Set<String> usedTrackIds,
+            Random random,
+            int maxTracks,
+            SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture) {
+
+        if (mixTracks.size() >= maxTracks) {
+            Log.d(TAG, "Mix complete with " + mixTracks.size() + " tracks");
+            setChildrenMetadata(mixTracks);
+            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(mixTracks);
+            listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
             return;
         }
 
-        if (albums.isEmpty()) {
-            future.set(LibraryResult.ofItemList(ImmutableList.copyOf(result), null));
-            return;
+        // Shuffle only at the start of each cycle
+        if (albumIndex == 0) {
+            Collections.shuffle(albums, random);
+            Log.d(TAG, "New cycle, albums shuffled");
         }
 
-        int computedIndex = index + 1;
-
-        if (computedIndex >= albums.size() || computedIndex == 4) {
-            Collections.shuffle(albums);
-            computedIndex = 0;
-        }
-        final int nextIndex = computedIndex;
-
-        AlbumID3 album = albums.get(index);
+        AlbumID3 album = albums.get(albumIndex);
+        Log.d(TAG, "Fetching album[" + albumIndex + "] " + album.getName() + " (" + mixTracks.size() + "/" + maxTracks + " tracks so far)");
 
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
@@ -920,50 +929,39 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-
                         if (response.isSuccessful()
                                 && response.body() != null
                                 && response.body().getSubsonicResponse().getAlbum() != null
                                 && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
 
-                            List<Child> songs = response.body()
-                                    .getSubsonicResponse()
-                                    .getAlbum()
-                                    .getSongs();
+                            List<Child> songs = response.body().getSubsonicResponse().getAlbum().getSongs();
+                            Child candidate = songs.get(random.nextInt(songs.size()));
 
-                            if (!songs.isEmpty()) {
-                                Collections.shuffle(songs);
-
-                                for (Child song : songs) {
-                                    if (!usedSongIds.contains(song.getId())) {
-                                        usedSongIds.add(song.getId());
-
-                                        List<Child> single = Collections.singletonList(song);
-                                        setChildrenMetadata(single);
-
-                                        MediaItem item = MappingUtil.mapMediaItem((Child) single);
-                                        /*
-                                        MediaItem item = MappingUtil
-                                                .mapMediaItems(single, "instant_mix")
-                                                .get(0);
-                                        */
-                                        result.add(item);
-                                        break;
-                                    }
-                                }
+                            if (!usedTrackIds.contains(candidate.getId())) {
+                                mixTracks.add(candidate);
+                                usedTrackIds.add(candidate.getId());
+                                Log.d(TAG, "Added track [" + mixTracks.size() + "/" + maxTracks + "] "
+                                        + candidate.getTitle() + " from " + album.getName());
+                            } else {
+                                Log.d(TAG, "Track " + candidate.getTitle() + " already used, skipping");
                             }
+                        } else {
+                            Log.w(TAG, "Album " + album.getName() + " skipped (empty or failed)");
                         }
 
-                        fetchNextTrack(albums, nextIndex, result, usedSongIds, future);
+                        // Next: albums[1] if we just did albums[0], else back to albums[0]
+                        int nextIndex = (albumIndex == 0) ? 1 : 0;
+                        fetchNextTrackForMix(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, listenableFuture);
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        fetchNextTrack(albums, index + 1, result, usedSongIds, future);
+                        Log.e(TAG, "Failed to load album " + album.getName() + ": " + t.getMessage());
+                        int nextIndex = (albumIndex == 0) ? 1 : 0;
+                        fetchNextTrackForMix(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, listenableFuture);
                     }
                 });
     }
-
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getPlaylistSongs(String id) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
