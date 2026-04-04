@@ -372,6 +372,7 @@ open class MediaLibrarySessionCallback(
     ): ListenableFuture<List<MediaItem>> {
         val firstItem = mediaItems.firstOrNull()
         val isRadio = firstItem?.mediaId?.startsWith("ir-") == true
+        val isRefreshRandom = firstItem?.mediaId == App.getContext().getString(R.string.refresh_media_id)
 
         if (isRadio) {
             return Futures.transformAsync(
@@ -388,6 +389,21 @@ open class MediaLibrarySessionCallback(
                     } else {
                         Futures.immediateFuture(emptyList())
                     }
+                },
+                androidx.core.content.ContextCompat.getMainExecutor(context)
+            )
+        }
+
+        if (isRefreshRandom) {
+            // Re-fetch random songs when refresh is tapped
+            return Futures.transformAsync(
+                automotiveRepository.getRandomSongs(100),
+                { result ->
+                    val items = result.value ?: emptyList()
+                    val resolvedItems = MediaBrowserTree.getItems(items)
+                    // Return playable items for user to tap and play
+                    // Note: Browse list will auto-refresh after playback or manual navigation
+                    Futures.immediateFuture(resolvedItems)
                 },
                 androidx.core.content.ContextCompat.getMainExecutor(context)
             )

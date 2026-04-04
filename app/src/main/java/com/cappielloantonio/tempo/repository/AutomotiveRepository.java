@@ -15,6 +15,7 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
@@ -155,6 +156,15 @@ public class AutomotiveRepository {
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getRandomSongs(int count) {
+        return getRandomSongs(count, false);
+    }
+
+    /**
+     * Get random songs for Android Auto.
+     * If showRefreshOnFailure is true and the server returns empty or fails,
+     * return a single refresh item instead of an error.
+     */
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getRandomSongs(int count, boolean showRefreshOnFailure) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
         App.getSubsonicClientInstance(false)
@@ -173,6 +183,9 @@ public class AutomotiveRepository {
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
+                        } else if (showRefreshOnFailure) {
+                            // Return refresh item when server is unreachable or returns empty list
+                            onServerUnavailable(listenableFuture);
                         } else {
                             listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
                         }
@@ -180,11 +193,32 @@ public class AutomotiveRepository {
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        listenableFuture.setException(t);
+                        if (showRefreshOnFailure) {
+                            onServerUnavailable(listenableFuture);
+                        } else {
+                            listenableFuture.setException(t);
+                        }
                     }
                 });
 
         return listenableFuture;
+    }
+
+    /**
+     * Helper method to set a refresh item when server is unavailable.
+     */
+    private void onServerUnavailable(SettableFuture<LibraryResult<ImmutableList<MediaItem>>> future) {
+        MediaItem refreshItem = new MediaItem.Builder()
+                .setMediaId(App.getContext().getString(R.string.refresh_media_id))
+                .setMediaMetadata(new androidx.media3.common.MediaMetadata.Builder()
+                        .setTitle(App.getContext().getString(R.string.aa_action_refresh))
+                        .setIsBrowsable(false)
+                        .setIsPlayable(true)
+                        .setMediaType(androidx.media3.common.MediaMetadata.MEDIA_TYPE_MUSIC)
+                        .build())
+                .setUri("")
+                .build();
+        future.set(LibraryResult.ofItemList(ImmutableList.of(refreshItem), null));
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getRecentlyPlayedSongs(String server, int count) {
