@@ -74,6 +74,8 @@ public class AutomotiveRepository {
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
 
     public static final String INSTANTMIX_ID = "[instantMix]";
+    public static final int INSTANT_MIX_MAX_TRACKS = 20;
+    public static final int INSTANT_MIX_MIN_TRACKS = INSTANT_MIX_MAX_TRACKS;
 
     private Bundle createContentStyleExtras(boolean gridView) {
         Bundle extras = new Bundle();
@@ -820,9 +822,9 @@ public class AutomotiveRepository {
 
                             Uri artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_radio);
 
-                            if (InstantMixEnabled && albums.size() >= 2 && totalTracks >= 20) {
+                            if (InstantMixEnabled && albums.size() >= 2 && totalTracks >= INSTANT_MIX_MIN_TRACKS) {
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle("Instant mix")
+                                        .setTitle(App.getContext().getString(R.string.aa_instant_mix))
                                         .setIsBrowsable(true)
                                         .setIsPlayable(false)
                                         .setArtworkUri(artworkUri)
@@ -853,8 +855,9 @@ public class AutomotiveRepository {
     }
 
     private static final String TAG = "InstantMix";
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getInstantMix(String artistId, int maxTracks) {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getInstantMix(String artistId, int count) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+        final int requestedTracks = Math.min(count, INSTANT_MIX_MAX_TRACKS );
 
         Log.d(TAG, "Starting instant mix for artistId=" + artistId);
 
@@ -879,7 +882,7 @@ public class AutomotiveRepository {
                             Set<String> usedTrackIds = new HashSet<>();
                             Random random = new Random();
 
-                            fetchNextTrackForMix(albums, 0, mixTracks, usedTrackIds, random, maxTracks, listenableFuture);
+                            fetchNextTrackForMix(albums, 0, mixTracks, usedTrackIds, random, requestedTracks, listenableFuture);
 
                         } else {
                             Log.e(TAG, "Failed to retrieve artist albums for artistId=" + artistId);

@@ -17,6 +17,7 @@
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artists</string>
     <string name="aa_starred_tracks">★ Tracks</string>
+    <string name="aa_instant_mix">Instant mix</string>
 	
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>

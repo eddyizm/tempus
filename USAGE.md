@@ -209,14 +209,15 @@ The Android Auto interface can be configured by user to best suit their preferen
 
 If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
 
-If "Home" is selected after another tab, it becomes "More"
+If "Home" is selected after another tab, it becomes "More".
 
 In addition, you can choose to display the following functions as thumbnails or lists:
 - Home
-- Albums (Last played, Most played, Recently added, Artists, Star tracks, Star albums, Star artists, Random)
+- Albums (Last played, Most played, Recently added, Artists, Star tracks, Star albums, Star artists)
 - Playlists
 - Radio
 - Podcast
+Random and Genres are always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
@@ -227,6 +228,13 @@ Albums sorted by artist or Artists :
 <p align="left">
     <img src="mockup/usage/aa_artists_view1.jpg" width=317 style="margin-right:16px;">
     <img src="mockup/usage/aa_artists_view2.jpg" width=317>
+</p>
+
+If "Enable artist instant mix" is selected and the artist has at least 2 albums with a minimum of 20 tracks, an "Instant Mix" album is added.
+This album features 12 tracks chosen randomly from their discography.
+
+<p align="left">
+    <img src="mockup/usage/aa_instantMix.jpg" width=317>
 </p>
 
 The A-Z button allows you to jump to items starting with the chosen letter.

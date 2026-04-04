@@ -17,7 +17,8 @@
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artistes</string>
     <string name="aa_starred_tracks">★ Titres</string>
-	
+    <string name="aa_instant_mix">Mix instantané</string>
+
     <string name="activity_battery_optimizations_conclusion">Si vous rencontrez un problème, visitez https://dontkillmyapp.com. Des instructions pour désactiver les fonctions de sauvegarde d\'énergie qui pourrait affecter les performance de l\'app y sont disponibles.</string>
     <string name="activity_battery_optimizations_summary">Veuillez désactiver les optimisations de la batterie pour permettre la lecture des médias lorsque l\'écran est éteint.</string>
     <string name="activity_battery_optimizations_title">Optimisations de la batterie</string>
