@@ -2,6 +2,7 @@
 <resources>
     <string name="album_page_tracks_count_and_duration">%1$d pistas  •  %2$d minutos</string>
     <string name="app_name">Tempus</string>
+    <string name="aa_starred_tracks">★ Pistas</string>
     <string name="activity_battery_optimizations_conclusion">Si tienes problemas, visita https://dontkillmyapp.com. Ofrece instrucciones detalladas para desactivar características de ahorro de energía que podrían afectar al rendimiento de la app.</string>
     <string name="activity_battery_optimizations_summary">Por favor, desactiva las optimizaciones de batería para continuar la reproducción multimedia mientras la pantalla está apagada.</string>
     <string name="activity_battery_optimizations_title">Optimizaciones de batería</string>
@@ -227,9 +228,12 @@
     <string name="playlist_chooser_dialog_create_button">Crear</string>
     <string name="playlist_chooser_dialog_title">Añadir a una lista de reproducción</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Error al añadir a la lista</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Error al eliminar la canción de la lista</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Todas las pistas se han descartado porque están repetidas</string>
     <string name="playlist_chooser_dialog_visibility_public">Público</string>
     <string name="playlist_chooser_dialog_visibility_private">Privado</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Marcar la lista de reproducción como pública</string>
+    <string name="playlist_chooser_dialog_visibility_summary">El servidor actualiza la visibilidad en cada petición. Por defecto está configurada como privada.</string>
     <string name="playlist_counted_tracks">%1$d pistas •  %2$s</string>
     <string name="playlist_duration">Duración  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Pulsación larga para eliminar</string>
@@ -290,6 +294,7 @@
     <string name="server_signup_dialog_hint_password">Contraseña</string>
     <string name="server_signup_dialog_hint_url">URL del servidor</string>
     <string name="server_signup_dialog_hint_username">Nombre de usuario</string>
+    <string name="server_signup_dialog_hint_client_certificate">Certificado del cliente (opcional)</string>
     <string name="server_signup_dialog_negative_button">Cancelar</string>
     <string name="server_signup_dialog_neutral_button">Eliminar</string>
     <string name="server_signup_dialog_positive_button">Guardar</string>
@@ -339,6 +344,7 @@
     <string name="settings_podcast">Mostrar pódcasts</string>
     <string name="settings_podcast_summary">Si se habilita, se mostrará la sección de pódcasts. Reinicia la aplicación para que los cambios surtan efecto.</string>
     <string name="settings_playlist_sort">Ordenar listas de reproducción</string>
+    <string name="settings_androidauto_fourth_tab">Vista de la cuarta pestaña</string>
     <string name="settings_audio_quality">Mostrar calidad de audio</string>
     <string name="settings_audio_quality_summary">La tasa de bits y el formato de audio se mostrarán para cada pista de audio.</string>
     <string name="settings_song_rating_summary">Si se habilita, muestra la valoración de la pista como barra de 5 estrellas en la página del control de reproducción.\n\n*Requiere reiniciar la aplicación</string>
@@ -363,6 +369,7 @@
     <string name="track_info_sampling_rate">Tasa de muestreo</string>
     <string name="track_info_content_type">Tipo de contenido</string>
     <string name="track_info_dialog_positive_button">Aceptar</string>
+    <string name="track_info_station">Emisora</string>
     <string name="track_info_transcoded_content_type">Tipo de contenido en la transcodificación</string>
     <string name="track_info_transcoded_suffix">Extensión en la transcodificación</string>
     <string name="track_info_year">Año</string>
@@ -396,6 +403,7 @@
     <string name="settings_summary_scrobble">El scrobbling es una característica que permite a tu dispositivo enviar información sobre las pistas que escuchas al servidor de música. Esta información ayuda a crear recomendaciones personalizadas basadas en tus gustos musicales.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sincronizar pistas destacadas para uso sin conexión</string>
     <string name="settings_theme">Tema</string>
+    <string name="settings_tile_size">Tamaño de los elementos de la cuadrícula</string>
     <string name="settings_title_data">Datos</string>
     <string name="settings_title_general">General</string>
     <string name="settings_title_playlist">Lista de reproducción</string>
@@ -419,6 +427,7 @@
     <string name="share_update_dialog_title">Compartir</string>
     <string name="song_bottom_sheet_rate">Valorar</string>
     <string name="song_bottom_sheet_remove">Eliminar</string>
+    <string name="song_bottom_sheet_remove_from_playlist">Eliminar de la lista</string>
     <string name="song_bottom_sheet_share">Compartir</string>
     <string name="song_subtitle_formatter">%1$s  •  %2$s  %3$s</string>
     <string name="starred_sync_dialog_negative_button">Cancelar</string>
@@ -499,6 +508,7 @@
     <string name="settings_github_update_summary">Si se usa la versión de GitHub, la app comprobará nuevas actualizaciones del APK.</string>
     <string name="settings_support_summary">Participa en las discusiones y el soporte de la comunidad</string>
     <string name="settings_show_mini_shuffle_button">Mostrar el botón «Aleatorio»</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Experimental. Aumenta el espacio vertical eliminando la barra de navegación inferior. Los cambios se aplicarán al reiniciar la app.</string>
     <string name="settings_auto_download_lyrics">Descargar automáticamente las letras</string>
     <string name="starred_artist_sync_dialog_summary">Descargar los artistas destacados podría consumir una gran cantidad de datos.</string>
     <string name="settings_summary_landscape_items_per_row">Aplica a todos los listados de álbumes y artistas. Por defecto es 4</string>
@@ -536,4 +546,33 @@
     <string name="settings_ping_timeout_title">Tiempo de espera de ping al servidor</string>
     <string name="playback_speed_dialog_title">Velocidad de reproducción</string>
     <string name="settings_title_ui_landscape_items_per_row">Elementos por fila en modo horizontal</string>
+    <string name="aa_albums">Álbumes</string>
+    <string name="aa_album_most_played">Álbumes más reproducidos</string>
+    <string name="aa_album_recently_added">Álbumes añadidos</string>
+    <string name="aa_artists">Artistas</string>
+    <string name="aa_home">Inicio</string>
+    <string name="aa_made_for_you">Para ti</string>
+    <string name="aa_more">Más</string>
+    <string name="aa_music_folder">Carpeta</string>
+    <string name="aa_playlists">Listas de reproducción</string>
+    <string name="aa_podcast">Pódcasts</string>
+    <string name="aa_radio">Radio</string>
+    <string name="aa_random">Aleatorio</string>
+    <string name="aa_recent_albums">Reciente</string>
+    <string name="aa_song_recently_played">Última canción reproducida</string>
+    <string name="aa_starred_albums">★ Álbumes</string>
+    <string name="aa_starred_artists">★ Artistas</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Canción eliminada de la lista</string>
+    <string name="settings_androidauto">Android Auto</string>
+    <string name="settings_androidauto_album_view">Vista de cuadrícula para álbumes</string>
+    <string name="settings_androidauto_home_view">Vista de cuadrícula para la página de inicio</string>
+    <string name="settings_androidauto_playlist_view">Vista de cuadrícula para listas de reproducción</string>
+    <string name="settings_androidauto_podcast_view">Vista de cuadrícula para pódcasts</string>
+    <string name="settings_androidauto_radio_view">Vista de cuadrícula para emisoras de radio</string>
+    <string name="settings_androidauto_first_tab">Vista de la primera pestaña</string>
+    <string name="settings_androidauto_second_tab">Vista de la segunda pestaña</string>
+    <string name="settings_androidauto_third_tab">Vista de la tercera pestaña</string>
+    <string name="settings_enable_drawer_on_landscape">Habilitar el menú lateral en modo vertical [Experimental]</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Desbloquea el menú lateral horizontal en modo vertical. Los cambios se aplicarán al reiniciar la app.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Ocultar la barra de navegación inferior en modo vertical [Experimental]</string>
 </resources>

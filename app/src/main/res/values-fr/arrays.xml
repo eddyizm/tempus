@@ -288,6 +288,7 @@
         <item>Albums favoris</item>
         <item>Artistes favoris</item>
         <item>Aléatoire</item>
+        <item>Genres</item>
     </string-array>
     <string-array name="aa_tab_values">
         <item>-1</item>
@@ -307,7 +308,7 @@
         <item>13</item>
         <item>14</item>
         <item>15</item>
+        <item>16</item>
     </string-array>
-	<!-- end Add by MFO -->
-	
+
 </resources>

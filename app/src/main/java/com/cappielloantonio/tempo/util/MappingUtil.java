@@ -25,6 +25,7 @@ import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.nio.charset.StandardCharsets;
 
@@ -162,6 +163,34 @@ public class MappingUtil {
                 )
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
                 .setUri(uri)
+                .build();
+    }
+    public static List<MediaItem> mapMediaItems(List<Child> items, String parentId) {
+        ArrayList<MediaItem> mediaItems = new ArrayList<>();
+
+        for (int i = 0; i < items.size(); i++) {
+            mediaItems.add(mapMediaItem(items.get(i), parentId));
+        }
+
+        return mediaItems;
+    }
+    public static MediaItem mapMediaItem(Child item, String parentId) {
+        MediaItem mediaItem = mapMediaItem(item);
+
+        Bundle extras = mediaItem.mediaMetadata.extras != null
+                ? new Bundle(mediaItem.mediaMetadata.extras)
+                : new Bundle();
+
+        extras.putString("parent_id", parentId);
+
+        MediaMetadata metadata = mediaItem.mediaMetadata
+                .buildUpon()
+                .setExtras(extras)
+                .build();
+
+        return mediaItem.buildUpon()
+                .setMediaId(item.getId())
+                .setMediaMetadata(metadata)
                 .build();
     }
 
@@ -303,6 +332,79 @@ public class MappingUtil {
                 .build();
 
         return item;
+    }
+
+    public static Child mapToChild(MediaItem item) {
+        if (item == null) return null;
+
+        Bundle extras = item.mediaMetadata.extras;
+        String id = (extras != null && extras.getString("id") != null) ? extras.getString("id") : item.mediaId;
+
+        if (id == null) return null;
+
+        Child child = new Child(id);
+
+        if (extras != null) {
+            child.setParentId(extras.getString("parentId"));
+            child.setDir(extras.getBoolean("isDir"));
+            child.setTitle(extras.getString("title"));
+            child.setAlbum(extras.getString("album"));
+            child.setArtist(extras.getString("artist"));
+            child.setGenre(extras.getString("genre"));
+            child.setCoverArtId(extras.getString("coverArtId"));
+            child.setContentType(extras.getString("contentType"));
+            child.setSuffix(extras.getString("suffix"));
+            child.setTranscodedContentType(extras.getString("transcodedContentType"));
+            child.setTranscodedSuffix(extras.getString("transcodedSuffix"));
+            child.setPath(extras.getString("path"));
+            child.setVideo(extras.getBoolean("isVideo"));
+            child.setAlbumId(extras.getString("albumId"));
+            child.setArtistId(extras.getString("artistId"));
+            child.setType(extras.getString("type"));
+
+            if (extras.containsKey("track")) child.setTrack(extras.getInt("track"));
+            if (extras.containsKey("year")) child.setYear(extras.getInt("year"));
+            if (extras.containsKey("size")) child.setSize(extras.getLong("size"));
+            if (extras.containsKey("duration")) child.setDuration(extras.getInt("duration"));
+            if (extras.containsKey("bitrate")) child.setBitrate(extras.getInt("bitrate"));
+            if (extras.containsKey("samplingRate")) child.setSamplingRate(extras.getInt("samplingRate"));
+            if (extras.containsKey("bitDepth")) child.setBitDepth(extras.getInt("bitDepth"));
+            if (extras.containsKey("userRating")) child.setUserRating(extras.getInt("userRating"));
+            if (extras.containsKey("averageRating")) child.setAverageRating(extras.getDouble("averageRating"));
+            if (extras.containsKey("playCount")) child.setPlayCount(extras.getLong("playCount"));
+            if (extras.containsKey("discNumber")) child.setDiscNumber(extras.getInt("discNumber"));
+            if (extras.containsKey("bookmarkPosition")) child.setBookmarkPosition(extras.getLong("bookmarkPosition"));
+            if (extras.containsKey("originalWidth")) child.setOriginalWidth(extras.getInt("originalWidth"));
+            if (extras.containsKey("originalHeight")) child.setOriginalHeight(extras.getInt("originalHeight"));
+
+            long createdTime = extras.getLong("created", 0);
+            if (createdTime != 0) child.setCreated(new Date(createdTime));
+
+            long starredTime = extras.getLong("starred", 0);
+            if (starredTime != 0) child.setStarred(new Date(starredTime));
+        }
+
+        // Fallbacks
+        if (child.getTitle() == null && item.mediaMetadata.title != null) {
+            child.setTitle(item.mediaMetadata.title.toString());
+        }
+        if (child.getArtist() == null && item.mediaMetadata.artist != null) {
+            child.setArtist(item.mediaMetadata.artist.toString());
+        }
+        if (child.getAlbum() == null && item.mediaMetadata.albumTitle != null) {
+            child.setAlbum(item.mediaMetadata.albumTitle.toString());
+        }
+        if (child.getTrack() == null && item.mediaMetadata.trackNumber != null) {
+            child.setTrack(item.mediaMetadata.trackNumber);
+        }
+        if (child.getDiscNumber() == null && item.mediaMetadata.discNumber != null) {
+            child.setDiscNumber(item.mediaMetadata.discNumber);
+        }
+        if (child.getYear() == null && item.mediaMetadata.releaseYear != null) {
+            child.setYear(item.mediaMetadata.releaseYear);
+        }
+
+        return child;
     }
 
     private static Uri getUri(Child media) {

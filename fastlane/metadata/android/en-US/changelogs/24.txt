@@ -1,0 +1,10 @@
+* chore(i18n): Improve Russian translation
+* feat: tile size manager
+* chore(i18n): Translated to zh_TW
+* fix: Show full album name when displaying details
+* chore(i18n): Update Spanish translation
+* fix: Relocate "Offline mode" text
+* chore(i18n): Update Polish translation
+* refactor: navigation and bottom sheet
+* feat: new Logo icon/adaptive icon update/refresh
+* feat: Added all-songs feature

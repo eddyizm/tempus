@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import com.cappielloantonio.tempo.model.Queue;
 
@@ -12,10 +13,10 @@ import java.util.List;
 
 @Dao
 public interface QueueDao {
-    @Query("SELECT * FROM queue")
+    @Query("SELECT * FROM queue ORDER BY track_order ASC")
     LiveData<List<Queue>> getAll();
 
-    @Query("SELECT * FROM queue")
+    @Query("SELECT * FROM queue ORDER BY track_order ASC")
     List<Queue> getAllSimple();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -41,4 +42,10 @@ public interface QueueDao {
 
     @Query("SELECT * FROM queue ORDER BY last_play DESC LIMIT 1")
     Queue getLastPlayed();
+
+    @Transaction
+    default void replaceQueue(List<Queue> newQueue) {
+        deleteAll();
+        insertAll(newQueue);
+    }
 }

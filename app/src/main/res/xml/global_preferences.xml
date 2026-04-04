@@ -529,10 +529,14 @@
             app:entryValues="@array/aa_tab_values"
             app:key="androidauto_fourth_tab"
             app:title="@string/settings_androidauto_fourth_tab"
-            app:useSimpleSummaryProvider="true" />	
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_shuffle_genre_songs"
+            android:defaultValue="false"
+            android:key="androidauto_shuffle_genre_songs" />
 			
 	</PreferenceCategory>
-	<!-- end Add by MFO -->
 
     <PreferenceCategory app:title="@string/settings_about_title">
         <Preference

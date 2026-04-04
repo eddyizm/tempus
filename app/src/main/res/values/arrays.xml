@@ -310,8 +310,9 @@
     <!--    <item>For you</item> -->
         <item>Star tracks</item>
         <item>Star albums</item>
-        <item>Star artistes</item>
+        <item>Star artists</item>
         <item>Random</item>
+        <item>Genres</item>
     </string-array>
     <string-array name="aa_tab_values">
         <item>-1</item>
@@ -331,7 +332,7 @@
         <item>13</item>
         <item>14</item>
         <item>15</item>
+        <item>16</item>
     </string-array>
-	<!-- end Add by MFO -->
-	
+
 </resources>

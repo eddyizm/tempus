@@ -330,6 +330,11 @@
         android:label="SongBottomSheetDialog"
         tools:layout="@layout/bottom_sheet_song_dialog" />
     <dialog
+        android:id="@+id/playlistBottomSheetDialog"
+        android:name="com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog.PlaylistBottomSheetDialog"
+        android:label="PlaylistBottomSheetDialog"
+        tools:layout="@layout/bottom_sheet_playlist_dialog" />
+    <dialog
         android:id="@+id/artistBottomSheetDialog"
         android:name="com.cappielloantonio.tempo.ui.fragment.bottomsheetdialog.ArtistBottomSheetDialog"
         android:label="ArtistBottomSheetDialog"
