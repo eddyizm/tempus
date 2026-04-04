@@ -527,7 +527,6 @@
             android:key="androidauto_shuffle_genre_songs" />
 			
 	</PreferenceCategory>
-	<!-- end Add by MFO -->
 
     <PreferenceCategory app:title="@string/settings_about_title">
         <Preference

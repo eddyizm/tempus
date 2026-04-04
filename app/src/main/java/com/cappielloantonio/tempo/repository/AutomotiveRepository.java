@@ -15,6 +15,8 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.BuildConfig;
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
@@ -57,6 +59,9 @@ public class AutomotiveRepository {
     private final SessionMediaItemDao sessionMediaItemDao = AppDatabase.getInstance().sessionMediaItemDao();
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
 
+    public static final String ALBUM = "[albumSource]";
+    public static final String PLAYLIST = "[playlistSource]";
+
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
@@ -69,7 +74,6 @@ public class AutomotiveRepository {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbumList2() != null && response.body().getSubsonicResponse().getAlbumList2().getAlbums() != null) {
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getAlbumList2().getAlbums();
 
-                            // add by MFO
                             // Hack for artist view
                             if("alphabeticalByArtist".equals(type))for(AlbumID3 album : albums){
                                 String artistName = album.getArtist();
@@ -77,7 +81,6 @@ public class AutomotiveRepository {
                                 album.setName(artistName);
                                 album.setArtist(albumName);
                             }
-                            // end add by MFO
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
@@ -333,6 +336,7 @@ public class AutomotiveRepository {
                             List<MusicFolder> musicFolders = response.body().getSubsonicResponse().getMusicFolders().getMusicFolders();
 
                             List<MediaItem> mediaItems = new ArrayList<>();
+                            Uri artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_folders);
 
                             for (MusicFolder musicFolder : musicFolders) {
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
@@ -340,6 +344,7 @@ public class AutomotiveRepository {
                                         .setIsBrowsable(true)
                                         .setIsPlayable(false)
                                         .setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_MIXED)
+                                        .setArtworkUri(artworkUri)
                                         .build();
 
                                 MediaItem mediaItem = new MediaItem.Builder()
@@ -514,11 +519,17 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (Playlist playlist : playlists) {
+                                String coverId = playlist.getCoverArtId();
+                                Uri artworkUri = (coverId != null && !coverId.isEmpty())
+                                        ? AlbumArtContentProvider.contentUri(coverId)
+                                        : Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_playlist);
+
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(playlist.getName())
                                         .setIsBrowsable(true)
                                         .setIsPlayable(false)
                                         .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
+                                        .setArtworkUri(artworkUri)
                                         .build();
 
                                 MediaItem mediaItem = new MediaItem.Builder()
@@ -652,7 +663,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ALBUM + id);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -737,7 +748,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, PLAYLIST + id);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
