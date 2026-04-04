@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Tempus" title="Tempus" src="mockup/svg/tempus_horizontal_logo.png" width="250">
+  <img alt="Tempus" title="Tempus" src="mockup/svg/tempus-horizontal-banner.png" width="250">
 </p>
 
 ---
@@ -84,13 +84,13 @@ Please note the two variants in the release assets include release/debug and 32/
 </p>
 
 <p align="center">
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_light.png" width=200>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_light.png" width=200>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_light.png" width=200>
+    <img src="mockup/1_light_tempus.png" width=200>
+    <img src="mockup/2_light_tempus.png" width=200>
+    <img src="mockup/3_light_tempus.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_light.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_light.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_light.png" width=200>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_light.png" width=200>
+    <!-- <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_light.png" width=200> -->
 </p>
 
 <br>
@@ -100,13 +100,13 @@ Please note the two variants in the release assets include release/debug and 32/
 </p>
 
 <p align="center">
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1_dark.png" width=200>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2_dark.png" width=200>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3_dark.png" width=200>
+    <img src="mockup/1_dark_tempus.png" width=200>
+    <img src="mockup/2_dark_tempus.png" width=200>
+    <img src="mockup/3_dark_tempus.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_dark.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_dark.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_dark.png" width=200>
-    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_dark.png" width=200>
+    <!-- <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_dark.png" width=200> -->
     
 </p>
 
@@ -136,4 +136,4 @@ Tempus is released under the [GNU General Public License v3.0](LICENSE). Feel fr
 ## Credits
 Thanks to the original repo/creator [CappielloAntonio](https://github.com/CappielloAntonio) (forked from v3.9.0)
 
-[Opensvg.org](https://opensvg.org) for the new turntable logo. 
+[SeattleGuy](https://github.com/SeattleGuy) for the new logo design. 

@@ -26,16 +26,20 @@ import com.cappielloantonio.tempo.helper.recyclerview.CustomLinearSnapHelper;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistAdapter;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
+import com.cappielloantonio.tempo.ui.adapter.PlaylistHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.SearchViewModel;
+import com.cappielloantonio.tempo.subsonic.models.PlaylistWithSongs;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.Collections;
+import java.util.List;
 
 @UnstableApi
 public class SearchFragment extends Fragment implements ClickCallback {
@@ -49,6 +53,7 @@ public class SearchFragment extends Fragment implements ClickCallback {
     private ArtistAdapter artistAdapter;
     private AlbumAdapter albumAdapter;
     private SongHorizontalAdapter songHorizontalAdapter;
+    private PlaylistHorizontalAdapter playlistHorizontalAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -126,6 +131,12 @@ public class SearchFragment extends Fragment implements ClickCallback {
         reapplyPlayback();
 
         bind.searchResultTracksRecyclerView.setAdapter(songHorizontalAdapter);
+
+        bind.allsongsview.setLayoutManager(new LinearLayoutManager(requireContext()));
+        bind.allsongsview.setHasFixedSize(true);
+
+        playlistHorizontalAdapter = new PlaylistHorizontalAdapter(this);
+        bind.allsongsview.setAdapter(playlistHorizontalAdapter);
     }
 
     private void initSearchView() {
@@ -216,13 +227,23 @@ public class SearchFragment extends Fragment implements ClickCallback {
 
     public void search(String query) {
         searchViewModel.setQuery(query);
+        bind.allSongs.setText(this.getView().getContext().getString(R.string.search_all_songs_loading));
+        playlistHorizontalAdapter.setItems(Collections.emptyList());
         bind.searchBar.setText(query);
         bind.searchView.hide();
         performSearch(query);
     }
 
+    public void updateUI(List<Playlist> allSongs) {
+        if (!allSongs.isEmpty()) {
+            playlistHorizontalAdapter.setItems(allSongs);
+        } else {
+            playlistHorizontalAdapter.setItems(Collections.emptyList());
+        }
+        bind.allSongs.setText(this.getView().getContext().getString(R.string.search_all_songs_play,String.valueOf(allSongs.getFirst().getName())));
+    }
     private void performSearch(String query) {
-        searchViewModel.search3(query).observe(getViewLifecycleOwner(), result -> {
+        searchViewModel.search3(this, query).observe(getViewLifecycleOwner(), result -> {
             if (bind != null) {
                 if (result.getArtists() != null) {
                     bind.searchArtistSector.setVisibility(!result.getArtists().isEmpty() ? View.VISIBLE : View.GONE);
@@ -279,6 +300,19 @@ public class SearchFragment extends Fragment implements ClickCallback {
     @Override
     public void onMediaLongClick(Bundle bundle) {
         Navigation.findNavController(requireView()).navigate(R.id.songBottomSheetDialog, bundle);
+    }
+
+    @Override
+    public void onPlaylistClick(Bundle bundle) {
+        PlaylistWithSongs playlistWithSongs = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+        if (playlistWithSongs != null) {
+            MediaManager.startQueue(mediaBrowserListenableFuture, playlistWithSongs.getEntries(), 0);
+        }
+    }
+
+    @Override
+    public void onPlaylistLongClick(Bundle bundle) {
+        Navigation.findNavController(requireView()).navigate(R.id.playlistBottomSheetDialog, bundle);
     }
 
     @Override

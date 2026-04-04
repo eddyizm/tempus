@@ -1,9 +1,14 @@
 package com.cappielloantonio.tempo.repository;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
+import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.RecentSearchDao;
 import com.cappielloantonio.tempo.model.RecentSearch;
@@ -11,13 +16,18 @@ import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
+import com.cappielloantonio.tempo.subsonic.models.PlaylistWithSongs;
 import com.cappielloantonio.tempo.subsonic.models.SearchResult2;
 import com.cappielloantonio.tempo.subsonic.models.SearchResult3;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.ui.fragment.SearchFragment;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,7 +41,7 @@ public class SearchingRepository {
 
         App.getSubsonicClientInstance(false)
                 .getSearchingClient()
-                .search3(query, 20, 20, 20)
+                .search3(query, 20, 0, 20, 0, 20, 0)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -49,12 +59,63 @@ public class SearchingRepository {
         return result;
     }
 
-    public MutableLiveData<SearchResult3> search3(String query) {
+    @UnstableApi
+    public MutableLiveData<SearchResult3> search3(SearchFragment sf, String query) {
         MutableLiveData<SearchResult3> result = new MutableLiveData<>();
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<Child> allSongs = new ArrayList<>();
+            int offset = 0;
+            int limit = 1000;
+            boolean hasMore = true;
+
+            while (hasMore) {
+                try {
+                    Response<ApiResponse> response = App.getSubsonicClientInstance(false)
+                            .getSearchingClient()
+                            .search3(query, limit, offset, 0, 0, 0, 0)
+                            .execute();
+
+                    if (response.isSuccessful() && response.body() != null) {
+                        SearchResult3 tmp = response.body().getSubsonicResponse().getSearchResult3();
+                        if (tmp != null && tmp.getSongs() != null && !tmp.getSongs().isEmpty()) {
+                            List<Child> fetchedSongs = tmp.getSongs();
+                            allSongs.addAll(fetchedSongs);
+
+                            offset += fetchedSongs.size();
+                            hasMore = fetchedSongs.size() == limit;
+                        } else {
+                            hasMore = false;
+                        }
+                    } else {
+                        hasMore = false;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    hasMore = false;
+                }
+            }
+            PlaylistWithSongs pws = new PlaylistWithSongs("allsongs", allSongs);
+            pws.setName(sf.getView().getContext().getString(R.string.search_all_songs, String.valueOf(allSongs.size())));
+            pws.setSongCount(allSongs.size());
+            List<Playlist> lpws = new ArrayList<>();
+            lpws.add(pws);
+            long duration = 0;
+            for (Child song: allSongs) {
+                if (song != null && song.getDuration() != null) {
+                    duration += song.getDuration();
+                }
+            }
+            pws.setDuration(duration);
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                sf.updateUI(lpws);
+            });
+        });
 
         App.getSubsonicClientInstance(false)
                 .getSearchingClient()
-                .search3(query, 20, 20, 20)
+                .search3(query, 20, 0, 20, 0, 20, 0)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -77,7 +138,7 @@ public class SearchingRepository {
 
         App.getSubsonicClientInstance(false)
                 .getSearchingClient()
-                .search3(query, 5, 5, 5)
+                .search3(query, 5, 0, 5, 0, 5, 0)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {

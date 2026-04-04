@@ -154,6 +154,28 @@ open class BaseMediaService : MediaLibraryService() {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
 
+                // --- Add for AA : aa_start_index if présent ---
+                val extras = mediaItem.mediaMetadata.extras
+                val startIndex = extras?.getInt("aa_start_index", -1) ?: -1
+                if (startIndex >= 0 ) {
+                    val cleanExtras = Bundle(extras).apply {
+                        remove("aa_start_index")
+                    }
+                    val newMetadata = mediaItem.mediaMetadata.buildUpon()
+                        .setExtras(cleanExtras)
+                        .build()
+                    val currentIdx = player.currentMediaItemIndex
+                    if (player is ExoPlayer && currentIdx != C.INDEX_UNSET) {
+                        player.replaceMediaItem(
+                            currentIdx,
+                            mediaItem.buildUpon().setMediaMetadata(newMetadata).build()
+                        )
+                    }
+                    if (startIndex in 0 until player.mediaItemCount && startIndex != currentIdx) {
+                        player.seekTo(startIndex, 0L)
+                    }
+                }
+                // --- End add for AA ---
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
                 }

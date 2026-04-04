@@ -26,11 +26,6 @@ object MediaBrowserTree {
 
     private var isInitialized = false
 
-/*	data class FunctionItem(
-		val id: String,
-		var isDisplayed: Boolean
-	)
-*/
     // Root
     private const val ROOT_ID = "[rootID]"
 	// Available functions
@@ -50,6 +45,7 @@ object MediaBrowserTree {
     private const val STARRED_ARTISTS_ID = "[starredArtistsID]"
     private const val RANDOM_ID = "[randomID]"
     private const val FOLDER_ID = "[folderID]"
+    private const val GENRES_ID = "[genresID]"
 
 	// System functions
     private const val INDEX_ID = "[indexID]"
@@ -178,7 +174,8 @@ object MediaBrowserTree {
             STARRED_TRACKS_ID,
             STARRED_ALBUMS_ID,
             STARRED_ARTISTS_ID,
-            RANDOM_ID
+            RANDOM_ID,
+            GENRES_ID
         )
 
         // Root level
@@ -331,7 +328,7 @@ object MediaBrowserTree {
         treeNodes[RECENT_SONGS_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = false,
                     title = appContext.getString(R.string.aa_song_recently_played),
                     mediaId = RECENT_SONGS_ID,
                     isPlayable = false,
@@ -409,12 +406,25 @@ object MediaBrowserTree {
         treeNodes[RANDOM_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = false,
                     title = appContext.getString(R.string.aa_random),
                     mediaId = RANDOM_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_random),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+                )
+            )
+
+        treeNodes[GENRES_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = false,
+                    title = appContext.getString(R.string.aa_genres),
+                    mediaId = GENRES_ID,
+                    isPlayable = false,
+                    isBrowsable = true,
+                    imageUri = iconUri(R.drawable.ic_aa_genres),
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
                 )
             )
@@ -459,57 +469,35 @@ object MediaBrowserTree {
             ROOT_ID -> treeNodes[ROOT_ID]?.getChildren()!!
 
             HOME_ID -> treeNodes[HOME_ID]?.getChildren()!!
-            LAST_PLAYED_ID -> automotiveRepository.getAlbums(id, "recent", 15)
-            ALBUMS_ID -> automotiveRepository.getAlbums(id, "alphabeticalByName", 500)
-            ARTISTS_ID -> automotiveRepository.getAlbums(id, "alphabeticalByArtist", 500)
-            PLAYLIST_ID -> automotiveRepository.getPlaylists(id)
+            LAST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "recent", 15)
+            ALBUMS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByName", 500)
+            ARTISTS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByArtist", 500)
+            PLAYLIST_ID -> automotiveRepository.getPlaylists(PLAYLIST_ID)
             PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
-            RADIO_ID -> automotiveRepository.internetRadioStations
-            FOLDER_ID -> automotiveRepository.getMusicFolders(id)
-            MOST_PLAYED_ID -> automotiveRepository.getAlbums(id, "frequent", 15)
-            RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
-            RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(id, "newest", 15)
-            MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
+            RADIO_ID -> automotiveRepository.getInternetRadioStations() //internetRadioStations
+            FOLDER_ID -> automotiveRepository.getMusicFolders(FOLDER_ID)
+            MOST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "frequent", 15)
+            //RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
+            RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "newest", 15)
+            //MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
             STARRED_TRACKS_ID -> automotiveRepository.starredSongs
-            STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(id)
-            STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(id)
+            STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(ALBUM_ID)
+            STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(ARTIST_ID)
             RANDOM_ID -> automotiveRepository.getRandomSongs(100)
+            GENRES_ID -> automotiveRepository.getGenres(GENRES_ID)
 
             else -> {
-                if (id.startsWith(LAST_PLAYED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(LAST_PLAYED_ID))
-                }
-
-                if (id.startsWith(ALBUMS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(ALBUMS_ID))
-                }
-
-                if (id.startsWith(ARTISTS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(ARTISTS_ID))
-                }
-
-                if (id.startsWith(HOME_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(HOME_ID))
-                }
-
-                if (id.startsWith(MOST_PLAYED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(MOST_PLAYED_ID))
-                }
-
-                if (id.startsWith(RECENTLY_ADDED_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(RECENTLY_ADDED_ID))
-                }
-
+				/*
                 if (id.startsWith(MADE_FOR_YOU_ID)) {
                     return automotiveRepository.getMadeForYou(id.removePrefix(MADE_FOR_YOU_ID),20)
                 }
+                */
 
-                if (id.startsWith(STARRED_ALBUMS_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(STARRED_ALBUMS_ID))
-                }
-
-                if (id.startsWith(STARRED_ARTISTS_ID)) {
-                    return automotiveRepository.getArtistAlbum(STARRED_ALBUMS_ID,id.removePrefix(STARRED_ARTISTS_ID))
+                if (id.startsWith(GENRES_ID)) {
+                    val shuffle = Preferences.isAndroidAutoShuffleGenreSongsEnabled()
+                    // If the user doesn't want random songs, it's likely it's for perusing them, so provide as many as possible
+                    val count = if (shuffle) 100 else 500
+                    return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), count, shuffle)
                 }
 
                 if (id.startsWith(PLAYLIST_ID)) {
@@ -541,34 +529,9 @@ object MediaBrowserTree {
         }
     }
 
-    // https://github.com/androidx/media/issues/156
-    fun getItems(mediaItems: List<MediaItem>): List<MediaItem> {
-        val updatedMediaItems = ArrayList<MediaItem>()
-
-        mediaItems.forEach {
-            if (it.localConfiguration?.uri != null) {
-                updatedMediaItems.add(it)
-            } else {
-                val sessionMediaItem = automotiveRepository.getSessionMediaItem(it.mediaId)
-
-                if (sessionMediaItem != null) {
-                    var toAdd = automotiveRepository.getMetadatas(sessionMediaItem.timestamp!!)
-                    val index = toAdd.indexOfFirst { mediaItem -> mediaItem.mediaId == it.mediaId }
-
-                    toAdd = toAdd.subList(index, toAdd.size)
-
-                    updatedMediaItems.addAll(toAdd)
-                }
-            }
-        }
-
-        return updatedMediaItems
-    }
-
     fun search(query: String): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
         return automotiveRepository.search(
             query,
-       //     ALBUM_ID,
             ALBUM_ID,
             ARTIST_ID
         )

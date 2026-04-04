@@ -165,6 +165,34 @@ public class MappingUtil {
                 .setUri(uri)
                 .build();
     }
+    public static List<MediaItem> mapMediaItems(List<Child> items, String parentId) {
+        ArrayList<MediaItem> mediaItems = new ArrayList<>();
+
+        for (int i = 0; i < items.size(); i++) {
+            mediaItems.add(mapMediaItem(items.get(i), parentId));
+        }
+
+        return mediaItems;
+    }
+    public static MediaItem mapMediaItem(Child item, String parentId) {
+        MediaItem mediaItem = mapMediaItem(item);
+
+        Bundle extras = mediaItem.mediaMetadata.extras != null
+                ? new Bundle(mediaItem.mediaMetadata.extras)
+                : new Bundle();
+
+        extras.putString("parent_id", parentId);
+
+        MediaMetadata metadata = mediaItem.mediaMetadata
+                .buildUpon()
+                .setExtras(extras)
+                .build();
+
+        return mediaItem.buildUpon()
+                .setMediaId(item.getId())
+                .setMediaMetadata(metadata)
+                .build();
+    }
 
     public static List<MediaItem> mapDownloads(List<Child> items) {
         ArrayList<MediaItem> downloads = new ArrayList<>();

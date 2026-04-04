@@ -13,6 +13,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.SimilarArtistID3;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,8 @@ public class ArtistSimilarAdapter extends RecyclerView.Adapter<ArtistSimilarAdap
     private final ClickCallback click;
 
     private List<SimilarArtistID3> artists;
+
+    private int sizePx = 400;
 
     public ArtistSimilarAdapter(ClickCallback click) {
         this.click = click;
@@ -31,11 +34,20 @@ public class ArtistSimilarAdapter extends RecyclerView.Adapter<ArtistSimilarAdap
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemLibrarySimilarArtistBinding view = ItemLibrarySimilarArtistBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+
+        TileSizeManager.getInstance().calculateTileSize(parent.getContext());
+        sizePx = TileSizeManager.getInstance().getTileSizePx(parent.getContext());
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        ViewGroup.LayoutParams lp = holder.item.similarArtistCoverImageView.getLayoutParams();
+        lp.width = sizePx;
+        lp.height = sizePx;
+        holder.item.similarArtistCoverImageView.setLayoutParams(lp);
+
         SimilarArtistID3 artist = artists.get(position);
 
         holder.item.artistNameLabel.setText(artist.getName());

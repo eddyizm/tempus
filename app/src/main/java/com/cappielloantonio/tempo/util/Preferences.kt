@@ -92,6 +92,7 @@ object Preferences {
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
     
+    private const val TILE_SIZE = "tile_size"
     private const val AA_ALBUM_VIEW = "androidauto_album_view"
 	private const val AA_HOME_VIEW = "androidauto_home_view"
     private const val AA_PLAYLIST_VIEW = "androidauto_playlist_view"
@@ -101,6 +102,7 @@ object Preferences {
 	private const val AA_SECOND_TAB = "androidauto_second_tab"
 	private const val AA_THIRD_TAB = "androidauto_third_tab"
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
+    private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
     
 	@JvmStatic
     fun getServer(): String? {
@@ -769,6 +771,10 @@ object Preferences {
     }
 
     @JvmStatic
+    fun getTileSize(): Int {
+        val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
+        return parsed?.takeIf { it in 2..6 } ?: 2
+    }
     fun isAndroidAutoAlbumViewEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
     }
@@ -811,6 +817,16 @@ object Preferences {
     @JvmStatic
     fun getAndroidAutoFourthTab(): Int {
         return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
+    }
+	
+    @JvmStatic
+    fun isAndroidAutoShuffleGenreSongsEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_GENRE_SONGS, false)
+    }
+
+    @JvmStatic
+    fun setAndroidAutoShuffleGenreSongsEnabled(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
     }
 	
 }
