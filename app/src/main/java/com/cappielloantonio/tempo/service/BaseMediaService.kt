@@ -144,6 +144,15 @@ open class BaseMediaService : MediaLibraryService() {
 
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
+            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                if (reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
+                    Log.d(TAG, "onTimelineChanged: syncing local database queue")
+                    val mediaItems = (0 until player.mediaItemCount).map { player.getMediaItemAt(it) }
+                    val children = mediaItems.mapNotNull { MappingUtil.mapToChild(it) }
+                    QueueRepository().insertAll(children, true, 0)
+                }
+            }
+
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
