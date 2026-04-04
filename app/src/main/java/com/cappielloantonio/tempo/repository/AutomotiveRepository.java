@@ -15,6 +15,8 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.BuildConfig;
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
@@ -334,6 +336,7 @@ public class AutomotiveRepository {
                             List<MusicFolder> musicFolders = response.body().getSubsonicResponse().getMusicFolders().getMusicFolders();
 
                             List<MediaItem> mediaItems = new ArrayList<>();
+                            Uri artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_folders);
 
                             for (MusicFolder musicFolder : musicFolders) {
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
@@ -341,6 +344,7 @@ public class AutomotiveRepository {
                                         .setIsBrowsable(true)
                                         .setIsPlayable(false)
                                         .setMediaType(MediaMetadata.MEDIA_TYPE_FOLDER_MIXED)
+                                        .setArtworkUri(artworkUri)
                                         .build();
 
                                 MediaItem mediaItem = new MediaItem.Builder()
@@ -515,11 +519,17 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (Playlist playlist : playlists) {
+                                String coverId = playlist.getCoverArtId();
+                                Uri artworkUri = (coverId != null && !coverId.isEmpty())
+                                        ? AlbumArtContentProvider.contentUri(coverId)
+                                        : Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_playlist);
+
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                                         .setTitle(playlist.getName())
                                         .setIsBrowsable(true)
                                         .setIsPlayable(false)
                                         .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
+                                        .setArtworkUri(artworkUri)
                                         .build();
 
                                 MediaItem mediaItem = new MediaItem.Builder()
