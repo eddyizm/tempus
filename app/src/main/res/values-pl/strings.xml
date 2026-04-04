@@ -11,6 +11,7 @@
 	<string name="aa_podcast">Podcasty</string>
 	<string name="aa_radio">Radio</string>
     <string name="aa_random">Losowe</string>
+	<string name="aa_genres">Gatunki</string>
     <string name="aa_recent_albums">Ostatnie</string>
     <string name="aa_song_recently_played">Odtwarzane piosenki</string>
     <string name="aa_starred_albums">★ Albumy</string>
@@ -146,6 +147,8 @@
     <string name="home_sync_starred_artists_subtitle">Masz wykonawców oznaczonych gwiazdką, bez pobranej muzyki</string>
     <plurals name="home_sync_starred_songs_count">
         <item quantity="one">%d piosenka wymaga synchronizacji</item>
+		<item quantity="few">%d piosenki wymagają synchronizacji</item>
+        <item quantity="many">%d piosenek wymaga synchronizacji</item>
         <item quantity="other">%d piosenek wymaga synchronizacji</item>
     </plurals>
     <string name="home_title_best_of">Najlepsze</string>
@@ -389,6 +392,8 @@
 	<string name="settings_androidauto_second_tab">Druga zakładka</string>
 	<string name="settings_androidauto_third_tab">Trzecia zakładka</string>
 	<string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
+	<string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
+    <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
@@ -402,8 +407,8 @@
     <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
     <string name="settings_radio">Pokaż radio</string>
     <string name="settings_radio_summary">Jeżeli włączone, widoczna będzie sekcja radia. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
-    <string name="settings_enable_drawer_on_landscape">Włącz szufladę w trybie pionowym [Eksperymentalne]</string>
-    <string name="settings_enable_drawer_on_landscape_summary">Odblokowywuje boczną szufladę trybu poziomego w trybie pionowym. Zmiany przyniosą efekt po restarcie.</string>
+    <string name="settings_enable_drawer_on_landscape">Włącz szufladę w trybie pionowym</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Odblokowywuje boczną szufladę trybu poziomego w trybie pionowym.</string>
     <string name="settings_hide_bottom_navbar_on_portrait">Ukryj dolny pasek nawigacji w trybie pionowym [Eksperymentalne]</string>
     <string name="settings_hide_bottom_navbar_on_portrait_summary">Eksperymentalne. Zwiększa ilość miejsca w pionie przez usunięcie dolnego paska nawigacji. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
@@ -562,6 +567,8 @@
     <string name="widget_content_desc_repeat">Zmień tryb powtarzania</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d album do zsynchronizowania </item>
+		<item quantity="few">%d albumy do zsynchronizowania</item>
+        <item quantity="many">%d albumów do zsynchronizowania</item>
         <item quantity="other">%d albumów do zsynchrpnizowania</item>
     </plurals>
     <plurals name="home_sync_starred_artists_count">
@@ -586,5 +593,8 @@
     <string name="folder_play_playing">Odtwarzanie %d piosenek</string>
     <string name="folder_play_no_songs">Nie znaleziono piosenek w folderze</string>
     <string name="search_sort_title">Sortuj ostatnie wyszukiwania chronologicznie</string>
-    <string name="search_sort_summary">Jeżeli włączone, sortuje wyszukiwania chronologicznie. Sortuje po naziwe jeżeli wyłączone.</string>    
+    <string name="search_sort_summary">Jeżeli włączone, sortuje wyszukiwania chronologicznie. Sortuje po naziwe jeżeli wyłączone.</string>
+	<string name="search_all_songs_loading">Getting wszystkich piosenek ...</string>
+    <string name="search_all_songs">Wszystkie %1$s piosenek</string>
+    <string name="search_all_songs_play">Odtwórz %1$s</string>
 </resources>
