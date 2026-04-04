@@ -13,6 +13,7 @@ import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.TileSizeManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,7 @@ public class AlbumCarouselAdapter extends RecyclerView.Adapter<AlbumCarouselAdap
     private final ClickCallback click;
     private List<AlbumID3> albums;
     private boolean showArtist;
+    private int sizePx = 400;
 
     public AlbumCarouselAdapter(ClickCallback click, boolean showArtist) {
         this.click = click;
@@ -32,11 +34,19 @@ public class AlbumCarouselAdapter extends RecyclerView.Adapter<AlbumCarouselAdap
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemAlbumCarouselBinding view = ItemAlbumCarouselBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        TileSizeManager.getInstance().calculateTileSize(parent.getContext());
+        sizePx = TileSizeManager.getInstance().getTileSizePx(parent.getContext());
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        ViewGroup.LayoutParams lp = holder.item.albumCoverImageView.getLayoutParams();
+        lp.width = sizePx;
+        lp.height = sizePx;
+        holder.item.albumCoverImageView.setLayoutParams(lp);
+
         AlbumID3 album = albums.get(position);
 
         holder.item.albumNameLabel.setText(album.getName());
