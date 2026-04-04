@@ -4,6 +4,7 @@
     <locale android:name="de-DE"/>         <!-- German -->
     <locale android:name="fr-FR"/>         <!-- French -->
     <locale android:name="zh-CN"/>         <!-- Simplified Chinese-->
+    <locale android:name="zh-TW"/>         <!-- Traditional Chinese-->
     <locale android:name="ko-KR"/>         <!-- Korean-->
     <locale android:name="pt-BR"/>         <!-- Brazilian Portuguese -->
     <locale android:name="it-IT"/>         <!-- Italian -->

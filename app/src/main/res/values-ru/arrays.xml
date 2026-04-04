@@ -1,19 +1,19 @@
 <resources>
     <string-array name="theme_list_titles">
-        <item>Светлый</item>
-        <item>Темный</item>
-        <item>Системный по умолчанию</item>
+        <item>Светлая</item>
+        <item>Темная</item>
+        <item>Системная по умолчанию</item>
     </string-array>
     <string-array name="theme_list_values">
-        <item>светлый</item>
-        <item>темный</item>
-        <item>по умолчанию</item>
+        <item>light</item>
+        <item>dark</item>
+        <item>default</item>
     </string-array>
 
     <string-array name="pref_cache_size_titles">
-        <item>Высокий</item>
+        <item>Большой</item>
         <item>Средний</item>
-        <item>Низкий</item>
+        <item>Маленький</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
@@ -22,9 +22,9 @@
     </string-array>
 
     <string-array name="pref_image_size_titles">
-        <item>Высокий</item>
-        <item>Средний</item>
-        <item>Низкий</item>
+        <item>Высокое</item>
+        <item>Среднее</item>
+        <item>Низкое</item>
     </string-array>
     <string-array name="pref_image_size_values">
         <item>-1</item>
@@ -165,7 +165,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_download_list_titles">
-        <item>Прямая загрузка</item>
+        <item>Оригинал</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -191,9 +191,9 @@
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
-        <item>Высокий</item>
-        <item>Средний</item>
-        <item>Низкий</item>
+        <item>Сильное скругление</item>
+        <item>Среднее скругление</item>
+        <item>Небольшое скругление</item>
     </string-array>
     <string-array name="rounded_corner_size_values">
         <item>18</item>
@@ -202,23 +202,23 @@
     </string-array>
 
     <string-array name="replay_gain_titles">
-        <item>Отключенный</item>
+        <item>Выключено</item>
         <item>Трек</item>
         <item>Альбом</item>
         <item>Авто</item>
     </string-array>
     <string-array name="replay_gain_values">
-        <item>отключенный</item>
-        <item>трек</item>
-        <item>альбом</item>
-        <item>авто</item>
+        <item>disabled</item>
+        <item>track</item>
+        <item>album</item>
+        <item>auto</item>
     </string-array>
 
     <string-array name="transcoded_download_option_list_titles">
-        <item>Не перекодировать</item>
+        <item>Не транскодировать</item>
         <item>Настройки сервера</item>
         <item>Формат транскодирования Wi-Fi</item>
-        <item>Формат мобильного транскодирования</item>
+        <item>Формат транскодирования моб. сети</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
         <item>0</item>
@@ -229,15 +229,24 @@
 
     <string-array name="buffering_strategy_titles">
         <item>Минимум</item>
-        <item>Умеренный</item>
-        <item>Агрессивный</item>
-        <item>Экстремальный</item>
+        <item>Умеренно</item>
+        <item>Агрессивно</item>
+        <item>Экстремально</item>
     </string-array>
     <string-array name="buffering_strategy_values">
         <item>.1</item>
         <item>1</item>
         <item>4</item>
         <item>8</item>
+    </string-array>
+
+    <string-array name="playlist_sort_option_titles">
+        <item>По названию</item>
+        <item>Случайно</item>
+    </string-array>
+    <string-array name="playlist_sort_option_values">
+        <item>ORDER_BY_NAME</item>
+        <item>ORDER_BY_RANDOM</item>
     </string-array>
 
     <string-array name="skip_min_star_rating_titles">
@@ -254,4 +263,62 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3"</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
+   	<!-- Add by MFO -->
+    <string-array name="aa_tab_titles">
+        <item>Не показывать</item>
+        <item>Главная</item>
+        <item>Недавние</item>
+        <item>Альбомы</item>
+        <item>Артисты</item>
+        <item>Плейлисты</item>
+        <item>Подкасты</item>
+        <item>Радио</item>
+        <item>Папки</item>
+        <item>Популярные альбомы</item>
+    <!--    <item>Tracks played</item> -->
+        <item>Недавно добавленные альбомы</item>
+    <!--    <item>For you</item> -->
+        <item>Избранные треки</item>
+        <item>Избранные альбомы</item>
+        <item>Избранные артисты</item>
+        <item>Случайное</item>
+        <item>Жанры</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+	<!-- end Add by MFO -->
+
 </resources>

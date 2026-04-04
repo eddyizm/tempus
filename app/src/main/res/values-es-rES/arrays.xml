@@ -263,4 +263,74 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3"</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
+    <string-array name="tile_size_titles">
+        <item>Muy pequeño</item>
+        <item>Pequeño</item>
+        <item>Mediano</item>
+        <item>Grande</item>
+        <item>Por defecto</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+
+    <!-- Add by MFO -->
+    <string-array name="aa_tab_titles">
+        <item>No mostrar</item>
+        <item>Inicio</item>
+        <item>Reciente</item>
+        <item>Álbumes</item>
+        <item>Artistas</item>
+        <item>Listas</item>
+        <item>Pódcasts</item>
+        <item>Radio</item>
+        <item>Carpeta</item>
+        <item>Álbumes más reproducidos</item>
+        <!--    <item>Pistas reproducidas</item> -->
+        <item>Álbumes añadidos</item>
+        <!--    <item>Para ti</item> -->
+        <item>Pistas favoritas</item>
+        <item>Álbumes favoritos</item>
+        <item>Artistas favoritos</item>
+        <item>Aleatorio</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+    </string-array>
+    <!-- end Add by MFO -->
 </resources>

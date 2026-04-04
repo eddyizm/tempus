@@ -255,6 +255,20 @@
         <item>4</item>
     </string-array>
 			
+    <string-array name="tile_size_titles">
+        <item>Minuscule</item>
+        <item>Petite</item>
+        <item>Moyenne</item>
+        <item>Large</item>
+        <item>Défaut</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
 	<!-- Add by MFO -->
     <string-array name="aa_tab_titles">
         <item>Ne pas afficher</item>
@@ -274,6 +288,7 @@
         <item>Albums favoris</item>
         <item>Artistes favoris</item>
         <item>Aléatoire</item>
+        <item>Genres</item>
     </string-array>
     <string-array name="aa_tab_values">
         <item>-1</item>
@@ -293,7 +308,7 @@
         <item>13</item>
         <item>14</item>
         <item>15</item>
+        <item>16</item>
     </string-array>
-	<!-- end Add by MFO -->
-	
+
 </resources>

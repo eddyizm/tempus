@@ -10,7 +10,7 @@ import java.util.*
 
 @Keep
 @Parcelize
-open class Child(
+open class Child @JvmOverloads constructor(
     @PrimaryKey
     @ColumnInfo(name = "id")
     open val id: String,

@@ -11,6 +11,7 @@
 	<string name="aa_podcast">Podcast</string>
 	<string name="aa_radio">Radio</string>
     <string name="aa_random">Random</string>
+    <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
     <string name="aa_song_recently_played">Song played</string>
     <string name="aa_starred_albums">★ Albums</string>
@@ -402,6 +403,8 @@
 	<string name="settings_androidauto_second_tab">Second tab display</string>
 	<string name="settings_androidauto_third_tab">Third tab display</string>
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
+    <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
+    <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
@@ -415,8 +418,8 @@
     <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
     <string name="settings_radio">Show radio</string>
     <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
-    <string name="settings_enable_drawer_on_landscape">Enable drawer on portrait [Experimental]</string>
-    <string name="settings_enable_drawer_on_landscape_summary">Unlocks the lateral landscape menu drawer on portrait. The changes will take effect on restart.</string>
+    <string name="settings_enable_drawer_on_landscape">Enable drawer on portrait</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Unlocks the lateral landscape menu drawer on portrait.</string>
     <string name="settings_hide_bottom_navbar_on_portrait">Hide bottom navbar on portrait [Experimental]</string>
     <string name="settings_hide_bottom_navbar_on_portrait_summary">Experimental.Increases vertical space by removing the bottom navbar. The changes will take effect on restart.</string>
     <string name="settings_auto_download_lyrics">Auto download lyrics</string>
@@ -450,6 +453,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
     <string name="settings_theme">Theme</string>
+	<string name="settings_tile_size">Tiles size</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
     <string name="settings_title_playlist">Playlist</string>
@@ -603,4 +607,7 @@
 
     <string name="search_sort_title">Sort recent searches chronologically</string>
     <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
+    <string name="search_all_songs_loading">Getting all songs ...</string>
+    <string name="search_all_songs">all %1$s songs</string>
+    <string name="search_all_songs_play">Play %1$s</string>
 </resources>
