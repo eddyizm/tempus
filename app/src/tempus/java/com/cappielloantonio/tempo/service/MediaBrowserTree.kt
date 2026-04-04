@@ -488,7 +488,7 @@ object MediaBrowserTree {
             STARRED_TRACKS_ID -> automotiveRepository.starredSongs
             STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(id)
             STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(id)
-            RANDOM_ID -> automotiveRepository.getRandomSongs(100)
+            RANDOM_ID -> automotiveRepository.getRandomSongs(100, true)
             GENRES_ID -> automotiveRepository.getGenres(id)
 
             else -> {

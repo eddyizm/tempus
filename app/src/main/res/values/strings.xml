@@ -11,6 +11,9 @@
 	<string name="aa_podcast">Podcast</string>
 	<string name="aa_radio">Radio</string>
     <string name="aa_random">Random</string>
+    <string name="aa_action_refresh">No data - Refresh</string>
+    <!-- Internal refresh media ID for Android Auto -->
+    <string name="refresh_media_id" translatable="false">__REFRESH_MEDIA__</string>
     <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
     <string name="aa_song_recently_played">Song played</string>
