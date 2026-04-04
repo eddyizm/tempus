@@ -527,8 +527,6 @@
             android:key="androidauto_shuffle_genre_songs" />
 			
 	</com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-	<!-- end Add by MFO -->
-
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_about_title">
         <Preference
             app:selectable="false"
