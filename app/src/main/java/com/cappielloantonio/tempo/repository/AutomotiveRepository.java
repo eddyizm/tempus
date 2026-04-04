@@ -155,8 +155,6 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-
-
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getRandomSongs(int count) {
         return getRandomSongs(count, false);
     }
