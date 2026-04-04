@@ -57,6 +57,9 @@ public class AutomotiveRepository {
     private final SessionMediaItemDao sessionMediaItemDao = AppDatabase.getInstance().sessionMediaItemDao();
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
 
+    public static final String ALBUM = "[albumSource]";
+    public static final String PLAYLIST = "[playlistSource]";
+
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
@@ -69,7 +72,6 @@ public class AutomotiveRepository {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbumList2() != null && response.body().getSubsonicResponse().getAlbumList2().getAlbums() != null) {
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getAlbumList2().getAlbums();
 
-                            // add by MFO
                             // Hack for artist view
                             if("alphabeticalByArtist".equals(type))for(AlbumID3 album : albums){
                                 String artistName = album.getArtist();
@@ -77,7 +79,6 @@ public class AutomotiveRepository {
                                 album.setName(artistName);
                                 album.setArtist(albumName);
                             }
-                            // end add by MFO
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
@@ -652,7 +653,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ALBUM + id);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -737,7 +738,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, PLAYLIST + id);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
