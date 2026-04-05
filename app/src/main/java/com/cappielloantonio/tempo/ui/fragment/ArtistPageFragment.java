@@ -65,6 +65,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private AlbumCarouselAdapter epAdapter;
     private AlbumCarouselAdapter singleAdapter;
     private AlbumCarouselAdapter compilationAdapter;
+    private AlbumCarouselAdapter soundtrackAdapter;
     private AlbumCarouselAdapter appearsOnAdapter;
     private ArtistCarouselAdapter similarArtistAdapter;
 
@@ -363,6 +364,22 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                     bind.compilationsSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
                     compilationAdapter.setItems(albums);
                     bind.compilationsSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_compilation_section), albums));
+                }
+            }
+        });
+
+        // Soundtracks
+        bind.soundtracksRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.soundtracksRecyclerView.setHasFixedSize(true);
+        soundtrackAdapter = new AlbumCarouselAdapter(this, false);
+        bind.soundtracksRecyclerView.setAdapter(soundtrackAdapter);
+        artistPageViewModel.getSoundtracks().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageSoundtracksSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.soundtracksSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    soundtrackAdapter.setItems(albums);
+                    bind.soundtracksSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_soundtrack_section), albums));
                 }
             }
         });
