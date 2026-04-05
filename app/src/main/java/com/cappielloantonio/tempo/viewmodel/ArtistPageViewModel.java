@@ -43,7 +43,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
     private final MutableLiveData<List<AlbumID3>> eps = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> mainAlbums = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> appearsOn = new MutableLiveData<>();
-    private final MutableLiveData<List<AlbumID3>> compilation = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> compilations = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> soundtrack = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> live = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> remix = new MutableLiveData<>();
@@ -97,7 +97,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
                     SECONDARY TYPES: compilation / soundtrack / live / remix
                      */
 
-                    compilation.setValue(
+                    compilations.setValue(
                             allAlbums.stream()
                                     .filter(a -> {
                                         List<String> releaseTypes = a.getReleaseTypes();
@@ -181,6 +181,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
     public LiveData<List<AlbumID3>> getSingles() { return singles; }
     public LiveData<List<AlbumID3>> getEPs() { return eps; }
     public LiveData<List<AlbumID3>> getMainAlbums() { return mainAlbums; }
+    public LiveData<List<AlbumID3>> getCompilations() { return compilations; }
     public LiveData<List<AlbumID3>> getAppearsOn() { return appearsOn; }
 
     public LiveData<List<AlbumID3>> getAlbumList() {

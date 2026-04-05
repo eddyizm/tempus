@@ -66,6 +66,7 @@
     <string name="artist_page_title_album_section">Albums</string>
     <string name="artist_page_title_ep_section">EPs</string>
     <string name="artist_page_title_single_section">Singles</string>
+    <string name="artist_page_title_compilation_section">Compilations</string>
     <string name="artist_page_title_appears_on_section">Appears On</string>
     <string name="artist_page_title_biography_more_button">More</string>
     <string name="artist_page_title_biography_section">Biography</string>

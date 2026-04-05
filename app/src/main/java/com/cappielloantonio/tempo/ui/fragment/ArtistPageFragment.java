@@ -64,6 +64,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private AlbumCarouselAdapter mainAlbumAdapter;
     private AlbumCarouselAdapter epAdapter;
     private AlbumCarouselAdapter singleAdapter;
+    private AlbumCarouselAdapter compilationAdapter;
     private AlbumCarouselAdapter appearsOnAdapter;
     private ArtistCarouselAdapter similarArtistAdapter;
 
@@ -293,7 +294,12 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initCategorizedAlbumsView() {
-        // Main Albums
+
+        /*
+        PRIMARY TYPES
+         */
+
+        // Albums
         bind.mainAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.mainAlbumsRecyclerView.setHasFixedSize(true);
         mainAlbumAdapter = new AlbumCarouselAdapter(this, false);
@@ -337,6 +343,26 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                     bind.singlesSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
                     singleAdapter.setItems(albums);
                     bind.singlesSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_single_section), albums));
+                }
+            }
+        });
+
+        /*
+        SECONDARY TYPES
+         */
+
+        // Compilations
+        bind.compilationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.compilationsRecyclerView.setHasFixedSize(true);
+        compilationAdapter = new AlbumCarouselAdapter(this, false);
+        bind.compilationsRecyclerView.setAdapter(compilationAdapter);
+        artistPageViewModel.getCompilations().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageCompilationsSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.compilationsSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    compilationAdapter.setItems(albums);
+                    bind.compilationsSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_compilation_section), albums));
                 }
             }
         });
