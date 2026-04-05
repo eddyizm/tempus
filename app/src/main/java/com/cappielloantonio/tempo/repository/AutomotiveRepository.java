@@ -172,7 +172,12 @@ public class AutomotiveRepository {
                                     for (ArtistID3 artist : index.getArtists()) {
                                         if (count >= maxSize) break;
 
-                                        Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
+                                        Uri artworkUri;
+                                        if (artist.getCoverArtId() != null && !artist.getCoverArtId().isEmpty()) {
+                                            artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
+                                        } else {
+                                            artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists);
+                                        }
 
                                         Bundle extras = createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled());
 
@@ -820,7 +825,14 @@ public class AutomotiveRepository {
                                 mediaItems.add(mediaItem);
                             }
 
-                            Uri artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_radio);
+                            ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
+                            Uri artworkUri;
+                            if (artist.getCoverArtId() != null && !artist.getCoverArtId().isEmpty()) {
+                                artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
+                            } else {
+                                artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_radio);
+                            }
+                            //Uri artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_radio);
 
                             if (InstantMixEnabled && albums.size() >= 2 && totalTracks >= INSTANT_MIX_MIN_TRACKS) {
                                 MediaMetadata mediaMetadata = new MediaMetadata.Builder()
