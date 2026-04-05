@@ -67,6 +67,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private AlbumCarouselAdapter compilationAdapter;
     private AlbumCarouselAdapter soundtrackAdapter;
     private AlbumCarouselAdapter liveAdapter;
+    private AlbumCarouselAdapter remixAdapter;
     private AlbumCarouselAdapter appearsOnAdapter;
     private ArtistCarouselAdapter similarArtistAdapter;
 
@@ -397,6 +398,22 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                     bind.livesSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
                     liveAdapter.setItems(albums);
                     bind.livesSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_live_section), albums));
+                }
+            }
+        });
+
+        // Remixes
+        bind.remixesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.remixesRecyclerView.setHasFixedSize(true);
+        remixAdapter = new AlbumCarouselAdapter(this, false);
+        bind.remixesRecyclerView.setAdapter(remixAdapter);
+        artistPageViewModel.getRemixes().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageRemixesSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.remixesSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    remixAdapter.setItems(albums);
+                    bind.remixesSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_remix_section), albums));
                 }
             }
         });
