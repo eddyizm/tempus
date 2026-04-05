@@ -305,6 +305,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // Albums
         bind.mainAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.mainAlbumsRecyclerView.setHasFixedSize(true);
+        bind.mainAlbumsRecyclerView.setNestedScrollingEnabled(false);
         mainAlbumAdapter = new AlbumCarouselAdapter(this, false);
         bind.mainAlbumsRecyclerView.setAdapter(mainAlbumAdapter);
         artistPageViewModel.getMainAlbums().observe(getViewLifecycleOwner(), albums -> {
@@ -321,6 +322,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // EPs
         bind.epsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.epsRecyclerView.setHasFixedSize(true);
+        bind.epsRecyclerView.setNestedScrollingEnabled(false);
         epAdapter = new AlbumCarouselAdapter(this, false);
         bind.epsRecyclerView.setAdapter(epAdapter);
         artistPageViewModel.getEPs().observe(getViewLifecycleOwner(), albums -> {
@@ -337,6 +339,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // Singles
         bind.singlesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.singlesRecyclerView.setHasFixedSize(true);
+        bind.singlesRecyclerView.setNestedScrollingEnabled(false);
         singleAdapter = new AlbumCarouselAdapter(this, false);
         bind.singlesRecyclerView.setAdapter(singleAdapter);
         artistPageViewModel.getSingles().observe(getViewLifecycleOwner(), albums -> {
@@ -357,6 +360,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // Compilations
         bind.compilationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.compilationsRecyclerView.setHasFixedSize(true);
+        bind.compilationsRecyclerView.setNestedScrollingEnabled(false);
         compilationAdapter = new AlbumCarouselAdapter(this, false);
         bind.compilationsRecyclerView.setAdapter(compilationAdapter);
         artistPageViewModel.getCompilations().observe(getViewLifecycleOwner(), albums -> {
@@ -373,6 +377,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // Soundtracks
         bind.soundtracksRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.soundtracksRecyclerView.setHasFixedSize(true);
+        bind.soundtracksRecyclerView.setNestedScrollingEnabled(false);
         soundtrackAdapter = new AlbumCarouselAdapter(this, false);
         bind.soundtracksRecyclerView.setAdapter(soundtrackAdapter);
         artistPageViewModel.getSoundtracks().observe(getViewLifecycleOwner(), albums -> {
@@ -389,6 +394,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // Lives
         bind.livesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.livesRecyclerView.setHasFixedSize(true);
+        bind.livesRecyclerView.setNestedScrollingEnabled(false);
         liveAdapter = new AlbumCarouselAdapter(this, false);
         bind.livesRecyclerView.setAdapter(liveAdapter);
         artistPageViewModel.getLives().observe(getViewLifecycleOwner(), albums -> {
@@ -405,6 +411,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // Remixes
         bind.remixesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.remixesRecyclerView.setHasFixedSize(true);
+        bind.remixesRecyclerView.setNestedScrollingEnabled(false);
         remixAdapter = new AlbumCarouselAdapter(this, false);
         bind.remixesRecyclerView.setAdapter(remixAdapter);
         artistPageViewModel.getRemixes().observe(getViewLifecycleOwner(), albums -> {
@@ -421,6 +428,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         // Appears On
         bind.appearsOnRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.appearsOnRecyclerView.setHasFixedSize(true);
+        bind.appearsOnRecyclerView.setNestedScrollingEnabled(false);
         appearsOnAdapter = new AlbumCarouselAdapter(this, true); // Show artist name for Appears On
         bind.appearsOnRecyclerView.setAdapter(appearsOnAdapter);
         artistPageViewModel.getAppearsOn().observe(getViewLifecycleOwner(), albums -> {
