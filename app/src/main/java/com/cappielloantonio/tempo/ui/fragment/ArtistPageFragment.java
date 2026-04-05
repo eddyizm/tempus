@@ -66,6 +66,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private AlbumCarouselAdapter singleAdapter;
     private AlbumCarouselAdapter compilationAdapter;
     private AlbumCarouselAdapter soundtrackAdapter;
+    private AlbumCarouselAdapter liveAdapter;
     private AlbumCarouselAdapter appearsOnAdapter;
     private ArtistCarouselAdapter similarArtistAdapter;
 
@@ -380,6 +381,22 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                     bind.soundtracksSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
                     soundtrackAdapter.setItems(albums);
                     bind.soundtracksSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_soundtrack_section), albums));
+                }
+            }
+        });
+
+        // Lives
+        bind.livesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.livesRecyclerView.setHasFixedSize(true);
+        liveAdapter = new AlbumCarouselAdapter(this, false);
+        bind.livesRecyclerView.setAdapter(liveAdapter);
+        artistPageViewModel.getLives().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageLivesSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.livesSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    liveAdapter.setItems(albums);
+                    bind.livesSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_live_section), albums));
                 }
             }
         });
