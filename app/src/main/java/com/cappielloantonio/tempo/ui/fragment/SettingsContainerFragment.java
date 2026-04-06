@@ -34,6 +34,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 import androidx.preference.SwitchPreference;
 
 import com.cappielloantonio.tempo.BuildConfig;
@@ -50,14 +51,17 @@ import com.cappielloantonio.tempo.ui.dialog.StarredAlbumSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredArtistSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
+import com.cappielloantonio.tempo.util.ClickablePreferenceCategory;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.SettingViewModel;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 @OptIn(markerClass = UnstableApi.class)
 public class SettingsContainerFragment extends PreferenceFragmentCompat {
@@ -73,6 +77,8 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private boolean isServiceBound = false;
     private ActivityResultLauncher<Intent> equalizerResultLauncher;
 
+    private final Set<String> expandedCategories = new HashSet<>();
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,13 +87,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {}
         );
-
-        if (!BuildConfig.FLAVOR.equals("tempus")) {
-            PreferenceCategory githubUpdateCategory = findPreference("settings_github_update_category_key");
-            if (githubUpdateCategory != null) {
-                getPreferenceScreen().removePreference(githubUpdateCategory);
-            }
-        }
 
         directoryPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -137,10 +136,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
 
-        checkSystemEqualizer();
-        checkCacheStorage();
-        checkStorage();
-        checkDownloadDirectory();
+        expandedCategories.clear();
 
         setStreamingCacheSize();
         setAppLanguage();
@@ -162,11 +158,43 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         bindMediaService();
         actionAppEqualizer();
+
+        applyAccordionState();
     }
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.global_preferences, rootKey);
+
+        if (!BuildConfig.FLAVOR.equals("tempus")) {
+            PreferenceCategory githubUpdateCategory = findPreference("settings_github_update_category_key");
+            if (githubUpdateCategory != null) {
+                getPreferenceScreen().removePreference(githubUpdateCategory);
+            }
+        }
+
+        PreferenceScreen screen = getPreferenceScreen();
+        if (screen != null) {
+            for (int i = 0; i < screen.getPreferenceCount(); i++) {
+                Preference pref = screen.getPreference(i);
+                if (pref instanceof ClickablePreferenceCategory) {
+                    ClickablePreferenceCategory category = (ClickablePreferenceCategory) pref;
+                    if (category.getKey() == null) {
+                        category.setKey("category_key_" + i);
+                    }
+                    category.setOnClickListener(cat -> {
+                        String key = cat.getKey();
+                        if (expandedCategories.contains(key)) {
+                            expandedCategories.remove(key);
+                        } else {
+                            expandedCategories.add(key);
+                        }
+                        applyAccordionState();
+                    });
+                }
+            }
+        }
+
         ListPreference themePreference = findPreference(Preferences.THEME);
         if (themePreference != null) {
             themePreference.setOnPreferenceChangeListener(
@@ -175,6 +203,45 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                         ThemeHelper.applyTheme(themeOption);
                         return true;
                     });
+        }
+    }
+
+    private void applyAccordionState() {
+        PreferenceScreen screen = getPreferenceScreen();
+        if (screen == null) return;
+
+        for (int i = 0; i < screen.getPreferenceCount(); i++) {
+            Preference pref = screen.getPreference(i);
+            if (pref instanceof PreferenceCategory) {
+                PreferenceCategory category = (PreferenceCategory) pref;
+                for (int j = 0; j < category.getPreferenceCount(); j++) {
+                    category.getPreference(j).setVisible(true);
+                }
+            }
+        }
+
+        checkSystemEqualizer();
+        checkCacheStorage();
+        checkStorage();
+        checkDownloadDirectory();
+        checkEqualizerBands();
+
+        for (int i = 0; i < screen.getPreferenceCount(); i++) {
+            Preference pref = screen.getPreference(i);
+            if (pref instanceof PreferenceCategory) {
+                PreferenceCategory category = (PreferenceCategory) pref;
+                boolean expanded = expandedCategories.contains(category.getKey());
+                category.setIcon(expanded ? R.drawable.ic_arrow_down : R.drawable.ic_navigate_next);
+                if (!expanded) {
+                    for (int j = 0; j < category.getPreferenceCount(); j++) {
+                        category.getPreference(j).setVisible(false);
+                    }
+                }
+            }
+        }
+
+        if (getListView() != null && getListView().getAdapter() != null) {
+            getListView().getAdapter().notifyDataSetChanged();
         }
     }
 
@@ -548,6 +615,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             mediaServiceBinder = (MediaService.LocalBinder) service;
             isServiceBound = true;
             checkEqualizerBands();
+            applyAccordionState();
         }
 
         @Override
