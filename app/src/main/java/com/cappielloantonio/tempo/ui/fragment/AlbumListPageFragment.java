@@ -93,6 +93,10 @@ public class AlbumListPageFragment extends Fragment implements ClickCallback {
             albumListPageViewModel.artist = requireArguments().getParcelable(Constants.ARTIST_OBJECT);
             albumListPageViewModel.title = Constants.ALBUM_FROM_ARTIST;
             bind.pageTitleLabel.setText(albumListPageViewModel.artist.getName());
+        } else if (requireArguments().getParcelableArrayList(Constants.ALBUMS_OBJECT) != null) {
+            albumListPageViewModel.albums = requireArguments().getParcelableArrayList(Constants.ALBUMS_OBJECT);
+            albumListPageViewModel.title = requireArguments().getString(Constants.ALBUM_LIST_TITLE, "");
+            bind.pageTitleLabel.setText(albumListPageViewModel.title);
         }
     }
 

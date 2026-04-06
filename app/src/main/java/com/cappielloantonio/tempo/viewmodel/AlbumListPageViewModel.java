@@ -23,6 +23,7 @@ public class AlbumListPageViewModel extends AndroidViewModel {
 
     public String title;
     public ArtistID3 artist;
+    public List<AlbumID3> albums;
 
     private MutableLiveData<List<AlbumID3>> albumList;
 
@@ -34,6 +35,9 @@ public class AlbumListPageViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<AlbumID3>> getAlbumList(LifecycleOwner owner) {
+        if (albums != null) {
+            return new MutableLiveData<>(albums);
+        }
         albumList = new MutableLiveData<>(new ArrayList<>());
 
         switch (title) {
