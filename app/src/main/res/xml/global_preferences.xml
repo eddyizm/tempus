@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory app:title="@string/settings_title_general">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_general">
         <Preference
             android:layout_height="match_parent"
             android:key="system_equalizer"
@@ -29,9 +29,9 @@
         <Preference
             android:key="logout"
             android:title="@string/settings_logout_title"/>
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_ui">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
         <ListPreference
             android:layout_height="match_parent"
             app:defaultValue="default"
@@ -166,9 +166,9 @@
             android:summary="@string/search_sort_summary"
             android:key="sort_search_chronologically" />
 
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-     <PreferenceCategory app:title="@string/settings_title_playlist">
+     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
         <SwitchPreference
             android:title="@string/settings_allow_playlist_duplicates"
             android:defaultValue="false"
@@ -182,10 +182,10 @@
              app:key="home_sort_playlists"
              app:title="@string/settings_playlist_sort"
              app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
     
-    <PreferenceCategory app:title="@string/settings_title_data">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_data">
         <ListPreference
             app:defaultValue="256"
             app:dialogTitle="@string/settings_streaming_cache_size"
@@ -278,9 +278,9 @@
             android:key="delete_download_storage"
             app:title="@string/settings_delete_download_storage_title"
             app:summary="@string/settings_delete_download_storage_summary"/>
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_transcoding">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_transcoding" />
@@ -336,9 +336,9 @@
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_transcoding_estimate_content_length" />
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_transcoding_download">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding_download">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_transcoding_download" />
@@ -372,9 +372,9 @@
             app:key="max_bitrate_download"
             app:title="@string/settings_max_bitrate_download"
             app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_replay_gain">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_replay_gain">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_replay_gain" />
@@ -388,9 +388,9 @@
             app:title="@string/settings_replay_gain"
             app:useSimpleSummaryProvider="true" />
 
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_rating">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_rating">
         <SeekBarPreference
             android:key="min_star_rating"
             app:defaultValue="0"
@@ -401,9 +401,9 @@
             app:summary="@string/settings_summary_skip_min_star_rating"
             app:title="@string/settings_title_skip_min_star_rating" />
 
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_scrobble">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_scrobble">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_scrobble" />
@@ -417,9 +417,9 @@
             android:defaultValue="true"
             android:key="scrobbling" />
 
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_share">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_share">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_share" />
@@ -429,9 +429,9 @@
             android:defaultValue="false"
             android:key="share" />
 
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory app:title="@string/settings_title_syncing">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_syncing">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_syncing" />
@@ -450,9 +450,9 @@
             app:key="queue_syncing_countdown"
             app:title="@string/settings_queue_syncing_countdown"
             app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <PreferenceCategory 
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory 
         android:key="settings_github_update_category_key"
         app:title="@string/settings_github_update">
         <Preference
@@ -462,10 +462,10 @@
             android:title="@string/settings_github_update_title"
             android:defaultValue="true"
             android:key="github_update_check" />
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
 	<!-- Android Auto configuration -->
-    <PreferenceCategory app:title="@string/settings_androidauto">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_androidauto">
          <Preference
             app:selectable="false"
             app:summary="@string/home_rearrangement_dialog_subtitle" />
@@ -536,9 +536,8 @@
             android:defaultValue="false"
             android:key="androidauto_shuffle_genre_songs" />
 			
-	</PreferenceCategory>
-
-    <PreferenceCategory app:title="@string/settings_about_title">
+	</com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_about_title">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_about_summary" />
@@ -571,5 +570,5 @@
                 android:action="android.intent.action.VIEW"
                 android:data="@string/undraw_url" />
         </Preference>
-    </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 </PreferenceScreen>
