@@ -313,8 +313,6 @@
     <string name="settings_audio_transcode_download_priority_title">Dar prioridad a las opciones del servidor usadas para el streaming en las descargas</string>
     <string name="settings_audio_transcode_download_summary">Si se habilita, Tempus descargará las pistas transcodificadas.</string>
     <string name="settings_audio_transcode_download_title">Descargas pistas transcodificadas</string>
-    <string name="settings_audio_transcode_estimate_content_length_summary">Si se habilita, se pedirá al servidor la duración estimada de la pista.</string>
-    <string name="settings_audio_transcode_estimate_content_length_title">Calcular la duración del contenido</string>
     <string name="settings_audio_transcode_format_download">Formato de transcodificación para las descargas</string>
     <string name="settings_audio_transcode_format_mobile">Formato de transcodificación en red de datos móviles</string>
     <string name="settings_audio_transcode_format_wifi">Formato de transcodificación en red Wi-Fi</string>

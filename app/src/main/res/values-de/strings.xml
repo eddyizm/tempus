@@ -264,8 +264,6 @@
     <string name="settings_audio_transcode_download_priority_title">Transkodierungseinstellungen des Servers für Downloads bevorzugen.</string>
     <string name="settings_audio_transcode_download_summary">Diese Option aktiviert das Transkodieren für heruntergeladene Tracks.</string>
     <string name="settings_audio_transcode_download_title">Transkodierte Tracks herunterladen</string>
-    <string name="settings_audio_transcode_estimate_content_length_summary">Diese Option bittet den Server um die geschätzte Länge des Titels.</string>
-    <string name="settings_audio_transcode_estimate_content_length_title">Titellänge schätzen</string>
     <string name="settings_audio_transcode_priority_summary">Diese Option deaktiviert die weiter unten folgenden Transkodierungseinstellungen.</string>
     <string name="settings_audio_transcode_priority_title">Transkodierungseinstellungen des Servers bevorzugen</string>
     <string name="settings_audio_transcode_priority_toast">Servereinstellungen zur Transkodierung des Tracks werden bevorzugt</string>

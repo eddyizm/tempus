@@ -316,8 +316,6 @@
     <string name="settings_audio_transcode_download_priority_title">Prioritizați setările serverului utilizate pentru streaming în descărcări</string>
     <string name="settings_audio_transcode_download_summary">Dacă este activat, Tempus va descărca piste transcodate.</string>
     <string name="settings_audio_transcode_download_title">Descărcați piste transcodate</string>
-    <string name="settings_audio_transcode_estimate_content_length_summary">Dacă este activat, serverul va fi întrebat cu privire la durata estimată a piesei.</string>
-    <string name="settings_audio_transcode_estimate_content_length_title">Estimare lungime conținut</string>
     <string name="settings_audio_transcode_format_download">Format transcodare pentru descărcări</string>
     <string name="settings_audio_transcode_format_mobile">Format transcodare pe mobil</string>
     <string name="settings_audio_transcode_format_wifi">Format transcodare pe Wi-Fi</string>
