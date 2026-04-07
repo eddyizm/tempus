@@ -332,8 +332,6 @@
     <string name="settings_audio_transcode_download_priority_title">Priorytetyzuj ustawienia serwera używanego do strumieniowania w pobieraniach</string>
     <string name="settings_audio_transcode_download_summary">Jeżeli włączone, Tempus będzie pobierał transkodowane utwory.</string>
     <string name="settings_audio_transcode_download_title">Pobieraj transkodowane utwory</string>
-    <string name="settings_audio_transcode_estimate_content_length_summary">Jeżeli włączone, serwer bedzię odpytywany o przybliżoną długość utworu.</string>
-    <string name="settings_audio_transcode_estimate_content_length_title">Szacuj długość treści</string>
     <string name="settings_audio_transcode_format_download">Format transkodowania dla pobierania</string>
     <string name="settings_audio_transcode_format_mobile">Format transkodowania w sieci komórkowej</string>
     <string name="settings_audio_transcode_format_wifi">Format transkodowania w sieci Wi-Fi</string>

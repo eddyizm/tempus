@@ -65,7 +65,6 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_DOWNLOAD = "audio_transcode_format_download"
     private const val SHARE = "share"
     private const val SCROBBLING = "scrobbling"
-    private const val ESTIMATE_CONTENT_LENGTH = "estimate_content_length"
     private const val BUFFERING_STRATEGY = "buffering_strategy"
     private const val SKIP_MIN_STAR_RATING = "skip_min_star_rating"
     private const val MIN_STAR_RATING = "min_star_rating"
@@ -598,11 +597,6 @@ object Preferences {
     @JvmStatic
     fun isScrobblingEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(SCROBBLING, true)
-    }
-
-    @JvmStatic
-    fun askForEstimateContentLength(): Boolean {
-        return App.getInstance().preferences.getBoolean(ESTIMATE_CONTENT_LENGTH, false)
     }
 
     @JvmStatic

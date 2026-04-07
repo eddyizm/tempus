@@ -245,8 +245,6 @@
     <string name="settings_audio_transcode_download_priority_title">다운로드 스트리밍에 사용할 서버 설정 우선순위 지정</string>
     <string name="settings_audio_transcode_download_summary">활성화 시, 트랜스코딩된 트랙을 다운로드합니다.</string>
     <string name="settings_audio_transcode_download_title">트랜스코딩 트랙 다운로드</string>
-    <string name="settings_audio_transcode_estimate_content_length_summary">활성화 시, 서버가 트랙의 예상 재생 시간을 묻습니다.</string>
-    <string name="settings_audio_transcode_estimate_content_length_title">예상 재생 시간</string>
     <string name="settings_audio_transcode_format_download">다운로드용 트랜스코딩 포맷</string>
     <string name="settings_audio_transcode_format_mobile">데이터 사용 시 트랜스코딩 포맷</string>
     <string name="settings_audio_transcode_format_wifi">Wi-Fi 사용 시 트랜스코딩 포맷</string>
