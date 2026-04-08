@@ -38,6 +38,7 @@ import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.cappielloantonio.tempo.subsonic.models.Genre;
+import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
@@ -58,9 +59,6 @@ import retrofit2.Response;
 public class AutomotiveRepository {
     private final SessionMediaItemDao sessionMediaItemDao = AppDatabase.getInstance().sessionMediaItemDao();
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
-
-    public static final String ALBUM = "[albumSource]";
-    public static final String PLAYLIST = "[playlistSource]";
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
@@ -663,7 +661,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ALBUM + id);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_ALBUM_SOURCE + id);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -748,7 +746,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, PLAYLIST + id);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_PLAYLIST_SOURCE + id);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 

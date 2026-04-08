@@ -421,19 +421,19 @@ open class MediaLibrarySessionCallback(
         val parentId = extras?.getString("parent_id")
 
         val futureQueue: ListenableFuture<List<MediaItem>> = when {
-            parentId?.startsWith(AutomotiveRepository.ALBUM) == true -> {
+            parentId?.startsWith(Constants.AA_ALBUM_SOURCE) == true -> {
                 Log.d(TAG, "Fetching album tracks for $parentId")
                 Futures.transform(
-                    automotiveRepository.getAlbumTracks(parentId.removePrefix(AutomotiveRepository.ALBUM)),
+                    automotiveRepository.getAlbumTracks(parentId.removePrefix(Constants.AA_ALBUM_SOURCE)),
                     { it.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
             }
 
-            parentId?.startsWith(AutomotiveRepository.PLAYLIST) == true -> {
+            parentId?.startsWith(Constants.AA_PLAYLIST_SOURCE) == true -> {
                 Log.d(TAG, "Fetching playlist tracks for $parentId")
                 Futures.transform(
-                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(AutomotiveRepository.PLAYLIST)),
+                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(Constants.AA_PLAYLIST_SOURCE)),
                     { it.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
@@ -470,7 +470,7 @@ open class MediaLibrarySessionCallback(
 
                 val firstResolved = resolvedItems[0]
                 val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {
-                    putInt("aa_start_index", startIndex)
+                    putInt(Constants.AA_START_INDEX, startIndex)
                 }
                 val newFirstResolved = firstResolved.buildUpon()
                     .setMediaMetadata(firstResolved.mediaMetadata.buildUpon().setExtras(extras).build())
