@@ -512,6 +512,11 @@ open class MediaLibrarySessionCallback(
                 Log.d(TAG, "Start index for clicked item ${firstItem.mediaId} = $startIndex")
                 if (startIndex <= 0) return@transform resolvedItems
 
+                val children = resolvedItems.mapNotNull { MappingUtil.mapToChild(it) }
+                if (children.isNotEmpty()) {
+                    QueueRepository().insertAll(children, true, 0)
+                }
+
                 val firstResolved = resolvedItems[0]
                 val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {
                     putInt(Constants.AA_START_INDEX, startIndex)
