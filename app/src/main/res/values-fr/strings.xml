@@ -604,4 +604,7 @@
 
     <string name="search_sort_title">Trier les recherches récentes par ordre chronologique</string>
     <string name="search_sort_summary">Si activé, les recherches récentes seront triées par ordre chronologique. Si désactivé, elles le seront par ordre alphabétique.</string>
+    <string name="search_all_songs_loading">Récupération de tous les sons…</string>
+    <string name="search_all_songs">tous les sons de %1$s</string>
+    <string name="search_all_songs_play">Jouer %1$s</string>
 </resources>
