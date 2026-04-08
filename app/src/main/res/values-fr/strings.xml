@@ -173,7 +173,7 @@
     <string name="home_title_most_played">Les plus écoutés</string>
     <string name="home_title_most_played_see_all_button">Voir tout</string>
     <string name="home_title_new_releases">Nouvelles sorties</string>
-    <string name="home_title_newest_podcasts">Nouveau podcasts</string>
+    <string name="home_title_newest_podcasts">Nouveaux podcasts</string>
     <string name="home_title_pinned_playlists">Playlists</string>
     <string name="home_title_podcast_channels">Chaînes</string>
     <string name="home_title_podcast_channels_see_all_button">Voir tout</string>
@@ -262,7 +262,7 @@
     <string name="playlist_chooser_dialog_visibility_public">Publique</string>
     <string name="playlist_chooser_dialog_visibility_private">Privé</string>
 	<string name="playlist_chooser_dialog_visibility_switch_label">Rendre la playlist publique</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Le serveur met à jour la visibilité à à chaque requête. Est défini à privé par défaut.</string>
+    <string name="playlist_chooser_dialog_visibility_summary">Le serveur met à jour la visibilité à chaque requête. Est défini à privé par défaut.</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>
@@ -391,8 +391,8 @@
     <string name="settings_image_size">Définir la résolution des images</string>
     <string name="settings_language">Langue</string>
     <string name="settings_logout_title">Se déconnecter</string>
-	<string name="settings_ping_timeout_title">Délai de Réponse du Serveur</string>
-    <string name="settings_ping_timeout_summary">Changer le délai de réponse de l'URL locale. Par défaut à 2 secondes (Le serveur à distance utilisera cette valeur 3 fois jusqu'à 10 secondes maximum.)</string>
+	<string name="settings_ping_timeout_title">Délai de réponse du serveur</string>
+    <string name="settings_ping_timeout_summary">Changer le délai de réponse de l\'URL locale. Par défaut à 2 secondes (Le serveur à distance utilisera cette valeur 3 fois jusqu\'à 10 secondes maximum.)</string>
     <string name="settings_ping_timeout_dialog">Changer le délai par défaut, en secondes.</string>
     <string name="settings_max_bitrate_download">Débit binaire pour les téléchargements</string>
     <string name="settings_max_bitrate_mobile">Débit binaire en données mobiles</string>
@@ -417,7 +417,7 @@
     <string name="settings_radio">Voir les radios</string>
     <string name="settings_radio_summary">Si activé, rend visible la section Radio. Redémarrez l\'application pour appliquer ce paramètre.</string>
     <string name="settings_hide_bottom_navbar_on_portrait">Cacher la barre de navigation en mode portrait [Expérimental]</string>
-    <string name="settings_hide_bottom_navbar_on_portrait_summary">Expérimental. Augmente l'espace vertical en enlevant la barre de navigation du bas. Les changements s'appliqueront après un redémarrage.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Expérimental. Augmente l\'espace vertical en enlevant la barre de navigation du bas. Les changements s\'appliqueront après un redémarrage.</string>
 	<string name="settings_enable_drawer_on_landscape">Activer le tiroir en mode portrait</string>
     <string name="settings_enable_drawer_on_landscape_summary">Déverrouille le tiroir de navigation latéral en mode portrait.</string>
 	<string name="settings_auto_download_lyrics">Téléchargement automatique des paroles</string>
@@ -466,7 +466,7 @@
     <string name="settings_title_transcoding_download">Transcodage des téléchargements</string>
     <string name="settings_title_ui">UI</string>
 	<string name="settings_title_ui_landscape_items_per_row">Éléments par ligne en mode paysage</string>
-	<string name="settings_title_ui_landscape_items_per_row_dialog">Nombre d'éléments par ligne</string>
+	<string name="settings_title_ui_landscape_items_per_row_dialog">Nombre d\'éléments par ligne</string>
     <string name="settings_transcoded_download">Transcodage des téléchargements</string>
     <string name="settings_version_title">Version</string>
     <string name="settings_wifi_only_summary">Demander confirmation à l\'utilisateur avant de streamer sur le réseau mobile.</string>
@@ -604,7 +604,7 @@
 
     <string name="search_sort_title">Trier les recherches récentes par ordre chronologique</string>
     <string name="search_sort_summary">Si activé, les recherches récentes seront triées par ordre chronologique. Si désactivé, elles le seront par ordre alphabétique.</string>
-    <string name="search_all_songs_loading">Récupération de tous les sons…</string>
-    <string name="search_all_songs">tous les sons de %1$s</string>
+    <string name="search_all_songs_loading">Récupération de tous les titres…</string>
+    <string name="search_all_songs">tous les titres de %1$s</string>
     <string name="search_all_songs_play">Jouer %1$s</string>
 </resources>
