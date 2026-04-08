@@ -22,6 +22,7 @@ import androidx.media3.session.SessionResult
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
+import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_LOADING
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
@@ -33,6 +34,7 @@ import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_M
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON
 import com.google.common.collect.ImmutableList
 import com.cappielloantonio.tempo.util.Constants
+import com.cappielloantonio.tempo.util.MappingUtil
 import com.cappielloantonio.tempo.util.Preferences
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -460,6 +462,11 @@ open class MediaLibrarySessionCallback(
                 val startIndex = resolvedItems.indexOfFirst { it.mediaId == firstItem.mediaId }
                 Log.d(TAG, "Start index for clicked item ${firstItem.mediaId} = $startIndex")
                 if (startIndex < 0) return@transform resolvedItems
+
+                val children = resolvedItems.mapNotNull { MappingUtil.mapToChild(it) }
+                if (children.isNotEmpty()) {
+                    QueueRepository().insertAll(children, true, 0)
+                }
 
                 val firstResolved = resolvedItems[0]
                 val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {
