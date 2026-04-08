@@ -55,7 +55,7 @@ jobs:
           body: |
             Development prerelease from commit ${{ github.sha }}
             
-            **Build date:** $(date)
+            **Note:** If using this to test. Please note you are using prerelease and may be unstable
             **Branch:** development
             **Architecture:** 64-bit only (arm64-v8a)
             **Build type:** Debug (unsigned)
