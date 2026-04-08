@@ -161,10 +161,9 @@ object Constants {
     const val AA_ARTIST_ID = "[artistID]"
 
     // Android Auto Source tag
-    const val AA_ALBUM_SOURCE = "[albumSource]";
-    const val AA_PLAYLIST_SOURCE = "[playlistSource]";
+    const val AA_ALBUM_SOURCE = "[albumSource]"
+    const val AA_PLAYLIST_SOURCE = "[playlistSource]"
 
     // Android Auto start index extra
-    const val AA_START_INDEX = "aa_start_index";
-
+    const val AA_START_INDEX = "aa_start_index"
 }
