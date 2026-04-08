@@ -1,6 +1,6 @@
 <resources>
     <string name="aa_albums">Albums</string>
-    <string name="aa_album_most_played">Albums plus joués</string>
+    <string name="aa_album_most_played">Albums les plus joués</string>
 	<string name="aa_album_recently_added">Albums ajoutés</string>
     <string name="aa_artists">Artistes</string>
     <string name="aa_home">Accueil</string>
@@ -11,6 +11,7 @@
 	<string name="aa_podcast">Podcast</string>
 	<string name="aa_radio">Radio</string>
     <string name="aa_random">Aléatoire</string>
+	<string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Récents</string>
     <string name="aa_song_recently_played">Titres joués</string>
     <string name="aa_starred_albums">★ Albums</string>
@@ -233,6 +234,8 @@
     <string name="menu_unpin_button">Retirer de l\'écran d\'accueil</string>
     <string name="menu_sort_year">Année</string>
     <string name="player_playback_speed">%1$.2fx</string>
+	<string name="playback_speed_dialog_title">Vitesse de lecture</string>
+	<string name="playback_speed_dialog_negative_button">Annuler</string>
     <string name="player_queue_clean_all_button">Vider la file d\'attente</string>
     <string name="player_queue_save_queue_success">File d\'attente sauvegardée</string>
     <string name="player_queue_save_to_playlist">Sauvegarder la file d\'attente dans une playlist</string>
@@ -253,9 +256,13 @@
     <string name="playlist_chooser_dialog_title">Ajouter à une playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Titre ajouté à la playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Échec d\'ajout du titre à la playlist</string>
+	<string name="playlist_chooser_dialog_toast_remove_success">Titre supprimé de la playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Échec de la suppression du titre de la playlist</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Tous les titres ont été traités comme des doublons et ignorés</string>
     <string name="playlist_chooser_dialog_visibility_public">Publique</string>
     <string name="playlist_chooser_dialog_visibility_private">Privé</string>
+	<string name="playlist_chooser_dialog_visibility_switch_label">Rendre la playlist publique</string>
+    <string name="playlist_chooser_dialog_visibility_summary">Le serveur met à jour la visibilité à à chaque requête. Est défini à privé par défaut.</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>
@@ -314,6 +321,7 @@
     <string name="server_signup_dialog_hint_password">Mot de passe</string>
     <string name="server_signup_dialog_hint_url">URL du serveur</string>
     <string name="server_signup_dialog_hint_username">Nom d\'utilisateur</string>
+	<string name="server_signup_dialog_hint_client_certificate">Certificat client (optionnel)</string>
     <string name="server_signup_dialog_negative_button">Annuler</string>
     <string name="server_signup_dialog_neutral_button">Supprimer</string>
     <string name="server_signup_dialog_positive_button">Enregistrer</string>
@@ -383,6 +391,9 @@
     <string name="settings_image_size">Définir la résolution des images</string>
     <string name="settings_language">Langue</string>
     <string name="settings_logout_title">Se déconnecter</string>
+	<string name="settings_ping_timeout_title">Délai de Réponse du Serveur</string>
+    <string name="settings_ping_timeout_summary">Changer le délai de réponse de l'URL locale. Par défaut à 2 secondes (Le serveur à distance utilisera cette valeur 3 fois jusqu'à 10 secondes maximum.)</string>
+    <string name="settings_ping_timeout_dialog">Changer le délai par défaut, en secondes.</string>
     <string name="settings_max_bitrate_download">Débit binaire pour les téléchargements</string>
     <string name="settings_max_bitrate_mobile">Débit binaire en données mobiles</string>
     <string name="settings_max_bitrate_wifi">Débit binaire en Wi-Fi</string>
