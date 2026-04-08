@@ -402,7 +402,8 @@
     <string name="settings_music_directory_summary">Si activé, rend possible la navigation dans les répertoires. À noter que pour que la navigation dans les dossiers fonctionne correctement, le serveur doit supporter cette fonctionnalité.</string>
     <string name="settings_podcast">Voir les podcasts</string>
     <string name="settings_podcast_summary">Si activé, rend visible la section Podcast. Redémarrez l\'application pour appliquer ce paramètre.</string>
-    <string name="settings_audio_quality">Afficher la qualité audio</string>
+    <string name="settings_playlist_sort">Tri de la playlist</string>
+	<string name="settings_audio_quality">Afficher la qualité audio</string>
     <string name="settings_audio_quality_summary">Le débit binaire et le format audio seront affichés pour chaque piste.</string>
     <string name="settings_song_rating">Afficher la note de la piste</string>
     <string name="settings_song_rating_summary">Si activé, rend visible la note de la piste sur sa page\n\n*Nécessite le redémarrage de l\'application</string>
@@ -415,7 +416,11 @@
     <string name="settings_show_mini_shuffle_button_summary">Si activé, le bouton Mélanger sera visible et le bouton Cœur caché sur le mini-lecteur</string>
     <string name="settings_radio">Voir les radios</string>
     <string name="settings_radio_summary">Si activé, rend visible la section Radio. Redémarrez l\'application pour appliquer ce paramètre.</string>
-    <string name="settings_auto_download_lyrics">Téléchargement automatique des paroles</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Cacher la barre de navigation en mode portrait [Expérimental]</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Expérimental. Augmente l'espace vertical en enlevant la barre de navigation du bas. Les changements s'appliqueront après un redémarrage.</string>
+	<string name="settings_enable_drawer_on_landscape">Activer le tiroir en mode portrait</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Déverrouille le tiroir de navigation latéral en mode portrait.</string>
+	<string name="settings_auto_download_lyrics">Téléchargement automatique des paroles</string>
     <string name="settings_auto_download_lyrics_summary">Ce paramètre active la sauvegarde automatique des paroles pour affichage hors-ligne, si elles sont disponibles.</string>
     <string name="settings_replay_gain">Ajuster le Replay Gain</string>
     <string name="settings_rounded_corner">Coins arrondis</string>
@@ -438,7 +443,8 @@
     <string name="settings_summary_transcoding">Le mode de transcodage à prioriser. Si réglé sur \"Lecture directe\", le débit binaire du fichier ne sera pas modifié.</string>
     <string name="settings_summary_transcoding_download">Télécharge les médias transcodés. Si activé, les paramètres de transcodage suivants seront utilisés pour les téléchargements.\n\n Si le format de transcodage est reglé à \"Téléchargement direct\", le débit binaire du fichier ne sera pas modifé.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Quand le fichier est transcodé à la volée, en général, le client n\'affiche pas la durée de la piste. Il est possible de demander aux serveurs qui le supportent d\'estimer la durée de la piste écoutée, mais les temps de réponses peuvent être plus longs.</string>
-    <string name="settings_sync_starred_artists_for_offline_use_summary">Si activé, les titres des artistes favoris seront téléchargés pour l\'écoute hors-ligne.</string>
+    <string name="settings_summary_landscape_items_per_row">S'applique à toutes les listes d'albums et d'artistes. Par défaut à 4</string>
+	<string name="settings_sync_starred_artists_for_offline_use_summary">Si activé, les titres des artistes favoris seront téléchargés pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Synchronisation des artistes favoris pour écoute hors-ligne</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Si activé, les albums favoris seront téléchargés pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronisation des albums favoris pour écoute hors-ligne</string>
@@ -459,6 +465,8 @@
     <string name="settings_title_transcoding">Transcodage</string>
     <string name="settings_title_transcoding_download">Transcodage des téléchargements</string>
     <string name="settings_title_ui">UI</string>
+	<string name="settings_title_ui_landscape_items_per_row">Éléments par ligne en mode paysage</string>
+	<string name="settings_title_ui_landscape_items_per_row_dialog">Nombre d'éléments par ligne</string>
     <string name="settings_transcoded_download">Transcodage des téléchargements</string>
     <string name="settings_version_title">Version</string>
     <string name="settings_wifi_only_summary">Demander confirmation à l\'utilisateur avant de streamer sur le réseau mobile.</string>
@@ -501,6 +509,7 @@
     <string name="song_bottom_sheet_play_next">Lire juste après</string>
     <string name="song_bottom_sheet_rate">Noter</string>
     <string name="song_bottom_sheet_remove">Retirer</string>
+	<string name="song_bottom_sheet_remove_from_playlist">Retirer de la playlist</string>
     <string name="song_bottom_sheet_share">Partager</string>
     <string name="song_list_page_downloaded">Téléchargé</string>
     <string name="song_list_page_most_played">Titres les plus joués</string>
@@ -536,6 +545,7 @@
     <string name="track_info_duration">Durée</string>
     <string name="track_info_genre">Genre</string>
     <string name="track_info_path">Chemin</string>
+	<string name="track_info_station">Station</string>
     <string name="track_info_sampling_rate">Fréquence d\'échantillonnage</string>
     <string name="track_info_size">Taille</string>
     <string name="track_info_suffix">Suffixe</string>
