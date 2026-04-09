@@ -2,7 +2,7 @@
     <string-array name="theme_list_titles">
         <item>Hell</item>
         <item>Dunkel</item>
-        <item>System Vorgabe</item>
+        <item>Systemvorgabe</item>
     </string-array>
     <string-array name="theme_list_values">
         <item>light</item>
@@ -11,9 +11,9 @@
     </string-array>
 
     <string-array name="pref_cache_size_titles">
-        <item>Hoch</item>
+        <item>Groß</item>
         <item>Mittel</item>
-        <item>Niedrig</item>
+        <item>Klein</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
@@ -30,6 +30,21 @@
         <item>-1</item>
         <item>500</item>
         <item>300</item>
+    </string-array>
+
+    <string-array name="streaming_cache_size_titles">
+        <item>Deaktiviert</item>
+        <item>128 MiB</item>
+        <item>256 MiB</item>
+        <item>512 MiB</item>
+        <item>1024 MiB</item>
+    </string-array>
+    <string-array name="streaming_cache_size_values">
+        <item>0</item>
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
     </string-array>
 
     <string-array name="max_bitrate_wifi_list_titles">
@@ -90,12 +105,41 @@
         <item>320</item>
     </string-array>
 
+    <string-array name="max_bitrate_download_list_titles">
+        <item>Original</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_download_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>Direktes Abspielen</item>
+        <item>Original</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_wifi_list_values">
         <item>raw</item>
@@ -106,11 +150,11 @@
     </string-array>
 
     <string-array name="audio_transcode_format_mobile_list_titles">
-        <item>Direct play</item>
+        <item>Original</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_mobile_list_values">
         <item>raw</item>
@@ -120,10 +164,25 @@
         <item>flac</item>
     </string-array>
 
+    <string-array name="audio_transcode_format_download_list_titles">
+        <item>Original</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>MP3</item>
+        <item>FLAC</item>
+    </string-array>
+    <string-array name="audio_transcode_format_download_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+
     <string-array name="queue_syncing_countdown_titles">
-        <item>Zehn Sekunden</item>
-        <item>Fünf Sekunden</item>
-        <item>Zwei Sekunden</item>
+        <item>10 Sekunden</item>
+        <item>5 Sekunden</item>
+        <item>2 Sekunden</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
         <item>10</item>
@@ -132,9 +191,9 @@
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
-        <item>Hoch</item>
-        <item>Mittel</item>
-        <item>Niedrig</item>
+        <item>Viel</item>
+        <item>Etwas</item>
+        <item>Wenig</item>
     </string-array>
     <string-array name="rounded_corner_size_values">
         <item>18</item>
@@ -149,9 +208,132 @@
         <item>Automatisch</item>
     </string-array>
     <string-array name="replay_gain_values">
-        <item>Deaktiviert</item>
-        <item>Titel</item>
-        <item>Album</item>
-        <item>Automatisch</item>
+        <item>disabled</item>
+        <item>track</item>
+        <item>album</item>
+        <item>auto</item>
     </string-array>
+
+    <string-array name="transcoded_download_option_list_titles">
+        <item>Nicht umwandeln</item>
+        <item>Server entscheidet</item>
+        <item>Einstellung für WLAN Streamen</item>
+        <item>Einstellung für mobiles Streamen</item>
+    </string-array>
+    <string-array name="transcoded_download_option_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="buffering_strategy_titles">
+        <item>Minmal</item>
+        <item>Moderat</item>
+        <item>Aggressiv</item>
+        <item>Extrem</item>
+    </string-array>
+    <string-array name="buffering_strategy_values">
+        <item>.1</item>
+        <item>1</item>
+        <item>4</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="playlist_sort_option_titles">
+        <item>Nach Name</item>
+        <item>Zufällig</item>
+    </string-array>
+    <string-array name="playlist_sort_option_values">
+        <item>ORDER_BY_NAME</item>
+        <item>ORDER_BY_RANDOM</item>
+    </string-array>
+
+
+    <string-array name="skip_min_star_rating_titles">
+        <item>Mind. 0 Sterne</item>
+        <item>Mind. 1 Stern</item>
+        <item>Mind. 2 Sterne</item>
+        <item>Mind. 3 Sterne</item>
+        <item>Mind. 4 Sterne</item>
+    </string-array>
+    <string-array name="skip_min_star_rating_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+
+    <string-array name="tile_size_titles">
+        <item>Winzig</item>
+        <item>Klein</item>
+        <item>Mittel</item>
+        <item>Groß</item>
+        <item>Standard</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+	<!-- Add by MFO -->
+    <string-array name="aa_tab_titles">
+        <item>Ausblenden</item>
+        <item>Start</item>
+        <item>Zuletzt gespielt</item>
+        <item>Alben</item>
+        <item>Interpreten</item>
+        <item>Wiedergabelisten</item>
+        <item>Podcasts</item>
+        <item>Radio</item>
+        <item>Ordner</item>
+        <item>Oft gespielte Alben</item>
+    <!--    <item>Oft gespielte Titel</item> -->
+        <item>Hinzugefügte Alben</item>
+    <!--    <item>Für dich</item> -->
+        <item>Lieblingstitel</item>
+        <item>Lieblingsalben</item>
+        <item>Lieblingsinterpreten</item>
+        <item>Zufall</item>
+        <item>Genres</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+	<!-- end Add by MFO -->
+
 </resources>
