@@ -108,13 +108,24 @@ public class ReplayGainUtil {
         return replayGain;
     }
 
-    private static Float parseReplayGainTag(String entry) {
-        try {
-            return Float.parseFloat(entry.toString().replaceAll("[^\\d.-]", ""));
-        } catch (NumberFormatException exception) {
-            return 0f;
+private static Float parseReplayGainTag(String entry) {
+    try {
+        // Find the last floating-point number in the string (the actual gain value)
+        java.util.regex.Matcher matcher =
+            java.util.regex.Pattern.compile("(-?\\d+(?:\\.\\d+)?)\\s*(?:dB)?\\s*$",
+                java.util.regex.Pattern.CASE_INSENSITIVE)
+            .matcher(entry.trim());
+
+        String lastMatch = null;
+        while (matcher.find()) {
+            lastMatch = matcher.group(1);
         }
+
+        return lastMatch != null ? Float.parseFloat(lastMatch) : 0f;
+    } catch (NumberFormatException exception) {
+        return 0f;
     }
+}
 
     private static void applyReplayGain(Player player, List<ReplayGain> gains) {
         if (Objects.equals(Preferences.getReplayGainMode(), "disabled") || gains == null || gains.isEmpty()) {
