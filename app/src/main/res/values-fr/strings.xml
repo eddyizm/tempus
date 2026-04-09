@@ -1,6 +1,6 @@
 <resources>
     <string name="aa_albums">Albums</string>
-    <string name="aa_album_most_played">Albums plus joués</string>
+    <string name="aa_album_most_played">Albums les plus joués</string>
 	<string name="aa_album_recently_added">Albums ajoutés</string>
     <string name="aa_artists">Artistes</string>
     <string name="aa_home">Accueil</string>
@@ -11,6 +11,7 @@
 	<string name="aa_podcast">Podcast</string>
 	<string name="aa_radio">Radio</string>
     <string name="aa_random">Aléatoire</string>
+	<string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Récents</string>
     <string name="aa_song_recently_played">Titres joués</string>
     <string name="aa_starred_albums">★ Albums</string>
@@ -172,7 +173,7 @@
     <string name="home_title_most_played">Les plus écoutés</string>
     <string name="home_title_most_played_see_all_button">Voir tout</string>
     <string name="home_title_new_releases">Nouvelles sorties</string>
-    <string name="home_title_newest_podcasts">Nouveau podcasts</string>
+    <string name="home_title_newest_podcasts">Nouveaux podcasts</string>
     <string name="home_title_pinned_playlists">Playlists</string>
     <string name="home_title_podcast_channels">Chaînes</string>
     <string name="home_title_podcast_channels_see_all_button">Voir tout</string>
@@ -233,6 +234,8 @@
     <string name="menu_unpin_button">Retirer de l\'écran d\'accueil</string>
     <string name="menu_sort_year">Année</string>
     <string name="player_playback_speed">%1$.2fx</string>
+	<string name="playback_speed_dialog_title">Vitesse de lecture</string>
+	<string name="playback_speed_dialog_negative_button">Annuler</string>
     <string name="player_queue_clean_all_button">Vider la file d\'attente</string>
     <string name="player_queue_save_queue_success">File d\'attente sauvegardée</string>
     <string name="player_queue_save_to_playlist">Sauvegarder la file d\'attente dans une playlist</string>
@@ -253,9 +256,13 @@
     <string name="playlist_chooser_dialog_title">Ajouter à une playlist</string>
     <string name="playlist_chooser_dialog_toast_add_success">Titre ajouté à la playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Échec d\'ajout du titre à la playlist</string>
+	<string name="playlist_chooser_dialog_toast_remove_success">Titre supprimé de la playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Échec de la suppression du titre de la playlist</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">Tous les titres ont été traités comme des doublons et ignorés</string>
     <string name="playlist_chooser_dialog_visibility_public">Publique</string>
     <string name="playlist_chooser_dialog_visibility_private">Privé</string>
+	<string name="playlist_chooser_dialog_visibility_switch_label">Rendre la playlist publique</string>
+    <string name="playlist_chooser_dialog_visibility_summary">Le serveur met à jour la visibilité à chaque requête. Est défini à privé par défaut.</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>
@@ -314,6 +321,7 @@
     <string name="server_signup_dialog_hint_password">Mot de passe</string>
     <string name="server_signup_dialog_hint_url">URL du serveur</string>
     <string name="server_signup_dialog_hint_username">Nom d\'utilisateur</string>
+	<string name="server_signup_dialog_hint_client_certificate">Certificat client (optionnel)</string>
     <string name="server_signup_dialog_negative_button">Annuler</string>
     <string name="server_signup_dialog_neutral_button">Supprimer</string>
     <string name="server_signup_dialog_positive_button">Enregistrer</string>
@@ -381,6 +389,9 @@
     <string name="settings_image_size">Définir la résolution des images</string>
     <string name="settings_language">Langue</string>
     <string name="settings_logout_title">Se déconnecter</string>
+	<string name="settings_ping_timeout_title">Délai de réponse du serveur</string>
+    <string name="settings_ping_timeout_summary">Changer le délai de réponse de l\'URL locale. Par défaut à 2 secondes (Le serveur à distance utilisera cette valeur 3 fois jusqu\'à 10 secondes maximum.)</string>
+    <string name="settings_ping_timeout_dialog">Changer le délai par défaut, en secondes.</string>
     <string name="settings_max_bitrate_download">Débit binaire pour les téléchargements</string>
     <string name="settings_max_bitrate_mobile">Débit binaire en données mobiles</string>
     <string name="settings_max_bitrate_wifi">Débit binaire en Wi-Fi</string>
@@ -389,7 +400,8 @@
     <string name="settings_music_directory_summary">Si activé, rend possible la navigation dans les répertoires. À noter que pour que la navigation dans les dossiers fonctionne correctement, le serveur doit supporter cette fonctionnalité.</string>
     <string name="settings_podcast">Voir les podcasts</string>
     <string name="settings_podcast_summary">Si activé, rend visible la section Podcast. Redémarrez l\'application pour appliquer ce paramètre.</string>
-    <string name="settings_audio_quality">Afficher la qualité audio</string>
+    <string name="settings_playlist_sort">Tri de la playlist</string>
+	<string name="settings_audio_quality">Afficher la qualité audio</string>
     <string name="settings_audio_quality_summary">Le débit binaire et le format audio seront affichés pour chaque piste.</string>
     <string name="settings_song_rating">Afficher la note de la piste</string>
     <string name="settings_song_rating_summary">Si activé, rend visible la note de la piste sur sa page\n\n*Nécessite le redémarrage de l\'application</string>
@@ -402,7 +414,11 @@
     <string name="settings_show_mini_shuffle_button_summary">Si activé, le bouton Mélanger sera visible et le bouton Cœur caché sur le mini-lecteur</string>
     <string name="settings_radio">Voir les radios</string>
     <string name="settings_radio_summary">Si activé, rend visible la section Radio. Redémarrez l\'application pour appliquer ce paramètre.</string>
-    <string name="settings_auto_download_lyrics">Téléchargement automatique des paroles</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Cacher la barre de navigation en mode portrait [Expérimental]</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Expérimental. Augmente l\'espace vertical en enlevant la barre de navigation du bas. Les changements s\'appliqueront après un redémarrage.</string>
+	<string name="settings_enable_drawer_on_landscape">Activer le tiroir en mode portrait</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Déverrouille le tiroir de navigation latéral en mode portrait.</string>
+	<string name="settings_auto_download_lyrics">Téléchargement automatique des paroles</string>
     <string name="settings_auto_download_lyrics_summary">Ce paramètre active la sauvegarde automatique des paroles pour affichage hors-ligne, si elles sont disponibles.</string>
     <string name="settings_replay_gain">Ajuster le Replay Gain</string>
     <string name="settings_rounded_corner">Coins arrondis</string>
@@ -425,7 +441,8 @@
     <string name="settings_summary_transcoding">Le mode de transcodage à prioriser. Si réglé sur \"Lecture directe\", le débit binaire du fichier ne sera pas modifié.</string>
     <string name="settings_summary_transcoding_download">Télécharge les médias transcodés. Si activé, les paramètres de transcodage suivants seront utilisés pour les téléchargements.\n\n Si le format de transcodage est reglé à \"Téléchargement direct\", le débit binaire du fichier ne sera pas modifé.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Quand le fichier est transcodé à la volée, en général, le client n\'affiche pas la durée de la piste. Il est possible de demander aux serveurs qui le supportent d\'estimer la durée de la piste écoutée, mais les temps de réponses peuvent être plus longs.</string>
-    <string name="settings_sync_starred_artists_for_offline_use_summary">Si activé, les titres des artistes favoris seront téléchargés pour l\'écoute hors-ligne.</string>
+    <string name="settings_summary_landscape_items_per_row">S'applique à toutes les listes d'albums et d'artistes. Par défaut à 4</string>
+	<string name="settings_sync_starred_artists_for_offline_use_summary">Si activé, les titres des artistes favoris seront téléchargés pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Synchronisation des artistes favoris pour écoute hors-ligne</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Si activé, les albums favoris seront téléchargés pour l\'écoute hors-ligne.</string>
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronisation des albums favoris pour écoute hors-ligne</string>
@@ -446,6 +463,8 @@
     <string name="settings_title_transcoding">Transcodage</string>
     <string name="settings_title_transcoding_download">Transcodage des téléchargements</string>
     <string name="settings_title_ui">UI</string>
+	<string name="settings_title_ui_landscape_items_per_row">Éléments par ligne en mode paysage</string>
+	<string name="settings_title_ui_landscape_items_per_row_dialog">Nombre d\'éléments par ligne</string>
     <string name="settings_transcoded_download">Transcodage des téléchargements</string>
     <string name="settings_version_title">Version</string>
     <string name="settings_wifi_only_summary">Demander confirmation à l\'utilisateur avant de streamer sur le réseau mobile.</string>
@@ -488,6 +507,7 @@
     <string name="song_bottom_sheet_play_next">Lire juste après</string>
     <string name="song_bottom_sheet_rate">Noter</string>
     <string name="song_bottom_sheet_remove">Retirer</string>
+	<string name="song_bottom_sheet_remove_from_playlist">Retirer de la playlist</string>
     <string name="song_bottom_sheet_share">Partager</string>
     <string name="song_list_page_downloaded">Téléchargé</string>
     <string name="song_list_page_most_played">Titres les plus joués</string>
@@ -523,6 +543,7 @@
     <string name="track_info_duration">Durée</string>
     <string name="track_info_genre">Genre</string>
     <string name="track_info_path">Chemin</string>
+	<string name="track_info_station">Station</string>
     <string name="track_info_sampling_rate">Fréquence d\'échantillonnage</string>
     <string name="track_info_size">Taille</string>
     <string name="track_info_suffix">Suffixe</string>
@@ -581,4 +602,7 @@
 
     <string name="search_sort_title">Trier les recherches récentes par ordre chronologique</string>
     <string name="search_sort_summary">Si activé, les recherches récentes seront triées par ordre chronologique. Si désactivé, elles le seront par ordre alphabétique.</string>
+    <string name="search_all_songs_loading">Récupération de tous les titres…</string>
+    <string name="search_all_songs">tous les titres de %1$s</string>
+    <string name="search_all_songs_play">Jouer %1$s</string>
 </resources>
