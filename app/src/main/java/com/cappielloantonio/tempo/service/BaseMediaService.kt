@@ -144,6 +144,7 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
+                ReplayGainUtil.applyCachedReplayGain(player, mediaItem)
 
                 // --- Add for AA : Constants.AA_START_INDEX if présent ---
                 val extras = mediaItem.mediaMetadata.extras
