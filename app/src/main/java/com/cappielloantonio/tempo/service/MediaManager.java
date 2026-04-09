@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.service;
 
-import android.content.ComponentName;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -15,9 +14,7 @@ import androidx.media3.common.Player;
 import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
-import androidx.media3.session.SessionToken;
 
-import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
 import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.repository.ChronologyRepository;
@@ -26,7 +23,6 @@ import com.cappielloantonio.tempo.repository.SongRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
-import com.cappielloantonio.tempo.util.Constants.SeedType;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -438,7 +434,7 @@ public class MediaManager {
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {
-        if (mediaItem != null && Preferences.isScrobblingEnabled()) {
+        if (mediaItem != null && mediaItem.mediaMetadata.extras != null && Preferences.isScrobblingEnabled()) {
             getSongRepository().scrobble(mediaItem.mediaMetadata.extras.getString("id"), submission);
         }
     }
