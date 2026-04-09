@@ -96,7 +96,6 @@ public class SearchingRepository {
                 }
             }
             PlaylistWithSongs pws = new PlaylistWithSongs("allsongs", allSongs);
-            pws.setName(sf.getView().getContext().getString(R.string.search_all_songs, String.valueOf(allSongs.size())));
             pws.setSongCount(allSongs.size());
             List<Playlist> lpws = new ArrayList<>();
             lpws.add(pws);
@@ -109,7 +108,10 @@ public class SearchingRepository {
             pws.setDuration(duration);
 
             new Handler(Looper.getMainLooper()).post(() -> {
-                sf.updateUI(lpws);
+                if (sf.getView() != null && sf.isAdded()) {
+                    pws.setName(sf.getView().getContext().getString(R.string.search_all_songs, String.valueOf(allSongs.size())));
+                    sf.updateUI(lpws);
+                }
             });
         });
 
