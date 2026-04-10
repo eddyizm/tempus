@@ -44,6 +44,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 private const val TAG = "MediaLibraryServiceCallback"
+@UnstableApi
 open class MediaLibrarySessionCallback(
     private val context: Context,
     private val automotiveRepository: AutomotiveRepository
@@ -367,6 +368,43 @@ open class MediaLibrarySessionCallback(
         return MediaBrowserTree.getChildren(parentId)
     }
 
+    override fun onSetMediaItems(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        mediaItems: List<MediaItem>,
+        startIndex: Int,
+        startPositionMs: Long
+    ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+        Log.d(TAG, "onSetMediaItems")
+        val firstItem = mediaItems.firstOrNull()
+            ?: return super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
+
+        Log.d(TAG, "mediaId = ${firstItem.mediaId},  startIndex = $startIndex, startPositionMs = $startPositionMs")
+
+        if (isRadio(firstItem)) {
+            QueueRepository().deleteAll()
+            return super.onSetMediaItems(mediaSession, controller, mediaItems, 0, 0)
+        }
+
+        val futureQueue = resolveQueueForItem(firstItem, mediaItems)
+
+        return Futures.transform(
+            futureQueue,
+            { resolvedItems ->
+                if (!resolvedItems.isNullOrEmpty()) {
+                    val children = resolvedItems.mapNotNull { MappingUtil.mapToChild(it) }
+                    if (children.isNotEmpty()) QueueRepository().insertAll(children, true, 0)
+                }
+                MediaSession.MediaItemsWithStartPosition(
+                    resolvedItems ?: emptyList(),
+                    startIndex,
+                    startPositionMs
+                )
+            },
+            MoreExecutors.directExecutor()
+        )
+    }
+
     override fun onAddMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
@@ -461,12 +499,7 @@ open class MediaLibrarySessionCallback(
 
                 val startIndex = resolvedItems.indexOfFirst { it.mediaId == firstItem.mediaId }
                 Log.d(TAG, "Start index for clicked item ${firstItem.mediaId} = $startIndex")
-                if (startIndex < 0) return@transform resolvedItems
-
-                val children = resolvedItems.mapNotNull { MappingUtil.mapToChild(it) }
-                if (children.isNotEmpty()) {
-                    QueueRepository().insertAll(children, true, 0)
-                }
+                if (startIndex <= 0) return@transform resolvedItems
 
                 val firstResolved = resolvedItems[0]
                 val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {
