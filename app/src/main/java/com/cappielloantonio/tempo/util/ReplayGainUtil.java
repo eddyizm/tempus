@@ -118,11 +118,11 @@ public class ReplayGainUtil {
         }
 
         if (str.contains(tags[2])) {
-            replayGain.setTrackGain(parseReplayGainTag(str) / 256f);
+            replayGain.setTrackGain(parseReplayGainTag(str) / 256f + 5f);
         }
 
         if (str.contains(tags[3])) {
-            replayGain.setAlbumGain(parseReplayGainTag(str) / 256f);
+            replayGain.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
         }
 
         return replayGain;
@@ -192,6 +192,9 @@ public class ReplayGainUtil {
     }
 
     private static void setReplayGain(Player player, float gain) {
-        player.setVolume((float) Math.pow(10f, gain / 20f));
+        float preamp = Preferences.getReplayGainPreamp();
+        float totalGain = gain + preamp;
+        totalGain = Math.max(-60f, Math.min(0f, totalGain));
+        player.setVolume((float) Math.pow(10f, totalGain / 20f));
     }
 }
