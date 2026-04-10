@@ -12,18 +12,38 @@ import androidx.media3.extractor.metadata.id3.InternalFrame;
 import com.cappielloantonio.tempo.model.ReplayGain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @OptIn(markerClass = UnstableApi.class)
 public class ReplayGainUtil {
     private static final String[] tags = {"REPLAYGAIN_TRACK_GAIN", "REPLAYGAIN_ALBUM_GAIN", "R128_TRACK_GAIN", "R128_ALBUM_GAIN"};
+    private static final Map<String, Float> gainCache = new HashMap<>();
 
     public static void setReplayGain(Player player, Tracks tracks) {
         List<Metadata> metadata = getMetadata(tracks);
         List<ReplayGain> gains = getReplayGains(metadata);
 
-        applyReplayGain(player, gains);
+        MediaItem currentMediaItem = player.getCurrentMediaItem();
+        float gain = resolveGain(player, gains);
+
+        if (currentMediaItem != null && currentMediaItem.mediaId != null) {
+            gainCache.put(currentMediaItem.mediaId, gain);
+        }
+
+        setReplayGain(player, gain);
+    }
+
+    public static void applyCachedReplayGain(Player player, MediaItem mediaItem) {
+        if (mediaItem == null || mediaItem.mediaId == null) {
+            setReplayGain(player, 0f);
+            return;
+        }
+
+        Float cachedGain = gainCache.get(mediaItem.mediaId);
+        setReplayGain(player, cachedGain != null ? cachedGain : 0f);
     }
 
     private static List<Metadata> getMetadata(Tracks tracks) {
@@ -98,11 +118,11 @@ public class ReplayGainUtil {
         }
 
         if (str.contains(tags[2])) {
-            replayGain.setTrackGain(parseReplayGainTag(str) / 256f);
+            replayGain.setTrackGain(parseReplayGainTag(str) / 256f + 5f);
         }
 
         if (str.contains(tags[3])) {
-            replayGain.setAlbumGain(parseReplayGainTag(str) / 256f);
+            replayGain.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
         }
 
         return replayGain;
@@ -110,62 +130,53 @@ public class ReplayGainUtil {
 
     private static Float parseReplayGainTag(String entry) {
         try {
-            return Float.parseFloat(entry.toString().replaceAll("[^\\d.-]", ""));
+            // Find the last floating-point number in the string (the actual gain value)
+            java.util.regex.Matcher matcher =
+                    java.util.regex.Pattern.compile("(-?\\d+(?:\\.\\d+)?)\\s*(?:dB)?\\s*$",
+                                    java.util.regex.Pattern.CASE_INSENSITIVE)
+                            .matcher(entry.trim());
+
+            String lastMatch = null;
+            while (matcher.find()) {
+                lastMatch = matcher.group(1);
+            }
+
+            return lastMatch != null ? Float.parseFloat(lastMatch) : 0f;
         } catch (NumberFormatException exception) {
             return 0f;
         }
     }
 
-    private static void applyReplayGain(Player player, List<ReplayGain> gains) {
+    private static float resolveGain(Player player, List<ReplayGain> gains) {
         if (Objects.equals(Preferences.getReplayGainMode(), "disabled") || gains == null || gains.isEmpty()) {
-            setNoReplayGain(player);
-            return;
-        }
-
-        if (Objects.equals(Preferences.getReplayGainMode(), "auto")) {
-            if (areTracksConsecutive(player)) {
-                setAutoReplayGain(player, gains);
-            } else {
-                setTrackReplayGain(player, gains);
-            }
-
-            return;
+            return 0f;
         }
 
         if (Objects.equals(Preferences.getReplayGainMode(), "track")) {
-            setTrackReplayGain(player, gains);
-            return;
+            return resolveTrackGain(gains);
         }
 
         if (Objects.equals(Preferences.getReplayGainMode(), "album")) {
-            setAlbumReplayGain(player, gains);
-            return;
+            return resolveAlbumGain(gains);
         }
 
-        setNoReplayGain(player);
+        if (Objects.equals(Preferences.getReplayGainMode(), "auto")) {
+            return areTracksConsecutive(player) ? resolveAlbumGain(gains) : resolveTrackGain(gains);
+        }
+
+        return 0f;
     }
 
-    private static void setNoReplayGain(Player player) {
-        setReplayGain(player, 0f);
+    private static float resolveTrackGain(List<ReplayGain> gains) {
+        float primaryTrackGain = gains.get(0).getTrackGain();
+        float secondaryTrackGain = gains.get(1).getTrackGain();
+        return primaryTrackGain != 0f ? primaryTrackGain : secondaryTrackGain;
     }
 
-    private static void setTrackReplayGain(Player player, List<ReplayGain> gains) {
-        float trackGain = gains.get(0).getTrackGain() != 0f ? gains.get(0).getTrackGain() : gains.get(1).getTrackGain();
-
-        setReplayGain(player, trackGain != 0f ? trackGain : 0f);
-    }
-
-    private static void setAlbumReplayGain(Player player, List<ReplayGain> gains) {
-        float albumGain = gains.get(0).getAlbumGain() != 0f ? gains.get(0).getAlbumGain() : gains.get(1).getAlbumGain();
-
-        setReplayGain(player, albumGain != 0f ? albumGain : 0f);
-    }
-
-    private static void setAutoReplayGain(Player player, List<ReplayGain> gains) {
-        float albumGain = gains.get(0).getAlbumGain() != 0f ? gains.get(0).getAlbumGain() : gains.get(1).getAlbumGain();
-        float trackGain = gains.get(0).getTrackGain() != 0f ? gains.get(0).getTrackGain() : gains.get(1).getTrackGain();
-
-        setReplayGain(player, albumGain != 0f ? albumGain : trackGain);
+    private static float resolveAlbumGain(List<ReplayGain> gains) {
+        float primaryAlbumGain = gains.get(0).getAlbumGain();
+        float secondaryAlbumGain = gains.get(1).getAlbumGain();
+        return primaryAlbumGain != 0f ? primaryAlbumGain : secondaryAlbumGain;
     }
 
     private static boolean areTracksConsecutive(Player player) {
@@ -181,6 +192,9 @@ public class ReplayGainUtil {
     }
 
     private static void setReplayGain(Player player, float gain) {
-        player.setVolume((float) Math.pow(10f, gain / 20f));
+        float preamp = Preferences.getReplayGainPreamp();
+        float totalGain = gain + preamp;
+        totalGain = Math.max(-60f, Math.min(0f, totalGain));
+        player.setVolume((float) Math.pow(10f, totalGain / 20f));
     }
 }

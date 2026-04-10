@@ -54,6 +54,7 @@ object Preferences {
     private const val AUTO_DOWNLOAD_LYRICS = "auto_download_lyrics"
     private const val MUSIC_DIRECTORY_SECTION_VISIBILITY = "music_directory_section_visibility"
     private const val REPLAY_GAIN_MODE = "replay_gain_mode"
+	private const val REPLAY_GAIN_PREAMP = "replay_gain_preamp"
     private const val AUDIO_TRANSCODE_PRIORITY = "audio_transcode_priority"
     private const val STREAMING_CACHE_STORAGE = "streaming_cache_storage"
     private const val DOWNLOAD_STORAGE = "download_storage"
@@ -508,6 +509,16 @@ object Preferences {
         return App.getInstance().preferences.getString(REPLAY_GAIN_MODE, "disabled")
     }
 
+    @JvmStatic
+    fun getReplayGainPreamp(): Float {
+        return App.getInstance().preferences.getFloat(REPLAY_GAIN_PREAMP, -6f)
+    }
+
+    @JvmStatic
+    fun setReplayGainPreamp(value: Float) {
+        App.getInstance().preferences.edit().putFloat(REPLAY_GAIN_PREAMP, value).apply()
+    }	
+	
     @JvmStatic
     fun isServerPrioritized(): Boolean {
         return App.getInstance().preferences.getBoolean(AUDIO_TRANSCODE_PRIORITY, false)
