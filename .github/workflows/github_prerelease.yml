@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: development  # Still builds from development branch
+          fetch-depth: 0
 
       - name: Cache Gradle and wrapper
         uses: actions/cache@v3
@@ -52,6 +53,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
+          generate_release_notes: true
           body: |
             Development prerelease from commit ${{ github.sha }}
             
