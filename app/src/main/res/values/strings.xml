@@ -485,6 +485,9 @@
     <string name="share_subtitle_item">Expiration date: %1$s</string>
     <string name="share_no_expiration">Never</string>
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
+    <string name="toolbar_navigation_drawer_open">Navigation drawer open</string>
+    <string name="toolbar_navigation_drawer_closed">Navigation drawer closed</string>
+
     <string name="asset_link_clipboard_label">Tempus asset link</string>
     <string name="asset_link_label_song">Song UID</string>
     <string name="asset_link_label_album">Album UID</string>
