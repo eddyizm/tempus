@@ -16,6 +16,7 @@ import android.os.IBinder
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
@@ -375,6 +376,45 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
                 attachEqualizerIfPossible(audioSessionId)
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                Log.e(
+                    TAG,
+                    "onPlayerError: errorCode=${error.errorCode}, message=${error.message}",
+                    error
+                )
+
+                // Check for audio-related errors
+                val isAudioTrackError =
+                    error.errorCode == PlaybackException.ERROR_CODE_AUDIO_TRACK_INIT_FAILED ||
+                            error.errorCode == PlaybackException.ERROR_CODE_AUDIO_TRACK_WRITE_FAILED
+
+                // Check stack trace for audio-related issues (since cause message might be null)
+                val stackTraceString = error.stackTraceToString()
+                val isAudioErrorInStackTrace =
+                    stackTraceString.contains("DefaultAudioSink", ignoreCase = true) ||
+                            stackTraceString.contains("AudioTrack", ignoreCase = true) ||
+                            stackTraceString.contains("MediaCodecAudioRenderer", ignoreCase = true)
+
+                // For any unspecified or decoder error with audio stack trace, show the toast
+                val isUnspecifiedOrDecoderError =
+                    error.errorCode == PlaybackException.ERROR_CODE_UNSPECIFIED ||
+                            error.errorCode == 1004
+
+                val isUnspecifiedAudioError =
+                    isUnspecifiedOrDecoderError && isAudioErrorInStackTrace
+                val isAudioError = isAudioTrackError || isUnspecifiedAudioError
+
+                if (isAudioError) {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(
+                            this@BaseMediaService,
+                            R.string.bottom_sheet_problem_playing_song,
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
             }
         })
         if (player.isPlaying) {
