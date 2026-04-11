@@ -226,13 +226,13 @@ As they displayed tracks, Star tracks, Random and Genres are always be displayed
 
 Artists view and View by albums:
 <p align="left">
-    <img src="mockup/usage/aa_artists_view1" width=317>
+    <img src="mockup/usage/aa_artists_view1.jpg" width=317>
     <img src="mockup/usage/aa_artists_view2.jpg" width=317 style="margin-right:16px;">
 </p>
 
 Starred Artists view:
 <p align="left">
-    <img src="mockup/usage/aa_starred_artists_view" width=317>
+    <img src="mockup/usage/aa_starred_artists_view.jpg" width=317>
 </p>
 
 On an artist's page, if they have at least 2 albums with a minimum of 20 tracks, an "Instant Mix by Tempus" album is added at the beginning.
