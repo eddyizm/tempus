@@ -615,4 +615,7 @@
     <string name="search_all_songs_loading">Getting all songs ...</string>
     <string name="search_all_songs">all %1$s songs</string>
     <string name="search_all_songs_play">Play %1$s</string>
+
+    <string name="nav_drawer_index">Index</string>
+
 </resources>
