@@ -213,25 +213,30 @@ If "Home" is selected after another tab, it becomes "More".
 
 In addition, you can choose to display the following functions as thumbnails or lists:
 - Home
-- Albums (Last played, Most played, Recently added, Artists, Star tracks, Star albums, Star artists)
+- Albums (Last played, Most played, Recently added, Artists, Star albums, Star artists)
 - Playlists
 - Radio
 - Podcast
-Random and Genres are always be displayed as a list.
+As they displayed tracks, Star tracks, Random and Genres are always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
     <img src="mockup/usage/aa_list.jpg" width=317>
 </p>
 
-Albums sorted by artist or Artists :
+Artists view and View by albums:
 <p align="left">
-    <img src="mockup/usage/aa_artists_view1.jpg" width=317 style="margin-right:16px;">
-    <img src="mockup/usage/aa_artists_view2.jpg" width=317>
+    <img src="mockup/usage/aa_artists_view1" width=317>
+    <img src="mockup/usage/aa_artists_view2.jpg" width=317 style="margin-right:16px;">
 </p>
 
-If "Enable artist instant mix" is selected and the artist has at least 2 albums with a minimum of 20 tracks, an "Instant Mix" album is added.
-This album features 12 tracks chosen randomly from their discography.
+Starred Artists view:
+<p align="left">
+    <img src="mockup/usage/aa_starred_artists_view" width=317>
+</p>
+
+On an artist's page, if they have at least 2 albums with a minimum of 20 tracks, an "Instant Mix by Tempus" album is added at the beginning.
+This album features 12 tracks chosen randomly from their discography and is an one click play.
 
 <p align="left">
     <img src="mockup/usage/aa_instantMix.jpg" width=317>
@@ -249,6 +254,12 @@ Results of the A-Z jump will always be displayed as a list.
 </p>
 
 Display of albums and artists is limited to 500. For large libraries, it's preferable to use star albums or star artists.
+
+Shortcuts are displayed only if the function is selected from root level:
+- On albums page: jump to starred albums
+- On starred albums page: jump to albums
+- On artists page: jump to starred artists
+- On starred artists page: jump to artists
 
 ### Server Settings
 **IN PROGRESS**
