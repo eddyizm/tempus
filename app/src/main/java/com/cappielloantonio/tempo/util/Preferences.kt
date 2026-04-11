@@ -769,6 +769,8 @@ object Preferences {
         val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
         return parsed?.takeIf { it in 2..6 } ?: 2
     }
+
+    @JvmStatic
     fun isAndroidAutoAlbumViewEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
     }

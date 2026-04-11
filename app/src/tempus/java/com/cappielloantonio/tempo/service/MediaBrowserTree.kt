@@ -329,7 +329,7 @@ object MediaBrowserTree {
         treeNodes[Constants.AA_STARRED_TRACKS_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = false,
                     title = appContext.getString(R.string.aa_starred_tracks),
                     mediaId = Constants.AA_STARRED_TRACKS_ID,
                     isPlayable = false,
@@ -444,22 +444,28 @@ object MediaBrowserTree {
             Constants.AA_ROOT_ID -> treeNodes[Constants.AA_ROOT_ID]?.getChildren()!!
 
             Constants.AA_HOME_ID -> treeNodes[Constants.AA_HOME_ID]?.getChildren()!!
-            Constants.AA_LAST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "recent", 15)
-            Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500)
-            Constants.AA_ARTISTS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByArtist", 500)
+            Constants.AA_LAST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "recent", 15, false)
+            Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, true)
+            Constants.AA_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, 500, true)
             Constants.AA_PLAYLIST_ID -> automotiveRepository.getPlaylists(Constants.AA_PLAYLIST_ID)
             Constants.AA_PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
             Constants.AA_RADIO_ID -> automotiveRepository.getInternetRadioStations()
             Constants.AA_FOLDER_ID -> automotiveRepository.getMusicFolders(Constants.AA_FOLDER_ID)
-            Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15)
+            Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15, false)
             //Constants.AA_RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
-            Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15)
+            Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
             //Constants.AA_MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
             Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.starredSongs
-            Constants.AA_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID)
-            Constants.AA_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID)
+            Constants.AA_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, true)
+            Constants.AA_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, true)
             Constants.AA_RANDOM_ID -> automotiveRepository.getRandomSongs(100)
             Constants.AA_GENRES_ID -> automotiveRepository.getGenres(Constants.AA_GENRES_ID)
+
+            Constants.AA_JUMP_TO_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, false)
+            Constants.AA_JUMP_TO_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, false)
+            Constants.AA_JUMP_TO_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, 500, false)
+            Constants.AA_JUMP_TO_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, false)
+            Constants.AA_ARTISTS_BY_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByArtist", 500, false)
 
             else -> {
 				/*
