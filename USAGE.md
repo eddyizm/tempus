@@ -22,6 +22,8 @@
 - Valid login credentials for your Subsonic server
 - Music content uploaded and organized on your server
 
+Tempus offers advanced features such as Instant Mix, Continuous Play, Artists Page, and many others, which require a properly configured server capable to respond to "similar songs" requests and correctly tagged music files.
+
 ### Verified backends
 This app works with any service that implements the Subsonic API, including:
 - [LMS - Lightweight Music Server](https://github.com/epoupon/lms) -  *personal fave and my backend*
