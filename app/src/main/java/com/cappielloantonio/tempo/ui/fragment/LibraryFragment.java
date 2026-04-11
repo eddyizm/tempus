@@ -29,6 +29,7 @@ import com.cappielloantonio.tempo.databinding.FragmentLibraryBinding;
 import com.cappielloantonio.tempo.helper.recyclerview.CustomLinearSnapHelper;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
+import com.cappielloantonio.tempo.navigation.NavigationController;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistAdapter;
@@ -52,6 +53,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
 
     private FragmentLibraryBinding bind;
     private MainActivity activity;
+    private NavigationController navigationController;
     private LibraryViewModel libraryViewModel;
 
     private MusicFolderAdapter musicFolderAdapter;
@@ -67,6 +69,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         activity = (MainActivity) getActivity();
+        navigationController = activity.getNavigationController();
 
         bind = FragmentLibraryBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
@@ -160,6 +163,8 @@ public class LibraryFragment extends Fragment implements ClickCallback {
         materialToolbar = bind.getRoot().findViewById(R.id.toolbar);
 
         activity.setSupportActionBar(materialToolbar);
+        navigationController.setHamburgerMenuForLandscape(activity, materialToolbar);
+
         Objects.requireNonNull(materialToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
     }
 

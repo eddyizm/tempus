@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 public class NavigationController {
@@ -40,5 +41,9 @@ public class NavigationController {
 
     public void setSystemBarsVisibility(AppCompatActivity activity, boolean visibility) {
         helper.setSystemBarsVisibility(activity, visibility);
+    }
+
+    public void setHamburgerMenuForLandscape(AppCompatActivity activity, MaterialToolbar toolbar) {
+        helper.sethamburgerMenuIconOnToolbar(activity, toolbar);
     }
 }
