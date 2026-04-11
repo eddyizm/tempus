@@ -1,6 +1,36 @@
 # Changelog
 
 ## What's Changed
+* fix: Android Auto queue initialization and queue confusion  by @MaFo-28 in https://github.com/eddyizm/tempus/pull/497
+* fix: Android Auto queue propagation by @MaFo-28 in https://github.com/eddyizm/tempus/pull/514
+* feat: add playlist artwork support for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/511
+* fix: Tile Size Manager applied to Made For You adapter by @MaFo-28 in https://github.com/eddyizm/tempus/pull/526
+* chore(i18n): Update Polish translation#516 by @skajmer in https://github.com/eddyizm/tempus/pull/536
+* feat: accordion for settings page with minimal changes by @MaFo-28 in https://github.com/eddyizm/tempus/pull/531
+* feat: extend artist page shelves by @tvillega in https://github.com/eddyizm/tempus/pull/539
+* feat!: remove estimate content length by @tvillega in https://github.com/eddyizm/tempus/pull/542
+* prerelease v4.14.0.1: fix queue reset on resume by @MaFo-28 in https://github.com/eddyizm/tempus/pull/543
+* feat(i18n): Update German translation by @SebinNyshkim in https://github.com/eddyizm/tempus/pull/547
+* feat: French Translations and revisions by @MaitreGEEK in https://github.com/eddyizm/tempus/pull/544
+* prerelease v4.14.0.2: refactor: move tag ID from AA files to Contants.kt by @MaFo-28 in https://github.com/eddyizm/tempus/pull/546
+* fix: redundant padding on artist page carousels by @tvillega in https://github.com/eddyizm/tempus/pull/552
+* fix: NPE in MediaManager.scrobble() by @tinsukE in https://github.com/eddyizm/tempus/pull/551
+* fix: prevent NPE from getView() in SearchFragment (#548) by @soyelmismo in https://github.com/eddyizm/tempus/pull/549
+* fix prerelease: enqueue tracks from Continuous Play by @MaFo-28 in https://github.com/eddyizm/tempus/pull/554
+* fix: remove estimate content length from german localization by @tvillega in https://github.com/eddyizm/tempus/pull/555
+* feat: make navigation drawer translatable by @Kurami32 in https://github.com/eddyizm/tempus/pull/556
+* feat(i18n): Add spanish latinoamerica translation by @Kurami32 in https://github.com/eddyizm/tempus/pull/553
+* fix: Continuous Play shuffling bug (issue #378) by @MaFo-28 in https://github.com/eddyizm/tempus/pull/557
+
+## New Contributors
+* @SebinNyshkim made their first contribution in https://github.com/eddyizm/tempus/pull/547
+* @MaitreGEEK made their first contribution in https://github.com/eddyizm/tempus/pull/544
+* @soyelmismo made their first contribution in https://github.com/eddyizm/tempus/pull/549
+* @Kurami32 made their first contribution in https://github.com/eddyizm/tempus/pull/556
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.13.0...v4.14.1
+
+## What's Changed
 ## [4.13.0](https://github.com/eddyizm/tempo/releases/tag/v4.13.0) (2026-03-25)
 * chore(i18n): Improve Russian translation by @NikkoFox in https://github.com/eddyizm/tempus/pull/503
 * feat: tile size manager by @MaFo-28 in https://github.com/eddyizm/tempus/pull/440
