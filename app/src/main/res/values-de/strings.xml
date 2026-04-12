@@ -200,6 +200,7 @@
     <string name="library_title_music_folder">Musikordner</string>
     <string name="library_title_playlist">Wiedergabelisten</string>
     <string name="library_title_playlist_see_all_button">Alle zeigen</string>
+    <string name="library_toast_long_press_to_refresh">Halten zum Aktualisieren</string>
     <string name="login_empty">Kein Server hinzugefügt</string>
     <string name="login_title">Subsonic-Server</string>
     <string name="login_title_expanded">Subsonic-Server</string>
