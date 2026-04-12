@@ -63,9 +63,16 @@
     <string name="artist_page_switch_layout_button">Zmień układ</string>
     <string name="artist_page_title_album_more_like_this_button">Więcej podobnych</string>
     <string name="artist_page_title_album_section">Albumy</string>
+	<string name="artist_page_title_ep_section">EP-ki</string>
+    <string name="artist_page_title_single_section">Single</string>
+    <string name="artist_page_title_compilation_section">Kompilacje</string>
+    <string name="artist_page_title_soundtrack_section">Ścieżki dźwiękowe</string>
+    <string name="artist_page_title_live_section">Na żywo</string>
+    <string name="artist_page_title_remix_section">Remiksy</string>
+    <string name="artist_page_title_appears_on_section">Występuje na</string>
     <string name="artist_page_title_biography_more_button">Więcej</string>
     <string name="artist_page_title_biography_section">Biografia</string>
-    <string name="artist_page_title_most_streamed_song_section">Najczęsciej słuchane utwory</string>
+    <string name="artist_page_title_most_streamed_song_section">Top piosenki</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Zobacz wszystkie</string>
     <string name="battery_optimization_negative_button">Ignoruj</string>
     <string name="battery_optimization_neutral_button">Nie pytaj ponownie</string>
