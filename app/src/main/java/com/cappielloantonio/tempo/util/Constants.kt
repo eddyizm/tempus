@@ -170,6 +170,9 @@ object Constants {
     const val AA_QUEUE_CACHED_SOURCE = "[aaQueueCachedSource]"
     const val AA_INSTANTMIX_SOURCE = "[instantMixSource]"
 
+    const val AA_INSTANTMIX_SOURCE = "[instantMixSource]"
+
+
     // Android Auto start index extra
     const val AA_START_INDEX = "aa_start_index"
 }
