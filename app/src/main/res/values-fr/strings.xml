@@ -200,6 +200,7 @@
     <string name="library_title_music_folder">Dossiers de musiques</string>
     <string name="library_title_playlist">Playlists</string>
     <string name="library_title_playlist_see_all_button">Voir tout</string>
+    <string name="library_toast_long_press_to_refresh">Appui long pour rafraîchir</string>
     <string name="login_empty">Aucun serveur ajouté</string>
     <string name="login_title">Serveurs Subsonic</string>
     <string name="login_title_expanded">Serveurs Subsonic</string>
