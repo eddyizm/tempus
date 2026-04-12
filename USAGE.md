@@ -22,6 +22,8 @@
 - Valid login credentials for your Subsonic server
 - Music content uploaded and organized on your server
 
+Tempus offers advanced features such as Instant Mix, Continuous Play, Artists Page, and many others, which require a properly configured server capable to respond to "similar songs" requests and correctly tagged music files.
+
 ### Verified backends
 This app works with any service that implements the Subsonic API, including:
 - [LMS - Lightweight Music Server](https://github.com/epoupon/lms) -  *personal fave and my backend*
@@ -192,7 +194,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Home : Displays all functions not used in other tabs
 - Recent : The 15 most recently listened-to albums
 - Albums : Albums sorted by name
-- Artists : Albums sorted by artist
+- Artists : Albums sorted by artist or Artists, selected by preference
 - Playlists
 - Podcast : The 100 podcasts recently added
 - Radio
@@ -207,25 +209,44 @@ The Android Auto interface can be configured by user to best suit their preferen
 
 If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
 
-If "Home" is selected after another tab, it becomes "More"
+If "Home" is selected after another tab, it becomes "More".
 
 In addition, you can choose to display the following functions as thumbnails or lists:
 - Home
-- Albums (Last played, Most played, Recently added, Artists, Star tracks, Star albums, Star artists, Random)
+- Albums (Last played, Most played, Recently added, Artists, Star albums, Star artists)
 - Playlists
 - Radio
 - Podcast
+As they displayed tracks, Star tracks, Random and Genres are always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
     <img src="mockup/usage/aa_list.jpg" width=317>
 </p>
 
+Artists view and View by albums:
+<p align="left">
+    <img src="mockup/usage/aa_artists_view1.jpg" width=317>
+    <img src="mockup/usage/aa_artists_view2.jpg" width=317 style="margin-right:16px;">
+</p>
+
+Starred Artists view:
+<p align="left">
+    <img src="mockup/usage/aa_starred_artists_view.jpg" width=317>
+</p>
+
+On an artist's page, if they have at least 2 albums with a minimum of 20 tracks, an "Instant Mix by Tempus" album is added at the beginning.
+This album features 12 tracks chosen randomly from their discography and is an one click play.
+
+<p align="left">
+    <img src="mockup/usage/aa_instantMix.jpg" width=317>
+</p>
+
 The A-Z button allows you to jump to items starting with the chosen letter.
 
 Search button returns albums or artists, even if they are not displayed by the selected function.
 
-Results of the A-Z jump or search will always be displayed as a list.
+Results of the A-Z jump will always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_AZ.jpg" width=317 style="margin-right:16px;">
@@ -233,6 +254,12 @@ Results of the A-Z jump or search will always be displayed as a list.
 </p>
 
 Display of albums and artists is limited to 500. For large libraries, it's preferable to use star albums or star artists.
+
+Shortcuts are displayed only if the function is selected from root level:
+- On albums page: jump to starred albums
+- On starred albums page: jump to albums
+- On artists page: jump to starred artists
+- On starred artists page: jump to artists
 
 ### Server Settings
 **IN PROGRESS**
