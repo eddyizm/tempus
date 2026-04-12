@@ -477,6 +477,15 @@ open class MediaLibrarySessionCallback(
                 )
             }
 
+            firstItem.mediaId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true -> {
+                Log.d(TAG, "Fetching instant mix for $firstItem.mediaId")
+                Futures.transform(
+                    automotiveRepository.getInstantMix(firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE), 12),
+                    { it.value ?: emptyList() },
+                    MoreExecutors.directExecutor()
+                )
+            }
+
             else -> {
                 Log.d(TAG, "Fallback queue for item ${firstItem.mediaId}")
                 val resolvedItems = ArrayList<MediaItem>()
