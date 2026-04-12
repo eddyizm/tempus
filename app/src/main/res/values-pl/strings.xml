@@ -388,7 +388,7 @@
     <string name="settings_podcast_summary">Jeżeli włączone, widoczna będzie sekcja z podcastami. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_playlist_sort">Sortowanie playlist</string>
     <string name="settings_androidauto">Android Auto</string>
-	<string name="settings_androidauto_album_view">Układ siatki dla albumów</string>
+	<string name="settings_androidauto_album_view">Układ siatki dla albumów i wykonawców</string>
 	<string name="settings_androidauto_home_view">Układ siatki dla strony głównej</string>
     <string name="settings_androidauto_playlist_view">Układ siatki dla playlist</string>
     <string name="settings_androidauto_podcast_view">Układ siatki dla podcastów</string>
