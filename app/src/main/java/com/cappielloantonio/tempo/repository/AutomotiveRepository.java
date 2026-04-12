@@ -88,13 +88,57 @@ public class AutomotiveRepository {
         return extras;
     }
 
-    private MediaItem createItem(String title, String id, Bundle extras, Uri artworkUri){
+    private MediaItem createFunction(String title, String id, boolean isGridView, Uri artworkUri){
         MediaMetadata mediaMetadata = new MediaMetadata.Builder()
                 .setTitle(title)
                 .setIsBrowsable(true)
                 .setIsPlayable(false)
                 .setArtworkUri(artworkUri)
-                .setExtras(extras)
+                .setExtras(createContentStyleExtras(isGridView))
+                .build();
+
+        return new MediaItem.Builder()
+                .setMediaId(id)
+                .setMediaMetadata(mediaMetadata)
+                .setUri("")
+                .build();
+    }
+
+    private MediaItem createArtist(String artistName, String id, boolean isGridView, String artistCoverArtId){
+        Uri artworkUri = (artistCoverArtId != null && !artistCoverArtId.isEmpty())
+                ? AlbumArtContentProvider.contentUri(artistCoverArtId)
+                : Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists);
+
+        MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                .setTitle(artistName)
+                .setIsBrowsable(true)
+                .setIsPlayable(false)
+                .setMediaType(MediaMetadata.MEDIA_TYPE_ARTIST)
+                .setArtworkUri(artworkUri)
+                .setExtras(createContentStyleExtras(isGridView))
+                .build();
+
+        return new MediaItem.Builder()
+                .setMediaId(id)
+                .setMediaMetadata(mediaMetadata)
+                .setUri("")
+                .build();
+    }
+
+    private MediaItem createAlbum(String albumName, String artirstName, String genre, String id, boolean isPlayable, String albumCoverArtId){
+        Uri artworkUri = (albumCoverArtId != null && !albumCoverArtId.isEmpty())
+                ? AlbumArtContentProvider.contentUri(albumCoverArtId)
+                : Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums);
+
+        MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                .setTitle(albumName)
+                .setAlbumTitle(albumName)
+                .setArtist(artirstName)
+                .setGenre(genre)
+                .setIsBrowsable(!isPlayable)
+                .setIsPlayable(isPlayable)
+                .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
+                .setArtworkUri(artworkUri)
                 .build();
 
         return new MediaItem.Builder()
@@ -127,33 +171,22 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
-
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(album.getName())
-                                        .setAlbumTitle(album.getName())
-                                        .setArtist(album.getArtist())
-                                        .setGenre(album.getGenre())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + album.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createAlbum(
+                                        album.getName(),
+                                        album.getArtist(),
+                                        album.getGenre(),
+                                        prefix + album.getId(),
+                                        false,
+                                        album.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
                             }
 
                             if (isRootCall == true) {
-                                MediaItem jumpTo = createItem(
+                                MediaItem jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_starred_albums),
                                         Constants.AA_JUMP_TO_STARRED_ALBUMS_ID,
-                                        createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled()),
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_star_album)
                                 );
                                 mediaItems.add(0, jumpTo);
@@ -199,29 +232,12 @@ public class AutomotiveRepository {
                                     for (ArtistID3 artist : index.getArtists()) {
                                         if (count >= maxSize) break;
 
-                                        Uri artworkUri;
-                                        if (artist.getCoverArtId() != null && !artist.getCoverArtId().isEmpty()) {
-                                            artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
-                                        } else {
-                                            artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists);
-                                        }
-
-                                        Bundle extras = createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled());
-
-                                        MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                                .setTitle(artist.getName())
-                                                .setIsBrowsable(true)
-                                                .setIsPlayable(false)
-                                                .setMediaType(MediaMetadata.MEDIA_TYPE_ARTIST)
-                                                .setArtworkUri(artworkUri)
-                                                .setExtras(extras)
-                                                .build();
-
-                                        MediaItem mediaItem = new MediaItem.Builder()
-                                                .setMediaId(prefix + artist.getId())
-                                                .setMediaMetadata(mediaMetadata)
-                                                .setUri("")
-                                                .build();
+                                        MediaItem mediaItem = createArtist(
+                                                artist.getName(),
+                                                prefix + artist.getId(),
+                                                Preferences.isAndroidAutoAlbumViewEnabled(),
+                                                artist.getCoverArtId()
+                                        );
 
                                         mediaItems.add(mediaItem);
                                         count++;
@@ -229,18 +245,19 @@ public class AutomotiveRepository {
                                 }
                             }
 
-                            MediaItem jumpTo = createItem(
+                            MediaItem jumpTo = createFunction(
                                     App.getContext().getString(R.string.aa_view_by_albums),
                                     Constants.AA_ARTISTS_BY_ALBUMS_ID,
-                                    createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled()),
+                                    Preferences.isAndroidAutoAlbumViewEnabled(),
                                     Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums)
                             );
                             mediaItems.add(0, jumpTo);
+
                             if (isRootCall == true) {
-                                jumpTo = createItem(
+                                jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_starred_artists),
                                         Constants.AA_JUMP_TO_STARRED_ARTISTS_ID,
-                                        createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled()),
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists)
                                 );
                                 mediaItems.add(0, jumpTo);
@@ -370,32 +387,22 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
-
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(album.getName())
-                                        .setArtist(album.getArtist())
-                                        .setGenre(album.getGenre())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + album.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createAlbum(
+                                        album.getName(),
+                                        album.getArtist(),
+                                        album.getGenre(),
+                                        prefix + album.getId(),
+                                        false,
+                                        album.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
                             }
 
                             if (isRootCall == true) {
-                                MediaItem jumpTo = createItem(
+                                MediaItem jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_albums),
                                         Constants.AA_JUMP_TO_ALBUMS_ID,
-                                        createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled()),
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums)
                                 );
                                 mediaItems.add(0, jumpTo);
@@ -439,32 +446,19 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (ArtistID3 artist : artists) {
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
-
-                                Bundle extras = createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled());
-
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(artist.getName())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
-                                        .setArtworkUri(artworkUri)
-                                        .setExtras(extras)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + artist.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createArtist(
+                                        artist.getName(),
+                                        prefix + artist.getId(),
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
+                                        artist.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
                             }
                             if (isRootCall == true) {
-                                MediaItem jumpTo = createItem(
+                                MediaItem jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_artists),
                                         Constants.AA_JUMP_TO_ARTISTS_ID,
-                                        createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled()),
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists)
                                 );
                                 mediaItems.add(0, jumpTo);
@@ -865,52 +859,28 @@ public class AutomotiveRepository {
                                 if (album.getSongCount() != null) {
                                     totalTracks += album.getSongCount();
                                 }
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
 
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(album.getName())
-                                        .setAlbumTitle(album.getName())
-                                        .setArtist(album.getArtist())
-                                        .setGenre(album.getGenre())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + album.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createAlbum(
+                                        album.getName(),
+                                        album.getArtist(),
+                                        album.getGenre(),
+                                        prefix + album.getId(),
+                                        false,
+                                        album.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
                             }
 
-                            ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
-                            Uri artworkUri;
-                            if (artist.getCoverArtId() != null && !artist.getCoverArtId().isEmpty()) {
-                                artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
-                            } else {
-                                artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_radio);
-                            }
-                            //Uri artworkUri = Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_radio);
-
                             if (albums.size() >= 2 && totalTracks >= INSTANT_MIX_MIN_TRACKS) {
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(App.getContext().getString(R.string.aa_instant_mix))
-                                        .setArtist("By Tempus")
-                                        .setIsBrowsable(false)
-                                        .setIsPlayable(true)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem instantMixItem = new MediaItem.Builder()
-                                        .setMediaId(Constants.AA_INSTANTMIX_SOURCE + id)
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
+                                MediaItem instantMixItem = createAlbum(
+                                        App.getContext().getString(R.string.aa_instant_mix),
+                                        "By Tempus",
+                                        "Instant Mix",
+                                        Constants.AA_INSTANTMIX_SOURCE + id,
+                                        true,
+                                        artist.getCoverArtId()
+                                );
                                 mediaItems.add(0, instantMixItem);
                             }
 
@@ -1115,50 +1085,27 @@ public class AutomotiveRepository {
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getArtists() != null) {
                                 for (ArtistID3 artist : response.body().getSubsonicResponse().getSearchResult3().getArtists()) {
-                                    Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
 
-                                    Bundle extras = createContentStyleExtras(Preferences.isAndroidAutoAlbumViewEnabled());
-
-                                    MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                            .setTitle(artist.getName())
-                                            .setIsBrowsable(true)
-                                            .setIsPlayable(false)
-                                            .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
-                                            .setArtworkUri(artworkUri)
-                                            .setExtras(extras)
-                                            .build();
-
-                                    MediaItem mediaItem = new MediaItem.Builder()
-                                            .setMediaId(artistPrefix + artist.getId())
-                                            .setMediaMetadata(mediaMetadata)
-                                            .setUri("")
-                                            .build();
-
+                                    MediaItem mediaItem = createArtist(
+                                            artist.getName(),
+                                            artistPrefix + artist.getId(),
+                                            Preferences.isAndroidAutoAlbumViewEnabled(),
+                                            artist.getCoverArtId()
+                                    );
                                     mediaItems.add(mediaItem);
                                 }
                             }
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getAlbums() != null) {
                                 for (AlbumID3 album : response.body().getSubsonicResponse().getSearchResult3().getAlbums()) {
-                                    Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
-
-                                    MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                            .setTitle(album.getName())
-                                            .setAlbumTitle(album.getName())
-                                            .setArtist(album.getArtist())
-                                            .setGenre(album.getGenre())
-                                            .setIsBrowsable(true)
-                                            .setIsPlayable(false)
-                                            .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                            .setArtworkUri(artworkUri)
-                                            .build();
-
-                                    MediaItem mediaItem = new MediaItem.Builder()
-                                            .setMediaId(albumPrefix + album.getId())
-                                            .setMediaMetadata(mediaMetadata)
-                                            .setUri("")
-                                            .build();
-
+                                    MediaItem mediaItem = createAlbum(
+                                            album.getName(),
+                                            album.getArtist(),
+                                            album.getGenre(),
+                                            albumPrefix + album.getId(),
+                                            false,
+                                            album.getCoverArtId()
+                                    );
                                     mediaItems.add(mediaItem);
                                 }
                             }
