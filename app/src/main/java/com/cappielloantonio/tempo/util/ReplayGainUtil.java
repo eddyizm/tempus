@@ -112,19 +112,19 @@ public class ReplayGainUtil {
 
         String strUpper = str.toUpperCase(java.util.Locale.ROOT);
         
-        if (str.contains(tags[0])) {
+        if (strUpper.contains(tags[0])) {
             replayGain.setTrackGain(parseReplayGainTag(str));
         }
 
-        if (str.contains(tags[1])) {
+        if (strUpper.contains(tags[1])) {
             replayGain.setAlbumGain(parseReplayGainTag(str));
         }
 
-        if (str.contains(tags[2])) {
+        if (strUpper.contains(tags[2])) {
             replayGain.setTrackGain(parseReplayGainTag(str) / 256f + 5f);
         }
 
-        if (str.contains(tags[3])) {
+        if (strUpper.contains(tags[3])) {
             replayGain.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
         }
 
@@ -179,7 +179,9 @@ public class ReplayGainUtil {
     private static float resolveAlbumGain(List<ReplayGain> gains) {
         float primaryAlbumGain = gains.get(0).getAlbumGain();
         float secondaryAlbumGain = gains.get(1).getAlbumGain();
-        return primaryAlbumGain != 0f ? primaryAlbumGain : secondaryAlbumGain;
+        float albumGain = primaryAlbumGain != 0f ? primaryAlbumGain : secondaryAlbumGain;
+        // Fall back to track gain when album gain is absent
+        return albumGain != 0f ? albumGain : resolveTrackGain(gains);
     }
 
     private static boolean areTracksConsecutive(Player player) {
@@ -197,7 +199,7 @@ public class ReplayGainUtil {
     private static void setReplayGain(Player player, float gain) {
         float preamp = Preferences.getReplayGainPreamp();
         float totalGain = gain + preamp;
-        totalGain = Math.max(-60f, Math.min(0f, totalGain));
+        totalGain = Math.max(-60f, Math.min(15f, totalGain));
         player.setVolume((float) Math.pow(10f, totalGain / 20f));
     }
 }
