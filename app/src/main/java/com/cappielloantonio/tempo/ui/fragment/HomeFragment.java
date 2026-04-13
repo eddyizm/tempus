@@ -12,6 +12,7 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.FragmentHomeBinding;
+import com.cappielloantonio.tempo.navigation.NavigationController;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.fragment.pager.HomePager;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -28,6 +29,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding bind;
     private MainActivity activity;
+    private NavigationController navigationController;
 
     private MaterialToolbar materialToolbar;
     private AppBarLayout appBarLayout;
@@ -37,6 +39,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         activity = (MainActivity) getActivity();
+        navigationController = activity.getNavigationController();
         bind = FragmentHomeBinding.inflate(inflater, container, false);
         return bind.getRoot();
     }
@@ -68,6 +71,8 @@ public class HomeFragment extends Fragment {
         materialToolbar = bind.getRoot().findViewById(R.id.toolbar);
 
         activity.setSupportActionBar(materialToolbar);
+        navigationController.setHamburgerMenuForLandscape(activity, materialToolbar);
+
         Objects.requireNonNull(materialToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
 
         tabLayout = new TabLayout(requireContext());
