@@ -143,7 +143,7 @@ object MediaBrowserTree {
             Constants.AA_RADIO_ID,
             Constants.AA_FOLDER_ID,
             Constants.AA_MOST_PLAYED_ID,
-            //Constants.AA_RECENT_SONGS_ID,            // => doesn't work !
+            Constants.AA_RECENT_SONGS_ID,
             Constants.AA_RECENTLY_ADDED_ID,
             //Constants.AA_MADE_FOR_YOU_ID,            // => doesn't work !
             Constants.AA_STARRED_TRACKS_ID,
@@ -452,7 +452,7 @@ object MediaBrowserTree {
             Constants.AA_RADIO_ID -> automotiveRepository.getInternetRadioStations()
             Constants.AA_FOLDER_ID -> automotiveRepository.getMusicFolders(Constants.AA_FOLDER_ID)
             Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15, false)
-            //Constants.AA_RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
+            Constants.AA_RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),100)
             Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
             //Constants.AA_MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
             Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.starredSongs
