@@ -8,6 +8,7 @@ import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.Player;
 import androidx.media3.extractor.metadata.id3.InternalFrame;
+import androidx.media3.extractor.metadata.id3.TextInformationFrame;
 
 import com.cappielloantonio.tempo.model.ReplayGain;
 
@@ -104,10 +105,19 @@ public class ReplayGainUtil {
     private static ReplayGain setReplayGains(Metadata.Entry entry) {
         ReplayGain replayGain = new ReplayGain();
 
-        // The logic below assumes .toString() contains the dB value. That's not the case for InternalFrame
+        // .toString() is not reliable for structured frame types:
+        // - InternalFrame: toString() may omit description/text content.
+        // - TextInformationFrame (TXXX): toString() wraps values in a List bracket, e.g.
+        //   "TXXX: description=REPLAYGAIN_TRACK_GAIN: values=[12.00 dB]", which breaks
+        //   the end-anchored regex in parseReplayGainTag because ']' trails the dB suffix.
+        // Build the string from the typed fields directly for both cases.
         String str = entry.toString();
         if (entry instanceof InternalFrame) {
             str = ((InternalFrame) entry).description + ((InternalFrame) entry).text;
+        } else if (entry instanceof TextInformationFrame) {
+            TextInformationFrame textFrame = (TextInformationFrame) entry;
+            String desc = textFrame.description != null ? textFrame.description : textFrame.id;
+            str = desc + (!textFrame.values.isEmpty() ? textFrame.values.get(0) : "");
         }
 
         String strUpper = str.toUpperCase(java.util.Locale.ROOT);
