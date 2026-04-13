@@ -91,8 +91,9 @@ public class ReplayGainUtil {
     }
 
     private static boolean checkReplayGain(Metadata.Entry entry) {
+        String entryStr = entry.toString().toUpperCase(java.util.Locale.ROOT);
         for (String tag : tags) {
-            if (entry.toString().contains(tag)) {
+            if (entryStr.contains(tag)) {
                 return true;
             }
         }
@@ -109,6 +110,8 @@ public class ReplayGainUtil {
             str = ((InternalFrame) entry).description + ((InternalFrame) entry).text;
         }
 
+        String strUpper = str.toUpperCase(java.util.Locale.ROOT);
+        
         if (str.contains(tags[0])) {
             replayGain.setTrackGain(parseReplayGainTag(str));
         }
