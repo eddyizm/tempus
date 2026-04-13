@@ -200,6 +200,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Radio
 - Folder : Navigation through music directories
 - Albums most played : The 15 most played albums
+- Tracks played : The 100 last tracks that were completly played
 - Albums added : The 15 recently added albums
 - Star tracks
 - Star albums
@@ -217,7 +218,8 @@ In addition, you can choose to display the following functions as thumbnails or 
 - Playlists
 - Radio
 - Podcast
-As they displayed tracks, Star tracks, Random and Genres are always be displayed as a list.
+
+As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">

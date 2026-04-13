@@ -269,7 +269,7 @@
         <item>3</item>
         <item>2</item>
     </string-array>
-	<!-- Add by MFO -->
+
     <string-array name="aa_tab_titles">
         <item>Ne pas afficher</item>
         <item>Accueil</item>
@@ -281,7 +281,7 @@
         <item>Radio</item>
         <item>Dossiers</item>
         <item>Albums les plus joués</item>
-	<!--	<item>Titres joués</item> -->
+		<item>Titres joués</item>
         <item>Albums ajouté</item>
     <!--    <item>Pour vous</item> -->
         <item>Titres favoris</item>

@@ -293,7 +293,7 @@
         <item>3</item>
         <item>2</item>
     </string-array>
-	<!-- Add by MFO -->
+
     <string-array name="aa_tab_titles">
         <item>Do not display</item>
         <item>Home</item>
@@ -305,7 +305,7 @@
         <item>Radio</item>
         <item>Folder</item>
         <item>Albums most played</item>
-    <!--    <item>Tracks played</item> -->
+        <item>Tracks played</item>
         <item>Albums added</item>
     <!--    <item>For you</item> -->
         <item>Star tracks</item>
