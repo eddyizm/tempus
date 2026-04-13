@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -77,6 +78,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         initAppBar();
         initButtons();
         initSongListView();
+        initSwipeToRefresh();
 
         return view;
     }
@@ -366,5 +368,23 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
 
     private void setMediaBrowserListenableFuture() {
         songHorizontalAdapter.setMediaBrowserListenableFuture(mediaBrowserListenableFuture);
+    }
+
+    public void initSwipeToRefresh() {
+        bind.swipeSongListToRefresh.setOnRefreshListener(() -> {
+            pullToRefresh();
+            bind.swipeSongListToRefresh.setRefreshing(false);
+        });
+    }
+
+    private void pullToRefresh() {
+        LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
+        songListPageViewModel.getSongList().observe(lifecycleOwner, songs -> {
+            isLoading = false;
+            songHorizontalAdapter.setItems(songs);
+            reapplyPlayback();
+            setSongListPageSubtitle(songs);
+        });
+
     }
 }

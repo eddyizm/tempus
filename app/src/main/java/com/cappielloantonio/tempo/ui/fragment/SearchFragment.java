@@ -235,12 +235,14 @@ public class SearchFragment extends Fragment implements ClickCallback {
     }
 
     public void updateUI(List<Playlist> allSongs) {
-        if (!allSongs.isEmpty()) {
+        if (allSongs != null && !allSongs.isEmpty()) {
             playlistHorizontalAdapter.setItems(allSongs);
+            if (getView() != null && bind != null) {
+                bind.allSongs.setText(this.getView().getContext().getString(R.string.search_all_songs_play, String.valueOf(allSongs.get(0).getName())));
+            }
         } else {
             playlistHorizontalAdapter.setItems(Collections.emptyList());
         }
-        bind.allSongs.setText(this.getView().getContext().getString(R.string.search_all_songs_play,String.valueOf(allSongs.getFirst().getName())));
     }
     private void performSearch(String query) {
         searchViewModel.search3(this, query).observe(getViewLifecycleOwner(), result -> {

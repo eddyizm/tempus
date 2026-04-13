@@ -26,6 +26,7 @@ object Preferences {
     private const val NEXT_SERVER_SWITCH = "next_server_switch"
     private const val PLAYBACK_SPEED = "playback_speed"
     private const val BITRATE_VISIBLE = "bitrate_visible"
+    private const val QUICK_ACTION_VISIBLE = "quick_action_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -103,7 +104,7 @@ object Preferences {
 	private const val AA_THIRD_TAB = "androidauto_third_tab"
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
-    
+
 	@JvmStatic
     fun getServer(): String? {
         return App.getInstance().preferences.getString(SERVER, null)
@@ -303,6 +304,16 @@ object Preferences {
     @JvmStatic
     fun setBitrateVisible(bitrateVisible: Boolean) {
         App.getInstance().preferences.edit().putBoolean(BITRATE_VISIBLE, bitrateVisible).apply()
+    }
+
+    @JvmStatic
+    fun getQuickActionVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(QUICK_ACTION_VISIBLE, true)
+    }
+
+    @JvmStatic
+    fun setQuickActionVisible(quickActionVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(QUICK_ACTION_VISIBLE, quickActionVisible).apply()
     }
 
     @JvmStatic
@@ -780,6 +791,8 @@ object Preferences {
         val parsed = App.getInstance().preferences.getString(TILE_SIZE, "2")?.toIntOrNull()
         return parsed?.takeIf { it in 2..6 } ?: 2
     }
+
+    @JvmStatic
     fun isAndroidAutoAlbumViewEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_ALBUM_VIEW, true)
     }
@@ -833,5 +846,5 @@ object Preferences {
     fun setAndroidAutoShuffleGenreSongsEnabled(enabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
     }
-	
+
 }

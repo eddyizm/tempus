@@ -17,7 +17,9 @@
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artists</string>
     <string name="aa_starred_tracks">★ Tracks</string>
-	
+    <string name="aa_instant_mix">Instant mix</string>
+    <string name="aa_view_by_albums">View by albums</string>
+
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>
     <string name="activity_battery_optimizations_title">Battery Optimizations</string>
@@ -207,6 +209,7 @@
     <string name="library_title_music_folder">Music folders</string>
     <string name="library_title_playlist">Playlists</string>
     <string name="library_title_playlist_see_all_button">See all</string>
+    <string name="library_toast_long_press_to_refresh">Long press to refresh</string>
     <string name="login_empty">No server added</string>
     <string name="login_title">Subsonic servers</string>
     <string name="login_title_expanded">Subsonic servers</string>
@@ -399,7 +402,7 @@
     <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
     <string name="settings_playlist_sort">Playlist sorting</string>
 	<string name="settings_androidauto">Android Auto</string>
-	<string name="settings_androidauto_album_view">Grid view for albums</string>
+	<string name="settings_androidauto_album_view">Grid view for albums and artists</string>
 	<string name="settings_androidauto_home_view">Grid view for home</string>
     <string name="settings_androidauto_playlist_view">Grid view for playlists</string>
     <string name="settings_androidauto_podcast_view">Grid view for podcast</string>
@@ -410,6 +413,7 @@
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
+    <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
@@ -615,4 +619,7 @@
     <string name="search_all_songs_loading">Getting all songs ...</string>
     <string name="search_all_songs">all %1$s songs</string>
     <string name="search_all_songs_play">Play %1$s</string>
+
+    <string name="nav_drawer_index">Index</string>
+
 </resources>
