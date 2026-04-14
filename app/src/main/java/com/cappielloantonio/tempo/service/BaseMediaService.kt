@@ -376,6 +376,7 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
                 attachEqualizerIfPossible(audioSessionId)
+                ReplayGainUtil.attachAudioSession(audioSessionId)
             }
         })
         if (player.isPlaying) {
@@ -430,6 +431,7 @@ open class BaseMediaService : MediaLibraryService() {
     override fun onDestroy() {
         releaseNetworkCallback()
         equalizerManager.release()
+        ReplayGainUtil.release()
         stopWidgetUpdates()
         stopRadioHeaderChecks()
         radioHeaderCheckExecutor.shutdown()

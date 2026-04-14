@@ -1,5 +1,8 @@
 package com.cappielloantonio.tempo.util;
 
+import android.media.audiofx.LoudnessEnhancer;
+import android.util.Log;
+
 import androidx.annotation.OptIn;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
@@ -20,6 +23,7 @@ import java.util.Objects;
 
 @OptIn(markerClass = UnstableApi.class)
 public class ReplayGainUtil {
+    private static final String TAG = "ReplayGainUtil";
     private static final String[] tags = {
         "REPLAYGAIN_TRACK_GAIN", "REPLAYGAIN_ALBUM_GAIN",
         "R128_TRACK_GAIN", "R128_ALBUM_GAIN",
@@ -27,6 +31,40 @@ public class ReplayGainUtil {
     };
     private static final Map<String, Float> gainCache = new HashMap<>();
     private static final Map<String, Float> peakCache = new HashMap<>();
+
+    // LoudnessEnhancer lets us apply positive gains (above unity) that
+    // player.setVolume() cannot reach — it operates directly on the audio session.
+    private static LoudnessEnhancer loudnessEnhancer;
+
+    /**
+     * Called from BaseMediaService.onAudioSessionIdChanged().
+     * Re-creates the LoudnessEnhancer bound to the new session.
+     */
+    public static void attachAudioSession(int audioSessionId) {
+        releaseEnhancer();
+        if (audioSessionId == 0 || audioSessionId == C.AUDIO_SESSION_ID_UNSET) return;
+        try {
+            loudnessEnhancer = new LoudnessEnhancer(audioSessionId);
+            loudnessEnhancer.setEnabled(true);
+        } catch (Exception e) {
+            Log.w(TAG, "LoudnessEnhancer unavailable on this device: " + e.getMessage());
+            loudnessEnhancer = null;
+        }
+    }
+
+    /** Called from BaseMediaService.onDestroy(). */
+    public static void release() {
+        releaseEnhancer();
+        gainCache.clear();
+        peakCache.clear();
+    }
+
+    private static void releaseEnhancer() {
+        if (loudnessEnhancer != null) {
+            try { loudnessEnhancer.release(); } catch (Exception ignored) {}
+            loudnessEnhancer = null;
+        }
+    }
 
     public static void setReplayGain(Player player, Tracks tracks) {
         List<Metadata> metadata = getMetadata(tracks);
@@ -260,6 +298,36 @@ public class ReplayGainUtil {
         }
 
         totalGain = Math.max(-60f, Math.min(15f, totalGain));
-        player.setVolume((float) Math.pow(10f, totalGain / 20f));
+
+        // player.setVolume() is limited to [0.0, 1.0] — it cannot amplify above unity.
+        // Split the gain across two mechanisms:
+        //   - Negative / zero gain: pure attenuation via player.setVolume(), LoudnessEnhancer = 0
+        //   - Positive gain:        player.setVolume(1.0), boost via LoudnessEnhancer in millibels
+        if (totalGain <= 0f) {
+            player.setVolume((float) Math.pow(10f, totalGain / 20f));
+            setLoudnessEnhancerGain(0f);
+        } else {
+            player.setVolume(1.0f);
+            setLoudnessEnhancerGain(totalGain);
+        }
+    }
+
+    /**
+     * Applies a positive gain (dB) through LoudnessEnhancer, or zeros it out.
+     * LoudnessEnhancer.setTargetGain() takes millibels (1 dB = 100 mB).
+     */
+    private static void setLoudnessEnhancerGain(float gainDb) {
+        if (loudnessEnhancer == null) return;
+        try {
+            if (gainDb <= 0f) {
+                loudnessEnhancer.setTargetGain(0);
+                // Leave enabled so it's ready for the next track; zero gain is transparent.
+            } else {
+                loudnessEnhancer.setTargetGain(Math.round(gainDb * 100f));
+                loudnessEnhancer.setEnabled(true);
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "Failed to set LoudnessEnhancer gain: " + e.getMessage());
+        }
     }
 }
