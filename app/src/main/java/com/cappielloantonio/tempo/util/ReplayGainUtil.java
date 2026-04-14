@@ -20,8 +20,13 @@ import java.util.Objects;
 
 @OptIn(markerClass = UnstableApi.class)
 public class ReplayGainUtil {
-    private static final String[] tags = {"REPLAYGAIN_TRACK_GAIN", "REPLAYGAIN_ALBUM_GAIN", "R128_TRACK_GAIN", "R128_ALBUM_GAIN"};
+    private static final String[] tags = {
+        "REPLAYGAIN_TRACK_GAIN", "REPLAYGAIN_ALBUM_GAIN",
+        "R128_TRACK_GAIN", "R128_ALBUM_GAIN",
+        "REPLAYGAIN_TRACK_PEAK", "REPLAYGAIN_ALBUM_PEAK"
+    };
     private static final Map<String, Float> gainCache = new HashMap<>();
+    private static final Map<String, Float> peakCache = new HashMap<>();
 
     public static void setReplayGain(Player player, Tracks tracks) {
         List<Metadata> metadata = getMetadata(tracks);
@@ -29,22 +34,26 @@ public class ReplayGainUtil {
 
         MediaItem currentMediaItem = player.getCurrentMediaItem();
         float gain = resolveGain(player, gains);
+        float peak = resolvePeak(player, gains);
 
         if (currentMediaItem != null && currentMediaItem.mediaId != null) {
             gainCache.put(currentMediaItem.mediaId, gain);
+            peakCache.put(currentMediaItem.mediaId, peak);
         }
 
-        setReplayGain(player, gain);
+        setReplayGain(player, gain, peak);
     }
 
     public static void applyCachedReplayGain(Player player, MediaItem mediaItem) {
         if (mediaItem == null || mediaItem.mediaId == null) {
-            setReplayGain(player, 0f);
+            setReplayGain(player, 0f, 0f);
             return;
         }
 
         Float cachedGain = gainCache.get(mediaItem.mediaId);
-        setReplayGain(player, cachedGain != null ? cachedGain : 0f);
+        Float cachedPeak = peakCache.get(mediaItem.mediaId);
+        setReplayGain(player, cachedGain != null ? cachedGain : 0f,
+                             cachedPeak != null ? cachedPeak : 0f);
     }
 
     private static List<Metadata> getMetadata(Tracks tracks) {
@@ -138,6 +147,14 @@ public class ReplayGainUtil {
             replayGain.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
         }
 
+        if (strUpper.contains(tags[4])) {
+            replayGain.setTrackPeak(parseReplayGainTag(str));
+        }
+
+        if (strUpper.contains(tags[5])) {
+            replayGain.setAlbumPeak(parseReplayGainTag(str));
+        }
+
         return replayGain;
     }
 
@@ -194,6 +211,28 @@ public class ReplayGainUtil {
         return albumGain != 0f ? albumGain : resolveTrackGain(gains);
     }
 
+    private static float resolvePeak(Player player, List<ReplayGain> gains) {
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled") || gains == null || gains.isEmpty()) {
+            return 0f;
+        }
+
+        boolean useAlbum = Objects.equals(Preferences.getReplayGainMode(), "album") ||
+                (Objects.equals(Preferences.getReplayGainMode(), "auto") && areTracksConsecutive(player));
+
+        if (useAlbum) {
+            float primary = gains.get(0).getAlbumPeak();
+            float secondary = gains.get(1).getAlbumPeak();
+            float albumPeak = primary != 0f ? primary : secondary;
+            // Fall back to track peak when album peak is absent
+            if (albumPeak != 0f) return albumPeak;
+        }
+
+        // Track peak (also the fallback for album mode without album peak)
+        float primary = gains.get(0).getTrackPeak();
+        float secondary = gains.get(1).getTrackPeak();
+        return primary != 0f ? primary : secondary;
+    }
+
     private static boolean areTracksConsecutive(Player player) {
         MediaItem currentMediaItem = player.getCurrentMediaItem();
         int prevMediaItemIndex = player.getPreviousMediaItemIndex();
@@ -206,9 +245,20 @@ public class ReplayGainUtil {
                 pastMediaItem.mediaMetadata.albumTitle.toString().equals(currentMediaItem.mediaMetadata.albumTitle.toString());
     }
 
-    private static void setReplayGain(Player player, float gain) {
+    private static void setReplayGain(Player player, float gain, float peak) {
         float preamp = Preferences.getReplayGainPreamp();
         float totalGain = gain + preamp;
+
+        // Prevent clipping: if a peak value is available and the setting is enabled,
+        // cap the total gain so that (peak * 10^(totalGain/20)) never exceeds 1.0 (0 dBFS).
+        if (Preferences.isReplayGainPreventClipping() && peak > 0f) {
+            // Maximum gain that keeps the peak at exactly 0 dBFS: -20 * log10(peak)
+            float maxGainForPeak = -(float) (20.0 * Math.log10(peak));
+            if (totalGain > maxGainForPeak) {
+                totalGain = maxGainForPeak;
+            }
+        }
+
         totalGain = Math.max(-60f, Math.min(15f, totalGain));
         player.setVolume((float) Math.pow(10f, totalGain / 20f));
     }

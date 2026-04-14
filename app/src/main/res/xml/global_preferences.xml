@@ -368,6 +368,12 @@
             app:title="@string/settings_replay_gain"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="replay_gain_prevent_clipping"
+            android:title="@string/settings_replay_gain_prevent_clipping_title"
+            android:summary="@string/settings_replay_gain_prevent_clipping_summary" />
+
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_rating">

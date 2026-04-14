@@ -395,6 +395,8 @@
     <string name="settings_title_playlist">Llista de reproducció</string>
     <string name="settings_title_rating">Valoració</string>
     <string name="settings_title_replay_gain">ReplayGain</string>
+    <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
     <string name="settings_title_scrobble">Anàlisi musical</string>
     <string name="settings_title_skip_min_star_rating">Ignora les pistes segons la valoració</string>
     <string name="settings_title_skip_min_star_rating_dialog">Cançons amb una valoració de:</string>
