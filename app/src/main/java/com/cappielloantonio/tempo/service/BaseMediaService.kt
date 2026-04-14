@@ -138,19 +138,11 @@ open class BaseMediaService : MediaLibraryService() {
 
     private var lastRadioArtist: String? = null
     private var lastRadioTitle: String? = null
-    private var lastTransitionMediaId: String? = null
-    private var lastTransitionMediaIndex: Int = C.INDEX_UNSET
 
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                lastTransitionMediaId = mediaItem?.mediaId
-                lastTransitionMediaIndex = player.currentMediaItemIndex
-                Log.d(
-                    TAG,
-                    "onMediaItemTransition index=${player.currentMediaItemIndex} " +
-                        "lastTransitionMediaId=$lastTransitionMediaId reason=$reason"
-                )
+                Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
                 ReplayGainUtil.applyCachedReplayGain(player, mediaItem)
 
@@ -193,19 +185,8 @@ open class BaseMediaService : MediaLibraryService() {
             }
 
             override fun onTracksChanged(tracks: Tracks) {
-                Log.d(
-                    TAG,
-                    "onTracksChanged index=${player.currentMediaItemIndex} " +
-                        "lastTransitionMediaId=$lastTransitionMediaId " +
-                        "lastTransitionMediaIndex=$lastTransitionMediaIndex " +
-                        "tracksEmpty=${tracks.groups.isEmpty()}"
-                )
-                ReplayGainUtil.setReplayGain(
-                    player,
-                    tracks,
-                    lastTransitionMediaId,
-                    lastTransitionMediaIndex
-                )
+                Log.d(TAG, "onTracksChanged " + player.currentMediaItemIndex)
+                ReplayGainUtil.setReplayGain(player, tracks)
                 val currentMediaItem = player.currentMediaItem
                 if (currentMediaItem != null) {
                     val item = MappingUtil.mapMediaItem(currentMediaItem)
