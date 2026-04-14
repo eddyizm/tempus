@@ -244,12 +244,12 @@ public class SongRepository {
 
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
-                .getSimilarSongs(id, count)
+                .getSimilarSongs2(id, count)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSimilarSongs() != null) {
-                            instantMix.setValue(response.body().getSubsonicResponse().getSimilarSongs().getSongs());
+                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSimilarSongs2() != null) {
+                            instantMix.setValue(response.body().getSubsonicResponse().getSimilarSongs2().getSongs());
                         }
                     }
 

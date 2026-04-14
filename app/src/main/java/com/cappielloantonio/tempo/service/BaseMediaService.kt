@@ -197,7 +197,9 @@ open class BaseMediaService : MediaLibraryService() {
                             this@BaseMediaService,
                             SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
                         ).buildAsync()
-                        MediaManager.continuousPlay(player.currentMediaItem, browserFuture)
+                        if(Preferences.isContinuousPlayEnabled() && player.currentMediaItem != null) {
+                            MediaManager.continuousPlay(player.currentMediaItem, browserFuture)
+                        }
                     }
                 }
 
