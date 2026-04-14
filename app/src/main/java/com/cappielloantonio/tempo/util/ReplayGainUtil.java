@@ -68,17 +68,34 @@ public class ReplayGainUtil {
         }
     }
 
-    public static void setReplayGain(Player player, Tracks tracks) {
+    public static void setReplayGain(Player player, Tracks tracks, String transitionMediaId, int transitionMediaIndex) {
         // Guard: ExoPlayer fires onTracksChanged(Tracks.EMPTY) during the loading
         // gap between gapless transitions. Treating that as "gain = 0 dB" would
         // (a) apply 0 dB for a brief window and (b) corrupt the cache entry for
         // the new track before the real tags arrive. Re-apply cached value instead.
         boolean hasRealTracks = tracks != null && !tracks.getGroups().isEmpty();
         if (!hasRealTracks) {
+            int currentIndex = player.getCurrentMediaItemIndex();
             MediaItem currentMediaItem = player.getCurrentMediaItem();
-            if (currentMediaItem != null) {
-                applyCachedReplayGain(player, currentMediaItem);
+            String currentMediaId = currentMediaItem != null ? currentMediaItem.mediaId : null;
+            Log.d(TAG, "onTracksChanged EMPTY index=" + currentIndex
+                    + " transitionMediaIndex=" + transitionMediaIndex
+                    + " currentMediaId=" + currentMediaId
+                    + " transitionMediaId=" + transitionMediaId);
+
+            // Apply cache only when transition info is known and still points to the
+            // current item. This avoids applying stale gain for the previous item.
+            if (transitionMediaId == null) {
+                Log.d(TAG, "onTracksChanged EMPTY: skip cached ReplayGain (unknown transitionMediaId)");
+                return;
             }
+
+            if (!Objects.equals(currentMediaId, transitionMediaId) || currentIndex != transitionMediaIndex) {
+                Log.d(TAG, "onTracksChanged EMPTY: skip cached ReplayGain (stale transition state)");
+                return;
+            }
+
+            applyCachedReplayGain(player, transitionMediaId);
             return;
         }
 
@@ -108,32 +125,40 @@ public class ReplayGainUtil {
     }
 
     public static void applyCachedReplayGain(Player player, MediaItem mediaItem) {
-        if (mediaItem == null || mediaItem.mediaId == null) {
+        String mediaId = mediaItem != null ? mediaItem.mediaId : null;
+        applyCachedReplayGain(player, mediaId);
+    }
+
+    public static void applyCachedReplayGain(Player player, String mediaId) {
+        if (mediaId == null) {
             setReplayGain(player, 0f, 0f);
             return;
         }
 
-        Float cachedGain = gainCache.get(mediaItem.mediaId);
-        Float cachedPeak = peakCache.get(mediaItem.mediaId);
+        Float cachedGain = gainCache.get(mediaId);
+        Float cachedPeak = peakCache.get(mediaId);
 
         if (cachedGain == null) {
             // In-memory miss (e.g. fresh service start) — try SharedPreferences,
             // which was populated by the last session that played this track.
             try {
                 SharedPreferences prefs = App.getInstance().getPreferences();
-                float persistedGain = prefs.getFloat("rg_gain_" + mediaItem.mediaId, Float.MIN_VALUE);
+                float persistedGain = prefs.getFloat("rg_gain_" + mediaId, Float.MIN_VALUE);
                 if (persistedGain != Float.MIN_VALUE) {
                     cachedGain = persistedGain;
-                    gainCache.put(mediaItem.mediaId, persistedGain);
-                    float persistedPeak = prefs.getFloat("rg_peak_" + mediaItem.mediaId, 0f);
+                    gainCache.put(mediaId, persistedGain);
+                    float persistedPeak = prefs.getFloat("rg_peak_" + mediaId, 0f);
                     cachedPeak = persistedPeak;
-                    peakCache.put(mediaItem.mediaId, persistedPeak);
+                    peakCache.put(mediaId, persistedPeak);
                 }
             } catch (Exception e) {
                 Log.w(TAG, "Failed to read persisted ReplayGain cache: " + e.getMessage());
             }
         }
 
+        Log.d(TAG, "applyCachedReplayGain mediaId=" + mediaId
+                + " cachedGain=" + (cachedGain != null ? cachedGain : 0f)
+                + " cachedPeak=" + (cachedPeak != null ? cachedPeak : 0f));
         setReplayGain(player, cachedGain != null ? cachedGain : 0f,
                              cachedPeak != null ? cachedPeak : 0f);
     }
