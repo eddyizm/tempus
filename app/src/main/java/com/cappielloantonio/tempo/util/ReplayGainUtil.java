@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.util;
 
+import android.content.SharedPreferences;
 import android.media.audiofx.LoudnessEnhancer;
 import android.util.Log;
 
@@ -13,6 +14,7 @@ import androidx.media3.common.Player;
 import androidx.media3.extractor.metadata.id3.InternalFrame;
 import androidx.media3.extractor.metadata.id3.TextInformationFrame;
 
+import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.model.ReplayGain;
 
 import java.util.ArrayList;
@@ -67,6 +69,19 @@ public class ReplayGainUtil {
     }
 
     public static void setReplayGain(Player player, Tracks tracks) {
+        // Guard: ExoPlayer fires onTracksChanged(Tracks.EMPTY) during the loading
+        // gap between gapless transitions. Treating that as "gain = 0 dB" would
+        // (a) apply 0 dB for a brief window and (b) corrupt the cache entry for
+        // the new track before the real tags arrive. Re-apply cached value instead.
+        boolean hasRealTracks = tracks != null && !tracks.getGroups().isEmpty();
+        if (!hasRealTracks) {
+            MediaItem currentMediaItem = player.getCurrentMediaItem();
+            if (currentMediaItem != null) {
+                applyCachedReplayGain(player, currentMediaItem);
+            }
+            return;
+        }
+
         List<Metadata> metadata = getMetadata(tracks);
         List<ReplayGain> gains = getReplayGains(metadata);
 
@@ -77,6 +92,16 @@ public class ReplayGainUtil {
         if (currentMediaItem != null && currentMediaItem.mediaId != null) {
             gainCache.put(currentMediaItem.mediaId, gain);
             peakCache.put(currentMediaItem.mediaId, peak);
+            // Persist so the correct gain is available immediately at the next
+            // session's onMediaItemTransition, before onTracksChanged fires.
+            try {
+                App.getInstance().getPreferences().edit()
+                        .putFloat("rg_gain_" + currentMediaItem.mediaId, gain)
+                        .putFloat("rg_peak_" + currentMediaItem.mediaId, peak)
+                        .apply();
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to persist ReplayGain cache: " + e.getMessage());
+            }
         }
 
         setReplayGain(player, gain, peak);
@@ -90,6 +115,25 @@ public class ReplayGainUtil {
 
         Float cachedGain = gainCache.get(mediaItem.mediaId);
         Float cachedPeak = peakCache.get(mediaItem.mediaId);
+
+        if (cachedGain == null) {
+            // In-memory miss (e.g. fresh service start) — try SharedPreferences,
+            // which was populated by the last session that played this track.
+            try {
+                SharedPreferences prefs = App.getInstance().getPreferences();
+                float persistedGain = prefs.getFloat("rg_gain_" + mediaItem.mediaId, Float.MIN_VALUE);
+                if (persistedGain != Float.MIN_VALUE) {
+                    cachedGain = persistedGain;
+                    gainCache.put(mediaItem.mediaId, persistedGain);
+                    float persistedPeak = prefs.getFloat("rg_peak_" + mediaItem.mediaId, 0f);
+                    cachedPeak = persistedPeak;
+                    peakCache.put(mediaItem.mediaId, persistedPeak);
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Failed to read persisted ReplayGain cache: " + e.getMessage());
+            }
+        }
+
         setReplayGain(player, cachedGain != null ? cachedGain : 0f,
                              cachedPeak != null ? cachedPeak : 0f);
     }
