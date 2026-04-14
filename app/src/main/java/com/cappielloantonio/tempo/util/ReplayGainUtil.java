@@ -323,7 +323,7 @@ public class ReplayGainUtil {
                 loudnessEnhancer.setTargetGain(0);
                 // Leave enabled so it's ready for the next track; zero gain is transparent.
             } else {
-                loudnessEnhancer.setTargetGain(Math.round(gainDb * 100f));
+                loudnessEnhancer.setTargetGain((int) (gainDb * 100f));
                 loudnessEnhancer.setEnabled(true);
             }
         } catch (Exception e) {
