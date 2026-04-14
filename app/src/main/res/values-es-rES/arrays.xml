@@ -293,7 +293,6 @@
         <item>2</item>
     </string-array>
 
-    <!-- Add by MFO -->
     <string-array name="aa_tab_titles">
         <item>No mostrar</item>
         <item>Inicio</item>
@@ -305,7 +304,7 @@
         <item>Radio</item>
         <item>Carpeta</item>
         <item>Álbumes más reproducidos</item>
-        <!--    <item>Pistas reproducidas</item> -->
+        <item>Pistas reproducidas</item>
         <item>Álbumes añadidos</item>
         <!--    <item>Para ti</item> -->
         <item>Pistas favoritas</item>
@@ -332,5 +331,5 @@
         <item>14</item>
         <item>15</item>
     </string-array>
-    <!-- end Add by MFO -->
+
 </resources>

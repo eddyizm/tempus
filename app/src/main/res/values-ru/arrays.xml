@@ -278,7 +278,6 @@
         <item>7</item>
     </string-array>
 
-   	<!-- Add by MFO -->
     <string-array name="aa_tab_titles">
         <item>Не показывать</item>
         <item>Главная</item>
@@ -290,7 +289,7 @@
         <item>Радио</item>
         <item>Папки</item>
         <item>Популярные альбомы</item>
-    <!--    <item>Tracks played</item> -->
+        <item>Tracks played</item>
         <item>Недавно добавленные альбомы</item>
     <!--    <item>For you</item> -->
         <item>Избранные треки</item>
@@ -319,6 +318,5 @@
         <item>15</item>
         <item>16</item>
     </string-array>
-	<!-- end Add by MFO -->
 
 </resources>
