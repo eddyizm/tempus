@@ -146,6 +146,16 @@ public class ReplayGainUtil {
         return gains;
     }
 
+    private static boolean checkReplayGain(Metadata.Entry entry) {
+        String entryStr = entry.toString().toUpperCase(java.util.Locale.ROOT);
+        for (String tag : tags) {
+            if (entryStr.contains(tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Parses a single metadata entry and merges any ReplayGain values it contains
      * into the provided ReplayGain object (last write wins within a bucket, but
