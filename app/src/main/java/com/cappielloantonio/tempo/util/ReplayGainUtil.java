@@ -54,18 +54,8 @@ public class ReplayGainUtil {
     private static final ExecutorService prefetchExecutor =
             Executors.newFixedThreadPool(2);
 
-    // LoudnessEnhancer lets us apply positive gains (above unity) that
-    // player.setVolume() cannot reach — it operates directly on the audio session.
     private static LoudnessEnhancer loudnessEnhancer;
 
-    // -------------------------------------------------------------------------
-    // Lifecycle
-    // -------------------------------------------------------------------------
-
-    /**
-     * Called from BaseMediaService.onAudioSessionIdChanged().
-     * Re-creates the LoudnessEnhancer bound to the new audio session.
-     */
     public static void attachAudioSession(int audioSessionId) {
         releaseEnhancer();
         if (audioSessionId == 0 || audioSessionId == C.AUDIO_SESSION_ID_UNSET) return;
@@ -78,14 +68,10 @@ public class ReplayGainUtil {
         }
     }
 
-    /** Called from BaseMediaService.onDestroy(). */
     public static void release() {
         releaseEnhancer();
         gainDataMap.clear();
         prefetchedIds.clear();
-        // Do NOT shutdown the executor — it is a static pool shared across
-        // service lifecycles.  Clearing the sets is enough: the next onCreate
-        // will re-submit prefetch work normally.
     }
 
     private static void releaseEnhancer() {
@@ -118,34 +104,24 @@ public class ReplayGainUtil {
             // Need both an ID (map key) and a resolvable URI.
             if (item.mediaId == null || item.localConfiguration == null) continue;
 
-            // Radio streams carry live audio with no embedded ReplayGain tags;
-            // submitting them to MetadataRetriever would be wasteful and wrong.
             String mediaType = item.mediaMetadata.extras != null
                     ? item.mediaMetadata.extras.getString("type") : null;
             if (Constants.MEDIA_TYPE_RADIO.equals(mediaType)) continue;
             if (item.mediaId.startsWith("ir-")) continue;
 
-            // add() returns false when the ID is already present, meaning the
-            // job is in-flight or done — skip to avoid duplicate fetches.
             if (!prefetchedIds.add(item.mediaId)) continue;
 
             submitPrefetch(item);
         }
     }
 
-    @SuppressWarnings("deprecation") // MetadataRetriever static method deprecated in media3 1.8.0.
-                                     // The replacement Builder API does not yet expose a public
-                                     // setMediaSourceFactory() in a way that is stable across all
-                                     // 1.x releases, so we keep using the static form which accepts
-                                     // DynamicMediaSourceFactory directly — giving us the same HTTP
-                                     // client, headers, and cache behaviour as real playback.
     private static void submitPrefetch(MediaItem item) {
-        // MetadataRetriever.retrieveMetadata() must be called on the main thread
-        // because it posts to the main looper internally.  We are already on the
-        // main thread here (called from onTimelineChanged), so no post needed.
+
         try {
-            Future<TrackGroupArray> future = MetadataRetriever.retrieveMetadata(
-                    new DynamicMediaSourceFactory(App.getInstance()), item);
+            MetadataRetriever retriever =
+                    new MetadataRetriever.Builder(App.getInstance(), item).build();
+
+            Future<TrackGroupArray> future = retriever.retrieveTrackGroups();
 
             // Block on the result in the background pool — never on the main thread.
             prefetchExecutor.execute(() -> {
@@ -162,6 +138,8 @@ public class ReplayGainUtil {
                     // Remove so a future onTimelineChanged can retry
                     // (e.g. after a network reconnect).
                     prefetchedIds.remove(item.mediaId);
+                } finally {
+                    try { retriever.close(); } catch (Exception ignored) {}
                 }
             });
         } catch (Exception e) {
