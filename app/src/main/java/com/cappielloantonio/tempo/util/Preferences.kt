@@ -523,7 +523,7 @@ object Preferences {
 
     @JvmStatic
     fun getReplayGainPreamp(): Float {
-        return App.getInstance().preferences.getFloat(REPLAY_GAIN_PREAMP, -12f)
+        return App.getInstance().preferences.getFloat(REPLAY_GAIN_PREAMP, -6f)
     }
 
     @JvmStatic
