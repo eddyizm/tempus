@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.util;
 
-import android.content.SharedPreferences;
 import android.media.audiofx.LoudnessEnhancer;
 import android.util.Log;
 
@@ -8,9 +7,12 @@ import androidx.annotation.OptIn;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Metadata;
+import androidx.media3.common.TrackGroup;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.Player;
+import androidx.media3.exoplayer.MetadataRetriever;
+import androidx.media3.exoplayer.source.TrackGroupArray;
 import androidx.media3.extractor.metadata.id3.InternalFrame;
 import androidx.media3.extractor.metadata.id3.TextInformationFrame;
 
@@ -18,10 +20,13 @@ import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.model.ReplayGain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @OptIn(markerClass = UnstableApi.class)
 public class ReplayGainUtil {
@@ -31,16 +36,35 @@ public class ReplayGainUtil {
         "R128_TRACK_GAIN", "R128_ALBUM_GAIN",
         "REPLAYGAIN_TRACK_PEAK", "REPLAYGAIN_ALBUM_PEAK"
     };
-    private static final Map<String, Float> gainCache = new HashMap<>();
-    private static final Map<String, Float> peakCache = new HashMap<>();
+
+    // Maps mediaId -> [id3Gains, fallbackGains].
+    // Populated proactively by prefetchQueueGains() while the previous track
+    // is still playing, so the data is ready before onMediaItemTransition fires.
+    // ConcurrentHashMap because prefetch callbacks arrive on background threads
+    // while reads happen on the main thread.
+    private static final ConcurrentHashMap<String, List<ReplayGain>> gainDataMap =
+            new ConcurrentHashMap<>();
+
+    // Tracks which mediaIds have an in-flight or completed prefetch so we
+    // never submit duplicate MetadataRetriever jobs for the same item.
+    private static final Set<String> prefetchedIds = ConcurrentHashMap.newKeySet();
+
+    // Two threads: one can be fetching the next track while another fetches
+    // the track after that.
+    private static final ExecutorService prefetchExecutor =
+            Executors.newFixedThreadPool(2);
 
     // LoudnessEnhancer lets us apply positive gains (above unity) that
     // player.setVolume() cannot reach — it operates directly on the audio session.
     private static LoudnessEnhancer loudnessEnhancer;
 
+    // -------------------------------------------------------------------------
+    // Lifecycle
+    // -------------------------------------------------------------------------
+
     /**
      * Called from BaseMediaService.onAudioSessionIdChanged().
-     * Re-creates the LoudnessEnhancer bound to the new session.
+     * Re-creates the LoudnessEnhancer bound to the new audio session.
      */
     public static void attachAudioSession(int audioSessionId) {
         releaseEnhancer();
@@ -49,7 +73,7 @@ public class ReplayGainUtil {
             loudnessEnhancer = new LoudnessEnhancer(audioSessionId);
             loudnessEnhancer.setEnabled(true);
         } catch (Exception e) {
-            Log.w(TAG, "LoudnessEnhancer unavailable on this device: " + e.getMessage());
+            Log.w(TAG, "LoudnessEnhancer unavailable: " + e.getMessage());
             loudnessEnhancer = null;
         }
     }
@@ -57,8 +81,11 @@ public class ReplayGainUtil {
     /** Called from BaseMediaService.onDestroy(). */
     public static void release() {
         releaseEnhancer();
-        gainCache.clear();
-        peakCache.clear();
+        gainDataMap.clear();
+        prefetchedIds.clear();
+        // Do NOT shutdown the executor — it is a static pool shared across
+        // service lifecycles.  Clearing the sets is enough: the next onCreate
+        // will re-submit prefetch work normally.
     }
 
     private static void releaseEnhancer() {
@@ -68,115 +95,189 @@ public class ReplayGainUtil {
         }
     }
 
-    public static void setReplayGain(Player player, Tracks tracks) {
-        // Guard: ExoPlayer fires onTracksChanged(Tracks.EMPTY) during the loading
-        // gap between gapless transitions. Treating that as "gain = 0 dB" would
-        // (a) apply 0 dB for a brief window and (b) corrupt the cache entry for
-        // the new track before the real tags arrive. Re-apply cached value instead.
-        boolean hasRealTracks = tracks != null && !tracks.getGroups().isEmpty();
-        if (!hasRealTracks) {
-            MediaItem currentMediaItem = player.getCurrentMediaItem();
-            if (currentMediaItem != null) {
-                applyCachedReplayGain(player, currentMediaItem);
-            }
-            return;
+    // -------------------------------------------------------------------------
+    // Proactive prefetch  —  called from onTimelineChanged
+    // -------------------------------------------------------------------------
+
+    /**
+     * Scans the player queue and submits a background MetadataRetriever job for
+     * every item whose ReplayGain tags have not yet been fetched.  Because this
+     * is called whenever the queue changes, by the time onMediaItemTransition
+     * fires for track N the tags are already in gainDataMap and applyGain() can
+     * apply the correct level with no audible gap or snap.
+     *
+     * Safe to call repeatedly — prefetchedIds deduplicates work.
+     * Must be called on the main thread (Player methods require it).
+     */
+    public static void prefetchQueueGains(Player player) {
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")) return;
+
+        for (int i = 0; i < player.getMediaItemCount(); i++) {
+            MediaItem item = player.getMediaItemAt(i);
+
+            // Need both an ID (map key) and a resolvable URI.
+            if (item.mediaId == null || item.localConfiguration == null) continue;
+
+            // Radio streams carry live audio with no embedded ReplayGain tags;
+            // submitting them to MetadataRetriever would be wasteful and wrong.
+            String mediaType = item.mediaMetadata.extras != null
+                    ? item.mediaMetadata.extras.getString("type") : null;
+            if (Constants.MEDIA_TYPE_RADIO.equals(mediaType)) continue;
+            if (item.mediaId.startsWith("ir-")) continue;
+
+            // add() returns false when the ID is already present, meaning the
+            // job is in-flight or done — skip to avoid duplicate fetches.
+            if (!prefetchedIds.add(item.mediaId)) continue;
+
+            submitPrefetch(item);
         }
-
-        List<Metadata> metadata = getMetadata(tracks);
-        List<ReplayGain> gains = getReplayGains(metadata);
-
-        MediaItem currentMediaItem = player.getCurrentMediaItem();
-        float gain = resolveGain(player, gains);
-        float peak = resolvePeak(player, gains);
-
-        if (currentMediaItem != null && currentMediaItem.mediaId != null) {
-            gainCache.put(currentMediaItem.mediaId, gain);
-            peakCache.put(currentMediaItem.mediaId, peak);
-            // Persist so the correct gain is available immediately at the next
-            // session's onMediaItemTransition, before onTracksChanged fires.
-            try {
-                App.getInstance().getPreferences().edit()
-                        .putFloat("rg_gain_" + currentMediaItem.mediaId, gain)
-                        .putFloat("rg_peak_" + currentMediaItem.mediaId, peak)
-                        .apply();
-            } catch (Exception e) {
-                Log.w(TAG, "Failed to persist ReplayGain cache: " + e.getMessage());
-            }
-        }
-
-        setReplayGain(player, gain, peak);
     }
 
-    public static void applyCachedReplayGain(Player player, MediaItem mediaItem) {
+    @SuppressWarnings("deprecation") // MetadataRetriever static method deprecated in media3 1.8.0.
+                                     // The replacement Builder API does not yet expose a public
+                                     // setMediaSourceFactory() in a way that is stable across all
+                                     // 1.x releases, so we keep using the static form which accepts
+                                     // DynamicMediaSourceFactory directly — giving us the same HTTP
+                                     // client, headers, and cache behaviour as real playback.
+    private static void submitPrefetch(MediaItem item) {
+        // MetadataRetriever.retrieveMetadata() must be called on the main thread
+        // because it posts to the main looper internally.  We are already on the
+        // main thread here (called from onTimelineChanged), so no post needed.
+        try {
+            Future<TrackGroupArray> future = MetadataRetriever.retrieveMetadata(
+                    new DynamicMediaSourceFactory(App.getInstance()), item);
+
+            // Block on the result in the background pool — never on the main thread.
+            prefetchExecutor.execute(() -> {
+                try {
+                    TrackGroupArray trackGroups = future.get(20,
+                            java.util.concurrent.TimeUnit.SECONDS);
+                    List<Metadata> metadataList = extractMetadata(trackGroups);
+                    List<ReplayGain> gains = getReplayGains(metadataList);
+                    gainDataMap.put(item.mediaId, gains);
+                    Log.d(TAG, "Prefetched " + item.mediaId
+                            + " trackGain=" + resolveTrackGain(gains));
+                } catch (Exception e) {
+                    Log.d(TAG, "Prefetch failed for " + item.mediaId + ": " + e.getMessage());
+                    // Remove so a future onTimelineChanged can retry
+                    // (e.g. after a network reconnect).
+                    prefetchedIds.remove(item.mediaId);
+                }
+            });
+        } catch (Exception e) {
+            Log.d(TAG, "Could not start prefetch for " + item.mediaId + ": " + e.getMessage());
+            prefetchedIds.remove(item.mediaId);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Called from onMediaItemTransition  —  primary gain-application path
+    // -------------------------------------------------------------------------
+
+    /**
+     * Applies the pre-fetched ReplayGain for mediaItem immediately.
+     *
+     * In the normal case (prefetch completed while the previous track was
+     * playing) this is a direct map lookup + volume set with no I/O.
+     *
+     * If prefetch hasn't finished yet (e.g. the user rapid-skipped), we apply
+     * 0 dB for safety and let setReplayGain(Player, Tracks) correct the level
+     * a moment later when onTracksChanged fires.
+     */
+    public static void applyGain(Player player, MediaItem mediaItem) {
         if (mediaItem == null || mediaItem.mediaId == null) {
             setReplayGain(player, 0f, 0f);
             return;
         }
 
-        Float cachedGain = gainCache.get(mediaItem.mediaId);
-        Float cachedPeak = peakCache.get(mediaItem.mediaId);
-
-        if (cachedGain == null) {
-            // In-memory miss (e.g. fresh service start) — try SharedPreferences,
-            // which was populated by the last session that played this track.
-            try {
-                SharedPreferences prefs = App.getInstance().getPreferences();
-                float persistedGain = prefs.getFloat("rg_gain_" + mediaItem.mediaId, Float.MIN_VALUE);
-                if (persistedGain != Float.MIN_VALUE) {
-                    cachedGain = persistedGain;
-                    gainCache.put(mediaItem.mediaId, persistedGain);
-                    float persistedPeak = prefs.getFloat("rg_peak_" + mediaItem.mediaId, 0f);
-                    cachedPeak = persistedPeak;
-                    peakCache.put(mediaItem.mediaId, persistedPeak);
-                }
-            } catch (Exception e) {
-                Log.w(TAG, "Failed to read persisted ReplayGain cache: " + e.getMessage());
-            }
+        List<ReplayGain> gains = gainDataMap.get(mediaItem.mediaId);
+        if (gains != null) {
+            setReplayGain(player, resolveGain(player, gains), resolvePeak(player, gains));
+        } else {
+            // Prefetch hasn't arrived yet.  0 dB is safe (no clipping).
+            // onTracksChanged will correct this shortly.
+            setReplayGain(player, 0f, 0f);
         }
-
-        setReplayGain(player, cachedGain != null ? cachedGain : 0f,
-                             cachedPeak != null ? cachedPeak : 0f);
     }
 
-    private static List<Metadata> getMetadata(Tracks tracks) {
-        List<Metadata> metadata = new ArrayList<>();
+    // -------------------------------------------------------------------------
+    // Called from onTracksChanged  —  safety net + fresh-data update
+    // -------------------------------------------------------------------------
 
-        if (tracks != null && !tracks.getGroups().isEmpty()) {
-            for (int i = 0; i < tracks.getGroups().size(); i++) {
-                Tracks.Group group = tracks.getGroups().get(i);
+    /**
+     * Safety net for the rare case where prefetch hadn't finished before
+     * onMediaItemTransition fired.  In the steady state (queue was populated
+     * before the track started playing) this simply re-confirms the value
+     * already in gainDataMap, so there is no audible change.
+     *
+     * Also updates gainDataMap with whatever ExoPlayer actually parsed,
+     * ensuring the map is always current.
+     *
+     * Ignores Tracks.EMPTY, which ExoPlayer fires during the brief loading gap
+     * between gapless transitions — no tag data and no reason to touch volume.
+     */
+    public static void setReplayGain(Player player, Tracks tracks) {
+        if (tracks == null || tracks.getGroups().isEmpty()) return;
 
-                if (group != null && group.getMediaTrackGroup() != null) {
-                    for (int j = 0; j < group.getMediaTrackGroup().length; j++) {
-                        metadata.add(group.getTrackFormat(j).metadata);
-                    }
-                }
-            }
+        List<Metadata> metadataList = extractMetadata(tracks);
+        List<ReplayGain> gains = getReplayGains(metadataList);
+
+        MediaItem currentItem = player.getCurrentMediaItem();
+        if (currentItem != null && currentItem.mediaId != null) {
+            gainDataMap.put(currentItem.mediaId, gains);
+            prefetchedIds.add(currentItem.mediaId);
         }
 
-        return metadata;
+        setReplayGain(player, resolveGain(player, gains), resolvePeak(player, gains));
+    }
+
+    // -------------------------------------------------------------------------
+    // Metadata extraction
+    // -------------------------------------------------------------------------
+
+    /** Extracts Metadata objects from a Tracks (onTracksChanged path). */
+    private static List<Metadata> extractMetadata(Tracks tracks) {
+        List<Metadata> result = new ArrayList<>();
+        if (tracks == null) return result;
+        for (int i = 0; i < tracks.getGroups().size(); i++) {
+            Tracks.Group group = tracks.getGroups().get(i);
+            if (group == null || group.getMediaTrackGroup() == null) continue;
+            for (int j = 0; j < group.getMediaTrackGroup().length; j++) {
+                Metadata m = group.getTrackFormat(j).metadata;
+                if (m != null) result.add(m);
+            }
+        }
+        return result;
+    }
+
+    /** Extracts Metadata objects from a TrackGroupArray (MetadataRetriever path). */
+    private static List<Metadata> extractMetadata(TrackGroupArray trackGroups) {
+        List<Metadata> result = new ArrayList<>();
+        if (trackGroups == null) return result;
+        for (int i = 0; i < trackGroups.length; i++) {
+            TrackGroup group = trackGroups.get(i);
+            if (group == null) continue;
+            for (int j = 0; j < group.length; j++) {
+                Metadata m = group.getFormat(j).metadata;
+                if (m != null) result.add(m);
+            }
+        }
+        return result;
     }
 
     private static List<ReplayGain> getReplayGains(List<Metadata> metadataList) {
-        // Consolidate all entries into exactly two buckets, preserving the
-        // existing resolveTrackGain / resolveAlbumGain fallback contract:
-        //   gains[0] = ID3 tags  (TextInformationFrame, InternalFrame) — preferred
-        //   gains[1] = all other tags (APEv2 ApeItem, etc.)            — fallback
-        //
-        // This fixes two bugs that occur when a file has both ID3 and APEv2 tags:
-        //   1. Each entry used to produce a separate ReplayGain object, so
-        //      resolveTrackGain (which only looks at [0] and [1]) would miss
-        //      the actual gain value when album tags sort before track tags.
-        //   2. There was no priority rule, so APEv2 could silently win over ID3.
-        ReplayGain id3Gains     = new ReplayGain();
+        // Consolidate into two buckets (ID3-preferred over APEv2/other):
+        //   gains[0] = ID3 tags  (TextInformationFrame, InternalFrame)
+        //   gains[1] = all other tags (APEv2 ApeItem, etc.)
+        ReplayGain id3Gains      = new ReplayGain();
         ReplayGain fallbackGains = new ReplayGain();
 
         if (metadataList != null) {
-            for (int i = 0; i < metadataList.size(); i++) {
-                Metadata metadata = metadataList.get(i);
+            for (Metadata metadata : metadataList) {
                 if (metadata == null) continue;
                 for (int j = 0; j < metadata.length(); j++) {
                     Metadata.Entry entry = metadata.get(j);
-                    if (!checkReplayGain(entry)) continue;
+                    if (!isReplayGainEntry(entry)) continue;
                     boolean isId3 = (entry instanceof TextInformationFrame)
                                  || (entry instanceof InternalFrame);
                     mergeIntoReplayGain(entry, isId3 ? id3Gains : fallbackGains);
@@ -190,150 +291,129 @@ public class ReplayGainUtil {
         return gains;
     }
 
-    private static boolean checkReplayGain(Metadata.Entry entry) {
-        String entryStr = entry.toString().toUpperCase(java.util.Locale.ROOT);
+    private static boolean isReplayGainEntry(Metadata.Entry entry) {
+        String upper = entry.toString().toUpperCase(java.util.Locale.ROOT);
         for (String tag : tags) {
-            if (entryStr.contains(tag)) {
-                return true;
-            }
+            if (upper.contains(tag)) return true;
         }
         return false;
     }
 
-    /**
-     * Parses a single metadata entry and merges any ReplayGain values it contains
-     * into the provided ReplayGain object (last write wins within a bucket, but
-     * in practice each tag appears only once per tag format).
-     */
     private static void mergeIntoReplayGain(Metadata.Entry entry, ReplayGain target) {
         String str = entry.toString();
         if (entry instanceof InternalFrame) {
             str = ((InternalFrame) entry).description + ((InternalFrame) entry).text;
         } else if (entry instanceof TextInformationFrame) {
-            TextInformationFrame textFrame = (TextInformationFrame) entry;
-            String desc = textFrame.description != null ? textFrame.description : textFrame.id;
-            str = desc + (!textFrame.values.isEmpty() ? textFrame.values.get(0) : "");
+            TextInformationFrame tf = (TextInformationFrame) entry;
+            String desc = tf.description != null ? tf.description : tf.id;
+            str = desc + (!tf.values.isEmpty() ? tf.values.get(0) : "");
         }
 
-        String strUpper = str.toUpperCase(java.util.Locale.ROOT);
+        String upper = str.toUpperCase(java.util.Locale.ROOT);
 
-        if (strUpper.contains(tags[0])) target.setTrackGain(parseReplayGainTag(str));
-        if (strUpper.contains(tags[1])) target.setAlbumGain(parseReplayGainTag(str));
-        if (strUpper.contains(tags[2])) target.setTrackGain(parseReplayGainTag(str) / 256f + 5f);
-        if (strUpper.contains(tags[3])) target.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
-        if (strUpper.contains(tags[4])) target.setTrackPeak(parseReplayGainTag(str));
-        if (strUpper.contains(tags[5])) target.setAlbumPeak(parseReplayGainTag(str));
+        if (upper.contains(tags[0])) target.setTrackGain(parseReplayGainTag(str));
+        if (upper.contains(tags[1])) target.setAlbumGain(parseReplayGainTag(str));
+        if (upper.contains(tags[2])) target.setTrackGain(parseReplayGainTag(str) / 256f + 5f);
+        if (upper.contains(tags[3])) target.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
+        if (upper.contains(tags[4])) target.setTrackPeak(parseReplayGainTag(str));
+        if (upper.contains(tags[5])) target.setAlbumPeak(parseReplayGainTag(str));
     }
 
-    private static Float parseReplayGainTag(String entry) {
+    private static float parseReplayGainTag(String entry) {
         try {
-            // Find the last floating-point number in the string (the actual gain value)
             java.util.regex.Matcher matcher =
-                    java.util.regex.Pattern.compile("(-?\\d+(?:\\.\\d+)?)\\s*(?:dB)?\\s*$",
-                                    java.util.regex.Pattern.CASE_INSENSITIVE)
-                            .matcher(entry.trim());
-
+                    java.util.regex.Pattern.compile(
+                            "(-?\\d+(?:\\.\\d+)?)\\s*(?:dB)?\\s*$",
+                            java.util.regex.Pattern.CASE_INSENSITIVE)
+                    .matcher(entry.trim());
             String lastMatch = null;
-            while (matcher.find()) {
-                lastMatch = matcher.group(1);
-            }
-
+            while (matcher.find()) lastMatch = matcher.group(1);
             return lastMatch != null ? Float.parseFloat(lastMatch) : 0f;
-        } catch (NumberFormatException exception) {
+        } catch (NumberFormatException e) {
             return 0f;
         }
     }
+
+    // -------------------------------------------------------------------------
+    // Gain / peak resolution
+    // -------------------------------------------------------------------------
 
     private static float resolveGain(Player player, List<ReplayGain> gains) {
-        if (Objects.equals(Preferences.getReplayGainMode(), "disabled") || gains == null || gains.isEmpty()) {
-            return 0f;
-        }
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")
+                || gains == null || gains.isEmpty()) return 0f;
 
-        if (Objects.equals(Preferences.getReplayGainMode(), "track")) {
-            return resolveTrackGain(gains);
+        String mode = Objects.toString(Preferences.getReplayGainMode(), "");
+        switch (mode) {
+            case "track": return resolveTrackGain(gains);
+            case "album": return resolveAlbumGain(gains);
+            case "auto":  return areTracksConsecutive(player)
+                                 ? resolveAlbumGain(gains) : resolveTrackGain(gains);
+            default:      return 0f;
         }
-
-        if (Objects.equals(Preferences.getReplayGainMode(), "album")) {
-            return resolveAlbumGain(gains);
-        }
-
-        if (Objects.equals(Preferences.getReplayGainMode(), "auto")) {
-            return areTracksConsecutive(player) ? resolveAlbumGain(gains) : resolveTrackGain(gains);
-        }
-
-        return 0f;
     }
 
     private static float resolveTrackGain(List<ReplayGain> gains) {
-        float primaryTrackGain = gains.get(0).getTrackGain();
-        float secondaryTrackGain = gains.get(1).getTrackGain();
-        return primaryTrackGain != 0f ? primaryTrackGain : secondaryTrackGain;
+        float primary   = gains.get(0).getTrackGain();
+        float secondary = gains.get(1).getTrackGain();
+        return primary != 0f ? primary : secondary;
     }
 
     private static float resolveAlbumGain(List<ReplayGain> gains) {
-        float primaryAlbumGain = gains.get(0).getAlbumGain();
-        float secondaryAlbumGain = gains.get(1).getAlbumGain();
-        float albumGain = primaryAlbumGain != 0f ? primaryAlbumGain : secondaryAlbumGain;
-        // Fall back to track gain when album gain is absent
-        return albumGain != 0f ? albumGain : resolveTrackGain(gains);
+        float primary   = gains.get(0).getAlbumGain();
+        float secondary = gains.get(1).getAlbumGain();
+        float album = primary != 0f ? primary : secondary;
+        return album != 0f ? album : resolveTrackGain(gains);
     }
 
     private static float resolvePeak(Player player, List<ReplayGain> gains) {
-        if (Objects.equals(Preferences.getReplayGainMode(), "disabled") || gains == null || gains.isEmpty()) {
-            return 0f;
-        }
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")
+                || gains == null || gains.isEmpty()) return 0f;
 
-        boolean useAlbum = Objects.equals(Preferences.getReplayGainMode(), "album") ||
-                (Objects.equals(Preferences.getReplayGainMode(), "auto") && areTracksConsecutive(player));
+        boolean useAlbum = Objects.equals(Preferences.getReplayGainMode(), "album")
+                || (Objects.equals(Preferences.getReplayGainMode(), "auto")
+                    && areTracksConsecutive(player));
 
         if (useAlbum) {
-            float primary = gains.get(0).getAlbumPeak();
+            float primary   = gains.get(0).getAlbumPeak();
             float secondary = gains.get(1).getAlbumPeak();
             float albumPeak = primary != 0f ? primary : secondary;
-            // Fall back to track peak when album peak is absent
             if (albumPeak != 0f) return albumPeak;
         }
 
-        // Track peak (also the fallback for album mode without album peak)
-        float primary = gains.get(0).getTrackPeak();
+        float primary   = gains.get(0).getTrackPeak();
         float secondary = gains.get(1).getTrackPeak();
         return primary != 0f ? primary : secondary;
     }
 
     private static boolean areTracksConsecutive(Player player) {
-        MediaItem currentMediaItem = player.getCurrentMediaItem();
-        int prevMediaItemIndex = player.getPreviousMediaItemIndex();
-        MediaItem pastMediaItem = prevMediaItemIndex == C.INDEX_UNSET ? null : player.getMediaItemAt(prevMediaItemIndex);
-
-        return currentMediaItem != null &&
-                pastMediaItem != null &&
-                pastMediaItem.mediaMetadata.albumTitle != null &&
-                currentMediaItem.mediaMetadata.albumTitle != null &&
-                pastMediaItem.mediaMetadata.albumTitle.toString().equals(currentMediaItem.mediaMetadata.albumTitle.toString());
+        MediaItem current = player.getCurrentMediaItem();
+        int prevIdx = player.getPreviousMediaItemIndex();
+        MediaItem prev = prevIdx == C.INDEX_UNSET ? null : player.getMediaItemAt(prevIdx);
+        return current != null && prev != null
+                && current.mediaMetadata.albumTitle != null
+                && prev.mediaMetadata.albumTitle != null
+                && prev.mediaMetadata.albumTitle.toString()
+                       .equals(current.mediaMetadata.albumTitle.toString());
     }
 
+    // -------------------------------------------------------------------------
+    // Volume / LoudnessEnhancer application
+    // -------------------------------------------------------------------------
+
     private static void setReplayGain(Player player, float gain, float peak) {
-        float preamp = Preferences.getReplayGainPreamp();
+        float preamp    = Preferences.getReplayGainPreamp();
         float totalGain = gain + preamp;
 
-        // Prevent clipping: if a peak value is available and the setting is enabled,
-        // cap the total gain so that (peak * 10^(totalGain/20)) never exceeds 1.0 (0 dBFS).
         if (Preferences.isReplayGainPreventClipping() && peak > 0f) {
-            // Maximum gain that keeps the peak at exactly 0 dBFS: -20 * log10(peak)
             float maxGainForPeak = -(float) (20.0 * Math.log10(peak));
-            if (totalGain > maxGainForPeak) {
-                totalGain = maxGainForPeak;
-            }
+            if (totalGain > maxGainForPeak) totalGain = maxGainForPeak;
         }
 
         totalGain = Math.max(-60f, Math.min(15f, totalGain));
 
-        // player.setVolume() is limited to [0.0, 1.0] — it cannot amplify above unity.
-        // Split the gain across two mechanisms:
-        //   - Negative / zero gain: pure attenuation via player.setVolume(), LoudnessEnhancer = 0
-        //   - Positive gain:        player.setVolume(1.0), boost via LoudnessEnhancer in millibels
+        // player.setVolume() is capped at 1.0; amplify via LoudnessEnhancer instead.
         if (totalGain <= 0f) {
-            player.setVolume((float) Math.pow(10f, totalGain / 20f));
+            player.setVolume((float) Math.pow(10.0, totalGain / 20.0));
             setLoudnessEnhancerGain(0f);
         } else {
             player.setVolume(1.0f);
@@ -341,16 +421,11 @@ public class ReplayGainUtil {
         }
     }
 
-    /**
-     * Applies a positive gain (dB) through LoudnessEnhancer, or zeros it out.
-     * LoudnessEnhancer.setTargetGain() takes millibels (1 dB = 100 mB).
-     */
     private static void setLoudnessEnhancerGain(float gainDb) {
         if (loudnessEnhancer == null) return;
         try {
             if (gainDb <= 0f) {
                 loudnessEnhancer.setTargetGain(0);
-                // Leave enabled so it's ready for the next track; zero gain is transparent.
             } else {
                 loudnessEnhancer.setTargetGain((int) (gainDb * 100f));
                 loudnessEnhancer.setEnabled(true);

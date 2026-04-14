@@ -144,7 +144,7 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
-                ReplayGainUtil.applyCachedReplayGain(player, mediaItem)
+                ReplayGainUtil.applyGain(player, mediaItem)
 
                 // --- Add for AA : Constants.AA_START_INDEX if présent ---
                 val extras = mediaItem.mediaMetadata.extras
@@ -182,6 +182,16 @@ open class BaseMediaService : MediaLibraryService() {
                 }
                 
                 updateWidget(player)
+            }
+
+            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                Log.d(TAG, "onTimelineChanged reason=$reason")
+                // Kick off background MetadataRetriever jobs for any queue items
+                // whose ReplayGain tags haven't been fetched yet.  By the time
+                // onMediaItemTransition fires for each of these items, the data
+                // will already be in gainDataMap and applyGain() can apply it
+                // instantly — no gap, no snap.
+                ReplayGainUtil.prefetchQueueGains(player)
             }
 
             override fun onTracksChanged(tracks: Tracks) {
