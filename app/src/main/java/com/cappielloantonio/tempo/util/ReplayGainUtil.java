@@ -112,52 +112,46 @@ public class ReplayGainUtil {
         return metadata;
     }
 
-    private static List<ReplayGain> getReplayGains(List<Metadata> metadata) {
-        List<ReplayGain> gains = new ArrayList<>();
+    private static List<ReplayGain> getReplayGains(List<Metadata> metadataList) {
+        // Consolidate all entries into exactly two buckets, preserving the
+        // existing resolveTrackGain / resolveAlbumGain fallback contract:
+        //   gains[0] = ID3 tags  (TextInformationFrame, InternalFrame) — preferred
+        //   gains[1] = all other tags (APEv2 ApeItem, etc.)            — fallback
+        //
+        // This fixes two bugs that occur when a file has both ID3 and APEv2 tags:
+        //   1. Each entry used to produce a separate ReplayGain object, so
+        //      resolveTrackGain (which only looks at [0] and [1]) would miss
+        //      the actual gain value when album tags sort before track tags.
+        //   2. There was no priority rule, so APEv2 could silently win over ID3.
+        ReplayGain id3Gains     = new ReplayGain();
+        ReplayGain fallbackGains = new ReplayGain();
 
-        if (metadata != null) {
-            for (int i = 0; i < metadata.size(); i++) {
-                Metadata singleMetadata = metadata.get(i);
-
-                if (singleMetadata != null) {
-                    for (int j = 0; j < singleMetadata.length(); j++) {
-                        Metadata.Entry entry = singleMetadata.get(j);
-
-                        if (checkReplayGain(entry)) {
-                            ReplayGain replayGain = setReplayGains(entry);
-                            gains.add(replayGain);
-                        }
-                    }
+        if (metadataList != null) {
+            for (int i = 0; i < metadataList.size(); i++) {
+                Metadata metadata = metadataList.get(i);
+                if (metadata == null) continue;
+                for (int j = 0; j < metadata.length(); j++) {
+                    Metadata.Entry entry = metadata.get(j);
+                    if (!checkReplayGain(entry)) continue;
+                    boolean isId3 = (entry instanceof TextInformationFrame)
+                                 || (entry instanceof InternalFrame);
+                    mergeIntoReplayGain(entry, isId3 ? id3Gains : fallbackGains);
                 }
             }
         }
 
-        if (gains.isEmpty()) gains.add(0, new ReplayGain());
-        if (gains.size() == 1) gains.add(1, new ReplayGain());
-
+        List<ReplayGain> gains = new ArrayList<>();
+        gains.add(id3Gains);
+        gains.add(fallbackGains);
         return gains;
     }
 
-    private static boolean checkReplayGain(Metadata.Entry entry) {
-        String entryStr = entry.toString().toUpperCase(java.util.Locale.ROOT);
-        for (String tag : tags) {
-            if (entryStr.contains(tag)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static ReplayGain setReplayGains(Metadata.Entry entry) {
-        ReplayGain replayGain = new ReplayGain();
-
-        // .toString() is not reliable for structured frame types:
-        // - InternalFrame: toString() may omit description/text content.
-        // - TextInformationFrame (TXXX): toString() wraps values in a List bracket, e.g.
-        //   "TXXX: description=REPLAYGAIN_TRACK_GAIN: values=[12.00 dB]", which breaks
-        //   the end-anchored regex in parseReplayGainTag because ']' trails the dB suffix.
-        // Build the string from the typed fields directly for both cases.
+    /**
+     * Parses a single metadata entry and merges any ReplayGain values it contains
+     * into the provided ReplayGain object (last write wins within a bucket, but
+     * in practice each tag appears only once per tag format).
+     */
+    private static void mergeIntoReplayGain(Metadata.Entry entry, ReplayGain target) {
         String str = entry.toString();
         if (entry instanceof InternalFrame) {
             str = ((InternalFrame) entry).description + ((InternalFrame) entry).text;
@@ -168,32 +162,13 @@ public class ReplayGainUtil {
         }
 
         String strUpper = str.toUpperCase(java.util.Locale.ROOT);
-        
-        if (strUpper.contains(tags[0])) {
-            replayGain.setTrackGain(parseReplayGainTag(str));
-        }
 
-        if (strUpper.contains(tags[1])) {
-            replayGain.setAlbumGain(parseReplayGainTag(str));
-        }
-
-        if (strUpper.contains(tags[2])) {
-            replayGain.setTrackGain(parseReplayGainTag(str) / 256f + 5f);
-        }
-
-        if (strUpper.contains(tags[3])) {
-            replayGain.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
-        }
-
-        if (strUpper.contains(tags[4])) {
-            replayGain.setTrackPeak(parseReplayGainTag(str));
-        }
-
-        if (strUpper.contains(tags[5])) {
-            replayGain.setAlbumPeak(parseReplayGainTag(str));
-        }
-
-        return replayGain;
+        if (strUpper.contains(tags[0])) target.setTrackGain(parseReplayGainTag(str));
+        if (strUpper.contains(tags[1])) target.setAlbumGain(parseReplayGainTag(str));
+        if (strUpper.contains(tags[2])) target.setTrackGain(parseReplayGainTag(str) / 256f + 5f);
+        if (strUpper.contains(tags[3])) target.setAlbumGain(parseReplayGainTag(str) / 256f + 5f);
+        if (strUpper.contains(tags[4])) target.setTrackPeak(parseReplayGainTag(str));
+        if (strUpper.contains(tags[5])) target.setAlbumPeak(parseReplayGainTag(str));
     }
 
     private static Float parseReplayGainTag(String entry) {
