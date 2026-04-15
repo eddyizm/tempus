@@ -188,17 +188,30 @@ public class ReplayGainUtil {
      */
     public static void applyGain(Player player, MediaItem mediaItem) {
         if (mediaItem == null || mediaItem.mediaId == null) {
-            setReplayGain(player, 0f, 0f);
+            // No item identity — can't look anything up. Leave volume unchanged;
+            // onTracksChanged will apply the correct gain once tracks are known.
+            Log.d(TAG, "applyGain: null mediaItem or mediaId, skipping");
             return;
         }
 
         List<ReplayGain> gains = gainDataMap.get(mediaItem.mediaId);
         if (gains != null) {
-            setReplayGain(player, resolveGain(player, gains), resolvePeak(player, gains));
+            // Prefetch completed before this transition — apply immediately with no gap.
+            float gain = resolveGain(player, gains);
+            float peak = resolvePeak(player, gains);
+            Log.d(TAG, "applyGain: cache hit for " + mediaItem.mediaId
+                    + " gain=" + gain + " peak=" + peak);
+            setReplayGain(player, gain, peak);
         } else {
-            // Prefetch hasn't arrived yet.  0 dB is safe (no clipping).
-            // onTracksChanged will correct this shortly.
-            setReplayGain(player, 0f, 0f);
+            // Prefetch hasn't arrived yet (dynamic add, rapid skip, first run, etc.).
+            // Do NOT snap to 0 dB — that causes the loud transition.
+            // Instead leave the volume exactly where the previous track left it.
+            // onTracksChanged fires within milliseconds for gapless transitions
+            // (ExoPlayer pre-buffers the next track while the current one plays),
+            // and within ~1-2 s for seeks/first play. Either way, staying at the
+            // previous track's level is far less jarring than a loud transient.
+            Log.d(TAG, "applyGain: cache miss for " + mediaItem.mediaId
+                    + ", holding current volume until onTracksChanged");
         }
     }
 
