@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.util;
 
-import android.media.audiofx.LoudnessEnhancer;
 import android.util.Log;
 
 import androidx.annotation.OptIn;
@@ -53,46 +52,32 @@ public class ReplayGainUtil {
     private static final ExecutorService prefetchExecutor =
             Executors.newFixedThreadPool(2);
 
-    // LoudnessEnhancer lets us apply positive gains (above unity) that
-    // player.setVolume() cannot reach — it operates directly on the audio session.
-    private static LoudnessEnhancer loudnessEnhancer;
+    // Audio processor that applies gain directly to PCM samples inside
+    // ExoPlayer's audio pipeline.  Unlike player.setVolume() this is
+    // sample-accurate across gapless transitions.
+    private static final ReplayGainAudioProcessor audioProcessor =
+            new ReplayGainAudioProcessor();
 
     // -------------------------------------------------------------------------
     // Lifecycle
     // -------------------------------------------------------------------------
 
     /**
-     * Called from BaseMediaService.onAudioSessionIdChanged().
-     * Re-creates the LoudnessEnhancer bound to the new audio session.
+     * Returns the audio processor that must be installed in ExoPlayer's
+     * audio pipeline (via DefaultAudioSink / RenderersFactory).
      */
-    public static void attachAudioSession(int audioSessionId) {
-        releaseEnhancer();
-        if (audioSessionId == 0 || audioSessionId == C.AUDIO_SESSION_ID_UNSET) return;
-        try {
-            loudnessEnhancer = new LoudnessEnhancer(audioSessionId);
-            loudnessEnhancer.setEnabled(true);
-        } catch (Exception e) {
-            Log.w(TAG, "LoudnessEnhancer unavailable: " + e.getMessage());
-            loudnessEnhancer = null;
-        }
+    public static ReplayGainAudioProcessor getAudioProcessor() {
+        return audioProcessor;
     }
 
     /** Called from BaseMediaService.onDestroy(). */
     public static void release() {
-        releaseEnhancer();
         gainDataMap.clear();
         prefetchedIds.clear();
-        preAppliedForMediaId = null;
+        pendingSetForMediaId = null;
         // Do NOT shutdown the executor — it is a static pool shared across
         // service lifecycles.  Clearing the sets is enough: the next onCreate
         // will re-submit prefetch work normally.
-    }
-
-    private static void releaseEnhancer() {
-        if (loudnessEnhancer != null) {
-            try { loudnessEnhancer.release(); } catch (Exception ignored) {}
-            loudnessEnhancer = null;
-        }
     }
 
     // -------------------------------------------------------------------------
@@ -134,21 +119,6 @@ public class ReplayGainUtil {
     }
 
     private static void submitPrefetch(MediaItem item) {
-        // Run the entire MetadataRetriever lifecycle — build(), get(), and close() —
-        // inside the background executor.  This matches the pattern shown in the
-        // media3 docs and is important for two reasons:
-        //
-        // 1. Crash isolation.  Any Throwable thrown here (including java.lang.Error
-        //    subclasses like AssertionError or kotlin.NotImplementedError, which
-        //    "catch (Exception e)" silently misses) is contained inside this thread.
-        //    Nothing can propagate back to the main thread and crash the service.
-        //
-        // 2. Correct threading.  MetadataRetriever.Builder.build() creates its own
-        //    internal HandlerThread/Looper; it is designed to be called from any
-        //    thread, including a background executor thread.
-        //
-        // Only 2 retrievers run concurrently (pool size), which bounds memory and
-        // open network connections even when the queue is large.
         prefetchExecutor.execute(() -> {
             try (MetadataRetriever retriever =
                          new MetadataRetriever.Builder(App.getInstance(), item).build()) {
@@ -164,9 +134,6 @@ public class ReplayGainUtil {
                         + " trackGain=" + resolveTrackGain(gains));
 
             } catch (Throwable e) {
-                // Includes InterruptedException, ExecutionException, TimeoutException,
-                // Error subclasses, and anything else.  Remove the ID so a future
-                // onTimelineChanged can retry (e.g. after a network reconnect).
                 Log.d(TAG, "Prefetch failed for " + item.mediaId + ": " + e);
                 prefetchedIds.remove(item.mediaId);
             }
@@ -178,56 +145,40 @@ public class ReplayGainUtil {
     // -------------------------------------------------------------------------
 
     /**
-     * During gapless playback ExoPlayer's audio decoder starts outputting
-     * samples from the next track *before* onMediaItemTransition fires.
-     * That means for a brief moment the new track's audio plays at the old
-     * track's volume level — causing the loud/quiet pop the user hears.
+     * Sets the next track's gain as a <em>pending</em> value on the audio
+     * processor.  The pending gain does <b>not</b> affect the currently-playing
+     * audio — it activates only when ExoPlayer calls {@code onFlush()} on the
+     * processor at the exact gapless track boundary.
      *
-     * This method is called every ~200 ms while the player is playing.
-     * When the current track is within {@code PRE_APPLY_THRESHOLD_MS} of
-     * its end *and* the next track's gain data has already been prefetched,
-     * we apply that gain early so the volume is correct by the time the
-     * decoder seamlessly switches to the next track's audio.
+     * <p>Called every ~200 ms while the player is playing, so that even if
+     * prefetch data arrives late, the pending gain is set before the transition.
      *
-     * The call is idempotent: once the gain is pre-applied, the flag
-     * {@code preAppliedForMediaId} prevents repeated volume writes until
-     * the track actually transitions (at which point applyGain() resets
-     * the flag).
+     * <p>Safe to call repeatedly — once the pending gain is set for a given
+     * next-track, subsequent calls are no-ops.
      */
-    private static final long PRE_APPLY_THRESHOLD_MS = 500;
-    private static volatile String preAppliedForMediaId = null;
+    private static volatile String pendingSetForMediaId = null;
 
     public static void preApplyNextTrackGain(Player player) {
         if (Objects.equals(Preferences.getReplayGainMode(), "disabled")) return;
 
-        // Only act when the player is actually playing content with a known duration.
-        if (!player.isPlaying()) return;
-        long duration = player.getDuration();
-        if (duration == C.TIME_UNSET || duration <= 0) return;
-
-        long remaining = duration - player.getCurrentPosition();
-        if (remaining > PRE_APPLY_THRESHOLD_MS || remaining < 0) return;
-
-        // Identify the next media item in the queue.
         int nextIndex = player.getNextMediaItemIndex();
         if (nextIndex == C.INDEX_UNSET) return;
         MediaItem nextItem = player.getMediaItemAt(nextIndex);
         if (nextItem == null || nextItem.mediaId == null) return;
 
-        // Avoid re-applying every 200 ms once we've already pre-applied for
-        // this particular next-track.
-        if (nextItem.mediaId.equals(preAppliedForMediaId)) return;
+        // Already set pending for this next-track — nothing to do.
+        if (nextItem.mediaId.equals(pendingSetForMediaId)) return;
 
         List<ReplayGain> gains = gainDataMap.get(nextItem.mediaId);
-        if (gains == null) return;  // prefetch hasn't completed — nothing we can do
+        if (gains == null) return;  // prefetch hasn't completed — try again next tick
 
-        float gain = resolveGain(player, gains);
-        float peak = resolvePeak(player, gains);
-        Log.d(TAG, "preApplyNextTrackGain: applying gain for upcoming "
-                + nextItem.mediaId + " gain=" + gain + " peak=" + peak
-                + " (remaining=" + remaining + "ms)");
-        setReplayGain(player, gain, peak);
-        preAppliedForMediaId = nextItem.mediaId;
+        float totalGain = computeTotalGain(
+                resolveGainForNextTrack(player, gains),
+                resolvePeakForNextTrack(player, gains));
+        Log.d(TAG, "preApplyNextTrackGain: setPendingGain for upcoming "
+                + nextItem.mediaId + " totalGain=" + totalGain);
+        audioProcessor.setPendingGain(totalGain);
+        pendingSetForMediaId = nextItem.mediaId;
     }
 
     // -------------------------------------------------------------------------
@@ -235,45 +186,46 @@ public class ReplayGainUtil {
     // -------------------------------------------------------------------------
 
     /**
-     * Applies the pre-fetched ReplayGain for mediaItem immediately.
+     * Applies the pre-fetched ReplayGain for mediaItem.
      *
-     * In the normal case (prefetch completed while the previous track was
-     * playing) this is a direct map lookup + volume set with no I/O.
+     * <p>In the ideal gapless case the processor's pending gain (set by
+     * {@link #preApplyNextTrackGain}) was already activated by {@code onFlush()}
+     * before this callback fired, so this call just confirms the value via
+     * {@code setGainImmediate} (which is a no-op when the gain hasn't changed).
      *
-     * If prefetch hasn't finished yet (e.g. the user rapid-skipped), we apply
-     * 0 dB for safety and let setReplayGain(Player, Tracks) correct the level
-     * a moment later when onTracksChanged fires.
+     * <p>In non-gapless cases (seek, skip, first play, rapid skip where
+     * prefetch hadn't completed) this is the primary gain-application path
+     * and the processor's 10 ms crossfade ramp smooths the change.
+     *
+     * <p>Also queues the <em>next</em> track's gain as pending, so it is
+     * ready for the next gapless boundary.
      */
     public static void applyGain(Player player, MediaItem mediaItem) {
-        // Clear the pre-apply flag now that the transition has actually happened.
-        preAppliedForMediaId = null;
+        // Clear stale pending state — this transition already happened.
+        audioProcessor.clearPendingGain();
+        pendingSetForMediaId = null;
 
         if (mediaItem == null || mediaItem.mediaId == null) {
-            // No item identity — can't look anything up. Leave volume unchanged;
-            // onTracksChanged will apply the correct gain once tracks are known.
             Log.d(TAG, "applyGain: null mediaItem or mediaId, skipping");
             return;
         }
 
         List<ReplayGain> gains = gainDataMap.get(mediaItem.mediaId);
         if (gains != null) {
-            // Prefetch completed before this transition — apply immediately with no gap.
             float gain = resolveGain(player, gains);
             float peak = resolvePeak(player, gains);
+            float totalGain = computeTotalGain(gain, peak);
             Log.d(TAG, "applyGain: cache hit for " + mediaItem.mediaId
-                    + " gain=" + gain + " peak=" + peak);
-            setReplayGain(player, gain, peak);
+                    + " gain=" + gain + " peak=" + peak
+                    + " totalGain=" + totalGain);
+            audioProcessor.setGainImmediate(totalGain);
         } else {
-            // Prefetch hasn't arrived yet (dynamic add, rapid skip, first run, etc.).
-            // Do NOT snap to 0 dB — that causes the loud transition.
-            // Instead leave the volume exactly where the previous track left it.
-            // onTracksChanged fires within milliseconds for gapless transitions
-            // (ExoPlayer pre-buffers the next track while the current one plays),
-            // and within ~1-2 s for seeks/first play. Either way, staying at the
-            // previous track's level is far less jarring than a loud transient.
             Log.d(TAG, "applyGain: cache miss for " + mediaItem.mediaId
-                    + ", holding current volume until onTracksChanged");
+                    + ", holding current gain until onTracksChanged");
         }
+
+        // Queue the NEXT track's gain as pending for the next gapless boundary.
+        queuePendingForNextTrack(player);
     }
 
     // -------------------------------------------------------------------------
@@ -282,15 +234,7 @@ public class ReplayGainUtil {
 
     /**
      * Safety net for the rare case where prefetch hadn't finished before
-     * onMediaItemTransition fired.  In the steady state (queue was populated
-     * before the track started playing) this simply re-confirms the value
-     * already in gainDataMap, so there is no audible change.
-     *
-     * Also updates gainDataMap with whatever ExoPlayer actually parsed,
-     * ensuring the map is always current.
-     *
-     * Ignores Tracks.EMPTY, which ExoPlayer fires during the brief loading gap
-     * between gapless transitions — no tag data and no reason to touch volume.
+     * onMediaItemTransition fired.
      */
     public static void setReplayGain(Player player, Tracks tracks) {
         if (tracks == null || tracks.getGroups().isEmpty()) return;
@@ -304,7 +248,37 @@ public class ReplayGainUtil {
             prefetchedIds.add(currentItem.mediaId);
         }
 
-        setReplayGain(player, resolveGain(player, gains), resolvePeak(player, gains));
+        float gain = resolveGain(player, gains);
+        float peak = resolvePeak(player, gains);
+        audioProcessor.setGainImmediate(computeTotalGain(gain, peak));
+
+        // Also try to queue the next track's pending gain, in case prefetch
+        // data arrived between applyGain() and this callback.
+        queuePendingForNextTrack(player);
+    }
+
+    // -------------------------------------------------------------------------
+    // Pending gain helper
+    // -------------------------------------------------------------------------
+
+    /**
+     * If we know the next track and its gain data is available, queue its
+     * gain as pending on the processor for the next gapless transition.
+     */
+    private static void queuePendingForNextTrack(Player player) {
+        int nextIndex = player.getNextMediaItemIndex();
+        if (nextIndex == C.INDEX_UNSET) return;
+        MediaItem nextItem = player.getMediaItemAt(nextIndex);
+        if (nextItem == null || nextItem.mediaId == null) return;
+
+        List<ReplayGain> gains = gainDataMap.get(nextItem.mediaId);
+        if (gains == null) return;
+
+        float totalGain = computeTotalGain(
+                resolveGainForNextTrack(player, gains),
+                resolvePeakForNextTrack(player, gains));
+        audioProcessor.setPendingGain(totalGain);
+        pendingSetForMediaId = nextItem.mediaId;
     }
 
     // -------------------------------------------------------------------------
@@ -342,9 +316,6 @@ public class ReplayGainUtil {
     }
 
     private static List<ReplayGain> getReplayGains(List<Metadata> metadataList) {
-        // Consolidate into two buckets (ID3-preferred over APEv2/other):
-        //   gains[0] = ID3 tags  (TextInformationFrame, InternalFrame)
-        //   gains[1] = all other tags (APEv2 ApeItem, etc.)
         ReplayGain id3Gains      = new ReplayGain();
         ReplayGain fallbackGains = new ReplayGain();
 
@@ -414,6 +385,7 @@ public class ReplayGainUtil {
     // Gain / peak resolution
     // -------------------------------------------------------------------------
 
+    /** Resolve gain for the current track (uses current vs previous for "auto"). */
     private static float resolveGain(Player player, List<ReplayGain> gains) {
         if (Objects.equals(Preferences.getReplayGainMode(), "disabled")
                 || gains == null || gains.isEmpty()) return 0f;
@@ -423,6 +395,21 @@ public class ReplayGainUtil {
             case "track": return resolveTrackGain(gains);
             case "album": return resolveAlbumGain(gains);
             case "auto":  return areTracksConsecutive(player)
+                                 ? resolveAlbumGain(gains) : resolveTrackGain(gains);
+            default:      return 0f;
+        }
+    }
+
+    /** Resolve gain for the NEXT track (uses current vs next for "auto"). */
+    private static float resolveGainForNextTrack(Player player, List<ReplayGain> gains) {
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")
+                || gains == null || gains.isEmpty()) return 0f;
+
+        String mode = Objects.toString(Preferences.getReplayGainMode(), "");
+        switch (mode) {
+            case "track": return resolveTrackGain(gains);
+            case "album": return resolveAlbumGain(gains);
+            case "auto":  return areCurrentAndNextConsecutive(player)
                                  ? resolveAlbumGain(gains) : resolveTrackGain(gains);
             default:      return 0f;
         }
@@ -441,6 +428,7 @@ public class ReplayGainUtil {
         return album != 0f ? album : resolveTrackGain(gains);
     }
 
+    /** Resolve peak for the current track. */
     private static float resolvePeak(Player player, List<ReplayGain> gains) {
         if (Objects.equals(Preferences.getReplayGainMode(), "disabled")
                 || gains == null || gains.isEmpty()) return 0f;
@@ -449,6 +437,22 @@ public class ReplayGainUtil {
                 || (Objects.equals(Preferences.getReplayGainMode(), "auto")
                     && areTracksConsecutive(player));
 
+        return resolveTrackOrAlbumPeak(gains, useAlbum);
+    }
+
+    /** Resolve peak for the NEXT track. */
+    private static float resolvePeakForNextTrack(Player player, List<ReplayGain> gains) {
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")
+                || gains == null || gains.isEmpty()) return 0f;
+
+        boolean useAlbum = Objects.equals(Preferences.getReplayGainMode(), "album")
+                || (Objects.equals(Preferences.getReplayGainMode(), "auto")
+                    && areCurrentAndNextConsecutive(player));
+
+        return resolveTrackOrAlbumPeak(gains, useAlbum);
+    }
+
+    private static float resolveTrackOrAlbumPeak(List<ReplayGain> gains, boolean useAlbum) {
         if (useAlbum) {
             float primary   = gains.get(0).getAlbumPeak();
             float secondary = gains.get(1).getAlbumPeak();
@@ -461,6 +465,7 @@ public class ReplayGainUtil {
         return primary != 0f ? primary : secondary;
     }
 
+    /** Checks if the current and previous tracks share the same album. */
     private static boolean areTracksConsecutive(Player player) {
         MediaItem current = player.getCurrentMediaItem();
         int prevIdx = player.getPreviousMediaItemIndex();
@@ -472,11 +477,28 @@ public class ReplayGainUtil {
                        .equals(current.mediaMetadata.albumTitle.toString());
     }
 
+    /** Checks if the current and NEXT tracks share the same album. */
+    private static boolean areCurrentAndNextConsecutive(Player player) {
+        MediaItem current = player.getCurrentMediaItem();
+        int nextIdx = player.getNextMediaItemIndex();
+        MediaItem next = nextIdx == C.INDEX_UNSET ? null : player.getMediaItemAt(nextIdx);
+        return current != null && next != null
+                && current.mediaMetadata.albumTitle != null
+                && next.mediaMetadata.albumTitle != null
+                && current.mediaMetadata.albumTitle.toString()
+                       .equals(next.mediaMetadata.albumTitle.toString());
+    }
+
     // -------------------------------------------------------------------------
-    // Volume / LoudnessEnhancer application
+    // Total gain computation (preamp + clipping prevention)
     // -------------------------------------------------------------------------
 
-    private static void setReplayGain(Player player, float gain, float peak) {
+    /**
+     * Computes the final gain in dB, incorporating the user's preamp setting
+     * and optional clipping prevention.  This is what gets sent to the audio
+     * processor.
+     */
+    private static float computeTotalGain(float gain, float peak) {
         float preamp    = Preferences.getReplayGainPreamp();
         float totalGain = gain + preamp;
 
@@ -485,29 +507,6 @@ public class ReplayGainUtil {
             if (totalGain > maxGainForPeak) totalGain = maxGainForPeak;
         }
 
-        totalGain = Math.max(-60f, Math.min(15f, totalGain));
-
-        // player.setVolume() is capped at 1.0; amplify via LoudnessEnhancer instead.
-        if (totalGain <= 0f) {
-            player.setVolume((float) Math.pow(10.0, totalGain / 20.0));
-            setLoudnessEnhancerGain(0f);
-        } else {
-            player.setVolume(1.0f);
-            setLoudnessEnhancerGain(totalGain);
-        }
-    }
-
-    private static void setLoudnessEnhancerGain(float gainDb) {
-        if (loudnessEnhancer == null) return;
-        try {
-            if (gainDb <= 0f) {
-                loudnessEnhancer.setTargetGain(0);
-            } else {
-                loudnessEnhancer.setTargetGain((int) (gainDb * 100f));
-                loudnessEnhancer.setEnabled(true);
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "Failed to set LoudnessEnhancer gain: " + e.getMessage());
-        }
+        return Math.max(-60f, Math.min(15f, totalGain));
     }
 }

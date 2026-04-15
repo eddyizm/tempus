@@ -19,7 +19,10 @@ import android.util.Log
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.audio.AudioSink
+import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
 import androidx.media3.session.*
@@ -411,7 +414,6 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
                 attachEqualizerIfPossible(audioSessionId)
-                ReplayGainUtil.attachAudioSession(audioSessionId)
             }
         })
         if (player.isPlaying) {
@@ -760,7 +762,30 @@ open class BaseMediaService : MediaLibraryService() {
         return attached
     }
 
-    private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)
+    private fun getRenderersFactory(): DefaultRenderersFactory {
+        val extensionRendererMode = if (DownloadUtil.useExtensionRenderers())
+            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+        else
+            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
+
+        return object : DefaultRenderersFactory(this) {
+            init {
+                setExtensionRendererMode(extensionRendererMode)
+            }
+
+            override fun buildAudioSink(
+                context: Context,
+                enableFloatOutput: Boolean,
+                enableAudioTrackPlaybackParams: Boolean
+            ): AudioSink {
+                return DefaultAudioSink.Builder(context)
+                    .setAudioProcessors(arrayOf(ReplayGainUtil.getAudioProcessor()))
+                    .setEnableFloatOutput(enableFloatOutput)
+                    .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                    .build()
+            }
+        }
+    }
 
     private fun getMediaSourceFactory(): MediaSource.Factory = DynamicMediaSourceFactory(this)
 
