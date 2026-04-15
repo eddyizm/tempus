@@ -82,6 +82,7 @@ public class ReplayGainUtil {
         releaseEnhancer();
         gainDataMap.clear();
         prefetchedIds.clear();
+        preAppliedForMediaId = null;
         // Do NOT shutdown the executor — it is a static pool shared across
         // service lifecycles.  Clearing the sets is enough: the next onCreate
         // will re-submit prefetch work normally.
@@ -173,6 +174,63 @@ public class ReplayGainUtil {
     }
 
     // -------------------------------------------------------------------------
+    // Gapless pre-apply  —  called periodically from BaseMediaService
+    // -------------------------------------------------------------------------
+
+    /**
+     * During gapless playback ExoPlayer's audio decoder starts outputting
+     * samples from the next track *before* onMediaItemTransition fires.
+     * That means for a brief moment the new track's audio plays at the old
+     * track's volume level — causing the loud/quiet pop the user hears.
+     *
+     * This method is called every ~200 ms while the player is playing.
+     * When the current track is within {@code PRE_APPLY_THRESHOLD_MS} of
+     * its end *and* the next track's gain data has already been prefetched,
+     * we apply that gain early so the volume is correct by the time the
+     * decoder seamlessly switches to the next track's audio.
+     *
+     * The call is idempotent: once the gain is pre-applied, the flag
+     * {@code preAppliedForMediaId} prevents repeated volume writes until
+     * the track actually transitions (at which point applyGain() resets
+     * the flag).
+     */
+    private static final long PRE_APPLY_THRESHOLD_MS = 500;
+    private static volatile String preAppliedForMediaId = null;
+
+    public static void preApplyNextTrackGain(Player player) {
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")) return;
+
+        // Only act when the player is actually playing content with a known duration.
+        if (!player.isPlaying()) return;
+        long duration = player.getDuration();
+        if (duration == C.TIME_UNSET || duration <= 0) return;
+
+        long remaining = duration - player.getCurrentPosition();
+        if (remaining > PRE_APPLY_THRESHOLD_MS || remaining < 0) return;
+
+        // Identify the next media item in the queue.
+        int nextIndex = player.getNextMediaItemIndex();
+        if (nextIndex == C.INDEX_UNSET) return;
+        MediaItem nextItem = player.getMediaItemAt(nextIndex);
+        if (nextItem == null || nextItem.mediaId == null) return;
+
+        // Avoid re-applying every 200 ms once we've already pre-applied for
+        // this particular next-track.
+        if (nextItem.mediaId.equals(preAppliedForMediaId)) return;
+
+        List<ReplayGain> gains = gainDataMap.get(nextItem.mediaId);
+        if (gains == null) return;  // prefetch hasn't completed — nothing we can do
+
+        float gain = resolveGain(player, gains);
+        float peak = resolvePeak(player, gains);
+        Log.d(TAG, "preApplyNextTrackGain: applying gain for upcoming "
+                + nextItem.mediaId + " gain=" + gain + " peak=" + peak
+                + " (remaining=" + remaining + "ms)");
+        setReplayGain(player, gain, peak);
+        preAppliedForMediaId = nextItem.mediaId;
+    }
+
+    // -------------------------------------------------------------------------
     // Called from onMediaItemTransition  —  primary gain-application path
     // -------------------------------------------------------------------------
 
@@ -187,6 +245,9 @@ public class ReplayGainUtil {
      * a moment later when onTracksChanged fires.
      */
     public static void applyGain(Player player, MediaItem mediaItem) {
+        // Clear the pre-apply flag now that the transition has actually happened.
+        preAppliedForMediaId = null;
+
         if (mediaItem == null || mediaItem.mediaId == null) {
             // No item identity — can't look anything up. Leave volume unchanged;
             // onTracksChanged will apply the correct gain once tracks are known.

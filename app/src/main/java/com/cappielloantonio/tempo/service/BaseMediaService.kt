@@ -79,6 +79,27 @@ open class BaseMediaService : MediaLibraryService() {
         }
     }
 
+    // Periodic check that pre-applies the next track's ReplayGain just before
+    // a gapless transition, so the volume is already correct when ExoPlayer's
+    // decoder starts outputting the next track's audio samples.
+    private val replayGainHandler = Handler(Looper.getMainLooper())
+    private var replayGainCheckScheduled = false
+    private val replayGainCheckRunnable = object : Runnable {
+        override fun run() {
+            val player = mediaLibrarySession.player
+            if (!player.isPlaying) {
+                replayGainCheckScheduled = false
+                return
+            }
+            try {
+                ReplayGainUtil.preApplyNextTrackGain(player)
+            } catch (t: Throwable) {
+                Log.w(TAG, "preApplyNextTrackGain failed: $t")
+            }
+            replayGainHandler.postDelayed(this, REPLAY_GAIN_CHECK_INTERVAL_MS)
+        }
+    }
+
     private val radioHeaderCheckExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     private var radioHeaderCheckScheduled = false
     private var radioHeaderCheckFuture: ScheduledFuture<*>? = null
@@ -336,9 +357,11 @@ open class BaseMediaService : MediaLibraryService() {
                 }
                 if (isPlaying) {
                     scheduleWidgetUpdates()
+                    scheduleReplayGainChecks()
                     scheduleRadioHeaderChecks()
                 } else {
                     stopWidgetUpdates()
+                    stopReplayGainChecks()
                     stopRadioHeaderChecks()
                 }
                 updateWidget(player)
@@ -393,6 +416,7 @@ open class BaseMediaService : MediaLibraryService() {
         })
         if (player.isPlaying) {
             scheduleWidgetUpdates()
+            scheduleReplayGainChecks()
         }
     }
 
@@ -445,6 +469,7 @@ open class BaseMediaService : MediaLibraryService() {
         equalizerManager.release()
         ReplayGainUtil.release()
         stopWidgetUpdates()
+        stopReplayGainChecks()
         stopRadioHeaderChecks()
         radioHeaderCheckExecutor.shutdown()
         releasePlayers()
@@ -563,6 +588,18 @@ open class BaseMediaService : MediaLibraryService() {
         if (!widgetUpdateScheduled) return
         widgetUpdateHandler.removeCallbacks(widgetUpdateRunnable)
         widgetUpdateScheduled = false
+    }
+
+    private fun scheduleReplayGainChecks() {
+        if (replayGainCheckScheduled) return
+        replayGainHandler.postDelayed(replayGainCheckRunnable, REPLAY_GAIN_CHECK_INTERVAL_MS)
+        replayGainCheckScheduled = true
+    }
+
+    private fun stopReplayGainChecks() {
+        if (!replayGainCheckScheduled) return
+        replayGainHandler.removeCallbacks(replayGainCheckRunnable)
+        replayGainCheckScheduled = false
     }
 
     private fun scheduleRadioHeaderChecks() {
@@ -897,4 +934,5 @@ open class BaseMediaService : MediaLibraryService() {
 }
 
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
+private const val REPLAY_GAIN_CHECK_INTERVAL_MS = 200L
 private const val RADIO_HEADER_CHECK_INTERVAL_SECONDS = 30L // Reduced frequency - only fallback when ICY fails
