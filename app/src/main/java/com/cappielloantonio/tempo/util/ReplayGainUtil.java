@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @OptIn(markerClass = UnstableApi.class)
 public class ReplayGainUtil {
@@ -54,8 +53,18 @@ public class ReplayGainUtil {
     private static final ExecutorService prefetchExecutor =
             Executors.newFixedThreadPool(2);
 
+    // LoudnessEnhancer lets us apply positive gains (above unity) that
+    // player.setVolume() cannot reach — it operates directly on the audio session.
     private static LoudnessEnhancer loudnessEnhancer;
 
+    // -------------------------------------------------------------------------
+    // Lifecycle
+    // -------------------------------------------------------------------------
+
+    /**
+     * Called from BaseMediaService.onAudioSessionIdChanged().
+     * Re-creates the LoudnessEnhancer bound to the new audio session.
+     */
     public static void attachAudioSession(int audioSessionId) {
         releaseEnhancer();
         if (audioSessionId == 0 || audioSessionId == C.AUDIO_SESSION_ID_UNSET) return;
@@ -68,10 +77,14 @@ public class ReplayGainUtil {
         }
     }
 
+    /** Called from BaseMediaService.onDestroy(). */
     public static void release() {
         releaseEnhancer();
         gainDataMap.clear();
         prefetchedIds.clear();
+        // Do NOT shutdown the executor — it is a static pool shared across
+        // service lifecycles.  Clearing the sets is enough: the next onCreate
+        // will re-submit prefetch work normally.
     }
 
     private static void releaseEnhancer() {
@@ -104,11 +117,15 @@ public class ReplayGainUtil {
             // Need both an ID (map key) and a resolvable URI.
             if (item.mediaId == null || item.localConfiguration == null) continue;
 
+            // Radio streams carry live audio with no embedded ReplayGain tags;
+            // submitting them to MetadataRetriever would be wasteful and wrong.
             String mediaType = item.mediaMetadata.extras != null
                     ? item.mediaMetadata.extras.getString("type") : null;
             if (Constants.MEDIA_TYPE_RADIO.equals(mediaType)) continue;
             if (item.mediaId.startsWith("ir-")) continue;
 
+            // add() returns false when the ID is already present, meaning the
+            // job is in-flight or done — skip to avoid duplicate fetches.
             if (!prefetchedIds.add(item.mediaId)) continue;
 
             submitPrefetch(item);
@@ -116,36 +133,43 @@ public class ReplayGainUtil {
     }
 
     private static void submitPrefetch(MediaItem item) {
+        // Run the entire MetadataRetriever lifecycle — build(), get(), and close() —
+        // inside the background executor.  This matches the pattern shown in the
+        // media3 docs and is important for two reasons:
+        //
+        // 1. Crash isolation.  Any Throwable thrown here (including java.lang.Error
+        //    subclasses like AssertionError or kotlin.NotImplementedError, which
+        //    "catch (Exception e)" silently misses) is contained inside this thread.
+        //    Nothing can propagate back to the main thread and crash the service.
+        //
+        // 2. Correct threading.  MetadataRetriever.Builder.build() creates its own
+        //    internal HandlerThread/Looper; it is designed to be called from any
+        //    thread, including a background executor thread.
+        //
+        // Only 2 retrievers run concurrently (pool size), which bounds memory and
+        // open network connections even when the queue is large.
+        prefetchExecutor.execute(() -> {
+            try (MetadataRetriever retriever =
+                         new MetadataRetriever.Builder(App.getInstance(), item).build()) {
 
-        try {
-            MetadataRetriever retriever =
-                    new MetadataRetriever.Builder(App.getInstance(), item).build();
+                TrackGroupArray trackGroups =
+                        retriever.retrieveTrackGroups().get(20,
+                                java.util.concurrent.TimeUnit.SECONDS);
 
-            Future<TrackGroupArray> future = retriever.retrieveTrackGroups();
+                List<Metadata> metadataList = extractMetadata(trackGroups);
+                List<ReplayGain> gains = getReplayGains(metadataList);
+                gainDataMap.put(item.mediaId, gains);
+                Log.d(TAG, "Prefetched " + item.mediaId
+                        + " trackGain=" + resolveTrackGain(gains));
 
-            // Block on the result in the background pool — never on the main thread.
-            prefetchExecutor.execute(() -> {
-                try {
-                    TrackGroupArray trackGroups = future.get(20,
-                            java.util.concurrent.TimeUnit.SECONDS);
-                    List<Metadata> metadataList = extractMetadata(trackGroups);
-                    List<ReplayGain> gains = getReplayGains(metadataList);
-                    gainDataMap.put(item.mediaId, gains);
-                    Log.d(TAG, "Prefetched " + item.mediaId
-                            + " trackGain=" + resolveTrackGain(gains));
-                } catch (Exception e) {
-                    Log.d(TAG, "Prefetch failed for " + item.mediaId + ": " + e.getMessage());
-                    // Remove so a future onTimelineChanged can retry
-                    // (e.g. after a network reconnect).
-                    prefetchedIds.remove(item.mediaId);
-                } finally {
-                    try { retriever.close(); } catch (Exception ignored) {}
-                }
-            });
-        } catch (Exception e) {
-            Log.d(TAG, "Could not start prefetch for " + item.mediaId + ": " + e.getMessage());
-            prefetchedIds.remove(item.mediaId);
-        }
+            } catch (Throwable e) {
+                // Includes InterruptedException, ExecutionException, TimeoutException,
+                // Error subclasses, and anything else.  Remove the ID so a future
+                // onTimelineChanged can retry (e.g. after a network reconnect).
+                Log.d(TAG, "Prefetch failed for " + item.mediaId + ": " + e);
+                prefetchedIds.remove(item.mediaId);
+            }
+        });
     }
 
     // -------------------------------------------------------------------------

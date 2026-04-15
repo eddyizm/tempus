@@ -187,11 +187,13 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                 Log.d(TAG, "onTimelineChanged reason=$reason")
                 // Kick off background MetadataRetriever jobs for any queue items
-                // whose ReplayGain tags haven't been fetched yet.  By the time
-                // onMediaItemTransition fires for each of these items, the data
-                // will already be in gainDataMap and applyGain() can apply it
-                // instantly — no gap, no snap.
-                ReplayGainUtil.prefetchQueueGains(player)
+                // whose ReplayGain tags haven't been fetched yet.  Wrapped in a
+                // broad catch so that no failure here can crash the service.
+                try {
+                    ReplayGainUtil.prefetchQueueGains(player)
+                } catch (t: Throwable) {
+                    Log.w(TAG, "prefetchQueueGains failed: $t")
+                }
             }
 
             override fun onTracksChanged(tracks: Tracks) {
