@@ -1,5 +1,7 @@
 package com.cappielloantonio.tempo.util;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.OptIn;
@@ -18,6 +20,7 @@ import androidx.media3.extractor.metadata.id3.TextInformationFrame;
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.model.ReplayGain;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +52,9 @@ public class ReplayGainUtil {
     private static final ReplayGainAudioProcessor audioProcessor =
             new ReplayGainAudioProcessor();
 
+    private static volatile WeakReference<Player> playerRef = new WeakReference<>(null);
+    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
+
     public static ReplayGainAudioProcessor getAudioProcessor() {
         return audioProcessor;
     }
@@ -56,10 +62,13 @@ public class ReplayGainUtil {
     public static void release() {
         gainDataMap.clear();
         prefetchedIds.clear();
+        playerRef = new WeakReference<>(null);
     }
 
     public static void prefetchQueueGains(Player player) {
         if (Objects.equals(Preferences.getReplayGainMode(), "disabled")) return;
+
+        playerRef = new WeakReference<>(player);
 
         for (int i = 0; i < player.getMediaItemCount(); i++) {
             MediaItem item = player.getMediaItemAt(i);
@@ -92,6 +101,15 @@ public class ReplayGainUtil {
                 Log.d(TAG, "Prefetched " + item.mediaId
                         + " trackGain=" + resolveTrackGain(gains));
 
+                // Post back to the main thread to queue the pending gain
+                // for the next gapless transition.  This covers the race
+                // where applyGain/setReplayGain already called
+                // queuePendingForNextTrack before this prefetch finished.
+                mainHandler.post(() -> {
+                    Player p = playerRef.get();
+                    if (p != null) queuePendingForNextTrack(p);
+                });
+
             } catch (Throwable e) {
                 Log.d(TAG, "Prefetch failed for " + item.mediaId + ": " + e);
                 prefetchedIds.remove(item.mediaId);
@@ -100,7 +118,6 @@ public class ReplayGainUtil {
     }
 
     public static void applyGain(Player player, MediaItem mediaItem) {
-
         audioProcessor.clearPendingGain();
 
         if (mediaItem == null || mediaItem.mediaId == null) {
