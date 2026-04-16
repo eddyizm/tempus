@@ -40,6 +40,15 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     private boolean ramping = false;
 
+    // Tracks whether any samples have been processed since the last flush.
+    // onFlush() is called both at initial audio-sink configuration (before
+    // any audio has played) AND at mid-stream format-change transitions.
+    // We only want to consume the pending gain in the second case — at
+    // startup, pending was queued for the NEXT track and must not be
+    // applied to the first track. Flipped true in queueInput and reset
+    // to false in onFlush / onReset.
+    private boolean hasProcessedAnyInput = false;
+
     public void setPendingGain(float gainDb) {
         pendingFlushGainLinear = dbToLinear(gainDb);
         hasPendingFlushGain = true;
@@ -68,12 +77,19 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     @Override
     protected void onFlush() {
-        if (hasPendingFlushGain) {
+        // Only promote the pending gain if this flush represents a real
+        // mid-stream boundary (some samples have already flowed through
+        // the processor). The initial configure→flush that runs before
+        // the first track starts playing must NOT steal the pending gain
+        // that was queued for the next track — doing so applies track
+        // B's gain to track A.
+        if (hasPendingFlushGain && hasProcessedAnyInput) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;
             hasPendingFlushGain = false;
             ramping = false;
         }
+        hasProcessedAnyInput = false;
     }
 
     /**
@@ -102,12 +118,18 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         pendingFlushGainLinear = 1.0f;
         hasPendingFlushGain = false;
         ramping = false;
+        hasProcessedAnyInput = false;
     }
 
     @Override
     public void queueInput(ByteBuffer inputBuffer) {
         int remaining = inputBuffer.remaining();
         if (remaining == 0) return;
+
+        // Mark that real audio has flowed through the processor, so a
+        // subsequent onFlush() knows it's a mid-stream boundary (safe to
+        // consume pending) rather than the initial startup flush.
+        hasProcessedAnyInput = true;
 
         float target = targetGainLinear;
         if (!ramping && Math.abs(target - activeGainLinear) > 0.0001f) {
