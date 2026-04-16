@@ -4,7 +4,7 @@ import androidx.core.content.ContextCompat
 import androidx.media3.cast.CastPlayer
 import androidx.media3.cast.SessionAvailabilityListener
 import androidx.media3.common.util.UnstableApi
-import com.cappielloantonio.tempo.repository.AutomotiveRepository
+import com.cappielloantonio.tempo.Repository.AutomotiveRepository
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
