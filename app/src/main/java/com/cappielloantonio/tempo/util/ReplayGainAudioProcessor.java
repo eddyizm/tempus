@@ -47,7 +47,6 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     public void setGainImmediate(float gainDb) {
         targetGainLinear = dbToLinear(gainDb);
-        hasPendingFlushGain = false;
     }
 
     public void clearPendingGain() {
