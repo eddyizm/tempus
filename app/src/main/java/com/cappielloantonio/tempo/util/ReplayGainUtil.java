@@ -231,7 +231,23 @@ public class ReplayGainUtil {
         if (nextItem == null || nextItem.mediaId == null) return;
 
         List<ReplayGain> gains = gainDataMap.get(nextItem.mediaId);
-        if (gains == null) return;
+        if (gains == null) {
+            // We have no RG data for the next track yet (its prefetch may
+            // still be in flight, or it may genuinely have no tags). Without
+            // a pending gain, onQueueEndOfStream leaves activeGain at the
+            // current track's value, so the next track's opening samples
+            // would play at the previous track's gain — very audible when
+            // the current track has a large positive gain. Queue a neutral
+            // fallback (preamp only) so the gapless handoff lands on a
+            // conservative volume; if tag extraction later resolves a real
+            // value, onTracksChanged / the late-prefetch callback will apply
+            // it with a short ramp.
+            float fallback = computeTotalGain(0f, 0f);
+            audioProcessor.setPendingGain(fallback);
+            Log.d(TAG, "queuePendingForNextTrack: no data for "
+                    + nextItem.mediaId + ", queuing fallback gain=" + fallback);
+            return;
+        }
 
         float totalGain = computeTotalGain(
                 resolveGainForNextTrack(player, gains),
