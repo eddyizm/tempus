@@ -47,6 +47,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     public void setGainImmediate(float gainDb) {
         targetGainLinear = dbToLinear(gainDb);
+        hasPendingFlushGain = false;
     }
 
     public void clearPendingGain() {
@@ -67,6 +68,25 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     @Override
     protected void onFlush() {
+        if (hasPendingFlushGain) {
+            activeGainLinear = pendingFlushGainLinear;
+            targetGainLinear = pendingFlushGainLinear;
+            hasPendingFlushGain = false;
+            ramping = false;
+        }
+    }
+
+    /**
+     * Called when the current stream has no more input.  For gapless
+     * transitions with the same audio format, media3 1.8's DefaultAudioSink
+     * does NOT call flush() between tracks — only queueEndOfStream().
+     * Activating the pending gain here (in addition to onFlush) ensures the
+     * next track's first samples get the correct gain in queueInput, since
+     * onQueueEndOfStream fires at the decoder stream boundary BEFORE the
+     * next track's samples enter the pipeline.
+     */
+    @Override
+    protected void onQueueEndOfStream() {
         if (hasPendingFlushGain) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;

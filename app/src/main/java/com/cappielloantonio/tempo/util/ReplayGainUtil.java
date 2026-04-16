@@ -101,13 +101,28 @@ public class ReplayGainUtil {
                 Log.d(TAG, "Prefetched " + item.mediaId
                         + " trackGain=" + resolveTrackGain(gains));
 
-                // Post back to the main thread to queue the pending gain
-                // for the next gapless transition.  This covers the race
-                // where applyGain/setReplayGain already called
-                // queuePendingForNextTrack before this prefetch finished.
+                // Post back to the main thread.  Two things can happen:
+                //  1. If the prefetched item is the CURRENT playing track
+                //     (prefetch finished AFTER the transition to it already
+                //     happened, which is common on first play with a cold
+                //     network), apply its gain immediately.  This corrects
+                //     the audio without waiting for onTracksChanged.
+                //  2. Queue the pending gain for the next gapless transition.
                 mainHandler.post(() -> {
                     Player p = playerRef.get();
-                    if (p != null) queuePendingForNextTrack(p);
+                    if (p == null) return;
+
+                    MediaItem current = p.getCurrentMediaItem();
+                    if (current != null && item.mediaId.equals(current.mediaId)) {
+                        float gain = resolveGain(p, gains);
+                        float peak = resolvePeak(p, gains);
+                        float totalGain = computeTotalGain(gain, peak);
+                        Log.d(TAG, "Late prefetch for current track " + item.mediaId
+                                + " — applying gain immediately totalGain=" + totalGain);
+                        audioProcessor.setGainImmediate(totalGain);
+                    }
+
+                    queuePendingForNextTrack(p);
                 });
 
             } catch (Throwable e) {
