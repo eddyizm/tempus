@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.Repository;
+package com.cappielloantonio.tempo.repository;
 
 import android.net.Uri;
 import android.os.Bundle;

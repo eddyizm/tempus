@@ -21,7 +21,7 @@ import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.Repository.AutomotiveRepository
+import com.cappielloantonio.tempo.repository.AutomotiveRepository
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_LOADING
@@ -58,66 +58,46 @@ open class MediaLibrarySessionCallback(
     }
 
     @SuppressLint("PrivateResource")
-    @Suppress("DEPRECATION")
-    private val customCommandToggleShuffleModeOn = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+    private val customCommandToggleShuffleModeOn = CommandButton.Builder(CommandButton.ICON_SHUFFLE_OFF)
         .setDisplayName(context.getString(R.string.exo_controls_shuffle_on_description))
-        .setSessionCommand(
-            SessionCommand(
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON, Bundle.EMPTY
-            )
-        ).setIconResId(R.drawable.exo_icon_shuffle_off).build()
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON, Bundle.EMPTY))
+        .build()
 
     @SuppressLint("PrivateResource")
-    @Suppress("DEPRECATION")
-    private val customCommandToggleShuffleModeOff = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+    private val customCommandToggleShuffleModeOff = CommandButton.Builder(CommandButton.ICON_SHUFFLE_ON)
         .setDisplayName(context.getString(R.string.exo_controls_shuffle_off_description))
-        .setSessionCommand(
-            SessionCommand(
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF, Bundle.EMPTY
-            )
-        ).setIconResId(R.drawable.exo_icon_shuffle_on).build()
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF, Bundle.EMPTY))
+        .build()
 
     @SuppressLint("PrivateResource")
-    @Suppress("DEPRECATION")
-    private val customCommandToggleRepeatModeOff = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+    private val customCommandToggleRepeatModeOff = CommandButton.Builder(CommandButton.ICON_REPEAT_OFF)
         .setDisplayName(context.getString(R.string.exo_controls_repeat_off_description))
         .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF, Bundle.EMPTY))
-        .setIconResId(R.drawable.exo_icon_repeat_off)
         .build()
 
     @SuppressLint("PrivateResource")
-    @Suppress("DEPRECATION")
-    private val customCommandToggleRepeatModeOne = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+    private val customCommandToggleRepeatModeOne = CommandButton.Builder(CommandButton.ICON_REPEAT_ONE)
         .setDisplayName(context.getString(R.string.exo_controls_repeat_one_description))
         .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE, Bundle.EMPTY))
-        .setIconResId(R.drawable.exo_icon_repeat_one)
         .build()
 
     @SuppressLint("PrivateResource")
-    @Suppress("DEPRECATION")
-    private val customCommandToggleRepeatModeAll = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+    private val customCommandToggleRepeatModeAll = CommandButton.Builder(CommandButton.ICON_REPEAT_ALL)
         .setDisplayName(context.getString(R.string.exo_controls_repeat_all_description))
         .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL, Bundle.EMPTY))
-        .setIconResId(R.drawable.exo_icon_repeat_all)
         .build()
 
     @Suppress("DEPRECATION")
     private val customCommandToggleHeartOn = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
         .setDisplayName(context.getString(R.string.exo_controls_heart_on_description))
-        .setSessionCommand(
-            SessionCommand(
-                CUSTOM_COMMAND_TOGGLE_HEART_ON, Bundle.EMPTY
-            )
-        )
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_ON, Bundle.EMPTY))
         .setIconResId(R.drawable.ic_favorite)
         .build()
 
     @Suppress("DEPRECATION")
     private val customCommandToggleHeartOff = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
         .setDisplayName(context.getString(R.string.exo_controls_heart_off_description))
-        .setSessionCommand(
-            SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_OFF, Bundle.EMPTY)
-        )
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_OFF, Bundle.EMPTY))
         .setIconResId(R.drawable.ic_favorites_outlined)
         .build()
 
@@ -125,9 +105,7 @@ open class MediaLibrarySessionCallback(
     @Suppress("DEPRECATION")
     private val customCommandToggleHeartLoading = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
         .setDisplayName(context.getString(R.string.cast_expanded_controller_loading))
-        .setSessionCommand(
-            SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_LOADING, Bundle.EMPTY)
-        )
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_LOADING, Bundle.EMPTY))
         .setIconResId(R.drawable.ic_bookmark_sync)
         .build()
 
