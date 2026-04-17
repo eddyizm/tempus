@@ -43,7 +43,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     // Tracks whether any samples have been processed since the last flush.
     // onFlush() is called both at initial audio-sink configuration (before
     // any audio has played) AND at mid-stream format-change transitions.
-    // We only want to consume the pending gain in the second case — at
+    // We only want to consume the pending gain in the second case - at
     // startup, pending was queued for the NEXT track and must not be
     // applied to the first track. Flipped true in queueInput and reset
     // to false in onFlush / onReset.
@@ -79,9 +79,9 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     protected void onFlush() {
         // Only promote the pending gain if this flush represents a real
         // mid-stream boundary (some samples have already flowed through
-        // the processor). The initial configure→flush that runs before
+        // the processor). The initial configure/flush that runs before
         // the first track starts playing must NOT steal the pending gain
-        // that was queued for the next track — doing so applies track
+        // that was queued for the next track - doing so applies track
         // B's gain to track A.
         if (hasPendingFlushGain && hasProcessedAnyInput) {
             activeGainLinear = pendingFlushGainLinear;
@@ -95,7 +95,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     /**
      * Called when the current stream has no more input.  For gapless
      * transitions with the same audio format, media3 1.8's DefaultAudioSink
-     * does NOT call flush() between tracks — only queueEndOfStream().
+     * does NOT call flush() between tracks - only queueEndOfStream().
      * Activating the pending gain here (in addition to onFlush) ensures the
      * next track's first samples get the correct gain in queueInput, since
      * onQueueEndOfStream fires at the decoder stream boundary BEFORE the

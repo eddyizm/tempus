@@ -154,7 +154,7 @@ public class ReplayGainUtil {
 
         // Fast path: OpenSubsonic RG data packed into the MediaItem extras.
         // This is always available synchronously for servers that return
-        // replayGain on Child responses — no MetadataRetriever needed.
+        // replayGain on Child responses - no MetadataRetriever needed.
         ReplayGainInfo serverInfo = extractServerInfo(mediaItem);
         if (serverInfo != null) {
             List<ReplayGain> gains = serverInfoToGains(serverInfo);
@@ -198,7 +198,7 @@ public class ReplayGainUtil {
         MediaItem currentItem = player.getCurrentMediaItem();
 
         // If the server already supplied RG for the current track, trust
-        // that over tag-extracted values — the server's data is authoritative
+        // that over tag-extracted values - the server's data is authoritative
         // (it reflects user-configured preamp, album grouping, etc.) and was
         // already applied synchronously in applyGain(). Avoid overwriting it
         // with tag-extracted values that may differ.
@@ -236,7 +236,7 @@ public class ReplayGainUtil {
             // still be in flight, or it may genuinely have no tags). Without
             // a pending gain, onQueueEndOfStream leaves activeGain at the
             // current track's value, so the next track's opening samples
-            // would play at the previous track's gain — very audible when
+            // would play at the previous track's gain - very audible when
             // the current track has a large positive gain. Queue a neutral
             // fallback (preamp only) so the gapless handoff lands on a
             // conservative volume; if tag extraction later resolves a real
@@ -477,21 +477,6 @@ public class ReplayGainUtil {
         return (info != null && info.hasAnyValue()) ? info : null;
     }
 
-    /**
-     * Adapts an OpenSubsonic {@link ReplayGainInfo} onto the internal
-     * {@code List<ReplayGain>} shape produced by tag extraction.
-     *
-     * The existing code treats the list as [id3Gains, fallbackGains], with
-     * {@link #resolveTrackGain} / {@link #resolveAlbumGain} preferring the
-     * first non-zero entry. We put server data in the primary slot and
-     * expose the server's fallback_gain in the secondary slot so that if
-     * track/album gain is unavailable, fallback_gain still applies.
-     *
-     * Note: OpenSubsonic's `fallbackGain` is documented as a value to use
-     * when neither track nor album gain is present, so mirroring it into
-     * both track and album gain of the secondary entry gives the right
-     * behaviour under any resolve mode.
-     */
     private static List<ReplayGain> serverInfoToGains(ReplayGainInfo info) {
         ReplayGain primary = new ReplayGain();
         if (info.getTrackGain() != null) primary.setTrackGain(info.getTrackGain());
