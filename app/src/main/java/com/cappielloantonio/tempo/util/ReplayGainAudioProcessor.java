@@ -26,6 +26,8 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     private volatile float pendingFlushGainLinear = 1.0f;
 
+    private volatile float baselineGainLinear = 1.0f;
+    
     private volatile boolean hasPendingFlushGain = false;
 
     private float activeGainLinear = 1.0f;
@@ -57,7 +59,9 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     }
 
     public void setGainImmediate(float gainDb) {
-        targetGainLinear = dbToLinear(gainDb);
+        float linear = dbToLinear(gainDb);
+        targetGainLinear = linear;
+        baselineGainLinear = linear;
         hasPendingFlushGain = false;
     }
 
@@ -121,8 +125,8 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     @Override
     protected void onReset() {
-        activeGainLinear = 1.0f;
-        targetGainLinear = 1.0f;
+        activeGainLinear = baselineGainLinear;
+        targetGainLinear = baselineGainLinear;
         pendingFlushGainLinear = 1.0f;
         hasPendingFlushGain = false;
         endOfStreamPending = false;
