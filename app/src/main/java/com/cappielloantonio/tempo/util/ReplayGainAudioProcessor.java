@@ -49,6 +49,8 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     // to false in onFlush / onReset.
     private boolean hasProcessedAnyInput = false;
 
+    private boolean endOfStreamPending = false;
+
     public void setPendingGain(float gainDb) {
         pendingFlushGainLinear = dbToLinear(gainDb);
         hasPendingFlushGain = true;
@@ -83,12 +85,17 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         // the first track starts playing must NOT steal the pending gain
         // that was queued for the next track — doing so applies track
         // B's gain to track A.
-        if (hasPendingFlushGain && hasProcessedAnyInput) {
+        // endOfStreamPending guards against seeks: ExoPlayer calls onFlush()
+        // for both seeks and format-change track transitions, but only calls
+        // onQueueEndOfStream() for the latter. Without this check a seek
+        // mid-track incorrectly promotes the next track's (or fallback) gain.
+        if (hasPendingFlushGain && hasProcessedAnyInput && endOfStreamPending) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;
             hasPendingFlushGain = false;
             ramping = false;
         }
+        endOfStreamPending = false;
         hasProcessedAnyInput = false;
     }
 
@@ -103,6 +110,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
      */
     @Override
     protected void onQueueEndOfStream() {
+        endOfStreamPending = true;
         if (hasPendingFlushGain) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;
@@ -117,6 +125,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         targetGainLinear = 1.0f;
         pendingFlushGainLinear = 1.0f;
         hasPendingFlushGain = false;
+        endOfStreamPending = false;
         ramping = false;
         hasProcessedAnyInput = false;
     }
