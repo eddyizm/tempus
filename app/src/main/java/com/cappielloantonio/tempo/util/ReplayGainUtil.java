@@ -192,6 +192,34 @@ public class ReplayGainUtil {
         queuePendingForNextTrack(player);
     }
 
+    public static void reapplyCurrentTrackGain(Player player) {
+        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")) return;
+
+        MediaItem mediaItem = player.getCurrentMediaItem();
+        if (mediaItem == null || mediaItem.mediaId == null) return;
+
+        ReplayGainInfo serverInfo = extractServerInfo(mediaItem);
+        if (serverInfo != null) {
+            List<ReplayGain> gains = serverInfoToGains(serverInfo);
+            float totalGain = computeTotalGain(resolveGain(player, gains), resolvePeak(player, gains));
+            Log.d(TAG, "reapplyCurrentTrackGain: server RG for " + mediaItem.mediaId
+                    + " totalGain=" + totalGain);
+            audioProcessor.setGainImmediate(totalGain);
+            return;
+        }
+
+        List<ReplayGain> gains = gainDataMap.get(mediaItem.mediaId);
+        if (gains != null) {
+            float totalGain = computeTotalGain(resolveGain(player, gains), resolvePeak(player, gains));
+            Log.d(TAG, "reapplyCurrentTrackGain: cache hit for " + mediaItem.mediaId
+                    + " totalGain=" + totalGain);
+            audioProcessor.setGainImmediate(totalGain);
+        } else {
+            Log.d(TAG, "reapplyCurrentTrackGain: cache miss for " + mediaItem.mediaId
+                    + ", no change (gain will be set by onTracksChanged)");
+        }
+    }
+
     public static void setReplayGain(Player player, Tracks tracks) {
         if (tracks == null || tracks.getGroups().isEmpty()) return;
 
