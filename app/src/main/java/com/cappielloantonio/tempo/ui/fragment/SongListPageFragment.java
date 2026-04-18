@@ -73,7 +73,13 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         songListPageViewModel = new ViewModelProvider(requireActivity()).get(SongListPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        init();
+        Bundle args = getArguments();
+        if (args == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        init(args);
         initAppBar();
         initButtons();
         initSongListView();
@@ -108,50 +114,50 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
-    private void init() {
-        if (requireArguments().getString(Constants.MEDIA_RECENTLY_PLAYED) != null) {
+    private void init(Bundle args) {
+        if (args.getString(Constants.MEDIA_RECENTLY_PLAYED) != null) {
             songListPageViewModel.title = Constants.MEDIA_RECENTLY_PLAYED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_recently_played);
             bind.pageTitleLabel.setText(R.string.song_list_page_recently_played);
-        } else if (requireArguments().getString(Constants.MEDIA_MOST_PLAYED) != null) {
+        } else if (args.getString(Constants.MEDIA_MOST_PLAYED) != null) {
             songListPageViewModel.title = Constants.MEDIA_MOST_PLAYED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_most_played);
             bind.pageTitleLabel.setText(R.string.song_list_page_most_played);
-        } else if (requireArguments().getString(Constants.MEDIA_RECENTLY_ADDED) != null) {
+        } else if (args.getString(Constants.MEDIA_RECENTLY_ADDED) != null) {
             songListPageViewModel.title = Constants.MEDIA_RECENTLY_ADDED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_recently_added);
             bind.pageTitleLabel.setText(R.string.song_list_page_recently_added);
-        } else if (requireArguments().getString(Constants.MEDIA_BY_GENRE) != null) {
+        } else if (args.getString(Constants.MEDIA_BY_GENRE) != null) {
             songListPageViewModel.title = Constants.MEDIA_BY_GENRE;
-            songListPageViewModel.genre = requireArguments().getParcelable(Constants.GENRE_OBJECT);
+            songListPageViewModel.genre = args.getParcelable(Constants.GENRE_OBJECT);
             songListPageViewModel.toolbarTitle = songListPageViewModel.genre.getGenre();
             bind.pageTitleLabel.setText(songListPageViewModel.genre.getGenre());
-        } else if (requireArguments().getString(Constants.MEDIA_BY_ARTIST) != null) {
+        } else if (args.getString(Constants.MEDIA_BY_ARTIST) != null) {
             songListPageViewModel.title = Constants.MEDIA_BY_ARTIST;
-            songListPageViewModel.artist = requireArguments().getParcelable(Constants.ARTIST_OBJECT);
+            songListPageViewModel.artist = args.getParcelable(Constants.ARTIST_OBJECT);
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_top, songListPageViewModel.artist.getName());
             bind.pageTitleLabel.setText(getString(R.string.song_list_page_top, songListPageViewModel.artist.getName()));
-        } else if (requireArguments().getString(Constants.MEDIA_BY_GENRES) != null) {
+        } else if (args.getString(Constants.MEDIA_BY_GENRES) != null) {
             songListPageViewModel.title = Constants.MEDIA_BY_GENRES;
-            songListPageViewModel.filters = requireArguments().getStringArrayList("filters_list");
-            songListPageViewModel.filterNames = requireArguments().getStringArrayList("filter_name_list");
+            songListPageViewModel.filters = args.getStringArrayList("filters_list");
+            songListPageViewModel.filterNames = args.getStringArrayList("filter_name_list");
             songListPageViewModel.toolbarTitle = songListPageViewModel.getFiltersTitle();
             bind.pageTitleLabel.setText(songListPageViewModel.getFiltersTitle());
-        } else if (requireArguments().getString(Constants.MEDIA_BY_YEAR) != null) {
+        } else if (args.getString(Constants.MEDIA_BY_YEAR) != null) {
             songListPageViewModel.title = Constants.MEDIA_BY_YEAR;
-            songListPageViewModel.year = requireArguments().getInt("year_object");
+            songListPageViewModel.year = args.getInt("year_object");
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_year, songListPageViewModel.year);
             bind.pageTitleLabel.setText(getString(R.string.song_list_page_year, songListPageViewModel.year));
-        } else if (requireArguments().getString(Constants.MEDIA_STARRED) != null) {
+        } else if (args.getString(Constants.MEDIA_STARRED) != null) {
             songListPageViewModel.title = Constants.MEDIA_STARRED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_starred);
             bind.pageTitleLabel.setText(R.string.song_list_page_starred);
-        } else if (requireArguments().getString(Constants.MEDIA_DOWNLOADED) != null) {
+        } else if (args.getString(Constants.MEDIA_DOWNLOADED) != null) {
             songListPageViewModel.title = Constants.MEDIA_DOWNLOADED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_downloaded);
             bind.pageTitleLabel.setText(getString(R.string.song_list_page_downloaded));
-        } else if (requireArguments().getParcelable(Constants.ALBUM_OBJECT) != null) {
-            songListPageViewModel.album = requireArguments().getParcelable(Constants.ALBUM_OBJECT);
+        } else if (args.getParcelable(Constants.ALBUM_OBJECT) != null) {
+            songListPageViewModel.album = args.getParcelable(Constants.ALBUM_OBJECT);
             songListPageViewModel.title = Constants.MEDIA_FROM_ALBUM;
             songListPageViewModel.toolbarTitle = songListPageViewModel.album.getName();
             bind.pageTitleLabel.setText(songListPageViewModel.album.getName());
