@@ -365,6 +365,17 @@ open class BaseMediaService : MediaLibraryService() {
                 Log.d(TAG, "onPositionDiscontinuity")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
 
+                // When the user seeks within the same track, re-apply that track's
+                // ReplayGain immediately. Without this, transient state changes that
+                // occur during the seek (e.g. onQueueEndOfStream firing because the
+                // decoder ran ahead, or onTracksChanged firing with stale metadata)
+                // can overwrite the correct gain and leave the track playing at the
+                // wrong volume level after the seek completes.
+                if (reason == Player.DISCONTINUITY_REASON_SEEK &&
+                    oldPosition.mediaItemIndex == newPosition.mediaItemIndex) {
+                    ReplayGainUtil.reapplyCurrentTrackGain(player)
+                }
+
                 if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
                     if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.scrobble(oldPosition.mediaItem, true)
