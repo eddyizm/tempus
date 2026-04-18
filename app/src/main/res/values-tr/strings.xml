@@ -351,6 +351,8 @@
     <string name="settings_title_general">Genel</string>
     <string name="settings_title_rating">Değerlendirme</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
+    <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Değerlendirmeye göre parçaları yok say</string>
     <string name="settings_title_skip_min_star_rating_dialog">Şu puana sahip şarkılar:</string>

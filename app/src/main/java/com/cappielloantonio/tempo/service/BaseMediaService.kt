@@ -19,7 +19,10 @@ import android.util.Log
 import androidx.media3.common.*
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.audio.AudioSink
+import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
 import androidx.media3.session.*
@@ -144,6 +147,7 @@ open class BaseMediaService : MediaLibraryService() {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
+                ReplayGainUtil.applyGain(player, mediaItem)
 
                 // --- Add for AA : Constants.AA_START_INDEX if présent ---
                 val extras = mediaItem.mediaMetadata.extras
@@ -181,6 +185,15 @@ open class BaseMediaService : MediaLibraryService() {
                 }
                 
                 updateWidget(player)
+            }
+
+            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                Log.d(TAG, "onTimelineChanged reason=$reason")
+                try {
+                    ReplayGainUtil.prefetchQueueGains(player)
+                } catch (t: Throwable) {
+                    Log.w(TAG, "prefetchQueueGains failed: $t")
+                }
             }
 
             override fun onTracksChanged(tracks: Tracks) {
@@ -352,6 +365,17 @@ open class BaseMediaService : MediaLibraryService() {
                 Log.d(TAG, "onPositionDiscontinuity")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
 
+                // When the user seeks within the same track, re-apply that track's
+                // ReplayGain immediately. Without this, transient state changes that
+                // occur during the seek (e.g. onQueueEndOfStream firing because the
+                // decoder ran ahead, or onTracksChanged firing with stale metadata)
+                // can overwrite the correct gain and leave the track playing at the
+                // wrong volume level after the seek completes.
+                if (reason == Player.DISCONTINUITY_REASON_SEEK &&
+                    oldPosition.mediaItemIndex == newPosition.mediaItemIndex) {
+                    ReplayGainUtil.reapplyCurrentTrackGain(player)
+                }
+
                 if (reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
                     if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.scrobble(oldPosition.mediaItem, true)
@@ -429,6 +453,7 @@ open class BaseMediaService : MediaLibraryService() {
     override fun onDestroy() {
         releaseNetworkCallback()
         equalizerManager.release()
+        ReplayGainUtil.release()
         stopWidgetUpdates()
         stopRadioHeaderChecks()
         radioHeaderCheckExecutor.shutdown()
@@ -708,7 +733,30 @@ open class BaseMediaService : MediaLibraryService() {
         return attached
     }
 
-    private fun getRenderersFactory() = DownloadUtil.buildRenderersFactory(this, false)
+    private fun getRenderersFactory(): DefaultRenderersFactory {
+        val extensionRendererMode = if (DownloadUtil.useExtensionRenderers())
+            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON
+        else
+            DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF
+
+        return object : DefaultRenderersFactory(this) {
+            init {
+                setExtensionRendererMode(extensionRendererMode)
+            }
+
+            override fun buildAudioSink(
+                context: Context,
+                enableFloatOutput: Boolean,
+                enableAudioTrackPlaybackParams: Boolean
+            ): AudioSink {
+                return DefaultAudioSink.Builder(context)
+                    .setAudioProcessors(arrayOf(ReplayGainUtil.getAudioProcessor()))
+                    .setEnableFloatOutput(enableFloatOutput)
+                    .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                    .build()
+            }
+        }
+    }
 
     private fun getMediaSourceFactory(): MediaSource.Factory = DynamicMediaSourceFactory(this)
 
