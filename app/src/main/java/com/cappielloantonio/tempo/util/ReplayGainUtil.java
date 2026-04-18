@@ -192,34 +192,6 @@ public class ReplayGainUtil {
         queuePendingForNextTrack(player);
     }
 
-    public static void reapplyCurrentTrackGain(Player player) {
-        if (Objects.equals(Preferences.getReplayGainMode(), "disabled")) return;
-
-        MediaItem mediaItem = player.getCurrentMediaItem();
-        if (mediaItem == null || mediaItem.mediaId == null) return;
-
-        ReplayGainInfo serverInfo = extractServerInfo(mediaItem);
-        if (serverInfo != null) {
-            List<ReplayGain> gains = serverInfoToGains(serverInfo);
-            float totalGain = computeTotalGain(resolveGain(player, gains), resolvePeak(player, gains));
-            Log.d(TAG, "reapplyCurrentTrackGain: server RG for " + mediaItem.mediaId
-                    + " totalGain=" + totalGain);
-            audioProcessor.setGainImmediate(totalGain);
-            return;
-        }
-
-        List<ReplayGain> gains = gainDataMap.get(mediaItem.mediaId);
-        if (gains != null) {
-            float totalGain = computeTotalGain(resolveGain(player, gains), resolvePeak(player, gains));
-            Log.d(TAG, "reapplyCurrentTrackGain: cache hit for " + mediaItem.mediaId
-                    + " totalGain=" + totalGain);
-            audioProcessor.setGainImmediate(totalGain);
-        } else {
-            Log.d(TAG, "reapplyCurrentTrackGain: cache miss for " + mediaItem.mediaId
-                    + ", no change (gain will be set by onTracksChanged)");
-        }
-    }
-
     public static void setReplayGain(Player player, Tracks tracks) {
         if (tracks == null || tracks.getGroups().isEmpty()) return;
 
@@ -240,9 +212,30 @@ public class ReplayGainUtil {
         List<Metadata> metadataList = extractMetadata(tracks);
         List<ReplayGain> gains = getReplayGains(metadataList);
 
-        if (currentItem != null && currentItem.mediaId != null) {
-            gainDataMap.put(currentItem.mediaId, gains);
-            prefetchedIds.add(currentItem.mediaId);
+        // Guard against a known media3 behaviour: after a seek on a streaming
+        // MP3 (or any format where ReplayGain tags live only in the file
+        // header), ExoPlayer fires onTracksChanged with a Tracks object that
+        // covers the new byte-range and therefore carries no ID3/Vorbis
+        // metadata.  In that case getReplayGains() returns all-zero gains and
+        // setGainImmediate(0 dB) would silently undo the correct gain that was
+        // applied at track start.
+        //
+        // If the extracted gains are empty AND we already have a valid cached
+        // result for this track, keep the cached value.  The cache is populated
+        // on first play (via onTracksChanged with the full header data) and by
+        // the MetadataRetriever prefetch path, so it is always authoritative
+        // when present.
+        String mediaId = (currentItem != null) ? currentItem.mediaId : null;
+        List<ReplayGain> cached = (mediaId != null) ? gainDataMap.get(mediaId) : null;
+        boolean extractedIsEmpty = resolveTrackGain(gains) == 0f
+                && resolveAlbumGain(gains) == 0f;
+        if (extractedIsEmpty && cached != null) {
+            Log.d(TAG, "setReplayGain: extracted gains empty (seek past header?), "
+                    + "keeping cached gains for " + mediaId);
+            gains = cached;
+        } else if (mediaId != null) {
+            gainDataMap.put(mediaId, gains);
+            prefetchedIds.add(mediaId);
         }
 
         float gain = resolveGain(player, gains);
