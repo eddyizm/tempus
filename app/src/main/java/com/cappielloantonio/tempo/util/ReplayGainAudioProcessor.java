@@ -42,6 +42,14 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     private boolean ramping = false;
 
+    // Set to true when onConfigure() is called while endOfStreamPending is true.
+    // A gapless transition with a format change always triggers onConfigure()
+    // between onQueueEndOfStream() and onFlush(), whereas a seek within the
+    // same track (even after the decoder has run ahead) never changes the format
+    // and therefore never calls onConfigure(). This lets onFlush() distinguish
+    // the two cases and avoid applying the next-track's gain after a seek.
+    private boolean reconfiguredSinceEndOfStream = false;
+
     // Tracks whether any samples have been processed since the last flush.
     // onFlush() is called both at initial audio-sink configuration (before
     // any audio has played) AND at mid-stream format-change transitions.
@@ -78,49 +86,70 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         }
         rampTotalFrames = Math.max(1,
                 (int) (inputAudioFormat.sampleRate * RAMP_DURATION_SECONDS));
-        return inputAudioFormat;   
+        // If we're in an end-of-stream state, a reconfigure means this is a
+        // gapless transition with a format change (not a seek). Record this so
+        // onFlush() can distinguish the two cases.
+        if (endOfStreamPending) {
+            reconfiguredSinceEndOfStream = true;
+        }
+        return inputAudioFormat;
     }
 
     @Override
     protected void onFlush() {
-        // Only promote the pending gain if this flush represents a real
-        // mid-stream boundary (some samples have already flowed through
-        // the processor). The initial configure→flush that runs before
-        // the first track starts playing must NOT steal the pending gain
-        // that was queued for the next track — doing so applies track
-        // B's gain to track A.
-        // endOfStreamPending guards against seeks: ExoPlayer calls onFlush()
-        // for both seeks and format-change track transitions, but only calls
-        // onQueueEndOfStream() for the latter. Without this check a seek
-        // mid-track incorrectly promotes the next track's (or fallback) gain.
-        if (hasPendingFlushGain && hasProcessedAnyInput && endOfStreamPending) {
+        // Only promote the pending gain if this flush represents a gapless
+        // transition with an audio format change. The three required conditions:
+        //
+        //  1. hasPendingFlushGain  — a gain was queued for the next track.
+        //  2. hasProcessedAnyInput — real audio has already flowed through,
+        //                            so this is not the initial startup flush.
+        //  3. endOfStreamPending   — the decoder reached the end of the
+        //                            current stream before the flush.
+        //  4. reconfiguredSinceEndOfStream — onConfigure() fired between
+        //                            onQueueEndOfStream() and here, which only
+        //                            happens on a format-change gapless
+        //                            transition, NOT on a seek within the
+        //                            same track (even if the decoder ran ahead).
+        //
+        // Without condition 4, a seek that happens after the decoder has
+        // already reached end-of-stream (decoder runs ahead of audio output)
+        // is indistinguishable from a gapless format-change. Without the guard,
+        // the seek incorrectly promotes the next track's (or fallback) gain,
+        // causing an audible volume jump on resume.
+        if (hasPendingFlushGain && hasProcessedAnyInput
+                && endOfStreamPending && reconfiguredSinceEndOfStream) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;
             hasPendingFlushGain = false;
             ramping = false;
         }
         endOfStreamPending = false;
+        reconfiguredSinceEndOfStream = false;
         hasProcessedAnyInput = false;
     }
 
     /**
      * Called when the current stream has no more input.  For gapless
      * transitions with the same audio format, media3 1.8's DefaultAudioSink
-     * does NOT call flush() between tracks — only queueEndOfStream().
-     * Activating the pending gain here (in addition to onFlush) ensures the
-     * next track's first samples get the correct gain in queueInput, since
-     * onQueueEndOfStream fires at the decoder stream boundary BEFORE the
-     * next track's samples enter the pipeline.
+     * does NOT call flush() between tracks — only queueEndOfStream() —
+     * so the pending gain for that case is promoted in queueInput() below
+     * when the first samples of the new track arrive.
+     *
+     * For gapless transitions with a format change, onConfigure() fires
+     * after this and sets reconfiguredSinceEndOfStream = true, allowing
+     * onFlush() to safely promote the pending gain there instead.
+     *
+     * We intentionally do NOT change activeGainLinear/targetGainLinear here.
+     * The old behaviour of doing so was the source of the seek volume bug:
+     * if the decoder ran ahead to the end of the current track while the
+     * user was still listening mid-track, and the user then sought backward,
+     * the next-track gain was already baked into activeGainLinear and could
+     * not be undone by onFlush() (which could no longer distinguish the seek
+     * from a legitimate gapless transition).
      */
     @Override
     protected void onQueueEndOfStream() {
         endOfStreamPending = true;
-        if (hasPendingFlushGain) {
-            activeGainLinear = pendingFlushGainLinear;
-            targetGainLinear = pendingFlushGainLinear;
-            hasPendingFlushGain = false;
-            ramping = false;
-        }
     }
 
     @Override
@@ -130,6 +159,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         pendingFlushGainLinear = 1.0f;
         hasPendingFlushGain = false;
         endOfStreamPending = false;
+        reconfiguredSinceEndOfStream = false;
         ramping = false;
         hasProcessedAnyInput = false;
     }
@@ -143,6 +173,17 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         // subsequent onFlush() knows it's a mid-stream boundary (safe to
         // consume pending) rather than the initial startup flush.
         hasProcessedAnyInput = true;
+
+        // Gapless same-format transition: onQueueEndOfStream() was called
+        // (decoder finished the previous track) and the first samples of the
+        // new track are now arriving without any intervening onFlush() or
+        // onConfigure(). This is the only opportunity to apply the pending
+        // gain for same-format gapless playback.
+        if (endOfStreamPending && hasPendingFlushGain) {
+            targetGainLinear = pendingFlushGainLinear;
+            hasPendingFlushGain = false;
+            endOfStreamPending = false;
+        }
 
         float target = targetGainLinear;
         if (!ramping && Math.abs(target - activeGainLinear) > 0.0001f) {
