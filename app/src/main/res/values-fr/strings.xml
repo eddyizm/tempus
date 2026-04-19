@@ -17,7 +17,9 @@
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artistes</string>
     <string name="aa_starred_tracks">★ Titres</string>
-	
+    <string name="aa_instant_mix">Mix instantané</string>
+    <string name="aa_view_by_albums">Vue par albums</string>
+
     <string name="activity_battery_optimizations_conclusion">Si vous rencontrez un problème, visitez https://dontkillmyapp.com. Des instructions pour désactiver les fonctions de sauvegarde d\'énergie qui pourrait affecter les performance de l\'app y sont disponibles.</string>
     <string name="activity_battery_optimizations_summary">Veuillez désactiver les optimisations de la batterie pour permettre la lecture des médias lorsque l\'écran est éteint.</string>
     <string name="activity_battery_optimizations_title">Optimisations de la batterie</string>
@@ -198,6 +200,7 @@
     <string name="library_title_music_folder">Dossiers de musiques</string>
     <string name="library_title_playlist">Playlists</string>
     <string name="library_title_playlist_see_all_button">Voir tout</string>
+    <string name="library_toast_long_press_to_refresh">Appui long pour rafraîchir</string>
     <string name="login_empty">Aucun serveur ajouté</string>
     <string name="login_title">Serveurs Subsonic</string>
     <string name="login_title_expanded">Serveurs Subsonic</string>
@@ -337,7 +340,7 @@
     <string name="settings_allow_playlist_duplicates">Autoriser l\'ajout de doublons à une playlist</string>
     <string name="settings_allow_playlist_duplicates_summary">Si activé, les doublons ne seront pas détectés à l\'ajout d\'un titre à une playlist.</string>
 	<string name="settings_androidauto">Android Auto</string>
-	<string name="settings_androidauto_album_view">Vue en grille des albums</string>
+	<string name="settings_androidauto_album_view">Vue en grille des albums et des artistes</string>
 	<string name="settings_androidauto_home_view">Vue en grille du menu accueil</string>
     <string name="settings_androidauto_playlist_view">Vue en grille des playlists</string>
     <string name="settings_androidauto_podcast_view">Vue en grille des podcasts</string>
