@@ -245,6 +245,67 @@ public class ReplayGainUtil {
         queuePendingForNextTrack(player);
     }
 
+    /**
+     * Re-asserts the correct gain for the track that is currently playing.
+     *
+     * <p>Called from {@code onPositionDiscontinuity} whenever the user seeks
+     * within the same track.  The problem it solves: ExoPlayer's decoder can
+     * run ahead of the playhead, causing {@code onQueueEndOfStream()} to fire
+     * before the seek is even issued.  That leaves
+     * {@code endOfStreamPending = true} in the audio processor.  When the seek
+     * then triggers {@code onFlush()}, the processor sees all three
+     * preconditions satisfied ({@code hasPendingFlushGain &amp;&amp;
+     * hasProcessedAnyInput &amp;&amp; endOfStreamPending}) and incorrectly
+     * promotes the <em>next</em> track's pending gain onto the current track.
+     * If that pending gain is the fallback 0 dB value (no RG data cached for
+     * the next track yet), the audio jumps to unity gain — the dramatic volume
+     * increase the user hears.
+     *
+     * <p>This method is intentionally narrow: it only calls
+     * {@link ReplayGainAudioProcessor#setGainImmediate} to restore the right
+     * level; it does <em>not</em> touch the pending gain for the next track
+     * (already queued correctly) and does <em>not</em> call
+     * {@link #queuePendingForNextTrack} again.
+     */
+    public static void reapplyCurrentTrackGain(Player player) {
+        MediaItem currentItem = player.getCurrentMediaItem();
+        if (currentItem == null || currentItem.mediaId == null) {
+            Log.d(TAG, "reapplyCurrentTrackGain: no current item, skipping");
+            return;
+        }
+
+        // Fast path: server-supplied RG on the MediaItem (OpenSubsonic).
+        ReplayGainInfo serverInfo = extractServerInfo(currentItem);
+        if (serverInfo != null) {
+            List<ReplayGain> gains = serverInfoToGains(serverInfo);
+            float gain = resolveGain(player, gains);
+            float peak = resolvePeak(player, gains);
+            float totalGain = computeTotalGain(gain, peak);
+            Log.d(TAG, "reapplyCurrentTrackGain: server RG for " + currentItem.mediaId
+                    + " totalGain=" + totalGain);
+            audioProcessor.setGainImmediate(totalGain);
+            return;
+        }
+
+        // Fallback: tag-based gains from the in-memory cache.
+        List<ReplayGain> cached = gainDataMap.get(currentItem.mediaId);
+        if (cached != null) {
+            float gain = resolveGain(player, cached);
+            float peak = resolvePeak(player, cached);
+            float totalGain = computeTotalGain(gain, peak);
+            Log.d(TAG, "reapplyCurrentTrackGain: cache hit for " + currentItem.mediaId
+                    + " totalGain=" + totalGain);
+            audioProcessor.setGainImmediate(totalGain);
+            return;
+        }
+
+        // No data available yet — leave the current gain unchanged rather than
+        // snapping to an arbitrary value.  onTracksChanged / the late-prefetch
+        // callback will apply the correct gain once data arrives.
+        Log.d(TAG, "reapplyCurrentTrackGain: no cached data for "
+                + currentItem.mediaId + ", keeping current gain");
+    }
+
     private static void queuePendingForNextTrack(Player player) {
         int nextIndex = player.getNextMediaItemIndex();
         if (nextIndex == C.INDEX_UNSET) return;
