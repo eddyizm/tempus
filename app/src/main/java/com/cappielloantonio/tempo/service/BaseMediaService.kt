@@ -142,25 +142,16 @@ open class BaseMediaService : MediaLibraryService() {
 
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
-            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                if (reason == Player.TIMELINE_CHANGE_REASON_PLAYLIST_CHANGED) {
-                    Log.d(TAG, "onTimelineChanged: syncing local database queue")
-                    val mediaItems = (0 until player.mediaItemCount).map { player.getMediaItemAt(it) }
-                    val children = mediaItems.mapNotNull { MappingUtil.mapToChild(it) }
-                    QueueRepository().insertAll(children, true, 0)
-                }
-            }
-
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
 
-                // --- Add for AA : aa_start_index if présent ---
+                // --- Add for AA : Constants.AA_START_INDEX if présent ---
                 val extras = mediaItem.mediaMetadata.extras
-                val startIndex = extras?.getInt("aa_start_index", -1) ?: -1
+                val startIndex = extras?.getInt(Constants.AA_START_INDEX, -1) ?: -1
                 if (startIndex >= 0 ) {
                     val cleanExtras = Bundle(extras).apply {
-                        remove("aa_start_index")
+                        remove(Constants.AA_START_INDEX)
                     }
                     val newMetadata = mediaItem.mediaMetadata.buildUpon()
                         .setExtras(cleanExtras)

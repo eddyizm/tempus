@@ -19,6 +19,8 @@ object Constants {
     const val MUSIC_DIRECTORY_OBJECT = "MUSIC_DIRECTORY_OBJECT"
     const val MUSIC_INDEX_OBJECT = "MUSIC_DIRECTORY_OBJECT"
     const val MUSIC_DIRECTORY_ID = "MUSIC_DIRECTORY_ID"
+    const val ALBUMS_OBJECT = "ALBUMS_OBJECT"
+    const val ALBUM_LIST_TITLE = "ALBUM_LIST_TITLE"
 
     const val ALBUM_RECENTLY_PLAYED = "ALBUM_RECENTLY_PLAYED"
     const val ALBUM_MOST_PLAYED = "ALBUM_MOST_PLAYED"
@@ -130,4 +132,46 @@ object Constants {
     enum class SeedType {
         ARTIST, ALBUM, TRACK
     }
+
+    // Android Root function
+    const val AA_ROOT_ID = "[rootID]"
+    // Android Auto functions
+    const val AA_HOME_ID = "[homeID]"
+    const val AA_LAST_PLAYED_ID = "[lastPlayedID]"
+    const val AA_ALBUMS_ID = "[albumsID]"
+    const val AA_ARTISTS_ID = "[artistsID]"
+    const val AA_MOST_PLAYED_ID = "[mostPlayedID]"
+    const val AA_PLAYLIST_ID = "[playlistID]"
+    const val AA_PODCAST_ID = "[podcastID]"
+    const val AA_RADIO_ID = "[radioID]"
+    const val AA_RECENTLY_ADDED_ID = "[recentlyAddedID]"
+    const val AA_RECENT_SONGS_ID = "[recentSongsID]"
+    const val AA_MADE_FOR_YOU_ID = "[madeForYouID]"
+    const val AA_STARRED_TRACKS_ID = "[starredTracksID]"
+    const val AA_STARRED_ALBUMS_ID = "[starredAlbumsID]"
+    const val AA_STARRED_ARTISTS_ID = "[starredArtistsID]"
+    const val AA_RANDOM_ID = "[randomID]"
+    const val AA_FOLDER_ID = "[folderID]"
+    const val AA_GENRES_ID = "[genresID]"
+
+    // Android Auto System functions
+    const val AA_INDEX_ID = "[indexID]"
+    const val AA_DIRECTORY_ID = "[directoryID]"
+    const val AA_ALBUM_ID = "[albumID]"
+    const val AA_ARTIST_ID = "[artistID]"
+    const val AA_JUMP_TO_ALBUMS_ID = "[jumpToAlbumsID]"
+    const val AA_JUMP_TO_STARRED_ALBUMS_ID = "[jumpToStarredAlbumsID]"
+    const val AA_JUMP_TO_ARTISTS_ID = "[jumpToArtistsID]"
+    const val AA_JUMP_TO_STARRED_ARTISTS_ID = "[jumpToStarredArtistsID]"
+    const val AA_ARTISTS_BY_ALBUMS_ID = "[artistsByAlbumsID]"
+
+    // Android Auto Source tag
+    const val AA_ALBUM_SOURCE = "[albumSource]"
+    const val AA_PLAYLIST_SOURCE = "[playlistSource]"
+
+    const val AA_INSTANTMIX_SOURCE = "[instantMixSource]"
+
+
+    // Android Auto start index extra
+    const val AA_START_INDEX = "aa_start_index"
 }

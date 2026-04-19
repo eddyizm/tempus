@@ -6,7 +6,7 @@
         android:icon="@drawable/ic_search"
         android:title="@string/menu_search_button" />
 
-    <item android:title="Index" >
+    <item android:title="@string/nav_drawer_index">
         <menu>
             <item
                 android:id="@+id/homeFragment"
@@ -31,28 +31,28 @@
 
     </item>
 
-    <item android:title="All" >
+    <item android:title="@string/menu_filter_all" >
         <menu>
             <item
                 android:id="@+id/albumCatalogueFragment"
                 android:icon="@drawable/ic_albums"
-                android:title="Albums" />
+                android:title="@string/library_title_album" />
 
             <item
                 android:id="@+id/artistCatalogueFragment"
                 android:icon="@drawable/ic_artists"
-                android:title="Artists" />
+                android:title="@string/library_title_artist" />
 
 
             <item
                 android:id="@+id/genreCatalogueFragment"
                 android:icon="@drawable/ic_genres"
-                android:title="Genres" />
+                android:title="@string/library_title_genre" />
 
             <item
                 android:id="@+id/playlistCatalogueFragment"
                 android:icon="@drawable/ic_playlist"
-                android:title="Playlists"
+                android:title="@string/library_title_playlist"
                 android:defaultValue="ALL"/>
 
         </menu>

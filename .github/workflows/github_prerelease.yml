@@ -1,0 +1,66 @@
+name: Prerelease Development Build
+
+on:
+  push:
+    tags:
+      - 'v*-dev'  # Matches tags like v4.12.0-dev, v1.2.3-dev, etc.
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - uses: actions/checkout@v3
+        with:
+          ref: development  # Still builds from development branch
+          fetch-depth: 0
+
+      - name: Cache Gradle and wrapper
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build 64-bit Debug APKs
+        run: |
+          bash ./gradlew assembleTempusDebug
+          bash ./gradlew assembleDegoogledDebug
+
+      - name: Prepare APKs
+        run: |
+          mkdir -p prerelease-artifacts
+          
+          # Copy and rename Tempus APK with version from tag
+          cp app/build/outputs/apk/tempus/debug/*arm64-v8a*.apk ./prerelease-artifacts/app-tempus-arm64-v8a-${{ github.ref_name }}.apk 2>/dev/null || true
+          
+          # Copy and rename Degoogled APK with version from tag
+          cp app/build/outputs/apk/degoogled/debug/*arm64-v8a*.apk ./prerelease-artifacts/app-degoogled-arm64-v8a-${{ github.ref_name }}.apk 2>/dev/null || true
+          
+          echo "Prepared APKs with version: ${{ github.ref_name }}"
+
+      - name: Create Prerelease
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          body: |
+            Development prerelease from commit ${{ github.sha }}
+            
+            **Note:** This is a prerelease and may be unstable. We will add a link so you can capture debug logs to help us find issues/bugs.
+            **Branch:** development
+            **Architecture:** 64-bit only (arm64-v8a)
+            **Build type:** Debug (unsigned)
+          draft: false
+          prerelease: true
+          files: ./prerelease-artifacts/*.apk

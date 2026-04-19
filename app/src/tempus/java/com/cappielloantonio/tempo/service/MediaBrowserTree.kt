@@ -16,6 +16,7 @@ import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
 import com.cappielloantonio.tempo.R
+import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.Preferences
 
 object MediaBrowserTree {
@@ -26,32 +27,6 @@ object MediaBrowserTree {
 
     private var isInitialized = false
 
-    // Root
-    private const val ROOT_ID = "[rootID]"
-	// Available functions
-    private const val HOME_ID = "[homeID]"
-    private const val LAST_PLAYED_ID = "[lastPlayedID]"
-    private const val ALBUMS_ID = "[albumsID]"
-    private const val ARTISTS_ID = "[artistsID]"
-    private const val MOST_PLAYED_ID = "[mostPlayedID]"
-    private const val PLAYLIST_ID = "[playlistID]"
-    private const val PODCAST_ID = "[podcastID]"
-    private const val RADIO_ID = "[radioID]"
-    private const val RECENTLY_ADDED_ID = "[recentlyAddedID]"
-    private const val RECENT_SONGS_ID = "[recentSongsID]"
-    private const val MADE_FOR_YOU_ID = "[madeForYouID]"
-    private const val STARRED_TRACKS_ID = "[starredTracksID]"
-    private const val STARRED_ALBUMS_ID = "[starredAlbumsID]"
-    private const val STARRED_ARTISTS_ID = "[starredArtistsID]"
-    private const val RANDOM_ID = "[randomID]"
-    private const val FOLDER_ID = "[folderID]"
-    private const val GENRES_ID = "[genresID]"
-
-	// System functions
-    private const val INDEX_ID = "[indexID]"
-    private const val DIRECTORY_ID = "[directoryID]"
-    private const val ALBUM_ID = "[albumID]"
-    private const val ARTIST_ID = "[artistID]"
 
     private fun iconUri(resId: Int): Uri =
         Uri.parse("android.resource://${BuildConfig.APPLICATION_ID}/$resId")
@@ -159,32 +134,32 @@ object MediaBrowserTree {
 
         // This list must be exactly the same as the one in aa_tab_titles
         val allFunctions = listOf(
-            HOME_ID,
-            LAST_PLAYED_ID,
-            ALBUMS_ID,
-            ARTISTS_ID,
-            PLAYLIST_ID,
-            PODCAST_ID,
-            RADIO_ID,
-            FOLDER_ID,
-            MOST_PLAYED_ID,
-            // RECENT_SONGS_ID,            // => doesn't work !
-            RECENTLY_ADDED_ID,
-            // MADE_FOR_YOU_ID,            // => doesn't work !
-            STARRED_TRACKS_ID,
-            STARRED_ALBUMS_ID,
-            STARRED_ARTISTS_ID,
-            RANDOM_ID,
-            GENRES_ID
+            Constants.AA_HOME_ID,
+            Constants.AA_LAST_PLAYED_ID,
+            Constants.AA_ALBUMS_ID,
+            Constants.AA_ARTISTS_ID,
+            Constants.AA_PLAYLIST_ID,
+            Constants.AA_PODCAST_ID,
+            Constants.AA_RADIO_ID,
+            Constants.AA_FOLDER_ID,
+            Constants.AA_MOST_PLAYED_ID,
+            //Constants.AA_RECENT_SONGS_ID,            // => doesn't work !
+            Constants.AA_RECENTLY_ADDED_ID,
+            //Constants.AA_MADE_FOR_YOU_ID,            // => doesn't work !
+            Constants.AA_STARRED_TRACKS_ID,
+            Constants.AA_STARRED_ALBUMS_ID,
+            Constants.AA_STARRED_ARTISTS_ID,
+            Constants.AA_RANDOM_ID,
+            Constants.AA_GENRES_ID
         )
 
         // Root level
-        treeNodes[ROOT_ID] =
+        treeNodes[Constants.AA_ROOT_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = "Root Folder",
-                    mediaId = ROOT_ID,
+                    mediaId = Constants.AA_ROOT_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
@@ -194,12 +169,12 @@ object MediaBrowserTree {
 		// All available functions
 		// if HOME is in first place or no item is selected
 		if (tabIndex.firstOrNull() == 0 || tabIndex.all { it == -1 }){
-			treeNodes[HOME_ID] =
+			treeNodes[Constants.AA_HOME_ID] =
 				MediaItemNode(
 					buildMediaItem(
 						gridView = homeView,
 						title = appContext.getString(R.string.aa_home),
-						mediaId = HOME_ID,
+						mediaId = Constants.AA_HOME_ID,
 						isPlayable = false,
 						isBrowsable = true,
 						imageUri = iconUri(R.drawable.ic_aa_home),
@@ -208,12 +183,12 @@ object MediaBrowserTree {
 				)
 		}
 		else { // More instead of Home
-			treeNodes[HOME_ID] =
+			treeNodes[Constants.AA_HOME_ID] =
 				MediaItemNode(
 					buildMediaItem(
 						gridView = homeView,
 						title = appContext.getString(R.string.aa_more),
-						mediaId = HOME_ID,
+						mediaId = Constants.AA_HOME_ID,
 						isPlayable = false,
 						isBrowsable = true,
 						imageUri = iconUri(R.drawable.ic_aa_other),
@@ -222,12 +197,12 @@ object MediaBrowserTree {
 				)
 		}
 		
-        treeNodes[LAST_PLAYED_ID] =
+        treeNodes[Constants.AA_LAST_PLAYED_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_recent_albums),
-                    mediaId = LAST_PLAYED_ID,
+                    mediaId = Constants.AA_LAST_PLAYED_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_recent),
@@ -235,12 +210,12 @@ object MediaBrowserTree {
                 )
             )
 			
-        treeNodes[ALBUMS_ID] =
+        treeNodes[Constants.AA_ALBUMS_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_albums),
-                    mediaId = ALBUMS_ID,
+                    mediaId = Constants.AA_ALBUMS_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_albums),
@@ -248,12 +223,12 @@ object MediaBrowserTree {
                 )
             )
 			
-        treeNodes[ARTISTS_ID] =
+        treeNodes[Constants.AA_ARTISTS_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_artists),
-                    mediaId = ARTISTS_ID,
+                    mediaId = Constants.AA_ARTISTS_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_artists),
@@ -261,12 +236,12 @@ object MediaBrowserTree {
                 )
             )
 			
-        treeNodes[PLAYLIST_ID] =
+        treeNodes[Constants.AA_PLAYLIST_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = playlistView,
                     title = appContext.getString(R.string.aa_playlists),
-                    mediaId = PLAYLIST_ID,
+                    mediaId = Constants.AA_PLAYLIST_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_playlist),
@@ -274,12 +249,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[PODCAST_ID] =
+        treeNodes[Constants.AA_PODCAST_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = podcastView,
                     title = appContext.getString(R.string.aa_podcast),
-                    mediaId = PODCAST_ID,
+                    mediaId = Constants.AA_PODCAST_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_podcasts),
@@ -287,12 +262,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[RADIO_ID] =
+        treeNodes[Constants.AA_RADIO_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = radioView,
                     title = appContext.getString(R.string.aa_radio),
-                    mediaId = RADIO_ID,
+                    mediaId = Constants.AA_RADIO_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_radio),
@@ -300,24 +275,24 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[MOST_PLAYED_ID] =
+        treeNodes[Constants.AA_MOST_PLAYED_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_album_most_played),
-                    mediaId = MOST_PLAYED_ID,
+                    mediaId = Constants.AA_MOST_PLAYED_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_mostplayed),
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS
                 )
             )
-        treeNodes[RECENTLY_ADDED_ID] =
+        treeNodes[Constants.AA_RECENTLY_ADDED_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_album_recently_added),
-                    mediaId = RECENTLY_ADDED_ID,
+                    mediaId = Constants.AA_RECENTLY_ADDED_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_added_album),
@@ -325,12 +300,12 @@ object MediaBrowserTree {
                 )
             )
 		
-        treeNodes[RECENT_SONGS_ID] =
+        treeNodes[Constants.AA_RECENT_SONGS_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = false,
                     title = appContext.getString(R.string.aa_song_recently_played),
-                    mediaId = RECENT_SONGS_ID,
+                    mediaId = Constants.AA_RECENT_SONGS_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_recent_title),
@@ -338,12 +313,12 @@ object MediaBrowserTree {
                 )
             )
 		
-        treeNodes[MADE_FOR_YOU_ID] =
+        treeNodes[Constants.AA_MADE_FOR_YOU_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_made_for_you),
-                    mediaId = MADE_FOR_YOU_ID,
+                    mediaId = Constants.AA_MADE_FOR_YOU_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_for_you),
@@ -351,12 +326,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[STARRED_TRACKS_ID] =
+        treeNodes[Constants.AA_STARRED_TRACKS_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = false,
                     title = appContext.getString(R.string.aa_starred_tracks),
-                    mediaId = STARRED_TRACKS_ID,
+                    mediaId = Constants.AA_STARRED_TRACKS_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_star_title),
@@ -364,12 +339,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[STARRED_ALBUMS_ID] =
+        treeNodes[Constants.AA_STARRED_ALBUMS_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_starred_albums),
-                    mediaId = STARRED_ALBUMS_ID,
+                    mediaId = Constants.AA_STARRED_ALBUMS_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_star_album),
@@ -377,12 +352,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[STARRED_ARTISTS_ID] =
+        treeNodes[Constants.AA_STARRED_ARTISTS_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = albumView,
                     title = appContext.getString(R.string.aa_starred_artists),
-                    mediaId = STARRED_ARTISTS_ID,
+                    mediaId = Constants.AA_STARRED_ARTISTS_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_artists),
@@ -390,12 +365,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[FOLDER_ID] =
+        treeNodes[Constants.AA_FOLDER_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = false,
                     title = appContext.getString(R.string.aa_music_folder),
-                    mediaId = FOLDER_ID,
+                    mediaId = Constants.AA_FOLDER_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_folders),
@@ -403,12 +378,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[RANDOM_ID] =
+        treeNodes[Constants.AA_RANDOM_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = false,
                     title = appContext.getString(R.string.aa_random),
-                    mediaId = RANDOM_ID,
+                    mediaId = Constants.AA_RANDOM_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_random),
@@ -416,12 +391,12 @@ object MediaBrowserTree {
                 )
             )
 
-        treeNodes[GENRES_ID] =
+        treeNodes[Constants.AA_GENRES_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = false,
                     title = appContext.getString(R.string.aa_genres),
-                    mediaId = GENRES_ID,
+                    mediaId = Constants.AA_GENRES_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_genres),
@@ -429,7 +404,7 @@ object MediaBrowserTree {
                 )
             )
 
-        val root = treeNodes[ROOT_ID]!!
+        val root = treeNodes[Constants.AA_ROOT_ID]!!
         val selectedIds = mutableSetOf<String>()
 
         // First level
@@ -445,8 +420,8 @@ object MediaBrowserTree {
             }
 		// if no function is selected, add at least HOME_ID
         if (selectedIds.isEmpty()) {
-            root.addChild(HOME_ID)
-            selectedIds.add(HOME_ID)
+            root.addChild(Constants.AA_HOME_ID)
+            selectedIds.add(Constants.AA_HOME_ID)
         }
 
         // Second level for HOME_ID even there is no HOME_ID displayed
@@ -454,37 +429,43 @@ object MediaBrowserTree {
         allFunctions
             .filter { it !in selectedIds }
             .forEach { function ->
-                treeNodes[HOME_ID]?.addChild(function)
+                treeNodes[Constants.AA_HOME_ID]?.addChild(function)
             }
 	}
 	
     fun getRootItem(): MediaItem {
-        return treeNodes[ROOT_ID]!!.item
+        return treeNodes[Constants.AA_ROOT_ID]!!.item
     }
 
     fun getChildren(
         id: String
     ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
         return when (id) {
-            ROOT_ID -> treeNodes[ROOT_ID]?.getChildren()!!
+            Constants.AA_ROOT_ID -> treeNodes[Constants.AA_ROOT_ID]?.getChildren()!!
 
-            HOME_ID -> treeNodes[HOME_ID]?.getChildren()!!
-            LAST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "recent", 15)
-            ALBUMS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByName", 500)
-            ARTISTS_ID -> automotiveRepository.getAlbums(ALBUM_ID, "alphabeticalByArtist", 500)
-            PLAYLIST_ID -> automotiveRepository.getPlaylists(PLAYLIST_ID)
-            PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
-            RADIO_ID -> automotiveRepository.getInternetRadioStations() //internetRadioStations
-            FOLDER_ID -> automotiveRepository.getMusicFolders(FOLDER_ID)
-            MOST_PLAYED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "frequent", 15)
-            //RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
-            RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(ALBUM_ID, "newest", 15)
-            //MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
-            STARRED_TRACKS_ID -> automotiveRepository.starredSongs
-            STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(ALBUM_ID)
-            STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(ARTIST_ID)
-            RANDOM_ID -> automotiveRepository.getRandomSongs(100)
-            GENRES_ID -> automotiveRepository.getGenres(GENRES_ID)
+            Constants.AA_HOME_ID -> treeNodes[Constants.AA_HOME_ID]?.getChildren()!!
+            Constants.AA_LAST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "recent", 15, false)
+            Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, true)
+            Constants.AA_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, 500, true)
+            Constants.AA_PLAYLIST_ID -> automotiveRepository.getPlaylists(Constants.AA_PLAYLIST_ID)
+            Constants.AA_PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
+            Constants.AA_RADIO_ID -> automotiveRepository.getInternetRadioStations()
+            Constants.AA_FOLDER_ID -> automotiveRepository.getMusicFolders(Constants.AA_FOLDER_ID)
+            Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15, false)
+            //Constants.AA_RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
+            Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
+            //Constants.AA_MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
+            Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.starredSongs
+            Constants.AA_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, true)
+            Constants.AA_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, true)
+            Constants.AA_RANDOM_ID -> automotiveRepository.getRandomSongs(100)
+            Constants.AA_GENRES_ID -> automotiveRepository.getGenres(Constants.AA_GENRES_ID)
+
+            Constants.AA_JUMP_TO_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, false)
+            Constants.AA_JUMP_TO_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, false)
+            Constants.AA_JUMP_TO_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, 500, false)
+            Constants.AA_JUMP_TO_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, false)
+            Constants.AA_ARTISTS_BY_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByArtist", 500, false)
 
             else -> {
 				/*
@@ -493,35 +474,35 @@ object MediaBrowserTree {
                 }
                 */
 
-                if (id.startsWith(GENRES_ID)) {
+                if (id.startsWith(Constants.AA_GENRES_ID)) {
                     val shuffle = Preferences.isAndroidAutoShuffleGenreSongsEnabled()
                     // If the user doesn't want random songs, it's likely it's for perusing them, so provide as many as possible
                     val count = if (shuffle) 100 else 500
-                    return automotiveRepository.getSongsByGenre(id.removePrefix(GENRES_ID), count, shuffle)
+                    return automotiveRepository.getSongsByGenre(id.removePrefix(Constants.AA_GENRES_ID), count, shuffle)
                 }
 
-                if (id.startsWith(PLAYLIST_ID)) {
-                    return automotiveRepository.getPlaylistSongs(id.removePrefix(PLAYLIST_ID))
+                if (id.startsWith(Constants.AA_PLAYLIST_ID)) {
+                    return automotiveRepository.getPlaylistSongs(id.removePrefix(Constants.AA_PLAYLIST_ID))
                 }
 
-                if (id.startsWith(ALBUM_ID)) {
-                    return automotiveRepository.getAlbumTracks(id.removePrefix(ALBUM_ID))
+                if (id.startsWith(Constants.AA_ALBUM_ID)) {
+                    return automotiveRepository.getAlbumTracks(id.removePrefix(Constants.AA_ALBUM_ID))
                 }
 
-                if (id.startsWith(ARTIST_ID)) {
-                    return automotiveRepository.getArtistAlbum(ALBUM_ID,id.removePrefix(ARTIST_ID))
+                if (id.startsWith(Constants.AA_ARTIST_ID)) {
+                    return automotiveRepository.getArtistAlbum(Constants.AA_ALBUM_ID,id.removePrefix(Constants.AA_ARTIST_ID))
                 }
 
-                if (id.startsWith(FOLDER_ID)) {
-                    return automotiveRepository.getIndexes(INDEX_ID,id.removePrefix(FOLDER_ID))
+                if (id.startsWith(Constants.AA_FOLDER_ID)) {
+                    return automotiveRepository.getIndexes(Constants.AA_INDEX_ID,id.removePrefix(Constants.AA_FOLDER_ID))
                 }
 
-                if (id.startsWith(INDEX_ID)) {
-                    return automotiveRepository.getDirectories(DIRECTORY_ID,id.removePrefix(INDEX_ID))
+                if (id.startsWith(Constants.AA_INDEX_ID)) {
+                    return automotiveRepository.getDirectories(Constants.AA_DIRECTORY_ID,id.removePrefix(Constants.AA_INDEX_ID))
                 }
 
-                if (id.startsWith(DIRECTORY_ID)) {
-                    return automotiveRepository.getDirectories(DIRECTORY_ID,id.removePrefix(DIRECTORY_ID))
+                if (id.startsWith(Constants.AA_DIRECTORY_ID)) {
+                    return automotiveRepository.getDirectories(Constants.AA_DIRECTORY_ID,id.removePrefix(Constants.AA_DIRECTORY_ID))
                 }
 
                 return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE))
@@ -532,8 +513,8 @@ object MediaBrowserTree {
     fun search(query: String): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
         return automotiveRepository.search(
             query,
-            ALBUM_ID,
-            ARTIST_ID
+            Constants.AA_ALBUM_ID,
+            Constants.AA_ARTIST_ID
         )
     }
 }

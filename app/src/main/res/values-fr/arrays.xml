@@ -138,8 +138,8 @@
         <item>Lecture directe</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_wifi_list_values">
         <item>raw</item>
@@ -153,8 +153,8 @@
         <item>Lecture directe</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_mobile_list_values">
         <item>raw</item>
@@ -168,8 +168,8 @@
         <item>Téléchargement direct</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_download_list_values">
         <item>raw</item>
@@ -217,7 +217,7 @@
     <string-array name="transcoded_download_option_list_titles">
         <item>Ne pas transcoder</item>
         <item>Réglages du serveur</item>
-        <item>Format de transcodage (Wi-FI)</item>
+        <item>Format de transcodage (Wi-Fi)</item>
         <item>Format de transcodage (Mobile)</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
@@ -280,7 +280,7 @@
         <item>Podcast</item>
         <item>Radio</item>
         <item>Dossiers</item>
-        <item>Albums plus joués</item>
+        <item>Albums les plus joués</item>
 	<!--	<item>Titres joués</item> -->
         <item>Albums ajouté</item>
     <!--    <item>Pour vous</item> -->

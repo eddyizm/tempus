@@ -37,7 +37,8 @@ import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
-import com.cappielloantonio.tempo.ui.adapter.AlbumCatalogueAdapter;
+import com.cappielloantonio.tempo.ui.adapter.AlbumCarouselAdapter;
+import com.cappielloantonio.tempo.ui.adapter.ArtistCarouselAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistCatalogueAdapter;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
@@ -60,8 +61,15 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private PlaybackViewModel playbackViewModel;
 
     private SongHorizontalAdapter songHorizontalAdapter;
-    private AlbumCatalogueAdapter albumCatalogueAdapter;
-    private ArtistCatalogueAdapter artistCatalogueAdapter;
+    private AlbumCarouselAdapter mainAlbumAdapter;
+    private AlbumCarouselAdapter epAdapter;
+    private AlbumCarouselAdapter singleAdapter;
+    private AlbumCarouselAdapter compilationAdapter;
+    private AlbumCarouselAdapter soundtrackAdapter;
+    private AlbumCarouselAdapter liveAdapter;
+    private AlbumCarouselAdapter remixAdapter;
+    private AlbumCarouselAdapter appearsOnAdapter;
+    private ArtistCarouselAdapter similarArtistAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -86,7 +94,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         initArtistInfo();
         initPlayButtons();
         initTopSongsView();
-        initAlbumsView();
+        initCategorizedAlbumsView();
         initSimilarArtistsView();
 
         return view;
@@ -120,6 +128,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
 
     private void init(View view) {
         artistPageViewModel.setArtist(requireArguments().getParcelable(Constants.ARTIST_OBJECT));
+        artistPageViewModel.fetchCategorizedAlbums(getViewLifecycleOwner());
 
         bind.mostStreamedSongTextViewClickable.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -277,31 +286,168 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             if (songs == null) {
                 if (bind != null) bind.artistPageTopSongsSector.setVisibility(View.GONE);
             } else {
-                if (bind != null)
+                if (bind != null) {
                     bind.artistPageTopSongsSector.setVisibility(!songs.isEmpty() ? View.VISIBLE : View.GONE);
-                songHorizontalAdapter.setItems(songs);
+                    bind.mostStreamedSongTextViewClickable.setVisibility(songs.size() > 3 ? View.VISIBLE : View.GONE);
+                }
+                songHorizontalAdapter.setItems(songs.stream().limit(3).collect(java.util.stream.Collectors.toList()));
                 reapplyPlayback();
             }
         });
     }
 
-    private void initAlbumsView() {
-        bind.albumsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
-        bind.albumsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
-        bind.albumsRecyclerView.setHasFixedSize(true);
+    private void initCategorizedAlbumsView() {
 
-        albumCatalogueAdapter = new AlbumCatalogueAdapter(this, false);
-        bind.albumsRecyclerView.setAdapter(albumCatalogueAdapter);
+        /*
+        PRIMARY TYPES
+         */
 
-        artistPageViewModel.getAlbumList().observe(getViewLifecycleOwner(), albums -> {
-            if (albums == null) {
-                if (bind != null) bind.artistPageAlbumsSector.setVisibility(View.GONE);
-            } else {
-                if (bind != null)
-                    bind.artistPageAlbumsSector.setVisibility(!albums.isEmpty() ? View.VISIBLE : View.GONE);
-                albumCatalogueAdapter.setItems(albums);
+        // Albums
+        bind.mainAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.mainAlbumsRecyclerView.setHasFixedSize(true);
+        bind.mainAlbumsRecyclerView.setNestedScrollingEnabled(false);
+        mainAlbumAdapter = new AlbumCarouselAdapter(this, false);
+        bind.mainAlbumsRecyclerView.setAdapter(mainAlbumAdapter);
+        artistPageViewModel.getMainAlbums().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageMainAlbumsSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.mainAlbumsSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    mainAlbumAdapter.setItems(albums);
+                    bind.mainAlbumsSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_album_section), albums));
+                }
             }
         });
+
+        // EPs
+        bind.epsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.epsRecyclerView.setHasFixedSize(true);
+        bind.epsRecyclerView.setNestedScrollingEnabled(false);
+        epAdapter = new AlbumCarouselAdapter(this, false);
+        bind.epsRecyclerView.setAdapter(epAdapter);
+        artistPageViewModel.getEPs().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageEpsSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.epsSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    epAdapter.setItems(albums);
+                    bind.epsSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_ep_section), albums));
+                }
+            }
+        });
+
+        // Singles
+        bind.singlesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.singlesRecyclerView.setHasFixedSize(true);
+        bind.singlesRecyclerView.setNestedScrollingEnabled(false);
+        singleAdapter = new AlbumCarouselAdapter(this, false);
+        bind.singlesRecyclerView.setAdapter(singleAdapter);
+        artistPageViewModel.getSingles().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageSinglesSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.singlesSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    singleAdapter.setItems(albums);
+                    bind.singlesSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_single_section), albums));
+                }
+            }
+        });
+
+        /*
+        SECONDARY TYPES
+         */
+
+        // Compilations
+        bind.compilationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.compilationsRecyclerView.setHasFixedSize(true);
+        bind.compilationsRecyclerView.setNestedScrollingEnabled(false);
+        compilationAdapter = new AlbumCarouselAdapter(this, false);
+        bind.compilationsRecyclerView.setAdapter(compilationAdapter);
+        artistPageViewModel.getCompilations().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageCompilationsSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.compilationsSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    compilationAdapter.setItems(albums);
+                    bind.compilationsSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_compilation_section), albums));
+                }
+            }
+        });
+
+        // Soundtracks
+        bind.soundtracksRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.soundtracksRecyclerView.setHasFixedSize(true);
+        bind.soundtracksRecyclerView.setNestedScrollingEnabled(false);
+        soundtrackAdapter = new AlbumCarouselAdapter(this, false);
+        bind.soundtracksRecyclerView.setAdapter(soundtrackAdapter);
+        artistPageViewModel.getSoundtracks().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageSoundtracksSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.soundtracksSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    soundtrackAdapter.setItems(albums);
+                    bind.soundtracksSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_soundtrack_section), albums));
+                }
+            }
+        });
+
+        // Lives
+        bind.livesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.livesRecyclerView.setHasFixedSize(true);
+        bind.livesRecyclerView.setNestedScrollingEnabled(false);
+        liveAdapter = new AlbumCarouselAdapter(this, false);
+        bind.livesRecyclerView.setAdapter(liveAdapter);
+        artistPageViewModel.getLives().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageLivesSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.livesSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    liveAdapter.setItems(albums);
+                    bind.livesSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_live_section), albums));
+                }
+            }
+        });
+
+        // Remixes
+        bind.remixesRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.remixesRecyclerView.setHasFixedSize(true);
+        bind.remixesRecyclerView.setNestedScrollingEnabled(false);
+        remixAdapter = new AlbumCarouselAdapter(this, false);
+        bind.remixesRecyclerView.setAdapter(remixAdapter);
+        artistPageViewModel.getRemixes().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageRemixesSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.remixesSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    remixAdapter.setItems(albums);
+                    bind.remixesSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_remix_section), albums));
+                }
+            }
+        });
+
+        // Appears On
+        bind.appearsOnRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.appearsOnRecyclerView.setHasFixedSize(true);
+        bind.appearsOnRecyclerView.setNestedScrollingEnabled(false);
+        appearsOnAdapter = new AlbumCarouselAdapter(this, true); // Show artist name for Appears On
+        bind.appearsOnRecyclerView.setAdapter(appearsOnAdapter);
+        artistPageViewModel.getAppearsOn().observe(getViewLifecycleOwner(), albums -> {
+            if (bind != null) {
+                bind.artistPageAppearsOnSector.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                if (albums != null) {
+                    bind.appearsOnSeeAllTextView.setVisibility(albums.size() > 5 ? View.VISIBLE : View.GONE);
+                    appearsOnAdapter.setItems(albums);
+                    bind.appearsOnSeeAllTextView.setOnClickListener(v -> navigateToAlbumList(getString(R.string.artist_page_title_appears_on_section), albums));
+                }
+            }
+        });
+    }
+
+    private void navigateToAlbumList(String title, List<com.cappielloantonio.tempo.subsonic.models.AlbumID3> albums) {
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.ALBUM_LIST_TITLE, title);
+        bundle.putParcelableArrayList(Constants.ALBUMS_OBJECT, new ArrayList<>(albums));
+        Navigation.findNavController(requireView()).navigate(R.id.albumListPageFragment, bundle);
     }
 
     private void initSimilarArtistsView() {
@@ -309,8 +455,8 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.similarArtistsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
         bind.similarArtistsRecyclerView.setHasFixedSize(true);
 
-        artistCatalogueAdapter = new ArtistCatalogueAdapter(this);
-        bind.similarArtistsRecyclerView.setAdapter(artistCatalogueAdapter);
+        similarArtistAdapter = new ArtistCarouselAdapter(this);
+        bind.similarArtistsRecyclerView.setAdapter(similarArtistAdapter);
 
         artistPageViewModel.getArtistInfo(artistPageViewModel.getArtist().getId()).observe(getViewLifecycleOwner(), artist -> {
             if (artist == null) {
@@ -325,7 +471,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                     artists.addAll(artist.getSimilarArtists());
                 }
 
-                artistCatalogueAdapter.setItems(artists);
+                similarArtistAdapter.setItems(artists);
             }
         });
 

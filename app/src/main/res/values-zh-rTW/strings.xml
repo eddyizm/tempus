@@ -353,8 +353,6 @@
     <string name="settings_audio_transcode_download_priority_title">優先考慮伺服器上用於流式傳輸的設定</string>
     <string name="settings_audio_transcode_download_summary">啟用後 Tempus 將下載轉碼後的歌曲。</string>
     <string name="settings_audio_transcode_download_title">下載轉碼後的歌曲</string>
-    <string name="settings_audio_transcode_estimate_content_length_summary">啟用後將發送請求到伺服器以查詢歌曲的大概持續時間。</string>
-    <string name="settings_audio_transcode_estimate_content_length_title">大概內容長度</string>
     <string name="settings_audio_transcode_format_download">用於下載的轉碼格式</string>
     <string name="settings_audio_transcode_format_mobile">行動資料下的轉碼格式</string>
     <string name="settings_audio_transcode_format_wifi">Wi-Fi 下的轉碼格式</string>

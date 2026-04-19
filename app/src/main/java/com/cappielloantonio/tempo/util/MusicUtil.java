@@ -60,8 +60,6 @@ public class MusicUtil {
             uri.append("&maxBitRate=").append(getBitratePreference());
         if (!Preferences.isServerPrioritized())
             uri.append("&format=").append(getTranscodingFormatPreference());
-        if (Preferences.askForEstimateContentLength())
-            uri.append("&estimateContentLength=true");
         if (timeOffset > 0)
             uri.append("&timeOffset=").append(timeOffset);
 
@@ -92,14 +90,11 @@ public class MusicUtil {
         s = m1.replaceAll("");
         Matcher m2 = FORMAT_PATTERN.matcher(s);
         s = m2.replaceAll("");
-        s = s.replace("&estimateContentLength=true", "");
 
         if (!Preferences.isServerPrioritized())
             s += "&maxBitRate=" + getBitratePreference();
         if (!Preferences.isServerPrioritized())
             s += "&format=" + getTranscodingFormatPreference();
-        if (Preferences.askForEstimateContentLength())
-            s += "&estimateContentLength=true";
 
         return Uri.parse(s);
     }

@@ -1,0 +1,13 @@
+* fix: Tile Size Manager applied to Made For You adapter
+* feat: accordion for settings page
+* feat: extend artist page shelves
+* feat: remove estimate content length
+* fix: queue reset on resume
+* feat(i18n): Update German translation 
+* feat: update French Translations 
+* fix: redundant padding on artist page carousels
+* fix: NPE in MediaManager.scrobble() causing crashing
+* fix: prevent NPE from getView() in SearchFragment 
+* feat: make navigation drawer translatable 
+* feat(i18n): Add spanish latinoamerica translation
+* fix: Continuous Play shuffling bug (issue #378)

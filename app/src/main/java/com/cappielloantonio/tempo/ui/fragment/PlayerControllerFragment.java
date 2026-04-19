@@ -342,7 +342,10 @@ public class PlayerControllerFragment extends Fragment {
             });
 
         playerMediaExtension.setOnClickListener( v -> toggleBitrateVisibility() );
+        playerMediaExtension.setOnLongClickListener(v -> toggleQuickActionVisiblity() );
+
         playerMediaBitrate.setOnClickListener(v -> toggleBitrateVisibility() );
+        playerMediaBitrate.setOnLongClickListener(v -> toggleQuickActionVisiblity() );
     }
 
     private void toggleBitrateVisibility() {
@@ -357,6 +360,20 @@ public class PlayerControllerFragment extends Fragment {
 
         playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.GONE : View.VISIBLE);
         Preferences.setBitrateVisible(!Preferences.getBitrateVisible());
+    }
+
+    private boolean toggleQuickActionVisiblity() {
+        ViewGroup parent = (ViewGroup) playerQuickActionView.getParent();
+
+        TransitionSet transition = new TransitionSet()
+                .addTransition(new Slide(Gravity.BOTTOM))
+                .addTransition(new ChangeBounds())
+                .setDuration(500)
+                .setInterpolator(new AccelerateDecelerateInterpolator());
+        TransitionManager.beginDelayedTransition(parent, transition);
+        playerQuickActionView.setVisibility(Preferences.getQuickActionVisible() ? View.GONE : View.VISIBLE);
+        Preferences.setQuickActionVisible(!Preferences.getQuickActionVisible());
+        return true;
     }
 
     private void updateAssetLinkChips(MediaMetadata mediaMetadata) {

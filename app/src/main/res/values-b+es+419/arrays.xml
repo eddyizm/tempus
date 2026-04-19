@@ -1,8 +1,8 @@
 <resources>
     <string-array name="theme_list_titles">
-        <item>Hell</item>
-        <item>Dunkel</item>
-        <item>Systemvorgabe</item>
+        <item>Claro</item>
+        <item>Oscuro</item>
+        <item>Predeterminado del sistema</item>
     </string-array>
     <string-array name="theme_list_values">
         <item>light</item>
@@ -11,9 +11,9 @@
     </string-array>
 
     <string-array name="pref_cache_size_titles">
-        <item>Groß</item>
-        <item>Mittel</item>
-        <item>Klein</item>
+        <item>Alto</item>
+        <item>Medio</item>
+        <item>Bajo</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
@@ -22,9 +22,9 @@
     </string-array>
 
     <string-array name="pref_image_size_titles">
-        <item>Hoch</item>
-        <item>Mittel</item>
-        <item>Niedrig</item>
+        <item>Alto</item>
+        <item>Medio</item>
+        <item>Bajo</item>
     </string-array>
     <string-array name="pref_image_size_values">
         <item>-1</item>
@@ -33,7 +33,7 @@
     </string-array>
 
     <string-array name="streaming_cache_size_titles">
-        <item>Deaktiviert</item>
+        <item>Desactivado</item>
         <item>128 MiB</item>
         <item>256 MiB</item>
         <item>512 MiB</item>
@@ -135,8 +135,8 @@
     </string-array>
 
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>Original</item>
-        <item>Opus</item>
+        <item>Reproducción directa</item>
+        <item>OPUS</item>
         <item>AAC</item>
         <item>MP3</item>
         <item>FLAC</item>
@@ -150,8 +150,8 @@
     </string-array>
 
     <string-array name="audio_transcode_format_mobile_list_titles">
-        <item>Original</item>
-        <item>Opus</item>
+        <item>Reproducción directa</item>
+        <item>OPUS</item>
         <item>AAC</item>
         <item>MP3</item>
         <item>FLAC</item>
@@ -165,8 +165,8 @@
     </string-array>
 
     <string-array name="audio_transcode_format_download_list_titles">
-        <item>Original</item>
-        <item>Opus</item>
+        <item>Descarga directa</item>
+        <item>OPUS</item>
         <item>AAC</item>
         <item>MP3</item>
         <item>FLAC</item>
@@ -180,9 +180,9 @@
     </string-array>
 
     <string-array name="queue_syncing_countdown_titles">
-        <item>10 Sekunden</item>
-        <item>5 Sekunden</item>
-        <item>2 Sekunden</item>
+        <item>10 segundos</item>
+        <item>5 segundos</item>
+        <item>2 segundos</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
         <item>10</item>
@@ -191,9 +191,9 @@
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
-        <item>Viel</item>
-        <item>Etwas</item>
-        <item>Wenig</item>
+        <item>Alto</item>
+        <item>Medio</item>
+        <item>Bajo</item>
     </string-array>
     <string-array name="rounded_corner_size_values">
         <item>18</item>
@@ -202,10 +202,10 @@
     </string-array>
 
     <string-array name="replay_gain_titles">
-        <item>Deaktiviert</item>
-        <item>Titel</item>
-        <item>Album</item>
-        <item>Automatisch</item>
+        <item>Desactivado</item>
+        <item>Canción</item>
+        <item>Álbum</item>
+        <item>Automático</item>
     </string-array>
     <string-array name="replay_gain_values">
         <item>disabled</item>
@@ -215,10 +215,10 @@
     </string-array>
 
     <string-array name="transcoded_download_option_list_titles">
-        <item>Nicht umwandeln</item>
-        <item>Server entscheidet</item>
-        <item>Einstellung für WLAN Streamen</item>
-        <item>Einstellung für mobiles Streamen</item>
+        <item>Sin transcodificar</item>
+        <item>Dejar que el servidor decida</item>
+        <item>Formato de transcodificación en Wi-Fi</item>
+        <item>Formato de transcodificación en Datos Móviles</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
         <item>0</item>
@@ -228,10 +228,10 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>Minmal</item>
-        <item>Moderat</item>
-        <item>Aggressiv</item>
-        <item>Extrem</item>
+        <item>Mínimo</item>
+        <item>Moderado</item>
+        <item>Agresivo</item>
+        <item>Extremo</item>
     </string-array>
     <string-array name="buffering_strategy_values">
         <item>.1</item>
@@ -241,8 +241,8 @@
     </string-array>
 
     <string-array name="playlist_sort_option_titles">
-        <item>Nach Name</item>
-        <item>Zufällig</item>
+        <item>Nombre</item>
+        <item>Aleatorio</item>
     </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>
@@ -251,11 +251,11 @@
 
 
     <string-array name="skip_min_star_rating_titles">
-        <item>Mind. 0 Sterne</item>
-        <item>Mind. 1 Stern</item>
-        <item>Mind. 2 Sterne</item>
-        <item>Mind. 3 Sterne</item>
-        <item>Mind. 4 Sterne</item>
+        <item>0 estrellas mínimo</item>
+        <item>1 estrella mínimo</item>
+        <item>2 estrellas mínimo</item>
+        <item>3 estrellas mínimo</item>
+        <item>4 estrellas mínimo</item>
     </string-array>
     <string-array name="skip_min_star_rating_values">
         <item>0</item>
@@ -265,7 +265,7 @@
         <item>4</item>
     </string-array>
     <string-array name="landscape_items_per_row">
-        <item>3</item>
+        <item>3"</item>
         <item>4</item>
         <item>5</item>
         <item>6</item>
@@ -280,11 +280,11 @@
     </string-array>
 
     <string-array name="tile_size_titles">
-        <item>Winzig</item>
-        <item>Klein</item>
-        <item>Mittel</item>
-        <item>Groß</item>
-        <item>Standard</item>
+        <item>Muy pequeño</item>
+        <item>Pequeño</item>
+        <item>Mediano</item>
+        <item>Grande</item>
+        <item>Por defecto</item>
     </string-array>
     <string-array name="tile_size_divisor">
         <item>6</item>
@@ -293,26 +293,26 @@
         <item>3</item>
         <item>2</item>
     </string-array>
-	<!-- Add by MFO -->
+
     <string-array name="aa_tab_titles">
-        <item>Ausblenden</item>
-        <item>Start</item>
-        <item>Zuletzt gespielt</item>
-        <item>Alben</item>
-        <item>Interpreten</item>
-        <item>Wiedergabelisten</item>
+        <item>No mostrar</item>
+        <item>Inicio</item>
+        <item>Reproducido recientemente</item>
+        <item>Álbumes</item>
+        <item>Artistas</item>
+        <item>Listas de reproducción</item>
         <item>Podcasts</item>
-        <item>Radio</item>
-        <item>Ordner</item>
-        <item>Oft gespielte Alben</item>
-    <!--    <item>Oft gespielte Titel</item> -->
-        <item>Hinzugefügte Alben</item>
-    <!--    <item>Für dich</item> -->
-        <item>Lieblingstitel</item>
-        <item>Lieblingsalben</item>
-        <item>Lieblingsinterpreten</item>
-        <item>Zufall</item>
-        <item>Genres</item>
+        <item>Radios</item>
+        <item>Carpetas</item>
+        <item>Álbumes más reproducidos</item>
+        <!--    <item>Tracks played</item> -->
+        <item>Álbumes añadidos recientemente</item>
+        <!--    <item>For you</item> -->
+        <item>Canciones favoritas</item>
+        <item>Álbumes favoritos</item>
+        <item>Artistas favoritos</item>
+        <item>Aleatorio</item>
+        <item>Géneros</item>
     </string-array>
     <string-array name="aa_tab_values">
         <item>-1</item>
@@ -334,6 +334,5 @@
         <item>15</item>
         <item>16</item>
     </string-array>
-	<!-- end Add by MFO -->
 
 </resources>

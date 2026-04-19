@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.service;
 
-import android.content.ComponentName;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -15,9 +14,8 @@ import androidx.media3.common.Player;
 import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
-import androidx.media3.session.SessionToken;
 
-import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
 import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.repository.ChronologyRepository;
@@ -26,7 +24,7 @@ import com.cappielloantonio.tempo.repository.SongRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
-import com.cappielloantonio.tempo.util.Constants.SeedType;
+import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -36,11 +34,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class MediaManager {
     private static final String TAG = "MediaManager";
@@ -305,7 +306,7 @@ public class MediaManager {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        Log.e(TAG, "enqueue");
+                        Log.d(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
                         if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
                             enqueueDatabase(media, false, browser.getNextMediaItemIndex());
@@ -438,7 +439,7 @@ public class MediaManager {
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {
-        if (mediaItem != null && Preferences.isScrobblingEnabled()) {
+        if (mediaItem != null && mediaItem.mediaMetadata.extras != null && Preferences.isScrobblingEnabled()) {
             getSongRepository().scrobble(mediaItem.mediaMetadata.extras.getString("id"), submission);
         }
     }
@@ -451,6 +452,7 @@ public class MediaManager {
                 || !Preferences.isInstantMixUsable()) {
             return;
         }
+        Log.d(TAG, "Continuous Play");
 
         Preferences.setLastInstantMix();
 
@@ -461,12 +463,31 @@ public class MediaManager {
             @Override
             public void onChanged(List<Child> media) {
                 if (media == null || media.isEmpty()) {
+                    Log.w(TAG, "Continuous Play: no similar track found. Is server correctly configured?");
                     return;
                 }
 
                 if (existingBrowserFuture != null) {
-                    Log.d(TAG, "Continuous play: adding " + media.size() + " tracks");
-                    enqueue(existingBrowserFuture, media, true);
+                    Log.d(TAG, "Continuous Play: found " + media.size() + " similar tracks");
+
+                    final MediaBrowser browser;
+                    try {
+                        browser = existingBrowserFuture.get();
+                    } catch (ExecutionException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    List<Child> filteredMedia;
+                    List<String> currentIds = new ArrayList<>();
+                    for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
+                        currentIds.add(browser.getMediaItemAt(i).mediaId);
+                    }
+                    filteredMedia = media.stream()
+                            .filter(child -> !currentIds.contains(child.getId()))
+                            .collect(Collectors.toList());
+
+                    Log.d(TAG, "Continuous Play: adding " + filteredMedia.size() + " tracks to queue");
+                    enqueue(existingBrowserFuture, filteredMedia, true);
                 }
                 instantMix.removeObserver(this);
             }

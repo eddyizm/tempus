@@ -279,8 +279,6 @@
     <string name="settings_audio_transcode_download_priority_title">İndirmelerde yayın için kullanılan sunucu ayarlarına öncelik ver</string>
     <string name="settings_audio_transcode_download_summary">Etkinleştirildiğinde, Tempus dönüştürülmüş parçaları indirir.</string>
     <string name="settings_audio_transcode_download_title">Dönüştürülmüş parçaları indir</string>
-    <string name="settings_audio_transcode_estimate_content_length_summary">Etkinleştirildiğinde, parçanın tahmini süresi sunucudan istenir.</string>
-    <string name="settings_audio_transcode_estimate_content_length_title">İçerik uzunluğunu tahmin et</string>
     <string name="settings_audio_transcode_format_download">İndirmeler için dönüştürme formatı</string>
     <string name="settings_audio_transcode_format_mobile">Mobilde dönüştürme formatı</string>
     <string name="settings_audio_transcode_format_wifi">Wi-Fi’da dönüştürme formatı</string>

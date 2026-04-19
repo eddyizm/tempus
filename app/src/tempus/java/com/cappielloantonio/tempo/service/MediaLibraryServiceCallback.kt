@@ -22,6 +22,7 @@ import androidx.media3.session.SessionResult
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
+import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_LOADING
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
@@ -33,6 +34,7 @@ import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_M
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON
 import com.google.common.collect.ImmutableList
 import com.cappielloantonio.tempo.util.Constants
+import com.cappielloantonio.tempo.util.MappingUtil
 import com.cappielloantonio.tempo.util.Preferences
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -42,6 +44,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 private const val TAG = "MediaLibraryServiceCallback"
+@UnstableApi
 open class MediaLibrarySessionCallback(
     private val context: Context,
     private val automotiveRepository: AutomotiveRepository
@@ -365,6 +368,43 @@ open class MediaLibrarySessionCallback(
         return MediaBrowserTree.getChildren(parentId)
     }
 
+    override fun onSetMediaItems(
+        mediaSession: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        mediaItems: List<MediaItem>,
+        startIndex: Int,
+        startPositionMs: Long
+    ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+        Log.d(TAG, "onSetMediaItems")
+        val firstItem = mediaItems.firstOrNull()
+            ?: return super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
+
+        Log.d(TAG, "mediaId = ${firstItem.mediaId},  startIndex = $startIndex, startPositionMs = $startPositionMs")
+
+        if (isRadio(firstItem)) {
+            QueueRepository().deleteAll()
+            return super.onSetMediaItems(mediaSession, controller, mediaItems, 0, 0)
+        }
+
+        val futureQueue = resolveQueueForItem(firstItem, mediaItems)
+
+        return Futures.transform(
+            futureQueue,
+            { resolvedItems ->
+                if (!resolvedItems.isNullOrEmpty()) {
+                    val children = resolvedItems.mapNotNull { MappingUtil.mapToChild(it) }
+                    if (children.isNotEmpty()) QueueRepository().insertAll(children, true, 0)
+                }
+                MediaSession.MediaItemsWithStartPosition(
+                    resolvedItems ?: emptyList(),
+                    startIndex,
+                    startPositionMs
+                )
+            },
+            MoreExecutors.directExecutor()
+        )
+    }
+
     override fun onAddMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
@@ -419,19 +459,28 @@ open class MediaLibrarySessionCallback(
         val parentId = extras?.getString("parent_id")
 
         val futureQueue: ListenableFuture<List<MediaItem>> = when {
-            parentId?.startsWith(AutomotiveRepository.ALBUM) == true -> {
+            parentId?.startsWith(Constants.AA_ALBUM_SOURCE) == true -> {
                 Log.d(TAG, "Fetching album tracks for $parentId")
                 Futures.transform(
-                    automotiveRepository.getAlbumTracks(parentId.removePrefix(AutomotiveRepository.ALBUM)),
+                    automotiveRepository.getAlbumTracks(parentId.removePrefix(Constants.AA_ALBUM_SOURCE)),
                     { it.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
             }
 
-            parentId?.startsWith(AutomotiveRepository.PLAYLIST) == true -> {
+            parentId?.startsWith(Constants.AA_PLAYLIST_SOURCE) == true -> {
                 Log.d(TAG, "Fetching playlist tracks for $parentId")
                 Futures.transform(
-                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(AutomotiveRepository.PLAYLIST)),
+                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(Constants.AA_PLAYLIST_SOURCE)),
+                    { it.value ?: emptyList() },
+                    MoreExecutors.directExecutor()
+                )
+            }
+
+            firstItem.mediaId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true -> {
+                Log.d(TAG, "Fetching instant mix for $firstItem.mediaId")
+                Futures.transform(
+                    automotiveRepository.getInstantMix(firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE), 12),
                     { it.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
@@ -459,11 +508,11 @@ open class MediaLibrarySessionCallback(
 
                 val startIndex = resolvedItems.indexOfFirst { it.mediaId == firstItem.mediaId }
                 Log.d(TAG, "Start index for clicked item ${firstItem.mediaId} = $startIndex")
-                if (startIndex < 0) return@transform resolvedItems
+                if (startIndex <= 0) return@transform resolvedItems
 
                 val firstResolved = resolvedItems[0]
                 val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {
-                    putInt("aa_start_index", startIndex)
+                    putInt(Constants.AA_START_INDEX, startIndex)
                 }
                 val newFirstResolved = firstResolved.buildUpon()
                     .setMediaMetadata(firstResolved.mediaMetadata.buildUpon().setExtras(extras).build())
