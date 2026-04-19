@@ -30,6 +30,7 @@ import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
@@ -100,7 +101,14 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         playlistPageViewModel = new ViewModelProvider(requireActivity()).get(PlaylistPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        init();
+        Bundle args = getArguments();
+        Playlist playlistArg = args != null ? args.getParcelable(Constants.PLAYLIST_OBJECT) : null;
+        if (playlistArg == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        init(playlistArg);
         initAppBar();
         initMusicButton();
         initBackCover();
@@ -169,8 +177,8 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         return false;
     }
 
-    private void init() {
-        playlistPageViewModel.setPlaylist(requireArguments().getParcelable(Constants.PLAYLIST_OBJECT));
+    private void init(Playlist playlist) {
+        playlistPageViewModel.setPlaylist(playlist);
     }
 
     private void initMenuOption(Menu menu) {
