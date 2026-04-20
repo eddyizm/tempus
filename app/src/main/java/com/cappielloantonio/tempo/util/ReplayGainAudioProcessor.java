@@ -60,7 +60,10 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     // an additional gate in onFlush() ensures we never promote a pending
     // gain during a seek, even if endOfStreamPending was left true by the
     // decoder running ahead of the playhead before the seek was issued.
-    private boolean hadFormatChangeSinceLastFlush = false;
+    // Set to true in onConfigure() only when endOfStreamPending is already
+    // true — the exact signature of a format-changing gapless transition.
+    // See full explanation in onConfigure() and onFlush() below.
+    private boolean configAfterEos = false;
 
     public void setPendingGain(float gainDb) {
         pendingFlushGainLinear = dbToLinear(gainDb);
@@ -87,37 +90,72 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         }
         rampTotalFrames = Math.max(1,
                 (int) (inputAudioFormat.sampleRate * RAMP_DURATION_SECONDS));
-        // Signal that a real audio-format change just happened. This lets
-        // onFlush() distinguish a format-change gapless track transition
-        // (should promote the pending gain) from a seek (should not).
-        hadFormatChangeSinceLastFlush = true;
-        return inputAudioFormat;   
+        // Only arm the gapless-promotion flag when an end-of-stream is already
+        // pending. This is the signature of a format-changing gapless transition:
+        //
+        //   onQueueEndOfStream()  ← decoder finished Track A (endOfStreamPending=true)
+        //   onConfigure()         ← new format arrives for Track B → configAfterEos=true
+        //   onFlush()             ← sink resets for new format    → promotion fires
+        //
+        // A post-seek onConfigure() (some DefaultAudioSink versions re-issue
+        // configure() after flush()) always fires when endOfStreamPending is
+        // already false (onFlush() resets it before any new configure()), so
+        // configAfterEos is never set and the next flush will not promote.
+        if (endOfStreamPending) {
+            configAfterEos = true;
+        }
+        return inputAudioFormat;
     }
 
     @Override
     protected void onFlush() {
-        // Only promote the pending gain if this flush represents a real
-        // mid-stream boundary (some samples have already flowed through
-        // the processor). The initial configure→flush that runs before
-        // the first track starts playing must NOT steal the pending gain
-        // that was queued for the next track — doing so applies track
-        // B's gain to track A.
-        // hadFormatChangeSinceLastFlush guards against seeks: onConfigure()
-        // is only called by ExoPlayer when the audio format actually changes,
-        // which happens for format-change gapless track transitions but NOT
-        // for seeks within the same track. Without this check, a seek after
-        // the decoder has run ahead (setting endOfStreamPending = true) would
-        // incorrectly promote the next track's (or fallback) gain.
-        if (hasPendingFlushGain && hasProcessedAnyInput && endOfStreamPending
-                && hadFormatChangeSinceLastFlush) {
+        // Promote the pending (next-track) gain only when this flush is the
+        // result of a genuine format-changing gapless track transition.
+        //
+        // The three existing guards (hasPendingFlushGain, hasProcessedAnyInput,
+        // endOfStreamPending) are necessary but not sufficient: ExoPlayer's
+        // decoder often runs ahead of the playhead, so onQueueEndOfStream()
+        // can fire before a user-initiated seek. When the seek then triggers
+        // onFlush() the processor incorrectly sees all three gates as true and
+        // promotes the next track's (or fallback) gain onto the current track.
+        //
+        // configAfterEos is the decisive fourth gate.  It is set in
+        // onConfigure() only when endOfStreamPending is already true at that
+        // moment (i.e. a real EOS immediately precedes a format change).
+        // A post-seek onConfigure() always arrives after onFlush() has already
+        // reset endOfStreamPending to false, so it can never arm configAfterEos
+        // for that flush or any subsequent seek-flush.
+        if (hasPendingFlushGain && hasProcessedAnyInput
+                && endOfStreamPending && configAfterEos) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;
             hasPendingFlushGain = false;
             ramping = false;
+        } else {
+            // Seek (or initial startup flush): snap targetGainLinear to the
+            // current activeGainLinear so that any ramp that was in flight
+            // (e.g. a queueInput promotion that fired because the decoder had
+            // run ahead) is cancelled immediately.  Without this, post-seek
+            // audio would continue ramping toward the pre-seek target and the
+            // volume would drift to the wrong level before reapplyCurrentTrackGain
+            // on the main thread gets a chance to correct things.
+            targetGainLinear = activeGainLinear;
+            ramping = false;
+            // Clear the stale pending gain so that queueInput's same-format
+            // gapless promotion cannot fire after the seek.  After the seek,
+            // the decoder runs ahead again and fires onQueueEndOfStream() a
+            // second time (endOfStreamPending = true).  With hasPendingFlushGain
+            // still true, queueInput would see both flags set and immediately
+            // promote the stale pending gain (a 0 dB fallback or the next
+            // track's gain) onto the current track — the volume spike the user
+            // hears.  Clearing it here prevents that.  The correct next-track
+            // gain is re-queued shortly after by setReplayGain →
+            // queuePendingForNextTrack() when onTracksChanged fires post-seek.
+            hasPendingFlushGain = false;
         }
         endOfStreamPending = false;
         hasProcessedAnyInput = false;
-        hadFormatChangeSinceLastFlush = false;
+        configAfterEos = false;
     }
 
     @Override
@@ -132,7 +170,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         pendingFlushGainLinear = 1.0f;
         hasPendingFlushGain = false;
         endOfStreamPending = false;
-        hadFormatChangeSinceLastFlush = false;
+        configAfterEos = false;
         ramping = false;
         hasProcessedAnyInput = false;
     }
