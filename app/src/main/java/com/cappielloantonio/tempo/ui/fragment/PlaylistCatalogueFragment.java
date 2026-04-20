@@ -54,7 +54,13 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
         View view = bind.getRoot();
         playlistCatalogueViewModel = new ViewModelProvider(requireActivity()).get(PlaylistCatalogueViewModel.class);
 
-        init();
+        Bundle args = getArguments();
+        if (args == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        init(args);
         initAppBar();
         initPlaylistCatalogueView();
 
@@ -67,10 +73,10 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
         bind = null;
     }
 
-    private void init() {
-        if (requireArguments().getString(Constants.PLAYLIST_ALL) != null) {
+    private void init(Bundle args) {
+        if (args.getString(Constants.PLAYLIST_ALL) != null) {
             playlistCatalogueViewModel.setType(Constants.PLAYLIST_ALL);
-        } else if (requireArguments().getString(Constants.PLAYLIST_DOWNLOADED) != null) {
+        } else if (args.getString(Constants.PLAYLIST_DOWNLOADED) != null) {
             playlistCatalogueViewModel.setType(Constants.PLAYLIST_DOWNLOADED);
         }
     }
