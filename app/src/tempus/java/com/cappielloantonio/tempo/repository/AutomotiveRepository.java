@@ -1,14 +1,10 @@
 package com.cappielloantonio.tempo.repository;
 
-import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
@@ -16,6 +12,7 @@ import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
 import androidx.media3.session.MediaConstants;
+import androidx.media3.session.SessionError;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.BuildConfig;
@@ -23,12 +20,9 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.model.Chronology;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
-import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.Artist;
@@ -43,32 +37,26 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.cappielloantonio.tempo.subsonic.models.Genre;
 import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@UnstableApi
 public class AutomotiveRepository {
     private final SessionMediaItemDao sessionMediaItemDao = AppDatabase.getInstance().sessionMediaItemDao();
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
@@ -196,7 +184,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -267,7 +255,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -299,7 +287,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -326,13 +314,13 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(songs);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -356,13 +344,13 @@ public class AutomotiveRepository {
 
                     setChildrenMetadata(songs);
 
-                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
 
                     LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                     listenableFuture.set(libraryResult);
                 } else {
-                    listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                    listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                 }
 
                 chronologyDao.getLastPlayed(server, count).removeObserver(this);
@@ -412,7 +400,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -467,7 +455,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -517,7 +505,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -702,7 +690,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -755,7 +743,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -793,7 +781,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -820,13 +808,13 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_ALBUM_SOURCE + id);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -930,7 +918,7 @@ public class AutomotiveRepository {
 
                         } else {
                             Log.e(TAG, "Instant Mix: Failed to retrieve artist albums for artistId=" + artistId);
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -1023,7 +1011,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_PLAYLIST_SOURCE + id);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -1261,7 +1249,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -1305,14 +1293,14 @@ public class AutomotiveRepository {
 
                     if (songs != null) {
                         setChildrenMetadata(songs);
-                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
                         LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
                         listenableFuture.set(libraryResult);
                     } else {
-                        listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                        listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                     }
                 } else {
-                    listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                    listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                 }
             }
 

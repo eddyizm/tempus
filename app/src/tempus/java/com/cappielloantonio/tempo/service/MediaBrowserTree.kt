@@ -3,14 +3,15 @@ package com.cappielloantonio.tempo.service
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.SubtitleConfiguration
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaConstants
 import com.cappielloantonio.tempo.BuildConfig
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
-import com.cappielloantonio.tempo.util.Preferences.getServerId
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -18,7 +19,10 @@ import com.google.common.util.concurrent.SettableFuture
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.Preferences
+import androidx.core.net.toUri
+import androidx.media3.session.SessionError
 
+@UnstableApi
 object MediaBrowserTree {
     private lateinit var appContext: Context
     private lateinit var automotiveRepository: AutomotiveRepository
@@ -27,9 +31,8 @@ object MediaBrowserTree {
 
     private var isInitialized = false
 
-
     private fun iconUri(resId: Int): Uri =
-        Uri.parse("android.resource://${BuildConfig.APPLICATION_ID}/$resId")
+        "android.resource://${BuildConfig.APPLICATION_ID}/$resId".toUri()
 
     private class MediaItemNode(val item: MediaItem) {
         private val children: MutableList<MediaItem> = ArrayList()
@@ -48,6 +51,7 @@ object MediaBrowserTree {
         }
     }
 
+    @OptIn(UnstableApi::class)
     private fun buildMediaItem(
         gridView: Boolean,
         title: String,
@@ -62,9 +66,9 @@ object MediaBrowserTree {
         sourceUri: Uri? = null,
         imageUri: Uri? = null
     ): MediaItem {
-        var extras = Bundle()
+        val extras = Bundle()
         if( gridView ) {
-                extras = Bundle().apply {
+                extras.apply {
                 putInt(
                     MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE,
                     MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
@@ -76,7 +80,7 @@ object MediaBrowserTree {
             }
         }
         else{
-            extras = Bundle().apply {
+            extras.apply {
                 putInt(
                     MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE,
                     MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM
@@ -123,7 +127,7 @@ object MediaBrowserTree {
         val podcastView: Boolean = Preferences.isAndroidAutoPodcastViewEnabled()
         val radioView: Boolean = Preferences.isAndroidAutoRadioViewEnabled()
 
-		val tabIndex = listOf(
+        val tabIndex = listOf(
 			Preferences.getAndroidAutoFirstTab(),
 			Preferences.getAndroidAutoSecondTab(),
 			Preferences.getAndroidAutoThirdTab(),
@@ -505,7 +509,7 @@ object MediaBrowserTree {
                     return automotiveRepository.getDirectories(Constants.AA_DIRECTORY_ID,id.removePrefix(Constants.AA_DIRECTORY_ID))
                 }
 
-                return Futures.immediateFuture(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE))
+                return Futures.immediateFuture(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE))
             }
         }
     }

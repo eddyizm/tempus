@@ -58,7 +58,13 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
         View view = bind.getRoot();
         artistListPageViewModel = new ViewModelProvider(requireActivity()).get(ArtistListPageViewModel.class);
 
-        init();
+        Bundle args = getArguments();
+        if (args == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        init(args);
         initAppBar();
         initArtistListView();
 
@@ -71,11 +77,11 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
-    private void init() {
-        if (requireArguments().getString(Constants.ARTIST_STARRED) != null) {
+    private void init(Bundle args) {
+        if (args.getString(Constants.ARTIST_STARRED) != null) {
             artistListPageViewModel.title = Constants.ARTIST_STARRED;
             bind.pageTitleLabel.setText(R.string.artist_list_page_starred);
-        } else if (requireArguments().getString(Constants.ARTIST_DOWNLOADED) != null) {
+        } else if (args.getString(Constants.ARTIST_DOWNLOADED) != null) {
             artistListPageViewModel.title = Constants.ARTIST_DOWNLOADED;
             bind.pageTitleLabel.setText(R.string.artist_list_page_downloaded);
         }
