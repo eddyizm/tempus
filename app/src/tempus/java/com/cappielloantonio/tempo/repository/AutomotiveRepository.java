@@ -1,18 +1,18 @@
 package com.cappielloantonio.tempo.repository;
 
-import android.content.ContentResolver;
 import android.net.Uri;
-import android.view.View;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
+import androidx.media3.session.MediaConstants;
+import androidx.media3.session.SessionError;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.BuildConfig;
@@ -20,12 +20,9 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.model.Chronology;
-import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
-import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.Artist;
@@ -33,13 +30,13 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Directory;
 import com.cappielloantonio.tempo.subsonic.models.Index;
+import com.cappielloantonio.tempo.subsonic.models.IndexID3;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.cappielloantonio.tempo.subsonic.models.Genre;
 import com.cappielloantonio.tempo.util.Constants;
-import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -49,18 +46,97 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@UnstableApi
 public class AutomotiveRepository {
     private final SessionMediaItemDao sessionMediaItemDao = AppDatabase.getInstance().sessionMediaItemDao();
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size) {
+    private static final String TAG = "AutomotiveRepository";
+
+    public static final int INSTANT_MIX_MAX_TRACKS = 20;
+    public static final int INSTANT_MIX_MIN_TRACKS = INSTANT_MIX_MAX_TRACKS;
+
+    private Bundle createContentStyleExtras(boolean gridView) {
+        Bundle extras = new Bundle();
+        int contentStyle = gridView
+                ? MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_GRID_ITEM
+                : MediaConstants.EXTRAS_VALUE_CONTENT_STYLE_LIST_ITEM;
+        extras.putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_BROWSABLE, contentStyle);
+        extras.putInt(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_PLAYABLE, contentStyle);
+        return extras;
+    }
+
+    private MediaItem createFunction(String title, String id, boolean isGridView, Uri artworkUri){
+        MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                .setTitle(title)
+                .setIsBrowsable(true)
+                .setIsPlayable(false)
+                .setArtworkUri(artworkUri)
+                .setExtras(createContentStyleExtras(isGridView))
+                .build();
+
+        return new MediaItem.Builder()
+                .setMediaId(id)
+                .setMediaMetadata(mediaMetadata)
+                .setUri("")
+                .build();
+    }
+
+    private MediaItem createArtist(String artistName, String id, boolean isGridView, String artistCoverArtId){
+        Uri artworkUri = (artistCoverArtId != null && !artistCoverArtId.isEmpty())
+                ? AlbumArtContentProvider.contentUri(artistCoverArtId)
+                : Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists);
+
+        MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                .setTitle(artistName)
+                .setIsBrowsable(true)
+                .setIsPlayable(false)
+                .setMediaType(MediaMetadata.MEDIA_TYPE_ARTIST)
+                .setArtworkUri(artworkUri)
+                .setExtras(createContentStyleExtras(isGridView))
+                .build();
+
+        return new MediaItem.Builder()
+                .setMediaId(id)
+                .setMediaMetadata(mediaMetadata)
+                .setUri("")
+                .build();
+    }
+
+    private MediaItem createAlbum(String albumName, String artirstName, String genre, String id, boolean isPlayable, String albumCoverArtId){
+        Uri artworkUri = (albumCoverArtId != null && !albumCoverArtId.isEmpty())
+                ? AlbumArtContentProvider.contentUri(albumCoverArtId)
+                : Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums);
+
+        MediaMetadata mediaMetadata = new MediaMetadata.Builder()
+                .setTitle(albumName)
+                .setAlbumTitle(albumName)
+                .setArtist(artirstName)
+                .setGenre(genre)
+                .setIsBrowsable(!isPlayable)
+                .setIsPlayable(isPlayable)
+                .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
+                .setArtworkUri(artworkUri)
+                .build();
+
+        return new MediaItem.Builder()
+                .setMediaId(id)
+                .setMediaMetadata(mediaMetadata)
+                .setUri("")
+                .build();
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size, Boolean isRootCall) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
         App.getSubsonicClientInstance(false)
@@ -83,33 +159,32 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
-
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(album.getName())
-                                        .setAlbumTitle(album.getName())
-                                        .setArtist(album.getArtist())
-                                        .setGenre(album.getGenre())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + album.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createAlbum(
+                                        album.getName(),
+                                        album.getArtist(),
+                                        album.getGenre(),
+                                        prefix + album.getId(),
+                                        false,
+                                        album.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
+                            }
+
+                            if (isRootCall == true) {
+                                MediaItem jumpTo = createFunction(
+                                        App.getContext().getString(R.string.aa_starred_albums),
+                                        Constants.AA_JUMP_TO_STARRED_ALBUMS_ID,
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
+                                        Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_star_album)
+                                );
+                                mediaItems.add(0, jumpTo);
                             }
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -119,6 +194,76 @@ public class AutomotiveRepository {
                     }
                 });
 
+        return listenableFuture;
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getArtists(String prefix, int size, Boolean isRootCall) {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+        if (size > 500) size = 500;
+        final int maxSize = size;
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getArtists()
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getSubsonicResponse().getArtists() != null
+                                && response.body().getSubsonicResponse().getArtists().getIndices() != null) {
+
+                            List<IndexID3> indices = response.body().getSubsonicResponse().getArtists().getIndices();
+                            List<MediaItem> mediaItems = new ArrayList<>();
+
+                            int count = 0;
+                            for (IndexID3 index : indices) {
+                                if (index.getArtists() != null && count < maxSize) {
+                                    for (ArtistID3 artist : index.getArtists()) {
+                                        if (count >= maxSize) break;
+
+                                        MediaItem mediaItem = createArtist(
+                                                artist.getName(),
+                                                prefix + artist.getId(),
+                                                Preferences.isAndroidAutoAlbumViewEnabled(),
+                                                artist.getCoverArtId()
+                                        );
+
+                                        mediaItems.add(mediaItem);
+                                        count++;
+                                    }
+                                }
+                            }
+
+                            MediaItem jumpTo = createFunction(
+                                    App.getContext().getString(R.string.aa_view_by_albums),
+                                    Constants.AA_ARTISTS_BY_ALBUMS_ID,
+                                    Preferences.isAndroidAutoAlbumViewEnabled(),
+                                    Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums)
+                            );
+                            mediaItems.add(0, jumpTo);
+
+                            if (isRootCall == true) {
+                                jumpTo = createFunction(
+                                        App.getContext().getString(R.string.aa_starred_artists),
+                                        Constants.AA_JUMP_TO_STARRED_ARTISTS_ID,
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
+                                        Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists)
+                                );
+                                mediaItems.add(0, jumpTo);
+                            }
+
+                            LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+
+                            listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        listenableFuture.setException(t);
+                    }
+                });
         return listenableFuture;
     }
 
@@ -142,7 +287,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -169,13 +314,13 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(songs);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -199,13 +344,13 @@ public class AutomotiveRepository {
 
                     setChildrenMetadata(songs);
 
-                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
 
                     LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                     listenableFuture.set(libraryResult);
                 } else {
-                    listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                    listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                 }
 
                 chronologyDao.getLastPlayed(server, count).removeObserver(this);
@@ -215,7 +360,7 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredAlbums(String prefix) {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredAlbums(String prefix, Boolean isRootCall) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
         App.getSubsonicClientInstance(false)
@@ -230,32 +375,32 @@ public class AutomotiveRepository {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
-
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(album.getName())
-                                        .setArtist(album.getArtist())
-                                        .setGenre(album.getGenre())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + album.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createAlbum(
+                                        album.getName(),
+                                        album.getArtist(),
+                                        album.getGenre(),
+                                        prefix + album.getId(),
+                                        false,
+                                        album.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
+                            }
+
+                            if (isRootCall == true) {
+                                MediaItem jumpTo = createFunction(
+                                        App.getContext().getString(R.string.aa_albums),
+                                        Constants.AA_JUMP_TO_ALBUMS_ID,
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
+                                        Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums)
+                                );
+                                mediaItems.add(0, jumpTo);
                             }
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -268,7 +413,7 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredArtists(String prefix) {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredArtists(String prefix, Boolean isRootCall) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
         App.getSubsonicClientInstance(false)
@@ -280,35 +425,37 @@ public class AutomotiveRepository {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getStarred2() != null && response.body().getSubsonicResponse().getStarred2().getArtists() != null) {
                             List<ArtistID3> artists = response.body().getSubsonicResponse().getStarred2().getArtists();
 
-                            Collections.shuffle(artists);
+                            artists.sort((a1, a2) -> {
+                                String name1 = a1.getName() != null ? a1.getName() : "";
+                                String name2 = a2.getName() != null ? a2.getName() : "";
+                                return name1.compareToIgnoreCase(name2);
+                            });
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             for (ArtistID3 artist : artists) {
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
-
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(artist.getName())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + artist.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createArtist(
+                                        artist.getName(),
+                                        prefix + artist.getId(),
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
+                                        artist.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
                             }
-
+                            if (isRootCall == true) {
+                                MediaItem jumpTo = createFunction(
+                                        App.getContext().getString(R.string.aa_artists),
+                                        Constants.AA_JUMP_TO_ARTISTS_ID,
+                                        Preferences.isAndroidAutoAlbumViewEnabled(),
+                                        Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists)
+                                );
+                                mediaItems.add(0, jumpTo);
+                            }
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -358,7 +505,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -543,7 +690,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -596,7 +743,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -634,7 +781,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -661,13 +808,13 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_ALBUM_SOURCE + id);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -690,31 +837,39 @@ public class AutomotiveRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getArtist() != null && response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
 
                             List<MediaItem> mediaItems = new ArrayList<>();
+                            int totalTracks = 0;
 
                             for (AlbumID3 album : albums) {
-                                Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
+                                if (album.getSongCount() != null) {
+                                    totalTracks += album.getSongCount();
+                                }
 
-                                MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                        .setTitle(album.getName())
-                                        .setAlbumTitle(album.getName())
-                                        .setArtist(album.getArtist())
-                                        .setGenre(album.getGenre())
-                                        .setIsBrowsable(true)
-                                        .setIsPlayable(false)
-                                        .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                        .setArtworkUri(artworkUri)
-                                        .build();
-
-                                MediaItem mediaItem = new MediaItem.Builder()
-                                        .setMediaId(prefix + album.getId())
-                                        .setMediaMetadata(mediaMetadata)
-                                        .setUri("")
-                                        .build();
-
+                                MediaItem mediaItem = createAlbum(
+                                        album.getName(),
+                                        album.getArtist(),
+                                        album.getGenre(),
+                                        prefix + album.getId(),
+                                        false,
+                                        album.getCoverArtId()
+                                );
                                 mediaItems.add(mediaItem);
+                            }
+
+                            if (albums.size() >= 2 && totalTracks >= INSTANT_MIX_MIN_TRACKS) {
+                                ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
+                                MediaItem instantMixItem = createAlbum(
+                                        App.getContext().getString(R.string.aa_instant_mix),
+                                        "By Tempus",
+                                        "Instant Mix",
+                                        Constants.AA_INSTANTMIX_SOURCE + id,
+                                        true,
+                                        artist.getCoverArtId()
+                                );
+                                mediaItems.add(0, instantMixItem);
                             }
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
@@ -732,6 +887,116 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getInstantMix(String artistId, int count) {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+        final int requestedTracks = Math.min(count, INSTANT_MIX_MAX_TRACKS );
+
+        Log.d(TAG, "Instant Mix: Starting instant mix for artistId=" + artistId);
+
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getArtist(artistId)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse().getArtist() != null
+                                && response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+
+                            List<AlbumID3> albums = new ArrayList<>(
+                                    response.body().getSubsonicResponse().getArtist().getAlbums()
+                            );
+
+                            Log.d(TAG, "Instant Mix: Found " + albums.size() + " albums");
+
+                            List<Child> mixTracks = new ArrayList<>();
+                            Set<String> usedTrackIds = new HashSet<>();
+                            Random random = new Random();
+
+                            fetchNextTrackForMix(albums, 0, mixTracks, usedTrackIds, random, requestedTracks, listenableFuture);
+
+                        } else {
+                            Log.e(TAG, "Instant Mix: Failed to retrieve artist albums for artistId=" + artistId);
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "Instant Mix: Network failure while fetching artist: " + t.getMessage());
+                        listenableFuture.setException(t);
+                    }
+                });
+
+        return listenableFuture;
+    }
+
+    private void fetchNextTrackForMix(
+            List<AlbumID3> albums,
+            int albumIndex,
+            List<Child> mixTracks,
+            Set<String> usedTrackIds,
+            Random random,
+            int maxTracks,
+            SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture) {
+
+        if (mixTracks.size() >= maxTracks) {
+            Log.d(TAG, "Instant Mix: Mix complete with " + mixTracks.size() + " tracks");
+            setChildrenMetadata(mixTracks);
+            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(mixTracks);
+            listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
+            return;
+        }
+
+        // Shuffle only at the start of each cycle
+        if (albumIndex == 0) {
+            Collections.shuffle(albums, random);
+            Log.d(TAG, "Instant Mix: New cycle, albums shuffled");
+        }
+
+        AlbumID3 album = albums.get(albumIndex);
+        Log.d(TAG, "Instant Mix: Fetching album[" + albumIndex + "] " + album.getName() + " (" + mixTracks.size() + "/" + maxTracks + " tracks so far)");
+
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getAlbum(album.getId())
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse().getAlbum() != null
+                                && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
+
+                            List<Child> songs = response.body().getSubsonicResponse().getAlbum().getSongs();
+                            Child candidate = songs.get(random.nextInt(songs.size()));
+
+                            if (!usedTrackIds.contains(candidate.getId())) {
+                                mixTracks.add(candidate);
+                                usedTrackIds.add(candidate.getId());
+                                Log.d(TAG, "Instant Mix: Added track [" + mixTracks.size() + "/" + maxTracks + "] "
+                                        + candidate.getTitle() + " from " + album.getName());
+                            } else {
+                                Log.d(TAG, "Instant Mix: Track " + candidate.getTitle() + " already used, skipping");
+                            }
+                        } else {
+                            Log.w(TAG, "Instant Mix: Album " + album.getName() + " skipped (empty or failed)");
+                        }
+
+                        // Next: albums[1] if we just did albums[0], else back to albums[0]
+                        int nextIndex = (albumIndex == 0) ? 1 : 0;
+                        fetchNextTrackForMix(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, listenableFuture);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "Instant Mix: Failed to load album " + album.getName() + ": " + t.getMessage());
+                        int nextIndex = (albumIndex == 0) ? 1 : 0;
+                        fetchNextTrackForMix(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, listenableFuture);
+                    }
+                });
+    }
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getPlaylistSongs(String id) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
@@ -746,7 +1011,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_PLAYLIST_SOURCE + id);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -808,47 +1073,27 @@ public class AutomotiveRepository {
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getArtists() != null) {
                                 for (ArtistID3 artist : response.body().getSubsonicResponse().getSearchResult3().getArtists()) {
-                                    Uri artworkUri = AlbumArtContentProvider.contentUri(artist.getCoverArtId());
 
-                                    MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                            .setTitle(artist.getName())
-                                            .setIsBrowsable(true)
-                                            .setIsPlayable(false)
-                                            .setMediaType(MediaMetadata.MEDIA_TYPE_PLAYLIST)
-                                            .setArtworkUri(artworkUri)
-                                            .build();
-
-                                    MediaItem mediaItem = new MediaItem.Builder()
-                                            .setMediaId(artistPrefix + artist.getId())
-                                            .setMediaMetadata(mediaMetadata)
-                                            .setUri("")
-                                            .build();
-
+                                    MediaItem mediaItem = createArtist(
+                                            artist.getName(),
+                                            artistPrefix + artist.getId(),
+                                            Preferences.isAndroidAutoAlbumViewEnabled(),
+                                            artist.getCoverArtId()
+                                    );
                                     mediaItems.add(mediaItem);
                                 }
                             }
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getAlbums() != null) {
                                 for (AlbumID3 album : response.body().getSubsonicResponse().getSearchResult3().getAlbums()) {
-                                    Uri artworkUri = AlbumArtContentProvider.contentUri(album.getCoverArtId());
-
-                                    MediaMetadata mediaMetadata = new MediaMetadata.Builder()
-                                            .setTitle(album.getName())
-                                            .setAlbumTitle(album.getName())
-                                            .setArtist(album.getArtist())
-                                            .setGenre(album.getGenre())
-                                            .setIsBrowsable(true)
-                                            .setIsPlayable(false)
-                                            .setMediaType(MediaMetadata.MEDIA_TYPE_ALBUM)
-                                            .setArtworkUri(artworkUri)
-                                            .build();
-
-                                    MediaItem mediaItem = new MediaItem.Builder()
-                                            .setMediaId(albumPrefix + album.getId())
-                                            .setMediaMetadata(mediaMetadata)
-                                            .setUri("")
-                                            .build();
-
+                                    MediaItem mediaItem = createAlbum(
+                                            album.getName(),
+                                            album.getArtist(),
+                                            album.getGenre(),
+                                            albumPrefix + album.getId(),
+                                            false,
+                                            album.getCoverArtId()
+                                    );
                                     mediaItems.add(mediaItem);
                                 }
                             }
@@ -1004,7 +1249,7 @@ public class AutomotiveRepository {
 
                             listenableFuture.set(libraryResult);
                         } else {
-                            listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -1037,25 +1282,25 @@ public class AutomotiveRepository {
                 if (response.isSuccessful() && response.body() != null) {
                     List<com.cappielloantonio.tempo.subsonic.models.Child> songs;
                     if (shuffle) {
-                        songs = response.body().getSubsonicResponse().getRandomSongs() != null 
-                                ? response.body().getSubsonicResponse().getRandomSongs().getSongs() 
+                        songs = response.body().getSubsonicResponse().getRandomSongs() != null
+                                ? response.body().getSubsonicResponse().getRandomSongs().getSongs()
                                 : null;
                     } else {
-                        songs = response.body().getSubsonicResponse().getSongsByGenre() != null 
-                                ? response.body().getSubsonicResponse().getSongsByGenre().getSongs() 
+                        songs = response.body().getSubsonicResponse().getSongsByGenre() != null
+                                ? response.body().getSubsonicResponse().getSongsByGenre().getSongs()
                                 : null;
                     }
 
                     if (songs != null) {
                         setChildrenMetadata(songs);
-                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
                         LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
                         listenableFuture.set(libraryResult);
                     } else {
-                        listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                        listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                     }
                 } else {
-                    listenableFuture.set(LibraryResult.ofError(LibraryResult.RESULT_ERROR_BAD_VALUE));
+                    listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                 }
             }
 

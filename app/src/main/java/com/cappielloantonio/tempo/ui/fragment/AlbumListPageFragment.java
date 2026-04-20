@@ -57,7 +57,13 @@ public class AlbumListPageFragment extends Fragment implements ClickCallback {
         View view = bind.getRoot();
         albumListPageViewModel = new ViewModelProvider(requireActivity()).get(AlbumListPageViewModel.class);
 
-        init();
+        Bundle args = getArguments();
+        if (args == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        init(args);
         initAppBar();
         initAlbumListView();
 
@@ -70,32 +76,32 @@ public class AlbumListPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
-    private void init() {
-        if (requireArguments().getString(Constants.ALBUM_RECENTLY_PLAYED) != null) {
+    private void init(Bundle args) {
+        if (args.getString(Constants.ALBUM_RECENTLY_PLAYED) != null) {
             albumListPageViewModel.title = Constants.ALBUM_RECENTLY_PLAYED;
             bind.pageTitleLabel.setText(R.string.album_list_page_recently_played);
-        } else if (requireArguments().getString(Constants.ALBUM_MOST_PLAYED) != null) {
+        } else if (args.getString(Constants.ALBUM_MOST_PLAYED) != null) {
             albumListPageViewModel.title = Constants.ALBUM_MOST_PLAYED;
             bind.pageTitleLabel.setText(R.string.album_list_page_most_played);
-        } else if (requireArguments().getString(Constants.ALBUM_RECENTLY_ADDED) != null) {
+        } else if (args.getString(Constants.ALBUM_RECENTLY_ADDED) != null) {
             albumListPageViewModel.title = Constants.ALBUM_RECENTLY_ADDED;
             bind.pageTitleLabel.setText(R.string.album_list_page_recently_added);
-        } else if (requireArguments().getString(Constants.ALBUM_STARRED) != null) {
+        } else if (args.getString(Constants.ALBUM_STARRED) != null) {
             albumListPageViewModel.title = Constants.ALBUM_STARRED;
             bind.pageTitleLabel.setText(R.string.album_list_page_starred);
-        } else if (requireArguments().getString(Constants.ALBUM_NEW_RELEASES) != null) {
+        } else if (args.getString(Constants.ALBUM_NEW_RELEASES) != null) {
             albumListPageViewModel.title = Constants.ALBUM_NEW_RELEASES;
             bind.pageTitleLabel.setText(R.string.album_list_page_new_releases);
-        } else if (requireArguments().getString(Constants.ALBUM_DOWNLOADED) != null) {
+        } else if (args.getString(Constants.ALBUM_DOWNLOADED) != null) {
             albumListPageViewModel.title = Constants.ALBUM_DOWNLOADED;
             bind.pageTitleLabel.setText(R.string.album_list_page_downloaded);
-        } else if (requireArguments().getParcelable(Constants.ARTIST_OBJECT) != null) {
-            albumListPageViewModel.artist = requireArguments().getParcelable(Constants.ARTIST_OBJECT);
+        } else if (args.getParcelable(Constants.ARTIST_OBJECT) != null) {
+            albumListPageViewModel.artist = args.getParcelable(Constants.ARTIST_OBJECT);
             albumListPageViewModel.title = Constants.ALBUM_FROM_ARTIST;
             bind.pageTitleLabel.setText(albumListPageViewModel.artist.getName());
-        } else if (requireArguments().getParcelableArrayList(Constants.ALBUMS_OBJECT) != null) {
-            albumListPageViewModel.albums = requireArguments().getParcelableArrayList(Constants.ALBUMS_OBJECT);
-            albumListPageViewModel.title = requireArguments().getString(Constants.ALBUM_LIST_TITLE, "");
+        } else if (args.getParcelableArrayList(Constants.ALBUMS_OBJECT) != null) {
+            albumListPageViewModel.albums = args.getParcelableArrayList(Constants.ALBUMS_OBJECT);
+            albumListPageViewModel.title = args.getString(Constants.ALBUM_LIST_TITLE, "");
             bind.pageTitleLabel.setText(albumListPageViewModel.title);
         }
     }

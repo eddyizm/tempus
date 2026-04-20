@@ -22,6 +22,7 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.FragmentDownloadBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.model.DownloadStack;
+import com.cappielloantonio.tempo.navigation.NavigationController;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.Child;
@@ -50,6 +51,8 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
     private FragmentDownloadBinding bind;
     private MainActivity activity;
+    private NavigationController navigationController;
+
     private DownloadViewModel downloadViewModel;
 
     private DownloadHorizontalAdapter downloadHorizontalAdapter;
@@ -62,6 +65,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         activity = (MainActivity) getActivity();
+        navigationController = activity.getNavigationController();
 
         bind = FragmentDownloadBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
@@ -103,6 +107,8 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         materialToolbar = bind.getRoot().findViewById(R.id.toolbar);
 
         activity.setSupportActionBar(materialToolbar);
+        navigationController.setHamburgerMenuForLandscape(activity, materialToolbar);
+
         Objects.requireNonNull(materialToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
     }
 
