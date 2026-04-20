@@ -239,6 +239,26 @@ public class ReplayGainUtil {
         }
 
         float gain = resolveGain(player, gains);
+
+        // Guard: if we have no effective gain data (all zeros), do NOT call
+        // setGainImmediate. This mirrors reapplyCurrentTrackGain's behaviour:
+        // "no data — leave the current gain unchanged."
+        //
+        // Without this guard, an onTracksChanged that fires with empty gains
+        // (e.g. seeking past the ID3 header, or a transcoded stream with no
+        // tags) and no cached data would call:
+        //   setGainImmediate(computeTotalGain(0f, 0f)) = preamp = -6 dB
+        // onto a track playing at e.g. -18 dB, causing a +12 dB spike.
+        //
+        // Tracks with a genuine 0 dB album/track gain are correctly handled
+        // by applyGain() (called from onMediaItemTransition), which already
+        // applied the correct preamp-only value when the track started.
+        if (gain == 0f) {
+            Log.d(TAG, "setReplayGain: no effective gain data, keeping current gain for " + mediaId);
+            queuePendingForNextTrack(player);
+            return;
+        }
+
         float peak = resolvePeak(player, gains);
         audioProcessor.setGainImmediate(computeTotalGain(gain, peak));
 
