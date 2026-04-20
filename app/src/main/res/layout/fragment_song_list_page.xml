@@ -95,6 +95,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_song_list_to_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/song_list_recycler_view"
             android:layout_width="match_parent"
@@ -103,6 +109,9 @@
             android:paddingTop="12dp"
             android:paddingBottom="@dimen/global_padding_bottom"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>
 
