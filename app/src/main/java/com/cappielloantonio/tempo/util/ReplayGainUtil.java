@@ -109,9 +109,23 @@ public class ReplayGainUtil {
 
                 List<Metadata> metadataList = extractMetadata(trackGroups);
                 List<ReplayGain> gains = getReplayGains(metadataList);
-                gainDataMap.put(item.mediaId, gains);
+
+                // Only cache non-empty gains. If the server returned a
+                // transcoded stream that strips ReplayGain tags, gains will
+                // be all-zero. Storing empty gains poisons the cache: every
+                // subsequent lookup (reapplyCurrentTrackGain, applyGain, etc.)
+                // would find a non-null but useless entry and call
+                // setGainImmediate(preamp-only = -6 dB) onto a track that was
+                // already playing at the correct -18 dB, producing a spike.
+                // Only update the cache when we actually got usable data.
+                boolean prefetchedGainsValid = resolveTrackGain(gains) != 0f
+                        || resolveAlbumGain(gains) != 0f;
+                if (prefetchedGainsValid) {
+                    gainDataMap.put(item.mediaId, gains);
+                }
                 Log.d(TAG, "Prefetched " + item.mediaId
-                        + " trackGain=" + resolveTrackGain(gains));
+                        + " trackGain=" + resolveTrackGain(gains)
+                        + " valid=" + prefetchedGainsValid);
 
                 // Post back to the main thread.  Two things can happen:
                 //  1. If the prefetched item is the CURRENT playing track
@@ -127,11 +141,23 @@ public class ReplayGainUtil {
                     MediaItem current = p.getCurrentMediaItem();
                     if (current != null && item.mediaId.equals(current.mediaId)) {
                         float gain = resolveGain(p, gains);
-                        float peak = resolvePeak(p, gains);
-                        float totalGain = computeTotalGain(gain, peak);
-                        Log.d(TAG, "Late prefetch for current track " + item.mediaId
-                                + " — applying gain immediately totalGain=" + totalGain);
-                        audioProcessor.setGainImmediate(totalGain);
+                        // Only apply if we have real gain data. Empty prefetch
+                        // gains (gain = 0f) must not call setGainImmediate —
+                        // that would write preamp-only (-6 dB) into
+                        // baselineGainLinear, poisoning every future seek
+                        // restore (onFlush reads baselineGainLinear) and every
+                        // reapplyCurrentTrackGain call, locking the volume at
+                        // the wrong level for the rest of the track.
+                        if (gain != 0f) {
+                            float peak = resolvePeak(p, gains);
+                            float totalGain = computeTotalGain(gain, peak);
+                            Log.d(TAG, "Late prefetch for current track " + item.mediaId
+                                    + " — applying gain immediately totalGain=" + totalGain);
+                            audioProcessor.setGainImmediate(totalGain);
+                        } else {
+                            Log.d(TAG, "Late prefetch for current track " + item.mediaId
+                                    + " — empty gains, skipping setGainImmediate");
+                        }
                     }
 
                     queuePendingForNextTrack(p);
@@ -178,12 +204,20 @@ public class ReplayGainUtil {
         List<ReplayGain> gains = gainDataMap.get(mediaItem.mediaId);
         if (gains != null) {
             float gain = resolveGain(player, gains);
-            float peak = resolvePeak(player, gains);
-            float totalGain = computeTotalGain(gain, peak);
-            Log.d(TAG, "applyGain: tag cache hit for " + mediaItem.mediaId
-                    + " gain=" + gain + " peak=" + peak
-                    + " totalGain=" + totalGain);
-            audioProcessor.setGainImmediate(totalGain);
+            if (gain != 0f) {
+                float peak = resolvePeak(player, gains);
+                float totalGain = computeTotalGain(gain, peak);
+                Log.d(TAG, "applyGain: tag cache hit for " + mediaItem.mediaId
+                        + " gain=" + gain + " peak=" + peak
+                        + " totalGain=" + totalGain);
+                audioProcessor.setGainImmediate(totalGain);
+            } else {
+                // Cache entry exists but has empty/zero gains (e.g. poisoned
+                // by a prefetch that got a tagless transcoded stream). Don't
+                // apply preamp-only gain — leave the current level alone.
+                Log.d(TAG, "applyGain: cache hit but gain=0 for " + mediaItem.mediaId
+                        + ", holding current gain");
+            }
         } else {
             Log.d(TAG, "applyGain: cache miss for " + mediaItem.mediaId
                     + ", holding current gain until onTracksChanged");
@@ -311,11 +345,18 @@ public class ReplayGainUtil {
         List<ReplayGain> cached = gainDataMap.get(currentItem.mediaId);
         if (cached != null) {
             float gain = resolveGain(player, cached);
-            float peak = resolvePeak(player, cached);
-            float totalGain = computeTotalGain(gain, peak);
-            Log.d(TAG, "reapplyCurrentTrackGain: cache hit for " + currentItem.mediaId
-                    + " totalGain=" + totalGain);
-            audioProcessor.setGainImmediate(totalGain);
+            if (gain != 0f) {
+                float peak = resolvePeak(player, cached);
+                float totalGain = computeTotalGain(gain, peak);
+                Log.d(TAG, "reapplyCurrentTrackGain: cache hit for " + currentItem.mediaId
+                        + " totalGain=" + totalGain);
+                audioProcessor.setGainImmediate(totalGain);
+                return;
+            }
+            // Cache entry exists but gain is zero (empty/poisoned). Fall through
+            // to the "no data" case and keep the current gain unchanged.
+            Log.d(TAG, "reapplyCurrentTrackGain: cache hit but gain=0 for "
+                    + currentItem.mediaId + ", keeping current gain");
             return;
         }
 
