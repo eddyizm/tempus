@@ -305,13 +305,12 @@
         <item>Radio</item>
         <item>Ordner</item>
         <item>Oft gespielte Alben</item>
-        <item>Oft gespielte Titel</item>
         <item>Hinzugefügte Alben</item>
     <!--    <item>Für dich</item> -->
         <item>Lieblingstitel</item>
         <item>Lieblingsalben</item>
         <item>Lieblingsinterpreten</item>
-        <item>Zufall</item>
+        <item>Titel</item>
         <item>Genres</item>
     </string-array>
     <string-array name="aa_tab_values">

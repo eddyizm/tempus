@@ -304,12 +304,11 @@
         <item>Radio</item>
         <item>Foldery</item>
         <item>Najczęściej odtwarzane albumy</item>
-        <item>Tracks played</item>
         <item>Dodane albumy</item>
         <item>Utwory oznaczone gwiazdką</item>
         <item>Albumy oznaczone gwiazdką</item>
         <item>Wykonawcy oznaczeni gwiazdką</item>
-        <item>Losowe</item>
+        <item>Tracks</item>
 		<item>Gatunki</item>
     </string-array>
     <string-array name="aa_tab_values">
