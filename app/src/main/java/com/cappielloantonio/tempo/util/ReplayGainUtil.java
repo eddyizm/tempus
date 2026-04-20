@@ -313,30 +313,29 @@ public class ReplayGainUtil {
         if (nextItem == null || nextItem.mediaId == null) return;
 
         List<ReplayGain> gains = gainDataMap.get(nextItem.mediaId);
-        if (gains == null) {
-            // No RG data for the next track yet (prefetch in flight or no tags).
-            // Do NOT queue a fallback gain here. The original fallback was
-            // computeTotalGain(0f, 0f) = preamp only (e.g. -6 dB), but that
-            // is louder than a typical negative-gain current track (e.g. -18 dB
-            // = album gain -12 + preamp -6). Snapping to the fallback at the
-            // gapless boundary produces a dramatic volume spike — exactly the
-            // bug this code was supposed to prevent.
+        float resolvedGain = (gains != null) ? resolveGainForNextTrack(player, gains) : 0f;
+
+        if (resolvedGain == 0f) {
+            // Either no RG data is cached yet (gains == null), or the cached
+            // entry has all-zero gains (e.g. prefetch ran but the track has no
+            // ReplayGain tags). Either way, do NOT queue a pending gain.
+            //
+            // The former fallback was computeTotalGain(0f, 0f) = preamp only
+            // (default -6 dB). For a current track playing at album+preamp
+            // (e.g. -18 dB), that snap produces a +12 dB volume spike at the
+            // gapless boundary — dramatically audible, and exactly the bug
+            // being fixed here.
             //
             // Leaving hasPendingFlushGain unset means the current track's gain
-            // carries over into the first samples of the next track. That brief
-            // continuity (at most a few hundred ms before onTracksChanged fires
-            // and applies the correct gain with a 10 ms ramp) is far less
-            // noticeable than a sudden +12 dB jump. The prefetch system fills
-            // the cache for most tracks before the transition, so this fallback
-            // path is a last resort.
-            Log.d(TAG, "queuePendingForNextTrack: no data for "
+            // carries over into the first samples of the next track. onTracksChanged
+            // fires shortly after the transition and applies the correct gain
+            // with a 10 ms ramp — far less noticeable than a sudden loud jump.
+            Log.d(TAG, "queuePendingForNextTrack: no effective RG gain for "
                     + nextItem.mediaId + ", carrying over current gain");
             return;
         }
 
-        float totalGain = computeTotalGain(
-                resolveGainForNextTrack(player, gains),
-                resolvePeakForNextTrack(player, gains));
+        float totalGain = computeTotalGain(resolvedGain, resolvePeakForNextTrack(player, gains));
         audioProcessor.setPendingGain(totalGain);
     }
 
