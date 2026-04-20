@@ -53,6 +53,15 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     private boolean endOfStreamPending = false;
 
+    // Set to true in onConfigure() and cleared in onFlush() / onReset().
+    // onConfigure() is only called by ExoPlayer when the audio format
+    // actually changes — which happens for format-change gapless track
+    // transitions, but NOT for seeks within the same track. Using this as
+    // an additional gate in onFlush() ensures we never promote a pending
+    // gain during a seek, even if endOfStreamPending was left true by the
+    // decoder running ahead of the playhead before the seek was issued.
+    private boolean hadFormatChangeSinceLastFlush = false;
+
     public void setPendingGain(float gainDb) {
         pendingFlushGainLinear = dbToLinear(gainDb);
         hasPendingFlushGain = true;
@@ -78,6 +87,10 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         }
         rampTotalFrames = Math.max(1,
                 (int) (inputAudioFormat.sampleRate * RAMP_DURATION_SECONDS));
+        // Signal that a real audio-format change just happened. This lets
+        // onFlush() distinguish a format-change gapless track transition
+        // (should promote the pending gain) from a seek (should not).
+        hadFormatChangeSinceLastFlush = true;
         return inputAudioFormat;   
     }
 
@@ -89,11 +102,14 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         // the first track starts playing must NOT steal the pending gain
         // that was queued for the next track — doing so applies track
         // B's gain to track A.
-        // endOfStreamPending guards against seeks: ExoPlayer calls onFlush()
-        // for both seeks and format-change track transitions, but only calls
-        // onQueueEndOfStream() for the latter. Without this check a seek
-        // mid-track incorrectly promotes the next track's (or fallback) gain.
-        if (hasPendingFlushGain && hasProcessedAnyInput && endOfStreamPending) {
+        // hadFormatChangeSinceLastFlush guards against seeks: onConfigure()
+        // is only called by ExoPlayer when the audio format actually changes,
+        // which happens for format-change gapless track transitions but NOT
+        // for seeks within the same track. Without this check, a seek after
+        // the decoder has run ahead (setting endOfStreamPending = true) would
+        // incorrectly promote the next track's (or fallback) gain.
+        if (hasPendingFlushGain && hasProcessedAnyInput && endOfStreamPending
+                && hadFormatChangeSinceLastFlush) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;
             hasPendingFlushGain = false;
@@ -101,6 +117,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         }
         endOfStreamPending = false;
         hasProcessedAnyInput = false;
+        hadFormatChangeSinceLastFlush = false;
     }
 
     @Override
@@ -115,6 +132,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         pendingFlushGainLinear = 1.0f;
         hasPendingFlushGain = false;
         endOfStreamPending = false;
+        hadFormatChangeSinceLastFlush = false;
         ramping = false;
         hasProcessedAnyInput = false;
     }
