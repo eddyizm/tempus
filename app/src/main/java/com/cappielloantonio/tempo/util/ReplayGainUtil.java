@@ -314,20 +314,23 @@ public class ReplayGainUtil {
 
         List<ReplayGain> gains = gainDataMap.get(nextItem.mediaId);
         if (gains == null) {
-            // We have no RG data for the next track yet (its prefetch may
-            // still be in flight, or it may genuinely have no tags). Without
-            // a pending gain, onQueueEndOfStream leaves activeGain at the
-            // current track's value, so the next track's opening samples
-            // would play at the previous track's gain — very audible when
-            // the current track has a large positive gain. Queue a neutral
-            // fallback (preamp only) so the gapless handoff lands on a
-            // conservative volume; if tag extraction later resolves a real
-            // value, onTracksChanged / the late-prefetch callback will apply
-            // it with a short ramp.
-            float fallback = computeTotalGain(0f, 0f);
-            audioProcessor.setPendingGain(fallback);
+            // No RG data for the next track yet (prefetch in flight or no tags).
+            // Do NOT queue a fallback gain here. The original fallback was
+            // computeTotalGain(0f, 0f) = preamp only (e.g. -6 dB), but that
+            // is louder than a typical negative-gain current track (e.g. -18 dB
+            // = album gain -12 + preamp -6). Snapping to the fallback at the
+            // gapless boundary produces a dramatic volume spike — exactly the
+            // bug this code was supposed to prevent.
+            //
+            // Leaving hasPendingFlushGain unset means the current track's gain
+            // carries over into the first samples of the next track. That brief
+            // continuity (at most a few hundred ms before onTracksChanged fires
+            // and applies the correct gain with a 10 ms ramp) is far less
+            // noticeable than a sudden +12 dB jump. The prefetch system fills
+            // the cache for most tracks before the transition, so this fallback
+            // path is a last resort.
             Log.d(TAG, "queuePendingForNextTrack: no data for "
-                    + nextItem.mediaId + ", queuing fallback gain=" + fallback);
+                    + nextItem.mediaId + ", carrying over current gain");
             return;
         }
 
