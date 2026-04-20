@@ -210,8 +210,13 @@ open class BaseMediaService : MediaLibraryService() {
                             this@BaseMediaService,
                             SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
                         ).buildAsync()
-                        if(Preferences.isContinuousPlayEnabled()) {
-                            MediaManager.continuousPlay(currentMediaItem, browserFuture)
+
+                        val handled = MediaServiceExtensionRegistry.handler
+                            ?.handle(item, browserFuture)
+                            ?: false
+
+                        if (!handled && Preferences.isContinuousPlayEnabled()) {
+                            MediaManager.continuousPlay(item, browserFuture)
                         }
                     }
                 }

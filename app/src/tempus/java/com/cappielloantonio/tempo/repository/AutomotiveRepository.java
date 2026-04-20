@@ -11,6 +11,7 @@ import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
+import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.MediaConstants;
 import androidx.media3.session.SessionError;
 
@@ -944,7 +945,7 @@ public class AutomotiveRepository {
         if (mixTracks.size() >= maxTracks) {
             Log.d(TAG, "Instant Mix: Mix complete with " + mixTracks.size() + " tracks");
             setChildrenMetadata(mixTracks);
-            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(mixTracks);
+            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(mixTracks, Constants.AA_INSTANTMIX_SOURCE);
             listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
             return;
         }

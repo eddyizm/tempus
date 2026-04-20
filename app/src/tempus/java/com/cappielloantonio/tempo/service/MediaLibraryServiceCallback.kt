@@ -14,6 +14,7 @@ import androidx.media3.common.Rating
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.CommandButton
 import androidx.media3.session.LibraryResult
+import androidx.media3.session.MediaBrowser
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
@@ -129,6 +130,15 @@ open class MediaLibrarySessionCallback(
                 }
             }.build()
 
+    override fun onDisconnected(
+        session: MediaSession, controller: MediaSession.ControllerInfo
+    ){
+        if (MediaServiceExtensionRegistry.handler != null) {
+            MediaServiceExtensionRegistry.handler = null
+            Log.d(TAG, "Android Auto is disconnected")
+        }
+    }
+
     @OptIn(UnstableApi::class)
     override fun onConnect(
         session: MediaSession, controller: MediaSession.ControllerInfo
@@ -150,6 +160,14 @@ open class MediaLibrarySessionCallback(
                 updateMediaNotificationCustomLayout(session)
             }
         })
+
+        if (MediaServiceExtensionRegistry.handler == null &&
+            (session.isAutomotiveController(controller) ||
+                    session.isAutoCompanionController(controller))
+        ) {
+            MediaServiceExtensionRegistry.handler = AndroidAutoMediaServiceExtension()
+            Log.d(TAG, "Android Auto is connected")
+        }
 
         // FIXME: I'm not sure this if is required anymore
         if (session.isMediaNotificationController(controller) || session.isAutomotiveController(
@@ -561,5 +579,23 @@ open class MediaLibrarySessionCallback(
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
         return MediaBrowserTree.search(query)
+    }
+
+    class AndroidAutoMediaServiceExtension : MediaServiceExtension {
+        override fun handle(
+            item: MediaItem,
+            browserFuture: ListenableFuture<MediaBrowser>
+        ): Boolean {
+
+            val extras = item.requestMetadata.extras ?: item.mediaMetadata.extras
+            val parentId = extras?.getString("parent_id")
+            Log.d(TAG, "handle for parentId = $parentId")
+
+
+            // logique Android Auto existante
+            // ex: MadeForYou, queue, radio, etc.
+
+            return false
+        }
     }
 }
