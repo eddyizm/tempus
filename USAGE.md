@@ -192,7 +192,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 4 tabs can be configured with the following functions:
 - Do not display : This tab is not used
 - Home : Displays all functions not used in other tabs
-- Recent : The 15 most recently listened-to albums
+- Recent : The 15 recently listened-to albums
 - Albums : Albums sorted by name
 - Artists : Albums sorted by artist or Artists, selected by preference
 - Playlists
@@ -205,8 +205,14 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Star tracks
 - Star albums
 - Star artists
+- Tracks bundle
+- Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
+
+
+Tracks bundle is composed with:
 - Random : 100 random songs
 - Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
+- Tracks played : The 100 recently listened-to tracks
 
 If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
 
