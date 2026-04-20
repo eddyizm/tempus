@@ -209,7 +209,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
 
 
-Tracks bundle is composed with:
+Tracks bundle includes:
 - Random : 100 random songs
 - Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
 - Tracks played : The 100 recently listened-to tracks
