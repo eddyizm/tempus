@@ -132,25 +132,28 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
             hasPendingFlushGain = false;
             ramping = false;
         } else {
-            // Seek (or initial startup flush): snap targetGainLinear to the
-            // current activeGainLinear so that any ramp that was in flight
-            // (e.g. a queueInput promotion that fired because the decoder had
-            // run ahead) is cancelled immediately.  Without this, post-seek
-            // audio would continue ramping toward the pre-seek target and the
-            // volume would drift to the wrong level before reapplyCurrentTrackGain
-            // on the main thread gets a chance to correct things.
-            targetGainLinear = activeGainLinear;
+            // Seek or initial startup flush: restore both active and target
+            // gain to baselineGainLinear — the last value explicitly set by
+            // setGainImmediate() for the current track.
+            //
+            // The previous code snapped only targetGainLinear to activeGainLinear.
+            // That was wrong: if the decoder ran ahead and queueInput's same-format
+            // gapless promotion had already fired (setting targetGainLinear to the
+            // NEXT track's gain and starting a ramp), then activeGainLinear would
+            // be partway through that ramp toward the wrong (louder) level.
+            // Preserving that mid-ramp activeGainLinear caused every post-seek
+            // buffer to play at the wrong gain — the "massive volume jump" the
+            // user hears after seeking.
+            //
+            // baselineGainLinear is always the correct, explicitly-set gain for
+            // the current track (written by setGainImmediate, which is called from
+            // applyGain / setReplayGain / reapplyCurrentTrackGain whenever the
+            // track changes or gain is confirmed). Restoring both active and target
+            // to baseline on every seek-flush is the same strategy onReset() uses
+            // and is always correct.
+            activeGainLinear = baselineGainLinear;
+            targetGainLinear = baselineGainLinear;
             ramping = false;
-            // Clear the stale pending gain so that queueInput's same-format
-            // gapless promotion cannot fire after the seek.  After the seek,
-            // the decoder runs ahead again and fires onQueueEndOfStream() a
-            // second time (endOfStreamPending = true).  With hasPendingFlushGain
-            // still true, queueInput would see both flags set and immediately
-            // promote the stale pending gain (a 0 dB fallback or the next
-            // track's gain) onto the current track — the volume spike the user
-            // hears.  Clearing it here prevents that.  The correct next-track
-            // gain is re-queued shortly after by setReplayGain →
-            // queuePendingForNextTrack() when onTracksChanged fires post-seek.
             hasPendingFlushGain = false;
         }
         endOfStreamPending = false;
