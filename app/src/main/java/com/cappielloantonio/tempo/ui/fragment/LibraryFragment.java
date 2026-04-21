@@ -29,6 +29,7 @@ import com.cappielloantonio.tempo.databinding.FragmentLibraryBinding;
 import com.cappielloantonio.tempo.helper.recyclerview.CustomLinearSnapHelper;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
+import com.cappielloantonio.tempo.navigation.NavigationController;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistAdapter;
@@ -48,10 +49,10 @@ import java.util.Objects;
 @UnstableApi
 public class LibraryFragment extends Fragment implements ClickCallback {
     private static final String TAG = "LibraryFragment";
-    private static final String TOAST_MSG = "Long press to refresh" ;
 
     private FragmentLibraryBinding bind;
     private MainActivity activity;
+    private NavigationController navigationController;
     private LibraryViewModel libraryViewModel;
 
     private MusicFolderAdapter musicFolderAdapter;
@@ -67,6 +68,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         activity = (MainActivity) getActivity();
+        navigationController = activity.getNavigationController();
 
         bind = FragmentLibraryBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
@@ -125,7 +127,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
             return true;
         });
         bind.albumCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
-            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.library_toast_long_press_to_refresh, Toast.LENGTH_SHORT).show()
         );
 
         // Artist
@@ -134,7 +136,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
             return true;
         });
         bind.artistCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
-            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.library_toast_long_press_to_refresh, Toast.LENGTH_SHORT).show()
         );
 
         // Genre
@@ -143,7 +145,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
             return true;
         });
         bind.genreCatalogueSampleTextViewRefreshable.setOnClickListener(v ->
-            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.library_toast_long_press_to_refresh, Toast.LENGTH_SHORT).show()
         );
 
         // Playlist
@@ -152,7 +154,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
             return true;
         });
         bind.playlistCatalogueSampleTextViewRefreshable.setOnClickListener( v ->
-            Toast.makeText(requireContext(), TOAST_MSG, Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), R.string.library_toast_long_press_to_refresh, Toast.LENGTH_SHORT).show()
         );
     }
 
@@ -160,6 +162,8 @@ public class LibraryFragment extends Fragment implements ClickCallback {
         materialToolbar = bind.getRoot().findViewById(R.id.toolbar);
 
         activity.setSupportActionBar(materialToolbar);
+        navigationController.setHamburgerMenuForLandscape(activity, materialToolbar);
+
         Objects.requireNonNull(materialToolbar.getOverflowIcon()).setTint(requireContext().getResources().getColor(R.color.titleTextColor, null));
     }
 
