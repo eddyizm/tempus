@@ -475,6 +475,8 @@
     <string name="share_subtitle_item">Data wygaśnięcia: %1$s</string>
     <string name="share_no_expiration">Nigdy</string>
     <string name="share_unsupported_error">Udostępnianie nie jest wspierane lub włączone</string>
+	<string name="toolbar_navigation_drawer_open">Szuflada nawigacji otwarta</string>
+    <string name="toolbar_navigation_drawer_closed">Szuflada nawigacji zamknięta</string>
     <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
     <string name="asset_link_label_song">UID piosenki</string>
     <string name="asset_link_label_album">UID albumu</string>
