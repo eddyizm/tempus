@@ -135,9 +135,10 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
             ramping = false;
             Log.d(TAG, "onFlush: GAPLESS PROMOTION -> active/target=" + activeGainLinear);
         } else {
-            Log.d(TAG, "onFlush: SEEK/STARTUP branch, keeping active=" + activeGainLinear
-                    + " baseline=" + baselineGainLinear);
-            targetGainLinear = activeGainLinear;
+            Log.d(TAG, "onFlush: SEEK/STARTUP branch, restoring to baseline=" + baselineGainLinear
+                    + " (was active=" + activeGainLinear + ")");
+            activeGainLinear = baselineGainLinear;
+            targetGainLinear = baselineGainLinear;
             ramping = false;
             hasPendingFlushGain = false;
         }
