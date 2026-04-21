@@ -135,10 +135,9 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
             ramping = false;
             Log.d(TAG, "onFlush: GAPLESS PROMOTION -> active/target=" + activeGainLinear);
         } else {
-            Log.d(TAG, "onFlush: SEEK/STARTUP branch, restoring to baseline=" + baselineGainLinear
-                    + " (was active=" + activeGainLinear + ")");
-            activeGainLinear = baselineGainLinear;
-            targetGainLinear = baselineGainLinear;
+            Log.d(TAG, "onFlush: SEEK/STARTUP branch, keeping active=" + activeGainLinear
+                    + " baseline=" + baselineGainLinear);
+            targetGainLinear = activeGainLinear;
             ramping = false;
             hasPendingFlushGain = false;
         }
@@ -179,14 +178,13 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         // consume pending) rather than the initial startup flush.
         hasProcessedAnyInput = true;
 
-        // Same-format gapless transition
-        if (endOfStreamPending && hasPendingFlushGain) {
-            Log.d(TAG, "queueInput: SAME-FORMAT GAPLESS PROMOTION"
-                    + " target " + targetGainLinear + " -> " + pendingFlushGainLinear);
-            targetGainLinear = pendingFlushGainLinear;
-            hasPendingFlushGain = false;
-            endOfStreamPending = false;
-        }
+        // NOTE: Same-format gapless gain promotion was intentionally removed from
+        // queueInput. On cached streams the decoder runs far ahead of playback,
+        // so endOfStreamPending becomes true long before audio actually reaches
+        // the track boundary. Triggering the promotion here caused a volume spike
+        // mid-track after every seek. Gain changes at track boundaries are now
+        // handled exclusively by applyGain() called from onMediaItemTransition,
+        // which fires at the correct playback time.
 
         float target = targetGainLinear;
         if (!ramping && Math.abs(target - activeGainLinear) > 0.0001f) {
