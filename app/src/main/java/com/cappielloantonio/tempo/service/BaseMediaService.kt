@@ -371,7 +371,8 @@ open class BaseMediaService : MediaLibraryService() {
                 // decoder ran ahead, or onTracksChanged firing with stale metadata)
                 // can overwrite the correct gain and leave the track playing at the
                 // wrong volume level after the seek completes.
-                if (reason == Player.DISCONTINUITY_REASON_SEEK &&
+                if ((reason == Player.DISCONTINUITY_REASON_SEEK ||
+                     reason == Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT) &&
                     oldPosition.mediaItemIndex == newPosition.mediaItemIndex) {
                     ReplayGainUtil.reapplyCurrentTrackGain(player)
                 }
