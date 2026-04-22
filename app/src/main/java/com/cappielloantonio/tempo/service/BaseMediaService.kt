@@ -210,7 +210,9 @@ open class BaseMediaService : MediaLibraryService() {
                             this@BaseMediaService,
                             SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
                         ).buildAsync()
-                        MediaManager.continuousPlay(player.currentMediaItem, browserFuture)
+                        if(Preferences.isContinuousPlayEnabled()) {
+                            MediaManager.continuousPlay(currentMediaItem, browserFuture)
+                        }
                     }
                 }
 
@@ -369,6 +371,13 @@ open class BaseMediaService : MediaLibraryService() {
                 // except an automatic transition to the next track.
                 if (reason != Player.DISCONTINUITY_REASON_AUTO_TRANSITION &&
                     oldPosition.mediaItemIndex == newPosition.mediaItemIndex) {
+                    // Clear pending gain immediately (main thread) before reapplying.
+                    // This pre-empts the same-format gapless promotion in onFlush: if
+                    // the decoder ran ahead (endOfStreamPending=true) before the seek,
+                    // hasPendingFlushGain being false when onFlush fires ensures we
+                    // restore to the correct current-track baseline instead of applying
+                    // the next track's gain mid-track.
+                    ReplayGainUtil.getAudioProcessor().clearPendingGain()
                     ReplayGainUtil.reapplyCurrentTrackGain(player)
                 }
 
