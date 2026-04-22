@@ -47,7 +47,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     // Tracks whether any samples have been processed since the last flush.
     // onFlush() is called both at initial audio-sink configuration (before
     // any audio has played) AND at mid-stream format-change transitions.
-    // We only want to consume the pending gain in the second case - at
+    // We only want to consume the pending gain in the second case — at
     // startup, pending was queued for the NEXT track and must not be
     // applied to the first track. Flipped true in queueInput and reset
     // to false in onFlush / onReset.
@@ -74,10 +74,15 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     public void setGainImmediate(float gainDb) {
         float linear = dbToLinear(gainDb);
+        float prevTarget = targetGainLinear;
+        float prevActive = activeGainLinear;
         targetGainLinear = linear;
         baselineGainLinear = linear;
         hasPendingFlushGain = false;
-        Log.d(TAG, "setGainImmediate: " + gainDb + " dB -> linear=" + linear);
+        Log.d(TAG, "setGainImmediate: " + gainDb + " dB -> linear=" + linear
+                + " | was target=" + prevTarget + " active=" + prevActive
+                + " baseline now=" + linear
+                + " | thread=" + Thread.currentThread().getName());
     }
 
     public void clearPendingGain() {
@@ -112,13 +117,24 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     @Override
     protected void onFlush() {
+        Log.d(TAG, "onFlush ENTER: active=" + activeGainLinear
+                + " target=" + targetGainLinear
+                + " baseline=" + baselineGainLinear
+                + " hasPending=" + hasPendingFlushGain
+                + " pendingVal=" + pendingFlushGainLinear
+                + " hasProcessed=" + hasProcessedAnyInput
+                + " eosP=" + endOfStreamPending
+                + " configAfterEos=" + configAfterEos
+                + " ramping=" + ramping
+                + " | thread=" + Thread.currentThread().getName());
         if (hasPendingFlushGain && hasProcessedAnyInput
                 && endOfStreamPending && configAfterEos) {
             activeGainLinear = pendingFlushGainLinear;
             targetGainLinear = pendingFlushGainLinear;
+            baselineGainLinear = pendingFlushGainLinear;
             hasPendingFlushGain = false;
             ramping = false;
-            Log.d(TAG, "onFlush: GAPLESS PROMOTION -> active/target=" + activeGainLinear);
+            Log.d(TAG, "onFlush: GAPLESS PROMOTION -> active/target/baseline=" + activeGainLinear);
         } else {
             Log.d(TAG, "onFlush: SEEK/STARTUP branch, restoring to baseline=" + baselineGainLinear
                     + " (was active=" + activeGainLinear + ")");
@@ -139,6 +155,10 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     @Override
     protected void onReset() {
+        Log.d(TAG, "onReset CALLED: active=" + activeGainLinear
+                + " target=" + targetGainLinear
+                + " baseline=" + baselineGainLinear
+                + " | thread=" + Thread.currentThread().getName());
         activeGainLinear = baselineGainLinear;
         targetGainLinear = baselineGainLinear;
         pendingFlushGainLinear = 1.0f;
@@ -147,7 +167,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         configAfterEos = false;
         ramping = false;
         hasProcessedAnyInput = false;
-        Log.d(TAG, "onReset: gain reset to baseline=" + baselineGainLinear);
+        Log.d(TAG, "onReset EXIT: active/target reset to baseline=" + baselineGainLinear);
     }
 
     @Override
