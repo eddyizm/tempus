@@ -74,15 +74,10 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     public void setGainImmediate(float gainDb) {
         float linear = dbToLinear(gainDb);
-        float prevTarget = targetGainLinear;
-        float prevActive = activeGainLinear;
         targetGainLinear = linear;
         baselineGainLinear = linear;
         hasPendingFlushGain = false;
-        Log.d(TAG, "setGainImmediate: " + gainDb + " dB -> linear=" + linear
-                + " | was target=" + prevTarget + " active=" + prevActive
-                + " baseline now=" + linear
-                + " | thread=" + Thread.currentThread().getName());
+        Log.d(TAG, "setGainImmediate: " + gainDb + " dB -> linear=" + linear);
     }
 
     public void clearPendingGain() {
@@ -117,16 +112,6 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     @Override
     protected void onFlush() {
-        Log.d(TAG, "onFlush ENTER: active=" + activeGainLinear
-                + " target=" + targetGainLinear
-                + " baseline=" + baselineGainLinear
-                + " hasPending=" + hasPendingFlushGain
-                + " pendingVal=" + pendingFlushGainLinear
-                + " hasProcessed=" + hasProcessedAnyInput
-                + " eosP=" + endOfStreamPending
-                + " configAfterEos=" + configAfterEos
-                + " ramping=" + ramping
-                + " | thread=" + Thread.currentThread().getName());
         if (hasPendingFlushGain && hasProcessedAnyInput
                 && endOfStreamPending && configAfterEos) {
             activeGainLinear = pendingFlushGainLinear;
@@ -154,10 +139,6 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
 
     @Override
     protected void onReset() {
-        Log.d(TAG, "onReset CALLED: active=" + activeGainLinear
-                + " target=" + targetGainLinear
-                + " baseline=" + baselineGainLinear
-                + " | thread=" + Thread.currentThread().getName());
         activeGainLinear = baselineGainLinear;
         targetGainLinear = baselineGainLinear;
         pendingFlushGainLinear = 1.0f;
@@ -166,7 +147,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
         configAfterEos = false;
         ramping = false;
         hasProcessedAnyInput = false;
-        Log.d(TAG, "onReset EXIT: active/target reset to baseline=" + baselineGainLinear);
+        Log.d(TAG, "onReset: gain reset to baseline=" + baselineGainLinear);
     }
 
     @Override
