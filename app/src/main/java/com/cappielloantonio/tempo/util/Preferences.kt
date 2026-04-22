@@ -699,7 +699,19 @@ object Preferences {
     fun isInstantMixUsable(): Boolean {
         return App.getInstance().preferences.getLong(
                 LAST_INSTANT_MIX, 0
-        ) + 30000 < System.currentTimeMillis()
+        ) + 5000 < System.currentTimeMillis()
+    }
+
+    @JvmStatic
+    fun setLastInstantMixForAA() {
+        App.getInstance().preferences.edit().putLong(LAST_INSTANT_MIX, System.currentTimeMillis()).apply()
+    }
+
+    @JvmStatic
+    fun isInstantMixForAAUsable(): Boolean {
+        return App.getInstance().preferences.getLong(
+            LAST_INSTANT_MIX, 0
+        ) + 2000 < System.currentTimeMillis()
     }
 
     @JvmStatic

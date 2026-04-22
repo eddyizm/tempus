@@ -25,6 +25,7 @@ import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse
+import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_LOADING
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON
@@ -33,10 +34,9 @@ import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MO
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON
-import com.google.common.collect.ImmutableList
-import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.MappingUtil
 import com.cappielloantonio.tempo.util.Preferences
+import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
@@ -44,6 +44,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TAG = "MediaLibraryServiceCallback"
 private val queueSourceCache = ConcurrentHashMap<String, List<MediaItem>>()
@@ -130,15 +131,6 @@ open class MediaLibrarySessionCallback(
                 }
             }.build()
 
-    override fun onDisconnected(
-        session: MediaSession, controller: MediaSession.ControllerInfo
-    ){
-        if (MediaServiceExtensionRegistry.handler != null) {
-            MediaServiceExtensionRegistry.handler = null
-            Log.d(TAG, "Android Auto is disconnected")
-        }
-    }
-
     @OptIn(UnstableApi::class)
     override fun onConnect(
         session: MediaSession, controller: MediaSession.ControllerInfo
@@ -165,7 +157,7 @@ open class MediaLibrarySessionCallback(
             (session.isAutomotiveController(controller) ||
                     session.isAutoCompanionController(controller))
         ) {
-            MediaServiceExtensionRegistry.handler = AndroidAutoMediaServiceExtension()
+            MediaServiceExtensionRegistry.handler = AndroidAutoMediaServiceExtension(automotiveRepository)
             Log.d(TAG, "Android Auto is connected")
         }
 
@@ -499,8 +491,14 @@ open class MediaLibrarySessionCallback(
 
             firstItem.mediaId.startsWith(Constants.AA_INSTANTMIX_SOURCE) -> {
                 Log.d(TAG, "Fetching instant mix for $firstItem.mediaId")
+
+                val withoutPrefix = firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE)
+                val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
+                val artistId = withoutPrefix.substringAfter("]")
+                val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+
                 Futures.transform(
-                    automotiveRepository.getInstantMix(firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE), 12),
+                    automotiveRepository.getInstantMix(artistId, count),
                     { it.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
@@ -581,19 +579,54 @@ open class MediaLibrarySessionCallback(
         return MediaBrowserTree.search(query)
     }
 
-    class AndroidAutoMediaServiceExtension : MediaServiceExtension {
+    class AndroidAutoMediaServiceExtension(
+        private val automotiveRepository: AutomotiveRepository
+    ) : MediaServiceExtension {
+
+        private var instantMixIsRunning = AtomicBoolean(false)
+
         override fun handle(
+            player: Player,
             item: MediaItem,
             browserFuture: ListenableFuture<MediaBrowser>
         ): Boolean {
+            if (!Preferences.isInstantMixForAAUsable()){
+                Log.d(TAG, "handle: something already running, skipping by time")
+                return true
+            }
+
+            if (player.mediaItemCount > 1) {
+                return false
+            }
 
             val extras = item.requestMetadata.extras ?: item.mediaMetadata.extras
             val parentId = extras?.getString("parent_id")
-            Log.d(TAG, "handle for parentId = $parentId")
 
+            if (parentId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true) {
+                if (!instantMixIsRunning.compareAndSet(false, true)) {
+                    Log.d(TAG, "handle: Instant Mix already running, skipping")
+                    return true
+                }
+                Preferences.setLastInstantMixForAA()
 
-            // logique Android Auto existante
-            // ex: MadeForYou, queue, radio, etc.
+                Log.d(TAG, "handle: Instant Mix is running for $parentId")
+
+                val withoutPrefix = parentId.removePrefix(Constants.AA_INSTANTMIX_SOURCE)
+
+                val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
+                val artistId = withoutPrefix.substringAfter("]")
+                val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+
+                Log.d(TAG, "handle: Instant Mix detected for artist $artistId count=$count")
+
+                automotiveRepository.buildAndEnqueueInstantMix(
+                    artistId,
+                    item.mediaId,
+                    (count-1),
+                    browserFuture
+                ) { instantMixIsRunning.set(false) }
+                return true
+            }
 
             return false
         }
