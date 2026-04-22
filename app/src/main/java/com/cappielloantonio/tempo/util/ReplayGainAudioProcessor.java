@@ -47,7 +47,7 @@ public final class ReplayGainAudioProcessor extends BaseAudioProcessor {
     // Tracks whether any samples have been processed since the last flush.
     // onFlush() is called both at initial audio-sink configuration (before
     // any audio has played) AND at mid-stream format-change transitions.
-    // We only want to consume the pending gain in the second case — at
+    // We only want to consume the pending gain in the second case - at
     // startup, pending was queued for the NEXT track and must not be
     // applied to the first track. Flipped true in queueInput and reset
     // to false in onFlush / onReset.
