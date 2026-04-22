@@ -212,11 +212,13 @@ public class ReplayGainUtil {
                         + " totalGain=" + totalGain);
                 audioProcessor.setGainImmediate(totalGain);
             } else {
-                // Cache entry exists but has empty/zero gains (e.g. poisoned
-                // by a prefetch that got a tagless transcoded stream). Don't
-                // apply preamp-only gain — leave the current level alone.
+                // Cache entry exists but gain is zero: the track genuinely has
+                // no ReplayGain data. Apply preamp-only so this track plays at the
+                // correct reference level rather than inheriting the previous track's gain.
+                float preampOnly = computeTotalGain(0f, 0f);
                 Log.d(TAG, "applyGain: cache hit but gain=0 for " + mediaItem.mediaId
-                        + ", holding current gain");
+                        + ", applying preamp-only totalGain=" + preampOnly);
+                audioProcessor.setGainImmediate(preampOnly);
             }
         } else {
             Log.d(TAG, "applyGain: cache miss for " + mediaItem.mediaId
@@ -288,7 +290,13 @@ public class ReplayGainUtil {
         // by applyGain() (called from onMediaItemTransition), which already
         // applied the correct preamp-only value when the track started.
         if (gain == 0f) {
-            Log.d(TAG, "setReplayGain: no effective gain data, keeping current gain for " + mediaId);
+            // No RG data for this track. Apply preamp-only so the track plays at
+            // the correct reference level rather than inheriting whatever gain the
+            // previous track left behind.
+            float preampOnly = computeTotalGain(0f, 0f);
+            Log.d(TAG, "setReplayGain: no effective gain data for " + mediaId
+                    + ", applying preamp-only totalGain=" + preampOnly);
+            audioProcessor.setGainImmediate(preampOnly);
             queuePendingForNextTrack(player);
             return;
         }
@@ -377,22 +385,22 @@ public class ReplayGainUtil {
         float resolvedGain = (gains != null) ? resolveGainForNextTrack(player, gains) : 0f;
 
         if (resolvedGain == 0f) {
-            // Either no RG data is cached yet (gains == null), or the cached
-            // entry has all-zero gains (e.g. prefetch ran but the track has no
-            // ReplayGain tags). Either way, do NOT queue a pending gain.
-            //
-            // The former fallback was computeTotalGain(0f, 0f) = preamp only
-            // (default -6 dB). For a current track playing at album+preamp
-            // (e.g. -18 dB), that snap produces a +12 dB volume spike at the
-            // gapless boundary — dramatically audible, and exactly the bug
-            // being fixed here.
-            //
-            // Leaving hasPendingFlushGain unset means the current track's gain
-            // carries over into the first samples of the next track. onTracksChanged
-            // fires shortly after the transition and applies the correct gain
-            // with a 10 ms ramp — far less noticeable than a sudden loud jump.
-            Log.d(TAG, "queuePendingForNextTrack: no effective RG gain for "
-                    + nextItem.mediaId + ", carrying over current gain");
+            if (gains == null) {
+                // No data cached yet — data may arrive via prefetch or onTracksChanged.
+                // Carry over the current track's gain so there is no sudden change at
+                // the boundary; the correct value will be applied once data arrives.
+                Log.d(TAG, "queuePendingForNextTrack: no RG data yet for "
+                        + nextItem.mediaId + ", carrying over current gain");
+                return;
+            }
+            // gains != null but resolvedGain == 0: we have confirmed the next track
+            // has no ReplayGain data. Queue preamp-only so the gapless transition
+            // applies the correct baseline instead of inheriting the current track's
+            // gain level.
+            float preampOnly = computeTotalGain(0f, 0f);
+            audioProcessor.setPendingGain(preampOnly);
+            Log.d(TAG, "queuePendingForNextTrack: no RG tags for "
+                    + nextItem.mediaId + ", queuing preamp-only totalGain=" + preampOnly);
             return;
         }
 
