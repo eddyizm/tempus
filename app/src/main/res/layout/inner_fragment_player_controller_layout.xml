@@ -319,8 +319,8 @@
     <ImageButton
         android:id="@id/exo_play_pause"
         style="@style/ExoStyledControls.Button.Center.PlayPause"
-        android:layout_width="@dimen/_75sdp"
-        android:layout_height="@dimen/_75sdp"
+        android:layout_width="@dimen/_65sdp"
+        android:layout_height="@dimen/_65sdp"
         android:layout_marginTop="0dp"
         app:layout_constraintBottom_toTopOf="@+id/player_quick_action_view"
         app:layout_constraintEnd_toEndOf="parent"
