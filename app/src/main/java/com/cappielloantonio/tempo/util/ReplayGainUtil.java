@@ -196,7 +196,6 @@ public class ReplayGainUtil {
                     + " gain=" + gain + " peak=" + peak
                     + " totalGain=" + totalGain);
             audioProcessor.setGainImmediate(totalGain);
-            Log.d(TAG, "applyGain: setGainImmediate done totalGain=" + totalGain);
             queuePendingForNextTrack(player);
             return;
         }
@@ -339,7 +338,6 @@ public class ReplayGainUtil {
             Log.d(TAG, "reapplyCurrentTrackGain: server RG for " + currentItem.mediaId
                     + " totalGain=" + totalGain);
             audioProcessor.setGainImmediate(totalGain);
-            Log.d(TAG, "reapplyCurrentTrackGain: setGainImmediate done totalGain=" + totalGain);
             return;
         }
 
