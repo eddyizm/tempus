@@ -310,8 +310,6 @@
     <string name="settings_title_general">일반</string>
     <string name="settings_title_rating">별점</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
-    <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
-    <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
     <string name="settings_title_scrobble">스크로블링</string>
     <string name="settings_title_skip_min_star_rating">별점 기준으로 트랙 무시</string>
     <string name="settings_title_skip_min_star_rating_dialog">음악 별점:</string>
