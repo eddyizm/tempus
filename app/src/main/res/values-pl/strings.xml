@@ -63,9 +63,16 @@
     <string name="artist_page_switch_layout_button">Zmień układ</string>
     <string name="artist_page_title_album_more_like_this_button">Więcej podobnych</string>
     <string name="artist_page_title_album_section">Albumy</string>
+	<string name="artist_page_title_ep_section">EP-ki</string>
+    <string name="artist_page_title_single_section">Single</string>
+    <string name="artist_page_title_compilation_section">Kompilacje</string>
+    <string name="artist_page_title_soundtrack_section">Ścieżki dźwiękowe</string>
+    <string name="artist_page_title_live_section">Na żywo</string>
+    <string name="artist_page_title_remix_section">Remiksy</string>
+    <string name="artist_page_title_appears_on_section">Występuje na</string>
     <string name="artist_page_title_biography_more_button">Więcej</string>
     <string name="artist_page_title_biography_section">Biografia</string>
-    <string name="artist_page_title_most_streamed_song_section">Najczęsciej słuchane utwory</string>
+    <string name="artist_page_title_most_streamed_song_section">Top piosenki</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Zobacz wszystkie</string>
     <string name="battery_optimization_negative_button">Ignoruj</string>
     <string name="battery_optimization_neutral_button">Nie pytaj ponownie</string>
@@ -192,6 +199,7 @@
     <string name="library_title_music_folder">Foldery z muzyką</string>
     <string name="library_title_playlist">Playlisty</string>
     <string name="library_title_playlist_see_all_button">Zobacz wszystkie</string>
+	<string name="library_toast_long_press_to_refresh">Przytrzymaj aby odświeżyć</string>
     <string name="login_empty">Brak dodanych serwerów</string>
     <string name="login_title">Serwery Subsonic</string>
     <string name="login_title_expanded">Serwery Subsonic</string>
@@ -381,7 +389,7 @@
     <string name="settings_podcast_summary">Jeżeli włączone, widoczna będzie sekcja z podcastami. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_playlist_sort">Sortowanie playlist</string>
     <string name="settings_androidauto">Android Auto</string>
-	<string name="settings_androidauto_album_view">Układ siatki dla albumów</string>
+	<string name="settings_androidauto_album_view">Układ siatki dla albumów i wykonawców</string>
 	<string name="settings_androidauto_home_view">Układ siatki dla strony głównej</string>
     <string name="settings_androidauto_playlist_view">Układ siatki dla playlist</string>
     <string name="settings_androidauto_podcast_view">Układ siatki dla podcastów</string>
@@ -467,6 +475,8 @@
     <string name="share_subtitle_item">Data wygaśnięcia: %1$s</string>
     <string name="share_no_expiration">Nigdy</string>
     <string name="share_unsupported_error">Udostępnianie nie jest wspierane lub włączone</string>
+	<string name="toolbar_navigation_drawer_open">Szuflada nawigacji otwarta</string>
+    <string name="toolbar_navigation_drawer_closed">Szuflada nawigacji zamknięta</string>
     <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
     <string name="asset_link_label_song">UID piosenki</string>
     <string name="asset_link_label_album">UID albumu</string>
@@ -595,4 +605,5 @@
 	<string name="search_all_songs_loading">Getting wszystkich piosenek ...</string>
     <string name="search_all_songs">Wszystkie %1$s piosenek</string>
     <string name="search_all_songs_play">Odtwórz %1$s</string>
+	<string name="nav_drawer_index">Indeks</string>
 </resources>

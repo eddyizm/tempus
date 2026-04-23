@@ -55,5 +55,6 @@ class Queue(
         bookmarkPosition = child.bookmarkPosition
         originalWidth = child.originalWidth
         originalHeight = child.originalHeight
+        replayGain = child.replayGain
     }
 }

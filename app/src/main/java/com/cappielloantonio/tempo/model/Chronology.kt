@@ -55,6 +55,9 @@ class Chronology(
         bookmarkPosition = mediaItem.mediaMetadata.extras!!.getLong("bookmarkPosition")
         originalWidth = mediaItem.mediaMetadata.extras!!.getInt("originalWidth")
         originalHeight = mediaItem.mediaMetadata.extras!!.getInt("originalHeight")
+        replayGain = com.cappielloantonio.tempo.util.ReplayGainBundleUtil.fromBundle(
+            mediaItem.mediaMetadata.extras
+        )
         server = Preferences.getServerId()
         timestamp = Date().time
     }

@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.subsonic.models
 import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
@@ -84,5 +85,14 @@ open class Child @JvmOverloads constructor(
     @ColumnInfo(name = "original_width")
     var originalWidth: Int? = null,
     @ColumnInfo(name = "original_height")
-    var originalHeight: Int? = null
+    var originalHeight: Int? = null,
+    /**
+     * OpenSubsonic ReplayGain data returned as part of the Child response.
+     * Stored as embedded columns prefixed `rg_` in every table that persists
+     * a Child. May be null for servers that don't implement the extension.
+     * See ReplayGainInfo for the exact schema.
+     */
+    @Embedded(prefix = "rg_")
+    @SerializedName("replayGain")
+    var replayGain: ReplayGainInfo? = null
 ) : Parcelable

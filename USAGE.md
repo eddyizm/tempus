@@ -52,7 +52,7 @@ This app works with any service that implements the Subsonic API, including:
 ### Initial Setup
 **IN PROGRESS**
 1. Enter your server URL (e.g., `https://your-subsonic-server.com`)
-2. Provide your username and password
+2. Provide your username and password. Or in some cases, API key (eg LMS: https://github.com/epoupon/lms/discussions/562).
 3. Test the connection to ensure proper configuration
 
 ### Advanced Settings
