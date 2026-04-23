@@ -224,7 +224,8 @@ In addition, you can choose to display the following functions as thumbnails or 
 - Playlists
 - Radio
 - Podcast
-As they displayed tracks, Star tracks, Random and Genres are always be displayed as a list.
+
+As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
 
 As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
 
