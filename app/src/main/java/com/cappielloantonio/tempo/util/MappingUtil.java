@@ -114,7 +114,7 @@ public class MappingUtil {
                                     .setAlbumTitle(media.getAlbum())
                                     .setArtist(media.getArtist())
                                     .setArtworkUri(artworkUri)
-                                    .setUserRating(new HeartRating(media.getStarred() != null))
+                                    .setUserRating(new HeartRating(media.getStarred() != null && media.getStarred().getTime() > 0))
                                     .setSupportedCommands(
                                         ImmutableList.of(
                                                 Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
