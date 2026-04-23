@@ -15,12 +15,15 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.cappielloantonio.tempo.glide.CustomGlideRequest
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider
+import androidx.room.Embedded
 import com.cappielloantonio.tempo.subsonic.models.Child
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode
+import com.cappielloantonio.tempo.subsonic.models.ReplayGainInfo
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.MusicUtil
 import com.cappielloantonio.tempo.util.Preferences.getImageSize
+import com.cappielloantonio.tempo.util.ReplayGainBundleUtil
 import java.util.Date
 
 @UnstableApi
@@ -133,6 +136,9 @@ class SessionMediaItem() {
     @ColumnInfo(name = "timestamp")
     var timestamp: Long? = null
 
+    @Embedded(prefix = "rg_")
+    var replayGain: ReplayGainInfo? = null
+
     constructor(child: Child) : this() {
         id = child.id
         parentId = child.parentId
@@ -165,6 +171,7 @@ class SessionMediaItem() {
         bookmarkPosition = child.bookmarkPosition
         originalWidth = child.originalWidth
         originalHeight = child.originalHeight
+        replayGain = child.replayGain
     }
 
     constructor(podcastEpisode: PodcastEpisode) : this() {
@@ -243,6 +250,7 @@ class SessionMediaItem() {
         bundle.putInt("originalWidth", originalWidth ?: 0)
         bundle.putInt("originalHeight", originalHeight ?: 0)
         bundle.putString("uri", uri.toString())
+        ReplayGainBundleUtil.writeToBundle(bundle, replayGain)
 
         return MediaItem.Builder()
             .setMediaId(id!!)
