@@ -44,7 +44,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TAG = "MediaLibraryServiceCallback"
 private val queueSourceCache = ConcurrentHashMap<String, List<MediaItem>>()
@@ -152,14 +151,6 @@ open class MediaLibrarySessionCallback(
                 updateMediaNotificationCustomLayout(session)
             }
         })
-
-        if (MediaServiceExtensionRegistry.handler == null &&
-            (session.isAutomotiveController(controller) ||
-                    session.isAutoCompanionController(controller))
-        ) {
-            MediaServiceExtensionRegistry.handler = AndroidAutoMediaServiceExtension(automotiveRepository)
-            Log.d(TAG, "Android Auto is connected")
-        }
 
         // FIXME: I'm not sure this if is required anymore
         if (session.isMediaNotificationController(controller) || session.isAutomotiveController(
@@ -497,6 +488,9 @@ open class MediaLibrarySessionCallback(
                 val artistId = withoutPrefix.substringAfter("]")
                 val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
 
+                // connect handle
+                MediaServiceExtensionRegistry.handler = AndroidAutoMediaServiceExtension(automotiveRepository)
+
                 Futures.transform(
                     automotiveRepository.getInstantMix(artistId, count),
                     { it.value ?: emptyList() },
@@ -583,17 +577,11 @@ open class MediaLibrarySessionCallback(
         private val automotiveRepository: AutomotiveRepository
     ) : MediaServiceExtension {
 
-        private var instantMixIsRunning = AtomicBoolean(false)
-
         override fun handle(
             player: Player,
             item: MediaItem,
             browserFuture: ListenableFuture<MediaBrowser>
         ): Boolean {
-            if (!Preferences.isInstantMixForAAUsable()){
-                Log.d(TAG, "handle: something already running, skipping by time")
-                return true
-            }
 
             if (player.mediaItemCount > 1) {
                 return false
@@ -603,28 +591,24 @@ open class MediaLibrarySessionCallback(
             val parentId = extras?.getString("parent_id")
 
             if (parentId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true) {
-                if (!instantMixIsRunning.compareAndSet(false, true)) {
-                    Log.d(TAG, "handle: Instant Mix already running, skipping")
-                    return true
-                }
-                Preferences.setLastInstantMixForAA()
+                Preferences.setLastInstantMix()
 
-                Log.d(TAG, "handle: Instant Mix is running for $parentId")
+                // disconnect handle
+                MediaServiceExtensionRegistry.handler = null
 
                 val withoutPrefix = parentId.removePrefix(Constants.AA_INSTANTMIX_SOURCE)
-
                 val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
                 val artistId = withoutPrefix.substringAfter("]")
                 val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
 
-                Log.d(TAG, "handle: Instant Mix detected for artist $artistId count=$count")
+                Log.d(TAG, "handle: Instant Mix is running for artist $artistId count=$count")
 
                 automotiveRepository.buildAndEnqueueInstantMix(
                     artistId,
                     item.mediaId,
                     (count-1),
                     browserFuture
-                ) { instantMixIsRunning.set(false) }
+                )
                 return true
             }
 

@@ -54,6 +54,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -985,14 +986,17 @@ public class AutomotiveRepository {
      * @param usedTrackId       The ID of the first track already playing, to avoid duplicate
      * @param count             Total number of tracks to add (INSTANT_MIX_MAX_TRACKS - 1)
      * @param browserFuture     The MediaBrowser future to enqueue into
-     * @param onComplete        Runnable to call when complete
      */
+    private final AtomicBoolean instantMixBuildIsRunning = new AtomicBoolean(false);
     public void buildAndEnqueueInstantMix(
             String artistId,
             String usedTrackId,
             int count,
-            ListenableFuture<MediaBrowser> browserFuture,
-            Runnable onComplete) {
+            ListenableFuture<MediaBrowser> browserFuture) {
+        if (!instantMixBuildIsRunning.compareAndSet(false, true)) {
+            Log.d(TAG, "Instant Mix: build already running, skipping");
+            return;
+        }
 
         final int maxTracks = Math.min(count, INSTANT_MIX_MAX_TRACKS - 1);
 
@@ -1021,8 +1025,7 @@ public class AutomotiveRepository {
 
                             fetchNextTrackForMix(albums, 0, mixTracks, usedTrackIds, random, maxTracks, browserFuture);
 
-                            if (onComplete != null) onComplete.run();
-                        //    MediaLibrarySessionCallback.AndroidAutoMediaServiceExtension.instantMixIsRunning.set(false);
+                            instantMixBuildIsRunning.set(false);
                         } else {
                             Log.e(TAG, "Instant Mix: buildAndEnqueue failed to retrieve albums");
                         }
