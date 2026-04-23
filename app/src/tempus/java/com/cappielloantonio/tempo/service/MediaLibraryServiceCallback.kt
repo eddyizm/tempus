@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.service
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +14,6 @@ import androidx.media3.common.Rating
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.CommandButton
 import androidx.media3.session.LibraryResult
-import androidx.media3.session.MediaConstants
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
@@ -42,8 +42,10 @@ import com.google.common.util.concurrent.MoreExecutors
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.ConcurrentHashMap
 
 private const val TAG = "MediaLibraryServiceCallback"
+private val queueSourceCache = ConcurrentHashMap<String, List<MediaItem>>()
 @UnstableApi
 open class MediaLibrarySessionCallback(
     private val context: Context,
@@ -55,64 +57,55 @@ open class MediaLibrarySessionCallback(
         MediaBrowserTree.initialize(context, automotiveRepository)
     }
 
-    private val customCommandToggleShuffleModeOn = CommandButton.Builder()
+    @SuppressLint("PrivateResource")
+    private val customCommandToggleShuffleModeOn = CommandButton.Builder(CommandButton.ICON_SHUFFLE_OFF)
         .setDisplayName(context.getString(R.string.exo_controls_shuffle_on_description))
-        .setSessionCommand(
-            SessionCommand(
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON, Bundle.EMPTY
-            )
-        ).setIconResId(R.drawable.exo_icon_shuffle_off).build()
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON, Bundle.EMPTY))
+        .build()
 
-    private val customCommandToggleShuffleModeOff = CommandButton.Builder()
+    @SuppressLint("PrivateResource")
+    private val customCommandToggleShuffleModeOff = CommandButton.Builder(CommandButton.ICON_SHUFFLE_ON)
         .setDisplayName(context.getString(R.string.exo_controls_shuffle_off_description))
-        .setSessionCommand(
-            SessionCommand(
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF, Bundle.EMPTY
-            )
-        ).setIconResId(R.drawable.exo_icon_shuffle_on).build()
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF, Bundle.EMPTY))
+        .build()
 
-    private val customCommandToggleRepeatModeOff = CommandButton.Builder()
+    @SuppressLint("PrivateResource")
+    private val customCommandToggleRepeatModeOff = CommandButton.Builder(CommandButton.ICON_REPEAT_OFF)
         .setDisplayName(context.getString(R.string.exo_controls_repeat_off_description))
         .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF, Bundle.EMPTY))
-        .setIconResId(R.drawable.exo_icon_repeat_off)
         .build()
 
-    private val customCommandToggleRepeatModeOne = CommandButton.Builder()
+    @SuppressLint("PrivateResource")
+    private val customCommandToggleRepeatModeOne = CommandButton.Builder(CommandButton.ICON_REPEAT_ONE)
         .setDisplayName(context.getString(R.string.exo_controls_repeat_one_description))
         .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE, Bundle.EMPTY))
-        .setIconResId(R.drawable.exo_icon_repeat_one)
         .build()
 
-    private val customCommandToggleRepeatModeAll = CommandButton.Builder()
+    @SuppressLint("PrivateResource")
+    private val customCommandToggleRepeatModeAll = CommandButton.Builder(CommandButton.ICON_REPEAT_ALL)
         .setDisplayName(context.getString(R.string.exo_controls_repeat_all_description))
         .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL, Bundle.EMPTY))
-        .setIconResId(R.drawable.exo_icon_repeat_all)
         .build()
 
-    private val customCommandToggleHeartOn = CommandButton.Builder()
+    @Suppress("DEPRECATION")
+    private val customCommandToggleHeartOn = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
         .setDisplayName(context.getString(R.string.exo_controls_heart_on_description))
-        .setSessionCommand(
-            SessionCommand(
-                CUSTOM_COMMAND_TOGGLE_HEART_ON, Bundle.EMPTY
-            )
-        )
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_ON, Bundle.EMPTY))
         .setIconResId(R.drawable.ic_favorite)
         .build()
 
-    private val customCommandToggleHeartOff = CommandButton.Builder()
+    @Suppress("DEPRECATION")
+    private val customCommandToggleHeartOff = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
         .setDisplayName(context.getString(R.string.exo_controls_heart_off_description))
-        .setSessionCommand(
-            SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_OFF, Bundle.EMPTY)
-        )
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_OFF, Bundle.EMPTY))
         .setIconResId(R.drawable.ic_favorites_outlined)
         .build()
 
     // Fake Command while waiting for like update command
-    private val customCommandToggleHeartLoading = CommandButton.Builder()
+    @Suppress("DEPRECATION")
+    private val customCommandToggleHeartLoading = CommandButton.Builder(CommandButton.ICON_UNDEFINED)
         .setDisplayName(context.getString(R.string.cast_expanded_controller_loading))
-        .setSessionCommand(
-            SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_LOADING, Bundle.EMPTY)
-        )
+        .setSessionCommand(SessionCommand(CUSTOM_COMMAND_TOGGLE_HEART_LOADING, Bundle.EMPTY))
         .setIconResId(R.drawable.ic_bookmark_sync)
         .build()
 
@@ -365,7 +358,15 @@ open class MediaLibrarySessionCallback(
         pageSize: Int,
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
-        return MediaBrowserTree.getChildren(parentId)
+        val future = MediaBrowserTree.getChildren(parentId)
+
+        Log.d(TAG, "onGetChildren parentId = $parentId")
+
+        return Futures.transform(future, { result ->
+            val items = result.value ?: emptyList()
+            queueSourceCache[Constants.AA_QUEUE_CACHED_SOURCE] = items
+            result
+        }, MoreExecutors.directExecutor())
     }
 
     override fun onSetMediaItems(
@@ -379,7 +380,7 @@ open class MediaLibrarySessionCallback(
         val firstItem = mediaItems.firstOrNull()
             ?: return super.onSetMediaItems(mediaSession, controller, mediaItems, startIndex, startPositionMs)
 
-        Log.d(TAG, "mediaId = ${firstItem.mediaId},  startIndex = $startIndex, startPositionMs = $startPositionMs")
+        Log.d(TAG, "mediaId = ${firstItem.mediaId}, startIndex = $startIndex, startPositionMs = $startPositionMs")
 
         if (isRadio(firstItem)) {
             QueueRepository().deleteAll()
@@ -392,7 +393,8 @@ open class MediaLibrarySessionCallback(
             futureQueue,
             { resolvedItems ->
                 if (!resolvedItems.isNullOrEmpty()) {
-                    val children = resolvedItems.mapNotNull { MappingUtil.mapToChild(it) }
+                    val resolvedItemsUntagged = resolvedItems.map { detagForQueue(it) }
+                    val children = resolvedItemsUntagged.mapNotNull { MappingUtil.mapToChild(it) }
                     if (children.isNotEmpty()) QueueRepository().insertAll(children, true, 0)
                 }
                 MediaSession.MediaItemsWithStartPosition(
@@ -405,6 +407,18 @@ open class MediaLibrarySessionCallback(
         )
     }
 
+    private fun detagForQueue(item: MediaItem): MediaItem {
+        val extras = item.mediaMetadata.extras?.let { Bundle(it) } ?: Bundle()
+        extras.remove("parent_id")
+        return item.buildUpon()
+            .setMediaMetadata(
+                item.mediaMetadata.buildUpon()
+                    .setExtras(extras)
+                    .build()
+            )
+            .build()
+    }
+
     override fun onAddMediaItems(
         mediaSession: MediaSession,
         controller: MediaSession.ControllerInfo,
@@ -415,7 +429,7 @@ open class MediaLibrarySessionCallback(
 
         Log.d(TAG, "mediaId = ${firstItem.mediaId}")
         val extras = firstItem.requestMetadata.extras ?: firstItem.mediaMetadata.extras
-        Log.d(TAG, "extras: ${extras?.keySet()?.joinToString { key -> "$key=${extras.get(key)}" } ?: "null"}")
+        Log.d(TAG, "extras: ${extras?.keySet()?.joinToString { key -> "$key=${extras.getString(key)}" } ?: "null"}")
 
         if (isRadio(firstItem)) {
             Log.d(TAG, "Radio")
@@ -426,7 +440,7 @@ open class MediaLibrarySessionCallback(
     }
 
     private fun isRadio(item: MediaItem): Boolean {
-        return item.mediaId?.startsWith("ir-") == true ||
+        return item.mediaId.startsWith("ir-") ||
                 item.mediaMetadata.extras?.getString("type", "") == Constants.MEDIA_TYPE_RADIO ||
                 item.requestMetadata.extras?.getString("type", "") == Constants.MEDIA_TYPE_RADIO
     }
@@ -459,25 +473,13 @@ open class MediaLibrarySessionCallback(
         val parentId = extras?.getString("parent_id")
 
         val futureQueue: ListenableFuture<List<MediaItem>> = when {
-            parentId?.startsWith(Constants.AA_ALBUM_SOURCE) == true -> {
-                Log.d(TAG, "Fetching album tracks for $parentId")
-                Futures.transform(
-                    automotiveRepository.getAlbumTracks(parentId.removePrefix(Constants.AA_ALBUM_SOURCE)),
-                    { it.value ?: emptyList() },
-                    MoreExecutors.directExecutor()
-                )
+            parentId?.startsWith(Constants.AA_QUEUE_CACHED_SOURCE) == true -> {
+                Log.d(TAG, "Fetching AA list source tracks for $parentId")
+                val cachedItems = queueSourceCache[Constants.AA_QUEUE_CACHED_SOURCE] ?: emptyList()
+                Futures.immediateFuture(cachedItems)
             }
 
-            parentId?.startsWith(Constants.AA_PLAYLIST_SOURCE) == true -> {
-                Log.d(TAG, "Fetching playlist tracks for $parentId")
-                Futures.transform(
-                    automotiveRepository.getPlaylistSongs(parentId.removePrefix(Constants.AA_PLAYLIST_SOURCE)),
-                    { it.value ?: emptyList() },
-                    MoreExecutors.directExecutor()
-                )
-            }
-
-            firstItem.mediaId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true -> {
+            firstItem.mediaId.startsWith(Constants.AA_INSTANTMIX_SOURCE) -> {
                 Log.d(TAG, "Fetching instant mix for $firstItem.mediaId")
                 Futures.transform(
                     automotiveRepository.getInstantMix(firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE), 12),

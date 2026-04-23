@@ -47,6 +47,7 @@ public class MediaManager {
     private static final String TAG = "MediaManager";
     private static WeakReference<MediaBrowser> attachedBrowserRef = new WeakReference<>(null);
     public static AtomicBoolean justStarted = new AtomicBoolean(false);
+    public static AtomicBoolean continuousPlayIsRunning = new AtomicBoolean(false);
 
     private static final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
 
@@ -447,14 +448,13 @@ public class MediaManager {
     @OptIn(markerClass = UnstableApi.class)
     public static void continuousPlay(MediaItem mediaItem,
                                     ListenableFuture<MediaBrowser> existingBrowserFuture) {
-        if (mediaItem == null
-                || !Preferences.isContinuousPlayEnabled()
-                || !Preferences.isInstantMixUsable()) {
+        if (continuousPlayIsRunning.get() && !Preferences.isInstantMixUsable()) {
             return;
         }
         Log.d(TAG, "Continuous Play");
 
         Preferences.setLastInstantMix();
+        continuousPlayIsRunning.set(true);
 
         LiveData<List<Child>> instantMix =
                 getSongRepository().getContinuousMix(mediaItem.mediaId, 25);
@@ -490,6 +490,7 @@ public class MediaManager {
                     enqueue(existingBrowserFuture, filteredMedia, true);
                 }
                 instantMix.removeObserver(this);
+                continuousPlayIsRunning.set(false);
             }
         });
     }

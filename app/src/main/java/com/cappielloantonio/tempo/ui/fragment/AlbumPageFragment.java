@@ -81,10 +81,18 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
         bind = FragmentAlbumPageBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
+
         albumPageViewModel = new ViewModelProvider(requireActivity()).get(AlbumPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        init(view);
+        Bundle args = getArguments();
+        AlbumID3 albumArg = args != null ? args.getParcelable(Constants.ALBUM_OBJECT) : null;
+        if (albumArg == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        init(view, albumArg);
         initAppBar();
         initAlbumInfoTextButton();
         initAlbumNotes();
@@ -163,9 +171,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         return false;
     }
 
-    private void init(View view) {
-        AlbumID3 albumArg = requireArguments().getParcelable(Constants.ALBUM_OBJECT);
-        assert albumArg != null;
+    private void init(View view, AlbumID3 albumArg) {
         albumPageViewModel.setAlbum(getViewLifecycleOwner(), albumArg);
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(albumArg.getStarred() != null);

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.AppBarLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/appbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -27,12 +26,11 @@
 
             <TextView
                 style="@style/HeadlineMedium"
-                android:textSize="@dimen/_20sdp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_8sdp"
-                android:text="@string/app_name"
-                tools:ignore="RtlSymmetry" />
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/app_name" />
         </LinearLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 </com.google.android.material.appbar.AppBarLayout>
