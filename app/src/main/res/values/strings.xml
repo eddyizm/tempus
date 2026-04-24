@@ -466,6 +466,8 @@
 	<string name="settings_tile_size">Tiles size</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
+    <string name="settings_title_misc">Miscellaneous</string>
+    <string name="settings_title_players">Players</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Rating</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
@@ -475,6 +477,7 @@
     <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
     <string name="settings_title_skip_min_star_rating_dialog">Songs with a rating of:</string>
     <string name="settings_title_share">Share</string>
+    <string name="settings_title_sound">Sound</string>
     <string name="settings_title_syncing">Syncing</string>
     <string name="settings_title_transcoding">Transcoding</string>
     <string name="settings_title_transcoding_download">Transcoding Download</string>

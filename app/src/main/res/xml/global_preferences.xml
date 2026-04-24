@@ -2,16 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_general">
         <Preference
-            android:layout_height="match_parent"
-            android:key="system_equalizer"
-            android:summary="@string/settings_system_equalizer_summary"
-            android:title="@string/settings_system_equalizer_title" />
-
-        <Preference
-            android:layout_height="match_parent"
-            android:key="app_equalizer"
-            android:summary="@string/settings_app_equalizer_summary"
-            android:title="@string/settings_app_equalizer" />
+            android:key="logout"
+            android:title="@string/settings_logout_title"/>
 
         <Preference
             android:key="scan_library"
@@ -25,10 +17,6 @@
             android:inputType="number"
             android:singleLine="true"
             android:defaultValue="2" />
-
-        <Preference
-            android:key="logout"
-            android:title="@string/settings_logout_title"/>
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
@@ -127,12 +115,6 @@
             android:key="auto_download_lyrics" />
 
         <SwitchPreference
-            android:title="@string/settings_show_mini_shuffle_button"
-            android:defaultValue="false"
-            android:summary="@string/settings_show_mini_shuffle_button_summary"
-            android:key="mini_shuffle_button_visibility" />
-
-        <SwitchPreference
             android:title="@string/settings_music_directory"
             android:defaultValue="true"
             android:summary="@string/settings_music_directory_summary"
@@ -155,26 +137,84 @@
             android:defaultValue="false"
             android:summary="@string/search_sort_summary"
             android:key="sort_search_chronologically" />
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_sound">
+        <Preference
+            android:layout_height="match_parent"
+            android:key="system_equalizer"
+            android:summary="@string/settings_system_equalizer_summary"
+            android:title="@string/settings_system_equalizer_title" />
+
+        <Preference
+            android:layout_height="match_parent"
+            android:key="app_equalizer"
+            android:summary="@string/settings_app_equalizer_summary"
+            android:title="@string/settings_app_equalizer" />
+
+        <PreferenceCategory app:title="@string/settings_title_replay_gain">
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_summary_replay_gain" />
+
+            <ListPreference
+                app:defaultValue="disabled"
+                app:dialogTitle="@string/settings_replay_gain"
+                app:entries="@array/replay_gain_titles"
+                app:entryValues="@array/replay_gain_values"
+                app:key="replay_gain_mode"
+                app:title="@string/settings_replay_gain"
+                app:useSimpleSummaryProvider="true" />
+
+            <SwitchPreference
+                android:defaultValue="true"
+                android:key="replay_gain_prevent_clipping"
+                android:title="@string/settings_replay_gain_prevent_clipping_title"
+                android:summary="@string/settings_replay_gain_prevent_clipping_summary" />
+        </PreferenceCategory>
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_players">
+        <SwitchPreference
+            android:title="@string/settings_continuous_play_title"
+            android:defaultValue="true"
+            android:summary="@string/settings_continuous_play_summary"
+            android:key="continuous_play" />
+
+        <SwitchPreference
+            android:title="@string/settings_show_mini_shuffle_button"
+            android:defaultValue="false"
+            android:summary="@string/settings_show_mini_shuffle_button_summary"
+            android:key="mini_shuffle_button_visibility" />
+
+        <SeekBarPreference
+            android:key="min_star_rating"
+            app:defaultValue="0"
+            app:min="0"
+            android:max="4"
+            app:seekBarIncrement="1"
+            app:showSeekBarValue="true"
+            app:summary="@string/settings_summary_skip_min_star_rating"
+            app:title="@string/settings_title_skip_min_star_rating" />
 
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
         <SwitchPreference
             android:title="@string/settings_allow_playlist_duplicates"
             android:defaultValue="false"
             android:summary="@string/settings_allow_playlist_duplicates_summary"
             android:key="allow_playlist_duplicates" />
-         <ListPreference
-             app:defaultValue="ORDER_BY_NAME"
-             app:dialogTitle="@string/settings_playlist_sort"
-             app:entries="@array/playlist_sort_option_titles"
-             app:entryValues="@array/playlist_sort_option_values"
-             app:key="home_sort_playlists"
-             app:title="@string/settings_playlist_sort"
-             app:useSimpleSummaryProvider="true" />
+        <ListPreference
+            app:defaultValue="ORDER_BY_NAME"
+            app:dialogTitle="@string/settings_playlist_sort"
+            app:entries="@array/playlist_sort_option_titles"
+            app:entryValues="@array/playlist_sort_option_values"
+            app:key="home_sort_playlists"
+            app:title="@string/settings_playlist_sort"
+            app:useSimpleSummaryProvider="true" />
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_data">
         <ListPreference
             app:defaultValue="256"
@@ -201,12 +241,6 @@
             app:key="image_size"
             app:title="@string/settings_image_size"
             app:useSimpleSummaryProvider="true" />
-
-        <SwitchPreference
-            android:title="@string/settings_continuous_play_title"
-            android:defaultValue="true"
-            android:summary="@string/settings_continuous_play_summary"
-            android:key="continuous_play" />
 
         <SwitchPreference
             android:title="@string/settings_wifi_only_title"
@@ -316,145 +350,133 @@
             app:key="max_bitrate_mobile"
             app:title="@string/settings_max_bitrate_mobile"
             app:useSimpleSummaryProvider="true" />
+
+        <PreferenceCategory app:title="@string/settings_title_transcoding_download">
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_summary_transcoding_download" />
+
+            <SwitchPreference
+                android:title="@string/settings_audio_transcode_download_title"
+                android:defaultValue="false"
+                android:summary="@string/settings_audio_transcode_download_summary"
+                android:key="audio_transcode_download" />
+
+            <SwitchPreference
+                android:title="@string/settings_audio_transcode_download_priority_title"
+                android:defaultValue="false"
+                android:summary="@string/settings_audio_transcode_download_priority_summary"
+                android:key="audio_transcode_download_priority" />
+
+            <ListPreference
+                app:defaultValue="raw"
+                app:dialogTitle="@string/settings_audio_transcode_format_download"
+                app:entries="@array/audio_transcode_format_download_list_titles"
+                app:entryValues="@array/audio_transcode_format_download_list_values"
+                app:key="audio_transcode_format_download"
+                app:title="@string/settings_audio_transcode_format_download"
+                app:useSimpleSummaryProvider="true" />
+
+            <ListPreference
+                app:defaultValue="0"
+                app:dialogTitle="@string/settings_max_bitrate_download"
+                app:entries="@array/max_bitrate_download_list_titles"
+                app:entryValues="@array/max_bitrate_download_list_values"
+                app:key="max_bitrate_download"
+                app:title="@string/settings_max_bitrate_download"
+                app:useSimpleSummaryProvider="true" />
+        </PreferenceCategory>
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding_download">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_summary_transcoding_download" />
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_misc">
+        <PreferenceCategory app:title="@string/settings_title_scrobble">
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_summary_scrobble" />
 
-        <SwitchPreference
-            android:title="@string/settings_audio_transcode_download_title"
-            android:defaultValue="false"
-            android:summary="@string/settings_audio_transcode_download_summary"
-            android:key="audio_transcode_download" />
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_sub_summary_scrobble" />
 
-        <SwitchPreference
-            android:title="@string/settings_audio_transcode_download_priority_title"
-            android:defaultValue="false"
-            android:summary="@string/settings_audio_transcode_download_priority_summary"
-            android:key="audio_transcode_download_priority" />
+            <SwitchPreference
+                android:title="@string/settings_scrobble_title"
+                android:defaultValue="true"
+                android:key="scrobbling" />
+        </PreferenceCategory>
 
-        <ListPreference
-            app:defaultValue="raw"
-            app:dialogTitle="@string/settings_audio_transcode_format_download"
-            app:entries="@array/audio_transcode_format_download_list_titles"
-            app:entryValues="@array/audio_transcode_format_download_list_values"
-            app:key="audio_transcode_format_download"
-            app:title="@string/settings_audio_transcode_format_download"
-            app:useSimpleSummaryProvider="true" />
+        <PreferenceCategory app:title="@string/settings_title_share">
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_summary_share" />
 
-        <ListPreference
-            app:defaultValue="0"
-            app:dialogTitle="@string/settings_max_bitrate_download"
-            app:entries="@array/max_bitrate_download_list_titles"
-            app:entryValues="@array/max_bitrate_download_list_values"
-            app:key="max_bitrate_download"
-            app:title="@string/settings_max_bitrate_download"
-            app:useSimpleSummaryProvider="true" />
+            <SwitchPreference
+                android:title="@string/settings_share_title"
+                android:defaultValue="false"
+                android:key="share" />
+        </PreferenceCategory>
+
+        <PreferenceCategory app:title="@string/settings_title_syncing">
+            <Preference
+                app:selectable="false"
+                app:summary="@string/settings_summary_syncing" />
+
+            <SwitchPreference
+                android:title="@string/settings_queue_syncing_title"
+                android:defaultValue="false"
+                android:summary="@string/settings_queue_syncing_summary"
+                android:key="queue_syncing" />
+
+            <ListPreference
+                app:defaultValue="5"
+                app:dialogTitle="@string/settings_queue_syncing_countdown"
+                app:entries="@array/queue_syncing_countdown_titles"
+                app:entryValues="@array/queue_syncing_countdown_values"
+                app:key="queue_syncing_countdown"
+                app:title="@string/settings_queue_syncing_countdown"
+                app:useSimpleSummaryProvider="true" />
+        </PreferenceCategory>
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_replay_gain">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_summary_replay_gain" />
-
-        <ListPreference
-            app:defaultValue="disabled"
-            app:dialogTitle="@string/settings_replay_gain"
-            app:entries="@array/replay_gain_titles"
-            app:entryValues="@array/replay_gain_values"
-            app:key="replay_gain_mode"
-            app:title="@string/settings_replay_gain"
-            app:useSimpleSummaryProvider="true" />
-
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="replay_gain_prevent_clipping"
-            android:title="@string/settings_replay_gain_prevent_clipping_title"
-            android:summary="@string/settings_replay_gain_prevent_clipping_summary" />
-
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_rating">
-        <SeekBarPreference
-            android:key="min_star_rating"
-            app:defaultValue="0"
-            app:min="0"
-            android:max="4"
-            app:seekBarIncrement="1"
-            app:showSeekBarValue="true"
-            app:summary="@string/settings_summary_skip_min_star_rating"
-            app:title="@string/settings_title_skip_min_star_rating" />
-
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_scrobble">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_summary_scrobble" />
-
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_sub_summary_scrobble" />
-
-        <SwitchPreference
-            android:title="@string/settings_scrobble_title"
-            android:defaultValue="true"
-            android:key="scrobbling" />
-
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_share">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_summary_share" />
-
-        <SwitchPreference
-            android:title="@string/settings_share_title"
-            android:defaultValue="false"
-            android:key="share" />
-
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_syncing">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_summary_syncing" />
-
-        <SwitchPreference
-            android:title="@string/settings_queue_syncing_title"
-            android:defaultValue="false"
-            android:summary="@string/settings_queue_syncing_summary"
-            android:key="queue_syncing" />
-
-        <ListPreference
-            app:defaultValue="5"
-            app:dialogTitle="@string/settings_queue_syncing_countdown"
-            app:entries="@array/queue_syncing_countdown_titles"
-            app:entryValues="@array/queue_syncing_countdown_values"
-            app:key="queue_syncing_countdown"
-            app:title="@string/settings_queue_syncing_countdown"
-            app:useSimpleSummaryProvider="true" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory 
-        android:key="settings_github_update_category_key"
-        app:title="@string/settings_github_update">
-        <Preference
-            app:selectable="false"
-            app:summary="@string/settings_github_update_summary" />
-        <SwitchPreference
-            android:title="@string/settings_github_update_title"
-            android:defaultValue="true"
-            android:key="github_update_check" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
-
-	<!-- Android Auto configuration -->
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_androidauto">
-         <Preference
+        <Preference
             app:selectable="false"
             app:summary="@string/home_rearrangement_dialog_subtitle" />
+
+        <ListPreference
+            app:defaultValue="0"
+            app:dialogTitle="@string/settings_androidauto_first_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_first_tab"
+            app:title="@string/settings_androidauto_first_tab"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="1"
+            app:dialogTitle="@string/settings_androidauto_second_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_second_tab"
+            app:title="@string/settings_androidauto_second_tab"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="2"
+            app:dialogTitle="@string/settings_androidauto_third_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_third_tab"
+            app:title="@string/settings_androidauto_third_tab"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="3"
+            app:dialogTitle="@string/settings_androidauto_fourth_tab"
+            app:entries="@array/aa_tab_titles"
+            app:entryValues="@array/aa_tab_values"
+            app:key="androidauto_fourth_tab"
+            app:title="@string/settings_androidauto_fourth_tab"
+            app:useSimpleSummaryProvider="true" />
 
         <SwitchPreference
             android:title="@string/settings_androidauto_home_view"
@@ -481,48 +503,24 @@
             android:defaultValue="false"
             android:key="androidauto_podcast_view" />
 
-        <ListPreference
-            app:defaultValue="0"
-            app:dialogTitle="@string/settings_androidauto_first_tab"
-            app:entries="@array/aa_tab_titles"
-            app:entryValues="@array/aa_tab_values"
-            app:key="androidauto_first_tab"
-            app:title="@string/settings_androidauto_first_tab"
-            app:useSimpleSummaryProvider="true" />
-			
-	    <ListPreference
-            app:defaultValue="1"
-            app:dialogTitle="@string/settings_androidauto_second_tab"
-            app:entries="@array/aa_tab_titles"
-            app:entryValues="@array/aa_tab_values"
-            app:key="androidauto_second_tab"
-            app:title="@string/settings_androidauto_second_tab"
-            app:useSimpleSummaryProvider="true" />
-			
-	    <ListPreference
-            app:defaultValue="2"
-            app:dialogTitle="@string/settings_androidauto_third_tab"
-            app:entries="@array/aa_tab_titles"
-            app:entryValues="@array/aa_tab_values"
-            app:key="androidauto_third_tab"
-            app:title="@string/settings_androidauto_third_tab"
-            app:useSimpleSummaryProvider="true" />
-			
-	    <ListPreference
-            app:defaultValue="3"
-            app:dialogTitle="@string/settings_androidauto_fourth_tab"
-            app:entries="@array/aa_tab_titles"
-            app:entryValues="@array/aa_tab_values"
-            app:key="androidauto_fourth_tab"
-            app:title="@string/settings_androidauto_fourth_tab"
-            app:useSimpleSummaryProvider="true" />
-
         <SwitchPreference
             android:title="@string/settings_androidauto_shuffle_genre_songs"
             android:defaultValue="false"
             android:key="androidauto_shuffle_genre_songs" />
-			
 	</com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory
+        android:key="settings_github_update_category_key"
+        app:title="@string/settings_github_update">
+        <Preference
+            app:selectable="false"
+            app:summary="@string/settings_github_update_summary" />
+        <SwitchPreference
+            android:title="@string/settings_github_update_title"
+            android:defaultValue="true"
+            android:key="github_update_check" />
+    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_about_title">
         <Preference
             app:selectable="false"
