@@ -14,7 +14,6 @@ import androidx.media3.common.Rating
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.CommandButton
 import androidx.media3.session.LibraryResult
-import androidx.media3.session.MediaBrowser
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import androidx.media3.session.SessionCommand
@@ -152,7 +151,9 @@ open class MediaLibrarySessionCallback(
             }
         })
 
-        // FIXME: I'm not sure this if is required anymore
+        // System controllers (media notification, Android Auto, Auto Companion) require
+        // specific session commands and a custom layout to function correctly.
+        // Other controllers (e.g. third-party apps) get default permissions only.
         if (session.isMediaNotificationController(controller) || session.isAutomotiveController(
                 controller
             ) || session.isAutoCompanionController(controller)
@@ -489,19 +490,10 @@ open class MediaLibrarySessionCallback(
                 val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
 
                 // connect handle
-                MediaServiceExtensionRegistry.handler = AndroidAutoMediaServiceExtension(automotiveRepository)
+                MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
 
                 Futures.transform(
                     automotiveRepository.getInstantMix(artistId, count),
-                    { it.value ?: emptyList() },
-                    MoreExecutors.directExecutor()
-                )
-            }
-
-            firstItem.mediaId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true -> {
-                Log.d(TAG, "Fetching instant mix for $firstItem.mediaId")
-                Futures.transform(
-                    automotiveRepository.getInstantMix(firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE), 12),
                     { it.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
@@ -515,7 +507,13 @@ open class MediaLibrarySessionCallback(
                         ?: automotiveRepository.getSessionMediaItem(item.mediaId)?.let { session ->
                             automotiveRepository.getMetadatas(session.timestamp!!)
                         }
-                    sessionItem?.let { resolvedItems.addAll(if (it is List<*>) it as List<MediaItem> else listOf(it as MediaItem)) }
+                    sessionItem?.let { resolved ->
+                        when (resolved) {
+                            is List<*> -> resolvedItems.addAll(resolved.filterIsInstance<MediaItem>())
+                            is MediaItem -> resolvedItems.add(resolved)
+                            else -> { /* ignore */ }
+                        }
+                    }
                 }
                 if (resolvedItems.isEmpty()) resolvedItems.add(firstItem)
                 Futures.immediateFuture(resolvedItems)
@@ -571,48 +569,5 @@ open class MediaLibrarySessionCallback(
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> {
         return MediaBrowserTree.search(query)
-    }
-
-    class AndroidAutoMediaServiceExtension(
-        private val automotiveRepository: AutomotiveRepository
-    ) : MediaServiceExtension {
-
-        override fun handle(
-            player: Player,
-            item: MediaItem,
-            browserFuture: ListenableFuture<MediaBrowser>
-        ): Boolean {
-
-            if (player.mediaItemCount > 1) {
-                return false
-            }
-
-            val extras = item.requestMetadata.extras ?: item.mediaMetadata.extras
-            val parentId = extras?.getString("parent_id")
-
-            if (parentId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true) {
-                Preferences.setLastInstantMix()
-
-                // disconnect handle
-                MediaServiceExtensionRegistry.handler = null
-
-                val withoutPrefix = parentId.removePrefix(Constants.AA_INSTANTMIX_SOURCE)
-                val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
-                val artistId = withoutPrefix.substringAfter("]")
-                val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
-
-                Log.d(TAG, "handle: Instant Mix is running for artist $artistId count=$count")
-
-                automotiveRepository.buildAndEnqueueInstantMix(
-                    artistId,
-                    item.mediaId,
-                    (count-1),
-                    browserFuture
-                )
-                return true
-            }
-
-            return false
-        }
     }
 }

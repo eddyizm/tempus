@@ -1,7 +1,5 @@
 package com.cappielloantonio.tempo.repository;
 
-import static com.cappielloantonio.tempo.service.MediaManager.enqueue;
-
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,7 +11,6 @@ import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.LibraryResult;
-import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.MediaConstants;
 import androidx.media3.session.SessionError;
 
@@ -26,7 +23,6 @@ import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
 import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
-import com.cappielloantonio.tempo.service.MediaLibrarySessionCallback;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.Artist;
@@ -50,11 +46,8 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -75,6 +68,8 @@ public class AutomotiveRepository {
     public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX = 12;
     public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_MEDIUM_MIX = 15;
     public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_LARGE_MIX = 18;
+
+    public final InstantMixBuilder instantMixBuilder = new InstantMixBuilder(this);
 
     private Bundle createContentStyleExtras(boolean gridView) {
         Bundle extras = new Bundle();
@@ -975,146 +970,6 @@ public class AutomotiveRepository {
                 });
 
         return listenableFuture;
-    }
-
-    /**
-     * Builds the rest of the Instant Mix in background and enqueues it.
-     * Called from AndroidAutoMediaServiceExtension.handle() when onTracksChanged() is called
-     * and the current item has parent_id starting with AA_INSTANTMIX_SOURCE.
-     *
-     * @param artistId          The artist ID extracted from parent_id
-     * @param usedTrackId       The ID of the first track already playing, to avoid duplicate
-     * @param count             Total number of tracks to add (INSTANT_MIX_MAX_TRACKS - 1)
-     * @param browserFuture     The MediaBrowser future to enqueue into
-     */
-    private final AtomicBoolean instantMixBuildIsRunning = new AtomicBoolean(false);
-    public void buildAndEnqueueInstantMix(
-            String artistId,
-            String usedTrackId,
-            int count,
-            ListenableFuture<MediaBrowser> browserFuture) {
-        if (!instantMixBuildIsRunning.compareAndSet(false, true)) {
-            Log.d(TAG, "Instant Mix: build already running, skipping");
-            return;
-        }
-
-        final int maxTracks = Math.min(count, INSTANT_MIX_MAX_TRACKS - 1);
-
-        Log.d(TAG, "Instant Mix: Building remaining " + maxTracks + " tracks for artist " + artistId);
-
-        App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getArtist(artistId)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()
-                                && response.body() != null
-                                && response.body().getSubsonicResponse().getArtist() != null
-                                && response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
-
-                            List<AlbumID3> albums = new ArrayList<>(
-                                    response.body().getSubsonicResponse().getArtist().getAlbums()
-                            );
-
-                            List<Child> mixTracks = new ArrayList<>();
-                            Set<String> usedTrackIds = new HashSet<>();
-                            usedTrackIds.add(usedTrackId); // exclude already playing track
-
-                            Random random = new Random();
-
-                            fetchNextTrackForMix(albums, 0, mixTracks, usedTrackIds, random, maxTracks, browserFuture);
-
-                            instantMixBuildIsRunning.set(false);
-                        } else {
-                            Log.e(TAG, "Instant Mix: buildAndEnqueue failed to retrieve albums");
-                        }
-                    }
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        Log.e(TAG, "Instant Mix: buildAndEnqueue network failure: " + t.getMessage());
-                    }
-                });
-    }
-
-    /**
-     * Recursively builds an instant mix by fetching tracks from randomly selected albums.
-     * When called from buildAndEnqueueInstantMix, enqueues directly via browserFuture.
-     * When listenableFuture is non-null, resolves it with the complete track list (legacy path).
-     *
-     * Each cycle shuffles the album list and fetches one track from albums[0], then one from albums[1],
-     * alternating between the two until maxTracks is reached.
-     *
-     * @param albums            Full list of artist albums
-     * @param albumIndex        0 or 1 — which of the two albums to fetch in this step
-     * @param mixTracks         Accumulated list of selected tracks
-     * @param usedTrackIds      Set of already used track IDs to avoid duplicates
-     * @param random            Shared Random instance
-     * @param maxTracks         Target number of tracks
-     * @param browserFuture     If non-null, enqueues tracks when complete instead of resolving future
-     */
-    private void fetchNextTrackForMix(
-            List<AlbumID3> albums,
-            int albumIndex,
-            List<Child> mixTracks,
-            Set<String> usedTrackIds,
-            Random random,
-            int maxTracks,
-            ListenableFuture<MediaBrowser> browserFuture) {
-
-        if (mixTracks.size() >= maxTracks) {
-            Log.d(TAG, "Instant Mix: Mix complete with " + mixTracks.size() + " tracks, enqueuing");
-            setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
-            return;
-        }
-
-        if (albumIndex == 0) {
-            Collections.shuffle(albums, random);
-            Log.d(TAG, "Instant Mix: New cycle, albums shuffled");
-        }
-
-        AlbumID3 album = albums.get(albumIndex);
-        Log.d(TAG, "Instant Mix: Fetching album[" + albumIndex + "] " + album.getName()
-                + " (" + mixTracks.size() + "/" + maxTracks + " tracks so far)");
-
-        App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getAlbum(album.getId())
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()
-                                && response.body() != null
-                                && response.body().getSubsonicResponse().getAlbum() != null
-                                && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
-
-                            List<Child> songs = response.body().getSubsonicResponse().getAlbum().getSongs();
-                            Child candidate = songs.get(random.nextInt(songs.size()));
-
-                            if (!usedTrackIds.contains(candidate.getId())) {
-                                mixTracks.add(candidate);
-                                usedTrackIds.add(candidate.getId());
-                                Log.d(TAG, "Instant Mix: Added track [" + mixTracks.size() + "/" + maxTracks + "] "
-                                        + candidate.getTitle() + " from " + album.getName());
-                            } else {
-                                Log.d(TAG, "Instant Mix: Track " + candidate.getTitle() + " already used, skipping");
-                            }
-                        } else {
-                            Log.w(TAG, "Instant Mix: Album " + album.getName() + " skipped (empty or failed)");
-                        }
-
-                        int nextIndex = (albumIndex == 0) ? 1 : 0;
-                        fetchNextTrackForMix(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, browserFuture);
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        Log.e(TAG, "Instant Mix: Failed to load album " + album.getName() + ": " + t.getMessage());
-                        int nextIndex = (albumIndex == 0) ? 1 : 0;
-                        fetchNextTrackForMix(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, browserFuture);
-                    }
-                });
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getPlaylistSongs(String id) {
