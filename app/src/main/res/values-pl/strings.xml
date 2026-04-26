@@ -13,10 +13,13 @@
     <string name="aa_random">Losowe</string>
 	<string name="aa_genres">Gatunki</string>
     <string name="aa_recent_albums">Ostatnie</string>
-    <string name="aa_song_recently_played">Odtwarzane piosenki</string>
+    <string name="aa_song_recently_played">Odtwarzane utwory</string>
     <string name="aa_starred_albums">★ Albumy</string>
     <string name="aa_starred_artists">★ Wykonawcy</string>
     <string name="aa_starred_tracks">★ Utwory</string>
+	<string name="aa_instant_mix">Natychmiastowy mix</string>
+    <string name="aa_view_by_albums">Wyświetlaj według albumów</string>
+    <string name="aa_tracks">Utwory</string>
     <string name="activity_battery_optimizations_conclusion">Jeżeli masz problemy odwiedź stronę https://dontkillmyapp.com. Podaje ona dokładne instrukcje na temat tego jak wyłączyć funkcje oszczędzania energii które mogą wpływać na wydajność aplikacji.</string>
     <string name="activity_battery_optimizations_summary">Wyłącz optymalizacje baterii aby odtwarzać media przy wyłączonym ekranie.</string>
     <string name="activity_battery_optimizations_title">Optymalizcje Baterii</string>
