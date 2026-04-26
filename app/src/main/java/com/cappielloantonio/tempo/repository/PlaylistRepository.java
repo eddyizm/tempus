@@ -10,9 +10,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.App;
-import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
+import com.cappielloantonio.tempo.database.dao.PinnedPlaylistDao;
+import com.cappielloantonio.tempo.model.PinnedPlaylist;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
@@ -25,6 +26,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@UnstableApi
 public class PlaylistRepository {
     private static final MutableLiveData<Boolean> playlistUpdateTrigger = new MutableLiveData<>();
 
@@ -38,6 +40,7 @@ public class PlaylistRepository {
     }
 
     @androidx.media3.common.util.UnstableApi
+    private final PinnedPlaylistDao pinnedPlaylistDao = AppDatabase.getInstance().pinnedPlaylistDao();
     private final PlaylistDao playlistDao = AppDatabase.getInstance().playlistDao();
     private static final MutableLiveData<List<Playlist>> allPlaylistsLiveData = new MutableLiveData<>();
 
@@ -229,7 +232,7 @@ public class PlaylistRepository {
                             // Subsonic doesn't have a "replace all songs" in updatePlaylist.
                             // So we might still need to recreate if the songs changed significantly,
                             // but if we just renamed, we should update the local pinned database.
-                            updateLocalPinnedPlaylistName(playlistId, name);
+                            updateLocalPlaylistName(playlistId, name);
                             notifyPlaylistChanged();
                         }
 
@@ -244,18 +247,23 @@ public class PlaylistRepository {
     }
 
     @OptIn(markerClass = UnstableApi.class)
-    private void updateLocalPinnedPlaylistName(String id, String newName) {
+    private void updateLocalPlaylistName(String id, String newName) {
         new Thread(() -> {
-            List<Playlist> pinned = playlistDao.getAllSync();
-            if (pinned != null) {
-                for (Playlist p : pinned) {
-                    if (p.getId().equals(id)) {
-                        p.setName(newName);
-                        playlistDao.insert(p); // Replace strategy will update it
-                        break;
-                    }
-                }
-            }
+            playlistDao.updateName(id, newName);
+        }).start();
+    }
+
+    @OptIn(markerClass = UnstableApi.class)
+    public void pin(String id) {
+        new Thread(() -> {
+            pinnedPlaylistDao.pin(id);
+        }).start();
+    }
+
+    @OptIn(markerClass = UnstableApi.class)
+    public void unpin(String id) {
+        new Thread(() -> {
+            pinnedPlaylistDao.unpin(id);
         }).start();
     }
 
@@ -276,8 +284,8 @@ public class PlaylistRepository {
                 });
     }
     @androidx.media3.common.util.UnstableApi
-    public LiveData<List<Playlist>> getPinnedPlaylists() {
-        return playlistDao.getAll();
+    public LiveData<List<PinnedPlaylist>> getPinnedPlaylists() {
+        return pinnedPlaylistDao.getAllPinnedIds();
     }
 
     @androidx.media3.common.util.UnstableApi

@@ -13,8 +13,6 @@ import java.util.List;
 
 @Dao
 public interface PlaylistDao {
-    // @Query("SELECT * FROM playlist WHERE server=:serverId")
-    // LiveData<List<Playlist>> getAll(String serverId);
 
     @Query("SELECT * FROM playlist")
     LiveData<List<Playlist>> getAll();
@@ -27,4 +25,7 @@ public interface PlaylistDao {
 
     @Delete
     void delete(Playlist playlist);
+
+    @Query("UPDATE playlist SET name = :newName WHERE id = :playlistId")
+    void updateName(String playlistId, String newName);
 }
