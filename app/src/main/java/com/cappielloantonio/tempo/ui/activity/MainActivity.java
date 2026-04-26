@@ -190,6 +190,10 @@ public class MainActivity extends BaseActivity {
         navigationController.syncWithBottomSheetBehavior(bottomSheetBehavior, navController);
     }
 
+    public NavigationController getNavigationController() {
+        return navigationController;
+    }
+
     private void initBottomSheet() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         View bottomSheetView = findViewById(R.id.player_bottom_sheet);

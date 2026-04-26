@@ -293,7 +293,7 @@
         <item>3</item>
         <item>2</item>
     </string-array>
-	<!-- Add by MFO -->
+
     <string-array name="aa_tab_titles">
         <item>Ausblenden</item>
         <item>Start</item>
@@ -305,13 +305,12 @@
         <item>Radio</item>
         <item>Ordner</item>
         <item>Oft gespielte Alben</item>
-    <!--    <item>Oft gespielte Titel</item> -->
         <item>Hinzugefügte Alben</item>
     <!--    <item>Für dich</item> -->
         <item>Lieblingstitel</item>
         <item>Lieblingsalben</item>
         <item>Lieblingsinterpreten</item>
-        <item>Zufall</item>
+        <item>Titel</item>
         <item>Genres</item>
     </string-array>
     <string-array name="aa_tab_values">
@@ -334,6 +333,5 @@
         <item>15</item>
         <item>16</item>
     </string-array>
-	<!-- end Add by MFO -->
 
 </resources>

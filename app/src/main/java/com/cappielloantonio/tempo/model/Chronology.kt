@@ -45,14 +45,19 @@ class Chronology(
         averageRating = mediaItem.mediaMetadata.extras!!.getDouble("averageRating")
         playCount = mediaItem.mediaMetadata.extras!!.getLong("playCount")
         discNumber = mediaItem.mediaMetadata.extras!!.getInt("discNumber")
-        created = Date(mediaItem.mediaMetadata.extras!!.getLong("created"))
-        starred = Date(mediaItem.mediaMetadata.extras!!.getLong("starred"))
+        val createdLong = mediaItem.mediaMetadata.extras!!.getLong("created")
+        created = if (createdLong > 0) Date(createdLong) else null
+        val starredLong = mediaItem.mediaMetadata.extras!!.getLong("starred")
+        starred = if (starredLong > 0) Date(starredLong) else null
         albumId = mediaItem.mediaMetadata.extras!!.getString("albumId")
         artistId = mediaItem.mediaMetadata.extras!!.getString("artistId")
         type = mediaItem.mediaMetadata.extras!!.getString("type")
         bookmarkPosition = mediaItem.mediaMetadata.extras!!.getLong("bookmarkPosition")
         originalWidth = mediaItem.mediaMetadata.extras!!.getInt("originalWidth")
         originalHeight = mediaItem.mediaMetadata.extras!!.getInt("originalHeight")
+        replayGain = com.cappielloantonio.tempo.util.ReplayGainBundleUtil.fromBundle(
+            mediaItem.mediaMetadata.extras
+        )
         server = Preferences.getServerId()
         timestamp = Date().time
     }

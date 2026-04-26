@@ -21,6 +21,7 @@ import com.cappielloantonio.tempo.databinding.FragmentPodcastChannelPageBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
+import com.cappielloantonio.tempo.subsonic.models.PodcastChannel;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.PodcastEpisodeAdapter;
@@ -51,7 +52,14 @@ public class PodcastChannelPageFragment extends Fragment implements ClickCallbac
         View view = bind.getRoot();
         podcastChannelPageViewModel = new ViewModelProvider(requireActivity()).get(PodcastChannelPageViewModel.class);
 
-        init();
+        Bundle args = getArguments();
+        PodcastChannel channelArg = args != null ? args.getParcelable(Constants.PODCAST_CHANNEL_OBJECT) : null;
+        if (channelArg == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        init(channelArg);
         initAppBar();
         initPodcastChannelInfo();
         initPodcastChannelEpisodesView();
@@ -78,8 +86,8 @@ public class PodcastChannelPageFragment extends Fragment implements ClickCallbac
         bind = null;
     }
 
-    private void init() {
-        podcastChannelPageViewModel.setPodcastChannel(requireArguments().getParcelable(Constants.PODCAST_CHANNEL_OBJECT));
+    private void init(PodcastChannel channel) {
+        podcastChannelPageViewModel.setPodcastChannel(channel);
     }
 
     private void initAppBar() {

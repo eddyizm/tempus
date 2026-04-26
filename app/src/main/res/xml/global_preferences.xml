@@ -72,17 +72,7 @@
             android:title="@string/settings_hide_bottom_navbar_on_portrait"
             android:key="hide_bottom_navbar_on_portrait"
             android:summary="@string/settings_hide_bottom_navbar_on_portrait_summary"/>
-
-        <SwitchPreference
-            android:title="@string/settings_enable_drawer_on_landscape"
-            android:key="enable_drawer_on_portrait"
-            android:summary="@string/settings_enable_drawer_on_landscape_summary"/>
-
-        <SwitchPreference
-            android:title="@string/settings_hide_bottom_navbar_on_portrait"
-            android:key="hide_bottom_navbar_on_portrait"
-            android:summary="@string/settings_hide_bottom_navbar_on_portrait_summary"/>
-
+        
         <SwitchPreference
             android:layout_height="match_parent"
             android:defaultValue="true"
@@ -377,6 +367,12 @@
             app:key="replay_gain_mode"
             app:title="@string/settings_replay_gain"
             app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="replay_gain_prevent_clipping"
+            android:title="@string/settings_replay_gain_prevent_clipping_title"
+            android:summary="@string/settings_replay_gain_prevent_clipping_summary" />
 
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 

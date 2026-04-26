@@ -150,9 +150,12 @@ public class ArtistPageViewModel extends AndroidViewModel {
     }
 
     private boolean isType(AlbumID3 album, String targetType) {
+        String normalizedTarget = targetType.toLowerCase();
         if (album.getReleaseTypes() != null && !album.getReleaseTypes().isEmpty()) {
-            return album.getReleaseTypes().contains(targetType);
+            return album.getReleaseTypes().stream()
+                    .anyMatch(rt -> rt.toLowerCase().equals(normalizedTarget));
         }
+
         // Fallback to song count if releaseTypes is not available
         int songCount = album.getSongCount() != null ? album.getSongCount() : 0;
         switch (targetType) {
