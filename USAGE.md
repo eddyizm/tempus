@@ -52,7 +52,7 @@ This app works with any service that implements the Subsonic API, including:
 ### Initial Setup
 **IN PROGRESS**
 1. Enter your server URL (e.g., `https://your-subsonic-server.com`)
-2. Provide your username and password
+2. Provide your username and password. Or in some cases, API key (eg LMS: https://github.com/epoupon/lms/discussions/562).
 3. Test the connection to ensure proper configuration
 
 ### Advanced Settings
@@ -192,7 +192,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 4 tabs can be configured with the following functions:
 - Do not display : This tab is not used
 - Home : Displays all functions not used in other tabs
-- Recent : The 15 most recently listened-to albums
+- Recent : The 15 recently listened-to albums
 - Albums : Albums sorted by name
 - Artists : Albums sorted by artist or Artists, selected by preference
 - Playlists
@@ -200,12 +200,19 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Radio
 - Folder : Navigation through music directories
 - Albums most played : The 15 most played albums
+- Tracks played : The 100 last tracks that were completly played
 - Albums added : The 15 recently added albums
 - Star tracks
 - Star albums
 - Star artists
+- Tracks bundle
+- Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
+
+
+Tracks bundle includes:
 - Random : 100 random songs
 - Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
+- Tracks played : The 100 recently listened-to tracks
 
 If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
 
@@ -217,7 +224,8 @@ In addition, you can choose to display the following functions as thumbnails or 
 - Playlists
 - Radio
 - Podcast
-As they displayed tracks, Star tracks, Random and Genres are always be displayed as a list.
+
+As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
 
 <p align="left">
     <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">

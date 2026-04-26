@@ -21,6 +21,7 @@ import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.Preferences
 import androidx.core.net.toUri
 import androidx.media3.session.SessionError
+import com.cappielloantonio.tempo.util.Preferences.getServerId
 
 @UnstableApi
 object MediaBrowserTree {
@@ -147,13 +148,12 @@ object MediaBrowserTree {
             Constants.AA_RADIO_ID,
             Constants.AA_FOLDER_ID,
             Constants.AA_MOST_PLAYED_ID,
-            //Constants.AA_RECENT_SONGS_ID,            // => doesn't work !
             Constants.AA_RECENTLY_ADDED_ID,
             //Constants.AA_MADE_FOR_YOU_ID,            // => doesn't work !
             Constants.AA_STARRED_TRACKS_ID,
             Constants.AA_STARRED_ALBUMS_ID,
             Constants.AA_STARRED_ARTISTS_ID,
-            Constants.AA_RANDOM_ID,
+            Constants.AA_TRACKS_ID,
             Constants.AA_GENRES_ID
         )
 
@@ -304,19 +304,32 @@ object MediaBrowserTree {
                 )
             )
 		
-        treeNodes[Constants.AA_RECENT_SONGS_ID] =
+        treeNodes[Constants.AA_RECENT_TRACKS_ID] =
             MediaItemNode(
                 buildMediaItem(
                     gridView = false,
                     title = appContext.getString(R.string.aa_song_recently_played),
-                    mediaId = Constants.AA_RECENT_SONGS_ID,
+                    mediaId = Constants.AA_RECENT_TRACKS_ID,
                     isPlayable = false,
                     isBrowsable = true,
                     imageUri = iconUri(R.drawable.ic_aa_recent_title),
                     mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
                 )
             )
-		
+
+        treeNodes[Constants.AA_TRACKS_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = homeView,
+                    title = appContext.getString(R.string.aa_tracks),
+                    mediaId = Constants.AA_TRACKS_ID,
+                    isPlayable = false,
+                    isBrowsable = true,
+                    imageUri = iconUri(R.drawable.ic_aa_title),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+                )
+            )
+
         treeNodes[Constants.AA_MADE_FOR_YOU_ID] =
             MediaItemNode(
                 buildMediaItem(
@@ -433,8 +446,20 @@ object MediaBrowserTree {
         allFunctions
             .filter { it !in selectedIds }
             .forEach { function ->
-                treeNodes[Constants.AA_HOME_ID]?.addChild(function)
+                if(function == Constants.AA_TRACKS_ID) {
+                    // add Random and Recent instead of Tracks to Home
+                    treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RANDOM_ID)
+                    treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
+                }
+                else {
+                    treeNodes[Constants.AA_HOME_ID]?.addChild(function)
+                }
             }
+
+        // create tracks bundle
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RANDOM_ID)
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_GENRES_ID)
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
 	}
 	
     fun getRootItem(): MediaItem {
@@ -448,6 +473,8 @@ object MediaBrowserTree {
             Constants.AA_ROOT_ID -> treeNodes[Constants.AA_ROOT_ID]?.getChildren()!!
 
             Constants.AA_HOME_ID -> treeNodes[Constants.AA_HOME_ID]?.getChildren()!!
+            Constants.AA_TRACKS_ID -> treeNodes[Constants.AA_TRACKS_ID]?.getChildren()!!
+
             Constants.AA_LAST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "recent", 15, false)
             Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, true)
             Constants.AA_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, 500, true)
@@ -456,7 +483,7 @@ object MediaBrowserTree {
             Constants.AA_RADIO_ID -> automotiveRepository.getInternetRadioStations()
             Constants.AA_FOLDER_ID -> automotiveRepository.getMusicFolders(Constants.AA_FOLDER_ID)
             Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15, false)
-            //Constants.AA_RECENT_SONGS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),30)
+            Constants.AA_RECENT_TRACKS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),100)
             Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
             //Constants.AA_MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
             Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.starredSongs

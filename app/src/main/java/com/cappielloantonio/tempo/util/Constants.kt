@@ -145,7 +145,6 @@ object Constants {
     const val AA_PODCAST_ID = "[podcastID]"
     const val AA_RADIO_ID = "[radioID]"
     const val AA_RECENTLY_ADDED_ID = "[recentlyAddedID]"
-    const val AA_RECENT_SONGS_ID = "[recentSongsID]"
     const val AA_MADE_FOR_YOU_ID = "[madeForYouID]"
     const val AA_STARRED_TRACKS_ID = "[starredTracksID]"
     const val AA_STARRED_ALBUMS_ID = "[starredAlbumsID]"
@@ -153,6 +152,8 @@ object Constants {
     const val AA_RANDOM_ID = "[randomID]"
     const val AA_FOLDER_ID = "[folderID]"
     const val AA_GENRES_ID = "[genresID]"
+    const val AA_TRACKS_ID = "[TracksID]"
+    const val AA_RECENT_TRACKS_ID = "[recentTracksID]"
 
     // Android Auto System functions
     const val AA_INDEX_ID = "[indexID]"
