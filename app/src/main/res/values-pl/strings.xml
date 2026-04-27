@@ -454,6 +454,8 @@
     <string name="settings_tile_size">Rozmiar kafelków</string>
     <string name="settings_title_data">Dane</string>
     <string name="settings_title_general">Ogólne</string>
+	<string name="settings_title_misc">Różne</string>
+    <string name="settings_title_players">Odtwarzanie</string>
     <string name="settings_title_playlist">Playlisty</string>
     <string name="settings_title_rating">Oceny</string>
     <string name="settings_title_replay_gain">Wzmocnienie głośności przy ponownym odtwarzaniu</string>
@@ -463,6 +465,7 @@
     <string name="settings_title_skip_min_star_rating">Ignoruj utwory na podstawie oceny</string>
     <string name="settings_title_skip_min_star_rating_dialog">Piosenki z oceną:</string>
     <string name="settings_title_share">Udostępnianie</string>
+	<string name="settings_title_sound">Dźwięk</string>
     <string name="settings_title_syncing">Synchronizacja</string>
     <string name="settings_title_transcoding">Transkodowanie</string>
     <string name="settings_title_transcoding_download">Transkodowanie Pobrań</string>
