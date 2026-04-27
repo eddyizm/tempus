@@ -13,12 +13,13 @@
     <string name="aa_random">Random</string>
     <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
-    <string name="aa_song_recently_played">Song played</string>
+    <string name="aa_song_recently_played">Tracks played</string>
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artists</string>
     <string name="aa_starred_tracks">★ Tracks</string>
     <string name="aa_instant_mix">Instant mix</string>
     <string name="aa_view_by_albums">View by albums</string>
+    <string name="aa_tracks">Tracks</string>
 
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>
@@ -469,6 +470,8 @@
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Rating</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
+    <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
     <string name="settings_title_skip_min_star_rating_dialog">Songs with a rating of:</string>
@@ -490,6 +493,9 @@
     <string name="share_subtitle_item">Expiration date: %1$s</string>
     <string name="share_no_expiration">Never</string>
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
+    <string name="toolbar_navigation_drawer_open">Navigation drawer open</string>
+    <string name="toolbar_navigation_drawer_closed">Navigation drawer closed</string>
+
     <string name="asset_link_clipboard_label">Tempus asset link</string>
     <string name="asset_link_label_song">Song UID</string>
     <string name="asset_link_label_album">Album UID</string>

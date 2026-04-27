@@ -85,11 +85,18 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         artistPageViewModel = new ViewModelProvider(requireActivity()).get(ArtistPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
+        Bundle args = getArguments();
+        ArtistID3 artistArg = args != null ? args.getParcelable(Constants.ARTIST_OBJECT) : null;
+        if (artistArg == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
         TileSizeManager.getInstance().calculateTileSize( requireContext() );
         spanCount = TileSizeManager.getInstance().getTileSpanCount( requireContext() );
         tileSpacing = TileSizeManager.getInstance().getTileSpacing( requireContext() );
 
-        init(view);
+        init(view, artistArg);
         initAppBar();
         initArtistInfo();
         initPlayButtons();
@@ -126,8 +133,8 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
-    private void init(View view) {
-        artistPageViewModel.setArtist(requireArguments().getParcelable(Constants.ARTIST_OBJECT));
+    private void init(View view, ArtistID3 artistArg) {
+        artistPageViewModel.setArtist(artistArg);
         artistPageViewModel.fetchCategorizedAlbums(getViewLifecycleOwner());
 
         bind.mostStreamedSongTextViewClickable.setOnClickListener(v -> {

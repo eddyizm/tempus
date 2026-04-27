@@ -30,12 +30,13 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 14,
+        version = 15,
         entities = {Queue.class, Server.class, RecentSearch.class, Download.class, Chronology.class, Favorite.class, SessionMediaItem.class, Playlist.class, LyricsCache.class},
         autoMigrations = {
                 @AutoMigration(from = 10, to = 11),
                 @AutoMigration(from = 11, to = 12),
                 @AutoMigration(from = 13, to = 14),
+                @AutoMigration(from = 14, to = 15),
         }
 )
 @TypeConverters({DateConverters.class})

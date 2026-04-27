@@ -90,6 +90,11 @@ public class MappingUtil {
             bundle.putInt("originalWidth", media.getOriginalWidth() != null ? media.getOriginalWidth() : 0);
             bundle.putInt("originalHeight", media.getOriginalHeight() != null ? media.getOriginalHeight() : 0);
             bundle.putString("uri", uri.toString());
+
+            // Pack ReplayGain data from the server response so ReplayGainUtil
+            // can apply gain synchronously at track transitions without a
+            // MetadataRetriever round-trip.
+            ReplayGainBundleUtil.writeToBundle(bundle, media.getReplayGain());
             
             bundle.putString("assetLinkSong", media.getId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_SONG, media.getId()) : null);
             bundle.putString("assetLinkAlbum", media.getAlbumId() != null ? AssetLinkUtil.buildLink(AssetLinkUtil.TYPE_ALBUM, media.getAlbumId()) : null);
@@ -109,7 +114,7 @@ public class MappingUtil {
                                     .setAlbumTitle(media.getAlbum())
                                     .setArtist(media.getArtist())
                                     .setArtworkUri(artworkUri)
-                                    .setUserRating(new HeartRating(media.getStarred() != null))
+                                    .setUserRating(new HeartRating(media.getStarred() != null && media.getStarred().getTime() > 0))
                                     .setSupportedCommands(
                                         ImmutableList.of(
                                                 Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
@@ -382,6 +387,9 @@ public class MappingUtil {
 
             long starredTime = extras.getLong("starred", 0);
             if (starredTime != 0) child.setStarred(new Date(starredTime));
+
+            // Rehydrate OpenSubsonic ReplayGain info if the bundle carries it.
+            child.setReplayGain(ReplayGainBundleUtil.fromBundle(extras));
         }
 
         // Fallbacks
