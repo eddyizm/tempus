@@ -699,7 +699,7 @@ object Preferences {
     fun isInstantMixUsable(): Boolean {
         return App.getInstance().preferences.getLong(
                 LAST_INSTANT_MIX, 0
-        ) + 30000 < System.currentTimeMillis()
+        ) + 10000 < System.currentTimeMillis()
     }
 
     @JvmStatic

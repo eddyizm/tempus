@@ -193,9 +193,15 @@ public class MappingUtil {
                 .setExtras(extras)
                 .build();
 
+        MediaItem.RequestMetadata requestMetadata = mediaItem.requestMetadata
+                .buildUpon()
+                .setExtras(extras)
+                .build();
+
         return mediaItem.buildUpon()
                 .setMediaId(item.getId())
                 .setMediaMetadata(metadata)
+                .setRequestMetadata(requestMetadata)
                 .build();
     }
 
