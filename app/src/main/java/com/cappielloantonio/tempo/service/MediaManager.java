@@ -448,7 +448,7 @@ public class MediaManager {
     @OptIn(markerClass = UnstableApi.class)
     public static void continuousPlay(MediaItem mediaItem,
                                     ListenableFuture<MediaBrowser> existingBrowserFuture) {
-        if (continuousPlayIsRunning.get() && !Preferences.isInstantMixUsable()) {
+        if (continuousPlayIsRunning.get() || !Preferences.isInstantMixUsable()) {
             return;
         }
         Log.d(TAG, "Continuous Play");

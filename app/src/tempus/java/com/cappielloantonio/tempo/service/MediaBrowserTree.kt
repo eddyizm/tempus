@@ -172,7 +172,7 @@ object MediaBrowserTree {
 
 		// All available functions
 		// if HOME is in first place or no item is selected
-		if (tabIndex.firstOrNull() == 0 || tabIndex.all { it == -1 }){
+        if (tabIndex.firstOrNull() == 0 || tabIndex.all { it == -1 }){
 			treeNodes[Constants.AA_HOME_ID] =
 				MediaItemNode(
 					buildMediaItem(

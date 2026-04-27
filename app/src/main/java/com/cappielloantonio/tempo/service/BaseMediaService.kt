@@ -197,7 +197,7 @@ open class BaseMediaService : MediaLibraryService() {
             }
 
             override fun onTracksChanged(tracks: Tracks) {
-                Log.d(TAG, "onTracksChanged " + player.currentMediaItemIndex)
+                Log.d(TAG, "onTracksChanged: " + player.currentMediaItemIndex)
                 ReplayGainUtil.setReplayGain(player, tracks)
                 val currentMediaItem = player.currentMediaItem
                 if (currentMediaItem != null) {
@@ -205,12 +205,17 @@ open class BaseMediaService : MediaLibraryService() {
                     if (item.mediaMetadata.extras != null)
                         MediaManager.scrobble(item, false)
 
+                    val browserFuture = MediaBrowser.Builder(
+                        this@BaseMediaService,
+                        SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
+                    ).buildAsync()
+
+                    val handled = MediaServiceExtensionRegistry.handler
+                        ?.handle(player, currentMediaItem, browserFuture)
+                        ?: false
+
                     if (player.nextMediaItemIndex == C.INDEX_UNSET) {
-                        val browserFuture = MediaBrowser.Builder(
-                            this@BaseMediaService,
-                            SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
-                        ).buildAsync()
-                        if(Preferences.isContinuousPlayEnabled()) {
+                        if (!handled && Preferences.isContinuousPlayEnabled()) {
                             MediaManager.continuousPlay(currentMediaItem, browserFuture)
                         }
                     }

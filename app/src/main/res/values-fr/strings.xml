@@ -456,6 +456,8 @@
 	<string name="settings_tile_size">Taille des vignettes</string>
     <string name="settings_title_data">Données</string>
     <string name="settings_title_general">Géneral</string>
+    <string name="settings_title_misc">Divers</string>
+    <string name="settings_title_players">Lecteurs</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Note</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
@@ -463,6 +465,7 @@
     <string name="settings_title_skip_min_star_rating">Ignorer des musiques selon leur note</string>
     <string name="settings_title_skip_min_star_rating_dialog">Musiques avec une note de :</string>
     <string name="settings_title_share">Partage</string>
+    <string name="settings_title_sound">Son</string>
     <string name="settings_title_syncing">Synchronisation</string>
     <string name="settings_title_transcoding">Transcodage</string>
     <string name="settings_title_transcoding_download">Transcodage des téléchargements</string>

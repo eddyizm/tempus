@@ -24,6 +24,7 @@ import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse
+import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_LOADING
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON
@@ -32,10 +33,9 @@ import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MO
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF
 import com.cappielloantonio.tempo.util.Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON
-import com.google.common.collect.ImmutableList
-import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.MappingUtil
 import com.cappielloantonio.tempo.util.Preferences
+import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
@@ -151,7 +151,9 @@ open class MediaLibrarySessionCallback(
             }
         })
 
-        // FIXME: I'm not sure this if is required anymore
+        // System controllers (media notification, Android Auto, Auto Companion) require
+        // specific session commands and a custom layout to function correctly.
+        // Other controllers (e.g. third-party apps) get default permissions only.
         if (session.isMediaNotificationController(controller) || session.isAutomotiveController(
                 controller
             ) || session.isAutoCompanionController(controller)
@@ -481,8 +483,17 @@ open class MediaLibrarySessionCallback(
 
             firstItem.mediaId.startsWith(Constants.AA_INSTANTMIX_SOURCE) -> {
                 Log.d(TAG, "Fetching instant mix for $firstItem.mediaId")
+
+                val withoutPrefix = firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE)
+                val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
+                val artistId = withoutPrefix.substringAfter("]")
+                val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+
+                // connect handle
+                MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
+
                 Futures.transform(
-                    automotiveRepository.getInstantMix(firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE), 12),
+                    automotiveRepository.getInstantMix(artistId, count),
                     { it.value ?: emptyList() },
                     MoreExecutors.directExecutor()
                 )
@@ -496,7 +507,13 @@ open class MediaLibrarySessionCallback(
                         ?: automotiveRepository.getSessionMediaItem(item.mediaId)?.let { session ->
                             automotiveRepository.getMetadatas(session.timestamp!!)
                         }
-                    sessionItem?.let { resolvedItems.addAll(if (it is List<*>) it as List<MediaItem> else listOf(it as MediaItem)) }
+                    sessionItem?.let { resolved ->
+                        when (resolved) {
+                            is List<*> -> resolvedItems.addAll(resolved.filterIsInstance<MediaItem>())
+                            is MediaItem -> resolvedItems.add(resolved)
+                            else -> { /* ignore */ }
+                        }
+                    }
                 }
                 if (resolvedItems.isEmpty()) resolvedItems.add(firstItem)
                 Futures.immediateFuture(resolvedItems)
@@ -511,6 +528,11 @@ open class MediaLibrarySessionCallback(
                 val startIndex = resolvedItems.indexOfFirst { it.mediaId == firstItem.mediaId }
                 Log.d(TAG, "Start index for clicked item ${firstItem.mediaId} = $startIndex")
                 if (startIndex <= 0) return@transform resolvedItems
+
+                val children = resolvedItems.mapNotNull { MappingUtil.mapToChild(it) }
+                if (children.isNotEmpty()) {
+                    QueueRepository().insertAll(children, true, 0)
+                }
 
                 val firstResolved = resolvedItems[0]
                 val extras = (firstResolved.mediaMetadata.extras ?: Bundle()).apply {

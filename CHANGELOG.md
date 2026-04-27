@@ -1,6 +1,35 @@
 # Changelog
 
 ## What's Changed
+## [4.15.0](https://github.com/eddyizm/tempus/releases/tag/v4.15.0) (2026-04-26)
+* feat: Improved artists display for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/512
+* fix: duplicated entry in settings by @tvillega in https://github.com/eddyizm/tempus/pull/562
+* fix: hardcoded string on library refresh toast by @tvillega in https://github.com/eddyizm/tempus/pull/563
+* feat: add pull-to-refresh flashbacks by @tvillega in https://github.com/eddyizm/tempus/pull/558
+* feat: toggle quick action visibility on long-press by @tvillega in https://github.com/eddyizm/tempus/pull/560
+* fix: prevent NPE from PlayerBottomSheetFragment (#540) by @georgeto in https://github.com/eddyizm/tempus/pull/571
+* Fix app crashing on resume by @BernardoGiordano in https://github.com/eddyizm/tempus/pull/578
+* refactor: improve queue confusion for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/574
+* feat: add hamburger menu for landscape by @tvillega in https://github.com/eddyizm/tempus/pull/559
+* feat: add dynamic scaling to player by @tvillega in https://github.com/eddyizm/tempus/pull/565
+* feat: add dynamic scaling to main appbar by @tvillega in https://github.com/eddyizm/tempus/pull/566
+* Improve continuous play by @MaFo-28 in https://github.com/eddyizm/tempus/pull/573
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/587
+* fix: replaygain refactor with more reliable volume normalization and optional clipping prevention by @CtznSniiips in https://github.com/eddyizm/tempus/pull/576
+* feat: add recent tracks played and Tracks bundle for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/570
+* fix: dynamic scaling (review 1) by @tvillega in https://github.com/eddyizm/tempus/pull/590
+* fix: case sensitive release type check by @tvillega in https://github.com/eddyizm/tempus/pull/596
+
+## New Contributors
+* @georgeto made their first contribution in https://github.com/eddyizm/tempus/pull/571
+* @BernardoGiordano made their first contribution in https://github.com/eddyizm/tempus/pull/578
+* @CtznSniiips made their first contribution in https://github.com/eddyizm/tempus/pull/576
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.14.1...v4.15.0
+
+
+## What's Changed
+## [4.14.1](https://github.com/eddyizm/tempus/releases/tag/v4.14.1) (2026-04-11)
 * fix: Android Auto queue initialization and queue confusion  by @MaFo-28 in https://github.com/eddyizm/tempus/pull/497
 * fix: Android Auto queue propagation by @MaFo-28 in https://github.com/eddyizm/tempus/pull/514
 * feat: add playlist artwork support for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/511
