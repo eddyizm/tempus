@@ -1,0 +1,9 @@
+fix: duplicated entry in settings
+fix: hardcoded string on library refresh toast
+feat: add pull-to-refresh flashbacks
+feat: toggle quick action visibility on long-press
+fix: app crashing on resume
+feat: add hamburger menu for landscape
+feat: add dynamic scaling to player and main appbar 
+fix: replaygain refactor with more reliable volume normalization and optional clipping prevention
+fix: case sensitive release type check
