@@ -305,7 +305,7 @@
         <item>Carpeta</item>
         <item>Álbumes más reproducidos</item>
         <item>Álbumes añadidos</item>
-        <!--    <item>Para ti</item> -->
+        <item>Para ti</item>
         <item>Pistas favoritas</item>
         <item>Álbumes favoritos</item>
         <item>Artistas favoritos</item>
@@ -330,6 +330,7 @@
         <item>13</item>
         <item>14</item>
         <item>15</item>
+        <item>16</item>
     </string-array>
 
 </resources>
