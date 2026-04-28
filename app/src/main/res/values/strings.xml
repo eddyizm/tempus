@@ -474,7 +474,7 @@
     <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
     <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
     <string name="settings_replay_gain_preamp_title">Pre-amplification</string>
-    <string name="settings_replay_gain_preamp_summary">Adjust the target loudness offset applied on top of the ReplayGain value. 0 dB targets the reference level encoded in the tags (typically −18 LUFS). Positive values make playback louder; negative values make it quieter.</string>
+    <string name="settings_replay_gain_preamp_summary">Adjust the target loudness offset applied on top of the ReplayGain value. Positive values make playback louder; negative values make it quieter. (Default = -6)</string>
     <string name="settings_replay_gain_preamp_db">%1$d dB</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
