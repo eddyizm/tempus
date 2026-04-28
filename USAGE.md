@@ -227,6 +227,8 @@ In addition, you can choose to display the following functions as thumbnails or 
 
 As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
 
+As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
+
 <p align="left">
     <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
     <img src="mockup/usage/aa_list.jpg" width=317>
@@ -244,7 +246,8 @@ Starred Artists view:
 </p>
 
 On an artist's page, if they have at least 2 albums with a minimum of 20 tracks, an "Instant Mix by Tempus" album is added at the beginning.
-This album features 12 tracks chosen randomly from their discography and is an one click play.
+This album features 12, 15 ou 18 tracks chosen randomly from their discography and is an one click play.
+The number of tracks on the album depends on the size of the artist's discography (>20, >30 or >40)
 
 <p align="left">
     <img src="mockup/usage/aa_instantMix.jpg" width=317>
