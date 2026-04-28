@@ -286,7 +286,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(songs);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
