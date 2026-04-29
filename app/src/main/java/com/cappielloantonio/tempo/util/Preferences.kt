@@ -105,6 +105,7 @@ object Preferences {
 	private const val AA_THIRD_TAB = "androidauto_third_tab"
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
+    private const val AA_STARRED_ALBUMS_FOR_MADE_FOR_YOU ="androidauto_starred_albums_for_made_for_you"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -853,4 +854,8 @@ object Preferences {
         App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
     }
 
+    @JvmStatic
+    fun isStarredAlbumsForMadeForYouEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_STARRED_ALBUMS_FOR_MADE_FOR_YOU, false)
+    }
 }

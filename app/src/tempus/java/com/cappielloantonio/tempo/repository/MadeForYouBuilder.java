@@ -1,19 +1,25 @@
 package com.cappielloantonio.tempo.repository;
 
 import static com.cappielloantonio.tempo.service.MediaManager.enqueue;
+import static com.cappielloantonio.tempo.util.Preferences.getServerId;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.database.AppDatabase;
+import com.cappielloantonio.tempo.database.dao.ChronologyDao;
+import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Starred2;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -37,9 +43,11 @@ public class MadeForYouBuilder {
 
     private static final String TAG = "MadeForYouBuilder";
     private final AutomotiveRepository repository;
+    private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
-
     private enum MixStep { RECENT, STARRED_ALBUM, STARRED_ARTIST }
+    private final int NUMBER_OF_RECENT_ALBUMS = 15;
+    private final int NUMBER_OF_RECENT_TRACKS = 50;
 
     public MadeForYouBuilder(AutomotiveRepository repository) {
         this.repository = repository;
@@ -62,17 +70,17 @@ public class MadeForYouBuilder {
             ListenableFuture<MediaBrowser> browserFuture) {
 
         if (!isRunning.compareAndSet(false, true)) {
-            Log.d(TAG, "Build already running, skipping");
+            Log.d(TAG, mixType + " Build already running, skipping");
             return;
         }
 
-        Log.d(TAG, "Building remaining " + count + " tracks for " + mixType);
+        Log.d(TAG, mixType + " Building remaining " + count + " tracks");
 
         // QUICK_MIX : only recent albums needed
         if (mixType.equals(Constants.AA_QUICKMIX_ID)) {
             App.getSubsonicClientInstance(false)
                     .getAlbumSongListClient()
-                    .getAlbumList2("recent", 15, 0, null, null)
+                    .getAlbumList2("recent", NUMBER_OF_RECENT_ALBUMS, 0, null, null)
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -83,39 +91,42 @@ public class MadeForYouBuilder {
 
                                 List<AlbumID3> recentAlbums = new ArrayList<>(
                                         response.body().getSubsonicResponse().getAlbumList2().getAlbums());
-                                Log.d(TAG, "QUICK_MIX recent albums loaded: " + recentAlbums.size());
+                                Log.d(TAG, mixType + " recent albums loaded: " + recentAlbums.size());
 
                                 Set<String> usedTrackIds = new HashSet<>();
                                 usedTrackIds.add(usedTrackId);
                                 Random random = new Random();
 
-                                runMixStep(1, //skip first step
+                                Collections.shuffle(recentAlbums, random);
+
+                                runMixStep(1,
                                         recentAlbums, Collections.emptyList(), Collections.emptyList(),
                                         0, 0, 0,
                                         new ArrayList<>(), usedTrackIds,
-                                        random, count, mixType, browserFuture);
+                                        random, count, mixType, Collections.emptySet(), browserFuture);
                             } else {
-                                Log.w(TAG, "QUICK_MIX recent albums failed");
+                                Log.w(TAG, mixType + " recent albums failed");
                                 fallbackToRandomSongs(count, usedTrackId, browserFuture);
                             }
                         }
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                            Log.e(TAG, "QUICK_MIX network failure: " + t.getMessage());
+                            Log.e(TAG, mixType + " network failure: " + t.getMessage());
                             isRunning.set(false);
                         }
                     });
             return;
         }
 
-        // MY_MIX and DISCOVERY_MIX : fetch recent + starred in parallel
+        // MY_MIX and DISCOVERY_MIX : fetch recent + starred + recent track IDs in parallel
         SettableFuture<List<AlbumID3>> recentFuture = SettableFuture.create();
         SettableFuture<List<AlbumID3>> starredAlbumsFuture = SettableFuture.create();
         SettableFuture<List<ArtistID3>> starredArtistsFuture = SettableFuture.create();
+        SettableFuture<Set<String>> recentTrackIdsFuture = SettableFuture.create();
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
-                .getAlbumList2("recent", 15, 0, null, null)
+                .getAlbumList2("recent", NUMBER_OF_RECENT_ALBUMS, 0, null, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -130,7 +141,7 @@ public class MadeForYouBuilder {
                     }
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        Log.e(TAG, "Failed to fetch recent albums: " + t.getMessage());
+                        Log.e(TAG, mixType + " Failed to fetch recent albums: " + t.getMessage());
                         recentFuture.set(Collections.emptyList());
                     }
                 });
@@ -154,24 +165,42 @@ public class MadeForYouBuilder {
                     }
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        Log.e(TAG, "Failed to fetch starred: " + t.getMessage());
+                        Log.e(TAG, mixType + " Failed to fetch starred: " + t.getMessage());
                         starredAlbumsFuture.set(Collections.emptyList());
                         starredArtistsFuture.set(Collections.emptyList());
                     }
                 });
 
-        ListenableFuture<Void> phase1Future = Futures.whenAllSucceed(recentFuture, starredAlbumsFuture, starredArtistsFuture).call(() -> {
+        // Load recent track IDs for Discovery Mix filtering
+        chronologyDao.getLastPlayed(getServerId(), NUMBER_OF_RECENT_TRACKS)
+                .observeForever(new Observer<List<Chronology>>() {
+                    @Override
+                    public void onChanged(List<Chronology> chronology) {
+                        Set<String> ids = new HashSet<>();
+                        if (chronology != null) {
+                            for (Chronology c : chronology) ids.add(c.getId());
+                        }
+                        Log.d(TAG, mixType + " Recent track IDs loaded: " + ids.size());
+                        recentTrackIdsFuture.set(ids);
+                        chronologyDao.getLastPlayed(getServerId(), NUMBER_OF_RECENT_TRACKS).removeObserver(this);
+                    }
+                });
+
+        ListenableFuture<Void> phase1Future = Futures.whenAllSucceed(
+                recentFuture, starredAlbumsFuture, starredArtistsFuture, recentTrackIdsFuture).call(() -> {
 
             List<AlbumID3> recentAlbums = new ArrayList<>(Futures.getDone(recentFuture));
             List<AlbumID3> starredAlbums = new ArrayList<>(Futures.getDone(starredAlbumsFuture));
             List<ArtistID3> starredArtists = new ArrayList<>(Futures.getDone(starredArtistsFuture));
+            Set<String> recentTrackIds = Futures.getDone(recentTrackIdsFuture);
 
             Log.d(TAG, mixType + " recent=" + recentAlbums.size()
                     + " starredAlbums=" + starredAlbums.size()
-                    + " starredArtists=" + starredArtists.size());
+                    + " starredArtists=" + starredArtists.size()
+                    + " recentTrackIds=" + recentTrackIds.size());
 
             if (recentAlbums.isEmpty() && starredAlbums.isEmpty() && starredArtists.isEmpty()) {
-                Log.w(TAG, "No context available, falling back to random songs");
+                Log.w(TAG, mixType + " No context available, falling back to random songs");
                 fallbackToRandomSongs(count, usedTrackId, browserFuture);
                 return null;
             }
@@ -184,11 +213,11 @@ public class MadeForYouBuilder {
             Collections.shuffle(starredAlbums, random);
             Collections.shuffle(starredArtists, random);
 
-            runMixStep(0,
+            runMixStep(1,
                     recentAlbums, starredAlbums, starredArtists,
                     0, 0, 0,
                     new ArrayList<>(), usedTrackIds,
-                    random, count, mixType, browserFuture);
+                    random, count, mixType, recentTrackIds, browserFuture);
 
             return null;
         }, MoreExecutors.directExecutor());
@@ -196,7 +225,7 @@ public class MadeForYouBuilder {
         Futures.addCallback(phase1Future, new FutureCallback<Void>() {
             @Override public void onSuccess(Void result) {}
             @Override public void onFailure(@NonNull Throwable t) {
-                Log.e(TAG, "Phase 1 error: " + t.getMessage());
+                Log.e(TAG, mixType + " Phase 1 error: " + t.getMessage());
                 isRunning.set(false);
             }
         }, MoreExecutors.directExecutor());
@@ -207,7 +236,8 @@ public class MadeForYouBuilder {
      * source lists when a cycle completes.
 
      * QUICK_MIX:     cycle of 2 — recent[0], recent[1], then reshuffle
-     * MY_MIX:        cycle of 6 — recent, starredAlbum, starredArtist × 2, then reshuffle
+     * MY_MIX:        cycle of 4 — recent, starred (album OR artist) × 2, then reshuffle
+     *                starred source depends on Preferences.isStarredAlbumsForMadeForYouEnabled()
      * DISCOVERY_MIX: same cycle as MY_MIX, similar songs handled separately
      */
     private MixStep getNextStep(
@@ -219,21 +249,27 @@ public class MadeForYouBuilder {
             Random random) {
 
         if (mixType.equals(Constants.AA_QUICKMIX_ID)) {
+            // cycle of 2: recent[0] → recent[1] → reshuffle → repeat
             int posInCycle = cycleIndex % 2;
             if (posInCycle == 0) Collections.shuffle(recentAlbums, random);
             return MixStep.RECENT;
         } else {
-            // MY_MIX and DISCOVERY_MIX: cycle of 6
-            int posInCycle = cycleIndex % 6;
+            // MY_MIX and DISCOVERY_MIX: cycle of 4
+            // Recent → STARRED → Recent → STARRED → reshuffle → repeat
+            int posInCycle = cycleIndex % 4;
             if (posInCycle == 0) {
                 Collections.shuffle(recentAlbums, random);
-                Collections.shuffle(starredAlbums, random);
-                Collections.shuffle(starredArtists, random);
+                if (Preferences.isStarredAlbumsForMadeForYouEnabled()) {
+                    Collections.shuffle(starredAlbums, random);
+                } else {
+                    Collections.shuffle(starredArtists, random);
+                }
             }
             switch (posInCycle) {
-                case 0: case 3: return MixStep.RECENT;
-                case 1: case 4: return MixStep.STARRED_ALBUM;
-                default:        return MixStep.STARRED_ARTIST;
+                case 0: case 2: return MixStep.RECENT;
+                default: return Preferences.isStarredAlbumsForMadeForYouEnabled()
+                        ? MixStep.STARRED_ALBUM
+                        : MixStep.STARRED_ARTIST;
             }
         }
     }
@@ -252,10 +288,11 @@ public class MadeForYouBuilder {
             int recentIdx, int starredAlbumIdx, int starredArtistIdx,
             List<Child> mixTracks, Set<String> usedTrackIds,
             Random random, int count, String mixType,
+            Set<String> recentTrackIds,
             ListenableFuture<MediaBrowser> browserFuture) {
 
         if (mixTracks.size() >= count) {
-            Log.d(TAG, "Mix complete with " + mixTracks.size() + " tracks, enqueuing");
+            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
             repository.setChildrenMetadata(mixTracks);
             enqueue(browserFuture, mixTracks, true);
             isRunning.set(false);
@@ -269,43 +306,47 @@ public class MadeForYouBuilder {
             case RECENT:
                 if (!recentAlbums.isEmpty()) {
                     AlbumID3 album = recentAlbums.get(recentIdx % recentAlbums.size());
-                    Log.d(TAG, "Step RECENT " + mixType + " cycle=" + cycleIndex + ": " + album.getName());
+                    Log.d(TAG, mixType + " Step RECENT cycle=" + cycleIndex + ": " + album.getName());
                     fetchTrackThenSimilar(album.getId(), MixStep.RECENT,
                             cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists,
                             recentIdx + 1, starredAlbumIdx, starredArtistIdx,
-                            mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                            mixTracks, usedTrackIds, random, count, mixType,
+                            recentTrackIds, browserFuture);
                 } else {
-                    Log.d(TAG, "Step RECENT: no recent albums, skipping");
+                    Log.d(TAG, mixType + " Step RECENT: no recent albums, skipping");
                     runMixStep(cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists,
                             recentIdx, starredAlbumIdx, starredArtistIdx,
-                            mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                            mixTracks, usedTrackIds, random, count, mixType,
+                            recentTrackIds, browserFuture);
                 }
                 break;
 
             case STARRED_ALBUM:
                 if (!starredAlbums.isEmpty()) {
                     AlbumID3 album = starredAlbums.get(starredAlbumIdx % starredAlbums.size());
-                    Log.d(TAG, "Step STARRED_ALBUM " + mixType + " cycle=" + cycleIndex + ": " + album.getName());
+                    Log.d(TAG, mixType + " Step STARRED_ALBUM cycle=" + cycleIndex + ": " + album.getName());
                     fetchTrackThenSimilar(album.getId(), MixStep.STARRED_ALBUM,
                             cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists,
                             recentIdx, starredAlbumIdx + 1, starredArtistIdx,
-                            mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                            mixTracks, usedTrackIds, random, count, mixType,
+                            recentTrackIds, browserFuture);
                 } else {
-                    Log.d(TAG, "Step STARRED_ALBUM: no starred albums, skipping");
+                    Log.d(TAG, mixType + " Step STARRED_ALBUM: no starred albums, skipping");
                     runMixStep(cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists,
                             recentIdx, starredAlbumIdx, starredArtistIdx,
-                            mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                            mixTracks, usedTrackIds, random, count, mixType,
+                            recentTrackIds, browserFuture);
                 }
                 break;
 
             case STARRED_ARTIST:
                 if (!starredArtists.isEmpty()) {
                     ArtistID3 artist = starredArtists.get(starredArtistIdx % starredArtists.size());
-                    Log.d(TAG, "Step STARRED_ARTIST " + mixType + " cycle=" + cycleIndex + ": " + artist.getName());
+                    Log.d(TAG, mixType + " Step STARRED_ARTIST cycle=" + cycleIndex + ": " + artist.getName());
                     App.getSubsonicClientInstance(false)
                             .getBrowsingClient()
                             .getArtist(artist.getId())
@@ -322,30 +363,34 @@ public class MadeForYouBuilder {
                                                 cycleIndex + 1,
                                                 recentAlbums, starredAlbums, starredArtists,
                                                 recentIdx, starredAlbumIdx, starredArtistIdx + 1,
-                                                mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                                                mixTracks, usedTrackIds, random, count, mixType,
+                                                recentTrackIds, browserFuture);
                                     } else {
-                                        Log.w(TAG, "Artist " + artist.getName() + " returned no albums, skipping");
+                                        Log.w(TAG, mixType + " Artist " + artist.getName() + " returned no albums, skipping");
                                         runMixStep(cycleIndex + 1,
                                                 recentAlbums, starredAlbums, starredArtists,
                                                 recentIdx, starredAlbumIdx, starredArtistIdx + 1,
-                                                mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                                                mixTracks, usedTrackIds, random, count, mixType,
+                                                recentTrackIds, browserFuture);
                                     }
                                 }
                                 @Override
                                 public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                                    Log.e(TAG, "Failed to fetch artist albums: " + t.getMessage());
+                                    Log.e(TAG, mixType + " Failed to fetch artist albums: " + t.getMessage());
                                     runMixStep(cycleIndex + 1,
                                             recentAlbums, starredAlbums, starredArtists,
                                             recentIdx, starredAlbumIdx, starredArtistIdx + 1,
-                                            mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                                            mixTracks, usedTrackIds, random, count, mixType,
+                                            recentTrackIds, browserFuture);
                                 }
                             });
                 } else {
-                    Log.d(TAG, "Step STARRED_ARTIST: no starred artists, skipping");
+                    Log.d(TAG, mixType + " Step STARRED_ARTIST: no starred artists, skipping");
                     runMixStep(cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists,
                             recentIdx, starredAlbumIdx, starredArtistIdx,
-                            mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                            mixTracks, usedTrackIds, random, count, mixType,
+                            recentTrackIds, browserFuture);
                 }
                 break;
         }
@@ -354,7 +399,7 @@ public class MadeForYouBuilder {
     /**
      * Fetches tracks from an album, picks one unused track, adds it to the mix,
      * then attempts to fetch one similar song (DISCOVERY_MIX only) before continuing.
-     *
+
      * @param albumId   Album to fetch tracks from
      * @param fromStep  The step that triggered this fetch — used to determine the next step
      * @param mixType   Controls whether similar songs are fetched after each track
@@ -369,6 +414,7 @@ public class MadeForYouBuilder {
             int recentIdx, int starredAlbumIdx, int starredArtistIdx,
             List<Child> mixTracks, Set<String> usedTrackIds,
             Random random, int count, String mixType,
+            Set<String> recentTrackIds,
             ListenableFuture<MediaBrowser> browserFuture) {
 
         App.getSubsonicClientInstance(false)
@@ -392,17 +438,17 @@ public class MadeForYouBuilder {
                                     mixTracks.add(candidate);
                                     usedTrackIds.add(candidate.getId());
                                     songIdForSimilar = candidate.getId();
-                                    Log.d(TAG, "Added " + fromStep + "/" + mixType + " track ["
+                                    Log.d(TAG, mixType + " Added " + fromStep + " / track ["
                                             + mixTracks.size() + "/" + count + "] " + candidate.getTitle());
                                     break;
                                 }
                             }
                         } else {
-                            Log.w(TAG, "Album " + albumId + " skipped (empty or failed)");
+                            Log.w(TAG, mixType + " Album " + albumId + " skipped (empty or failed)");
                         }
 
                         if (mixTracks.size() >= count) {
-                            Log.d(TAG, "Mix complete with " + mixTracks.size() + " tracks, enqueuing");
+                            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
                             repository.setChildrenMetadata(mixTracks);
                             enqueue(browserFuture, mixTracks, true);
                             isRunning.set(false);
@@ -414,33 +460,34 @@ public class MadeForYouBuilder {
                             final String finalSongId = songIdForSimilar;
                             App.getSubsonicClientInstance(false)
                                     .getBrowsingClient()
-                                    .getSimilarSongs2(finalSongId, 5)
+                                    .getSimilarSongs(finalSongId, 10) // fetch more candidates for better filtering
                                     .enqueue(new Callback<ApiResponse>() {
                                         @Override
                                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                                             if (response.isSuccessful()
                                                     && response.body() != null
-                                                    && response.body().getSubsonicResponse().getSimilarSongs2() != null
-                                                    && response.body().getSubsonicResponse().getSimilarSongs2().getSongs() != null) {
+                                                    && response.body().getSubsonicResponse().getSimilarSongs() != null
+                                                    && response.body().getSubsonicResponse().getSimilarSongs().getSongs() != null) {
 
                                                 List<Child> similar = new ArrayList<>(
-                                                        response.body().getSubsonicResponse().getSimilarSongs2().getSongs());
+                                                        response.body().getSubsonicResponse().getSimilarSongs().getSongs());
                                                 Collections.shuffle(similar, random);
                                                 for (Child candidate : similar) {
-                                                    if (!usedTrackIds.contains(candidate.getId())) {
+                                                    if (!usedTrackIds.contains(candidate.getId())
+                                                            && !recentTrackIds.contains(candidate.getId())) {
                                                         mixTracks.add(candidate);
                                                         usedTrackIds.add(candidate.getId());
-                                                        Log.d(TAG, "Added similar track ["
+                                                        Log.d(TAG, mixType + " Added similar track ["
                                                                 + mixTracks.size() + "/" + count + "] " + candidate.getTitle());
                                                         break;
                                                     }
                                                 }
                                             } else {
-                                                Log.d(TAG, "No similar songs for song " + finalSongId);
+                                                Log.d(TAG, mixType + " No similar songs for song " + finalSongId);
                                             }
 
                                             if (mixTracks.size() >= count) {
-                                                Log.d(TAG, "Mix complete with " + mixTracks.size() + " tracks, enqueuing");
+                                                Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
                                                 repository.setChildrenMetadata(mixTracks);
                                                 enqueue(browserFuture, mixTracks, true);
                                                 isRunning.set(false);
@@ -450,33 +497,37 @@ public class MadeForYouBuilder {
                                             runMixStep(cycleIndex,
                                                     recentAlbums, starredAlbums, starredArtists,
                                                     recentIdx, starredAlbumIdx, starredArtistIdx,
-                                                    mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                                                    mixTracks, usedTrackIds, random, count, mixType,
+                                                    recentTrackIds, browserFuture);
                                         }
 
                                         @Override
                                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                                            Log.e(TAG, "Similar songs fetch failed: " + t.getMessage());
+                                            Log.e(TAG, mixType + " Similar songs fetch failed: " + t.getMessage());
                                             runMixStep(cycleIndex,
                                                     recentAlbums, starredAlbums, starredArtists,
                                                     recentIdx, starredAlbumIdx, starredArtistIdx,
-                                                    mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                                                    mixTracks, usedTrackIds, random, count, mixType,
+                                                    recentTrackIds, browserFuture);
                                         }
                                     });
                         } else {
                             runMixStep(cycleIndex,
                                     recentAlbums, starredAlbums, starredArtists,
                                     recentIdx, starredAlbumIdx, starredArtistIdx,
-                                    mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                                    mixTracks, usedTrackIds, random, count, mixType,
+                                    recentTrackIds, browserFuture);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        Log.e(TAG, "Album fetch failed for " + albumId + ": " + t.getMessage());
+                        Log.e(TAG, mixType + " Album fetch failed for " + albumId + ": " + t.getMessage());
                         runMixStep(cycleIndex,
                                 recentAlbums, starredAlbums, starredArtists,
                                 recentIdx, starredAlbumIdx, starredArtistIdx,
-                                mixTracks, usedTrackIds, random, count, mixType, browserFuture);
+                                mixTracks, usedTrackIds, random, count, mixType,
+                                recentTrackIds, browserFuture);
                     }
                 });
     }
