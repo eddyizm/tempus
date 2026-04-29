@@ -52,30 +52,33 @@ sha256 signing key fingerprint
 
 Please note the two variants in the release assets include release/debug and 32/64 bit flavors.
 
-`app-tempus` <- The github release with all the android auto/chromecast features 
+🟥 `app-tempus` <- The github release with all the android auto/chromecast features 
 
-`app-degoogled*` <- The izzyOnDroid release that goes without any of the google stuff. It is now available on izzyOnDroid (64bit) I am releasing the both 32/64bit apk's here on github for those who need a 32bit version.
+🟩`app-degoogled*` <- The izzyOnDroid release that goes without any of the google stuff. It is now available on izzyOnDroid (64bit) I am releasing the both 32/64bit apk's here on github for those who need a 32bit version.
 
 
 ## Features
+
+### 🟩F-droid & 🟥Github
 - **Subsonic Integration**: Tempus seamlessly integrates with your Subsonic server, providing you with easy access to your entire music collection on the go.
 - **Sleek and Intuitive UI**: Enjoy a clean and user-friendly interface designed to enhance your music listening experience, tailored to your preferences and listening history.
 - **Browse and Search**: Easily navigate through your music library using various browsing and searching options, including artists, albums, genres, playlists, decades and more.
 - **Streaming and Offline Mode**: Stream music directly from your Subsonic server. Offline mode is currently under active development and may have limitations when using multiple servers.
 - **Playlist Management**: Create, edit, and manage playlists to curate your perfect music collection.
 - **Gapless Playback**: Experience uninterrupted playback with gapless listening mode.
-- **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.*
+- **ReplayGain**: Volume normalization, preamp offset and clipping prevention if your metadata provide the information.
 - **Scrobbling Integration**: Optionally integrate Tempus with Last.fm or Listenbrainz.org to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
 - **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
 - **Instant Mix**: Full refactor of instant mix function which leverages subsonics similarSongs2 by artist/album and similarSongs endpoints to server a larger play queue more reliably.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
-- **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.* 
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
 - **Equalizer**: Option to use in app equalizer.
 - **Widget**: New widget to keeping the basic controls on your screen at all times.
 - **Available in 11 languages**: Currently in Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish and Turkish
 
- **Github version only*
+### 🟥GitHub version only
+- **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.
+- **Android Auto Support**: Enjoy your favorite music on the go with full Android Auto integration, allowing you to seamlessly control and listen to your tracks directly from your mobile device while driving.
  
 ## Screenshot
 
