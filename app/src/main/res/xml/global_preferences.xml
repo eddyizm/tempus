@@ -508,10 +508,14 @@
             android:defaultValue="false"
             android:key="androidauto_shuffle_genre_songs" />
 
-        <SwitchPreference
-            android:title="@string/settings_androidauto_starred_albums_for_made_for_you"
-            android:defaultValue="false"
-            android:key="androidauto_starred_albums_for_made_for_you" />
+        <ListPreference
+            app:defaultValue="0"
+            app:dialogTitle="@string/settings_androidauto_starred_for_made_for_you"
+            app:entries="@array/aa_starred_for_made_for_you_titles"
+            app:entryValues="@array/aa_starred_for_made_for_you_values"
+            app:key="androidauto_starred_for_made_for_you"
+            app:title="@string/settings_androidauto_starred_for_made_for_you"
+            app:useSimpleSummaryProvider="true" />
 	</com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory

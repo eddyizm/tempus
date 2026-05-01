@@ -355,7 +355,7 @@
 	<string name="settings_androidauto_fourth_tab">Affichage du quatrième onglet</string>
     <string name="settings_androidauto_shuffle_genre_songs">Mélanger les chansons par genre</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Lire des chansons aléatoires lors de la sélection d\'un genre</string>
-    <string name="settings_androidauto_starred_albums_for_made_for_you">Utilisation des albums favoris pour les mix Pour Vous</string>
+    <string name="settings_androidauto_starred_for_made_for_you">Favoris utilisés pour les mix Pour Vous</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>
     <string name="settings_audio_transcode_download_priority_summary">Si activé, Tempus ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioriser les paramètres du serveurs, utilisés pour le streaming, dans les téléchargements</string>

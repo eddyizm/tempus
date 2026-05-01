@@ -310,4 +310,9 @@
         <item>16</item>
     </string-array>
 
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Artistes favoris</item>
+        <item>Albums favoris</item>
+        <item>Titres favoris</item>
+    </string-array>
 </resources>
