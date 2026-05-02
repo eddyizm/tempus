@@ -486,7 +486,7 @@ object MediaBrowserTree {
             Constants.AA_RECENT_TRACKS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),100)
             Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
             //Constants.AA_MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
-            Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.starredSongs
+            Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.getStarredSongs()
             Constants.AA_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, true)
             Constants.AA_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, true)
             Constants.AA_RANDOM_ID -> automotiveRepository.getRandomSongs(100)
