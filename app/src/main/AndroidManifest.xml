@@ -53,6 +53,10 @@
                     android:scheme="tempo" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.activity.CrashActivity"
+            android:label="@string/ca_info_title"
+            android:process=":error_activity" />
 
         <service
             android:name=".service.MediaService"

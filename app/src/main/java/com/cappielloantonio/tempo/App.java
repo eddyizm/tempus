@@ -5,14 +5,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
+import androidx.media3.common.util.UnstableApi;
 import androidx.preference.PreferenceManager;
 
 import com.cappielloantonio.tempo.github.Github;
 import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.SubsonicPreferences;
+import com.cappielloantonio.tempo.ui.activity.CrashActivity;
 import com.cappielloantonio.tempo.util.ClientCertManager;
 import com.cappielloantonio.tempo.util.Preferences;
+
+import cat.ereza.customactivityoncrash.config.CaocConfig;
 
 public class App extends Application {
     private static App instance;
@@ -21,9 +26,26 @@ public class App extends Application {
     private static Github github;
     private static SharedPreferences preferences;
 
+    @OptIn(markerClass = UnstableApi.class)
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Capture crash logs
+        CaocConfig.Builder.create()
+                .backgroundMode(CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM) //default: CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM
+                .enabled(true) //default: true
+                .showErrorDetails(true) //default: true
+                .showRestartButton(true) //default: true
+                .logErrorOnRestart(true) //default: true
+                .trackActivities(false) //default: false
+                .minTimeBetweenCrashesMs(3000) //default: 3000
+                .errorDrawable(R.drawable.ui_crash) //default: bug image
+                .restartActivity(null) //default: null (your app's launch activity)
+                .errorActivity(CrashActivity.class) //default: null (default error activity)
+                .eventListener(null) //default: null
+                .customCrashDataCollector(null) //default: null
+                .apply();
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String themePref = sharedPreferences.getString(Preferences.THEME, ThemeHelper.DEFAULT_MODE);

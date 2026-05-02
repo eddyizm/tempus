@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/crash_nav_info"
+        android:icon="@drawable/ic_info_stream"
+        android:title="@string/ca_info_label" />
+    <item
+        android:id="@+id/crash_nav_logs"
+        android:icon="@drawable/ic_log"
+        android:title="@string/ca_logs_label" />
+    <item
+        android:id="@+id/crash_nav_export"
+        android:icon="@drawable/ic_export"
+        android:title="@string/ca_export_label" />
+</menu>
