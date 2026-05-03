@@ -59,13 +59,27 @@ public class PlaylistRepository {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylists() != null) {
                             List<Playlist> playlists = response.body().getSubsonicResponse().getPlaylists().getPlaylists();
                             allPlaylistsLiveData.postValue(playlists);
+                            // cache all playlists
+                            cacheAllPlaylists(playlists);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                    // OFFLINE MILESTONE: Future home of the "Server unreachable, falling back to cache" Toast
                     }
                 });
+    }
+
+    @OptIn(markerClass = UnstableApi.class)
+    private void cacheAllPlaylists(List<Playlist> playlists) {
+        new Thread(() -> {
+            // clear table to prevert cross-server data bleed.
+            playlistDao.deleteAll();
+            // TODO add server aware join or column.
+            playlistDao.insertAll(playlists);
+            android.util.Log.d("PlaylistRepository", "Cached " + playlists.size() + " playlists to local DB.");
+        }).start();
     }
 
     public MutableLiveData<List<Playlist>> getPlaylists(boolean random, int size) {
@@ -79,6 +93,8 @@ public class PlaylistRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylists() != null && response.body().getSubsonicResponse().getPlaylists().getPlaylists() != null) {
                             List<Playlist> playlists = response.body().getSubsonicResponse().getPlaylists().getPlaylists();
+
+                            cacheAllPlaylists(playlists);
 
                             if (random) {
                                 Collections.shuffle(playlists);
@@ -95,6 +111,12 @@ public class PlaylistRepository {
                 });
 
         return listLivePlaylists;
+    }
+
+    @androidx.media3.common.util.UnstableApi
+    public LiveData<List<Playlist>> getSortedPlaylists(String sortOrder) {
+        android.util.Log.d("TempusLog", "Repo reaching DAO with: " + sortOrder);
+        return playlistDao.getSortedPlaylists(sortOrder);
     }
 
     public MutableLiveData<List<Child>> getPlaylistSongs(String id) {
