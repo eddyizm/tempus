@@ -150,9 +150,7 @@ object MediaBrowserTree {
             Constants.AA_MOST_PLAYED_ID,
             Constants.AA_RECENTLY_ADDED_ID,
             Constants.AA_MADE_FOR_YOU_ID,
-            Constants.AA_STARRED_TRACKS_ID,
-            Constants.AA_STARRED_ALBUMS_ID,
-            Constants.AA_STARRED_ARTISTS_ID,
+            Constants.AA_STARRED_BUNDLE_ID,
             Constants.AA_TRACKS_ID,
             Constants.AA_GENRES_ID
         )
@@ -356,6 +354,19 @@ object MediaBrowserTree {
                 )
             )
 
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = albumView,
+                    title = appContext.getString(R.string.aa_starred),
+                    mediaId = Constants.AA_STARRED_BUNDLE_ID,
+                    isPlayable = false,
+                    isBrowsable = true,
+                    imageUri = iconUri(R.drawable.ic_aa_bundle_star),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS
+                )
+            )
+
         treeNodes[Constants.AA_STARRED_ALBUMS_ID] =
             MediaItemNode(
                 buildMediaItem(
@@ -502,6 +513,19 @@ object MediaBrowserTree {
                     } else {
                         treeNodes[Constants.AA_HOME_ID]?.addChild(function)
                     }
+                when (function) {
+                    Constants.AA_TRACKS_ID -> {
+                        // add Random and Recent instead of Tracks to Home
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RANDOM_ID)
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
+                    }
+                    Constants.AA_STARRED_BUNDLE_ID -> {
+                        // add starred function instead of Starred bundle to Home
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_STARRED_ARTISTS_ID)
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_STARRED_ALBUMS_ID)
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_STARRED_TRACKS_ID)
+                    }
+                    else -> treeNodes[Constants.AA_HOME_ID]?.addChild(function)
                 }
             }
 
@@ -509,6 +533,7 @@ object MediaBrowserTree {
         treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RANDOM_ID)
         treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_GENRES_ID)
         treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_STARRED_TRACKS_ID)
 
         // build Made For You bundle
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_QUICKMIX_ID)
@@ -517,6 +542,12 @@ object MediaBrowserTree {
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_ARTISTS_ID)
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_ALBUMS_ID)
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_TRACKS_ID)
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_STARRED_TRACKS_ID)
+
+        // create starred bundle
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID]?.addChild(Constants.AA_STARRED_ARTISTS_ID)
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID]?.addChild(Constants.AA_STARRED_ALBUMS_ID)
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID]?.addChild(Constants.AA_STARRED_TRACKS_ID)
 	}
 	
     fun getRootItem(): MediaItem {

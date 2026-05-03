@@ -306,9 +306,7 @@
         <item>Najczęściej odtwarzane albumy</item>
         <item>Dodane albumy</item>
         <item>For you</item>
-        <item>Utwory oznaczone gwiazdką</item>
-        <item>Albumy oznaczone gwiazdką</item>
-        <item>Wykonawcy oznaczeni gwiazdką</item>
+        <item>Starred</item>
         <item>Tracks</item>
 		<item>Gatunki</item>
     </string-array>

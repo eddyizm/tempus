@@ -14,9 +14,10 @@
 	<string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Récents</string>
     <string name="aa_song_recently_played">Titres joués</string>
-    <string name="aa_starred_albums">★ Albums</string>
-    <string name="aa_starred_artists">★ Artistes</string>
-    <string name="aa_starred_tracks">★ Titres</string>
+    <string name="aa_starred">Favoris</string>
+    <string name="aa_starred_albums">Albums ★</string>
+    <string name="aa_starred_artists">Artistes ★</string>
+    <string name="aa_starred_tracks">Titres ★</string>
     <string name="aa_instant_mix">Mix instantané</string>
     <string name="aa_view_by_albums">Vue par albums</string>
     <string name="aa_tracks">Titres</string>
@@ -354,6 +355,7 @@
 	<string name="settings_androidauto_third_tab">Affichage du troisième onglet</string>
 	<string name="settings_androidauto_fourth_tab">Affichage du quatrième onglet</string>
     <string name="settings_androidauto_shuffle_genre_songs">Mélanger les chansons par genre</string>
+    <string name="settings_androidauto_shuffle_starred_tracks">Mélanger les morceaux favoris</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Lire des chansons aléatoires lors de la sélection d\'un genre</string>
     <string name="settings_androidauto_starred_for_made_for_you">Favoris utilisés pour les mix Pour Vous</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>

@@ -306,10 +306,8 @@
         <item>Ordner</item>
         <item>Oft gespielte Alben</item>
         <item>Hinzugefügte Alben</item>
-		<item>Für dich</item>
-        <item>Lieblingstitel</item>
-        <item>Lieblingsalben</item>
-        <item>Lieblingsinterpreten</item>
+        <item>Für dich</item>
+        <item>Starred</item>
         <item>Titel</item>
         <item>Genres</item>
     </string-array>
