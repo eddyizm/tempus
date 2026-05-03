@@ -936,6 +936,10 @@ open class BaseMediaService : MediaLibraryService() {
         fun getEqualizerManager(): EqualizerManager {
             return equalizerManager
         }
+
+        fun getPlayer(): ExoPlayer {
+            return exoplayer
+        }
     }
 }
 

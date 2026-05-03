@@ -166,6 +166,16 @@
                 app:title="@string/settings_replay_gain"
                 app:useSimpleSummaryProvider="true" />
 
+            <SeekBarPreference
+                android:defaultValue="-6"
+                android:key="replay_gain_preamp"
+                android:title="@string/settings_replay_gain_preamp_title"
+                android:summary="@string/settings_replay_gain_preamp_summary"
+                android:max="15"
+                app:min="-15"
+                app:showSeekBarValue="true"
+                app:adjustable="true" />
+
             <SwitchPreference
                 android:defaultValue="true"
                 android:key="replay_gain_prevent_clipping"
