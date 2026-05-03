@@ -14,6 +14,7 @@
     <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
     <string name="aa_song_recently_played">Tracks played</string>
+    <string name="aa_starred">Starred</string>
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artists</string>
     <string name="aa_starred_tracks">★ Tracks</string>
@@ -416,6 +417,7 @@
 	<string name="settings_androidauto_third_tab">Third tab display</string>
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
+    <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>

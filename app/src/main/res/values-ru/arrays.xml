@@ -291,9 +291,7 @@
         <item>Популярные альбомы</item>
         <item>Недавно добавленные альбомы</item>
         <item>For you</item>
-        <item>Избранные треки</item>
-        <item>Избранные альбомы</item>
-        <item>Избранные артисты</item>
+        <item>Starred</item>
         <item>Tracks</item>
         <item>Жанры</item>
     </string-array>

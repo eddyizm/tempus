@@ -150,9 +150,7 @@ object MediaBrowserTree {
             Constants.AA_MOST_PLAYED_ID,
             Constants.AA_RECENTLY_ADDED_ID,
             Constants.AA_MADE_FOR_YOU_ID,
-            Constants.AA_STARRED_TRACKS_ID,
-            Constants.AA_STARRED_ALBUMS_ID,
-            Constants.AA_STARRED_ARTISTS_ID,
+            Constants.AA_STARRED_BUNDLE_ID,
             Constants.AA_TRACKS_ID,
             Constants.AA_GENRES_ID
         )
@@ -356,6 +354,19 @@ object MediaBrowserTree {
                 )
             )
 
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = albumView,
+                    title = appContext.getString(R.string.aa_starred),
+                    mediaId = Constants.AA_STARRED_BUNDLE_ID,
+                    isPlayable = false,
+                    isBrowsable = true,
+                    imageUri = iconUri(R.drawable.ic_aa_bundle_star),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_ALBUMS
+                )
+            )
+
         treeNodes[Constants.AA_STARRED_ALBUMS_ID] =
             MediaItemNode(
                 buildMediaItem(
@@ -488,27 +499,27 @@ object MediaBrowserTree {
         allFunctions
             .filter { it !in selectedIds }
             .forEach { function ->
-                if(function == Constants.AA_TRACKS_ID) {
-                    // add Random and Recent instead of Tracks to Home
-                    treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RANDOM_ID)
-                    treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
-                }
-                else {
-                    if (function == Constants.AA_MADE_FOR_YOU_ID) {
+                when (function) {
+                    Constants.AA_MADE_FOR_YOU_ID -> {
                         // add Quick Mix, My Mix and Discovery Mix instead of Made For You to Home
                         treeNodes[Constants.AA_HOME_ID]!!.addChild(Constants.AA_QUICKMIX_ID)
                         treeNodes[Constants.AA_HOME_ID]!!.addChild(Constants.AA_MYMIX_ID)
                         treeNodes[Constants.AA_HOME_ID]!!.addChild(Constants.AA_DISCOVERYMIX_ID)
-                    } else {
-                        treeNodes[Constants.AA_HOME_ID]?.addChild(function)
                     }
+                    Constants.AA_STARRED_BUNDLE_ID -> {
+                        // add starred function instead of Starred bundle to Home
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_STARRED_ARTISTS_ID)
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_STARRED_ALBUMS_ID)
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_STARRED_TRACKS_ID)
+                    }
+                    Constants.AA_TRACKS_ID -> {
+                        // add Random and Recent instead of Tracks to Home
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RANDOM_ID)
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
+                    }
+                    else -> treeNodes[Constants.AA_HOME_ID]?.addChild(function)
                 }
             }
-
-        // create tracks bundle
-        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RANDOM_ID)
-        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_GENRES_ID)
-        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
 
         // build Made For You bundle
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_QUICKMIX_ID)
@@ -517,6 +528,17 @@ object MediaBrowserTree {
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_ARTISTS_ID)
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_ALBUMS_ID)
         treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_TRACKS_ID)
+
+        // create starred bundle
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID]?.addChild(Constants.AA_STARRED_ARTISTS_ID)
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID]?.addChild(Constants.AA_STARRED_ALBUMS_ID)
+        treeNodes[Constants.AA_STARRED_BUNDLE_ID]?.addChild(Constants.AA_STARRED_TRACKS_ID)
+
+        // create tracks bundle
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RANDOM_ID)
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_GENRES_ID)
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
+        treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_STARRED_TRACKS_ID)
 	}
 	
     fun getRootItem(): MediaItem {
@@ -530,8 +552,9 @@ object MediaBrowserTree {
             Constants.AA_ROOT_ID -> treeNodes[Constants.AA_ROOT_ID]?.getChildren()!!
 
             Constants.AA_HOME_ID -> treeNodes[Constants.AA_HOME_ID]?.getChildren()!!
-            Constants.AA_TRACKS_ID -> treeNodes[Constants.AA_TRACKS_ID]?.getChildren()!!
             Constants.AA_MADE_FOR_YOU_ID -> treeNodes[Constants.AA_MADE_FOR_YOU_ID]?.getChildren()!!
+            Constants.AA_STARRED_BUNDLE_ID -> treeNodes[Constants.AA_STARRED_BUNDLE_ID]?.getChildren()!!
+            Constants.AA_TRACKS_ID -> treeNodes[Constants.AA_TRACKS_ID]?.getChildren()!!
 
             Constants.AA_LAST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "recent", 15, false)
             Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, true)
@@ -543,7 +566,7 @@ object MediaBrowserTree {
             Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15, false)
             Constants.AA_RECENT_TRACKS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),100)
             Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
-            Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.getStarredSongs()
+            Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.getStarredSongs(500)
             Constants.AA_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, true)
             Constants.AA_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, true)
             Constants.AA_RANDOM_ID -> automotiveRepository.getRandomSongs(100)
