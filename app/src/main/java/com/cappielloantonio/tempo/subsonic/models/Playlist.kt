@@ -7,7 +7,6 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
@@ -26,27 +25,15 @@ open class Playlist(
     @ColumnInfo(name = "coverArt")
     var coverArtId: String? = null,
 ) : Parcelable {
-    @Ignore
-    @IgnoredOnParcel
     var comment: String? = null
-    @Ignore
-    @IgnoredOnParcel
     var owner: String? = null
-    @Ignore
-    @IgnoredOnParcel
     @SerializedName("public")
     var isUniversal: Boolean? = null
-    @Ignore
-    @IgnoredOnParcel
+    @ColumnInfo(name = "songCount", defaultValue = "0")
     var songCount: Int = 0
-    @Ignore
-    @IgnoredOnParcel
     var created: Date? = null
-    @Ignore
-    @IgnoredOnParcel
     var changed: Date? = null
-    @Ignore
-    @IgnoredOnParcel
+    @ColumnInfo(name = "allowedUsers")
     var allowedUsers: List<String>? = null
     @Ignore
     constructor(

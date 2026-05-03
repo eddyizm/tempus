@@ -9,10 +9,12 @@ import androidx.room.TypeConverters;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.database.converter.DateConverters;
+import com.cappielloantonio.tempo.database.converter.StringListConverter;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.DownloadDao;
 import com.cappielloantonio.tempo.database.dao.FavoriteDao;
 import com.cappielloantonio.tempo.database.dao.LyricsDao;
+import com.cappielloantonio.tempo.database.dao.PinnedPlaylistDao;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
 import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.database.dao.RecentSearchDao;
@@ -22,6 +24,7 @@ import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.Favorite;
 import com.cappielloantonio.tempo.model.LyricsCache;
+import com.cappielloantonio.tempo.model.PinnedPlaylist;
 import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.model.RecentSearch;
 import com.cappielloantonio.tempo.model.Server;
@@ -30,16 +33,29 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 15,
-        entities = {Queue.class, Server.class, RecentSearch.class, Download.class, Chronology.class, Favorite.class, SessionMediaItem.class, Playlist.class, LyricsCache.class},
+        version = 16,
+        entities = {
+            Queue.class,
+            Server.class,
+            RecentSearch.class,
+            Download.class,
+            Chronology.class,
+            Favorite.class,
+            SessionMediaItem.class,
+            Playlist.class,
+            PinnedPlaylist.class,
+            LyricsCache.class
+        },
         autoMigrations = {
                 @AutoMigration(from = 10, to = 11),
                 @AutoMigration(from = 11, to = 12),
+                @AutoMigration(from = 12, to = 13),
                 @AutoMigration(from = 13, to = 14),
                 @AutoMigration(from = 14, to = 15),
+                @AutoMigration(from = 15, to = 16),
         }
 )
-@TypeConverters({DateConverters.class})
+@TypeConverters({DateConverters.class, StringListConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
     private final static String DB_NAME = "tempo_db";
     private static AppDatabase instance;
@@ -69,6 +85,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SessionMediaItemDao sessionMediaItemDao();
 
     public abstract PlaylistDao playlistDao();
+
+    public abstract PinnedPlaylistDao pinnedPlaylistDao();
 
     public abstract LyricsDao lyricsDao();
 }

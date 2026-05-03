@@ -104,6 +104,19 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
         });
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        playlistCatalogueViewModel.getSortedPlaylistList().observe(getViewLifecycleOwner(), playlists -> {
+            if (playlists != null) {
+                android.util.Log.d("TempusLog", "UI Update: Received " + playlists.size() + " items");
+                playlistHorizontalAdapter.setItems(playlists);
+                playlistHorizontalAdapter.notifyDataSetChanged(); 
+            }
+        });
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private void initPlaylistCatalogueView() {
         bind.playlistCatalogueRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -112,11 +125,7 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
         playlistHorizontalAdapter = new PlaylistHorizontalAdapter(this);
         bind.playlistCatalogueRecyclerView.setAdapter(playlistHorizontalAdapter);
 
-        if (getActivity() != null) {
-            playlistCatalogueViewModel.getPlaylistList(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), playlists -> {
-                if (playlists != null) playlistHorizontalAdapter.setItems(playlists);
-            });
-        }
+        playlistCatalogueViewModel.getPlaylistList(getViewLifecycleOwner());
 
         bind.playlistCatalogueRecyclerView.setOnTouchListener((v, event) -> {
             hideKeyboard(v);
@@ -161,17 +170,20 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
         popup.getMenuInflater().inflate(menuResource, popup.getMenu());
 
         popup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() == R.id.menu_playlist_sort_name) {
-                playlistHorizontalAdapter.sort(Constants.PLAYLIST_ORDER_BY_NAME);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_playlist_sort_random) {
-                playlistHorizontalAdapter.sort(Constants.PLAYLIST_ORDER_BY_RANDOM);
-                return true;
+            int id = menuItem.getItemId();
+            if (id == R.id.menu_playlist_sort_name) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_NAME);
+            } else if (id == R.id.menu_playlist_sort_pinned) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_PINNED);
+            } else if (id == R.id.menu_playlist_sort_random) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_RANDOM);
+            } else if (id == R.id.menu_playlist_sort_date) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_DATE);
+            } else if (id == R.id.menu_playlist_sort_songs) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_SONGS);
             }
-
-            return false;
+            return true;
         });
-
         popup.show();
     }
 
