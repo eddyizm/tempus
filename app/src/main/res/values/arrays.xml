@@ -312,7 +312,7 @@
         <item>Folder</item>
         <item>Albums most played</item>
         <item>Albums added</item>
-    <!--    <item>For you</item> -->
+        <item>For you</item>
         <item>Star tracks</item>
         <item>Star albums</item>
         <item>Star artists</item>
@@ -338,6 +338,17 @@
         <item>14</item>
         <item>15</item>
         <item>16</item>
+    </string-array>
+
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Star artists</item>
+        <item>Star albums</item>
+        <item>Star tracks</item>
+    </string-array>
+    <string-array name="aa_starred_for_made_for_you_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
 
 </resources>

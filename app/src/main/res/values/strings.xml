@@ -20,6 +20,9 @@
     <string name="aa_instant_mix">Instant mix</string>
     <string name="aa_view_by_albums">View by albums</string>
     <string name="aa_tracks">Tracks</string>
+    <string name="aa_quick_mix">Quick mix</string>
+    <string name="aa_my_mix">My mix</string>
+    <string name="aa_discovery_mix">Discovery mix</string>
 
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>
@@ -418,6 +421,7 @@
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
+    <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
@@ -476,6 +480,9 @@
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
     <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
+    <string name="settings_replay_gain_preamp_title">Pre-amplification</string>
+    <string name="settings_replay_gain_preamp_summary">Adjust the target loudness offset applied on top of the ReplayGain value. Positive values make playback louder; negative values make it quieter. (Default = -6)</string>
+    <string name="settings_replay_gain_preamp_db">%1$d dB</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
     <string name="settings_title_skip_min_star_rating_dialog">Songs with a rating of:</string>

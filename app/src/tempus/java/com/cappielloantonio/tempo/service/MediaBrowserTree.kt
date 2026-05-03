@@ -149,7 +149,7 @@ object MediaBrowserTree {
             Constants.AA_FOLDER_ID,
             Constants.AA_MOST_PLAYED_ID,
             Constants.AA_RECENTLY_ADDED_ID,
-            //Constants.AA_MADE_FOR_YOU_ID,            // => doesn't work !
+            Constants.AA_MADE_FOR_YOU_ID,
             Constants.AA_STARRED_TRACKS_ID,
             Constants.AA_STARRED_ALBUMS_ID,
             Constants.AA_STARRED_ARTISTS_ID,
@@ -333,7 +333,7 @@ object MediaBrowserTree {
         treeNodes[Constants.AA_MADE_FOR_YOU_ID] =
             MediaItemNode(
                 buildMediaItem(
-                    gridView = albumView,
+                    gridView = homeView,
                     title = appContext.getString(R.string.aa_made_for_you),
                     mediaId = Constants.AA_MADE_FOR_YOU_ID,
                     isPlayable = false,
@@ -421,6 +421,48 @@ object MediaBrowserTree {
                 )
             )
 
+        treeNodes[Constants.AA_QUICKMIX_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = false,
+                    title = appContext.getString(R.string.aa_quick_mix),
+                    artist = "By Tempus",
+                    mediaId = Constants.AA_MADE_FOR_YOU_SOURCE + "[" + 12 + "]" + Constants.AA_QUICKMIX_ID,
+                    isPlayable = true,
+                    isBrowsable = false,
+                    imageUri = iconUri(R.drawable.ic_aa_quickmix),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+                )
+            )
+
+        treeNodes[Constants.AA_MYMIX_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = false,
+                    title = appContext.getString(R.string.aa_my_mix),
+                    artist = "By Tempus",
+                    mediaId = Constants.AA_MADE_FOR_YOU_SOURCE + "[" + 15 + "]" + Constants.AA_MYMIX_ID,
+                    isPlayable = true,
+                    isBrowsable = false,
+                    imageUri = iconUri(R.drawable.ic_aa_mymix),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+                )
+            )
+
+        treeNodes[Constants.AA_DISCOVERYMIX_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = false,
+                    title = appContext.getString(R.string.aa_discovery_mix),
+                    artist = "By Tempus",
+                    mediaId = Constants.AA_MADE_FOR_YOU_SOURCE + "[" + 18 + "]" + Constants.AA_DISCOVERYMIX_ID,
+                    isPlayable = true,
+                    isBrowsable = false,
+                    imageUri = iconUri(R.drawable.ic_aa_discoverymix),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+                )
+            )
+
         val root = treeNodes[Constants.AA_ROOT_ID]!!
         val selectedIds = mutableSetOf<String>()
 
@@ -452,7 +494,14 @@ object MediaBrowserTree {
                     treeNodes[Constants.AA_HOME_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
                 }
                 else {
-                    treeNodes[Constants.AA_HOME_ID]?.addChild(function)
+                    if (function == Constants.AA_MADE_FOR_YOU_ID) {
+                        // add Quick Mix, My Mix and Discovery Mix instead of Made For You to Home
+                        treeNodes[Constants.AA_HOME_ID]!!.addChild(Constants.AA_QUICKMIX_ID)
+                        treeNodes[Constants.AA_HOME_ID]!!.addChild(Constants.AA_MYMIX_ID)
+                        treeNodes[Constants.AA_HOME_ID]!!.addChild(Constants.AA_DISCOVERYMIX_ID)
+                    } else {
+                        treeNodes[Constants.AA_HOME_ID]?.addChild(function)
+                    }
                 }
             }
 
@@ -460,6 +509,14 @@ object MediaBrowserTree {
         treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RANDOM_ID)
         treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_GENRES_ID)
         treeNodes[Constants.AA_TRACKS_ID]?.addChild(Constants.AA_RECENT_TRACKS_ID)
+
+        // build Made For You bundle
+        treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_QUICKMIX_ID)
+        treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_MYMIX_ID)
+        treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_DISCOVERYMIX_ID)
+        treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_ARTISTS_ID)
+        treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_ALBUMS_ID)
+        treeNodes[Constants.AA_MADE_FOR_YOU_ID]!!.addChild(Constants.AA_STARRED_TRACKS_ID)
 	}
 	
     fun getRootItem(): MediaItem {
@@ -474,6 +531,7 @@ object MediaBrowserTree {
 
             Constants.AA_HOME_ID -> treeNodes[Constants.AA_HOME_ID]?.getChildren()!!
             Constants.AA_TRACKS_ID -> treeNodes[Constants.AA_TRACKS_ID]?.getChildren()!!
+            Constants.AA_MADE_FOR_YOU_ID -> treeNodes[Constants.AA_MADE_FOR_YOU_ID]?.getChildren()!!
 
             Constants.AA_LAST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "recent", 15, false)
             Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, true)
@@ -485,7 +543,10 @@ object MediaBrowserTree {
             Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15, false)
             Constants.AA_RECENT_TRACKS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),100)
             Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
+<<<<<<< aa_made_for_you
+=======
             //Constants.AA_MADE_FOR_YOU_ID -> automotiveRepository.getStarredArtists(id)
+>>>>>>> development
             Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.getStarredSongs()
             Constants.AA_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, true)
             Constants.AA_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, true)
@@ -499,12 +560,6 @@ object MediaBrowserTree {
             Constants.AA_ARTISTS_BY_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByArtist", 500, false)
 
             else -> {
-				/*
-                if (id.startsWith(MADE_FOR_YOU_ID)) {
-                    return automotiveRepository.getMadeForYou(id.removePrefix(MADE_FOR_YOU_ID),20)
-                }
-                */
-
                 if (id.startsWith(Constants.AA_GENRES_ID)) {
                     val shuffle = Preferences.isAndroidAutoShuffleGenreSongsEnabled()
                     // If the user doesn't want random songs, it's likely it's for perusing them, so provide as many as possible

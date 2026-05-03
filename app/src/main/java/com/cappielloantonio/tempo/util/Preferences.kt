@@ -105,6 +105,7 @@ object Preferences {
 	private const val AA_THIRD_TAB = "androidauto_third_tab"
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
+    private const val AA_STARRED_FOR_MADE_FOR_YOU ="androidauto_starred_for_made_for_you"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -523,12 +524,12 @@ object Preferences {
 
     @JvmStatic
     fun getReplayGainPreamp(): Float {
-        return App.getInstance().preferences.getFloat(REPLAY_GAIN_PREAMP, -6f)
+        return App.getInstance().preferences.getInt(REPLAY_GAIN_PREAMP, -6).toFloat()
     }
 
     @JvmStatic
     fun setReplayGainPreamp(value: Float) {
-        App.getInstance().preferences.edit().putFloat(REPLAY_GAIN_PREAMP, value).apply()
+        App.getInstance().preferences.edit().putInt(REPLAY_GAIN_PREAMP, value.toInt()).apply()
     }	
 
     @JvmStatic
@@ -854,4 +855,8 @@ object Preferences {
         App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
     }
 
+    @JvmStatic
+    fun getAndroidAutoStarredForMadeForYou(): Int {
+        return App.getInstance().preferences.getString(AA_STARRED_FOR_MADE_FOR_YOU, "0")!!.toInt()
+    }
 }

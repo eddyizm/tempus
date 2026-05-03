@@ -20,6 +20,9 @@
     <string name="aa_instant_mix">Mix instantané</string>
     <string name="aa_view_by_albums">Vue par albums</string>
     <string name="aa_tracks">Titres</string>
+    <string name="aa_quick_mix">Mix rapide</string>
+    <string name="aa_my_mix">Mon mix</string>
+    <string name="aa_discovery_mix">Mix découverte</string>
 
     <string name="activity_battery_optimizations_conclusion">Si vous rencontrez un problème, visitez https://dontkillmyapp.com. Des instructions pour désactiver les fonctions de sauvegarde d\'énergie qui pourrait affecter les performance de l\'app y sont disponibles.</string>
     <string name="activity_battery_optimizations_summary">Veuillez désactiver les optimisations de la batterie pour permettre la lecture des médias lorsque l\'écran est éteint.</string>
@@ -352,6 +355,7 @@
 	<string name="settings_androidauto_fourth_tab">Affichage du quatrième onglet</string>
     <string name="settings_androidauto_shuffle_genre_songs">Mélanger les chansons par genre</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Lire des chansons aléatoires lors de la sélection d\'un genre</string>
+    <string name="settings_androidauto_starred_for_made_for_you">Favoris utilisés pour les mix Pour Vous</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>
     <string name="settings_audio_transcode_download_priority_summary">Si activé, Tempus ne forcera pas le téléchargement de la piste avec les paramètres de transcodage ci-dessous.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioriser les paramètres du serveurs, utilisés pour le streaming, dans les téléchargements</string>
