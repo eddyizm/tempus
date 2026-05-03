@@ -202,37 +202,49 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Albums most played : The 15 most played albums
 - Tracks played : The 100 last tracks that were completly played
 - Albums added : The 15 recently added albums
+- For You bundle
 - Star tracks
 - Star albums
 - Star artists
 - Tracks bundle
 - Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
 
+<p align="left">
+    <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_list.jpg" width=317>
+</p>
 
 Tracks bundle includes:
 - Random : 100 random songs
 - Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
 - Tracks played : The 100 recently listened-to tracks
 
+
+For You bundle includes:
+- Quick mix : features 12 tracks chosen randomly from the 15 last played albums
+- My mix : features 15 tracks chosen randomly from the 15 last played albums, and starred artists or starred albums, following preference
+- Discovery mix : features 18 tracks, as My mix, with similar songs
+- Star artists
+- Star albums
+- Star tracks
+
+<p align="left">
+    <img src="mockup/usage/aa_tracks.jpg" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_for_you.jpg" width=317>
+</p>
+
 If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
 
 If "Home" is selected after another tab, it becomes "More".
 
 In addition, you can choose to display the following functions as thumbnails or lists:
-- Home
+- Home and For You bundle
 - Albums (Last played, Most played, Recently added, Artists, Star albums, Star artists)
 - Playlists
 - Radio
 - Podcast
 
 As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
-
-As they displayed tracks, Tracks played, Star tracks, Random and Genres are always be displayed as a list.
-
-<p align="left">
-    <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
-    <img src="mockup/usage/aa_list.jpg" width=317>
-</p>
 
 Artists view and View by albums:
 <p align="left">

@@ -70,6 +70,7 @@ public class AutomotiveRepository {
     public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_LARGE_MIX = 18;
 
     public final InstantMixBuilder instantMixBuilder = new InstantMixBuilder(this);
+    public final MadeForYouBuilder madeForYouBuilder = new MadeForYouBuilder(this);
 
     private Bundle createContentStyleExtras(boolean gridView) {
         Bundle extras = new Bundle();
@@ -310,7 +311,7 @@ public class AutomotiveRepository {
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
-                .getRandomSongs(100, null, null)
+                .getRandomSongs(count, null, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -1003,35 +1004,122 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getMadeForYou(String id, int count) {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getMadeForYou(String mixType, int count) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
         App.getSubsonicClientInstance(false)
-                .getBrowsingClient()
-                .getSimilarSongs2(id, count)
+                .getAlbumSongListClient()
+                .getAlbumList2("recent", 15, 0, null, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSimilarSongs2() != null && response.body().getSubsonicResponse().getSimilarSongs2().getSongs() != null) {
-                            List<Child> tracks = response.body().getSubsonicResponse().getSimilarSongs2().getSongs();
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse().getAlbumList2() != null
+                                && response.body().getSubsonicResponse().getAlbumList2().getAlbums() != null) {
+                            List<AlbumID3> recentAlbums = new ArrayList<>(
+                                    response.body().getSubsonicResponse().getAlbumList2().getAlbums());
+                            Log.d(TAG, "MadeForYou: recent albums loaded: " + recentAlbums.size());
 
-                            setChildrenMetadata(tracks);
+                            if (recentAlbums.isEmpty()) {
+                                Log.w(TAG, "MadeForYou: No recent albums, falling back to random song");
+                                fallbackToFirstRandomSong(mixType, count, listenableFuture);
+                                return;
+                            }
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks);
+                            Random random = new Random();
+                            Collections.shuffle(recentAlbums, random);
 
-                            LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+                            // Fetch just the first album to get the first track
+                            AlbumID3 firstAlbum = recentAlbums.get(0);
+                            App.getSubsonicClientInstance(false)
+                                    .getBrowsingClient()
+                                    .getAlbum(firstAlbum.getId())
+                                    .enqueue(new Callback<ApiResponse>() {
+                                        @Override
+                                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                                            if (response.isSuccessful()
+                                                    && response.body() != null
+                                                    && response.body().getSubsonicResponse().getAlbum() != null
+                                                    && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
 
-                            listenableFuture.set(libraryResult);
+                                                List<Child> songs = response.body().getSubsonicResponse().getAlbum().getSongs();
+                                                Child firstTrack = songs.get(random.nextInt(songs.size()));
+
+                                                Log.d(TAG, "MadeForYou: First track: " + firstTrack.getTitle());
+
+                                                setChildrenMetadata(List.of(firstTrack));
+
+                                                // Tag parent_id with mixType so handle() can resume the mix
+                                                MediaItem mediaItem = MappingUtil.mapMediaItem(firstTrack,
+                                                        Constants.AA_MADE_FOR_YOU_SOURCE+ "[" + count + "]"  + mixType);
+
+                                                listenableFuture.set(LibraryResult.ofItemList(
+                                                        ImmutableList.of(mediaItem), null));
+                                            } else {
+                                                Log.e(TAG, "MadeForYou: Failed to fetch first album");
+                                                fallbackToFirstRandomSong(mixType, count, listenableFuture);                                            }
+                                        }
+                                        @Override
+                                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                                            Log.e(TAG, "MadeForYou: Failed to fetch first album: " + t.getMessage());
+                                            listenableFuture.setException(t);
+                                        }
+                                    });
+                        } else {
+                            Log.w(TAG, "MadeForYou: Recent albums failed, falling back to random songs");
+                            fallbackToFirstRandomSong(mixType, count, listenableFuture);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "MadeForYou: Failed to fetch recent albums: " + t.getMessage());
                         listenableFuture.setException(t);
                     }
                 });
 
         return listenableFuture;
+    }
+
+    private void fallbackToFirstRandomSong(
+            String mixType,
+            int count,
+            SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture) {
+
+        App.getSubsonicClientInstance(false)
+                .getAlbumSongListClient()
+                .getRandomSongs(1, null, null)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse().getRandomSongs() != null
+                                && response.body().getSubsonicResponse().getRandomSongs().getSongs() != null) {
+
+                            List<Child> songs = response.body().getSubsonicResponse().getRandomSongs().getSongs();
+                            Child firstTrack = songs.get(0);
+
+                            Log.d(TAG, "MadeForYou: Fallback first track: " + firstTrack.getTitle());
+
+                            setChildrenMetadata(List.of(firstTrack));
+
+                            MediaItem mediaItem = MappingUtil.mapMediaItem(firstTrack,
+                                    Constants.AA_MADE_FOR_YOU_SOURCE + "[" + count + "]" + mixType);
+
+                            listenableFuture.set(LibraryResult.ofItemList(
+                                    ImmutableList.of(mediaItem), null));
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
+                        }
+                    }
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "MadeForYou: Fallback random song failed: " + t.getMessage());
+                        listenableFuture.setException(t);
+                    }
+                });
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> search(String query, String albumPrefix, String artistPrefix) {
