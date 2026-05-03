@@ -13,6 +13,7 @@ import androidx.media3.common.util.UnstableApi;
 import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 
 import java.util.List;
 
@@ -28,7 +29,8 @@ public class PlaylistCatalogueViewModel extends AndroidViewModel {
 
     public PlaylistCatalogueViewModel(@NonNull Application application) {
         super(application);
-
+        String currentPref = Preferences.getHomeSortPlaylists();
+        sortOrder.setValue(currentPref);
         playlistRepository = new PlaylistRepository();
     }
 
@@ -45,9 +47,8 @@ public class PlaylistCatalogueViewModel extends AndroidViewModel {
     }
 
     public void setSortOrder(String order) {
-        // TODO Save preference so it sticks
-        //App.getPreferences().edit().putString("playlist_sort_pref", order).apply();
         android.util.Log.d("TempusLog", "ViewModel setSortOrder called with: " + order);
+        Preferences.setHomeSortPlaylists(order);
         sortOrder.setValue(order);
     }
 

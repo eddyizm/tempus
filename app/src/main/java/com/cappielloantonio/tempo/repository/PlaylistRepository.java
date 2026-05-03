@@ -119,6 +119,10 @@ public class PlaylistRepository {
         return playlistDao.getSortedPlaylists(sortOrder);
     }
 
+    public LiveData<List<Playlist>> getSortedPlaylistsPreview(String sortOrder, int limit) {
+        return playlistDao.getSortedPlaylistsPreview(sortOrder, limit);
+    }
+
     public MutableLiveData<List<Child>> getPlaylistSongs(String id) {
         MutableLiveData<List<Child>> listLivePlaylistSongs = new MutableLiveData<>();
 
