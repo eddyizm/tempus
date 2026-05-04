@@ -20,6 +20,9 @@
 	<string name="aa_instant_mix">Natychmiastowy mix</string>
     <string name="aa_view_by_albums">Wyświetlaj według albumów</string>
     <string name="aa_tracks">Utwory</string>
+	<string name="aa_quick_mix">Szybki mix</string>
+    <string name="aa_my_mix">Mój mix</string>
+    <string name="aa_discovery_mix">Mix odkrywania</string>
     <string name="activity_battery_optimizations_conclusion">Jeżeli masz problemy odwiedź stronę https://dontkillmyapp.com. Podaje ona dokładne instrukcje na temat tego jak wyłączyć funkcje oszczędzania energii które mogą wpływać na wydajność aplikacji.</string>
     <string name="activity_battery_optimizations_summary">Wyłącz optymalizacje baterii aby odtwarzać media przy wyłączonym ekranie.</string>
     <string name="activity_battery_optimizations_title">Optymalizcje Baterii</string>
@@ -403,6 +406,8 @@
 	<string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
 	<string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
+	<string name="settings_androidauto_artists_view">Wykonawcy są wyświetlani według albumu</string>
+	<string name="settings_androidauto_starred_for_made_for_you">Oznaczone gwiazdką do mixu stworzonego dla ciebie</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
