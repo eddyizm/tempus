@@ -461,6 +461,9 @@
     <string name="settings_title_replay_gain">Wzmocnienie głośności przy ponownym odtwarzaniu</string>
 	<string name="settings_replay_gain_prevent_clipping_title">Powstrzymuj przycinanie</string>
     <string name="settings_replay_gain_prevent_clipping_summary">Zmniejsz wzmocnienie gdy tag szczytu głośności utworu lub albumu pokazuje że sygnał zostanie przycięty po zastosowaniu Wzmocnienia Głośności.</string>
+	<string name="settings_replay_gain_preamp_title">Wstępne wzmocnienie</string>
+    <string name="settings_replay_gain_preamp_summary">Dostosuj docelowe przesunięcie głośności nakładane na wartość wzmocnienia głośności przy ponownym odtwarzaniu. Wartości pozytywne podgłośnią odtwarzanie; a negatywne je ściszą. (Domyślnie = -6)</string>
+    <string name="settings_replay_gain_preamp_db">%1$d dB</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Ignoruj utwory na podstawie oceny</string>
     <string name="settings_title_skip_min_star_rating_dialog">Piosenki z oceną:</string>
