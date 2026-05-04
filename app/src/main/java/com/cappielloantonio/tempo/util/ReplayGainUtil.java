@@ -605,7 +605,7 @@ public class ReplayGainUtil {
     // Total gain computation (preamp + clipping prevention)
 
     private static float computeTotalGain(float gain, float peak) {
-        float preamp    = Preferences.getReplayGainPreamp();
+        float preamp    = Preferences.getLoudnessPreamp();
         float totalGain = gain + preamp;
 
         if (Preferences.isReplayGainPreventClipping() && peak > 0f) {
