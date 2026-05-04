@@ -161,6 +161,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void initQuickActionView() {
+        playerQuickActionView.setVisibility(Preferences.getQuickActionVisible() ? View.VISIBLE : View.GONE);
         playerQuickActionView.setBackgroundColor(SurfaceColors.getColorForElevation(requireContext(), 8));
 
         playerOpenQueueButton.setOnClickListener(view -> {
