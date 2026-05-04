@@ -54,6 +54,28 @@ class TracksChangedExtension(
             return true
         }
 
+        if (parentId?.startsWith(Constants.AA_MADE_FOR_YOU_SOURCE) == true) {
+            Preferences.setLastInstantMix()
+
+            // disconnect handle
+            MediaServiceExtensionRegistry.handler = null
+
+            val withoutPrefix = parentId.removePrefix(Constants.AA_MADE_FOR_YOU_SOURCE)
+            val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
+            val mixType = withoutPrefix.substringAfter("]")
+            val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+
+            Log.d(TAG, "handle: MadeForYou Mix is running for $mixType count=$count")
+
+            automotiveRepository.madeForYouBuilder.buildAndEnqueue(
+                mixType,
+                item.mediaId,
+                (count-1),
+                browserFuture
+            )
+            return true
+        }
+
         return false
     }
 }

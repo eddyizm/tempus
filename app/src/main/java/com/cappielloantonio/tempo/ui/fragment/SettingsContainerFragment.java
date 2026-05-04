@@ -35,6 +35,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
+import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
 
 import com.cappielloantonio.tempo.BuildConfig;
@@ -158,6 +159,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         bindMediaService();
         actionAppEqualizer();
+        actionReplayGainPreamp();
 
         applyAccordionState();
     }
@@ -641,6 +643,31 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 appEqualizer.setVisible(numBands > 0);
             }
         }
+    }
+
+    private void actionReplayGainPreamp() {
+        SeekBarPreference preampPref = findPreference("replay_gain_preamp");
+        if (preampPref == null) return;
+
+        // Seed the widget with the currently persisted value so it shows the
+        // correct position when the settings screen opens.
+        preampPref.setValue((int) Preferences.getReplayGainPreamp());
+
+        preampPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (!(newValue instanceof Integer)) return true;
+
+            int dB = (Integer) newValue;
+            Preferences.setReplayGainPreamp((float) dB);
+
+            // Immediately re-apply gain to whatever is playing so the user can
+            // hear the effect without restarting playback.
+            if (isServiceBound && mediaServiceBinder != null) {
+                com.cappielloantonio.tempo.util.ReplayGainUtil.reapplyCurrentTrackGain(
+                        mediaServiceBinder.getPlayer());
+            }
+
+            return true;
+        });
     }
 
     private void actionAppEqualizer() {
