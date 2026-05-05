@@ -113,6 +113,14 @@
     <string name="download_storage_external_dialog_positive_button">Zewnętrzna</string>
     <string name="download_storage_internal_dialog_negative_button">Wewnętrzna</string>
     <string name="download_title_section">Pobrane</string>
+	    <string name="download_refresh_no_directory">Ustaw folder pobierania do odświeżania twoich pobrań.</string>
+    <string name="download_refresh_no_changes">Nie znaleziono brakujących pobrań.</string>
+    <plurals name="download_refresh_removed">
+        <item quantity="one">Usunięto %d brakujące pobranie.</item>
+		<item quantity="few">Usunięto %d brakujące pobrania</item>
+        <item quantity="many">Usunięto %d brakujących pobrań.</item>
+        <item quantity="other">Usunięto %d brakujących pobrań.</item>
+    </plurals>
     <string name="downloaded_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
     <string name="downloaded_bottom_sheet_play_next">Odtwarzaj jako następne</string>
     <string name="downloaded_bottom_sheet_remove">Usuń</string>
@@ -232,6 +240,7 @@
     <string name="menu_sort_artist">Wykonawca</string>
     <string name="menu_sort_name">Nazwa</string>
     <string name="menu_sort_random">Losowo</string>
+	<string name="menu_sort_album_count">Liczba albumów</string>
     <string name="menu_sort_recently_added">Ostatnio dodane</string>
     <string name="menu_sort_recently_played">Ostatnio odtwarzane</string>
     <string name="menu_sort_most_played">Najczęściej odtwarzane</string>
@@ -268,6 +277,8 @@
     <string name="playlist_chooser_dialog_toast_all_skipped">Pominięto wszystkie piosenki jako duplikaty</string>
     <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
+	<string name="playlist_chooser_dialog_visibility_switch_label">Oznacz playlistę jako publiczną</string>
+    <string name="playlist_chooser_dialog_visibility_summary">Serwer aktualizuje widoczność podczas każdego zapytania. Domyślnie jest ustawiona na prywatną.</string>
     <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
     <string name="playlist_duration">Długość  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
@@ -551,6 +562,7 @@
     <string name="streaming_cache_storage_dialog_title">Wybieranie pamięci</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">Zewnętrzna</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Wewnętrzna</string>
+	<string name="download_storage_directory_dialog_neutral_button">Katalog</string>
     <string name="support_url">https://ko-fi.com/eddyizm</string>
     <string name="track_info_album">Album</string>
     <string name="track_info_artist">Wykonawca</string>
