@@ -222,7 +222,7 @@ public class MediaManager {
                                     @Override
                                     public void onIsPlayingChanged(boolean isPlaying) {
                                         if (isPlaying) {
-                                            enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
+                                            enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(initialBatchSize, itemsToQueue.size()), false);
                                             browser.removeListener(this);
                                         }
                                     }
@@ -319,7 +319,7 @@ public class MediaManager {
     public static void enqueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, boolean playImmediatelyAfter) {
         if (mediaBrowserListenableFuture != null) {
             mediaBrowserListenableFuture.addListener(() -> {
-                Executors.newSingleThreadExecutor().execute(() -> {
+                backgroundExecutor.execute(() -> {
                     // Map the media off the main thread
                     final List<MediaItem> mediaItems = MappingUtil.mapMediaItems(media);
                     // Return to main thread to update the media
@@ -332,9 +332,9 @@ public class MediaManager {
                                     enqueueDatabase(media, false, browser.getNextMediaItemIndex());
                                     browser.addMediaItems(browser.getNextMediaItemIndex(), mediaItems);
                                 } else {
-                                    enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
+                                    enqueueDatabase(media, false, browser.getMediaItemCount());
 
-                                    mediaBrowserListenableFuture.get().addMediaItems(mediaItems);
+                                    browser.addMediaItems(mediaItems);
                                 }
                             }
                         } catch (ExecutionException | InterruptedException e) {
