@@ -427,7 +427,7 @@
     <string name="settings_hide_bottom_navbar_on_portrait_summary">Eksperymentalne. Zwiększa ilość miejsca w pionie przez usunięcie dolnego paska nawigacji. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
     <string name="settings_auto_download_lyrics_summary">Automatycznie zapisuj teksty jeżeli, są dostępne aby, mogły być wyświetlane offline.</string>
-    <string name="settings_replay_gain">Tryb wzmocnienia głośności przy ponownym odtwarzaniu</string>
+    <string name="settings_replay_gain">Normalizacja głośności (ReplayGain)</string>
     <string name="settings_rounded_corner">Zaokrąglone rogi</string>
     <string name="settings_rounded_corner_size">Rozmiar rogów</string>
     <string name="settings_rounded_corner_size_summary">Ustawia wielkość krzywizny kąta.</string>
@@ -440,7 +440,8 @@
     <string name="settings_streaming_cache_storage_title">Pamięć cache dla strumieniowania</string>
     <string name="settings_sub_summary_scrobble">Ważne jest to że scrobbling polega też na byciu włączonym na serwerze aby otrzymywać te dane.</string>
     <string name="settings_summary_skip_min_star_rating">Podczas słuchania radia wykonawcy, natychmiastowego miksu albo podczas odtwarzania losowego, utwory poniżej określonej oceny użytkownika będą ignorowane.</string>
-    <string name="settings_summary_replay_gain">Wzmocnienie głośności jest funkcją która pozwala tobie na ustawienia poziomu głośności dla utworów aby słuchanie brzmiało cały czas tak samo. To ustawienia działa tylko wtedy kiedy utwór zawiera potrzebne metadane.</string>
+    <string name="settings_summary_replay_gain">Normalizuje poziom głośności utworów. Pliki muszą zawierać odpowiednie metadane.</string>
+	<string name="settings_summary_loudness">Pozwala poprawić głośność urządzenia odtwarzającego dźwięk (np. głośników).\n\nJest zalecane dla ReplayGain -6, to pomoże uniknąć konfliktów z powstrzymywaniem przycinania.</string>
     <string name="settings_summary_scrobble">Scrobbling jest funkcją która pozwala twojemu urządzeniu na wysyłanie informacji na temat piosenek których słuchasz do serwera muzyki. Te informacje pomagają tworzyć spersonalizowane rekomendacje na podstawie twojego gustu muzycznego.</string>
     <string name="settings_summary_share">Pozwala udostępnić użytkownikowi muzykę przez link. Ta funkcjonalność musi być wspierana i włączona na serwerze i jest ograniczona do pojedyńczych utworów, albumów i playlist.</string>
     <string name="settings_summary_syncing">Przywraca stan kolejki odtwarzania dla tego użytkownika. Zawiera utwory w kolejce, aktualnie odtwarzany utwór i pozycję w nim. Serwer musi wspierać tę funkcję.\n*To ustawienie nie działa na 100% na wszystkich serwerach/urządzeniach.</string>
@@ -463,12 +464,13 @@
     <string name="settings_title_players">Odtwarzanie</string>
     <string name="settings_title_playlist">Playlisty</string>
     <string name="settings_title_rating">Oceny</string>
+	<string name="settings_title_loudness">Poprawa głośności</string>
+    <string name="settings_loudness_preamp_title">Wstępne wzmocnienie</string>
+    <string name="settings_loudness_preamp_summary">Ustaw wartości pozytywne dla głośniejszych dźwięków.\nUstaw wartości negatywne dla cichszych dźwięków.</string>
+    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_title_replay_gain">Wzmocnienie głośności przy ponownym odtwarzaniu</string>
 	<string name="settings_replay_gain_prevent_clipping_title">Powstrzymuj przycinanie</string>
-    <string name="settings_replay_gain_prevent_clipping_summary">Zmniejsz wzmocnienie gdy tag szczytu głośności utworu lub albumu pokazuje że sygnał zostanie przycięty po zastosowaniu Wzmocnienia Głośności.</string>
-	<string name="settings_replay_gain_preamp_title">Wstępne wzmocnienie</string>
-    <string name="settings_replay_gain_preamp_summary">Dostosuj docelowe przesunięcie głośności nakładane na wartość wzmocnienia głośności przy ponownym odtwarzaniu. Wartości pozytywne podgłośnią odtwarzanie; a negatywne je ściszą. (Domyślnie = -6)</string>
-    <string name="settings_replay_gain_preamp_db">%1$d dB</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Zmniejsz wzmocnienie gdy tag szczytu głośności utworu lub albumu pokazuje że sygnał zostanie przycięty po zastosowaniu ReplayGain.</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Ignoruj utwory na podstawie oceny</string>
     <string name="settings_title_skip_min_star_rating_dialog">Piosenki z oceną:</string>
