@@ -595,7 +595,7 @@
         <item quantity="one">%d album do zsynchronizowania </item>
 		<item quantity="few">%d albumy do zsynchronizowania</item>
         <item quantity="many">%d albumów do zsynchronizowania</item>
-        <item quantity="other">%d albumów do zsynchrpnizowania</item>
+        <item quantity="other">%d albumów do zsynchronizowania</item>
     </plurals>
     <plurals name="home_sync_starred_artists_count">
         <item quantity="one">%d wykonawca do zsynchronizowania</item>
