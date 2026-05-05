@@ -128,12 +128,6 @@ object MediaBrowserTree {
         val podcastView: Boolean = Preferences.isAndroidAutoPodcastViewEnabled()
         val radioView: Boolean = Preferences.isAndroidAutoRadioViewEnabled()
 
-        val tabIndex = listOf(
-			Preferences.getAndroidAutoFirstTab(),
-			Preferences.getAndroidAutoSecondTab(),
-			Preferences.getAndroidAutoThirdTab(),
-			Preferences.getAndroidAutoFourthTab()
-		)
         // clear before rebuild
         treeNodes.clear()
 
@@ -153,6 +147,23 @@ object MediaBrowserTree {
             Constants.AA_STARRED_BUNDLE_ID,
             Constants.AA_TRACKS_ID,
             Constants.AA_GENRES_ID
+        )
+
+        // Prevents index error
+        val indexMax = allFunctions.lastIndex
+
+        fun indexGuard(index: Int, reset: () -> Unit): Int {
+            return if (index in -1..indexMax) index else {
+                reset()
+                -1
+            }
+        }
+
+        val tabIndex = listOf(
+            indexGuard(Preferences.getAndroidAutoFirstTab(), Preferences::resetAndroidAutoFirstTab),
+            indexGuard(Preferences.getAndroidAutoSecondTab(), Preferences::resetAndroidAutoSecondTab),
+            indexGuard(Preferences.getAndroidAutoThirdTab(), Preferences::resetAndroidAutoThirdTab),
+            indexGuard(Preferences.getAndroidAutoFourthTab(), Preferences::resetAndroidAutoFourthTab)
         )
 
         // Root level

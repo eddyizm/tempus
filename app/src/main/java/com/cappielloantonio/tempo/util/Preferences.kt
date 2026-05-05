@@ -844,7 +844,27 @@ object Preferences {
     fun getAndroidAutoFourthTab(): Int {
         return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
     }
-	
+
+    @JvmStatic
+    fun resetAndroidAutoFirstTab() {
+        App.getInstance().preferences.edit().putString(AA_FIRST_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoSecondTab() {
+        App.getInstance().preferences.edit().putString(AA_SECOND_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoThirdTab() {
+        App.getInstance().preferences.edit().putString(AA_THIRD_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoFourthTab() {
+        App.getInstance().preferences.edit().putString(AA_FOURTH_TAB,"-1").apply()
+    }
+
     @JvmStatic
     fun isAndroidAutoShuffleGenreSongsEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_SHUFFLE_GENRE_SONGS, false)
