@@ -43,6 +43,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+// MS TEST IMPORTS
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class MediaManager {
     private static final String TAG = "MediaManager";
     private static WeakReference<MediaBrowser> attachedBrowserRef = new WeakReference<>(null);
@@ -185,17 +190,32 @@ public class MediaManager {
 
     @OptIn(markerClass = UnstableApi.class)
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex) {
+        Log.d(TAG, "media size=" + media.size() + ", startIndex=" + startIndex);
+        if (startIndex < 0 || startIndex >= media.size()) {
+            Log.e(TAG, "requested startIndex out of range: " + startIndex);
+            return;
+        }
         if (mediaBrowserListenableFuture != null) {
-
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         final MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        final List<MediaItem> items = MappingUtil.mapMediaItems(media);
-                        
+                        // queing from startIndex is how spotify works and avoids loading excess data before playback
+                        final List<Child> itemsToQueue = media.subList(startIndex, media.size());
+                        // Instead of queing all media, only queue the first 10 tracks
+                        // after the users requested startIndex
+                        final List<Child> initialItems;
+                        if (itemsToQueue.size() > 10) {
+                            initialItems = itemsToQueue.subList(0, 10);
+                        } else {
+                            initialItems = itemsToQueue;
+                        }
+                        // map
+                        final List<MediaItem> initialMedia = MappingUtil.mapMediaItems(initialItems);
+
                         new Handler(Looper.getMainLooper()).post(() -> {
                             justStarted.set(true);
-                            browser.setMediaItems(items, startIndex, 0);
+                            browser.setMediaItems(initialMedia, 0, 0);
                             browser.prepare();
 
                             Player.Listener timelineListener = new Player.Listener() {
@@ -203,10 +223,16 @@ public class MediaManager {
                                 public void onTimelineChanged(Timeline timeline, int reason) {
                                     
                                     int itemCount = browser.getMediaItemCount();
-                                    if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                        browser.seekTo(startIndex, 0);
+                                    if (itemCount > 0) {
+                                        browser.seekTo(0, 0);
                                         browser.play();
                                         browser.removeListener(this);
+                                        enqueueDatabase(initialItems, true, 0);
+                                        // If more than 10 songs were queued
+                                        // add all the other media to the queue if the first song plays successfully
+                                        if (itemsToQueue.size() > 10) {
+                                            enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
+                                        }
                                     } else {
                                         Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
                                     }
@@ -214,11 +240,6 @@ public class MediaManager {
                             };
                             
                             browser.addListener(timelineListener);
-                        });
-
-                        backgroundExecutor.execute(() -> {
-                            Log.d(TAG, "Background: enqueuing to database");
-                            enqueueDatabase(media, true, 0);
                         });
                     }
                 } catch (ExecutionException | InterruptedException e) {
