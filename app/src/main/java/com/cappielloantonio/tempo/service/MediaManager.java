@@ -190,63 +190,63 @@ public class MediaManager {
 
     @OptIn(markerClass = UnstableApi.class)
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex) {
-        Log.d(TAG, "media size=" + media.size() + ", startIndex=" + startIndex);
-        if (startIndex < 0 || startIndex >= media.size()) {
-            Log.e(TAG, "requested startIndex out of range: " + startIndex);
+        if (media == null || startIndex < 0 || startIndex >= media.size()) {
+            Log.e(TAG, "Invalid parameters passed to startQueue");
             return;
         }
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        final MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        // queing from startIndex is how spotify works and avoids loading excess data before playback
-                        final List<Child> itemsToQueue = media.subList(startIndex, media.size());
-                        // Instead of queing all media, only queue the first 10 tracks
-                        // after the users requested startIndex
-                        final List<Child> initialItems;
-                        if (itemsToQueue.size() > 10) {
-                            initialItems = itemsToQueue.subList(0, 10);
-                        } else {
-                            initialItems = itemsToQueue;
-                        }
-                        // map
-                        final List<MediaItem> initialMedia = MappingUtil.mapMediaItems(initialItems);
+        if (mediaBrowserListenableFuture == null) return;
 
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            justStarted.set(true);
-                            browser.setMediaItems(initialMedia, 0, 0);
-                            browser.prepare();
+        mediaBrowserListenableFuture.addListener(() -> {
+            try {
+                if (mediaBrowserListenableFuture.isDone()) {
+                    final MediaBrowser browser = mediaBrowserListenableFuture.get();
+                    // Queing from startIndex is how spotify works and avoids loading excess data before playback
+                    final List<Child> itemsToQueue = media.subList(startIndex, media.size());
+                    // Instead of queing all media, only queue a maximum of next 10 tracks initially
+                    int initialBatchSize = Math.min(itemsToQueue.size(), 10);
+                    final List<Child> initialItems = itemsToQueue.subList(0, initialBatchSize);
+                    final List<MediaItem> initialMedia = MappingUtil.mapMediaItems(initialItems);
 
-                            Player.Listener timelineListener = new Player.Listener() {
-                                @Override
-                                public void onTimelineChanged(Timeline timeline, int reason) {
-                                    
-                                    int itemCount = browser.getMediaItemCount();
-                                    if (itemCount > 0) {
-                                        browser.seekTo(0, 0);
-                                        browser.play();
-                                        browser.removeListener(this);
-                                        enqueueDatabase(initialItems, true, 0);
-                                        // If more than 10 songs were queued
-                                        // add all the other media to the queue if the first song plays successfully
-                                        if (itemsToQueue.size() > 10) {
-                                            enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
-                                        }
-                                    } else {
-                                        Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
-                                    }
-                                }
-                            };
-                            
-                            browser.addListener(timelineListener);
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        justStarted.set(true);
+                        browser.setMediaItems(initialMedia, 0, 0);
+                        browser.prepare();
+
+                        // Populate the remaining queue after playing starts
+                        browser.addListener(new Player.Listener() {
+                            @Override
+                            public void onIsPlayingChanged(boolean isPlaying) {
+                                enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
+                                browser.removeListener(this);
+                            }
                         });
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    Log.e(TAG, "Error in startQueue: " + e.getMessage(), e);
+
+                        int itemCount = browser.getMediaItemCount();
+                        if (itemCount > 0) {
+                            // If more than 10 songs were queued
+                            // add all the other media to the queue once the first song plays successfully
+                            if (itemsToQueue.size() > 10) {
+                                // Populate the remaining queue after playing starts
+                                browser.addListener(new Player.Listener() {
+                                    @Override
+                                    public void onIsPlayingChanged(boolean isPlaying) {
+                                        enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
+                                        browser.removeListener(this);
+                                    }
+                                });
+                            }
+                            browser.seekTo(0, 0);
+                            browser.play();
+                            enqueueDatabase(initialItems, true, 0);
+                        } else {
+                            Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
+                        }
+                    });
                 }
-            }, MoreExecutors.directExecutor());
-        }
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e(TAG, "Error in startQueue: " + e.getMessage(), e);
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, Child media) {
@@ -326,21 +326,29 @@ public class MediaManager {
     public static void enqueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, boolean playImmediatelyAfter) {
         if (mediaBrowserListenableFuture != null) {
             mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        Log.d(TAG, "enqueue");
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItems(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItems(media));
-                        } else {
-                            enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
-                            mediaBrowserListenableFuture.get().addMediaItems(MappingUtil.mapMediaItems(media));
+                Executors.newSingleThreadExecutor().execute(() -> {
+                    // Map the media off the main thread
+                    final List<MediaItem> mediaItems = MappingUtil.mapMediaItems(media);
+                    // Return to main thread to update the media
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        try {
+                            if (mediaBrowserListenableFuture.isDone()) {
+                                Log.d(TAG, "enqueue");
+                                MediaBrowser browser = mediaBrowserListenableFuture.get();
+                                if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
+                                    enqueueDatabase(media, false, browser.getNextMediaItemIndex());
+                                    browser.addMediaItems(browser.getNextMediaItemIndex(), mediaItems);
+                                } else {
+                                    enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
+
+                                    mediaBrowserListenableFuture.get().addMediaItems(mediaItems);
+                                }
+                            }
+                        } catch (ExecutionException | InterruptedException e) {
+                            e.printStackTrace();
                         }
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    });
+                });
             }, MoreExecutors.directExecutor());
         }
     }
