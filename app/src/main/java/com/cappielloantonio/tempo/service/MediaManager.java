@@ -212,15 +212,6 @@ public class MediaManager {
                         browser.setMediaItems(initialMedia, 0, 0);
                         browser.prepare();
 
-                        // Populate the remaining queue after playing starts
-                        browser.addListener(new Player.Listener() {
-                            @Override
-                            public void onIsPlayingChanged(boolean isPlaying) {
-                                enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
-                                browser.removeListener(this);
-                            }
-                        });
-
                         int itemCount = browser.getMediaItemCount();
                         if (itemCount > 0) {
                             // If more than 10 songs were queued
@@ -230,8 +221,10 @@ public class MediaManager {
                                 browser.addListener(new Player.Listener() {
                                     @Override
                                     public void onIsPlayingChanged(boolean isPlaying) {
-                                        enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
-                                        browser.removeListener(this);
+                                        if (isPlaying) {
+                                            enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(10, itemsToQueue.size()), false);
+                                            browser.removeListener(this);
+                                        }
                                     }
                                 });
                             }
