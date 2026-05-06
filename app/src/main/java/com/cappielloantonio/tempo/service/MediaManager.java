@@ -217,8 +217,8 @@ public class MediaManager {
                                     @Override
                                     public void onIsPlayingChanged(boolean isPlaying) {
                                         if (isPlaying) {
-                                            enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(initialBatchSize, itemsToQueue.size()), false);
                                             browser.removeListener(this);
+                                            enqueue(mediaBrowserListenableFuture, itemsToQueue.subList(initialBatchSize, itemsToQueue.size()), false);
                                         }
                                     }
                                 });
