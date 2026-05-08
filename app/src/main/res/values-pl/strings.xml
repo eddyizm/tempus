@@ -636,4 +636,25 @@
     <string name="search_all_songs">Wszystkie %1$s piosenek</string>
     <string name="search_all_songs_play">Odtwórz %1$s</string>
 	<string name="nav_drawer_index">Indeks</string>
+	    <string name="sleep_timer_dialog_title">Wyłącznik czasowy</string>
+    <string name="sleep_timer_dialog_active_message">Wyłącznik włączony — pozostało %1$s</string>
+    <string name="sleep_timer_dialog_cancel_timer">Anuluj wyłączanie</string>
+    <string name="sleep_timer_dialog_close">Zamknij</string>
+    <string name="sleep_timer_custom_hint">Wpisz liczbę minut</string>
+    <string name="sleep_timer_custom_set">Ustaw</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Zatrzymaj po tej piosence</string>
+    <string name="sleep_timer_end_of_track_label">Koniec utworu</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minut</item>
+        <item>10 minut</item>
+        <item>15 minut</item>
+        <item>20 minut</item>
+        <item>30 minut</item>
+        <item>45 minut</item>
+        <item>60 minut</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Niestandardowwy\u2026</item>
+    </string-array>
 </resources>
