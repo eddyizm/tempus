@@ -657,4 +657,34 @@
         <item>@string/sleep_timer_end_of_track_label</item>
         <item>Niestandardowwy\u2026</item>
     </string-array>
+	
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus przestał działać.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Informacja</string>
+    <string name="ca_info_title">Tempus przestał działać</string>
+    <string name="ca_info_description">
+        Otwórz problem na GitHubie i załącz kopię logów, aby pomóć z tym problemem.
+    </string>
+    <string name="ca_info_button_close">Zamknij aplikację</string>
+    <string name="ca_info_button_restart">Uruchom aplikację ponownie</string>
+
+    <string name="ca_logs_label">Logi</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+    <string name="ca_logs_description">
+        To poszło nie tak.
+    </string>
+    <string name="ca_export_button_copy">Skopiuj log</string>
+    <string name="ca_export_button_share">Udostępnij log</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Log copied do schowka</string>
+
+    <string name="ca_export_label">Eksportuj</string>
+    <string name="ca_export_title">Przechwycenie logów</string>
+    <string name="ca_export_description">
+        Apk debug (wersje testowe) podaje bardziej dokładne logi i pomaga nam
+        zrozumieć co poszło nie tak w aplikacji.\n\n
+
+        Te dane nie są nigdzie wysyłane bez twojej zgody.
+    </string>
 </resources>
