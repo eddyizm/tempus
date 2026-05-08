@@ -107,6 +107,7 @@ object Preferences {
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
     private const val AA_STARRED_FOR_MADE_FOR_YOU ="androidauto_starred_for_made_for_you"
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
+    private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -873,6 +874,11 @@ object Preferences {
     @JvmStatic
     fun isAndroidAutoShuffleStarredTracksEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_SHUFFLE_STARRED_TRACKS, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoShufflePlaylistsEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_PLAYLISTS, false)
     }
 
     @JvmStatic
