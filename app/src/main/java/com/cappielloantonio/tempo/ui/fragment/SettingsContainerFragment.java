@@ -175,6 +175,13 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             }
         }
 
+        if (BuildConfig.FLAVOR.equals("degoogled")) {
+            ClickablePreferenceCategory androidAutoCategory = findPreference("settings_androidauto_category_key");
+            if (androidAutoCategory != null) {
+                getPreferenceScreen().removePreference(androidAutoCategory);
+            }
+        }
+
         PreferenceScreen screen = getPreferenceScreen();
         if (screen != null) {
             for (int i = 0; i < screen.getPreferenceCount(); i++) {
