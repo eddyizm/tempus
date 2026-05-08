@@ -282,7 +282,7 @@
         <item>Dossiers</item>
         <item>Albums les plus joués</item>
         <item>Albums ajouté</item>
-    <!--    <item>Pour vous</item> -->
+        <item>Pour vous</item>
         <item>Titres favoris</item>
         <item>Albums favoris</item>
         <item>Artistes favoris</item>
@@ -310,4 +310,9 @@
         <item>16</item>
     </string-array>
 
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Artistes favoris</item>
+        <item>Albums favoris</item>
+        <item>Titres favoris</item>
+    </string-array>
 </resources>

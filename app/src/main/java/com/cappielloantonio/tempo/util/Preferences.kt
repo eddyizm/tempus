@@ -55,8 +55,8 @@ object Preferences {
     private const val AUTO_DOWNLOAD_LYRICS = "auto_download_lyrics"
     private const val MUSIC_DIRECTORY_SECTION_VISIBILITY = "music_directory_section_visibility"
     private const val REPLAY_GAIN_MODE = "replay_gain_mode"
-	private const val REPLAY_GAIN_PREAMP = "replay_gain_preamp"
     private const val REPLAY_GAIN_PREVENT_CLIPPING = "replay_gain_prevent_clipping"
+    private const val LOUDNESS_PREAMP = "loudness_preamp"
     private const val AUDIO_TRANSCODE_PRIORITY = "audio_transcode_priority"
     private const val STREAMING_CACHE_STORAGE = "streaming_cache_storage"
     private const val DOWNLOAD_STORAGE = "download_storage"
@@ -105,6 +105,7 @@ object Preferences {
 	private const val AA_THIRD_TAB = "androidauto_third_tab"
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
+    private const val AA_STARRED_FOR_MADE_FOR_YOU ="androidauto_starred_for_made_for_you"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -522,20 +523,20 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getReplayGainPreamp(): Float {
-        return App.getInstance().preferences.getFloat(REPLAY_GAIN_PREAMP, -6f)
-    }
-
-    @JvmStatic
-    fun setReplayGainPreamp(value: Float) {
-        App.getInstance().preferences.edit().putFloat(REPLAY_GAIN_PREAMP, value).apply()
-    }	
-
-    @JvmStatic
     fun isReplayGainPreventClipping(): Boolean {
         return App.getInstance().preferences.getBoolean(REPLAY_GAIN_PREVENT_CLIPPING, true)
     }
-	
+
+    @JvmStatic
+    fun getLoudnessPreamp(): Float {
+        return App.getInstance().preferences.getInt(LOUDNESS_PREAMP, 0).toFloat()
+    }
+
+    @JvmStatic
+    fun setLoudnessPreamp(value: Float) {
+        App.getInstance().preferences.edit().putInt(LOUDNESS_PREAMP, value.toInt()).apply()
+    }
+
     @JvmStatic
     fun isServerPrioritized(): Boolean {
         return App.getInstance().preferences.getBoolean(AUDIO_TRANSCODE_PRIORITY, false)
@@ -699,7 +700,7 @@ object Preferences {
     fun isInstantMixUsable(): Boolean {
         return App.getInstance().preferences.getLong(
                 LAST_INSTANT_MIX, 0
-        ) + 30000 < System.currentTimeMillis()
+        ) + 10000 < System.currentTimeMillis()
     }
 
     @JvmStatic
@@ -853,4 +854,8 @@ object Preferences {
         App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
     }
 
+    @JvmStatic
+    fun getAndroidAutoStarredForMadeForYou(): Int {
+        return App.getInstance().preferences.getString(AA_STARRED_FOR_MADE_FOR_YOU, "0")!!.toInt()
+    }
 }
