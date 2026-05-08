@@ -283,9 +283,7 @@
         <item>Albums les plus joués</item>
         <item>Albums ajouté</item>
         <item>Pour vous</item>
-        <item>Titres favoris</item>
-        <item>Albums favoris</item>
-        <item>Artistes favoris</item>
+        <item>Favoris</item>
 		<item>Titres</item>
         <item>Genres</item>
     </string-array>

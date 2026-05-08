@@ -527,6 +527,11 @@
             android:defaultValue="false"
             android:key="androidauto_shuffle_genre_songs" />
 
+        <SwitchPreference
+            android:title="@string/settings_androidauto_shuffle_starred_tracks"
+            android:defaultValue="false"
+            android:key="androidauto_shuffle_starred_tracks" />
+
         <ListPreference
             app:defaultValue="0"
             app:dialogTitle="@string/settings_androidauto_starred_for_made_for_you"

@@ -14,6 +14,7 @@
     <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
     <string name="aa_song_recently_played">Tracks played</string>
+    <string name="aa_starred">Starred</string>
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artists</string>
     <string name="aa_starred_tracks">★ Tracks</string>
@@ -416,6 +417,7 @@
 	<string name="settings_androidauto_third_tab">Third tab display</string>
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
+    <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
@@ -639,5 +641,35 @@
     <string name="search_all_songs_play">Play %1$s</string>
 
     <string name="nav_drawer_index">Index</string>
+
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus Crashed</string>
+    <string name="ca_info_description">
+        Please open an issue on GitHub and include a copy of the logs to address this crash.
+    </string>
+    <string name="ca_info_button_close">Close app</string>
+    <string name="ca_info_button_restart">Restart app</string>
+
+    <string name="ca_logs_label">Logs</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+    <string name="ca_logs_description">
+        This is what went wrong.
+    </string>
+    <string name="ca_export_button_copy">Copy log</string>
+    <string name="ca_export_button_share">Share log</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Log copied to clipboard</string>
+
+    <string name="ca_export_label">Export</string>
+    <string name="ca_export_title">Logs retrival</string>
+    <string name="ca_export_description">
+        A debug apk (pre-release) provides a more extensive log and helps us
+        understand what went wrong inside the app.\n\n
+
+        The data is not sent anywhere without your consent.
+    </string>
 
 </resources>
