@@ -512,6 +512,7 @@ open class BaseMediaService : MediaLibraryService() {
         mediaLibrarySession =
             MediaLibrarySession.Builder(this, player, getMediaLibrarySessionCallback())
                 .setSessionActivity(sessionActivityPendingIntent)
+                .setPeriodicPositionUpdateEnabled(false)
                 .build()
     }
 

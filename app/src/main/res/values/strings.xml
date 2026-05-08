@@ -451,7 +451,8 @@
     <string name="settings_streaming_cache_storage_title">Streaming cache storage</string>
     <string name="settings_sub_summary_scrobble">It\'s important to note that scrobbling also relies on the server being enabled to receive this data.</string>
     <string name="settings_summary_skip_min_star_rating">When listening to an artist\'s radio, an instant mix or when shuffling all, tracks below a certain user rating will be ignored.</string>
-    <string name="settings_summary_replay_gain">Replay gain is a feature that allows you to adjust the volume level of audio tracks for a consistent listening experience. This setting is only effective if the track contains the necessary metadata.</string>
+    <string name="settings_summary_replay_gain">Normalizes the volume level of audio tracks. Files must contain the necessary metadata.</string>
+    <string name="settings_summary_loudness">Allows to correct the volume of audio playback devices (e.g. speakers).\n\nFor ReplayGain -6 is recommended, this is to avoid conflicts with clipping prevention.</string>
     <string name="settings_summary_scrobble">Scrobbling is a feature that allows your device to send information about the songs you listen to the music server. This information helps create personalized recommendations based on your music preferences.</string>
     <string name="settings_summary_share">Allows the user to share music via a link. The functionality must be supported and enabled server-side and is limited to individual tracks, albums and playlists.</string>
     <string name="settings_summary_syncing">Returns the state of the play queue for this user. This includes the tracks in the play queue, the currently playing track, and the position within this track. The server must support this feature.\n*This setting is not 100% working on all servers/devices.</string>
@@ -474,12 +475,13 @@
     <string name="settings_title_players">Players</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Rating</string>
+    <string name="settings_title_loudness">Loudness correction</string>
+    <string name="settings_loudness_preamp_title">Pre-amplification</string>
+    <string name="settings_loudness_preamp_summary">Set positive values for louder sounds.\nSet negative values for quieter sounds.</string>
+    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
     <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
-    <string name="settings_replay_gain_preamp_title">Pre-amplification</string>
-    <string name="settings_replay_gain_preamp_summary">Adjust the target loudness offset applied on top of the ReplayGain value. Positive values make playback louder; negative values make it quieter. (Default = -6)</string>
-    <string name="settings_replay_gain_preamp_db">%1$d dB</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
     <string name="settings_title_skip_min_star_rating_dialog">Songs with a rating of:</string>
