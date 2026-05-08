@@ -306,9 +306,7 @@
         <item>Álbumes más reproducidos</item>
         <item>Álbumes añadidos</item>
         <item>Para ti</item>
-        <item>Pistas favoritas</item>
-        <item>Álbumes favoritos</item>
-        <item>Artistas favoritos</item>
+        <item>Favoritas</item>
         <item>Pistas</item>
         <item>Genres</item>
     </string-array>

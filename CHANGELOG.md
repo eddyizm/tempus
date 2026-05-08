@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.16.0](https://github.com/eddyizm/tempus/releases/tag/v4.16.0) (2026-05-06)
+## What's Changed
+* Improved creation time for the Instant Mix on the Android Auto artist page by @MaFo-28 in https://github.com/eddyizm/tempus/pull/594
+* Improved settings page by @MaFo-28 in https://github.com/eddyizm/tempus/pull/595
+* Fix queue confusion for Starred Tracks  by @MaFo-28 in https://github.com/eddyizm/tempus/pull/605
+* docs: update README.md by @tvillega in https://github.com/eddyizm/tempus/pull/607
+* feat: Set Replay Gain preamp offset by @CtznSniiips in https://github.com/eddyizm/tempus/pull/606
+* feat: add For You bundle for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/609
+* fix: stop periodic update of queue on Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/619
+* feat: improve sound settings by @tvillega in https://github.com/eddyizm/tempus/pull/620
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.15.0...v4.16.0
+
+
 ## What's Changed
 ## [4.15.0](https://github.com/eddyizm/tempus/releases/tag/v4.15.0) (2026-04-26)
 * feat: Improved artists display for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/512

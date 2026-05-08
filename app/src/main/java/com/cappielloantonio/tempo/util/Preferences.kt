@@ -55,8 +55,8 @@ object Preferences {
     private const val AUTO_DOWNLOAD_LYRICS = "auto_download_lyrics"
     private const val MUSIC_DIRECTORY_SECTION_VISIBILITY = "music_directory_section_visibility"
     private const val REPLAY_GAIN_MODE = "replay_gain_mode"
-	private const val REPLAY_GAIN_PREAMP = "replay_gain_preamp"
     private const val REPLAY_GAIN_PREVENT_CLIPPING = "replay_gain_prevent_clipping"
+    private const val LOUDNESS_PREAMP = "loudness_preamp"
     private const val AUDIO_TRANSCODE_PRIORITY = "audio_transcode_priority"
     private const val STREAMING_CACHE_STORAGE = "streaming_cache_storage"
     private const val DOWNLOAD_STORAGE = "download_storage"
@@ -106,6 +106,7 @@ object Preferences {
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
     private const val AA_STARRED_FOR_MADE_FOR_YOU ="androidauto_starred_for_made_for_you"
+    private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -523,20 +524,20 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getReplayGainPreamp(): Float {
-        return App.getInstance().preferences.getInt(REPLAY_GAIN_PREAMP, -6).toFloat()
-    }
-
-    @JvmStatic
-    fun setReplayGainPreamp(value: Float) {
-        App.getInstance().preferences.edit().putInt(REPLAY_GAIN_PREAMP, value.toInt()).apply()
-    }	
-
-    @JvmStatic
     fun isReplayGainPreventClipping(): Boolean {
         return App.getInstance().preferences.getBoolean(REPLAY_GAIN_PREVENT_CLIPPING, true)
     }
-	
+
+    @JvmStatic
+    fun getLoudnessPreamp(): Float {
+        return App.getInstance().preferences.getInt(LOUDNESS_PREAMP, 0).toFloat()
+    }
+
+    @JvmStatic
+    fun setLoudnessPreamp(value: Float) {
+        App.getInstance().preferences.edit().putInt(LOUDNESS_PREAMP, value.toInt()).apply()
+    }
+
     @JvmStatic
     fun isServerPrioritized(): Boolean {
         return App.getInstance().preferences.getBoolean(AUDIO_TRANSCODE_PRIORITY, false)
@@ -843,10 +844,35 @@ object Preferences {
     fun getAndroidAutoFourthTab(): Int {
         return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
     }
-	
+
+    @JvmStatic
+    fun resetAndroidAutoFirstTab() {
+        App.getInstance().preferences.edit().putString(AA_FIRST_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoSecondTab() {
+        App.getInstance().preferences.edit().putString(AA_SECOND_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoThirdTab() {
+        App.getInstance().preferences.edit().putString(AA_THIRD_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoFourthTab() {
+        App.getInstance().preferences.edit().putString(AA_FOURTH_TAB,"-1").apply()
+    }
+
     @JvmStatic
     fun isAndroidAutoShuffleGenreSongsEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_SHUFFLE_GENRE_SONGS, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoShuffleStarredTracksEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_STARRED_TRACKS, false)
     }
 
     @JvmStatic
