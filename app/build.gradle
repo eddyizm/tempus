@@ -128,6 +128,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
 
     implementation 'com.intuit.sdp:sdp-android:1.1.1'
+    implementation 'cat.ereza:customactivityoncrash:2.4.0'
 }
 java {
     toolchain {
