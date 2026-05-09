@@ -1,0 +1,5 @@
+* ui: Improved settings page
+* Fix: queue confusion for Starred Tracks 
+* docs: update README.md 
+* feat: Set Replay Gain preamp offset 
+* feat: improve sound settings 
