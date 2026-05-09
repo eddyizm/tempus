@@ -642,6 +642,28 @@
 
     <string name="nav_drawer_index">Index</string>
 
+    <!-- Sleep timer -->
+    <string name="sleep_timer_dialog_title">Sleep Timer</string>
+    <string name="sleep_timer_dialog_active_message">Timer active — %1$s remaining</string>
+    <string name="sleep_timer_dialog_cancel_timer">Cancel Timer</string>
+    <string name="sleep_timer_dialog_close">Close</string>
+    <string name="sleep_timer_custom_hint">Enter minutes</string>
+    <string name="sleep_timer_custom_set">Set</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Stop after this song</string>
+    <string name="sleep_timer_end_of_track_label">End of track</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>30 minutes</item>
+        <item>45 minutes</item>
+        <item>60 minutes</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Custom\u2026</item>
+    </string-array>
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
 
     <!-- Crash Activity -->
