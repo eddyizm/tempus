@@ -651,13 +651,13 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         // Seed the widget with the currently persisted value so it shows the
         // correct position when the settings screen opens.
-        preampPref.setValue((int) Preferences.getReplayGainPreamp());
+        preampPref.setValue((int) Preferences.getLoudnessPreamp());
 
         preampPref.setOnPreferenceChangeListener((preference, newValue) -> {
             if (!(newValue instanceof Integer)) return true;
 
             int dB = (Integer) newValue;
-            Preferences.setReplayGainPreamp((float) dB);
+            Preferences.setLoudnessPreamp((float) dB);
 
             // Immediately re-apply gain to whatever is playing so the user can
             // hear the effect without restarting playback.

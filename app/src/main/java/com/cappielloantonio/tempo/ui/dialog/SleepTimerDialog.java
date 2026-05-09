@@ -18,15 +18,20 @@ public class SleepTimerDialog extends DialogFragment {
     public interface SleepTimerListener {
         void onTimerSet(int minutes);
         void onTimerCancelled();
+
+        /** Called when the user picks "End of track" (stop after current song). */
+        default void onEndOfTrackSet() {}
     }
 
-    private static final int CUSTOM = -1;
-    private static final int[] MINUTE_VALUES  = {5, 10, 15, 20, 30, 45, 60, CUSTOM};
-    private static final String[] MINUTE_LABELS = {
-            "5 minutes", "10 minutes", "15 minutes",
-            "20 minutes", "30 minutes", "45 minutes", "60 minutes",
-            "Custom\u2026"
-    };
+    // Sentinel values — must not collide with real minute counts.
+    private static final int END_OF_TRACK = -2;
+    private static final int CUSTOM       = -1;
+
+    /**
+     * Minute values parallel to {@code R.array.sleep_timer_duration_labels}.
+     * END_OF_TRACK and CUSTOM must be the last two entries.
+     */
+    private static final int[] MINUTE_VALUES = {5, 10, 15, 20, 30, 45, 60, END_OF_TRACK, CUSTOM};
 
     private SleepTimerListener listener;
 
@@ -37,16 +42,23 @@ public class SleepTimerDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Labels come from strings.xml so they are fully localizable.
+        String[] labels = getResources().getStringArray(R.array.sleep_timer_duration_labels);
+
         boolean timerActive = SleepTimerManager.getInstance().isActive();
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(R.string.sleep_timer_dialog_title)
-                .setSingleChoiceItems(MINUTE_LABELS, -1, (dialog, which) -> {
-                    if (MINUTE_VALUES[which] == CUSTOM) {
+                .setSingleChoiceItems(labels, -1, (dialog, which) -> {
+                    int value = MINUTE_VALUES[which];
+                    if (value == CUSTOM) {
                         dialog.dismiss();
                         showCustomInputDialog();
+                    } else if (value == END_OF_TRACK) {
+                        if (listener != null) listener.onEndOfTrackSet();
+                        dialog.dismiss();
                     } else {
-                        if (listener != null) listener.onTimerSet(MINUTE_VALUES[which]);
+                        if (listener != null) listener.onTimerSet(value);
                         dialog.dismiss();
                     }
                 })
@@ -54,8 +66,15 @@ public class SleepTimerDialog extends DialogFragment {
                         (dialog, id) -> dialog.cancel());
 
         if (timerActive) {
-            String remaining = SleepTimerManager.getInstance().getRemainingFormatted();
-            builder.setMessage(getString(R.string.sleep_timer_dialog_active_message, remaining));
+            boolean isEndOfTrack = SleepTimerManager.getInstance().isEndOfTrack();
+            String statusMessage;
+            if (isEndOfTrack) {
+                statusMessage = getString(R.string.sleep_timer_dialog_end_of_track_active);
+            } else {
+                String remaining = SleepTimerManager.getInstance().getRemainingFormatted();
+                statusMessage = getString(R.string.sleep_timer_dialog_active_message, remaining);
+            }
+            builder.setMessage(statusMessage);
             builder.setNeutralButton(R.string.sleep_timer_dialog_cancel_timer,
                     (dialog, id) -> {
                         if (listener != null) listener.onTimerCancelled();
