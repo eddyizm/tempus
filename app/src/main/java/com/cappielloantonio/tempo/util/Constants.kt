@@ -146,6 +146,7 @@ object Constants {
     const val AA_RADIO_ID = "[radioID]"
     const val AA_RECENTLY_ADDED_ID = "[recentlyAddedID]"
     const val AA_MADE_FOR_YOU_ID = "[madeForYouID]"
+    const val AA_STARRED_BUNDLE_ID = "[starredBundleID]"
     const val AA_STARRED_TRACKS_ID = "[starredTracksID]"
     const val AA_STARRED_ALBUMS_ID = "[starredAlbumsID]"
     const val AA_STARRED_ARTISTS_ID = "[starredArtistsID]"
@@ -165,10 +166,14 @@ object Constants {
     const val AA_JUMP_TO_ARTISTS_ID = "[jumpToArtistsID]"
     const val AA_JUMP_TO_STARRED_ARTISTS_ID = "[jumpToStarredArtistsID]"
     const val AA_ARTISTS_BY_ALBUMS_ID = "[artistsByAlbumsID]"
+    const val AA_QUICKMIX_ID = "[quickmixID]"
+    const val AA_MYMIX_ID = "[mymixID]"
+    const val AA_DISCOVERYMIX_ID = "[discoverymixID]"
 
     // Android Auto Source tag
     const val AA_QUEUE_CACHED_SOURCE = "[aaQueueCachedSource]"
     const val AA_INSTANTMIX_SOURCE = "[instantMixSource]"
+    const val AA_MADE_FOR_YOU_SOURCE = "[madeForYouSource]"
 
     // Android Auto start index extra
     const val AA_START_INDEX = "aa_start_index"

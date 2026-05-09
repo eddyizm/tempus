@@ -14,12 +14,16 @@
     <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
     <string name="aa_song_recently_played">Tracks played</string>
+    <string name="aa_starred">Starred</string>
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artists</string>
     <string name="aa_starred_tracks">★ Tracks</string>
     <string name="aa_instant_mix">Instant mix</string>
     <string name="aa_view_by_albums">View by albums</string>
     <string name="aa_tracks">Tracks</string>
+    <string name="aa_quick_mix">Quick mix</string>
+    <string name="aa_my_mix">My mix</string>
+    <string name="aa_discovery_mix">Discovery mix</string>
 
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>
@@ -414,8 +418,10 @@
 	<string name="settings_androidauto_third_tab">Third tab display</string>
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
+    <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
+    <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
@@ -448,7 +454,8 @@
     <string name="settings_streaming_cache_storage_title">Streaming cache storage</string>
     <string name="settings_sub_summary_scrobble">It\'s important to note that scrobbling also relies on the server being enabled to receive this data.</string>
     <string name="settings_summary_skip_min_star_rating">When listening to an artist\'s radio, an instant mix or when shuffling all, tracks below a certain user rating will be ignored.</string>
-    <string name="settings_summary_replay_gain">Replay gain is a feature that allows you to adjust the volume level of audio tracks for a consistent listening experience. This setting is only effective if the track contains the necessary metadata.</string>
+    <string name="settings_summary_replay_gain">Normalizes the volume level of audio tracks. Files must contain the necessary metadata.</string>
+    <string name="settings_summary_loudness">Allows to correct the volume of audio playback devices (e.g. speakers).\n\nFor ReplayGain -6 is recommended, this is to avoid conflicts with clipping prevention.</string>
     <string name="settings_summary_scrobble">Scrobbling is a feature that allows your device to send information about the songs you listen to the music server. This information helps create personalized recommendations based on your music preferences.</string>
     <string name="settings_summary_share">Allows the user to share music via a link. The functionality must be supported and enabled server-side and is limited to individual tracks, albums and playlists.</string>
     <string name="settings_summary_syncing">Returns the state of the play queue for this user. This includes the tracks in the play queue, the currently playing track, and the position within this track. The server must support this feature.\n*This setting is not 100% working on all servers/devices.</string>
@@ -467,8 +474,14 @@
 	<string name="settings_tile_size">Tiles size</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
+    <string name="settings_title_misc">Miscellaneous</string>
+    <string name="settings_title_players">Players</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Rating</string>
+    <string name="settings_title_loudness">Loudness correction</string>
+    <string name="settings_loudness_preamp_title">Pre-amplification</string>
+    <string name="settings_loudness_preamp_summary">Set positive values for louder sounds.\nSet negative values for quieter sounds.</string>
+    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
     <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
@@ -476,6 +489,7 @@
     <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
     <string name="settings_title_skip_min_star_rating_dialog">Songs with a rating of:</string>
     <string name="settings_title_share">Share</string>
+    <string name="settings_title_sound">Sound</string>
     <string name="settings_title_syncing">Syncing</string>
     <string name="settings_title_transcoding">Transcoding</string>
     <string name="settings_title_transcoding_download">Transcoding Download</string>
@@ -628,5 +642,57 @@
     <string name="search_all_songs_play">Play %1$s</string>
 
     <string name="nav_drawer_index">Index</string>
+
+    <!-- Sleep timer -->
+    <string name="sleep_timer_dialog_title">Sleep Timer</string>
+    <string name="sleep_timer_dialog_active_message">Timer active — %1$s remaining</string>
+    <string name="sleep_timer_dialog_cancel_timer">Cancel Timer</string>
+    <string name="sleep_timer_dialog_close">Close</string>
+    <string name="sleep_timer_custom_hint">Enter minutes</string>
+    <string name="sleep_timer_custom_set">Set</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Stop after this song</string>
+    <string name="sleep_timer_end_of_track_label">End of track</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>30 minutes</item>
+        <item>45 minutes</item>
+        <item>60 minutes</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Custom\u2026</item>
+    </string-array>
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus Crashed</string>
+    <string name="ca_info_description">
+        Please open an issue on GitHub and include a copy of the logs to address this crash.
+    </string>
+    <string name="ca_info_button_close">Close app</string>
+    <string name="ca_info_button_restart">Restart app</string>
+
+    <string name="ca_logs_label">Logs</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+    <string name="ca_logs_description">
+        This is what went wrong.
+    </string>
+    <string name="ca_export_button_copy">Copy log</string>
+    <string name="ca_export_button_share">Share log</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Log copied to clipboard</string>
+
+    <string name="ca_export_label">Export</string>
+    <string name="ca_export_title">Logs retrival</string>
+    <string name="ca_export_description">
+        A debug apk (pre-release) provides a more extensive log and helps us
+        understand what went wrong inside the app.\n\n
+
+        The data is not sent anywhere without your consent.
+    </string>
 
 </resources>

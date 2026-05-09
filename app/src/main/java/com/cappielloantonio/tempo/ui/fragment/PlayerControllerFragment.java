@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -47,6 +49,11 @@ import com.cappielloantonio.tempo.service.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
+import com.cappielloantonio.tempo.ui.dialog.SleepTimerDialog;
+import com.cappielloantonio.tempo.util.SleepTimerManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
+import android.content.res.ColorStateList;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
 import com.cappielloantonio.tempo.ui.dialog.TrackInfoDialog;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerHorizontalPager;
@@ -86,6 +93,9 @@ public class PlayerControllerFragment extends Fragment {
     private ImageButton playerTrackInfo;
     private LinearLayout ratingContainer;
     private ImageButton equalizerButton;
+    private LinearLayout sleepTimerContainer;
+    private ImageButton sleepTimerButton;
+    private android.widget.TextView sleepTimerLabel;
     private ChipGroup assetLinkChipGroup;
     private Chip playerSongLinkChip;
     private Chip playerAlbumLinkChip;
@@ -115,6 +125,9 @@ public class PlayerControllerFragment extends Fragment {
         initMediaLabelButton();
         initArtistLabelButton();
         initEqualizerButton();
+
+        // Sync UI immediately in case a timer survived a rotation.
+        updateSleepTimerUI();
 
         return view;
     }
@@ -157,10 +170,14 @@ public class PlayerControllerFragment extends Fragment {
         playerSongLinkChip = bind.getRoot().findViewById(R.id.asset_link_song_chip);
         playerAlbumLinkChip = bind.getRoot().findViewById(R.id.asset_link_album_chip);
         playerArtistLinkChip = bind.getRoot().findViewById(R.id.asset_link_artist_chip);
+        sleepTimerContainer = bind.getRoot().findViewById(R.id.player_sleep_timer_container);
+        sleepTimerButton = bind.getRoot().findViewById(R.id.player_sleep_timer_button);
+        sleepTimerLabel  = bind.getRoot().findViewById(R.id.player_sleep_timer_label);
         checkAndSetRatingContainerVisibility();
     }
 
     private void initQuickActionView() {
+        playerQuickActionView.setVisibility(Preferences.getQuickActionVisible() ? View.VISIBLE : View.GONE);
         playerQuickActionView.setBackgroundColor(SurfaceColors.getColorForElevation(requireContext(), 8));
 
         playerOpenQueueButton.setOnClickListener(view -> {
@@ -176,6 +193,8 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void releaseBrowser() {
+        SleepTimerManager.getInstance().setTickListener(null);
+        stopEndOfTrackPoller();
         MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
     }
 
@@ -188,6 +207,7 @@ public class PlayerControllerFragment extends Fragment {
                 mediaBrowser.setShuffleModeEnabled(Preferences.isShuffleModeEnabled());
                 mediaBrowser.setRepeatMode(Preferences.getRepeatMode());
                 setMediaControllerListener(mediaBrowser);
+                initSleepTimerButton(mediaBrowser);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -205,6 +225,22 @@ public class PlayerControllerFragment extends Fragment {
                 setMediaControllerUI(mediaBrowser);
                 setMetadata(mediaMetadata);
                 setMediaInfo(mediaMetadata);
+            }
+
+            @Override
+            public void onMediaItemTransition(@androidx.annotation.Nullable androidx.media3.common.MediaItem mediaItem, int reason) {
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO
+                        && SleepTimerManager.getInstance().isEndOfTrack()) {
+                    // Safety net: fires when the track ended before the position
+                    // poller could trigger the fade (e.g. unknown duration on a
+                    // stream).  Abort any in-progress fade, cancel the timer,
+                    // and pause immediately.
+                    abortCurrentFade = true;
+                    stopEndOfTrackPoller();
+                    SleepTimerManager.getInstance().cancelTimer();
+                    mediaBrowser.setVolume(1.0f);
+                    mediaBrowser.pause();
+                }
             }
 
             @Override
@@ -526,6 +562,189 @@ public class PlayerControllerFragment extends Fragment {
         }
     }
 
+
+    // -------------------------------------------------------------------------
+    // Sleep timer
+    // -------------------------------------------------------------------------
+
+    /**
+     * Wire up the sleep timer button click listener and connect the
+     * {@link SleepTimerManager} tick callback so that:
+     *  - the countdown label refreshes every second, and
+     *  - the player pauses automatically when the timer expires.
+     */
+    private void initSleepTimerButton(MediaBrowser mediaBrowser) {
+        sleepTimerButton.setOnClickListener(v -> {
+            SleepTimerDialog dialog = new SleepTimerDialog();
+            dialog.setSleepTimerListener(new SleepTimerDialog.SleepTimerListener() {
+                @Override
+                public void onTimerSet(int minutes) {
+                    SleepTimerManager.getInstance().startTimer(minutes);
+                    connectSleepTimerTick(mediaBrowser);
+                }
+
+                @Override
+                public void onTimerCancelled() {
+                    SleepTimerManager.getInstance().cancelTimer();
+                    updateSleepTimerUI();
+                }
+
+                @Override
+                public void onEndOfTrackSet() {
+                    SleepTimerManager.getInstance().startEndOfTrack();
+                    connectSleepTimerTick(mediaBrowser);
+                    armEndOfTrackFadePoller(mediaBrowser);
+                }
+            });
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
+        });
+
+        connectSleepTimerTick(mediaBrowser);
+    }
+
+    /**
+     * (Re-)registers the tick listener with {@link SleepTimerManager}.
+     * Called on first bind and whenever the fragment reconnects after rotation.
+     *
+     * <p>When the timer expires (countdown or end-of-track), a 10-second
+     * fade-out is applied before the player is paused, giving a much more
+     * pleasant user experience than an abrupt stop.
+     */
+    private void connectSleepTimerTick(MediaBrowser mediaBrowser) {
+        SleepTimerManager.getInstance().setTickListener(expired -> {
+            if (expired) {
+                startFadeOutThenPause(mediaBrowser);
+            }
+            updateSleepTimerUI();
+        });
+    }
+
+    // -------------------------------------------------------------------------
+    // Fade-out (called when sleep timer expires)
+    // -------------------------------------------------------------------------
+
+    /** Duration of the fade-out in milliseconds. */
+    private static final long FADE_DURATION_MS = 10_000L;
+    /** Number of volume steps during the fade. */
+    private static final int  FADE_STEPS       = 40;
+
+    // End-of-track fade poller — polls position to start the fade on the right track.
+    private final Handler endOfTrackHandler = new Handler(Looper.getMainLooper());
+    private Runnable endOfTrackPoller = null;
+    /** Signals a running fade to stop and restore volume (e.g. when a transition fires early). */
+    private volatile boolean abortCurrentFade = false;
+
+    /**
+     * Gradually lowers the player volume to zero over {@link #FADE_DURATION_MS},
+     * then pauses playback and restores full volume.
+     * Respects {@link #abortCurrentFade}: if set before a step runs, the fade
+     * stops and volume is immediately restored (used when a track transition
+     * fires before the fade finishes).
+     */
+    private void startFadeOutThenPause(MediaBrowser mediaBrowser) {
+        final long stepMs     = FADE_DURATION_MS / FADE_STEPS;
+        final float decrement = 1.0f / FADE_STEPS;
+        final float[] volume  = {1.0f}; // always fade from full regardless of current value
+
+        abortCurrentFade = false;
+
+        Handler fadeHandler = new Handler(Looper.getMainLooper());
+        Runnable fadeStep = new Runnable() {
+            @Override
+            public void run() {
+                if (!isAdded() || abortCurrentFade) {
+                    mediaBrowser.setVolume(1.0f);
+                    return;
+                }
+                volume[0] = Math.max(0f, volume[0] - decrement);
+                mediaBrowser.setVolume(volume[0]);
+                if (volume[0] > 0f) {
+                    fadeHandler.postDelayed(this, stepMs);
+                } else {
+                    // Fade complete — cancel the timer (no-op if countdown already
+                    // expired) and pause.  This also resets the UI via the tick listener.
+                    SleepTimerManager.getInstance().cancelTimer();
+                    mediaBrowser.pause();
+                    fadeHandler.postDelayed(() -> mediaBrowser.setVolume(1.0f), 300);
+                }
+            }
+        };
+        fadeHandler.post(fadeStep);
+    }
+
+    /**
+     * Polls playback position every 500 ms while end-of-track is armed.
+     * Triggers {@link #startFadeOutThenPause} when the current track has
+     * {@link #FADE_DURATION_MS} or fewer milliseconds remaining, ensuring
+     * the fade happens on the correct track rather than the next one.
+     */
+    private void armEndOfTrackFadePoller(MediaBrowser mediaBrowser) {
+        stopEndOfTrackPoller();
+        abortCurrentFade = false;
+        endOfTrackPoller = new Runnable() {
+            boolean fadeStarted = false;
+
+            @Override
+            public void run() {
+                if (!isAdded() || !SleepTimerManager.getInstance().isEndOfTrack()) return;
+                if (fadeStarted) return; // fade is already running — stop polling
+
+                long duration = mediaBrowser.getDuration();
+                long position = mediaBrowser.getCurrentPosition();
+
+                if (duration > 0 && duration != androidx.media3.common.C.TIME_UNSET) {
+                    long remaining = duration - position;
+                    if (remaining > 0 && remaining <= FADE_DURATION_MS) {
+                        fadeStarted = true;
+                        startFadeOutThenPause(mediaBrowser);
+                        return; // don't reschedule — fade has taken over
+                    }
+                }
+                endOfTrackHandler.postDelayed(this, 500);
+            }
+        };
+        endOfTrackHandler.post(endOfTrackPoller);
+    }
+
+    private void stopEndOfTrackPoller() {
+        if (endOfTrackPoller != null) {
+            endOfTrackHandler.removeCallbacks(endOfTrackPoller);
+            endOfTrackPoller = null;
+        }
+    }
+
+    /**
+     * Refreshes the sleep timer button tint and the countdown label to
+     * reflect the current timer state. Safe to call from any thread because
+     * {@link SleepTimerManager} always invokes the tick listener on the
+     * main thread.
+     */
+    private void updateSleepTimerUI() {
+        if (sleepTimerButton == null || sleepTimerLabel == null) return;
+
+        boolean active = SleepTimerManager.getInstance().isActive();
+
+        if (active) {
+            boolean isEndOfTrack = SleepTimerManager.getInstance().isEndOfTrack();
+            String label = isEndOfTrack
+                    ? getString(R.string.sleep_timer_end_of_track_label)
+                    : SleepTimerManager.getInstance().getRemainingFormatted();
+            sleepTimerLabel.setText(label);
+            sleepTimerLabel.setVisibility(View.VISIBLE);
+            int accentColor = com.google.android.material.color.MaterialColors.getColor(
+                    sleepTimerButton, com.google.android.material.R.attr.colorPrimary);
+            ImageViewCompat.setImageTintList(sleepTimerButton,
+                    ColorStateList.valueOf(accentColor));
+        } else {
+            sleepTimerLabel.setVisibility(View.GONE);
+            sleepTimerLabel.setText("");
+            int defaultColor = com.google.android.material.color.MaterialColors.getColor(
+                    sleepTimerButton, com.google.android.material.R.attr.colorOnSurface);
+            ImageViewCompat.setImageTintList(sleepTimerButton,
+                    ColorStateList.valueOf(defaultColor));
+        }
+    }
+
     private void initCoverLyricsSlideView() {
         playerMediaCoverViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         playerMediaCoverViewPager.setAdapter(new PlayerControllerHorizontalPager(this));
@@ -714,22 +933,22 @@ public class PlayerControllerFragment extends Fragment {
             EqualizerManager eqManager = mediaServiceBinder.getEqualizerManager();
             short numBands = eqManager.getNumberOfBands();
 
-            if (equalizerButton != null) {
+            if (equalizerButton != null && sleepTimerContainer != null) {
+                ConstraintLayout.LayoutParams sleepParams =
+                        (ConstraintLayout.LayoutParams) sleepTimerContainer.getLayoutParams();
                 if (numBands == 0) {
                     equalizerButton.setVisibility(View.GONE);
-
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerOpenQueueButton.getLayoutParams();
-                    params.startToEnd = ConstraintLayout.LayoutParams.UNSET;
-                    params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-                    playerOpenQueueButton.setLayoutParams(params);
+                    // Equalizer gone: anchor sleep timer to parent start so the
+                    // two remaining buttons (sleep timer + queue) stay centred.
+                    sleepParams.startToEnd = ConstraintLayout.LayoutParams.UNSET;
+                    sleepParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
                 } else {
                     equalizerButton.setVisibility(View.VISIBLE);
-
-                    ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) playerOpenQueueButton.getLayoutParams();
-                    params.startToStart = ConstraintLayout.LayoutParams.UNSET;
-                    params.startToEnd = R.id.player_open_equalizer_button;
-                    playerOpenQueueButton.setLayoutParams(params);
+                    // Equalizer visible: restore the three-button spread chain.
+                    sleepParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
+                    sleepParams.startToEnd = R.id.player_open_equalizer_button;
                 }
+                sleepTimerContainer.setLayoutParams(sleepParams);
             }
         }
     }

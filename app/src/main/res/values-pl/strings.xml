@@ -13,10 +13,17 @@
     <string name="aa_random">Losowe</string>
 	<string name="aa_genres">Gatunki</string>
     <string name="aa_recent_albums">Ostatnie</string>
-    <string name="aa_song_recently_played">Odtwarzane piosenki</string>
+    <string name="aa_song_recently_played">Odtwarzane utwory</string>
+	<string name="aa_starred">Oznaczone gwiazdką</string>
     <string name="aa_starred_albums">★ Albumy</string>
     <string name="aa_starred_artists">★ Wykonawcy</string>
     <string name="aa_starred_tracks">★ Utwory</string>
+	<string name="aa_instant_mix">Natychmiastowy mix</string>
+    <string name="aa_view_by_albums">Wyświetlaj według albumów</string>
+    <string name="aa_tracks">Utwory</string>
+	<string name="aa_quick_mix">Szybki mix</string>
+    <string name="aa_my_mix">Mój mix</string>
+    <string name="aa_discovery_mix">Mix odkrywania</string>
     <string name="activity_battery_optimizations_conclusion">Jeżeli masz problemy odwiedź stronę https://dontkillmyapp.com. Podaje ona dokładne instrukcje na temat tego jak wyłączyć funkcje oszczędzania energii które mogą wpływać na wydajność aplikacji.</string>
     <string name="activity_battery_optimizations_summary">Wyłącz optymalizacje baterii aby odtwarzać media przy wyłączonym ekranie.</string>
     <string name="activity_battery_optimizations_title">Optymalizcje Baterii</string>
@@ -107,6 +114,14 @@
     <string name="download_storage_external_dialog_positive_button">Zewnętrzna</string>
     <string name="download_storage_internal_dialog_negative_button">Wewnętrzna</string>
     <string name="download_title_section">Pobrane</string>
+	    <string name="download_refresh_no_directory">Ustaw folder pobierania do odświeżania twoich pobrań.</string>
+    <string name="download_refresh_no_changes">Nie znaleziono brakujących pobrań.</string>
+    <plurals name="download_refresh_removed">
+        <item quantity="one">Usunięto %d brakujące pobranie.</item>
+		<item quantity="few">Usunięto %d brakujące pobrania</item>
+        <item quantity="many">Usunięto %d brakujących pobrań.</item>
+        <item quantity="other">Usunięto %d brakujących pobrań.</item>
+    </plurals>
     <string name="downloaded_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
     <string name="downloaded_bottom_sheet_play_next">Odtwarzaj jako następne</string>
     <string name="downloaded_bottom_sheet_remove">Usuń</string>
@@ -226,6 +241,7 @@
     <string name="menu_sort_artist">Wykonawca</string>
     <string name="menu_sort_name">Nazwa</string>
     <string name="menu_sort_random">Losowo</string>
+	<string name="menu_sort_album_count">Liczba albumów</string>
     <string name="menu_sort_recently_added">Ostatnio dodane</string>
     <string name="menu_sort_recently_played">Ostatnio odtwarzane</string>
     <string name="menu_sort_most_played">Najczęściej odtwarzane</string>
@@ -262,6 +278,8 @@
     <string name="playlist_chooser_dialog_toast_all_skipped">Pominięto wszystkie piosenki jako duplikaty</string>
     <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
+	<string name="playlist_chooser_dialog_visibility_switch_label">Oznacz playlistę jako publiczną</string>
+    <string name="playlist_chooser_dialog_visibility_summary">Serwer aktualizuje widoczność podczas każdego zapytania. Domyślnie jest ustawiona na prywatną.</string>
     <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
     <string name="playlist_duration">Długość  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
@@ -399,7 +417,10 @@
 	<string name="settings_androidauto_third_tab">Trzecia zakładka</string>
 	<string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
 	<string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
+	<string name="settings_androidauto_shuffle_starred_tracks">Odtwarzaj losowo utwory oznaczone gwiazdką</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
+	<string name="settings_androidauto_artists_view">Wykonawcy są wyświetlani według albumu</string>
+	<string name="settings_androidauto_starred_for_made_for_you">Oznaczone gwiazdką do mixu stworzonego dla ciebie</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
@@ -419,7 +440,7 @@
     <string name="settings_hide_bottom_navbar_on_portrait_summary">Eksperymentalne. Zwiększa ilość miejsca w pionie przez usunięcie dolnego paska nawigacji. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
     <string name="settings_auto_download_lyrics_summary">Automatycznie zapisuj teksty jeżeli, są dostępne aby, mogły być wyświetlane offline.</string>
-    <string name="settings_replay_gain">Tryb wzmocnienia głośności przy ponownym odtwarzaniu</string>
+    <string name="settings_replay_gain">Normalizacja głośności (ReplayGain)</string>
     <string name="settings_rounded_corner">Zaokrąglone rogi</string>
     <string name="settings_rounded_corner_size">Rozmiar rogów</string>
     <string name="settings_rounded_corner_size_summary">Ustawia wielkość krzywizny kąta.</string>
@@ -432,7 +453,8 @@
     <string name="settings_streaming_cache_storage_title">Pamięć cache dla strumieniowania</string>
     <string name="settings_sub_summary_scrobble">Ważne jest to że scrobbling polega też na byciu włączonym na serwerze aby otrzymywać te dane.</string>
     <string name="settings_summary_skip_min_star_rating">Podczas słuchania radia wykonawcy, natychmiastowego miksu albo podczas odtwarzania losowego, utwory poniżej określonej oceny użytkownika będą ignorowane.</string>
-    <string name="settings_summary_replay_gain">Wzmocnienie głośności jest funkcją która pozwala tobie na ustawienia poziomu głośności dla utworów aby słuchanie brzmiało cały czas tak samo. To ustawienia działa tylko wtedy kiedy utwór zawiera potrzebne metadane.</string>
+    <string name="settings_summary_replay_gain">Normalizuje poziom głośności utworów. Pliki muszą zawierać odpowiednie metadane.</string>
+	<string name="settings_summary_loudness">Pozwala poprawić głośność urządzenia odtwarzającego dźwięk (np. głośników).\n\nJest zalecane dla ReplayGain -6, to pomoże uniknąć konfliktów z powstrzymywaniem przycinania.</string>
     <string name="settings_summary_scrobble">Scrobbling jest funkcją która pozwala twojemu urządzeniu na wysyłanie informacji na temat piosenek których słuchasz do serwera muzyki. Te informacje pomagają tworzyć spersonalizowane rekomendacje na podstawie twojego gustu muzycznego.</string>
     <string name="settings_summary_share">Pozwala udostępnić użytkownikowi muzykę przez link. Ta funkcjonalność musi być wspierana i włączona na serwerze i jest ograniczona do pojedyńczych utworów, albumów i playlist.</string>
     <string name="settings_summary_syncing">Przywraca stan kolejki odtwarzania dla tego użytkownika. Zawiera utwory w kolejce, aktualnie odtwarzany utwór i pozycję w nim. Serwer musi wspierać tę funkcję.\n*To ustawienie nie działa na 100% na wszystkich serwerach/urządzeniach.</string>
@@ -451,13 +473,22 @@
     <string name="settings_tile_size">Rozmiar kafelków</string>
     <string name="settings_title_data">Dane</string>
     <string name="settings_title_general">Ogólne</string>
+	<string name="settings_title_misc">Różne</string>
+    <string name="settings_title_players">Odtwarzanie</string>
     <string name="settings_title_playlist">Playlisty</string>
     <string name="settings_title_rating">Oceny</string>
+	<string name="settings_title_loudness">Poprawa głośności</string>
+    <string name="settings_loudness_preamp_title">Wstępne wzmocnienie</string>
+    <string name="settings_loudness_preamp_summary">Ustaw wartości pozytywne dla głośniejszych dźwięków.\nUstaw wartości negatywne dla cichszych dźwięków.</string>
+    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_title_replay_gain">Wzmocnienie głośności przy ponownym odtwarzaniu</string>
+	<string name="settings_replay_gain_prevent_clipping_title">Powstrzymuj przycinanie</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Zmniejsz wzmocnienie gdy tag szczytu głośności utworu lub albumu pokazuje że sygnał zostanie przycięty po zastosowaniu ReplayGain.</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_skip_min_star_rating">Ignoruj utwory na podstawie oceny</string>
     <string name="settings_title_skip_min_star_rating_dialog">Piosenki z oceną:</string>
     <string name="settings_title_share">Udostępnianie</string>
+	<string name="settings_title_sound">Dźwięk</string>
     <string name="settings_title_syncing">Synchronizacja</string>
     <string name="settings_title_transcoding">Transkodowanie</string>
     <string name="settings_title_transcoding_download">Transkodowanie Pobrań</string>
@@ -533,6 +564,7 @@
     <string name="streaming_cache_storage_dialog_title">Wybieranie pamięci</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">Zewnętrzna</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Wewnętrzna</string>
+	<string name="download_storage_directory_dialog_neutral_button">Katalog</string>
     <string name="support_url">https://ko-fi.com/eddyizm</string>
     <string name="track_info_album">Album</string>
     <string name="track_info_artist">Wykonawca</string>
@@ -577,7 +609,7 @@
         <item quantity="one">%d album do zsynchronizowania </item>
 		<item quantity="few">%d albumy do zsynchronizowania</item>
         <item quantity="many">%d albumów do zsynchronizowania</item>
-        <item quantity="other">%d albumów do zsynchrpnizowania</item>
+        <item quantity="other">%d albumów do zsynchronizowania</item>
     </plurals>
     <plurals name="home_sync_starred_artists_count">
         <item quantity="one">%d wykonawca do zsynchronizowania</item>
@@ -606,4 +638,55 @@
     <string name="search_all_songs">Wszystkie %1$s piosenek</string>
     <string name="search_all_songs_play">Odtwórz %1$s</string>
 	<string name="nav_drawer_index">Indeks</string>
+	    <string name="sleep_timer_dialog_title">Wyłącznik czasowy</string>
+    <string name="sleep_timer_dialog_active_message">Wyłącznik włączony — pozostało %1$s</string>
+    <string name="sleep_timer_dialog_cancel_timer">Anuluj wyłączanie</string>
+    <string name="sleep_timer_dialog_close">Zamknij</string>
+    <string name="sleep_timer_custom_hint">Wpisz liczbę minut</string>
+    <string name="sleep_timer_custom_set">Ustaw</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Zatrzymaj po tej piosence</string>
+    <string name="sleep_timer_end_of_track_label">Koniec utworu</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minut</item>
+        <item>10 minut</item>
+        <item>15 minut</item>
+        <item>20 minut</item>
+        <item>30 minut</item>
+        <item>45 minut</item>
+        <item>60 minut</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Niestandardowwy\u2026</item>
+    </string-array>
+	
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus przestał działać.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Informacja</string>
+    <string name="ca_info_title">Tempus przestał działać</string>
+    <string name="ca_info_description">
+        Otwórz problem na GitHubie i załącz kopię logów, aby pomóć z tym problemem.
+    </string>
+    <string name="ca_info_button_close">Zamknij aplikację</string>
+    <string name="ca_info_button_restart">Uruchom aplikację ponownie</string>
+
+    <string name="ca_logs_label">Logi</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+    <string name="ca_logs_description">
+        To poszło nie tak.
+    </string>
+    <string name="ca_export_button_copy">Skopiuj log</string>
+    <string name="ca_export_button_share">Udostępnij log</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Log copied do schowka</string>
+
+    <string name="ca_export_label">Eksportuj</string>
+    <string name="ca_export_title">Przechwycenie logów</string>
+    <string name="ca_export_description">
+        Apk debug (wersje testowe) podają bardziej dokładne logi i pomaga nam
+        zrozumieć co poszło nie tak w aplikacji.\n\n
+
+        Te dane nie są nigdzie wysyłane bez twojej zgody.
+    </string>
 </resources>
