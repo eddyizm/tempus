@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.service
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
@@ -30,14 +29,10 @@ import androidx.media3.session.MediaSession.ControllerInfo
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
-import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
-import com.google.common.collect.ImmutableList
-import com.google.common.util.concurrent.Futures
-import com.google.common.util.concurrent.ListenableFuture
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
@@ -50,16 +45,6 @@ private const val TAG = "BaseMediaService"
 @UnstableApi
 open class BaseMediaService : MediaLibraryService() {
     companion object {
-        private const val CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON =
-            "android.media3.session.demo.SHUFFLE_ON"
-        private const val CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF =
-            "android.media3.session.demo.SHUFFLE_OFF"
-        private const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF =
-            "android.media3.session.demo.REPEAT_OFF"
-        private const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE =
-            "android.media3.session.demo.REPEAT_ONE"
-        private const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL =
-            "android.media3.session.demo.REPEAT_ALL"
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
     }
@@ -99,7 +84,7 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     open fun getMediaLibrarySessionCallback(): MediaLibrarySession.Callback {
-        return CustomMediaLibrarySessionCallback(baseContext)
+        return BaseSessionCallback(baseContext)
     }
 
     fun updateMediaItems(player: Player) {
@@ -770,143 +755,6 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private fun getMediaSourceFactory(): MediaSource.Factory = DynamicMediaSourceFactory(this)
-
-    @UnstableApi
-    private class CustomMediaLibrarySessionCallback : MediaLibrarySession.Callback {
-        private val shuffleCommands: List<CommandButton>
-        private val repeatCommands: List<CommandButton>
-
-        constructor(ctx: Context) {
-            shuffleCommands = listOf(
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON,
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF
-            )
-                .map { getShuffleCommandButton(SessionCommand(it, Bundle.EMPTY), ctx) }
-            repeatCommands = listOf(
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF,
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE,
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL
-            )
-                .map { getRepeatCommandButton(SessionCommand(it, Bundle.EMPTY), ctx) }
-        }
-
-        override fun onConnect(
-            session: MediaSession,
-            controller: ControllerInfo
-        ): MediaSession.ConnectionResult {
-            val connectionResult = super.onConnect(session, controller)
-            val availableSessionCommands = connectionResult.availableSessionCommands.buildUpon()
-
-            (shuffleCommands + repeatCommands).forEach { commandButton ->
-                commandButton.sessionCommand?.let { availableSessionCommands.add(it) }
-            }
-
-            val result = MediaSession.ConnectionResult.AcceptedResultBuilder(session)
-                .setAvailableSessionCommands(availableSessionCommands.build())
-                .setAvailablePlayerCommands(connectionResult.availablePlayerCommands)
-                .setMediaButtonPreferences(buildCustomLayout(session.player))
-                .build()
-            return result
-        }
-
-        override fun onCustomCommand(
-            session: MediaSession,
-            controller: ControllerInfo,
-            customCommand: SessionCommand,
-            args: Bundle
-        ): ListenableFuture<SessionResult> {
-            Log.d(TAG, "onCustomCommand")
-            when (customCommand.customAction) {
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON -> session.player.shuffleModeEnabled = true
-                CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF -> session.player.shuffleModeEnabled = false
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF,
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL,
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE -> {
-                    val nextMode = when (session.player.repeatMode) {
-                        Player.REPEAT_MODE_ONE -> Player.REPEAT_MODE_ALL
-                        Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ONE
-                        else -> Player.REPEAT_MODE_OFF
-                    }
-                    session.player.repeatMode = nextMode
-                }
-            }
-
-            session.setMediaButtonPreferences(buildCustomLayout(session.player))
-            return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
-        }
-
-        override fun onAddMediaItems(
-            mediaSession: MediaSession,
-            controller: ControllerInfo,
-            mediaItems: List<MediaItem>
-        ): ListenableFuture<List<MediaItem>> {
-            Log.d(TAG, "onAddMediaItems")
-            val updatedMediaItems = mediaItems.map { mediaItem ->
-                val mediaMetadata = mediaItem.mediaMetadata
-                val newMetadata = mediaMetadata.buildUpon()
-                    .setArtist(
-                        if (mediaMetadata.artist != null) mediaMetadata.artist
-                        else mediaMetadata.extras?.getString("uri") ?: ""
-                    )
-                    .build()
-
-                mediaItem.buildUpon()
-                    .setUri(mediaItem.requestMetadata.mediaUri)
-                    .setMediaMetadata(newMetadata)
-                    .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
-                    .build()
-            }
-            return Futures.immediateFuture(updatedMediaItems)
-        }
-
-        @SuppressLint("PrivateResource")
-        private fun getShuffleCommandButton(
-            sessionCommand: SessionCommand,
-            ctx: Context
-        ): CommandButton {
-            val isOn = sessionCommand.customAction == CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON
-            return CommandButton.Builder(if (isOn) CommandButton.ICON_SHUFFLE_OFF else CommandButton.ICON_SHUFFLE_ON)
-                .setSessionCommand(sessionCommand)
-                .setDisplayName(
-                    ctx.getString(
-                        if (isOn) R.string.exo_controls_shuffle_on_description
-                        else R.string.exo_controls_shuffle_off_description
-                    )
-                )
-                .build()
-        }
-
-        @SuppressLint("PrivateResource")
-        private fun getRepeatCommandButton(
-            sessionCommand: SessionCommand,
-            ctx: Context
-        ): CommandButton {
-            val icon = when (sessionCommand.customAction) {
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE -> CommandButton.ICON_REPEAT_ONE
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL -> CommandButton.ICON_REPEAT_ALL
-                else -> CommandButton.ICON_REPEAT_OFF
-            }
-            val description = when (sessionCommand.customAction) {
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE -> R.string.exo_controls_repeat_one_description
-                CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL -> R.string.exo_controls_repeat_all_description
-                else -> R.string.exo_controls_repeat_off_description
-            }
-            return CommandButton.Builder(icon)
-                .setSessionCommand(sessionCommand)
-                .setDisplayName(ctx.getString(description))
-                .build()
-        }
-
-        private fun buildCustomLayout(player: Player): ImmutableList<CommandButton> {
-            val shuffle = shuffleCommands[if (player.shuffleModeEnabled) 1 else 0]
-            val repeat = when (player.repeatMode) {
-                Player.REPEAT_MODE_ONE -> repeatCommands[1]
-                Player.REPEAT_MODE_ALL -> repeatCommands[2]
-                else -> repeatCommands[0]
-            }
-            return ImmutableList.of(shuffle, repeat)
-        }
-    }
 
     private inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
         var wasWifi = false
