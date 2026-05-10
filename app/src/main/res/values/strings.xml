@@ -242,13 +242,16 @@
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_random">Random</string>
     <string name="menu_sort_album_count">Album Count</string>
+    <string name="menu_sort_song_count">Song Count</string>
+    <string name="menu_sort_date_created">Date Created</string>
     <string name="menu_sort_recently_added">Recently added</string>
     <string name="menu_sort_recently_played">Recently played</string>
     <string name="menu_sort_most_played">Most played</string>
     <string name="menu_sort_most_recently_starred">Most recently starred</string>
     <string name="menu_sort_least_recently_starred">Least recently starred</string>
-    <string name="menu_pin_button">Add to home screen</string>
-    <string name="menu_unpin_button">Remove from home screen</string>
+    <string name="menu_pin_button">Add to faves</string>
+    <string name="menu_unpin_button">Remove from faves</string>
+    <string name="playlist_sort_pinned">Faves</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
@@ -470,6 +473,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
     <string name="settings_theme">Theme</string>
+    <string name="settings_dark_theme_style">Dark theme style</string>
 	<string name="settings_tile_size">Tiles size</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
@@ -642,6 +646,28 @@
 
     <string name="nav_drawer_index">Index</string>
 
+    <!-- Sleep timer -->
+    <string name="sleep_timer_dialog_title">Sleep Timer</string>
+    <string name="sleep_timer_dialog_active_message">Timer active — %1$s remaining</string>
+    <string name="sleep_timer_dialog_cancel_timer">Cancel Timer</string>
+    <string name="sleep_timer_dialog_close">Close</string>
+    <string name="sleep_timer_custom_hint">Enter minutes</string>
+    <string name="sleep_timer_custom_set">Set</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Stop after this song</string>
+    <string name="sleep_timer_end_of_track_label">End of track</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>30 minutes</item>
+        <item>45 minutes</item>
+        <item>60 minutes</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Custom\u2026</item>
+    </string-array>
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
 
     <!-- Crash Activity -->

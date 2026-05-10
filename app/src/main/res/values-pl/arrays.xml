@@ -305,9 +305,9 @@
         <item>Foldery</item>
         <item>Najczęściej odtwarzane albumy</item>
         <item>Dodane albumy</item>
-        <item>For you</item>
-        <item>Starred</item>
-        <item>Tracks</item>
+        <item>Dla ciebie</item>
+        <item>Oznaczone gwiazdką</item>
+        <item>Utwory</item>
 		<item>Gatunki</item>
     </string-array>
     <string-array name="aa_tab_values">
