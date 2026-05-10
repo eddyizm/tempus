@@ -9,7 +9,16 @@
         <item>ciemny</item>
         <item>domyślny</item>
     </string-array>
-
+	
+	<string-array name="dark_theme_style_titles">
+        <item>Standardowy</item>
+        <item>AMOLED (Czysta czerń)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+	
     <string-array name="pref_cache_size_titles">
         <item>Duży</item>
         <item>Średni</item>
