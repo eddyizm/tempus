@@ -65,16 +65,19 @@ public class ExternalAudioWriter {
     }
 
     public static void downloadToUserDirectory(Context context, Child child) {
-        if (context == null || child == null) {
-            return;
-        }
+        downloadToUserDirectory(context, child, null, null);
+    }
+
+    public static void downloadToUserDirectory(Context context, Child child, String playlistId, String playlistName) {
+        if (context == null || child == null) return;
         Context appContext = context.getApplicationContext();
         MediaItem mediaItem = MappingUtil.mapDownload(child);
         String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
-        EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child));
+        
+        EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName));
     }
 
-    private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child) {
+    private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
             notifyUnavailable(context);
@@ -201,7 +204,7 @@ public class ExternalAudioWriter {
                 }
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
-                    recordDownload(child, existingFile.getUri());
+                    recordDownload(child, existingFile.getUri(), playlistId, playlistName);
                     ExternalAudioReader.refreshCacheAsync();
                     notifyExists(context, fileName);
                     return;
@@ -250,7 +253,7 @@ public class ExternalAudioWriter {
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
-                recordDownload(child, targetUri);
+                recordDownload(child, targetUri, playlistId, playlistName);
                 notifySuccess(context, fileName, child, targetUri);
                 ExternalAudioReader.refreshCacheAsync();
             }
@@ -312,19 +315,20 @@ public class ExternalAudioWriter {
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
-    private static void recordDownload(Child child, Uri fileUri) {
-        if (child == null) {
-            return;
-        }
+    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName) {
+        if (child == null) return;
 
         Download download = new Download(child);
         download.setDownloadState(1);
+        download.setPlaylistId(playlistId);
+        download.setPlaylistName(playlistName);
+
         if (fileUri != null) {
             download.setDownloadUri(fileUri.toString());
         }
 
         new DownloadRepository().insert(download);
-    }
+    }   
 
     private static void notifyExists(Context context, String name) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
