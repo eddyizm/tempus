@@ -6,4 +6,13 @@
     <item
         android:id="@+id/menu_playlist_sort_random"
         android:title="@string/menu_sort_random" />
+    <item
+        android:id="@+id/menu_playlist_sort_pinned"
+        android:title="@string/playlist_sort_pinned" />
+    <item
+        android:id="@+id/menu_playlist_sort_date"
+        android:title="@string/menu_sort_date_created" />
+    <item
+        android:id="@+id/menu_playlist_sort_songs"
+        android:title="@string/menu_sort_song_count" />
 </menu>

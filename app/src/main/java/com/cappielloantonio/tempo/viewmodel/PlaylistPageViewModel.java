@@ -3,17 +3,21 @@ package com.cappielloantonio.tempo.viewmodel;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.media3.common.util.UnstableApi;
 
+import com.cappielloantonio.tempo.model.PinnedPlaylist;
 import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 import java.util.List;
 
+@UnstableApi
 public class PlaylistPageViewModel extends AndroidViewModel {
     private final PlaylistRepository playlistRepository;
 
@@ -63,21 +67,25 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     public LiveData<Boolean> isPinned(LifecycleOwner owner) {
         MutableLiveData<Boolean> isPinnedLive = new MutableLiveData<>();
 
         playlistRepository.getPinnedPlaylists().observe(owner, playlists -> {
-            isPinnedLive.postValue(playlists.stream().anyMatch(obj -> obj.getId().equals(playlist.getId())));
+            isPinnedLive.postValue(playlists.stream().anyMatch(obj -> obj.getPlaylistId().equals(playlist.getId())));
         });
 
         return isPinnedLive;
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     public void setPinned(boolean isNowPinned) {
+        playlistRepository.insert(playlist);
+
         if (isNowPinned) {
-            playlistRepository.insert(playlist);
+            playlistRepository.pin(playlist.getId());
         } else {
-            playlistRepository.delete(playlist);
+            playlistRepository.unpin(playlist.getId());
         }
     }
 }

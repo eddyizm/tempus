@@ -719,11 +719,12 @@ object Preferences {
 
     @JvmStatic
     fun getHomeSortPlaylists(): String {
-        return App.getInstance().preferences.getString(HOME_SORT_PLAYLISTS, DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER) ?: DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER
+        return App.getInstance().preferences.getString(HOME_SORT_PLAYLISTS, DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER)
+            ?: DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER
     }
 
-        @JvmStatic
-    fun getHomeSortPlaylists(sortOrder: String) {
+    @JvmStatic
+    fun setHomeSortPlaylists(sortOrder: String) {
         App.getInstance().preferences.edit().putString(HOME_SORT_PLAYLISTS, sortOrder).apply()
     }
 

@@ -243,10 +243,16 @@
     <string-array name="playlist_sort_option_titles">
         <item>Name</item>
         <item>Random</item>
+        <item>Date Created</item>
+        <item>Song Count</item>
+        <item>Faved</item>
     </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>
         <item>ORDER_BY_RANDOM</item>
+        <item>ORDER_BY_DATE</item>
+        <item>ORDER_BY_SONGS</item>
+        <item>ORDER_BY_PINNED</item>
     </string-array>
 
 
