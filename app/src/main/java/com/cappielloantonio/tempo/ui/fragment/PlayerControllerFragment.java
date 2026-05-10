@@ -200,9 +200,13 @@ public class PlayerControllerFragment extends Fragment {
         playerOpenLyricsButton.setOnClickListener(view -> {
             int currentItem = playerMediaCoverViewPager.getCurrentItem();
             if (currentItem == 0) {
-                playerMediaCoverViewPager.setCurrentItem(1, true);
+                playerMediaCoverViewPager.setCurrentItem(1, false);
+                playerCoverFlow.setVisibility(View.GONE);
+                playerMediaCoverViewPager.setVisibility(View.VISIBLE);
             } else if (currentItem == 1) {
-                playerMediaCoverViewPager.setCurrentItem(0, true);;
+                playerMediaCoverViewPager.setCurrentItem(0, false);
+                playerCoverFlow.setVisibility(View.VISIBLE);
+                playerMediaCoverViewPager.setVisibility(View.GONE);
             }
 
         });
