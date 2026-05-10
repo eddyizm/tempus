@@ -2,15 +2,22 @@ package com.cappielloantonio.tempo.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.InsetDrawable;
+import android.view.View;
 
 import androidx.core.os.LocaleListCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.LinearSnapHelper;
+import androidx.recyclerview.widget.PagerSnapHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.R;
 
+import org.jspecify.annotations.NonNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -110,6 +117,81 @@ public class UIUtil {
         }
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
         return formatter.format(date);
+    }
+
+    public static RecyclerView.ItemDecoration horizontalSpacing(int spacingPx) {
+        return new HorizontalSpacingItemDecoration(spacingPx);
+    }
+
+    public static RecyclerView.OnScrollListener scaleOnScroll() {
+        return new ScaleOnScrollListener();
+    }
+
+    private static class HorizontalSpacingItemDecoration extends RecyclerView.ItemDecoration {
+        private final int spacingPx;
+
+        HorizontalSpacingItemDecoration(int spacingPx) {
+            this.spacingPx = spacingPx;
+        }
+
+        @Override
+        public void getItemOffsets(@NonNull Rect outRect,
+                                   @NonNull View view,
+                                   @NonNull RecyclerView parent,
+                                   RecyclerView.@NonNull State state) {
+            int pos = parent.getChildAdapterPosition(view);
+            outRect.left  = (pos == 0) ? spacingPx : 0;
+            outRect.right = spacingPx;
+        }
+    }
+
+    private static class ScaleOnScrollListener extends RecyclerView.OnScrollListener {
+        private static final float MAX = 1.0f;
+        private static final float MIN = 0.70f;
+        private static final float ELEVATION_FACTOR = 8f;
+
+        @Override
+        public void onScrolled(@NonNull RecyclerView rv, int dx, int dy) {
+            final float centerX = rv.getWidth() / 2f;
+
+            for (int i = 0; i < rv.getChildCount(); i++) {
+                View child = rv.getChildAt(i);
+
+                float childCenter = (child.getLeft() + child.getRight()) / 2f;
+                float distance    = Math.abs(centerX - childCenter);
+                float scale       = MAX - (distance / centerX) * (MAX - MIN);
+
+                child.setScaleX(scale);
+                child.setScaleY(scale);
+                child.setElevation(scale * ELEVATION_FACTOR);
+            }
+        }
+    }
+
+    public static void centerAndSnapRecyclerView(@NonNull RecyclerView rv) {
+        final PagerSnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(rv);
+
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView,
+                                             int newState) {
+                if (newState != RecyclerView.SCROLL_STATE_IDLE) return;
+
+                RecyclerView.LayoutManager lm = recyclerView.getLayoutManager();
+                if (!(lm instanceof LinearLayoutManager)) return;
+
+                View snapView = snapHelper.findSnapView(lm);
+                if (snapView == null) return;
+
+                int[] distance = snapHelper.calculateDistanceToFinalSnap(lm, snapView);
+                if (distance == null) return;
+
+                if (distance[0] != 0 || distance[1] != 0) {
+                    recyclerView.smoothScrollBy(distance[0], distance[1]);
+                }
+            }
+        });
     }
 
 }
