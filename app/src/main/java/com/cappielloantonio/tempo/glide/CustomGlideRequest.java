@@ -82,6 +82,7 @@ public class CustomGlideRequest {
     }
 
     public static String createUrl(String item, int size) {
+        // TODO Removed log statement but we should considering caching cover art using a hash
         Map<String, String> params = App.getSubsonicClientInstance(false).getParams();
 
         StringBuilder uri = new StringBuilder();
@@ -105,8 +106,6 @@ public class CustomGlideRequest {
             uri.append("&size=").append(size);
 
         uri.append("&id=").append(item);
-
-        Log.d(TAG, "createUrl() " + uri);
 
         return uri.toString();
     }
