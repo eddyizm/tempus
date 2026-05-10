@@ -460,6 +460,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Si está activado, tus canciones favoritas serán descargadas para uso sin conexión.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sincronizar canciones favoritas para uso sin conexión</string>
     <string name="settings_theme">Tema</string>
+    <string name="settings_dark_theme_style">Estilo del tema oscuro</string>
     <string name="settings_tile_size">Tamaño de los elementos</string>
     <string name="settings_title_data">Almacenamiento</string>
     <string name="settings_title_general">General</string>
