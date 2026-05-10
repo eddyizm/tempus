@@ -10,6 +10,15 @@
         <item>default</item>
     </string-array>
 
+    <string-array name="dark_theme_style_titles">
+        <item>Standard</item>
+        <item>AMOLED (Pure black)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+
     <string-array name="pref_cache_size_titles">
         <item>High</item>
         <item>Medium</item>
@@ -313,9 +322,7 @@
         <item>Albums most played</item>
         <item>Albums added</item>
         <item>For you</item>
-        <item>Star tracks</item>
-        <item>Star albums</item>
-        <item>Star artists</item>
+        <item>Starred</item>
         <item>Tracks</item>
         <item>Genres</item>
     </string-array>

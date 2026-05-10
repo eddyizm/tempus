@@ -106,6 +106,8 @@ object Preferences {
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
     private const val AA_STARRED_FOR_MADE_FOR_YOU ="androidauto_starred_for_made_for_you"
+    private const val DARK_THEME_STYLE = "dark_theme_style"
+    private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -844,10 +846,35 @@ object Preferences {
     fun getAndroidAutoFourthTab(): Int {
         return App.getInstance().preferences.getString(AA_FOURTH_TAB, "3")!!.toInt()
     }
-	
+
+    @JvmStatic
+    fun resetAndroidAutoFirstTab() {
+        App.getInstance().preferences.edit().putString(AA_FIRST_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoSecondTab() {
+        App.getInstance().preferences.edit().putString(AA_SECOND_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoThirdTab() {
+        App.getInstance().preferences.edit().putString(AA_THIRD_TAB,"-1").apply()
+    }
+
+    @JvmStatic
+    fun resetAndroidAutoFourthTab() {
+        App.getInstance().preferences.edit().putString(AA_FOURTH_TAB,"-1").apply()
+    }
+
     @JvmStatic
     fun isAndroidAutoShuffleGenreSongsEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_SHUFFLE_GENRE_SONGS, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoShuffleStarredTracksEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_STARRED_TRACKS, false)
     }
 
     @JvmStatic
@@ -858,5 +885,25 @@ object Preferences {
     @JvmStatic
     fun getAndroidAutoStarredForMadeForYou(): Int {
         return App.getInstance().preferences.getString(AA_STARRED_FOR_MADE_FOR_YOU, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getTheme(): String {
+        return App.getInstance().preferences.getString(THEME, "default") ?: "default"
+    }
+
+    @JvmStatic
+    fun setTheme(theme: String) {
+        App.getInstance().preferences.edit().putString(THEME, theme).apply()
+    }
+
+    @JvmStatic
+    fun getDarkThemeStyle(): String {
+        return App.getInstance().preferences.getString(DARK_THEME_STYLE, "standard") ?: "standard"
+    }
+
+    @JvmStatic
+    fun setDarkThemeStyle(style: String) {
+        App.getInstance().preferences.edit().putString(DARK_THEME_STYLE, style).apply()
     }
 }

@@ -273,8 +273,10 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredSongs() {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredSongs(int size) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+        if (size > 500) size = 500;
+        final int maxSize = size;
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
@@ -286,6 +288,14 @@ public class AutomotiveRepository {
                             List<Child> songs = response.body().getSubsonicResponse().getStarred2().getSongs();
 
                             setChildrenMetadata(songs);
+
+                            if( !Preferences.isAndroidAutoShuffleStarredTracksEnabled() ) {
+                                songs = songs.subList(0, Math.min(maxSize, songs.size()));
+                            }
+                            else {
+                                Collections.shuffle(songs);
+                                songs = songs.subList(0, Math.min(100, songs.size()));
+                            }
 
                             List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
 
