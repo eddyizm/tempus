@@ -426,7 +426,7 @@
     <string name="settings_song_rating">Show song star rating</string>
     <string name="settings_song_rating_summary">If enabled, shows 5 star rating for track on song page\n\n*Requires App restart</string>
     <string name="settings_track_number">Show track number</string>
-    <string name="settings_track_number_summary">If enabled, shows the track number of songs in the player.</string>
+    <string name="settings_track_number_summary">If enabled, shows the track number of the song being played.</string>
     <string name="settings_item_rating">Show item rating</string>
     <string name="settings_item_rating_summary">If enabled, the item\'s rating and whether it is marked as a favorite will be displayed.</string>
     <string name="settings_queue_syncing_countdown">Sync timer</string>
