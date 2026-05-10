@@ -299,6 +299,7 @@ public class PlayerControllerFragment extends Fragment {
             return;
         }
 
+        // vvv
         playerMediaTitleLabel.setText(String.valueOf(mediaMetadata.title));
         playerArtistNameLabel.setText(
                 mediaMetadata.artist != null

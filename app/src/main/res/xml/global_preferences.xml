@@ -91,6 +91,12 @@
             android:key="song_rating_per_item" />
 
         <SwitchPreference
+            android:title="@string/settings_track_number"
+            android:defaultValue="false"
+            android:summary="@string/settings_track_number_summary"
+            android:key="track_number_visible" />
+
+        <SwitchPreference
             android:title="@string/settings_item_rating"
             android:defaultValue="false"
             android:summary="@string/settings_item_rating_summary"

@@ -27,6 +27,7 @@ object Preferences {
     private const val PLAYBACK_SPEED = "playback_speed"
     private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val QUICK_ACTION_VISIBLE = "quick_action_visible"
+    private const val TRACK_NUMBER_VISIBLE = "track_number_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -317,6 +318,15 @@ object Preferences {
     @JvmStatic
     fun setQuickActionVisible(quickActionVisible: Boolean) {
         App.getInstance().preferences.edit().putBoolean(QUICK_ACTION_VISIBLE, quickActionVisible).apply()
+    }
+
+    @JvmStatic
+    fun getTrackNumberVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(TRACK_NUMBER_VISIBLE, false)
+    }
+
+    fun setTrackNumberVisible(trackNumberVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(TRACK_NUMBER_VISIBLE, trackNumberVisible).apply()
     }
 
     @JvmStatic
