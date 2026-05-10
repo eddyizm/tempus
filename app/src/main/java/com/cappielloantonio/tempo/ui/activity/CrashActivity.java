@@ -24,6 +24,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.Objects;
+
 import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 
@@ -78,6 +80,8 @@ public class CrashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_crash);
 
         toolbar = findViewById(R.id.crash_toolbar);
+        setSupportActionBar(toolbar);
+
         FrameLayout contentFrame = findViewById(R.id.crash_content_frame);
 
         // These will be null if the view is not present in the current layout
@@ -121,43 +125,46 @@ public class CrashActivity extends AppCompatActivity {
     }
 
     private void setupBottomNav(BottomNavigationView nav) {
+        String toolbarTitle = "Crash Landing";
         nav.setOnNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.crash_nav_info) {
-                loadFragment(new CrashInfoFragment());
+                loadFragment(new CrashInfoFragment(), toolbarTitle);
                 return true;
             } else if (itemId == R.id.crash_nav_logs) {
-                loadFragment(new CrashLogsFragment());
+                loadFragment(new CrashLogsFragment(), toolbarTitle);
                 return true;
             } else if (itemId == R.id.crash_nav_export) {
-                loadFragment(new CrashExportFragment());
+                loadFragment(new CrashExportFragment(), toolbarTitle);
                 return true;
             }
             return false;
         });
 
-        // nav.setSelectedItemId(R.id.crash_nav_info);
-        loadFragment(new CrashInfoFragment());
-        nav.getMenu().findItem(R.id.crash_nav_info).setChecked(true);}
+        loadFragment(new CrashInfoFragment(), toolbarTitle);
+        nav.getMenu().findItem(R.id.crash_nav_info).setChecked(true);
+    }
 
     private void setupDrawer(DrawerLayout drawer, NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.crash_nav_info) {
-                loadFragment(new CrashInfoFragment());
+                loadFragment(new CrashInfoFragment(), getString(R.string.ca_info_title));
             } else if (itemId == R.id.crash_nav_logs) {
-                loadFragment(new CrashLogsFragment());
+                loadFragment(new CrashLogsFragment(), getString(R.string.ca_logs_title));
             } else if (itemId == R.id.crash_nav_export) {
-                loadFragment(new CrashExportFragment());
+                loadFragment(new CrashExportFragment(), getString(R.string.ca_export_title));
             }
             drawer.closeDrawers();
             return true;
         });
-        loadFragment(new CrashInfoFragment());
+        loadFragment(new CrashInfoFragment(), getString(R.string.ca_info_title));
         navigationView.setCheckedItem(R.id.crash_nav_info);
     }
 
-    private void loadFragment(Fragment fragment) {
+    private void loadFragment(Fragment fragment, String toolbarTitle) {
+        Objects.requireNonNull(getSupportActionBar())
+                .setTitle(toolbarTitle);
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.crash_content_frame, fragment)
