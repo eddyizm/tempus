@@ -37,6 +37,8 @@ import androidx.media3.session.SessionToken;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.ChangeBounds;
 import androidx.transition.Slide;
 import androidx.transition.TransitionManager;
@@ -48,10 +50,11 @@ import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBindi
 import com.cappielloantonio.tempo.service.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.cappielloantonio.tempo.ui.adapter.CoverFlowAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
 import com.cappielloantonio.tempo.ui.dialog.SleepTimerDialog;
 import com.cappielloantonio.tempo.util.SleepTimerManager;
-import androidx.core.content.ContextCompat;
+
 import androidx.core.widget.ImageViewCompat;
 import android.content.res.ColorStateList;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
@@ -61,6 +64,7 @@ import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.RatingViewModel;
 import com.google.android.material.chip.Chip;
@@ -70,6 +74,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -96,6 +101,8 @@ public class PlayerControllerFragment extends Fragment {
     private LinearLayout sleepTimerContainer;
     private ImageButton sleepTimerButton;
     private android.widget.TextView sleepTimerLabel;
+
+    private RecyclerView playerCoverFlow;
     private ChipGroup assetLinkChipGroup;
     private Chip playerSongLinkChip;
     private Chip playerAlbumLinkChip;
@@ -120,6 +127,7 @@ public class PlayerControllerFragment extends Fragment {
 
         init();
         initQuickActionView();
+        initCoverFlow();
         initCoverLyricsSlideView();
         initMediaListenable();
         initMediaLabelButton();
@@ -163,6 +171,7 @@ public class PlayerControllerFragment extends Fragment {
         playerQuickActionView = bind.getRoot().findViewById(R.id.player_quick_action_view);
         playerOpenQueueButton = bind.getRoot().findViewById(R.id.player_open_queue_button);
         playerTrackInfo = bind.getRoot().findViewById(R.id.player_info_track);
+        playerCoverFlow = bind.getRoot().findViewById(R.id.player_cover_flow);
         songRatingBar =  bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
         equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
@@ -187,6 +196,30 @@ public class PlayerControllerFragment extends Fragment {
             }
         });
     }
+
+    private void initCoverFlow() {
+
+        List<String> covers = Arrays.asList(
+                "https://images.dog.ceo/breeds/affenpinscher/n02110627_11858.jpg",
+                "https://images.dog.ceo/breeds/hound-english/n02089973_811.jpg",
+                "https://images.dog.ceo/breeds/shiba/shiba-14.jpg",
+                "https://images.dog.ceo/breeds/affenpinscher/n02110627_11858.jpg",
+                "https://images.dog.ceo/breeds/hound-english/n02089973_811.jpg",
+                "https://images.dog.ceo/breeds/shiba/shiba-14.jpg"
+        );
+
+        playerCoverFlow.setAdapter(new CoverFlowAdapter(requireContext(), covers));
+        playerCoverFlow.setLayoutManager(
+                new LinearLayoutManager(requireContext(),
+                        LinearLayoutManager.HORIZONTAL,
+                        false));
+
+        playerCoverFlow.addItemDecoration(UIUtil.horizontalSpacing(32));
+        playerCoverFlow.addOnScrollListener(UIUtil.scaleOnScroll());
+        UIUtil.centerAndSnapRecyclerView(playerCoverFlow);
+    }
+
+
 
     private void initializeBrowser() {
         mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
