@@ -29,7 +29,10 @@ import androidx.media3.session.MediaSession.ControllerInfo
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
+import com.cappielloantonio.tempo.equalizer.BuiltinBackend
+import com.cappielloantonio.tempo.equalizer.EqualizerBackend
 import com.cappielloantonio.tempo.equalizer.EqualizerManager
+import com.cappielloantonio.tempo.equalizer.ExternalBackend
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
