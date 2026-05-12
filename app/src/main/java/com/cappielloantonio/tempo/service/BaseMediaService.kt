@@ -393,7 +393,8 @@ open class BaseMediaService : MediaLibraryService() {
 
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
-                attachEqualizerIfPossible(audioSessionId)
+                equalizerManager.attachEqualizerIfPossible(audioSessionId)
+                sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
             }
         })
         if (player.isPlaying) {
@@ -482,8 +483,8 @@ open class BaseMediaService : MediaLibraryService() {
 
     private fun initializeEqualizerManager() {
         equalizerManager = EqualizerManager()
-        val audioSessionId = exoplayer.audioSessionId
-        attachEqualizerIfPossible(audioSessionId)
+        equalizerManager.attachEqualizerIfPossible(exoplayer.audioSessionId)
+        sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
     }
 
     private fun initializeMediaLibrarySession(player: Player) {
@@ -711,22 +712,6 @@ open class BaseMediaService : MediaLibraryService() {
                 updateWidget(exo)
             }
         }
-    }
-
-    private fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
-        if (audioSessionId == 0 || audioSessionId == -1) return false
-        val attached = equalizerManager.attachToSession(audioSessionId)
-        if (attached) {
-            val enabled = Preferences.isEqualizerEnabled()
-            equalizerManager.setEnabled(enabled)
-            val bands = equalizerManager.getNumberOfBands()
-            val savedLevels = Preferences.getEqualizerBandLevels(bands)
-            for (i in 0 until bands) {
-                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
-            }
-            sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
-        }
-        return attached
     }
 
     private fun getRenderersFactory(): DefaultRenderersFactory {

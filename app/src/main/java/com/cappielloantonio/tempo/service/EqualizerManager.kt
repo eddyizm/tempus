@@ -1,10 +1,26 @@
 package com.cappielloantonio.tempo.service
 
 import android.media.audiofx.Equalizer
+import com.cappielloantonio.tempo.util.Preferences
 
 class EqualizerManager {
 
     private var equalizer: Equalizer? = null
+
+    fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
+        if (audioSessionId == 0 || audioSessionId == -1) return false
+        val attached = attachToSession(audioSessionId)
+        if (attached) {
+            val enabled = Preferences.isEqualizerEnabled()
+            setEnabled(enabled)
+            val bands = getNumberOfBands()
+            val savedLevels = Preferences.getEqualizerBandLevels(bands)
+            for (i in 0 until bands) {
+                setBandLevel(i.toShort(), savedLevels[i])
+            }
+        }
+        return attached
+    }
 
     fun attachToSession(audioSessionId: Int): Boolean {
         release()
