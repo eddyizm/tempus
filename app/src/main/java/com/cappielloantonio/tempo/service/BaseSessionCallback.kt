@@ -147,12 +147,37 @@ open class BaseSessionCallback(protected val context: Context) :
             }
         })
 
+        val previousButton =
+            CommandButton.Builder(CommandButton.ICON_PREVIOUS)
+                .setPlayerCommand(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                .setDisplayName("Previous")
+                .build()
+
+        val playPauseButton =
+            CommandButton.Builder(CommandButton.ICON_PLAY)
+                .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
+                .setDisplayName("PlayPause")
+                .build()
+
+        val nextButton =
+            CommandButton.Builder(CommandButton.ICON_NEXT)
+                .setPlayerCommand(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                .setDisplayName("Next")
+                .build()
+
         if (session.isMediaNotificationController(controller) ||
             session.isAutomotiveController(controller) ||
             session.isAutoCompanionController(controller)
         ) {
             return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
                 .setAvailableSessionCommands(mediaNotificationSessionCommands)
+                .setMediaButtonPreferences(
+                    ImmutableList.of(
+                        previousButton,
+                        playPauseButton,
+                        nextButton
+                    )
+                )
                 .setCustomLayout(buildCustomLayout(session.player))
                 .build()
         }
