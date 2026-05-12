@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.service
+package com.cappielloantonio.tempo.equalizer
 
 import android.media.audiofx.Equalizer
 import com.cappielloantonio.tempo.util.Preferences

@@ -18,7 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.service.EqualizerManager
+import com.cappielloantonio.tempo.equalizer.EqualizerManager
 import com.cappielloantonio.tempo.service.BaseMediaService
 import com.cappielloantonio.tempo.service.MediaService
 import com.cappielloantonio.tempo.ui.activity.MainActivity
