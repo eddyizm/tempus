@@ -436,6 +436,8 @@
     <string name="settings_enable_drawer_on_landscape_summary">Unlocks the lateral landscape menu drawer on portrait.</string>
     <string name="settings_hide_bottom_navbar_on_portrait">Hide bottom navbar on portrait [Experimental]</string>
     <string name="settings_hide_bottom_navbar_on_portrait_summary">Increases vertical space by removing the bottom navbar. The changes will take effect on restart.</string>
+    <string name="settings_hide_system_bars_on_landscape">Hide system bars on landscape [Experimental]</string>
+    <string name="settings_hide_system_bars_on_landscape_summary">Increases vertical and horizontal space by removing the system bars.</string>
     <string name="settings_auto_download_lyrics">Auto download lyrics</string>
     <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
     <string name="settings_replay_gain">Set replay gain mode</string>

@@ -293,24 +293,19 @@ public class MainActivity extends BaseActivity {
 
     public void toggleBottomNavigationBarVisibilityOnOrientationChange() {
         float displayDensity = getResources().getDisplayMetrics().density;
-        // Ignore orientation change, bottom navbar always hidden
-        if (Preferences.getHideBottomNavbarOnPortrait()) {
+
+        if (Preferences.getHideBottomNavbarOnPortrait() || isLandscape) {
             navigationController.setNavbarVisibility(false);
             bottomSheetController.setPeekHeight(56, displayDensity);
-            navigationController.setSystemBarsVisibility(this, !isLandscape);
-            return;
+        } else {
+            navigationController.setNavbarVisibility(true);
+            bottomSheetController.setPeekHeight(136, displayDensity);
         }
 
-        if (!isLandscape) {
-            // Show app navbar + show system bars
-            bottomSheetController.setPeekHeight(136, displayDensity);
-            navigationController.setNavbarVisibility(true);
-            navigationController.setSystemBarsVisibility(this, true);
-        } else {
-            // Hide app navbar + hide system bars
-            bottomSheetController.setPeekHeight(56, displayDensity);
-            navigationController.setNavbarVisibility(false);
+        if (Preferences.getHideSystemBarsOnLandscape() && isLandscape) {
             navigationController.setSystemBarsVisibility(this, false);
+        } else {
+            navigationController.setSystemBarsVisibility(this, true);
         }
     }
 
