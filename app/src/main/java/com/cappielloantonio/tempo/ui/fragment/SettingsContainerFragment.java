@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -159,7 +160,8 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionMiniPlayerHeart();
 
         bindMediaService();
-        actionAppEqualizer();
+        actionBuiltinEqualizer();
+        actionEqualizerSelector();
         actionReplayGainPreamp();
 
         applyAccordionState();
@@ -715,8 +717,31 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         });
     }
 
-    private void actionAppEqualizer() {
-        Preference appEqualizer = findPreference("app_equalizer");
+    private void actionEqualizerSelector() {
+        final ListPreference selectedEqualizer = findPreference("selected_equalizer");
+        if (selectedEqualizer != null) {
+            selectedEqualizer.setSummary(selectedEqualizer.getEntry());
+            selectedEqualizer.setOnPreferenceChangeListener(
+                    (preference, newValue) -> {
+                        String newValStr = (String) newValue;
+                        int idx = selectedEqualizer.findIndexOfValue(newValStr);
+                        CharSequence newEntry = "";
+                        if (idx >= 0 && selectedEqualizer.getEntries() != null) {
+                            newEntry = selectedEqualizer.getEntries()[idx];
+                        }
+                        selectedEqualizer.setSummary(newEntry);
+                        Preferences.setSelectedEqualizer(newValStr);
+
+                        Intent intent = new Intent(getContext().getApplicationContext(), MediaService.class);
+                        intent.setAction(MediaService.ACTION_RELOAD_EQUALIZER);
+                        ContextCompat.startForegroundService(getContext().getApplicationContext(), intent);
+                        return true;
+                    });
+        }
+    }
+
+    private void actionBuiltinEqualizer() {
+        Preference appEqualizer = findPreference("builtin_equalizer");
         if (appEqualizer != null) {
             appEqualizer.setOnPreferenceClickListener(preference -> {
                 NavController navController = NavHostFragment.findNavController(this);

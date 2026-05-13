@@ -150,17 +150,28 @@
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_sound">
-        <Preference
-            android:layout_height="match_parent"
-            android:key="system_equalizer"
-            android:summary="@string/settings_system_equalizer_summary"
-            android:title="@string/settings_system_equalizer_title" />
 
-        <Preference
-            android:layout_height="match_parent"
-            android:key="app_equalizer"
-            android:summary="@string/settings_app_equalizer_summary"
-            android:title="@string/settings_app_equalizer" />
+        <PreferenceCategory app:title="Equalizer">
+            <ListPreference
+                android:key="selected_equalizer"
+                android:title="Select an equalizer to use"
+                android:summary="None"
+                android:dialogTitle="Equalizers"
+                android:entries="@array/selected_equalizer_entries"
+                android:entryValues="@array/selected_equalizer_values"
+                android:defaultValue="0" />
+            <Preference
+                android:layout_height="match_parent"
+                android:key="system_equalizer"
+                android:summary="@string/settings_system_equalizer_summary"
+                android:title="@string/settings_system_equalizer_title" />
+
+            <Preference
+                android:layout_height="match_parent"
+                android:key="builtin_equalizer"
+                android:summary="@string/settings_app_equalizer_summary"
+                android:title="@string/settings_app_equalizer" />
+        </PreferenceCategory>
 
         <PreferenceCategory app:title="@string/settings_title_replay_gain">
             <Preference
