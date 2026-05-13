@@ -537,7 +537,7 @@
     <string name="equalizer_fragment_title">Egalizator</string>
     <string name="equalizer_reset">Resetaţi</string>
     <string name="equalizer_enable">Activaţi</string>
-    <string name="equalizer_not_supported">Nu este acceptat pe acest dispozitiv</string>
+    <string name="equalizer_managed_externally">Nu este acceptat pe acest dispozitiv</string>
     <string name="settings_app_equalizer">Egalizator</string>
     <string name="settings_app_equalizer_summary">Deschideți egalizatorul încorporat</string>
 

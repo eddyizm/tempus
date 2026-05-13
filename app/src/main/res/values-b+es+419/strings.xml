@@ -603,7 +603,7 @@
     <string name="equalizer_fragment_title">Ecualizador</string>
     <string name="equalizer_reset">Reiniciar</string>
     <string name="equalizer_enable">Activar</string>
-    <string name="equalizer_not_supported">No soportado por este dispositivo</string>
+    <string name="equalizer_managed_externally">No soportado por este dispositivo</string>
     <string name="settings_app_equalizer">Ecualizador</string>
     <string name="settings_app_equalizer_summary">Abrir el ecualizador incorporado en Tempus</string>
 

@@ -120,7 +120,7 @@ class EqualizerFragment : Fragment() {
 
     private fun initUI() {
         val manager = equalizerManager
-        val notSupportedView = view?.findViewById<LinearLayout>(R.id.equalizer_not_supported_container)
+        val notSupportedView = view?.findViewById<LinearLayout>(R.id.equalizer_managed_externally_container)
         val switchRow = view?.findViewById<View>(R.id.equalizer_switch_row)
 
         if (manager == null || manager.getNumberOfBands().toInt() == 0) {

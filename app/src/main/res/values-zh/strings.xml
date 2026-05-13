@@ -113,7 +113,7 @@
     <string name="empty_string" />
     <string name="equalizer_enable">启用</string>
     <string name="equalizer_fragment_title">均衡器</string>
-    <string name="equalizer_not_supported">此设备不支持</string>
+    <string name="equalizer_managed_externally">此设备不支持</string>
     <string name="equalizer_reset">重置</string>
     <string name="error_required">必需</string>
     <string name="error_server_prefix">必须是 http 或 https 前缀</string>

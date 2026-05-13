@@ -74,7 +74,7 @@
     </ScrollView>
 
     <LinearLayout
-        android:id="@+id/equalizer_not_supported_container"
+        android:id="@+id/equalizer_managed_externally_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -96,7 +96,7 @@
             android:id="@+id/equalizer_not_supported_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/equalizer_not_supported"
+            android:text="@string/equalizer_managed_externally"
             android:gravity="center"
             style="@style/BodyMedium"
             android:layout_marginTop="16dp"/>

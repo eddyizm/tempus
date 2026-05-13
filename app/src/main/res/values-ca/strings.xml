@@ -524,7 +524,7 @@
     <string name="equalizer_fragment_title">Equalitzador</string>
     <string name="equalizer_reset">Reinicialitza</string>
     <string name="equalizer_enable">Habilita</string>
-    <string name="equalizer_not_supported">No és compatible amb aquest dispositiu</string>
+    <string name="equalizer_managed_externally">No és compatible amb aquest dispositiu</string>
     <string name="settings_app_equalizer">Equalitzador</string>
     <string name="settings_app_equalizer_summary">Obre l\'equalitzador integrat</string>
 
