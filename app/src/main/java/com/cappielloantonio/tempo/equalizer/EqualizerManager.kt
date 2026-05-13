@@ -1,16 +1,18 @@
 package com.cappielloantonio.tempo.equalizer
 
+import android.content.Context
+
 class EqualizerManager(
-    private var backend: EqualizerBackend = BuiltinBackend()
+    private var backend: EqualizerBackend,
+    private var context: Context
 ) {
 
-    fun setBackend(newBackend: EqualizerBackend) {
-        backend.release()
-        backend = newBackend
+    fun attach(audioSessionId: Int): Boolean {
+        return backend.attach(audioSessionId, context.applicationContext)
     }
 
-    fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
-        return backend.attachEqualizerIfPossible(audioSessionId)
+    fun release(audioSessionId: Int) {
+        backend.release(audioSessionId, context.applicationContext)
     }
 
     fun setBandLevel(band: Short, level: Short) = backend.setBandLevel(band, level)
@@ -19,5 +21,4 @@ class EqualizerManager(
     fun getCenterFreq(band: Short): Int? = backend.getCenterFreq(band)
     fun getBandLevel(band: Short): Short? = backend.getBandLevel(band)
     fun setEnabled(enabled: Boolean) = backend.setEnabled(enabled)
-    fun release() = backend.release()
 }

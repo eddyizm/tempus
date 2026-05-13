@@ -1,12 +1,12 @@
 package com.cappielloantonio.tempo.equalizer
 
+import android.content.Context
+
 interface EqualizerBackend {
 
-    fun attachEqualizerIfPossible(audioSessionId: Int): Boolean
+    fun attach(audioSessionId: Int, context: Context): Boolean
 
-    fun attachToSession(audioSessionId: Int): Boolean
-
-    fun release()
+    fun release(audioSessionId: Int, context: Context)
 
     fun setEnabled(enabled: Boolean)
 

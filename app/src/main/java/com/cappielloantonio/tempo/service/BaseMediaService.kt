@@ -29,6 +29,7 @@ import androidx.media3.session.MediaSession.ControllerInfo
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
+import com.cappielloantonio.tempo.equalizer.BuiltinBackend
 import com.cappielloantonio.tempo.equalizer.EqualizerManager
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
@@ -40,6 +41,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 private const val TAG = "BaseMediaService"
 
@@ -222,7 +224,7 @@ open class BaseMediaService : MediaLibraryService() {
                             shuffledList[index] = tmp
                         }
                         player.shuffleOrder =
-                            DefaultShuffleOrder(shuffledList, kotlin.random.Random.nextLong())
+                            DefaultShuffleOrder(shuffledList, Random.nextLong())
                     }
                 }
             }
@@ -394,7 +396,7 @@ open class BaseMediaService : MediaLibraryService() {
 
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
-                equalizerManager.attachEqualizerIfPossible(audioSessionId)
+                equalizerManager.attach(audioSessionId)
                 sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
             }
         })
@@ -449,7 +451,7 @@ open class BaseMediaService : MediaLibraryService() {
 
     override fun onDestroy() {
         releaseNetworkCallback()
-        equalizerManager.release()
+        equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
         stopWidgetUpdates()
         stopRadioHeaderChecks()
@@ -483,8 +485,8 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private fun initializeEqualizerManager() {
-        equalizerManager = EqualizerManager()
-        equalizerManager.attachEqualizerIfPossible(exoplayer.audioSessionId)
+        equalizerManager = EqualizerManager(BuiltinBackend(), baseContext)
+        equalizerManager.attach(exoplayer.audioSessionId)
         sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
     }
 

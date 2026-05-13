@@ -1,14 +1,15 @@
 package com.cappielloantonio.tempo.equalizer
 
+import android.content.Context
 import android.media.audiofx.Equalizer
 import com.cappielloantonio.tempo.util.Preferences
 
-class BuiltinBackend : EqualizerBackend {
+class BuiltinBackend: EqualizerBackend {
     private var equalizer: Equalizer? = null
 
-    override fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
+    override fun attach(audioSessionId: Int, context: Context): Boolean {
         if (audioSessionId == 0 || audioSessionId == -1) return false
-        val attached = attachToSession(audioSessionId)
+        val attached = attachToSession(audioSessionId, context.applicationContext)
         if (attached) {
             val enabled = Preferences.isEqualizerEnabled()
             setEnabled(enabled)
@@ -21,8 +22,8 @@ class BuiltinBackend : EqualizerBackend {
         return attached
     }
 
-    override fun attachToSession(audioSessionId: Int): Boolean {
-        release()
+    private fun attachToSession(audioSessionId: Int, context: Context): Boolean {
+        release(audioSessionId, context.applicationContext)
         if (audioSessionId != 0 && audioSessionId != -1) {
             try {
                 equalizer = Equalizer(0, audioSessionId).apply {
@@ -35,6 +36,15 @@ class BuiltinBackend : EqualizerBackend {
             }
         }
         return false
+    }
+
+    override fun release(audioSessionId: Int, context: Context) {
+        release()
+    }
+
+    private fun release() {
+        equalizer?.release()
+        equalizer = null
     }
 
     override fun setBandLevel(band: Short, level: Short) {
@@ -53,10 +63,5 @@ class BuiltinBackend : EqualizerBackend {
 
     override fun setEnabled(enabled: Boolean) {
         equalizer?.enabled = enabled
-    }
-
-    override fun release() {
-        equalizer?.release()
-        equalizer = null
     }
 }
