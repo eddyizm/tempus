@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.ui.fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -148,6 +149,8 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_download_playlist) {
+            String _playListID = playlistPageViewModel.getPlaylist().getId();
+            String _playListName = playlistPageViewModel.getPlaylist().getName();
             playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
                 if (isVisible() && getActivity() != null) {
                     if (Preferences.getDownloadDirectoryUri() == null) {
@@ -155,13 +158,13 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                             MappingUtil.mapDownloads(songs),
                             songs.stream().map(child -> {
                                 Download toDownload = new Download(child);
-                                toDownload.setPlaylistId(playlistPageViewModel.getPlaylist().getId());
-                                toDownload.setPlaylistName(playlistPageViewModel.getPlaylist().getName());
+                                toDownload.setPlaylistId(_playListID);
+                                toDownload.setPlaylistName(_playListName);
                                 return toDownload;
                             }).collect(Collectors.toList())
                         );
                     } else {
-                        songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+                        songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child, _playListID, _playListName));
                     }
                 }
             });

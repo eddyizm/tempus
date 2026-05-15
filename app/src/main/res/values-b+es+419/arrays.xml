@@ -10,6 +10,15 @@
         <item>default</item>
     </string-array>
 
+    <string-array name="dark_theme_style_titles">
+        <item>Estándar</item>
+        <item>AMOLED (Negro puro)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+
     <string-array name="pref_cache_size_titles">
         <item>Alto</item>
         <item>Medio</item>
