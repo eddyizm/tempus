@@ -37,6 +37,7 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.SongListPageViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -218,6 +219,10 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
             songHorizontalAdapter.setItems(songs);
             reapplyPlayback();
             setSongListPageSubtitle(songs);
+            if (Constants.MEDIA_STARRED.equals(songListPageViewModel.title)) {
+                String savedSort = Preferences.getStarredTrackSortOrder();
+                if (savedSort != null) songHorizontalAdapter.sort(savedSort);
+            }
         });
 
         bind.songListRecyclerView.addOnScrollListener(new PaginationScrollListener((LinearLayoutManager) bind.songListRecyclerView.getLayoutManager()) {
@@ -278,12 +283,15 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == R.id.menu_song_sort_name) {
                 songHorizontalAdapter.sort(Constants.MEDIA_BY_TITLE);
+                Preferences.setStarredTrackSortOrder(Constants.MEDIA_BY_TITLE);
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_song_sort_most_recently_starred) {
                 songHorizontalAdapter.sort(Constants.MEDIA_MOST_RECENTLY_STARRED);
+                Preferences.setStarredTrackSortOrder(Constants.MEDIA_MOST_RECENTLY_STARRED);
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_song_sort_least_recently_starred) {
                 songHorizontalAdapter.sort(Constants.MEDIA_LEAST_RECENTLY_STARRED);
+                Preferences.setStarredTrackSortOrder(Constants.MEDIA_LEAST_RECENTLY_STARRED);
                 return true;
             }
 

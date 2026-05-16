@@ -90,6 +90,9 @@ object Preferences {
     private const val ALBUM_DETAIL = "album_detail"
     private const val ALBUM_SORT_ORDER = "album_sort_order"
     private const val DEFAULT_ALBUM_SORT_ORDER = Constants.ALBUM_ORDER_BY_NAME
+    private const val STARRED_ALBUM_SORT_ORDER = "starred_album_sort_order"
+    private const val STARRED_ARTIST_SORT_ORDER = "starred_artist_sort_order"
+    private const val STARRED_TRACK_SORT_ORDER = "starred_track_sort_order"
     private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
     private const val SORT_SEARCH_CHRONOLOGICALLY= "sort_search_chronologically"
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
@@ -780,6 +783,36 @@ object Preferences {
     @JvmStatic
     fun setAlbumSortOrder(sortOrder: String) {
         App.getInstance().preferences.edit().putString(ALBUM_SORT_ORDER, sortOrder).apply()
+    }
+
+    @JvmStatic
+    fun getStarredAlbumSortOrder(): String? {
+        return App.getInstance().preferences.getString(STARRED_ALBUM_SORT_ORDER, null)
+    }
+
+    @JvmStatic
+    fun setStarredAlbumSortOrder(sortOrder: String) {
+        App.getInstance().preferences.edit().putString(STARRED_ALBUM_SORT_ORDER, sortOrder).apply()
+    }
+
+    @JvmStatic
+    fun getStarredArtistSortOrder(): String? {
+        return App.getInstance().preferences.getString(STARRED_ARTIST_SORT_ORDER, null)
+    }
+
+    @JvmStatic
+    fun setStarredArtistSortOrder(sortOrder: String) {
+        App.getInstance().preferences.edit().putString(STARRED_ARTIST_SORT_ORDER, sortOrder).apply()
+    }
+
+    @JvmStatic
+    fun getStarredTrackSortOrder(): String? {
+        return App.getInstance().preferences.getString(STARRED_TRACK_SORT_ORDER, null)
+    }
+
+    @JvmStatic
+    fun setStarredTrackSortOrder(sortOrder: String) {
+        App.getInstance().preferences.edit().putString(STARRED_TRACK_SORT_ORDER, sortOrder).apply()
     }
 
     @JvmStatic

@@ -31,6 +31,7 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.ArtistHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.ArtistListPageViewModel;
 
 import java.util.List;
@@ -120,6 +121,8 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
             artistHorizontalAdapter.setItems(artists);
             setArtistListPageSubtitle(artists);
             setArtistListPageSorter();
+            String savedSort = Preferences.getStarredArtistSortOrder();
+            if (savedSort != null) artistHorizontalAdapter.sort(savedSort);
         });
 
         bind.artistListRecyclerView.setOnTouchListener((v, event) -> {
@@ -167,12 +170,15 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == R.id.menu_horizontal_artist_sort_name) {
                 artistHorizontalAdapter.sort(Constants.ARTIST_ORDER_BY_NAME);
+                Preferences.setStarredArtistSortOrder(Constants.ARTIST_ORDER_BY_NAME);
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_horizontal_artist_sort_most_recently_starred) {
                 artistHorizontalAdapter.sort(Constants.ARTIST_ORDER_BY_MOST_RECENTLY_STARRED);
+                Preferences.setStarredArtistSortOrder(Constants.ARTIST_ORDER_BY_MOST_RECENTLY_STARRED);
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_horizontal_artist_sort_least_recently_starred) {
                 artistHorizontalAdapter.sort(Constants.ARTIST_ORDER_BY_LEAST_RECENTLY_STARRED);
+                Preferences.setStarredArtistSortOrder(Constants.ARTIST_ORDER_BY_LEAST_RECENTLY_STARRED);
                 return true;
             }
 

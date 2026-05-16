@@ -31,6 +31,7 @@ import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.AlbumListPageViewModel;
 
 import java.util.List;
@@ -143,6 +144,10 @@ public class AlbumListPageFragment extends Fragment implements ClickCallback {
             albumHorizontalAdapter.setItems(albums);
             setAlbumListPageSubtitle(albums);
             setAlbumListPageSorter();
+            if (albumListPageViewModel.title.equals(Constants.ALBUM_STARRED)) {
+                String savedSort = Preferences.getStarredAlbumSortOrder();
+                if (savedSort != null) albumHorizontalAdapter.sort(savedSort);
+            }
         });
 
         bind.albumListRecyclerView.setOnTouchListener((v, event) -> {
@@ -190,12 +195,15 @@ public class AlbumListPageFragment extends Fragment implements ClickCallback {
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == R.id.menu_horizontal_album_sort_name) {
                 albumHorizontalAdapter.sort(Constants.ALBUM_ORDER_BY_NAME);
+                Preferences.setStarredAlbumSortOrder(Constants.ALBUM_ORDER_BY_NAME);
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_horizontal_album_sort_most_recently_starred) {
                 albumHorizontalAdapter.sort(Constants.ALBUM_ORDER_BY_MOST_RECENTLY_STARRED);
+                Preferences.setStarredAlbumSortOrder(Constants.ALBUM_ORDER_BY_MOST_RECENTLY_STARRED);
                 return true;
             } else if (menuItem.getItemId() == R.id.menu_horizontal_album_sort_least_recently_starred) {
                 albumHorizontalAdapter.sort(Constants.ALBUM_ORDER_BY_LEAST_RECENTLY_STARRED);
+                Preferences.setStarredAlbumSortOrder(Constants.ALBUM_ORDER_BY_LEAST_RECENTLY_STARRED);
                 return true;
             }
 
