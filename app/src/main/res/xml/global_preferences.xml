@@ -466,7 +466,9 @@
         </PreferenceCategory>
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_androidauto">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory
+        android:key="settings_androidauto_category_key"
+        app:title="@string/settings_androidauto">
         <Preference
             app:selectable="false"
             app:summary="@string/home_rearrangement_dialog_subtitle" />
