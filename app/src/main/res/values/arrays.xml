@@ -249,6 +249,21 @@
         <item>8</item>
     </string-array>
 
+    <string-array name="song_preload_buffer_titles">
+        <item>5 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>3 minutes</item>
+        <item>5 minutes</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+
     <string-array name="playlist_sort_option_titles">
         <item>Name</item>
         <item>Random</item>

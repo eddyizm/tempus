@@ -382,6 +382,8 @@
     <string name="settings_download_folder_cleared">Download folder cleared.</string>
     <string name="settings_download_folder_set">Download folder set</string>
     <string name="settings_set_download_folder">Set download folder</string>
+    <string name="settings_song_preload_buffer">Song preload buffer</string>
+    <string name="settings_song_preload_buffer_summary">Current value: %1$s\nFor the change to take effect you must manually restart the app.</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -697,5 +699,4 @@
 
         The data is not sent anywhere without your consent.
     </string>
-
 </resources>
