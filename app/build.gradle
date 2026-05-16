@@ -11,7 +11,7 @@ android {
         targetSdk 35
 
         versionCode 27
-        versionName '4.16.2-dev'
+        versionName '4.16.3-dev'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
