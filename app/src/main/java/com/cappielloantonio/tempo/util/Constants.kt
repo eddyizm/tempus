@@ -54,6 +54,9 @@ object Constants {
     const val PLAYLIST_DOWNLOADED = "DOWNLOADED"
     const val PLAYLIST_ORDER_BY_NAME = "ORDER_BY_NAME"
     const val PLAYLIST_ORDER_BY_RANDOM = "ORDER_BY_RANDOM"
+    const val PLAYLIST_ORDER_BY_DATE = "ORDER_BY_DATE"
+    const val PLAYLIST_ORDER_BY_SONGS = "ORDER_BY_SONGS"
+    const val PLAYLIST_ORDER_BY_PINNED = "ORDER_BY_PINNED"
 
     const val PODCAST_FILTER_BY_DOWNLOAD = "PODCAST_FILTER_BY_DOWNLOAD"
     const val PODCAST_FILTER_BY_ALL = "PODCAST_FILTER_BY_ALL"
@@ -146,6 +149,7 @@ object Constants {
     const val AA_RADIO_ID = "[radioID]"
     const val AA_RECENTLY_ADDED_ID = "[recentlyAddedID]"
     const val AA_MADE_FOR_YOU_ID = "[madeForYouID]"
+    const val AA_STARRED_BUNDLE_ID = "[starredBundleID]"
     const val AA_STARRED_TRACKS_ID = "[starredTracksID]"
     const val AA_STARRED_ALBUMS_ID = "[starredAlbumsID]"
     const val AA_STARRED_ARTISTS_ID = "[starredArtistsID]"

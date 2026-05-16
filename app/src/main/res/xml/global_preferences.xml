@@ -37,6 +37,16 @@
             app:title="@string/settings_theme"
             app:useSimpleSummaryProvider="true" />
 
+        <ListPreference
+            android:layout_height="wrap_content"
+            app:defaultValue="standard"
+            app:dialogTitle="@string/settings_dark_theme_style"
+            app:entries="@array/dark_theme_style_titles"
+            app:entryValues="@array/dark_theme_style_values"
+            app:title="@string/settings_dark_theme_style"
+            app:key="dark_theme_style"
+            app:useSimpleSummaryProvider="true" />
+
         <SwitchPreference
             android:title="@string/settings_always_on_display"
             android:defaultValue="false"
@@ -526,6 +536,11 @@
             android:title="@string/settings_androidauto_shuffle_genre_songs"
             android:defaultValue="false"
             android:key="androidauto_shuffle_genre_songs" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_shuffle_starred_tracks"
+            android:defaultValue="false"
+            android:key="androidauto_shuffle_starred_tracks" />
 
         <ListPreference
             app:defaultValue="0"

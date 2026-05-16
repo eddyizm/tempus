@@ -14,6 +14,7 @@
     <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
     <string name="aa_song_recently_played">Tracks played</string>
+    <string name="aa_starred">Starred</string>
     <string name="aa_starred_albums">★ Albums</string>
     <string name="aa_starred_artists">★ Artists</string>
     <string name="aa_starred_tracks">★ Tracks</string>
@@ -241,13 +242,16 @@
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_random">Random</string>
     <string name="menu_sort_album_count">Album Count</string>
+    <string name="menu_sort_song_count">Song Count</string>
+    <string name="menu_sort_date_created">Date Created</string>
     <string name="menu_sort_recently_added">Recently added</string>
     <string name="menu_sort_recently_played">Recently played</string>
     <string name="menu_sort_most_played">Most played</string>
     <string name="menu_sort_most_recently_starred">Most recently starred</string>
     <string name="menu_sort_least_recently_starred">Least recently starred</string>
-    <string name="menu_pin_button">Add to home screen</string>
-    <string name="menu_unpin_button">Remove from home screen</string>
+    <string name="menu_pin_button">Add to faves</string>
+    <string name="menu_unpin_button">Remove from faves</string>
+    <string name="playlist_sort_pinned">Faves</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
@@ -416,6 +420,7 @@
 	<string name="settings_androidauto_third_tab">Third tab display</string>
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
+    <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
@@ -468,6 +473,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
     <string name="settings_theme">Theme</string>
+    <string name="settings_dark_theme_style">Dark theme style</string>
 	<string name="settings_tile_size">Tiles size</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
@@ -639,5 +645,57 @@
     <string name="search_all_songs_play">Play %1$s</string>
 
     <string name="nav_drawer_index">Index</string>
+
+    <!-- Sleep timer -->
+    <string name="sleep_timer_dialog_title">Sleep Timer</string>
+    <string name="sleep_timer_dialog_active_message">Timer active — %1$s remaining</string>
+    <string name="sleep_timer_dialog_cancel_timer">Cancel Timer</string>
+    <string name="sleep_timer_dialog_close">Close</string>
+    <string name="sleep_timer_custom_hint">Enter minutes</string>
+    <string name="sleep_timer_custom_set">Set</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Stop after this song</string>
+    <string name="sleep_timer_end_of_track_label">End of track</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>30 minutes</item>
+        <item>45 minutes</item>
+        <item>60 minutes</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Custom\u2026</item>
+    </string-array>
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus Crashed</string>
+    <string name="ca_info_description">
+        Please open an issue on GitHub and include a copy of the logs to address this crash.
+    </string>
+    <string name="ca_info_button_close">Close app</string>
+    <string name="ca_info_button_restart">Restart app</string>
+
+    <string name="ca_logs_label">Logs</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+    <string name="ca_logs_description">
+        This is what went wrong.
+    </string>
+    <string name="ca_export_button_copy">Copy log</string>
+    <string name="ca_export_button_share">Share log</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Log copied to clipboard</string>
+
+    <string name="ca_export_label">Export</string>
+    <string name="ca_export_title">Logs retrival</string>
+    <string name="ca_export_description">
+        A debug apk (pre-release) provides a more extensive log and helps us
+        understand what went wrong inside the app.\n\n
+
+        The data is not sent anywhere without your consent.
+    </string>
 
 </resources>

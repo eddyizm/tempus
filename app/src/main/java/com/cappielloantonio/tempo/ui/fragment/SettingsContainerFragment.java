@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -198,13 +199,56 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         }
 
         ListPreference themePreference = findPreference(Preferences.THEME);
+        ListPreference darkThemeStylePreference = findPreference("dark_theme_style");
+
         if (themePreference != null) {
+            if (darkThemeStylePreference != null) {
+                updateDarkThemeStyleVisibility(themePreference.getValue(), darkThemeStylePreference);
+            }
             themePreference.setOnPreferenceChangeListener(
                     (preference, newValue) -> {
                         String themeOption = (String) newValue;
                         ThemeHelper.applyTheme(themeOption);
+                        if (darkThemeStylePreference != null) {
+                            updateDarkThemeStyleVisibility(themeOption, darkThemeStylePreference);
+                        }
+                        if (getActivity() != null) {
+                            getActivity().recreate();
+                        }
                         return true;
                     });
+        }
+
+        if (darkThemeStylePreference != null) {
+            darkThemeStylePreference.setOnPreferenceChangeListener(
+                    (preference, newValue) -> {
+                        if (getActivity() != null) {
+                            getActivity().recreate();
+                        }
+                        return true;
+                    });
+        }
+    }
+
+    private void updateDarkThemeStyleVisibility(String themeOption, Preference darkThemeStylePreference) {
+        if (darkThemeStylePreference == null) return;
+
+        boolean isDark;
+        if (ThemeHelper.DARK_MODE.equals(themeOption) || ThemeHelper.AMOLED_MODE.equals(themeOption)) {
+            isDark = true;
+        } else if (ThemeHelper.DEFAULT_MODE.equals(themeOption)) {
+            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            isDark = currentNightMode == Configuration.UI_MODE_NIGHT_YES;
+        } else {
+            isDark = false;
+        }
+        darkThemeStylePreference.setVisible(isDark);
+    }
+
+    private void checkDarkThemeStyle() {
+        Preference darkThemeStylePreference = findPreference("dark_theme_style");
+        if (darkThemeStylePreference != null) {
+            updateDarkThemeStyleVisibility(Preferences.getTheme(), darkThemeStylePreference);
         }
     }
 
@@ -227,6 +271,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         checkStorage();
         checkDownloadDirectory();
         checkEqualizerBands();
+        checkDarkThemeStyle();
 
         for (int i = 0; i < screen.getPreferenceCount(); i++) {
             Preference pref = screen.getPreference(i);
