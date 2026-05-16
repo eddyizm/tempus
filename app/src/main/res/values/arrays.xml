@@ -136,6 +136,7 @@
 
     <string-array name="audio_transcode_format_wifi_list_titles">
         <item>Direct play</item>
+        <item>Auto (server decides)</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -143,6 +144,7 @@
     </string-array>
     <string-array name="audio_transcode_format_wifi_list_values">
         <item>raw</item>
+        <item>auto</item>
         <item>opus</item>
         <item>aac</item>
         <item>mp3</item>
@@ -151,6 +153,7 @@
 
     <string-array name="audio_transcode_format_mobile_list_titles">
         <item>Direct play</item>
+        <item>Auto (server decides)</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -158,6 +161,7 @@
     </string-array>
     <string-array name="audio_transcode_format_mobile_list_values">
         <item>raw</item>
+        <item>auto</item>
         <item>opus</item>
         <item>aac</item>
         <item>mp3</item>
@@ -166,6 +170,7 @@
 
     <string-array name="audio_transcode_format_download_list_titles">
         <item>Direct download</item>
+        <item>Auto (server decides)</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -173,6 +178,7 @@
     </string-array>
     <string-array name="audio_transcode_format_download_list_values">
         <item>raw</item>
+        <item>auto</item>
         <item>opus</item>
         <item>aac</item>
         <item>mp3</item>

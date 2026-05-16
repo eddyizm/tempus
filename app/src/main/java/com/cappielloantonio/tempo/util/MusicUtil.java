@@ -55,11 +55,11 @@ public class MusicUtil {
         String selectedBitrate = getBitratePreference();
         String selectedFormat = getTranscodingFormatPreference();
         Log.i(TAG, "DEBUG: Requesting Format: " + selectedFormat + " at Bitrate: " + selectedBitrate);
-        
+
         if (!Preferences.isServerPrioritized())
-            uri.append("&maxBitRate=").append(getBitratePreference());
-        if (!Preferences.isServerPrioritized())
-            uri.append("&format=").append(getTranscodingFormatPreference());
+            uri.append("&maxBitRate=").append(selectedBitrate);
+        if (!Preferences.isServerPrioritized() && !selectedFormat.equals("auto"))
+            uri.append("&format=").append(selectedFormat);
         if (timeOffset > 0)
             uri.append("&timeOffset=").append(timeOffset);
 
@@ -91,10 +91,11 @@ public class MusicUtil {
         Matcher m2 = FORMAT_PATTERN.matcher(s);
         s = m2.replaceAll("");
 
+        String updatedFormat = getTranscodingFormatPreference();
         if (!Preferences.isServerPrioritized())
             s += "&maxBitRate=" + getBitratePreference();
-        if (!Preferences.isServerPrioritized())
-            s += "&format=" + getTranscodingFormatPreference();
+        if (!Preferences.isServerPrioritized() && !updatedFormat.equals("auto"))
+            s += "&format=" + updatedFormat;
 
         return Uri.parse(s);
     }
@@ -154,10 +155,11 @@ public class MusicUtil {
         if (params.containsKey("c") && params.get("c") != null)
             uri.append("&c=").append(params.get("c"));
 
+        String downloadFormat = getTranscodingFormatPreferenceForDownload();
         if (!Preferences.isServerPrioritizedInTranscodedDownload())
             uri.append("&maxBitRate=").append(getBitratePreferenceForDownload());
-        if (!Preferences.isServerPrioritizedInTranscodedDownload())
-            uri.append("&format=").append(getTranscodingFormatPreferenceForDownload());
+        if (!Preferences.isServerPrioritizedInTranscodedDownload() && !downloadFormat.equals("auto"))
+            uri.append("&format=").append(downloadFormat);
 
         uri.append("&id=").append(id);
 
