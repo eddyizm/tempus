@@ -228,10 +228,10 @@
     </string-array>
 
     <string-array name="buffering_strategy_titles">
-        <item>Minimalna</item>
-        <item>Średnia</item>
-        <item>Agresywna</item>
-        <item>Ekstremalna</item>
+        <item>5 sec</item>
+        <item>50 sec</item>
+        <item>3 min 20 sec</item>
+        <item>6 min 40 sec</item>
     </string-array>
     <string-array name="buffering_strategy_values">
         <item>.1</item>
