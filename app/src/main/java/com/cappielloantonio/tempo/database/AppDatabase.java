@@ -13,6 +13,7 @@ import com.cappielloantonio.tempo.database.converter.StringListConverter;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.DownloadDao;
 import com.cappielloantonio.tempo.database.dao.FavoriteDao;
+import com.cappielloantonio.tempo.database.dao.InternetRadioStationDao;
 import com.cappielloantonio.tempo.database.dao.LyricsDao;
 import com.cappielloantonio.tempo.database.dao.PinnedPlaylistDao;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
@@ -23,6 +24,7 @@ import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
 import com.cappielloantonio.tempo.model.Chronology;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.Favorite;
+import com.cappielloantonio.tempo.model.InternetRadioStationCache;
 import com.cappielloantonio.tempo.model.LyricsCache;
 import com.cappielloantonio.tempo.model.PinnedPlaylist;
 import com.cappielloantonio.tempo.model.Queue;
@@ -33,7 +35,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 16,
+        version = 17,
         entities = {
             Queue.class,
             Server.class,
@@ -44,7 +46,8 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
             SessionMediaItem.class,
             Playlist.class,
             PinnedPlaylist.class,
-            LyricsCache.class
+            LyricsCache.class,
+            InternetRadioStationCache.class,
         },
         autoMigrations = {
                 @AutoMigration(from = 10, to = 11),
@@ -53,6 +56,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
                 @AutoMigration(from = 13, to = 14),
                 @AutoMigration(from = 14, to = 15),
                 @AutoMigration(from = 15, to = 16),
+                @AutoMigration(from = 16, to = 17),
         }
 )
 @TypeConverters({DateConverters.class, StringListConverter.class})
@@ -89,4 +93,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PinnedPlaylistDao pinnedPlaylistDao();
 
     public abstract LyricsDao lyricsDao();
+
+    public abstract InternetRadioStationDao internetRadioStationDao();
 }

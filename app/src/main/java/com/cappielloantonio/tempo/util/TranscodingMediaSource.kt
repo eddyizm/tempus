@@ -193,6 +193,12 @@ class TranscodingMediaSource(
                 return currentPeriod.seekToUs(positionUs)
             }
 
+            // Don't reload the source if we can already seek to the desired position. This can
+            // occur if the music server decided to direct play instead of transcoding.
+            if (currentPeriod.getAdjustedSeekPositionUs(positionUs, SeekParameters.DEFAULT) != 0L) {
+                return currentPeriod.seekToUs(positionUs)
+            }
+
             reloadSource(positionUs)
             return positionUs
         }

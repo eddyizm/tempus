@@ -101,6 +101,12 @@
             android:key="song_rating_per_item" />
 
         <SwitchPreference
+            android:title="@string/settings_track_number"
+            android:defaultValue="false"
+            android:summary="@string/settings_track_number_summary"
+            android:key="track_number_visible" />
+
+        <SwitchPreference
             android:title="@string/settings_item_rating"
             android:defaultValue="false"
             android:summary="@string/settings_item_rating_summary"
@@ -466,7 +472,9 @@
         </PreferenceCategory>
     </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_androidauto">
+    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory
+        android:key="settings_androidauto_category_key"
+        app:title="@string/settings_androidauto">
         <Preference
             app:selectable="false"
             app:summary="@string/home_rearrangement_dialog_subtitle" />
@@ -541,6 +549,11 @@
             android:title="@string/settings_androidauto_shuffle_starred_tracks"
             android:defaultValue="false"
             android:key="androidauto_shuffle_starred_tracks" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_shuffle_playlists"
+            android:defaultValue="false"
+            android:key="androidauto_shuffle_playlists" />
 
         <ListPreference
             app:defaultValue="0"
