@@ -54,6 +54,33 @@
     <color name="md_theme_dark_inverseSurface">#E6E1E5</color>
     <color name="md_theme_dark_primaryInverse">#6750A4</color>
 
+    <color name="md_theme_amoled_primary">#D0BCFF</color>
+    <color name="md_theme_amoled_onPrimary">#381E72</color>
+    <color name="md_theme_amoled_primaryContainer">#4F378B</color>
+    <color name="md_theme_amoled_onPrimaryContainer">#EADDFF</color>
+    <color name="md_theme_amoled_secondary">#CCC2DC</color>
+    <color name="md_theme_amoled_onSecondary">#332D41</color>
+    <color name="md_theme_amoled_secondaryContainer">#4A4458</color>
+    <color name="md_theme_amoled_onSecondaryContainer">#E8DEF8</color>
+    <color name="md_theme_amoled_tertiary">#EFB8C8</color>
+    <color name="md_theme_amoled_onTertiary">#492532</color>
+    <color name="md_theme_amoled_tertiaryContainer">#633B48</color>
+    <color name="md_theme_amoled_onTertiaryContainer">#FFD8E4</color>
+    <color name="md_theme_amoled_error">#F2B8B5</color>
+    <color name="md_theme_amoled_errorContainer">#8C1D18</color>
+    <color name="md_theme_amoled_onError">#601410</color>
+    <color name="md_theme_amoled_onErrorContainer">#F9DEDC</color>
+    <color name="md_theme_amoled_background">#000000</color>
+    <color name="md_theme_amoled_onBackground">#E6E1E5</color>
+    <color name="md_theme_amoled_surface">#000000</color>
+    <color name="md_theme_amoled_onSurface">#E6E1E5</color>
+    <color name="md_theme_amoled_surfaceVariant">#252525</color>
+    <color name="md_theme_amoled_onSurfaceVariant">#CAC4D0</color>
+    <color name="md_theme_amoled_outline">#938F99</color>
+    <color name="md_theme_amoled_inverseOnSurface">#000000</color>
+    <color name="md_theme_amoled_inverseSurface">#E6E1E5</color>
+    <color name="md_theme_amoled_primaryInverse">#6750A4</color>
+
     <color name="gradientTitleColor">#FFFFFF</color>
     <color name="gradientSubtitleColor">#BFBFBF</color>
     <color name="titleTextColor">#252525</color>

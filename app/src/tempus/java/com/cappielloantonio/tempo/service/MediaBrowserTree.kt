@@ -568,8 +568,8 @@ object MediaBrowserTree {
             Constants.AA_TRACKS_ID -> treeNodes[Constants.AA_TRACKS_ID]?.getChildren()!!
 
             Constants.AA_LAST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "recent", 15, false)
-            Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, true)
-            Constants.AA_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, 500, true)
+            Constants.AA_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", automotiveRepository.MAX_AA_ITEMS,true)
+            Constants.AA_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, true)
             Constants.AA_PLAYLIST_ID -> automotiveRepository.getPlaylists(Constants.AA_PLAYLIST_ID)
             Constants.AA_PODCAST_ID -> automotiveRepository.getNewestPodcastEpisodes(100)
             Constants.AA_RADIO_ID -> automotiveRepository.getInternetRadioStations()
@@ -577,23 +577,23 @@ object MediaBrowserTree {
             Constants.AA_MOST_PLAYED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "frequent", 15, false)
             Constants.AA_RECENT_TRACKS_ID -> automotiveRepository.getRecentlyPlayedSongs(getServerId(),100)
             Constants.AA_RECENTLY_ADDED_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "newest", 15, false)
-            Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.getStarredSongs(500)
+            Constants.AA_STARRED_TRACKS_ID -> automotiveRepository.getStarredSongs()
             Constants.AA_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, true)
             Constants.AA_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, true)
             Constants.AA_RANDOM_ID -> automotiveRepository.getRandomSongs(100)
             Constants.AA_GENRES_ID -> automotiveRepository.getGenres(Constants.AA_GENRES_ID)
 
-            Constants.AA_JUMP_TO_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", 500, false)
-            Constants.AA_JUMP_TO_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID, false)
-            Constants.AA_JUMP_TO_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, 500, false)
+            Constants.AA_JUMP_TO_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByName", automotiveRepository.MAX_AA_ITEMS, false)
+            Constants.AA_JUMP_TO_STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(Constants.AA_ALBUM_ID,false)
+            Constants.AA_JUMP_TO_ARTISTS_ID -> automotiveRepository.getArtists(Constants.AA_ARTIST_ID, false)
             Constants.AA_JUMP_TO_STARRED_ARTISTS_ID -> automotiveRepository.getStarredArtists(Constants.AA_ARTIST_ID, false)
-            Constants.AA_ARTISTS_BY_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByArtist", 500, false)
+            Constants.AA_ARTISTS_BY_ALBUMS_ID -> automotiveRepository.getAlbums(Constants.AA_ALBUM_ID, "alphabeticalByArtist", automotiveRepository.MAX_AA_ITEMS, false)
 
             else -> {
                 if (id.startsWith(Constants.AA_GENRES_ID)) {
                     val shuffle = Preferences.isAndroidAutoShuffleGenreSongsEnabled()
                     // If the user doesn't want random songs, it's likely it's for perusing them, so provide as many as possible
-                    val count = if (shuffle) 100 else 500
+                    val count = if (shuffle) automotiveRepository.MAX_AA_SHUFFLE_ITEMS else automotiveRepository.MAX_AA_ITEMS
                     return automotiveRepository.getSongsByGenre(id.removePrefix(Constants.AA_GENRES_ID), count, shuffle)
                 }
 
