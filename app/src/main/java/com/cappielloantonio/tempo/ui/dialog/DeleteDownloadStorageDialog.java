@@ -57,7 +57,9 @@ public class DeleteDownloadStorageDialog extends DialogFragment {
                     DocumentFile directory = DocumentFile.fromTreeUri(requireContext(), Uri.parse(uriString));
                     if (directory != null && directory.canWrite()) {
                         for (DocumentFile file : directory.listFiles()) {
-                            file.delete();
+                            if (ExternalDownloadMetadataStore.isTrackedFile(file.getName())) {
+                                file.delete();
+                            }
                         }
                     }
                     ExternalAudioReader.refreshCache();
