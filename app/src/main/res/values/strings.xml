@@ -421,6 +421,7 @@
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
+    <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
