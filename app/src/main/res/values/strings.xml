@@ -242,13 +242,16 @@
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_random">Random</string>
     <string name="menu_sort_album_count">Album Count</string>
+    <string name="menu_sort_song_count">Song Count</string>
+    <string name="menu_sort_date_created">Date Created</string>
     <string name="menu_sort_recently_added">Recently added</string>
     <string name="menu_sort_recently_played">Recently played</string>
     <string name="menu_sort_most_played">Most played</string>
     <string name="menu_sort_most_recently_starred">Most recently starred</string>
     <string name="menu_sort_least_recently_starred">Least recently starred</string>
-    <string name="menu_pin_button">Add to home screen</string>
-    <string name="menu_unpin_button">Remove from home screen</string>
+    <string name="menu_pin_button">Add to faves</string>
+    <string name="menu_unpin_button">Remove from faves</string>
+    <string name="playlist_sort_pinned">Faves</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
@@ -418,6 +421,7 @@
 	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
+    <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
@@ -425,6 +429,8 @@
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
     <string name="settings_song_rating">Show song star rating</string>
     <string name="settings_song_rating_summary">If enabled, shows 5 star rating for track on song page\n\n*Requires App restart</string>
+    <string name="settings_track_number">Show track number</string>
+    <string name="settings_track_number_summary">If enabled, shows the track number of the song being played.</string>
     <string name="settings_item_rating">Show item rating</string>
     <string name="settings_item_rating_summary">If enabled, the item\'s rating and whether it is marked as a favorite will be displayed.</string>
     <string name="settings_queue_syncing_countdown">Sync timer</string>
@@ -470,6 +476,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
     <string name="settings_theme">Theme</string>
+    <string name="settings_dark_theme_style">Dark theme style</string>
 	<string name="settings_tile_size">Tiles size</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>

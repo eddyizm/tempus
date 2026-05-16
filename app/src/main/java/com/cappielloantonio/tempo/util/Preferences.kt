@@ -27,6 +27,7 @@ object Preferences {
     private const val PLAYBACK_SPEED = "playback_speed"
     private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val QUICK_ACTION_VISIBLE = "quick_action_visible"
+    private const val TRACK_NUMBER_VISIBLE = "track_number_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -106,7 +107,9 @@ object Preferences {
 	private const val AA_FOURTH_TAB = "androidauto_fourth_tab"
     private const val AA_SHUFFLE_GENRE_SONGS = "androidauto_shuffle_genre_songs"
     private const val AA_STARRED_FOR_MADE_FOR_YOU ="androidauto_starred_for_made_for_you"
+    private const val DARK_THEME_STYLE = "dark_theme_style"
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
+    private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -317,6 +320,15 @@ object Preferences {
     @JvmStatic
     fun setQuickActionVisible(quickActionVisible: Boolean) {
         App.getInstance().preferences.edit().putBoolean(QUICK_ACTION_VISIBLE, quickActionVisible).apply()
+    }
+
+    @JvmStatic
+    fun getTrackNumberVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(TRACK_NUMBER_VISIBLE, false)
+    }
+
+    fun setTrackNumberVisible(trackNumberVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(TRACK_NUMBER_VISIBLE, trackNumberVisible).apply()
     }
 
     @JvmStatic
@@ -719,11 +731,12 @@ object Preferences {
 
     @JvmStatic
     fun getHomeSortPlaylists(): String {
-        return App.getInstance().preferences.getString(HOME_SORT_PLAYLISTS, DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER) ?: DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER
+        return App.getInstance().preferences.getString(HOME_SORT_PLAYLISTS, DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER)
+            ?: DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER
     }
 
-        @JvmStatic
-    fun getHomeSortPlaylists(sortOrder: String) {
+    @JvmStatic
+    fun setHomeSortPlaylists(sortOrder: String) {
         App.getInstance().preferences.edit().putString(HOME_SORT_PLAYLISTS, sortOrder).apply()
     }
 
@@ -876,6 +889,11 @@ object Preferences {
     }
 
     @JvmStatic
+    fun isAndroidAutoShufflePlaylistsEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_PLAYLISTS, false)
+    }
+
+    @JvmStatic
     fun setAndroidAutoShuffleGenreSongsEnabled(enabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(AA_SHUFFLE_GENRE_SONGS, enabled).apply()
     }
@@ -883,5 +901,25 @@ object Preferences {
     @JvmStatic
     fun getAndroidAutoStarredForMadeForYou(): Int {
         return App.getInstance().preferences.getString(AA_STARRED_FOR_MADE_FOR_YOU, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getTheme(): String {
+        return App.getInstance().preferences.getString(THEME, "default") ?: "default"
+    }
+
+    @JvmStatic
+    fun setTheme(theme: String) {
+        App.getInstance().preferences.edit().putString(THEME, theme).apply()
+    }
+
+    @JvmStatic
+    fun getDarkThemeStyle(): String {
+        return App.getInstance().preferences.getString(DARK_THEME_STYLE, "standard") ?: "standard"
+    }
+
+    @JvmStatic
+    fun setDarkThemeStyle(style: String) {
+        App.getInstance().preferences.edit().putString(DARK_THEME_STYLE, style).apply()
     }
 }

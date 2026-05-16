@@ -90,6 +90,7 @@ public class PlayerControllerFragment extends Fragment {
     private TextView playerMediaBitrate;
     private ConstraintLayout playerQuickActionView;
     private ImageButton playerOpenQueueButton;
+    private ImageButton playerOpenLyricsButton;
     private ImageButton playerTrackInfo;
     private LinearLayout ratingContainer;
     private ImageButton equalizerButton;
@@ -162,6 +163,7 @@ public class PlayerControllerFragment extends Fragment {
         playerMediaBitrate = bind.getRoot().findViewById(R.id.player_media_bitrate);
         playerQuickActionView = bind.getRoot().findViewById(R.id.player_quick_action_view);
         playerOpenQueueButton = bind.getRoot().findViewById(R.id.player_open_queue_button);
+        playerOpenLyricsButton = bind.getRoot().findViewById(R.id.player_open_lyrics_button);
         playerTrackInfo = bind.getRoot().findViewById(R.id.player_info_track);
         songRatingBar =  bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
@@ -185,6 +187,15 @@ public class PlayerControllerFragment extends Fragment {
             if (playerBottomSheetFragment != null) {
                 playerBottomSheetFragment.goToQueuePage();
             }
+        });
+        playerOpenLyricsButton.setOnClickListener(view -> {
+            int currentItem = playerMediaCoverViewPager.getCurrentItem();
+            if (currentItem == 0) {
+                playerMediaCoverViewPager.setCurrentItem(1, true);
+            } else if (currentItem == 1) {
+                playerMediaCoverViewPager.setCurrentItem(0, true);;
+            }
+
         });
     }
 
@@ -299,7 +310,13 @@ public class PlayerControllerFragment extends Fragment {
             return;
         }
 
-        playerMediaTitleLabel.setText(String.valueOf(mediaMetadata.title));
+        playerMediaTitleLabel.setText(
+                Preferences.getTrackNumberVisible()
+                        && mediaMetadata.trackNumber != null
+                        && !String.valueOf(mediaMetadata.trackNumber).isEmpty()
+                        ? String.format("%02d", mediaMetadata.trackNumber)+ " " + String.valueOf(mediaMetadata.title)
+                        : String.valueOf(mediaMetadata.title)
+        );
         playerArtistNameLabel.setText(
                 mediaMetadata.artist != null
                         ? String.valueOf(mediaMetadata.artist)
