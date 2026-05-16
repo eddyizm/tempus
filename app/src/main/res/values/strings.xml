@@ -640,4 +640,18 @@
 
     <string name="nav_drawer_index">Index</string>
 
+    <!-- Sleep Timer -->
+    <string name="sleep_timer_dialog_title">Sleep timer</string>
+    <string name="sleep_timer_dialog_negative_button">Dismiss</string>
+    <string name="sleep_timer_5_min">5 minutes</string>
+    <string name="sleep_timer_10_min">10 minutes</string>
+    <string name="sleep_timer_15_min">15 minutes</string>
+    <string name="sleep_timer_30_min">30 minutes</string>
+    <string name="sleep_timer_45_min">45 minutes</string>
+    <string name="sleep_timer_60_min">60 minutes</string>
+    <string name="sleep_timer_end_of_song">End of song</string>
+    <string name="sleep_timer_cancel">Cancel timer</string>
+    <string name="sleep_timer_button_description">Sleep timer</string>
+    <string name="sleep_timer_active_label">%d min</string>
+
 </resources>

@@ -46,8 +46,10 @@ import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBindi
 import com.cappielloantonio.tempo.service.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.cappielloantonio.tempo.service.SleepTimerManager;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
+import com.cappielloantonio.tempo.ui.dialog.SleepTimerDialog;
 import com.cappielloantonio.tempo.ui.dialog.TrackInfoDialog;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerHorizontalPager;
 import com.cappielloantonio.tempo.util.AssetLinkUtil;
@@ -86,6 +88,7 @@ public class PlayerControllerFragment extends Fragment {
     private ImageButton playerTrackInfo;
     private LinearLayout ratingContainer;
     private ImageButton equalizerButton;
+    private ImageButton sleepTimerButton;
     private ChipGroup assetLinkChipGroup;
     private Chip playerSongLinkChip;
     private Chip playerAlbumLinkChip;
@@ -115,6 +118,7 @@ public class PlayerControllerFragment extends Fragment {
         initMediaLabelButton();
         initArtistLabelButton();
         initEqualizerButton();
+        initSleepTimerButton();
 
         return view;
     }
@@ -153,6 +157,7 @@ public class PlayerControllerFragment extends Fragment {
         songRatingBar =  bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
         equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
+        sleepTimerButton = bind.getRoot().findViewById(R.id.player_sleep_timer_button);
         assetLinkChipGroup = bind.getRoot().findViewById(R.id.asset_link_chip_group);
         playerSongLinkChip = bind.getRoot().findViewById(R.id.asset_link_song_chip);
         playerAlbumLinkChip = bind.getRoot().findViewById(R.id.asset_link_album_chip);
@@ -169,6 +174,65 @@ public class PlayerControllerFragment extends Fragment {
                 playerBottomSheetFragment.goToQueuePage();
             }
         });
+    }
+
+    private void initSleepTimerButton() {
+        updateSleepTimerButtonTint();
+
+        sleepTimerButton.setOnClickListener(v -> {
+            SleepTimerDialog dialog = new SleepTimerDialog();
+            dialog.setSleepTimerListener(new SleepTimerDialog.SleepTimerListener() {
+                @Override
+                public void onSleepTimerSet(long durationMs) {
+                    SleepTimerManager.instance.startCountdown(durationMs, () -> {
+                        pausePlayback();
+                        updateSleepTimerButtonTint();
+                    });
+                    updateSleepTimerButtonTint();
+                }
+
+                @Override
+                public void onSleepTimerEndOfSong() {
+                    SleepTimerManager.instance.startEndOfSong(() -> {
+                        pausePlayback();
+                        updateSleepTimerButtonTint();
+                    });
+                    updateSleepTimerButtonTint();
+                }
+
+                @Override
+                public void onSleepTimerCancelled() {
+                    SleepTimerManager.instance.cancelTimer();
+                    updateSleepTimerButtonTint();
+                }
+            });
+            dialog.show(getParentFragmentManager(), "SleepTimerDialog");
+        });
+    }
+
+    /** Highlights the sleep-timer button when a timer is active. */
+    private void updateSleepTimerButtonTint() {
+        if (sleepTimerButton == null) return;
+        int colorAttr = SleepTimerManager.instance.isActive()
+                ? com.google.android.material.R.attr.colorPrimary
+                : com.google.android.material.R.attr.colorOnPrimaryContainer;
+        android.content.res.TypedArray ta = requireContext().obtainStyledAttributes(new int[]{colorAttr});
+        int color = ta.getColor(0, 0);
+        ta.recycle();
+        androidx.core.widget.ImageViewCompat.setImageTintList(
+                sleepTimerButton,
+                android.content.res.ColorStateList.valueOf(color)
+        );
+    }
+
+    /** Pauses the current player via the MediaBrowser. */
+    private void pausePlayback() {
+        if (mediaBrowserListenableFuture == null || !mediaBrowserListenableFuture.isDone()) return;
+        try {
+            mediaBrowserListenableFuture.get().pause();
+        } catch (Exception e) {
+            Log.e(TAG, "pausePlayback failed", e);
+        }
     }
 
     private void initializeBrowser() {
@@ -215,6 +279,14 @@ public class PlayerControllerFragment extends Fragment {
             @Override
             public void onRepeatModeChanged(int repeatMode) {
                 Preferences.setRepeatMode(repeatMode);
+            }
+
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                // Notify sleep timer when the current song finishes naturally
+                if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
+                    SleepTimerManager.instance.notifyEndOfSong();
+                }
             }
         });
     }
