@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.database.AppDatabase;
+import com.cappielloantonio.tempo.model.InternetRadioStationCache;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,17 +28,43 @@ public class RadioRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getInternetRadioStations() != null && response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations() != null) {
-                            radioStation.setValue(response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations());
+                            List<InternetRadioStation> stations = response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations();
+                            radioStation.setValue(stations);
+                            cacheStations(stations);
+                        } else {
+                            fallbackToCache(radioStation);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        fallbackToCache(radioStation);
                     }
                 });
 
         return radioStation;
+    }
+
+    private void cacheStations(List<InternetRadioStation> stations) {
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getInstance();
+            db.internetRadioStationDao().deleteAll();
+            List<InternetRadioStationCache> cacheList = stations.stream()
+                    .map(InternetRadioStationCache::new)
+                    .collect(Collectors.toList());
+            db.internetRadioStationDao().insertAll(cacheList);
+        }).start();
+    }
+
+    private void fallbackToCache(MutableLiveData<List<InternetRadioStation>> liveData) {
+        new Thread(() -> {
+            List<InternetRadioStation> cached = AppDatabase.getInstance().internetRadioStationDao().getAll().stream()
+                    .map(InternetRadioStationCache::toInternetRadioStation)
+                    .collect(Collectors.toList());
+            if (!cached.isEmpty()) {
+                liveData.postValue(cached);
+            }
+        }).start();
     }
 
         public Call<ApiResponse> createInternetRadioStation(String name, String streamURL, String homepageURL) {
