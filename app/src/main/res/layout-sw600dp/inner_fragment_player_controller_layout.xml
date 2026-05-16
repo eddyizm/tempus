@@ -420,7 +420,7 @@
             android:orientation="vertical"
             android:gravity="center_horizontal"
             app:layout_constraintStart_toEndOf="@+id/player_open_equalizer_button"
-            app:layout_constraintEnd_toStartOf="@+id/player_open_queue_button"
+            app:layout_constraintEnd_toStartOf="@+id/player_open_lyrics_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -442,6 +442,20 @@
 
         </LinearLayout>
 
+        <!-- Lyrics: -->
+        <ImageButton
+            android:id="@+id/player_open_lyrics_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintStart_toEndOf="@+id/player_sleep_timer_container"
+            app:layout_constraintEnd_toStartOf="@+id/player_open_queue_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:srcCompat="@drawable/ic_lyrics" />
+
+
         <!-- Queue: last element of the horizontal spread chain -->
         <ImageButton
             android:id="@+id/player_open_queue_button"
@@ -449,7 +463,7 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintStart_toEndOf="@+id/player_sleep_timer_container"
+            app:layout_constraintStart_toEndOf="@+id/player_open_lyrics_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

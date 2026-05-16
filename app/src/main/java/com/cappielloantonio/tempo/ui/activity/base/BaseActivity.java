@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.ui.activity.base;
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -17,6 +18,8 @@ import androidx.media3.exoplayer.offline.DownloadService;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 
+import com.cappielloantonio.tempo.R;
+import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.service.DownloaderService;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.dialog.BatteryOptimizationDialog;
@@ -33,6 +36,21 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        String theme = Preferences.getTheme();
+        String darkStyle = Preferences.getDarkThemeStyle();
+        boolean isAmoled = ThemeHelper.AMOLED_MODE.equals(darkStyle);
+
+        if (ThemeHelper.DARK_MODE.equals(theme) || ThemeHelper.AMOLED_MODE.equals(theme)) {
+            if (isAmoled) {
+                setTheme(R.style.AppTheme_Amoled);
+            }
+        } else if (ThemeHelper.DEFAULT_MODE.equals(theme)) {
+            int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && isAmoled) {
+                setTheme(R.style.AppTheme_Amoled);
+            }
+        }
+
         super.onCreate(savedInstanceState);
         Flavors.initializeCastContext(this);
         initializeDownloader();
@@ -106,7 +124,24 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void setNavigationBarColor() {
-        getWindow().setNavigationBarColor(SurfaceColors.getColorForElevation(this, 8));
-        getWindow().setStatusBarColor(SurfaceColors.getColorForElevation(this, 0));
+        String theme = Preferences.getTheme();
+        String darkStyle = Preferences.getDarkThemeStyle();
+        boolean isAmoled = ThemeHelper.AMOLED_MODE.equals(darkStyle);
+        boolean applyAmoled = false;
+
+        if (ThemeHelper.DARK_MODE.equals(theme) || ThemeHelper.AMOLED_MODE.equals(theme)) {
+            applyAmoled = isAmoled;
+        } else if (ThemeHelper.DEFAULT_MODE.equals(theme)) {
+            int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+            applyAmoled = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && isAmoled);
+        }
+
+        if (applyAmoled) {
+            getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
+            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.black));
+        } else {
+            getWindow().setNavigationBarColor(SurfaceColors.getColorForElevation(this, 8));
+            getWindow().setStatusBarColor(SurfaceColors.getColorForElevation(this, 0));
+        }
     }
 }
