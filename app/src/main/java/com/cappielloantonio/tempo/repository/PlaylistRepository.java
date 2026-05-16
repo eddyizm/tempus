@@ -247,6 +247,7 @@ public class PlaylistRepository {
     }
 
     public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId) {
+        // Rename the playlist
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .updatePlaylist(playlistId, name, true, null, null)
@@ -254,16 +255,25 @@ public class PlaylistRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful()) {
-                            // After renaming, we need to handle the song list update.
-                            // Subsonic doesn't have a "replace all songs" in updatePlaylist.
-                            // So we might still need to recreate if the songs changed significantly,
-                            // but if we just renamed, we should update the local pinned database.
                             updateLocalPlaylistName(playlistId, name);
-                            notifyPlaylistChanged();
                         }
+                    }
 
-                        // If songsId is provided, we might want to re-sync them.
-                        // For now, let's at least fix the name duplication issue.
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                    }
+                });
+
+        // Replace the full song list to persist reordering and additions/removals.
+        // createPlaylist with an existing playlistId replaces its contents entirely,
+        // which is the only way to reorder via the Subsonic API.
+        App.getSubsonicClientInstance(false)
+                .getPlaylistClient()
+                .createPlaylist(playlistId, null, songsId != null ? songsId : new ArrayList<>())
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful()) notifyPlaylistChanged();
                     }
 
                     @Override
