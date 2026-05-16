@@ -302,16 +302,6 @@
             android:key="sync_starred_artists_for_offline_use" />
 
         <ListPreference
-            app:defaultValue="1"
-            app:dialogTitle="@string/settings_buffering_strategy"
-            app:entries="@array/buffering_strategy_titles"
-            app:entryValues="@array/buffering_strategy_values"
-            app:key="buffering_strategy"
-            app:title="@string/settings_buffering_strategy"
-            app:summary="@string/settings_buffering_strategy_summary"
-            app:useSimpleSummaryProvider="false" />
-
-        <ListPreference
             app:defaultValue="60"
             app:dialogTitle="@string/settings_song_preload_buffer"
             app:entries="@array/song_preload_buffer_titles"
