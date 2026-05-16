@@ -515,7 +515,7 @@ open class BaseMediaService : MediaLibraryService() {
         return DefaultLoadControl.Builder()
             .setBufferDurationsMs(
                 preloadMs,
-                preloadMs * 2,
+                preloadMs,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
             )
