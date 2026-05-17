@@ -27,6 +27,7 @@ object Preferences {
     private const val PLAYBACK_SPEED = "playback_speed"
     private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val QUICK_ACTION_VISIBLE = "quick_action_visible"
+    private const val TRACK_NUMBER_VISIBLE = "track_number_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -108,6 +109,7 @@ object Preferences {
     private const val AA_STARRED_FOR_MADE_FOR_YOU ="androidauto_starred_for_made_for_you"
     private const val DARK_THEME_STYLE = "dark_theme_style"
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
+    private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -318,6 +320,15 @@ object Preferences {
     @JvmStatic
     fun setQuickActionVisible(quickActionVisible: Boolean) {
         App.getInstance().preferences.edit().putBoolean(QUICK_ACTION_VISIBLE, quickActionVisible).apply()
+    }
+
+    @JvmStatic
+    fun getTrackNumberVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(TRACK_NUMBER_VISIBLE, false)
+    }
+
+    fun setTrackNumberVisible(trackNumberVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(TRACK_NUMBER_VISIBLE, trackNumberVisible).apply()
     }
 
     @JvmStatic
@@ -875,6 +886,11 @@ object Preferences {
     @JvmStatic
     fun isAndroidAutoShuffleStarredTracksEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_SHUFFLE_STARRED_TRACKS, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoShufflePlaylistsEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_PLAYLISTS, false)
     }
 
     @JvmStatic
