@@ -53,10 +53,9 @@ object ConstantsAA {
     const val MADE_FOR_YOU_SOURCE = "[madeForYouSource]"
 
     // Android Auto InstantMix constants
-    const val INSTANT_MIX_MAX_TRACKS = 20
-    const val MIN_TRACKS_SMALL_MIX = INSTANT_MIX_MAX_TRACKS
-    const val MIN_TRACKS_MEDIUM_MIX = INSTANT_MIX_MAX_TRACKS+10
-    const val MIN_TRACKS_LARGE_MIX = INSTANT_MIX_MAX_TRACKS+20
+    const val MIN_TRACKS_SMALL_MIX = 20
+    const val MIN_TRACKS_MEDIUM_MIX = 30
+    const val MIN_TRACKS_LARGE_MIX = 40
     const val NUMBER_OF_TRACKS_IN_SMALL_MIX = 12
     const val NUMBER_OF_TRACKS_IN_MEDIUM_MIX = 15
     const val NUMBER_OF_TRACKS_IN_LARGE_MIX = 18
