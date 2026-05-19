@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity {
     private NavigationController navigationController;
     private BottomSheetController bottomSheetController;
     public BottomSheetBehavior bottomSheetBehavior;
-    public boolean isLandscape = false;
+    private boolean isLandscape = false;
     private AssetLinkNavigator assetLinkNavigator;
     private AssetLinkUtil.AssetLink pendingAssetLink;
 
