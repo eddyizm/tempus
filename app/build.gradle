@@ -55,6 +55,20 @@ android {
             applicationId "com.eddyizm.degoogled.tempus"
         }
 
+        fiddle {
+            dimension = "default"
+            applicationId "com.tvillega.fiddle"
+            resValue "string", "app_name", "Fiddle"
+        }
+
+    }
+
+    sourceSets {
+        fiddle {
+            java.srcDirs += sourceSets.degoogled.java.srcDirs
+            res.srcDirs += sourceSets.degoogled.res.srcDirs
+            assets.srcDirs += sourceSets.degoogled.assets.srcDirs
+        }
     }
 
     buildTypes {
@@ -129,6 +143,7 @@ dependencies {
 
     implementation 'com.intuit.sdp:sdp-android:1.1.1'
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
+    implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
 }
 java {
     toolchain {
