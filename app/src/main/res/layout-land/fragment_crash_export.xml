@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="horizontal"
+    android:gravity="center">
 
     <LinearLayout
         android:id="@+id/crash_export_fragment"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -21,7 +22,17 @@
             android:maxWidth="240dp"
             android:maxHeight="240dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ui_share" />
+            android:src="@drawable/ui_share"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp">
 
         <TextView
             style="@style/LabelMedium"
@@ -59,8 +70,6 @@
                 android:layout_marginStart="8dp"
                 tools:ignore="ButtonStyle"/>
         </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>
-
