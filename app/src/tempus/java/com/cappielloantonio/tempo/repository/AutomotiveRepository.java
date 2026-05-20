@@ -69,6 +69,9 @@ public class AutomotiveRepository {
     public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_MEDIUM_MIX = 15;
     public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_LARGE_MIX = 18;
 
+    public final int MAX_AA_ITEMS = 500;
+    public final int MAX_AA_SHUFFLE_ITEMS = 100;
+
     public final InstantMixBuilder instantMixBuilder = new InstantMixBuilder(this);
     public final MadeForYouBuilder madeForYouBuilder = new MadeForYouBuilder(this);
 
@@ -144,10 +147,12 @@ public class AutomotiveRepository {
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size, Boolean isRootCall) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+        if (size > MAX_AA_ITEMS) size = MAX_AA_ITEMS;
+        final int maxSize = size;
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
-                .getAlbumList2(type, size, 0, null, null)
+                .getAlbumList2(type, maxSize, 0, null, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -203,10 +208,9 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getArtists(String prefix, int size, Boolean isRootCall) {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getArtists(String prefix, Boolean isRootCall) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
-        if (size > 500) size = 500;
-        final int maxSize = size;
+
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
                 .getArtists()
@@ -222,9 +226,9 @@ public class AutomotiveRepository {
 
                             int count = 0;
                             for (IndexID3 index : indices) {
-                                if (index.getArtists() != null && count < maxSize) {
+                                if (index.getArtists() != null && count < MAX_AA_ITEMS) {
                                     for (ArtistID3 artist : index.getArtists()) {
-                                        if (count >= maxSize) break;
+                                        if (count >= MAX_AA_ITEMS) break;
 
                                         MediaItem mediaItem = createArtist(
                                                 artist.getName(),
@@ -273,10 +277,8 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
-    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredSongs(int size) {
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredSongs() {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
-        if (size > 500) size = 500;
-        final int maxSize = size;
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
@@ -290,11 +292,11 @@ public class AutomotiveRepository {
                             setChildrenMetadata(songs);
 
                             if( !Preferences.isAndroidAutoShuffleStarredTracksEnabled() ) {
-                                songs = songs.subList(0, Math.min(maxSize, songs.size()));
+                                songs = songs.subList(0, Math.min(MAX_AA_ITEMS, songs.size()));
                             }
                             else {
                                 Collections.shuffle(songs);
-                                songs = songs.subList(0, Math.min(100, songs.size()));
+                                songs = songs.subList(0, Math.min(MAX_AA_SHUFFLE_ITEMS, songs.size()));
                             }
 
                             List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
@@ -377,6 +379,7 @@ public class AutomotiveRepository {
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredAlbums(String prefix, Boolean isRootCall) {
+
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
         App.getSubsonicClientInstance(false)
@@ -387,6 +390,7 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getStarred2() != null && response.body().getSubsonicResponse().getStarred2().getAlbums() != null) {
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getStarred2().getAlbums();
+                            albums = albums.subList(0, Math.min(MAX_AA_ITEMS, albums.size()));
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
@@ -440,6 +444,7 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getStarred2() != null && response.body().getSubsonicResponse().getStarred2().getArtists() != null) {
                             List<ArtistID3> artists = response.body().getSubsonicResponse().getStarred2().getArtists();
+                            artists = artists.subList(0, Math.min(MAX_AA_ITEMS, artists.size()));
 
                             artists.sort((a1, a2) -> {
                                 String name1 = a1.getName() != null ? a1.getName() : "";
@@ -676,6 +681,7 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylists() != null && response.body().getSubsonicResponse().getPlaylists().getPlaylists() != null) {
                             List<Playlist> playlists = response.body().getSubsonicResponse().getPlaylists().getPlaylists();
+                            playlists = playlists.subList(0, Math.min(MAX_AA_ITEMS, playlists.size()));
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
@@ -994,6 +1000,14 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylist() != null && response.body().getSubsonicResponse().getPlaylist().getEntries() != null) {
                             List<Child> tracks = response.body().getSubsonicResponse().getPlaylist().getEntries();
+
+                            if( !Preferences.isAndroidAutoShufflePlaylistsEnabled() ) {
+                                tracks = tracks.subList(0, Math.min(MAX_AA_ITEMS, tracks.size()));
+                            }
+                            else {
+                                Collections.shuffle(tracks);
+                                tracks = tracks.subList(0, Math.min(MAX_AA_SHUFFLE_ITEMS, tracks.size()));
+                            }
 
                             setChildrenMetadata(tracks);
 
