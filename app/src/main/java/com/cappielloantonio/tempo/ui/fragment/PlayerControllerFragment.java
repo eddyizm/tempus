@@ -24,6 +24,7 @@ import android.widget.ToggleButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -47,6 +48,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBinding;
+import com.cappielloantonio.tempo.factory.CoverFlowViewModelFactory;
+import com.cappielloantonio.tempo.glide.CustomGlideRequest;
+import com.cappielloantonio.tempo.model.Cover;
+import com.cappielloantonio.tempo.repository.CoverRepository;
+import com.cappielloantonio.tempo.repository.MediaBrowserCoverRepository;
 import com.cappielloantonio.tempo.service.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
@@ -65,6 +71,7 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.UIUtil;
+import com.cappielloantonio.tempo.viewmodel.CoverFlowViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.RatingViewModel;
 import com.google.android.material.chip.Chip;
@@ -128,7 +135,6 @@ public class PlayerControllerFragment extends Fragment {
 
         init();
         initQuickActionView();
-        initCoverFlow();
         initCoverLyricsSlideView();
         initMediaListenable();
         initMediaLabelButton();
@@ -139,6 +145,78 @@ public class PlayerControllerFragment extends Fragment {
         updateSleepTimerUI();
 
         return view;
+    }
+
+    private CoverFlowViewModel viewModel;
+
+//    public CoverFlowFragment() {
+//        super(R.layout.inner_fragment_player_controller_layout);   // your layout that contains the RecyclerView
+//    }
+
+    @Override
+    public void onViewCreated(@NonNull View root, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(root, savedInstanceState);
+
+        // -----------------------------------------------------------------
+        // 1️⃣  Find the RecyclerView (the id changed to player_cover_flow)
+        // -----------------------------------------------------------------
+        playerCoverFlow = root.findViewById(R.id.player_cover_flow);
+
+        // -----------------------------------------------------------------
+        // 2️⃣  Set up the ViewModel (repository injection omitted for brevity)
+        // -----------------------------------------------------------------
+//        CoverRepository repository = new MediaBrowserCoverRepository(mediaBrowserListenableFuture);
+//        viewModel = new ViewModelProvider(this,
+//                new CoverFlowViewModelFactory(repository))
+//                .get(CoverFlowViewModel.class);
+        CoverRepository repository = new MediaBrowserCoverRepository(mediaBrowserListenableFuture);
+        CoverFlowViewModelFactory factory = new CoverFlowViewModelFactory(repository);
+
+        viewModel = new ViewModelProvider(this, factory)
+                .get(CoverFlowViewModel.class);
+
+        // -----------------------------------------------------------------
+        // 3️⃣  Observe the LiveData and build the UI when data arrives
+        // -----------------------------------------------------------------
+        viewModel.getCovers().observe(getViewLifecycleOwner(), this::setupCoverFlow);
+    }
+
+    /** Called once the list of covers is available */
+    private void setupCoverFlow(@NonNull List<Cover> covers) {
+        if (covers.isEmpty()) return;   // optionally show an empty‑state view
+
+        // -----------------------------------------------------------------
+        // 4️⃣  Create the adapter – the lambda receives the Cover object
+        //     and the ImageView that just got bound.
+        // -----------------------------------------------------------------
+        CoverFlowAdapter adapter = new CoverFlowAdapter(
+                requireContext(),
+                covers,
+                (cover, imageView) -> {
+                    // Run the *extra* Glide request only when we have a valid id.
+                    String coverArtId = cover.getCoverArtId();
+                    if (coverArtId != null) {
+                        CustomGlideRequest.Builder
+                                .from(requireContext(),
+                                        coverArtId,
+                                        CustomGlideRequest.ResourceType.Song)
+                                .build()
+                                .into(imageView);   // load into the same thumbnail ImageView
+                    }
+                });
+
+        // -----------------------------------------------------------------
+        // 5️⃣  RecyclerView basics (same as your original code)
+        // -----------------------------------------------------------------
+        playerCoverFlow.setAdapter(adapter);
+        playerCoverFlow.setLayoutManager(
+                new LinearLayoutManager(requireContext(),
+                        LinearLayoutManager.HORIZONTAL,
+                        false));
+
+        playerCoverFlow.addItemDecoration(UIUtil.horizontalSpacing(32));
+        playerCoverFlow.addOnScrollListener(UIUtil.scaleOnScroll());
+        UIUtil.centerAndSnapRecyclerView(playerCoverFlow);
     }
 
     @Override
@@ -210,28 +288,6 @@ public class PlayerControllerFragment extends Fragment {
             }
 
         });
-    }
-
-    private void initCoverFlow() {
-
-        List<String> covers = Arrays.asList(
-                "https://images.dog.ceo/breeds/affenpinscher/n02110627_11858.jpg",
-                "https://images.dog.ceo/breeds/hound-english/n02089973_811.jpg",
-                "https://images.dog.ceo/breeds/shiba/shiba-14.jpg",
-                "https://images.dog.ceo/breeds/affenpinscher/n02110627_11858.jpg",
-                "https://images.dog.ceo/breeds/hound-english/n02089973_811.jpg",
-                "https://images.dog.ceo/breeds/shiba/shiba-14.jpg"
-        );
-
-        playerCoverFlow.setAdapter(new CoverFlowAdapter(requireContext(), covers));
-        playerCoverFlow.setLayoutManager(
-                new LinearLayoutManager(requireContext(),
-                        LinearLayoutManager.HORIZONTAL,
-                        false));
-
-        playerCoverFlow.addItemDecoration(UIUtil.horizontalSpacing(32));
-        playerCoverFlow.addOnScrollListener(UIUtil.scaleOnScroll());
-        UIUtil.centerAndSnapRecyclerView(playerCoverFlow);
     }
 
 
