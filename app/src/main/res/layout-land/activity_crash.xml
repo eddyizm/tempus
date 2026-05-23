@@ -16,20 +16,20 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorSurface"
-            android:title="Tempus Crashed"
-            android:titleTextColor="@color/material_dynamic_primary0"
+            android:title="@string/app_name"
+            android:titleTextColor="@android:color/white"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
         <FrameLayout
             android:id="@+id/crash_content_frame"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/crash_bottom_nav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:menu="@menu/crash_bottom_nav_menu"/>
+            android:layout_height="match_parent"/>
     </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/crash_nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/crash_nav_drawer"/>
 </androidx.drawerlayout.widget.DrawerLayout>
