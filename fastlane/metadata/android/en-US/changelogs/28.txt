@@ -1,0 +1,9 @@
+feat: handle crashes gracefully
+feat: Added sleep timer button
+Playlist pinned and sorting
+feat: add lyrics to player quick actions
+style: Add pure black/AMOLED theme, Adjust text margin in "Discover" section elements
+feat: save radio list locally for offline access
+fix: equalizer glitching navigation
+feat: add settings for track number display
+feat: add landscape layout to crash activity
