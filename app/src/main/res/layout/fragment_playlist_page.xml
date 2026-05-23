@@ -151,7 +151,8 @@
                         android:textAllCaps="false"
                         app:icon="@drawable/ic_play"
                         app:iconGravity="textStart"
-                        app:iconPadding="18dp" />
+                        app:iconPadding="18dp"
+                        android:enabled="false"/>
 
                     <Button
                         android:id="@+id/playlist_page_shuffle_button"
@@ -165,7 +166,8 @@
                         android:textAllCaps="false"
                         app:icon="@drawable/ic_shuffle"
                         app:iconGravity="textStart"
-                        app:iconPadding="18dp" />
+                        app:iconPadding="18dp"
+                        android:enabled="false" />
                 </LinearLayout>
 
                 <TextView
@@ -192,6 +194,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/playlist_page_button_layout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <ProgressBar
+                android:id="@+id/song_recycler_view_placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"/>
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
