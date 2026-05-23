@@ -113,6 +113,22 @@ Please note the two variants in the release assets include release/debug and 32/
     
 </p>
 
+## 🟥Github (Android Auto)
+<p>
+    <p align="left">
+        <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
+        <img src="mockup/usage/aa_list.jpg" width=317>
+    </p>
+    <p align="left">
+        <img src="mockup/usage/aa_tracks.jpg" width=317 style="margin-right:16px;">
+        <img src="mockup/usage/aa_for_you.jpg" width=317>
+    </p>
+    <p align="left">
+        <img src="mockup/usage/aa_AZ.jpg" width=317 style="margin-right:16px;">
+        <img src="mockup/usage/aa_search.jpg" width=317>
+    </p>
+</p>
+
 ## Contributing  
 
 Please fork and open PR's against the development branch. Make sure your PR builds successfully. 
