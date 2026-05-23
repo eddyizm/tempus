@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.ui.fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +32,7 @@ import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.service.MediaManager;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
@@ -45,9 +47,13 @@ import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaylistPageViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import kotlin.collections.ArrayDeque;
 
 @UnstableApi
 public class PlaylistPageFragment extends Fragment implements ClickCallback {
@@ -219,21 +225,29 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initMusicButton() {
-        playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
-            if (bind != null) {
-                bind.playlistPagePlayButton.setOnClickListener(v -> {
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                    activity.setBottomSheetInPeek(true);
-                });
 
-                bind.playlistPageShuffleButton.setOnClickListener(v -> {
-                    java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> shuffledSongs = new java.util.ArrayList<>(songs);
-                    java.util.Collections.shuffle(shuffledSongs);
-                    MediaManager.startQueue(mediaBrowserListenableFuture, shuffledSongs, 0);
-                    activity.setBottomSheetInPeek(true);
-                });
-            }
-        });
+        playlistPageViewModel.getPlaylistSongLiveList()
+                        .observe(getViewLifecycleOwner(), songs -> {
+                            if (songs != null) {
+
+                                bind.playlistPagePlayButton.setEnabled(true);
+                                bind.playlistPageShuffleButton.setEnabled(true);
+
+                                assert bind.songRecyclerViewPlaceholder != null;
+                                bind.songRecyclerViewPlaceholder.setVisibility(View.GONE);
+
+                                bind.playlistPagePlayButton.setOnClickListener(v -> {
+                                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                                    activity.setBottomSheetInPeek(true);
+                                });
+                                bind.playlistPageShuffleButton.setOnClickListener(v -> {
+                                    List<Child> shuffled = new ArrayList<>(songs);
+                                    Collections.shuffle(shuffled);
+                                    MediaManager.startQueue(mediaBrowserListenableFuture, shuffled, 0);
+                                    activity.setBottomSheetInPeek(true);
+                                });
+                            }
+                        });
     }
 
     private void initBackCover() {
