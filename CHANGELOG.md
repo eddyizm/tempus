@@ -1,5 +1,27 @@
 # Changelog
 
+## Pending changes (Pre-Release)
+* feat: handle crashes gracefully by @tvillega in https://github.com/eddyizm/tempus/pull/611
+* feat: add Starred bundle for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/614
+* fix: quick actions visibility state not checked by @tvillega in https://github.com/eddyizm/tempus/pull/621
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/626
+* feat: Implement a sleep timer button to the currently playing screen by @CtznSniiips in https://github.com/eddyizm/tempus/pull/617
+* Refactor: Custom Commands for degoogled and Tempus flavors by @MaFo-28 in https://github.com/eddyizm/tempus/pull/641
+* Playlist pinned sorting by @eddyizm in https://github.com/eddyizm/tempus/pull/642
+* feat: add lyrics to player quick actions by @tvillega in https://github.com/eddyizm/tempus/pull/622
+* style: Add pure black/AMOLED theme by @jaime-grj in https://github.com/eddyizm/tempus/pull/630
+* style: Adjust text margin in "Discover" section elements by @jaime-grj in https://github.com/eddyizm/tempus/pull/628
+* feat: save radio list locally for offline access by @pLum0 in https://github.com/eddyizm/tempus/pull/631
+* Feat: remove Android Auto settings in degoogled flavor by @MaFo-28 in https://github.com/eddyizm/tempus/pull/637
+* Limiting number of tracks in playlists on Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/638
+* fix: equalizer glitching navigation by @tvillega in https://github.com/eddyizm/tempus/pull/643
+* feat: add settings for track number display by @tvillega in https://github.com/eddyizm/tempus/pull/647
+* feat: add landscape layout to crash activity by @tvillega in https://github.com/eddyizm/tempus/pull/648
+* fix: don't reload media source if we can already seek to the desired position by @OlivierGenez in https://github.com/eddyizm/tempus/pull/651
+* fix: npe if playlist playback happens before data fetching is done by @tvillega in https://github.com/eddyizm/tempus/pull/690
+* Revert Issue600 - Slow loading of long playlists (#627) by @eddyizm in https://github.com/eddyizm/tempus/pull/703
+
+
 ## [4.16.0](https://github.com/eddyizm/tempus/releases/tag/v4.16.0) (2026-05-06)
 ## What's Changed
 * Improved creation time for the Instant Mix on the Android Auto artist page by @MaFo-28 in https://github.com/eddyizm/tempus/pull/594
