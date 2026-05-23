@@ -227,26 +227,26 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == R.id.menu_download_group_by_track) {
-                downloadViewModel.initViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_TRACK, null));
-                Preferences.setDefaultDownloadViewType(Constants.DOWNLOAD_TYPE_TRACK);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_download_group_by_album) {
-                downloadViewModel.initViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_ALBUM, null));
-                Preferences.setDefaultDownloadViewType(Constants.DOWNLOAD_TYPE_ALBUM);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_download_group_by_artist) {
-                downloadViewModel.initViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_ARTIST, null));
-                Preferences.setDefaultDownloadViewType(Constants.DOWNLOAD_TYPE_ARTIST);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_download_group_by_genre) {
-                downloadViewModel.initViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_GENRE, null));
-                Preferences.setDefaultDownloadViewType(Constants.DOWNLOAD_TYPE_GENRE);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_download_group_by_year) {
-                downloadViewModel.initViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_YEAR, null));
-                Preferences.setDefaultDownloadViewType(Constants.DOWNLOAD_TYPE_YEAR);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_download_set_directory) { 
+                return setDownloadViewModel(Constants.DOWNLOAD_TYPE_TRACK);
+            }
+
+            if (menuItem.getItemId() == R.id.menu_download_group_by_album) {
+                return setDownloadViewModel(Constants.DOWNLOAD_TYPE_ALBUM);
+            }
+
+            if (menuItem.getItemId() == R.id.menu_download_group_by_artist) {
+                return setDownloadViewModel(Constants.DOWNLOAD_TYPE_ARTIST);
+            }
+
+            if (menuItem.getItemId() == R.id.menu_download_group_by_genre) {
+                return setDownloadViewModel(Constants.DOWNLOAD_TYPE_GENRE);
+            }
+
+            if (menuItem.getItemId() == R.id.menu_download_group_by_year) {
+                return setDownloadViewModel(Constants.DOWNLOAD_TYPE_YEAR);
+            }
+
+            if (menuItem.getItemId() == R.id.menu_download_set_directory) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
                 startActivityForResult(intent, REQUEST_CODE_PICK_DIRECTORY);
                 return true;
@@ -254,8 +254,13 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
             return false;
         });
-
         popup.show();
+    }
+
+    private boolean setDownloadViewModel(String downloadType) {
+        downloadViewModel.initViewStack(new DownloadStack(downloadType, null));
+        Preferences.setDefaultDownloadViewType(downloadType);
+        return true;
     }
 
     private void initializeMediaBrowser() {

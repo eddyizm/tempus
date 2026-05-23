@@ -46,7 +46,7 @@ public class MadeForYouBuilder {
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
     private enum MixStep { RECENT, STARRED_ALBUM, STARRED_ARTIST, STARRED_TRACKS}
-    private static final int NUMBER_OF_RECENT_ALBUMS = 15;
+    private static final int NUMBER_OF_RECENT_ALBUMS = 20;
     private static final int NUMBER_OF_RECENT_TRACKS = 50;
     private static final int MAX_CYCLES = 100; // safetyBreak
 
@@ -306,18 +306,13 @@ public class MadeForYouBuilder {
             ListenableFuture<MediaBrowser> browserFuture) {
 
         if (mixTracks.size() >= count) {
-            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-            repository.setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
-            isRunning.set(false);
+            enqueueMix(mixTracks, mixType, browserFuture);
             return;
         }
 
         if (cycleIndex > MAX_CYCLES) {
             Log.w(TAG, mixType + " Safety break reached, finalizing with " + mixTracks.size() + " tracks");
-            repository.setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
-            isRunning.set(false);
+            enqueueMix(mixTracks, mixType, browserFuture);
             return;
         }
 
@@ -492,10 +487,7 @@ public class MadeForYouBuilder {
                         }
 
                         if (mixTracks.size() >= count) {
-                            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-                            repository.setChildrenMetadata(mixTracks);
-                            enqueue(browserFuture, mixTracks, true);
-                            isRunning.set(false);
+                            enqueueMix(mixTracks, mixType, browserFuture);
                             return;
                         }
 
@@ -553,10 +545,7 @@ public class MadeForYouBuilder {
         }
 
         if (mixTracks.size() >= count) {
-            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-            repository.setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
-            isRunning.set(false);
+            enqueueMix(mixTracks, mixType, browserFuture);
             return;
         }
 
@@ -628,10 +617,7 @@ public class MadeForYouBuilder {
                         }
 
                         if (mixTracks.size() >= count) {
-                            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-                            repository.setChildrenMetadata(mixTracks);
-                            enqueue(browserFuture, mixTracks, true);
-                            isRunning.set(false);
+                            enqueueMix(mixTracks, mixType, browserFuture);
                             return;
                         }
 
@@ -692,5 +678,23 @@ public class MadeForYouBuilder {
                         isRunning.set(false);
                     }
                 });
+    }
+
+    /**
+     * Enqueues complete mix
+     */
+    private void enqueueMix(
+            List<Child> mixTracks,
+            String mixType,
+            ListenableFuture<MediaBrowser> browserFuture) {
+        Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
+
+        if(mixType.equals(Constants.AA_DISCOVERYMIX_ID))
+            Collections.shuffle(mixTracks);
+
+        repository.setChildrenMetadata(mixTracks);
+        enqueue(browserFuture, mixTracks, true);
+
+        isRunning.set(false);
     }
 }

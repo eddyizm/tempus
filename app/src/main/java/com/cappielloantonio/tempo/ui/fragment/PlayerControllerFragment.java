@@ -336,7 +336,13 @@ public class PlayerControllerFragment extends Fragment {
             return;
         }
 
-        playerMediaTitleLabel.setText(String.valueOf(mediaMetadata.title));
+        playerMediaTitleLabel.setText(
+                Preferences.getTrackNumberVisible()
+                        && mediaMetadata.trackNumber != null
+                        && !String.valueOf(mediaMetadata.trackNumber).isEmpty()
+                        ? String.format("%02d", mediaMetadata.trackNumber)+ " " + String.valueOf(mediaMetadata.title)
+                        : String.valueOf(mediaMetadata.title)
+        );
         playerArtistNameLabel.setText(
                 mediaMetadata.artist != null
                         ? String.valueOf(mediaMetadata.artist)
