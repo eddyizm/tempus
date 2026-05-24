@@ -24,8 +24,9 @@ private val queueSourceCache = ConcurrentHashMap<String, List<MediaItem>>()
 @UnstableApi
 class MediaLibrarySessionCallback(
     context: Context,
+    service: BaseMediaService,
     private val automotiveRepository: AutomotiveRepository
-) : BaseSessionCallback(context) {
+) : BaseSessionCallback(context, service) {
     init {
         MediaBrowserTree.initialize(context, automotiveRepository)
     }

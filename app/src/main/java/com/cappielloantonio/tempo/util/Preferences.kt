@@ -87,6 +87,8 @@ object Preferences {
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
     private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
+    private const val CUSTOM_COMMAND_FIRST_BUTTON = "custom_command_first_button"
+    private const val CUSTOM_COMMAND_SECOND_BUTTON = "custom_command_second_button"
     private const val ALBUM_DETAIL = "album_detail"
     private const val ALBUM_SORT_ORDER = "album_sort_order"
     private const val DEFAULT_ALBUM_SORT_ORDER = Constants.ALBUM_ORDER_BY_NAME
@@ -471,6 +473,16 @@ object Preferences {
     @JvmStatic
     fun setShuffleInsteadOfHeart(enabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(MINI_SHUFFLE_BUTTON_VISIBILITY, enabled).apply()
+    }
+
+    @JvmStatic
+    fun getCustomCommandFirstButton(): String? {
+        return App.getInstance().preferences.getString(CUSTOM_COMMAND_FIRST_BUTTON, "[heartID]")
+    }
+
+    @JvmStatic
+    fun getCustomCommandSecondButton(): String? {
+        return App.getInstance().preferences.getString(CUSTOM_COMMAND_SECOND_BUTTON, "[repeatID]")
     }
 
     @JvmStatic

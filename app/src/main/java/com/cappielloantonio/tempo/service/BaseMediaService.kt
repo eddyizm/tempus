@@ -84,7 +84,7 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     open fun getMediaLibrarySessionCallback(): MediaLibrarySession.Callback {
-        return BaseSessionCallback(baseContext)
+        return BaseSessionCallback(baseContext, this)
     }
 
     fun updateMediaItems(player: Player) {
@@ -401,6 +401,27 @@ open class BaseMediaService : MediaLibraryService() {
         }
     }
 
+    open fun onInstantMix(session: MediaSession, onComplete: Runnable? = null) {
+        val player = session.player
+        val currentMediaItem = player.currentMediaItem
+        val currentIndex = player.currentMediaItemIndex
+        val lastIndex = player.mediaItemCount - 1
+        val browserFuture = MediaBrowser.Builder(
+            this@BaseMediaService,
+            SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
+        ).buildAsync()
+
+        if (currentIndex in 0 until lastIndex) {
+            Log.d(TAG, "onInstantMix: remove range from $currentIndex to $lastIndex")
+            MediaManager.removeRange(browserFuture, currentIndex + 1, lastIndex + 1)
+        }
+
+        Log.d(TAG, "onInstantMix: start Continuous Play with $currentMediaItem")
+        MediaManager.continuousPlay(currentMediaItem, browserFuture) {
+            Handler(Looper.getMainLooper()).post { onComplete?.run() }
+        }
+    }
+
     fun setPlayer(oldPlayer: Player?, newPlayer: Player) {
         if (oldPlayer === newPlayer) return
         if (oldPlayer != null) {
@@ -415,7 +436,21 @@ open class BaseMediaService : MediaLibraryService() {
         }
         mediaLibrarySession.player = newPlayer
     }
-
+    /*
+            val customPlayer = if (newPlayer is CustomForwardingPlayer) newPlayer else CustomForwardingPlayer(newPlayer)
+        if (oldPlayer === customPlayer) return
+        if (oldPlayer != null) {
+            val currentQueue = getQueueFromPlayer(oldPlayer)
+            val currentIndex = oldPlayer.currentMediaItemIndex
+            val currentPosition = oldPlayer.currentPosition
+            val isPlaying = oldPlayer.playWhenReady
+            oldPlayer.stop()
+            customPlayer.setMediaItems(currentQueue, currentIndex, currentPosition)
+            customPlayer.playWhenReady = isPlaying
+            customPlayer.prepare()
+        }
+        mediaLibrarySession.player = customPlayer
+     */
     open fun releasePlayers() {
         exoplayer.release()
     }

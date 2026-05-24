@@ -216,11 +216,23 @@
             android:summary="@string/settings_continuous_play_summary"
             android:key="continuous_play" />
 
-        <SwitchPreference
-            android:title="@string/settings_show_mini_shuffle_button"
-            android:defaultValue="false"
-            android:summary="@string/settings_show_mini_shuffle_button_summary"
-            android:key="mini_shuffle_button_visibility" />
+        <ListPreference
+            app:defaultValue="[heartID]"
+            app:dialogTitle="@string/settings_custom_command_first_button"
+            app:entries="@array/custom_commands_titles"
+            app:entryValues="@array/custom_commands_values"
+            app:key="custom_command_first_button"
+            app:title="@string/settings_custom_command_first_button"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            app:defaultValue="[repeatID]"
+            app:dialogTitle="@string/settings_custom_command_second_button"
+            app:entries="@array/custom_commands_titles"
+            app:entryValues="@array/custom_commands_values"
+            app:key="custom_command_second_button"
+            app:title="@string/settings_custom_command_second_button"
+            app:useSimpleSummaryProvider="true" />
 
         <SeekBarPreference
             android:key="min_star_rating"
