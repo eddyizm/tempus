@@ -37,6 +37,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
     private List<Child> shuffling;
     private List<Child> grouped;
 
+    private final java.util.Map<String, String> playlistCoverCache = new java.util.HashMap<>();
+
     public DownloadHorizontalAdapter(ClickCallback click) {
         this.click = click;
         this.view = Constants.DOWNLOAD_TYPE_TRACK;
@@ -296,8 +298,26 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
             holder.item.downloadedItemTitleTextView.setText(download.getPlaylistName());
             holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_PLAYLIST, download.getPlaylistId(), songs)));
 
+            String playlistId = download.getPlaylistId();
+            String coverArtId = playlistCoverCache.get(playlistId);
+
+            if (coverArtId == null) {
+                // Async lookup from local playlist cache
+                new Thread(() -> {
+                    String cachedCover = com.cappielloantonio.tempo.database.AppDatabase.getInstance().playlistDao().getPlaylistCoverArtId(playlistId);
+                    if (cachedCover != null) {
+                        playlistCoverCache.put(playlistId, cachedCover);
+                        if (holder.itemView.getContext() instanceof android.app.Activity) {
+                            ((android.app.Activity) holder.itemView.getContext()).runOnUiThread(() -> notifyItemChanged(position));
+                        }
+                    }
+                }).start();
+                // Fallback to track cover art while loading
+                coverArtId = download.getCoverArtId();
+            }
+
             CustomGlideRequest.Builder
-                    .from(holder.itemView.getContext(), download.getCoverArtId(), CustomGlideRequest.ResourceType.Song)
+                    .from(holder.itemView.getContext(), coverArtId, CustomGlideRequest.ResourceType.Song)
                     .build()
                     .into(holder.item.itemCoverImageView);
 

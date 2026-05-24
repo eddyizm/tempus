@@ -299,6 +299,11 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     }
 
     @Override
+    public void onPlaylistClick(Bundle bundle) {
+        downloadViewModel.pushViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_PLAYLIST, bundle.getString(Constants.DOWNLOAD_TYPE_PLAYLIST)));
+    }
+
+    @Override
     public void onMediaClick(Bundle bundle) {
         MediaManager.startQueue(mediaBrowserListenableFuture, bundle.getParcelableArrayList(Constants.TRACKS_OBJECT), bundle.getInt(Constants.ITEM_POSITION));
         activity.setBottomSheetInPeek(true);
