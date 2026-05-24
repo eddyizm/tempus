@@ -229,6 +229,7 @@
     <string name="menu_group_by_album">Album</string>
     <string name="menu_group_by_artist">Artist</string>
     <string name="menu_group_by_genre">Genre</string>
+    <string name="menu_group_by_playlist">Playlist</string>
     <string name="menu_group_by_track">Track</string>
     <string name="menu_group_by_year">Year</string>
     <string name="menu_home_label">Home</string>

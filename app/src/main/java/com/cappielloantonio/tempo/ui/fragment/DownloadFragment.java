@@ -185,6 +185,9 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                 case Constants.DOWNLOAD_TYPE_YEAR:
                     downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
                     break;
+                case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
+                    break;
             }
 
             bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
@@ -244,6 +247,10 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
             if (menuItem.getItemId() == R.id.menu_download_group_by_year) {
                 return setDownloadViewModel(Constants.DOWNLOAD_TYPE_YEAR);
+            }
+
+            if (menuItem.getItemId() == R.id.menu_download_group_by_playlist) {
+                return setDownloadViewModel(Constants.DOWNLOAD_TYPE_PLAYLIST);
             }
 
             if (menuItem.getItemId() == R.id.menu_download_set_directory) {

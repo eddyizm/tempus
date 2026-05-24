@@ -98,6 +98,7 @@ object Constants {
     const val DOWNLOAD_TYPE_ARTIST = "download_type_artist"
     const val DOWNLOAD_TYPE_GENRE = "download_type_genre"
     const val DOWNLOAD_TYPE_YEAR = "download_type_year"
+    const val DOWNLOAD_TYPE_PLAYLIST = "download_type_playlist"
 
     const val DOWNLOAD_GROUP = "download_group"
     const val DOWNLOAD_GROUP_TITLE = "download_group_title"

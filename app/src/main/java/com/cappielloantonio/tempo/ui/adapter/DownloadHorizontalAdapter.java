@@ -13,6 +13,7 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.ItemHorizontalDownloadBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
+import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
@@ -68,6 +69,9 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
             case Constants.DOWNLOAD_TYPE_YEAR:
                 initYearLayout(holder, position);
                 break;
+            case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                initPlaylistLayout(holder, position);
+                break;
         }
     }
 
@@ -118,6 +122,11 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                 return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getGenre())).filter(Util.distinctByKey(Child::getGenre)).collect(Collectors.toList()));
             case Constants.DOWNLOAD_TYPE_YEAR:
                 return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getYear())).filter(Util.distinctByKey(Child::getYear)).collect(Collectors.toList()));
+            case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                return filterSong(filterKey, filterValue, songs.stream()
+                        .filter(song -> song instanceof Download && ((Download) song).getPlaylistId() != null)
+                        .filter(Util.distinctByKey(song -> ((Download) song).getPlaylistId()))
+                        .collect(Collectors.toList()));
         }
 
         return Collections.emptyList();
@@ -136,6 +145,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                     return songs.stream().filter(child -> Objects.equals(child.getYear(), Integer.valueOf(filterValue))).collect(Collectors.toList());
                 case Constants.DOWNLOAD_TYPE_ARTIST:
                     return songs.stream().filter(child -> Objects.equals(child.getArtistId(), filterValue)).collect(Collectors.toList());
+                case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                    return songs.stream().filter(child -> child instanceof Download && Objects.equals(((Download) child).getPlaylistId(), filterValue)).collect(Collectors.toList());
             }
         }
 
@@ -158,6 +169,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                 return songs.stream().filter(child -> Objects.equals(child.getYear(), Integer.valueOf(filterValue))).collect(Collectors.toList());
             case Constants.DOWNLOAD_TYPE_ARTIST:
                 return songs.stream().filter(child -> Objects.equals(child.getArtistId(), filterValue)).collect(Collectors.toList());
+            case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                return songs.stream().filter(child -> child instanceof Download && Objects.equals(((Download) child).getPlaylistId(), filterValue)).collect(Collectors.toList());
             default:
                 return songs;
         }
@@ -176,6 +189,8 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                     return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getYear(), Integer.valueOf(filterValue))).count());
                 case Constants.DOWNLOAD_TYPE_ARTIST:
                     return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getArtistId(), filterValue)).count());
+                case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                    return String.valueOf(songs.stream().filter(child -> child instanceof Download && Objects.equals(((Download) child).getPlaylistId(), filterValue)).count());
             }
         }
 
@@ -274,6 +289,24 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         holder.item.divider.setVisibility(View.GONE);
     }
 
+    private void initPlaylistLayout(ViewHolder holder, int position) {
+        Child song = grouped.get(position);
+        if (song instanceof Download) {
+            Download download = (Download) song;
+            holder.item.downloadedItemTitleTextView.setText(download.getPlaylistName());
+            holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_PLAYLIST, download.getPlaylistId(), songs)));
+
+            CustomGlideRequest.Builder
+                    .from(holder.itemView.getContext(), download.getCoverArtId(), CustomGlideRequest.ResourceType.Song)
+                    .build()
+                    .into(holder.item.itemCoverImageView);
+
+            holder.item.itemCoverImageView.setVisibility(View.VISIBLE);
+            holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
+            holder.item.divider.setVisibility(View.GONE);
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemHorizontalDownloadBinding item;
 
@@ -316,6 +349,12 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                     bundle.putString(Constants.DOWNLOAD_TYPE_YEAR, grouped.get(getBindingAdapterPosition()).getYear().toString());
                     click.onYearClick(bundle);
                     break;
+                case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                    if (grouped.get(getBindingAdapterPosition()) instanceof Download) {
+                        bundle.putString(Constants.DOWNLOAD_TYPE_PLAYLIST, ((Download) grouped.get(getBindingAdapterPosition())).getPlaylistId());
+                        click.onPlaylistClick(bundle);
+                    }
+                    break;
             }
         }
 
@@ -339,6 +378,11 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                     break;
                 case Constants.DOWNLOAD_TYPE_YEAR:
                     filteredSongs.addAll(filterSong(Constants.DOWNLOAD_TYPE_YEAR, grouped.get(getBindingAdapterPosition()).getYear().toString(), songs));
+                    break;
+                case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                    if (grouped.get(getBindingAdapterPosition()) instanceof Download) {
+                        filteredSongs.addAll(filterSong(Constants.DOWNLOAD_TYPE_PLAYLIST, ((Download) grouped.get(getBindingAdapterPosition())).getPlaylistId(), songs));
+                    }
                     break;
             }
 
