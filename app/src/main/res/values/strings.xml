@@ -82,6 +82,7 @@
     <string name="artist_page_title_biography_section">Biography</string>
     <string name="artist_page_title_most_streamed_song_section">Top Songs</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">See all</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">No top songs available\n\nTap to hide</string>
     <string name="battery_optimization_negative_button">Ignore</string>
     <string name="battery_optimization_neutral_button">Don\'t ask again</string>
     <string name="battery_optimization_positive_button">Disable</string>
