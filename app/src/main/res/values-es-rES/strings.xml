@@ -502,7 +502,7 @@
     <string name="equalizer_fragment_title">Ecualizador</string>
     <string name="equalizer_reset">Restablecer</string>
     <string name="equalizer_enable">Habilitar</string>
-    <string name="equalizer_not_supported">No disponible en este dispositivo</string>
+    <string name="equalizer_managed_externally">No disponible en este dispositivo</string>
     <string name="settings_app_equalizer">Ecualizador</string>
     <string name="settings_app_equalizer_summary">Abrir el ecualizador integrado</string>
     <string name="settings_download_folder_cleared">Se ha limpiado la carpeta de descargas.</string>

@@ -526,7 +526,7 @@
     <string name="equalizer_fragment_title">Equalizzatore</string>
     <string name="equalizer_reset">Reimposta</string>
     <string name="equalizer_enable">Abilita</string>
-    <string name="equalizer_not_supported">Non supportato su questo dispositivo</string>
+    <string name="equalizer_managed_externally">Non supportato su questo dispositivo</string>
     <string name="settings_app_equalizer">Equalizzatore</string>
     <string name="settings_app_equalizer_summary">Apri l\'equalizzatore integrato</string>
     

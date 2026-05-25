@@ -30,7 +30,10 @@ import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
 import com.cappielloantonio.tempo.equalizer.BuiltinBackend
+import com.cappielloantonio.tempo.equalizer.EqualizerBackend
 import com.cappielloantonio.tempo.equalizer.EqualizerManager
+import com.cappielloantonio.tempo.equalizer.ExternalBackend
+import com.cappielloantonio.tempo.equalizer.DefaultBackend
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
@@ -50,6 +53,7 @@ open class BaseMediaService : MediaLibraryService() {
     companion object {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
+        const val ACTION_RELOAD_EQUALIZER = "com.cappielloantonio.tempo.service.ACTION_RELOAD_EQUALIZER"
     }
 
     protected lateinit var exoplayer: ExoPlayer
@@ -78,6 +82,13 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private val binder = LocalBinder()
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_RELOAD_EQUALIZER -> reloadEqualizer()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
 
     open fun playerInitHook() {
         initializeExoPlayer()
@@ -440,7 +451,7 @@ open class BaseMediaService : MediaLibraryService() {
         super.onCreate()
 
         playerInitHook()
-        initializeEqualizerManager()
+        initializeEqualizer()
         initializeNetworkListener()
         restorePlayerFromQueue(mediaLibrarySession.player)
     }
@@ -484,10 +495,32 @@ open class BaseMediaService : MediaLibraryService() {
         exoplayer.repeatMode = Preferences.getRepeatMode()
     }
 
-    private fun initializeEqualizerManager() {
-        equalizerManager = EqualizerManager(BuiltinBackend(), baseContext)
+    private fun initializeEqualizer() {
+
+        val equalizerBackend: EqualizerBackend =
+            when (Preferences.getSelectedEqualizer()) {
+            1 -> BuiltinBackend()
+            2 -> ExternalBackend()
+            else -> DefaultBackend()
+        }
+
+        equalizerManager = EqualizerManager(equalizerBackend, baseContext)
         equalizerManager.attach(exoplayer.audioSessionId)
         sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+    }
+
+    fun reloadEqualizer() {
+        equalizerManager.release(exoplayer.audioSessionId)
+
+        val backend: EqualizerBackend = when (Preferences.getSelectedEqualizer()) {
+            1 -> BuiltinBackend()
+            2 -> ExternalBackend()
+            else -> DefaultBackend()
+        }
+
+        equalizerManager = EqualizerManager(backend, baseContext)
+        equalizerManager.attach(exoplayer.audioSessionId)
+        sendBroadcast(Intent(ACTION_RELOAD_EQUALIZER))
     }
 
     private fun initializeMediaLibrarySession(player: Player) {

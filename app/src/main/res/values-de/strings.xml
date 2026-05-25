@@ -589,7 +589,7 @@
     <string name="equalizer_fragment_title">Equalizer</string>
     <string name="equalizer_reset">Zurücksetzen</string>
     <string name="equalizer_enable">Aktivieren</string>
-    <string name="equalizer_not_supported">Auf diesem Gerät nicht unterstützt</string>
+    <string name="equalizer_managed_externally">Auf diesem Gerät nicht unterstützt</string>
     <string name="settings_app_equalizer">Equalizer</string>
     <string name="settings_app_equalizer_summary">Integrierten Equalizer öffnen</string>
 

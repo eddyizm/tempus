@@ -586,7 +586,7 @@
     <string name="equalizer_fragment_title">Эквалайзер</string>
     <string name="equalizer_reset">Сброс</string>
     <string name="equalizer_enable">Включить</string>
-    <string name="equalizer_not_supported">Не поддерживается на этом устройстве</string>
+    <string name="equalizer_managed_externally">Не поддерживается на этом устройстве</string>
     <string name="settings_app_equalizer">Эквалайзер</string>
     <string name="settings_app_equalizer_summary">Открыть встроенный эквалайзер</string>
 
