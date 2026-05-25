@@ -11,7 +11,7 @@ android {
         targetSdk 35
 
         versionCode 28
-        versionName '4.17.0'
+        versionName '4.17.3-dev'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -129,6 +129,7 @@ dependencies {
 
     implementation 'com.intuit.sdp:sdp-android:1.1.1'
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0@aar'
 }
 java {
     toolchain {
