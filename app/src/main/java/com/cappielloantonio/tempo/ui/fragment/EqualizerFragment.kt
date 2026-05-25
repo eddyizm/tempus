@@ -1,11 +1,11 @@
 package com.cappielloantonio.tempo.ui.fragment
 
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
-import android.content.BroadcastReceiver
 import android.os.Bundle
 import android.os.IBinder
 import android.view.Gravity
@@ -18,15 +18,20 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.service.EqualizerManager
+import com.cappielloantonio.tempo.equalizer.EqualizerManager
 import com.cappielloantonio.tempo.service.BaseMediaService
+import com.cappielloantonio.tempo.service.EqualizerManager
 import com.cappielloantonio.tempo.service.MediaService
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.Preferences
+import com.google.android.material.appbar.MaterialToolbar
 
+@UnstableApi
 class EqualizerFragment : Fragment() {
 
     private lateinit var activity: MainActivity
+    private lateinit var root: View
+    private lateinit var settingsToolbar: MaterialToolbar
     private var equalizerManager: EqualizerManager? = null
     private lateinit var eqBandsContainer: LinearLayout
     private lateinit var eqSwitch: Switch
@@ -40,6 +45,8 @@ class EqualizerFragment : Fragment() {
         super.onAttach(context)
         activity = requireActivity() as MainActivity
     }
+
+
 
     private val equalizerUpdatedReceiver = object : BroadcastReceiver() {
         @OptIn(UnstableApi::class)
@@ -81,10 +88,6 @@ class EqualizerFragment : Fragment() {
             )
             receiverRegistered = true
         }
-        activity.setBottomNavigationBarVisibility(false)
-        activity.setBottomSheetVisibility(false)
-        activity.setNavigationDrawerLock(true)
-        activity.setSystemBarsVisibility(!activity.isLandscape)
     }
 
     @OptIn(UnstableApi::class)
@@ -107,11 +110,14 @@ class EqualizerFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.fragment_equalizer, container, false)
+    ): View {
+        root = inflater.inflate(R.layout.fragment_equalizer, container, false)
         eqSwitch = root.findViewById(R.id.equalizer_switch)
         eqSwitch.isChecked = Preferences.isEqualizerEnabled()
         eqSwitch.jumpDrawablesToCurrentState()
+
+        initAppBar()
+
         return root
     }
 
@@ -275,6 +281,13 @@ class EqualizerFragment : Fragment() {
             val savedDb = savedLevels[i] / 100
             manager.setBandLevel(i.toShort(), (savedDb * 100).toShort())
             bandSeekBars.getOrNull(i)?.progress = savedDb - minLevelDb
+        }
+    }
+
+    private fun initAppBar() {
+        settingsToolbar = root.findViewById(R.id.equalizer_toolbar)
+        settingsToolbar.setNavigationOnClickListener { v ->
+            activity.navController.navigateUp()
         }
     }
 

@@ -356,6 +356,7 @@
 	<string name="settings_androidauto_fourth_tab">Affichage du quatrième onglet</string>
     <string name="settings_androidauto_shuffle_genre_songs">Mélanger les chansons par genre</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Mélanger les morceaux favoris</string>
+    <string name="settings_androidauto_shuffle_playlists">Mélanger les playlists</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Lire des chansons aléatoires lors de la sélection d\'un genre</string>
     <string name="settings_androidauto_starred_for_made_for_you">Favoris utilisés pour les mix Pour Vous</string>
     <string name="settings_audio_transcode_download_format">Format de transcodage</string>

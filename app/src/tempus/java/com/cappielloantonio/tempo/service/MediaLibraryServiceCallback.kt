@@ -11,6 +11,7 @@ import androidx.media3.session.MediaSession
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.util.Constants
+import com.cappielloantonio.tempo.util.ConstantsAA
 import com.cappielloantonio.tempo.util.MappingUtil
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
@@ -57,7 +58,7 @@ class MediaLibrarySessionCallback(
 
         return Futures.transform(future, { result ->
             val items = result.value ?: emptyList()
-            queueSourceCache[Constants.AA_QUEUE_CACHED_SOURCE] = items
+            queueSourceCache[ConstantsAA.QUEUE_CACHED_SOURCE] = items
             result
         }, MoreExecutors.directExecutor())
     }
@@ -143,7 +144,7 @@ class MediaLibrarySessionCallback(
     }
 
     private fun fetchRadioItem(firstItem: MediaItem): ListenableFuture<List<MediaItem>> {
-        return Futures.transformAsync(
+        val radioFuture = Futures.transformAsync(
             automotiveRepository.internetRadioStations,
             { result ->
                 val selected = result?.value?.find { it.mediaId == firstItem.mediaId }
@@ -153,9 +154,15 @@ class MediaLibrarySessionCallback(
                         .build()
                     Futures.immediateFuture(listOf(updated))
                 } else {
-                    Futures.immediateFuture(emptyList())
+                    Futures.immediateFuture(listOf(firstItem))
                 }
             },
+            androidx.core.content.ContextCompat.getMainExecutor(context)
+        )
+        return Futures.catchingAsync(
+            radioFuture,
+            Exception::class.java,
+            { Futures.immediateFuture(listOf(firstItem)) },
             androidx.core.content.ContextCompat.getMainExecutor(context)
         )
     }
@@ -170,19 +177,19 @@ class MediaLibrarySessionCallback(
         val parentId = extras?.getString("parent_id")
 
         val futureQueue: ListenableFuture<List<MediaItem>> = when {
-            parentId?.startsWith(Constants.AA_QUEUE_CACHED_SOURCE) == true -> {
+            parentId?.startsWith(ConstantsAA.QUEUE_CACHED_SOURCE) == true -> {
                 Log.d(TAG, "Fetching AA list source tracks for $parentId")
-                val cachedItems = queueSourceCache[Constants.AA_QUEUE_CACHED_SOURCE] ?: emptyList()
+                val cachedItems = queueSourceCache[ConstantsAA.QUEUE_CACHED_SOURCE] ?: emptyList()
                 Futures.immediateFuture(cachedItems)
             }
 
-            firstItem.mediaId.startsWith(Constants.AA_INSTANTMIX_SOURCE) -> {
+            firstItem.mediaId.startsWith(ConstantsAA.INSTANTMIX_SOURCE) -> {
                 Log.d(TAG, "Fetching instant mix for $firstItem.mediaId")
 
-                val withoutPrefix = firstItem.mediaId.removePrefix(Constants.AA_INSTANTMIX_SOURCE)
+                val withoutPrefix = firstItem.mediaId.removePrefix(ConstantsAA.INSTANTMIX_SOURCE)
                 val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
                 val artistId = withoutPrefix.substringAfter("]")
-                val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+                val count = countStr.toIntOrNull() ?: ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX
 
                 // connect handle
                 MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
@@ -194,13 +201,13 @@ class MediaLibrarySessionCallback(
                 )
             }
 
-            firstItem.mediaId.startsWith(Constants.AA_MADE_FOR_YOU_SOURCE) -> {
+            firstItem.mediaId.startsWith(ConstantsAA.MADE_FOR_YOU_SOURCE) -> {
                 Log.d(TAG, "Fetching MadeForYou for $firstItem.mediaId")
 
-                val withoutPrefix = firstItem.mediaId.removePrefix(Constants.AA_MADE_FOR_YOU_SOURCE)
+                val withoutPrefix = firstItem.mediaId.removePrefix(ConstantsAA.MADE_FOR_YOU_SOURCE)
                 val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
                 val mixType = withoutPrefix.substringAfter("]")
-                val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+                val count = countStr.toIntOrNull() ?: ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX
 
                 // connect handle
                 MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)

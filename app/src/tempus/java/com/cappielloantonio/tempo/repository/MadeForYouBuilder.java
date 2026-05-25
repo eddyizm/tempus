@@ -18,7 +18,7 @@ import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Starred2;
-import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.ConstantsAA;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -46,8 +46,6 @@ public class MadeForYouBuilder {
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
     private enum MixStep { RECENT, STARRED_ALBUM, STARRED_ARTIST, STARRED_TRACKS}
-    private static final int NUMBER_OF_RECENT_ALBUMS = 15;
-    private static final int NUMBER_OF_RECENT_TRACKS = 50;
     private static final int MAX_CYCLES = 100; // safetyBreak
 
     public MadeForYouBuilder(AutomotiveRepository repository) {
@@ -78,10 +76,10 @@ public class MadeForYouBuilder {
         Log.d(TAG, mixType + " Building remaining " + count + " tracks");
 
         // QUICK_MIX : only recent albums needed
-        if (mixType.equals(Constants.AA_QUICKMIX_ID)) {
+        if (mixType.equals(ConstantsAA.QUICKMIX_ID)) {
             App.getSubsonicClientInstance(false)
                     .getAlbumSongListClient()
-                    .getAlbumList2("recent", NUMBER_OF_RECENT_ALBUMS, 0, null, null)
+                    .getAlbumList2("recent", ConstantsAA.NUMBER_OF_RECENT_ALBUMS_FOR_MIX, 0, null, null)
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -128,7 +126,7 @@ public class MadeForYouBuilder {
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
-                .getAlbumList2("recent", NUMBER_OF_RECENT_ALBUMS, 0, null, null)
+                .getAlbumList2("recent", ConstantsAA.NUMBER_OF_RECENT_ALBUMS_FOR_MIX, 0, null, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -177,7 +175,7 @@ public class MadeForYouBuilder {
                 });
 
         // Load recent track IDs for Discovery Mix filtering
-        chronologyDao.getLastPlayed(getServerId(), NUMBER_OF_RECENT_TRACKS)
+        chronologyDao.getLastPlayed(getServerId(), ConstantsAA.NUMBER_OF_RECENT_TRACKS_FOR_MIX)
                 .observeForever(new Observer<List<Chronology>>() {
                     @Override
                     public void onChanged(List<Chronology> chronology) {
@@ -186,7 +184,7 @@ public class MadeForYouBuilder {
                             for (Chronology c : chronology) ids.add(c.getId());
                         }
                         recentTrackIdsFuture.set(ids);
-                        chronologyDao.getLastPlayed(getServerId(), NUMBER_OF_RECENT_TRACKS).removeObserver(this);
+                        chronologyDao.getLastPlayed(getServerId(), ConstantsAA.NUMBER_OF_RECENT_TRACKS_FOR_MIX).removeObserver(this);
                     }
                 });
 
@@ -256,7 +254,7 @@ public class MadeForYouBuilder {
             List<ArtistID3> starredArtists,
             List<Child> starredTracks) {
 
-        if (mixType.equals(Constants.AA_QUICKMIX_ID)) {
+        if (mixType.equals(ConstantsAA.QUICKMIX_ID)) {
             // cycle of 2: recent[0] → recent[1] → shuffle → repeat
             int posInCycle = cycleIndex % 2;
             if (posInCycle == 0) {
@@ -306,18 +304,13 @@ public class MadeForYouBuilder {
             ListenableFuture<MediaBrowser> browserFuture) {
 
         if (mixTracks.size() >= count) {
-            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-            repository.setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
-            isRunning.set(false);
+            enqueueMix(mixTracks, mixType, browserFuture);
             return;
         }
 
         if (cycleIndex > MAX_CYCLES) {
             Log.w(TAG, mixType + " Safety break reached, finalizing with " + mixTracks.size() + " tracks");
-            repository.setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
-            isRunning.set(false);
+            enqueueMix(mixTracks, mixType, browserFuture);
             return;
         }
 
@@ -492,10 +485,7 @@ public class MadeForYouBuilder {
                         }
 
                         if (mixTracks.size() >= count) {
-                            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-                            repository.setChildrenMetadata(mixTracks);
-                            enqueue(browserFuture, mixTracks, true);
-                            isRunning.set(false);
+                            enqueueMix(mixTracks, mixType, browserFuture);
                             return;
                         }
 
@@ -553,10 +543,7 @@ public class MadeForYouBuilder {
         }
 
         if (mixTracks.size() >= count) {
-            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-            repository.setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
-            isRunning.set(false);
+            enqueueMix(mixTracks, mixType, browserFuture);
             return;
         }
 
@@ -589,7 +576,7 @@ public class MadeForYouBuilder {
             Set<String> recentTrackIds,
             ListenableFuture<MediaBrowser> browserFuture) {
 
-        if (!mixType.equals(Constants.AA_DISCOVERYMIX_ID) || songIdForSimilar == null) {
+        if (!mixType.equals(ConstantsAA.DISCOVERYMIX_ID) || songIdForSimilar == null) {
             runMixStep(cycleIndex,
                     recentAlbums, starredAlbums, starredArtists, starredTracks,
                     recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
@@ -628,10 +615,7 @@ public class MadeForYouBuilder {
                         }
 
                         if (mixTracks.size() >= count) {
-                            Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
-                            repository.setChildrenMetadata(mixTracks);
-                            enqueue(browserFuture, mixTracks, true);
-                            isRunning.set(false);
+                            enqueueMix(mixTracks, mixType, browserFuture);
                             return;
                         }
 
@@ -692,5 +676,23 @@ public class MadeForYouBuilder {
                         isRunning.set(false);
                     }
                 });
+    }
+
+    /**
+     * Enqueues complete mix
+     */
+    private void enqueueMix(
+            List<Child> mixTracks,
+            String mixType,
+            ListenableFuture<MediaBrowser> browserFuture) {
+        Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
+
+        if(mixType.equals(ConstantsAA.DISCOVERYMIX_ID))
+            Collections.shuffle(mixTracks);
+
+        repository.setChildrenMetadata(mixTracks);
+        enqueue(browserFuture, mixTracks, true);
+
+        isRunning.set(false);
     }
 }

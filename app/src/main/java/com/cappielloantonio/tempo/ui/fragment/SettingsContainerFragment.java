@@ -46,7 +46,7 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.interfaces.DialogClickCallback;
 import com.cappielloantonio.tempo.interfaces.ScanCallback;
-import com.cappielloantonio.tempo.service.EqualizerManager;
+import com.cappielloantonio.tempo.equalizer.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.DeleteDownloadStorageDialog;
@@ -177,6 +177,13 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             PreferenceCategory githubUpdateCategory = findPreference("settings_github_update_category_key");
             if (githubUpdateCategory != null) {
                 getPreferenceScreen().removePreference(githubUpdateCategory);
+            }
+        }
+
+        if (BuildConfig.FLAVOR.equals("degoogled")) {
+            ClickablePreferenceCategory androidAutoCategory = findPreference("settings_androidauto_category_key");
+            if (androidAutoCategory != null) {
+                getPreferenceScreen().removePreference(androidAutoCategory);
             }
         }
 
