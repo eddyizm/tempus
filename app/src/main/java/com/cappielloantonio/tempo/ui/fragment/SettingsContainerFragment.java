@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -35,6 +37,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
@@ -60,6 +63,7 @@ import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.SettingViewModel;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
@@ -152,6 +156,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionSyncStarredArtists();
         actionChangeStreamingCacheStorage();
         actionChangeDownloadStorage();
+        actionSetSongPreloadBuffer();
         actionSetDownloadDirectory();
         actionDeleteDownloadStorage();
         actionKeepScreenOn();
@@ -159,7 +164,8 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionMiniPlayerHeart();
 
         bindMediaService();
-        actionAppEqualizer();
+        actionBuiltinEqualizer();
+        actionEqualizerSelector();
         actionReplayGainPreamp();
 
         applyAccordionState();
@@ -572,6 +578,31 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         });
     }
 
+    private void actionSetSongPreloadBuffer() {
+        ListPreference pref = findPreference("song_preload_buffer");
+
+        Context ctx = getContext();
+        Resources res = getResources();
+
+        String[] titles = res.getStringArray(R.array.song_preload_buffer_titles);
+        String[] values = res.getStringArray(R.array.song_preload_buffer_values);
+
+        final int DEFAULT_IDX = 2; // 60 seconds
+        final String DEFAULT_VAL = values[DEFAULT_IDX];
+
+        String selectedValue = PreferenceManager
+                .getDefaultSharedPreferences(ctx)
+                .getString("song_preload_buffer", DEFAULT_VAL);
+
+        int valueIdx = Arrays.asList(values).indexOf(selectedValue);
+        int titleIdx = (valueIdx == -1) ? DEFAULT_IDX : valueIdx;
+
+        pref.setSummary(
+                ctx.getString(R.string.settings_song_preload_buffer_summary,
+                        titles[titleIdx])
+        );
+    }
+
     private void actionSetDownloadDirectory() {
         Preference pref = findPreference("set_download_directory");
         if (pref != null) {
@@ -722,8 +753,31 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         });
     }
 
-    private void actionAppEqualizer() {
-        Preference appEqualizer = findPreference("app_equalizer");
+    private void actionEqualizerSelector() {
+        final ListPreference selectedEqualizer = findPreference("selected_equalizer");
+        if (selectedEqualizer != null) {
+            selectedEqualizer.setSummary(selectedEqualizer.getEntry());
+            selectedEqualizer.setOnPreferenceChangeListener(
+                    (preference, newValue) -> {
+                        String newValStr = (String) newValue;
+                        int idx = selectedEqualizer.findIndexOfValue(newValStr);
+                        CharSequence newEntry = "";
+                        if (idx >= 0 && selectedEqualizer.getEntries() != null) {
+                            newEntry = selectedEqualizer.getEntries()[idx];
+                        }
+                        selectedEqualizer.setSummary(newEntry);
+                        Preferences.setSelectedEqualizer(newValStr);
+
+                        Intent intent = new Intent(getContext().getApplicationContext(), MediaService.class);
+                        intent.setAction(MediaService.ACTION_RELOAD_EQUALIZER);
+                        ContextCompat.startForegroundService(getContext().getApplicationContext(), intent);
+                        return true;
+                    });
+        }
+    }
+
+    private void actionBuiltinEqualizer() {
+        Preference appEqualizer = findPreference("builtin_equalizer");
         if (appEqualizer != null) {
             appEqualizer.setOnPreferenceClickListener(preference -> {
                 NavController navController = NavHostFragment.findNavController(this);

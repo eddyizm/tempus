@@ -358,8 +358,6 @@
     <string name="settings_audio_transcode_priority_summary">Si está activado, Tempus no forzará la transmisión de música con los ajustes de abajo.</string>
     <string name="settings_audio_transcode_priority_title">Preferir las opciones de transcodificación del servidor</string>
     <string name="settings_audio_transcode_priority_toast">La prioridad de transcodificación lo decidirá el servidor.</string>
-    <string name="settings_buffering_strategy">Estrategia de búfer</string>
-    <string name="settings_buffering_strategy_summary">Para que el cambio tenga efecto, tendrás que reiniciar la app manualmente.</string>
     <string name="settings_choose_download_folder">Elige una carpeta para descargar todas las canciones</string>
     <string name="settings_clear_download_folder">Vaciar carpeta de descargas</string>
     <string name="settings_continuous_play_summary">Permite seguir reproduciendo música cuando una lista de reproducción terminó; reproduciendo canciones similares</string>
@@ -603,7 +601,7 @@
     <string name="equalizer_fragment_title">Ecualizador</string>
     <string name="equalizer_reset">Reiniciar</string>
     <string name="equalizer_enable">Activar</string>
-    <string name="equalizer_not_supported">No soportado por este dispositivo</string>
+    <string name="equalizer_managed_externally">No soportado por este dispositivo</string>
     <string name="settings_app_equalizer">Ecualizador</string>
     <string name="settings_app_equalizer_summary">Abrir el ecualizador incorporado en Tempus</string>
 
