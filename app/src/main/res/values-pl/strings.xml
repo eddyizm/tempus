@@ -81,6 +81,7 @@
     <string name="artist_page_title_biography_section">Biografia</string>
     <string name="artist_page_title_most_streamed_song_section">Top piosenki</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Zobacz wszystkie</string>
+	<string name="artist_page_title_most_streamed_song_unavailable">Brak top piosenek\n\nNaciśnij aby ukryć</string>
     <string name="battery_optimization_negative_button">Ignoruj</string>
     <string name="battery_optimization_neutral_button">Nie pytaj ponownie</string>
     <string name="battery_optimization_positive_button">Wyłącz</string>
@@ -229,6 +230,7 @@
     <string name="menu_group_by_album">Albumy</string>
     <string name="menu_group_by_artist">Wykonawcy</string>
     <string name="menu_group_by_genre">Gatkunki</string>
+	<string name="menu_group_by_playlist">Playlisty</string>
     <string name="menu_group_by_track">Utwory</string>
     <string name="menu_group_by_year">Rok</string>
     <string name="menu_home_label">Strona główna</string>
@@ -380,6 +382,8 @@
     <string name="settings_download_folder_cleared">Utworzono folder pobierania.</string>
     <string name="settings_download_folder_set">Wybrano folder pobierania</string>
     <string name="settings_set_download_folder">Ustaw folder pobierania</string>
+	<string name="settings_song_preload_buffer">Bufor wstępnego ładowania piosenek</string>
+    <string name="settings_song_preload_buffer_summary">Aktualna wartość: %1$s\nAby zmiany przyniosły efekt musisz zrestartować aplikację ręcznie.</string>
     <string name="settings_system_equalizer_summary">Zmień ustawienia audio</string>
     <string name="settings_system_equalizer_title">Korektor systemowy</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -627,7 +631,8 @@
     <string name="equalizer_fragment_title">Korektor dźwięku</string>
     <string name="equalizer_reset">Reset</string>
     <string name="equalizer_enable">Włączony</string>
-    <string name="equalizer_managed_externally">Nie wspierane na tym urządzeniu</string>
+    <string name="equalizer_managed_externally">Equalizer jest zarządzany przez system lub inną aplikację</string>
+    <string name="settings_app_equalizer">Wbudowany equalizer</string>
     <string name="settings_app_equalizer">Korektor dźwięku</string>
     <string name="settings_app_equalizer_summary">Otwórz wbudowany korektor dźwięku</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>
