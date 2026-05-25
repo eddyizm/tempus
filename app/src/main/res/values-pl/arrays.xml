@@ -235,7 +235,22 @@
         <item>2</item>
         <item>3</item>
     </string-array>
-    
+
+    <string-array name="song_preload_buffer_titles">
+        <item>5 sekund</item>
+        <item>30 sekund</item>
+        <item>1 minuta</item>
+        <item>3 minuty</item>
+        <item>5 minut</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+	
    <string-array name="playlist_sort_option_titles">
         <item>Po nazwie</item>
         <item>Losowo</item>
@@ -294,7 +309,18 @@
         <item>3</item>
         <item>2</item>
     </string-array>
-    
+
+	    <string-array name="selected_equalizer_entries">
+        <item>Domyślny</item>
+        <item>Wbudowany</item>
+        <item>Zewnętrzny</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+	
     <string-array name="aa_tab_titles">
         <item>Nie wyświetlaj</item>
         <item>Strona główna</item>
