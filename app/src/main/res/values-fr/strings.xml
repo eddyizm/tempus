@@ -370,8 +370,6 @@
     <string name="settings_audio_transcode_priority_summary">Si activé, Tempus ne forcera pas le streaming des pistes avec les paramètres ci-dessous.</string>
     <string name="settings_audio_transcode_priority_title">Prioriser les paramètres de transcodage du serveur</string>
     <string name="settings_audio_transcode_priority_toast">La priorité au transcodage de la piste est donnée au serveur</string>
-    <string name="settings_buffering_strategy">Stratégie de mise en mémoire tampon</string>
-    <string name="settings_buffering_strategy_summary">Redémarrez l\'application pour appliquer les changements.</string>
     <string name="settings_choose_download_folder">Sélectionner un répertoire pour le téléchargement des fichiers de musique</string>
     <string name="settings_clear_download_folder">Vider le répertoire de téléchargement</string>
     <string name="settings_continuous_play_summary">Permet de prolonger la lecture après la fin d\'une playlist avec des titres similaires</string>

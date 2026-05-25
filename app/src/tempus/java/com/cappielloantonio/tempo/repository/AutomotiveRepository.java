@@ -36,7 +36,7 @@ import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.cappielloantonio.tempo.subsonic.models.Genre;
-import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.ConstantsAA;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -60,17 +60,6 @@ public class AutomotiveRepository {
     private final ChronologyDao chronologyDao = AppDatabase.getInstance().chronologyDao();
 
     private static final String TAG = "AutomotiveRepository";
-
-    public final int INSTANT_MIX_MAX_TRACKS = 20;
-    public final int INSTANT_MIX_MIN_TRACKS_SMALL_MIX = INSTANT_MIX_MAX_TRACKS;
-    public final int INSTANT_MIX_MIN_TRACKS_MEDIUM_MIX = INSTANT_MIX_MAX_TRACKS+10;
-    public final int INSTANT_MIX_MIN_TRACKS_LARGE_MIX = INSTANT_MIX_MAX_TRACKS+20;
-    public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX = 12;
-    public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_MEDIUM_MIX = 15;
-    public final int INSTANT_MIX_NUMBER_OF_TRACKS_IN_LARGE_MIX = 18;
-
-    public final int MAX_AA_ITEMS = 500;
-    public final int MAX_AA_SHUFFLE_ITEMS = 100;
 
     public final InstantMixBuilder instantMixBuilder = new InstantMixBuilder(this);
     public final MadeForYouBuilder madeForYouBuilder = new MadeForYouBuilder(this);
@@ -147,7 +136,7 @@ public class AutomotiveRepository {
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size, Boolean isRootCall) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
-        if (size > MAX_AA_ITEMS) size = MAX_AA_ITEMS;
+        if (size > ConstantsAA.MAX_ITEMS) size = ConstantsAA.MAX_ITEMS;
         final int maxSize = size;
 
         App.getSubsonicClientInstance(false)
@@ -184,7 +173,7 @@ public class AutomotiveRepository {
                             if (isRootCall == true) {
                                 MediaItem jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_starred_albums),
-                                        Constants.AA_JUMP_TO_STARRED_ALBUMS_ID,
+                                        ConstantsAA.JUMP_TO_STARRED_ALBUMS_ID,
                                         Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_star_album)
                                 );
@@ -226,9 +215,9 @@ public class AutomotiveRepository {
 
                             int count = 0;
                             for (IndexID3 index : indices) {
-                                if (index.getArtists() != null && count < MAX_AA_ITEMS) {
+                                if (index.getArtists() != null && count < ConstantsAA.MAX_ITEMS) {
                                     for (ArtistID3 artist : index.getArtists()) {
-                                        if (count >= MAX_AA_ITEMS) break;
+                                        if (count >= ConstantsAA.MAX_ITEMS) break;
 
                                         MediaItem mediaItem = createArtist(
                                                 artist.getName(),
@@ -245,7 +234,7 @@ public class AutomotiveRepository {
 
                             MediaItem jumpTo = createFunction(
                                     App.getContext().getString(R.string.aa_view_by_albums),
-                                    Constants.AA_ARTISTS_BY_ALBUMS_ID,
+                                    ConstantsAA.ARTISTS_BY_ALBUMS_ID,
                                     Preferences.isAndroidAutoAlbumViewEnabled(),
                                     Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums)
                             );
@@ -254,7 +243,7 @@ public class AutomotiveRepository {
                             if (isRootCall == true) {
                                 jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_starred_artists),
-                                        Constants.AA_JUMP_TO_STARRED_ARTISTS_ID,
+                                        ConstantsAA.JUMP_TO_STARRED_ARTISTS_ID,
                                         Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists)
                                 );
@@ -292,14 +281,14 @@ public class AutomotiveRepository {
                             setChildrenMetadata(songs);
 
                             if( !Preferences.isAndroidAutoShuffleStarredTracksEnabled() ) {
-                                songs = songs.subList(0, Math.min(MAX_AA_ITEMS, songs.size()));
+                                songs = songs.subList(0, Math.min(ConstantsAA.MAX_ITEMS, songs.size()));
                             }
                             else {
                                 Collections.shuffle(songs);
-                                songs = songs.subList(0, Math.min(MAX_AA_SHUFFLE_ITEMS, songs.size()));
+                                songs = songs.subList(0, Math.min(ConstantsAA.MAX_SHUFFLE_ITEMS, songs.size()));
                             }
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -332,7 +321,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(songs);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -362,7 +351,7 @@ public class AutomotiveRepository {
 
                     setChildrenMetadata(songs);
 
-                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
+                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
 
                     LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -390,7 +379,7 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getStarred2() != null && response.body().getSubsonicResponse().getStarred2().getAlbums() != null) {
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getStarred2().getAlbums();
-                            albums = albums.subList(0, Math.min(MAX_AA_ITEMS, albums.size()));
+                            albums = albums.subList(0, Math.min(ConstantsAA.MAX_ITEMS, albums.size()));
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
@@ -409,7 +398,7 @@ public class AutomotiveRepository {
                             if (isRootCall == true) {
                                 MediaItem jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_albums),
-                                        Constants.AA_JUMP_TO_ALBUMS_ID,
+                                        ConstantsAA.JUMP_TO_ALBUMS_ID,
                                         Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_albums)
                                 );
@@ -444,7 +433,7 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getStarred2() != null && response.body().getSubsonicResponse().getStarred2().getArtists() != null) {
                             List<ArtistID3> artists = response.body().getSubsonicResponse().getStarred2().getArtists();
-                            artists = artists.subList(0, Math.min(MAX_AA_ITEMS, artists.size()));
+                            artists = artists.subList(0, Math.min(ConstantsAA.MAX_ITEMS, artists.size()));
 
                             artists.sort((a1, a2) -> {
                                 String name1 = a1.getName() != null ? a1.getName() : "";
@@ -466,7 +455,7 @@ public class AutomotiveRepository {
                             if (isRootCall == true) {
                                 MediaItem jumpTo = createFunction(
                                         App.getContext().getString(R.string.aa_artists),
-                                        Constants.AA_JUMP_TO_ARTISTS_ID,
+                                        ConstantsAA.JUMP_TO_ARTISTS_ID,
                                         Preferences.isAndroidAutoAlbumViewEnabled(),
                                         Uri.parse("android.resource://" + BuildConfig.APPLICATION_ID + "/" + R.drawable.ic_aa_artists)
                                 );
@@ -681,7 +670,7 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylists() != null && response.body().getSubsonicResponse().getPlaylists().getPlaylists() != null) {
                             List<Playlist> playlists = response.body().getSubsonicResponse().getPlaylists().getPlaylists();
-                            playlists = playlists.subList(0, Math.min(MAX_AA_ITEMS, playlists.size()));
+                            playlists = playlists.subList(0, Math.min(ConstantsAA.MAX_ITEMS, playlists.size()));
 
                             List<MediaItem> mediaItems = new ArrayList<>();
 
@@ -830,7 +819,7 @@ public class AutomotiveRepository {
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_QUEUE_CACHED_SOURCE);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ConstantsAA.QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -881,17 +870,17 @@ public class AutomotiveRepository {
                                 mediaItems.add(mediaItem);
                             }
 
-                            if (albums.size() >= 2 && totalTracks >= INSTANT_MIX_MIN_TRACKS_SMALL_MIX) {
+                            if (albums.size() >= 2 && totalTracks >= ConstantsAA.MIN_TRACKS_SMALL_MIX) {
                                 int numberOfTracks =
-                                        totalTracks >= INSTANT_MIX_MIN_TRACKS_LARGE_MIX ? INSTANT_MIX_NUMBER_OF_TRACKS_IN_LARGE_MIX :
-                                                totalTracks >= INSTANT_MIX_MIN_TRACKS_MEDIUM_MIX ? INSTANT_MIX_NUMBER_OF_TRACKS_IN_MEDIUM_MIX :
-                                                        INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX;
+                                        totalTracks >= ConstantsAA.MIN_TRACKS_LARGE_MIX ? ConstantsAA.NUMBER_OF_TRACKS_IN_LARGE_MIX :
+                                                totalTracks >= ConstantsAA.MIN_TRACKS_MEDIUM_MIX ? ConstantsAA.NUMBER_OF_TRACKS_IN_MEDIUM_MIX :
+                                                        ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX;
                                 ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
                                 MediaItem instantMixItem = createAlbum(
                                         App.getContext().getString(R.string.aa_instant_mix),
                                         "By Tempus",
                                         "Instant Mix",
-                                        Constants.AA_INSTANTMIX_SOURCE + "[" + numberOfTracks + "]" + id,
+                                        ConstantsAA.INSTANTMIX_SOURCE + "[" + numberOfTracks + "]" + id,
                                         true,
                                         artist.getCoverArtId()
                                 );
@@ -959,7 +948,7 @@ public class AutomotiveRepository {
 
                                                 // Tag parent_id with artistId so handle() can resume the mix
                                                 MediaItem mediaItem = MappingUtil.mapMediaItem(firstTrack,
-                                                        Constants.AA_INSTANTMIX_SOURCE+ "[" + count + "]"  + artistId);
+                                                        ConstantsAA.INSTANTMIX_SOURCE+ "[" + count + "]"  + artistId);
 
                                                 listenableFuture.set(LibraryResult.ofItemList(
                                                         ImmutableList.of(mediaItem), null));
@@ -1002,16 +991,16 @@ public class AutomotiveRepository {
                             List<Child> tracks = response.body().getSubsonicResponse().getPlaylist().getEntries();
 
                             if( !Preferences.isAndroidAutoShufflePlaylistsEnabled() ) {
-                                tracks = tracks.subList(0, Math.min(MAX_AA_ITEMS, tracks.size()));
+                                tracks = tracks.subList(0, Math.min(ConstantsAA.MAX_ITEMS, tracks.size()));
                             }
                             else {
                                 Collections.shuffle(tracks);
-                                tracks = tracks.subList(0, Math.min(MAX_AA_SHUFFLE_ITEMS, tracks.size()));
+                                tracks = tracks.subList(0, Math.min(ConstantsAA.MAX_SHUFFLE_ITEMS, tracks.size()));
                             }
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, Constants.AA_QUEUE_CACHED_SOURCE);
+                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ConstantsAA.QUEUE_CACHED_SOURCE);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -1033,7 +1022,7 @@ public class AutomotiveRepository {
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
-                .getAlbumList2("recent", 15, 0, null, null)
+                .getAlbumList2("recent", ConstantsAA.NUMBER_OF_RECENT_ALBUMS_FOR_MIX, 0, null, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -1076,7 +1065,7 @@ public class AutomotiveRepository {
 
                                                 // Tag parent_id with mixType so handle() can resume the mix
                                                 MediaItem mediaItem = MappingUtil.mapMediaItem(firstTrack,
-                                                        Constants.AA_MADE_FOR_YOU_SOURCE+ "[" + count + "]"  + mixType);
+                                                        ConstantsAA.MADE_FOR_YOU_SOURCE+ "[" + count + "]"  + mixType);
 
                                                 listenableFuture.set(LibraryResult.ofItemList(
                                                         ImmutableList.of(mediaItem), null));
@@ -1130,7 +1119,7 @@ public class AutomotiveRepository {
                             setChildrenMetadata(List.of(firstTrack));
 
                             MediaItem mediaItem = MappingUtil.mapMediaItem(firstTrack,
-                                    Constants.AA_MADE_FOR_YOU_SOURCE + "[" + count + "]" + mixType);
+                                    ConstantsAA.MADE_FOR_YOU_SOURCE + "[" + count + "]" + mixType);
 
                             listenableFuture.set(LibraryResult.ofItemList(
                                     ImmutableList.of(mediaItem), null));
@@ -1380,7 +1369,7 @@ public class AutomotiveRepository {
 
                     if (songs != null) {
                         setChildrenMetadata(songs);
-                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, Constants.AA_QUEUE_CACHED_SOURCE);
+                        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
                         LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
                         listenableFuture.set(libraryResult);
                     } else {
