@@ -322,8 +322,6 @@
     <string name="settings_audio_transcode_priority_summary">Dacă este activat, Tempus nu va forța streamarea piesei cu setările de transcodare de mai jos.</string>
     <string name="settings_audio_transcode_priority_title">Prioritizați setările de transcodare ale serverului</string>
     <string name="settings_audio_transcode_priority_toast">Prioritate pentru transcodarea piesei acordată serverului</string>
-    <string name="settings_buffering_strategy">Strategie de bufering</string>
-    <string name="settings_buffering_strategy_summary">Pentru ca modificarea să aibă efect, trebuie să reporniți manual aplicația.</string>
     <string name="settings_choose_download_folder">Alegeți un folder pentru fișierele de muzică descărcate</string>
     <string name="settings_clear_download_folder">Curățați folderul de descărcare</string>
     <string name="settings_continuous_play_summary">Permite muzicii să continue redarea după ce o playlist s-a încheiat, redând piese similare</string>

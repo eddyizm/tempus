@@ -227,19 +227,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="buffering_strategy_titles">
-        <item>Minimum</item>
-        <item>Moderate</item>
-        <item>Agrasif</item>
-        <item>Aşırı</item>
-    </string-array>
-    <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
-    </string-array>
-
     <string-array name="skip_min_star_rating_titles">
         <item>En az 0 yıldız</item>
         <item>En az 1 yıldız</item>

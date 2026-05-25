@@ -69,7 +69,7 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_DOWNLOAD = "audio_transcode_format_download"
     private const val SHARE = "share"
     private const val SCROBBLING = "scrobbling"
-    private const val BUFFERING_STRATEGY = "buffering_strategy"
+    private const val SONG_PRELOAD_BUFFER = "song_preload_buffer"
     private const val SKIP_MIN_STAR_RATING = "skip_min_star_rating"
     private const val MIN_STAR_RATING = "min_star_rating"
     private const val ALWAYS_ON_DISPLAY = "always_on_display"
@@ -642,8 +642,8 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getBufferingStrategy(): Double {
-        return App.getInstance().preferences.getString(BUFFERING_STRATEGY, "1")!!.toDouble()
+    fun getSongPreloadBuffer(): Int {
+        return App.getInstance().preferences.getString(SONG_PRELOAD_BUFFER, "60")!!.toInt()
     }
 
     @JvmStatic

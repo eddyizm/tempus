@@ -309,8 +309,6 @@
     <string name="settings_audio_transcode_priority_summary">Si s\'habilita, Tempus no forçarà la transmissió de la pista amb els paràmetres de transcodificació següents.</string>
     <string name="settings_audio_transcode_priority_title">Prioritza els paràmetres de transcodificació del servidor</string>
     <string name="settings_audio_transcode_priority_toast">Prioritat de transcodificació de la pista proporcionada al servidor</string>
-    <string name="settings_buffering_strategy">Estratègia de memòria intermèdia</string>
-    <string name="settings_buffering_strategy_summary">Perquè el canvi tingui efecte, heu de reiniciar l\'aplicació manualment.</string>
     <string name="settings_choose_download_folder">Trieu una carpeta per als fitxers de música baixats.</string>
     <string name="settings_clear_download_folder">Esborra la carpeta de baixades</string>
     <string name="settings_continuous_play_summary">Permet que segueixi sonant música quan acabi una llista de reproducció; es reproduiran cançons similars.</string>
