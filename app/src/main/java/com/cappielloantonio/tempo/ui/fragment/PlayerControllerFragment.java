@@ -45,13 +45,13 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBinding;
-import com.cappielloantonio.tempo.service.EqualizerManager;
+import com.cappielloantonio.tempo.equalizer.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
 import com.cappielloantonio.tempo.ui.dialog.SleepTimerDialog;
 import com.cappielloantonio.tempo.util.SleepTimerManager;
-import androidx.core.content.ContextCompat;
+
 import androidx.core.widget.ImageViewCompat;
 import android.content.res.ColorStateList;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
