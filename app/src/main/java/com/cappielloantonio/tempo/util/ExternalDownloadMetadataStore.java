@@ -9,12 +9,10 @@ import com.cappielloantonio.tempo.App;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.Normalizer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -95,20 +93,6 @@ public final class ExternalDownloadMetadataStore {
             }
         }
         return sizes;
-    }
-
-    public static synchronized boolean isTrackedFile(String fileName) {
-        if (fileName == null) return false;
-        int dot = fileName.lastIndexOf('.');
-        String base = dot > 0 ? fileName.substring(0, dot) : fileName;
-        return readAll().has(normalizeKey(base));
-    }
-
-    static String normalizeKey(String name) {
-        String s = name.replaceAll("[\\/:*?\"<>|]", "_").replaceAll("\\s+", " ").trim();
-        s = Normalizer.normalize(s, Normalizer.Form.NFKD);
-        s = s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
-        return s.toLowerCase(Locale.ROOT);
     }
 
     public static synchronized void retainOnly(Set<String> keysToKeep) {
