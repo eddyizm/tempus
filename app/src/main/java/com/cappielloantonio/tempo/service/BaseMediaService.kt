@@ -440,21 +440,7 @@ open class BaseMediaService : MediaLibraryService() {
         }
         mediaLibrarySession.player = newPlayer
     }
-    /*
-            val customPlayer = if (newPlayer is CustomForwardingPlayer) newPlayer else CustomForwardingPlayer(newPlayer)
-        if (oldPlayer === customPlayer) return
-        if (oldPlayer != null) {
-            val currentQueue = getQueueFromPlayer(oldPlayer)
-            val currentIndex = oldPlayer.currentMediaItemIndex
-            val currentPosition = oldPlayer.currentPosition
-            val isPlaying = oldPlayer.playWhenReady
-            oldPlayer.stop()
-            customPlayer.setMediaItems(currentQueue, currentIndex, currentPosition)
-            customPlayer.playWhenReady = isPlaying
-            customPlayer.prepare()
-        }
-        mediaLibrarySession.player = customPlayer
-     */
+
     open fun releasePlayers() {
         exoplayer.release()
     }
