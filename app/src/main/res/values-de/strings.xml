@@ -350,8 +350,6 @@
     <string name="settings_audio_transcode_priority_summary">Vom Server vorgegebenes Format für Streams verwenden</string>
     <string name="settings_audio_transcode_priority_title">Format-Einstellung des Servers bevorzugen</string>
     <string name="settings_audio_transcode_priority_toast">Priorität für Umwandlung des Titels an Server übergeben</string>
-    <string name="settings_buffering_strategy">Pufferstrategie</string>
-    <string name="settings_buffering_strategy_summary">Legt fest, wie viele Daten beim Streamen eines Titels vorab geladen werden (Neustart der App nötig)</string>
     <string name="settings_choose_download_folder">Order für heruntergeladene Dateien wählen</string>
     <string name="settings_clear_download_folder">Download-Ordner zurücksetzen</string>
     <string name="settings_continuous_play_summary">Musik läuft nach dem Ende einer Wiedergabeliste mit ähnlichen Titeln weiter</string>

@@ -547,10 +547,12 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private fun initializeLoadControl(): DefaultLoadControl {
+        val preloadSec = Preferences.getSongPreloadBuffer().toLong()
+        val preloadMs = TimeUnit.SECONDS.toMillis(preloadSec).toInt()
         return DefaultLoadControl.Builder()
             .setBufferDurationsMs(
-                (DefaultLoadControl.DEFAULT_MIN_BUFFER_MS * Preferences.getBufferingStrategy()).toInt(),
-                (DefaultLoadControl.DEFAULT_MAX_BUFFER_MS * Preferences.getBufferingStrategy()).toInt(),
+                preloadMs,
+                preloadMs,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
             )

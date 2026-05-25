@@ -348,8 +348,6 @@
     <string name="settings_audio_transcode_priority_summary">Если включено, Tempus не будет принудительно стримить трек с настройками транскодирования, указанными ниже.</string>
     <string name="settings_audio_transcode_priority_title">Приоритет серверных настроек транскодирования</string>
     <string name="settings_audio_transcode_priority_toast">Приоритет транскодирования передан серверу</string>
-    <string name="settings_buffering_strategy">Стратегия буферизации</string>
-    <string name="settings_buffering_strategy_summary">Чтобы изменения вступили в силу, необходимо перезапустить приложение.</string>
     <string name="settings_choose_download_folder">Выберите папку для загруженной музыки</string>
     <string name="settings_clear_download_folder">Сбросить папку загрузок</string>
     <string name="settings_continuous_play_summary">Позволяет продолжать воспроизведение после окончания плейлиста</string>

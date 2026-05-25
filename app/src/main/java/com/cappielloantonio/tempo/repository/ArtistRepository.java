@@ -341,22 +341,32 @@ public class ArtistRepository {
     }
 
     public MutableLiveData<List<Child>> getTopSongs(String artistName, int count) {
-        MutableLiveData<List<Child>> topSongs = new MutableLiveData<>(new ArrayList<>());
+        MutableLiveData<List<Child>> topSongs = new MutableLiveData<>(null);
 
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
                 .getTopSongs(artistName, count)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getTopSongs() != null && response.body().getSubsonicResponse().getTopSongs().getSongs() != null) {
-                            topSongs.setValue(response.body().getSubsonicResponse().getTopSongs().getSongs());
+                    public void onResponse(@NonNull Call<ApiResponse> call,
+                                           @NonNull Response<ApiResponse> response) {
+                        List<Child> fetched = null;
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse() != null
+                                && response.body().getSubsonicResponse().getTopSongs() != null) {
+                            fetched = response.body()
+                                    .getSubsonicResponse()
+                                    .getTopSongs()
+                                    .getSongs();
                         }
+                        topSongs.setValue(fetched);
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                    public void onFailure(@NonNull Call<ApiResponse> call,
+                                          @NonNull Throwable t) {
+                        topSongs.setValue(null);
                     }
                 });
 

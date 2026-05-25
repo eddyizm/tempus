@@ -82,6 +82,7 @@
     <string name="artist_page_title_biography_section">Biography</string>
     <string name="artist_page_title_most_streamed_song_section">Top Songs</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">See all</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">No top songs available\n\nTap to hide</string>
     <string name="battery_optimization_negative_button">Ignore</string>
     <string name="battery_optimization_neutral_button">Don\'t ask again</string>
     <string name="battery_optimization_positive_button">Disable</string>
@@ -367,8 +368,6 @@
     <string name="settings_audio_transcode_priority_summary">If enabled, Tempus will not force stream the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_priority_title">Prioritize server transcode settings</string>
     <string name="settings_audio_transcode_priority_toast">Priority on transcoding of track given to server</string>
-    <string name="settings_buffering_strategy">Buffering strategy</string>
-    <string name="settings_buffering_strategy_summary">For the change to take effect you must manually restart the app.</string>
     <string name="settings_choose_download_folder">Choose a folder for downloaded music files</string>
     <string name="settings_clear_download_folder">Clear download folder</string>
     <string name="settings_continuous_play_summary">Allows music to keep playing after a playlist has ended, playing similar songs</string>
@@ -382,6 +381,8 @@
     <string name="settings_download_folder_cleared">Download folder cleared.</string>
     <string name="settings_download_folder_set">Download folder set</string>
     <string name="settings_set_download_folder">Set download folder</string>
+    <string name="settings_song_preload_buffer">Song preload buffer</string>
+    <string name="settings_song_preload_buffer_summary">Current value: %1$s\nFor the change to take effect you must manually restart the app.</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -700,5 +701,4 @@
 
         The data is not sent anywhere without your consent.
     </string>
-
 </resources>

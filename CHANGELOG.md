@@ -1,6 +1,7 @@
 # Changelog
 
-## Pending changes (Pre-Release)
+## [4.17.0](https://github.com/eddyizm/tempus/releases/tag/v4.17.0) (2026-05-23)
+## What's Changed
 * feat: handle crashes gracefully by @tvillega in https://github.com/eddyizm/tempus/pull/611
 * feat: add Starred bundle for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/614
 * fix: quick actions visibility state not checked by @tvillega in https://github.com/eddyizm/tempus/pull/621
@@ -21,6 +22,12 @@
 * fix: npe if playlist playback happens before data fetching is done by @tvillega in https://github.com/eddyizm/tempus/pull/690
 * Revert Issue600 - Slow loading of long playlists (#627) by @eddyizm in https://github.com/eddyizm/tempus/pull/703
 
+## New Contributors
+* @pLum0 made their first contribution in https://github.com/eddyizm/tempus/pull/631
+* @REDGROUL made their first contribution in https://github.com/eddyizm/tempus/pull/635
+* @OlivierGenez made their first contribution in https://github.com/eddyizm/tempus/pull/651
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.16.0...v4.17.0
 
 ## [4.16.0](https://github.com/eddyizm/tempus/releases/tag/v4.16.0) (2026-05-06)
 ## What's Changed

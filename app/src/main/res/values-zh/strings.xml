@@ -361,8 +361,6 @@
     <string name="settings_audio_transcode_priority_toast">歌曲转码设置优先级设置为服务器</string>
     <string name="settings_auto_download_lyrics">自动下载歌词</string>
     <string name="settings_auto_download_lyrics_summary">自动保存可用歌词，以便离线时查看。</string>
-    <string name="settings_buffering_strategy">缓存策略</string>
-    <string name="settings_buffering_strategy_summary">为了使更改生效，您必须手动重新启动应用程序。</string>
     <string name="settings_choose_download_folder">选择一个音乐下载目录</string>
     <string name="settings_clear_download_folder">清空下载文件夹</string>
     <string name="settings_continuous_play_summary">允许在播放列表结束后，播放相似的歌曲。</string>

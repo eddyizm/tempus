@@ -227,19 +227,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="buffering_strategy_titles">
-        <item>最小</item>
-        <item>適中</item>
-        <item>積極</item>
-        <item>極端</item>
-    </string-array>
-    <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
-    </string-array>
-
     <string-array name="skip_min_star_rating_titles">
         <item>不篩選評分</item>
         <item>1 星及以上</item>

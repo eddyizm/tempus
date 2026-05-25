@@ -24,6 +24,7 @@ import android.widget.ToggleButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -69,6 +70,8 @@ import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -80,6 +83,7 @@ public class PlayerControllerFragment extends Fragment {
     private InnerFragmentPlayerControllerBinding bind;
     private ViewPager2 playerMediaCoverViewPager;
     private ToggleButton buttonFavorite;
+    private ImageButton playerOverflowButton;
     private RatingViewModel ratingViewModel;
     private RatingBar songRatingBar;
     private TextView playerMediaTitleLabel;
@@ -120,6 +124,7 @@ public class PlayerControllerFragment extends Fragment {
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
 
         init();
+        initOverflowButton();
         initQuickActionView();
         initCoverLyricsSlideView();
         initMediaListenable();
@@ -155,6 +160,7 @@ public class PlayerControllerFragment extends Fragment {
     private void init() {
         playerMediaCoverViewPager = bind.getRoot().findViewById(R.id.player_media_cover_view_pager);
         buttonFavorite = bind.getRoot().findViewById(R.id.button_favorite);
+        playerOverflowButton = bind.getRoot().findViewById(R.id.player_overflow_button);
         playerMediaTitleLabel = bind.getRoot().findViewById(R.id.player_media_title_label);
         playerArtistNameLabel = bind.getRoot().findViewById(R.id.player_artist_name_label);
         playbackSpeedButton = bind.getRoot().findViewById(R.id.player_playback_speed_button);
@@ -176,6 +182,26 @@ public class PlayerControllerFragment extends Fragment {
         sleepTimerButton = bind.getRoot().findViewById(R.id.player_sleep_timer_button);
         sleepTimerLabel  = bind.getRoot().findViewById(R.id.player_sleep_timer_label);
         checkAndSetRatingContainerVisibility();
+    }
+
+    private void initOverflowButton() {
+        // Not available on sw600dp
+        if (playerOverflowButton != null) {
+            playerOverflowButton.setOnClickListener(v -> {
+                PopupMenu popup = new PopupMenu(requireContext(), v);
+                popup.inflate(R.menu.player_overflow_menu);
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_open_equalizer:
+                            navigateToEqualizerFragment();
+                            return true;
+                        default:
+                            return false;
+                    }
+                });
+                popup.show();
+            });
+        }
     }
 
     private void initQuickActionView() {
@@ -876,15 +902,17 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void initEqualizerButton() {
-        equalizerButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(this);
-            NavOptions navOptions = new NavOptions.Builder()
-                    .setLaunchSingleTop(true)
-                    .setPopUpTo(R.id.equalizerFragment, true)
-                    .build();
-            navController.navigate(R.id.equalizerFragment, null, navOptions);
-            if (activity != null) activity.collapseBottomSheetDelayed();
-        });
+        equalizerButton.setOnClickListener(v -> navigateToEqualizerFragment());
+    }
+
+    private void navigateToEqualizerFragment() {
+        NavController navController = NavHostFragment.findNavController(this);
+        NavOptions navOptions = new NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setPopUpTo(R.id.equalizerFragment, true)
+                .build();
+        navController.navigate(R.id.equalizerFragment, null, navOptions);
+        if (activity != null) activity.collapseBottomSheetDelayed();
     }
 
     public void goToControllerPage() {
