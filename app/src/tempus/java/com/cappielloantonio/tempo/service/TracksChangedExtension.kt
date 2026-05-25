@@ -7,7 +7,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaBrowser
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
-import com.cappielloantonio.tempo.util.Constants
+import com.cappielloantonio.tempo.util.ConstantsAA
 import com.cappielloantonio.tempo.util.Preferences
 import com.google.common.util.concurrent.ListenableFuture
 import kotlin.text.removePrefix
@@ -32,16 +32,16 @@ class TracksChangedExtension(
         val extras = item.requestMetadata.extras ?: item.mediaMetadata.extras
         val parentId = extras?.getString("parent_id")
 
-        if (parentId?.startsWith(Constants.AA_INSTANTMIX_SOURCE) == true) {
+        if (parentId?.startsWith(ConstantsAA.INSTANTMIX_SOURCE) == true) {
             Preferences.setLastInstantMix()
 
             // disconnect handle
             MediaServiceExtensionRegistry.handler = null
 
-            val withoutPrefix = parentId.removePrefix(Constants.AA_INSTANTMIX_SOURCE)
+            val withoutPrefix = parentId.removePrefix(ConstantsAA.INSTANTMIX_SOURCE)
             val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
             val artistId = withoutPrefix.substringAfter("]")
-            val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+            val count = countStr.toIntOrNull() ?: ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX
 
             Log.d(TAG, "handle: Instant Mix is running for artist $artistId count=$count")
 
@@ -54,16 +54,16 @@ class TracksChangedExtension(
             return true
         }
 
-        if (parentId?.startsWith(Constants.AA_MADE_FOR_YOU_SOURCE) == true) {
+        if (parentId?.startsWith(ConstantsAA.MADE_FOR_YOU_SOURCE) == true) {
             Preferences.setLastInstantMix()
 
             // disconnect handle
             MediaServiceExtensionRegistry.handler = null
 
-            val withoutPrefix = parentId.removePrefix(Constants.AA_MADE_FOR_YOU_SOURCE)
+            val withoutPrefix = parentId.removePrefix(ConstantsAA.MADE_FOR_YOU_SOURCE)
             val countStr = withoutPrefix.substringAfter("[").substringBefore("]")
             val mixType = withoutPrefix.substringAfter("]")
-            val count = countStr.toIntOrNull() ?: automotiveRepository.INSTANT_MIX_NUMBER_OF_TRACKS_IN_SMALL_MIX
+            val count = countStr.toIntOrNull() ?: ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX
 
             Log.d(TAG, "handle: MadeForYou Mix is running for $mixType count=$count")
 

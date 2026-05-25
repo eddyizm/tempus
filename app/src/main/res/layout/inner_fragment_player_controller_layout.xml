@@ -179,12 +179,24 @@
         android:id="@+id/button_favorite"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
-        android:layout_marginEnd="@dimen/_18sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
         android:background="@drawable/button_favorite_selector"
         android:checked="false"
         android:text=""
         android:textOff=""
         android:textOn=""
+        app:layout_constraintBottom_toBottomOf="@+id/player_media_title_label"
+        app:layout_constraintEnd_toStartOf="@id/player_overflow_button"
+        app:layout_constraintTop_toTopOf="@+id/player_media_title_label" />
+
+    <ImageButton
+        android:id="@+id/player_overflow_button"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="@dimen/_18sdp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_more_vert"
         app:layout_constraintBottom_toBottomOf="@+id/player_media_title_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/player_media_title_label" />
