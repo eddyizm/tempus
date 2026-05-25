@@ -226,19 +226,6 @@
         <item>2</item>
         <item>3</item>
     </string-array>
-
-    <string-array name="buffering_strategy_titles">
-        <item>Minimo</item>
-        <item>Moderato</item>
-        <item>Aggressivo</item>
-        <item>Estremo</item>
-    </string-array>
-    <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
-    </string-array>
     
     <string-array name="skip_min_star_rating_titles">
         <item>Minimo 0 stelle</item>

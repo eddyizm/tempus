@@ -113,7 +113,7 @@
     <string name="empty_string" />
     <string name="equalizer_enable">啟用</string>
     <string name="equalizer_fragment_title">均衡器</string>
-    <string name="equalizer_not_supported">此設備不支援</string>
+    <string name="equalizer_managed_externally">此設備不支援</string>
     <string name="equalizer_reset">重置</string>
     <string name="error_required">必需</string>
     <string name="error_server_prefix">必須是 http 或 https 前綴</string>
@@ -361,8 +361,6 @@
     <string name="settings_audio_transcode_priority_toast">歌曲轉碼設定優先級設定為伺服器</string>
     <string name="settings_auto_download_lyrics">自動下載歌詞</string>
     <string name="settings_auto_download_lyrics_summary">自動儲存可用歌詞，以便離線時查看。</string>
-    <string name="settings_buffering_strategy">快取策略</string>
-    <string name="settings_buffering_strategy_summary">為了使更改生效，您必須手動重新啟動應用程式。</string>
     <string name="settings_choose_download_folder">選擇一個音樂下載目錄</string>
     <string name="settings_clear_download_folder">清空下載資料夾</string>
     <string name="settings_continuous_play_summary">允許在播放清單結束後，播放相似的歌曲。</string>
