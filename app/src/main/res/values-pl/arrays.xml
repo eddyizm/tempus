@@ -226,19 +226,6 @@
         <item>2</item>
         <item>3</item>
     </string-array>
-
-    <string-array name="buffering_strategy_titles">
-        <item>Minimalna</item>
-        <item>Średnia</item>
-        <item>Agresywna</item>
-        <item>Ekstremalna</item>
-    </string-array>
-    <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
-    </string-array>
     
    <string-array name="playlist_sort_option_titles">
         <item>Po nazwie</item>

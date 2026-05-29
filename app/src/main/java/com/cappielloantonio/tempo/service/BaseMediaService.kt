@@ -29,6 +29,11 @@ import androidx.media3.session.MediaSession.ControllerInfo
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
+import com.cappielloantonio.tempo.equalizer.BuiltinBackend
+import com.cappielloantonio.tempo.equalizer.EqualizerBackend
+import com.cappielloantonio.tempo.equalizer.EqualizerManager
+import com.cappielloantonio.tempo.equalizer.ExternalBackend
+import com.cappielloantonio.tempo.equalizer.DefaultBackend
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
@@ -39,6 +44,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 private const val TAG = "BaseMediaService"
 
@@ -47,6 +53,7 @@ open class BaseMediaService : MediaLibraryService() {
     companion object {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
+        const val ACTION_RELOAD_EQUALIZER = "com.cappielloantonio.tempo.service.ACTION_RELOAD_EQUALIZER"
     }
 
     protected lateinit var exoplayer: ExoPlayer
@@ -75,6 +82,13 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private val binder = LocalBinder()
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_RELOAD_EQUALIZER -> reloadEqualizer()
+        }
+        return super.onStartCommand(intent, flags, startId)
+    }
 
     open fun playerInitHook() {
         initializeExoPlayer()
@@ -221,7 +235,7 @@ open class BaseMediaService : MediaLibraryService() {
                             shuffledList[index] = tmp
                         }
                         player.shuffleOrder =
-                            DefaultShuffleOrder(shuffledList, kotlin.random.Random.nextLong())
+                            DefaultShuffleOrder(shuffledList, Random.nextLong())
                     }
                 }
             }
@@ -393,7 +407,8 @@ open class BaseMediaService : MediaLibraryService() {
 
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
-                attachEqualizerIfPossible(audioSessionId)
+                equalizerManager.attach(audioSessionId)
+                sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
             }
         })
         if (player.isPlaying) {
@@ -436,7 +451,7 @@ open class BaseMediaService : MediaLibraryService() {
         super.onCreate()
 
         playerInitHook()
-        initializeEqualizerManager()
+        initializeEqualizer()
         initializeNetworkListener()
         restorePlayerFromQueue(mediaLibrarySession.player)
     }
@@ -447,7 +462,7 @@ open class BaseMediaService : MediaLibraryService() {
 
     override fun onDestroy() {
         releaseNetworkCallback()
-        equalizerManager.release()
+        equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
         stopWidgetUpdates()
         stopRadioHeaderChecks()
@@ -480,10 +495,32 @@ open class BaseMediaService : MediaLibraryService() {
         exoplayer.repeatMode = Preferences.getRepeatMode()
     }
 
-    private fun initializeEqualizerManager() {
-        equalizerManager = EqualizerManager()
-        val audioSessionId = exoplayer.audioSessionId
-        attachEqualizerIfPossible(audioSessionId)
+    private fun initializeEqualizer() {
+
+        val equalizerBackend: EqualizerBackend =
+            when (Preferences.getSelectedEqualizer()) {
+            1 -> BuiltinBackend()
+            2 -> ExternalBackend()
+            else -> DefaultBackend()
+        }
+
+        equalizerManager = EqualizerManager(equalizerBackend, baseContext)
+        equalizerManager.attach(exoplayer.audioSessionId)
+        sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
+    }
+
+    fun reloadEqualizer() {
+        equalizerManager.release(exoplayer.audioSessionId)
+
+        val backend: EqualizerBackend = when (Preferences.getSelectedEqualizer()) {
+            1 -> BuiltinBackend()
+            2 -> ExternalBackend()
+            else -> DefaultBackend()
+        }
+
+        equalizerManager = EqualizerManager(backend, baseContext)
+        equalizerManager.attach(exoplayer.audioSessionId)
+        sendBroadcast(Intent(ACTION_RELOAD_EQUALIZER))
     }
 
     private fun initializeMediaLibrarySession(player: Player) {
@@ -510,10 +547,12 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     private fun initializeLoadControl(): DefaultLoadControl {
+        val preloadSec = Preferences.getSongPreloadBuffer().toLong()
+        val preloadMs = TimeUnit.SECONDS.toMillis(preloadSec).toInt()
         return DefaultLoadControl.Builder()
             .setBufferDurationsMs(
-                (DefaultLoadControl.DEFAULT_MIN_BUFFER_MS * Preferences.getBufferingStrategy()).toInt(),
-                (DefaultLoadControl.DEFAULT_MAX_BUFFER_MS * Preferences.getBufferingStrategy()).toInt(),
+                preloadMs,
+                preloadMs,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
                 DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
             )
@@ -711,22 +750,6 @@ open class BaseMediaService : MediaLibraryService() {
                 updateWidget(exo)
             }
         }
-    }
-
-    private fun attachEqualizerIfPossible(audioSessionId: Int): Boolean {
-        if (audioSessionId == 0 || audioSessionId == -1) return false
-        val attached = equalizerManager.attachToSession(audioSessionId)
-        if (attached) {
-            val enabled = Preferences.isEqualizerEnabled()
-            equalizerManager.setEnabled(enabled)
-            val bands = equalizerManager.getNumberOfBands()
-            val savedLevels = Preferences.getEqualizerBandLevels(bands)
-            for (i in 0 until bands) {
-                equalizerManager.setBandLevel(i.toShort(), savedLevels[i])
-            }
-            sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
-        }
-        return attached
     }
 
     private fun getRenderersFactory(): DefaultRenderersFactory {
