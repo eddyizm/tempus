@@ -18,12 +18,15 @@ class InternetRadioStationCache(
     var streamUrl: String? = null,
     @ColumnInfo(name = "home_page_url")
     var homePageUrl: String? = null,
+    @ColumnInfo(name = "cover_art")
+    var coverArtId: String? = null,
 ) {
     constructor(station: InternetRadioStation) : this(
         id = station.id ?: "",
         name = station.name,
         streamUrl = station.streamUrl,
         homePageUrl = station.homePageUrl,
+        coverArtId = station.coverArtId,
     )
 
     fun toInternetRadioStation(): InternetRadioStation {
@@ -32,6 +35,7 @@ class InternetRadioStationCache(
             name = name,
             streamUrl = streamUrl,
             homePageUrl = homePageUrl,
+            coverArtId = coverArtId,
         )
     }
 }

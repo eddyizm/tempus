@@ -35,7 +35,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 17,
+        version = 18,
         entities = {
             Queue.class,
             Server.class,
@@ -57,6 +57,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
                 @AutoMigration(from = 14, to = 15),
                 @AutoMigration(from = 15, to = 16),
                 @AutoMigration(from = 16, to = 17),
+                @AutoMigration(from = 17, to = 18),
         }
 )
 @TypeConverters({DateConverters.class, StringListConverter.class})

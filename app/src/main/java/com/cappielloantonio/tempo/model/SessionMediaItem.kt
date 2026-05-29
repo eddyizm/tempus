@@ -1,6 +1,5 @@
 package com.cappielloantonio.tempo.model
 
-import android.content.ContentResolver
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.Keep
@@ -13,7 +12,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.cappielloantonio.tempo.glide.CustomGlideRequest
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider
 import androidx.room.Embedded
 import com.cappielloantonio.tempo.subsonic.models.Child
@@ -202,15 +200,7 @@ class SessionMediaItem() {
         title = internetRadioStation.name
         streamUrl = internetRadioStation.streamUrl
         type = Constants.MEDIA_TYPE_RADIO
-
-        val homePageUrl = internetRadioStation.homePageUrl
-        if (homePageUrl != null && homePageUrl.isNotEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
-            val encodedUrl = android.util.Base64.encodeToString(
-                homePageUrl.toByteArray(java.nio.charset.StandardCharsets.UTF_8),
-                android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP
-            )
-            coverArtId = "ir_$encodedUrl"
-        }
+        coverArtId = internetRadioStation.coverArtId
     }
 
     fun getMediaItem(): MediaItem {

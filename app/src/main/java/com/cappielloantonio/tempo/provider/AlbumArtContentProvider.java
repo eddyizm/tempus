@@ -8,8 +8,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.util.Base64;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -54,15 +52,7 @@ public class AlbumArtContentProvider extends ContentProvider {
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
         Context context = getContext();
         String albumId = uri.getLastPathSegment();
-        Uri artworkUri;
-
-        if (albumId != null && albumId.startsWith("ir_")) {
-            String encodedUrl = albumId.substring("ir_".length());
-            String decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
-            artworkUri = Uri.parse(decodedUrl);
-        } else {
-            artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
-        }
+        Uri artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
 
         try {
             // use pipe to communicate between background thread and caller of openFile()
