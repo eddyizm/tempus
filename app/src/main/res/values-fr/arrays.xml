@@ -300,4 +300,12 @@
         <item>Albums favoris</item>
         <item>Titres favoris</item>
     </string-array>
+
+    <string-array name="custom_commands_titles">
+        <item>Coeur</item>
+        <item>Répétition</item>
+        <item>Mélange</item>
+        <item>Mix instantané</item>
+    </string-array>
+
 </resources>

@@ -288,4 +288,16 @@ public class QueueRepository {
             return lastMediaPlayed;
         }
     }
+
+    public void deleteRange(int fromIndex, int toIndex) {
+        dbExecutor.execute(() -> {
+            List<Queue> media = queueDao.getAllSimple();
+            if (fromIndex < 0 || toIndex > media.size() || fromIndex >= toIndex) return;
+            media.subList(fromIndex, toIndex).clear();
+            for (int i = 0; i < media.size(); i++) {
+                media.get(i).setTrackOrder(i);
+            }
+            queueDao.replaceQueue(media);
+        });
+    }
 }

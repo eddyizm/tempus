@@ -46,4 +46,9 @@ public class NavigationController {
     public void setHamburgerMenuForLandscape(AppCompatActivity activity, MaterialToolbar toolbar) {
         helper.sethamburgerMenuIconOnToolbar(activity, toolbar);
     }
+
+    @NonNull
+    public NavController getNavController() {
+        return helper.getNavController();
+    }
 }

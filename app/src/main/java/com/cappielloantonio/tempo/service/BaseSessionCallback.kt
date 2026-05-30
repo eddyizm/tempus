@@ -34,7 +34,9 @@ import retrofit2.Response
 private const val TAG = "BaseSessionCallback"
 
 @UnstableApi
-open class BaseSessionCallback(protected val context: Context) :
+open class BaseSessionCallback(
+    protected val context: Context,
+    protected val service: BaseMediaService) :
     MediaLibraryService.MediaLibrarySession.Callback {
 
     // ─────────────────────────────────────────────────────────────
@@ -100,6 +102,22 @@ open class BaseSessionCallback(protected val context: Context) :
             .setIconResId(R.drawable.ic_bookmark_sync)
             .build()
 
+    @Suppress("DEPRECATION")
+    private val customCommandInstantMixOn =
+        CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+            .setDisplayName("instantmix on")
+            .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_INSTANT_MIX_ON, Bundle.EMPTY))
+            .setIconResId(R.drawable.ic_instantmix_on)
+            .build()
+
+    @Suppress("DEPRECATION")
+    private val customCommandInstantMixOff =
+        CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+            .setDisplayName("instantmix off")
+            .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_INSTANT_MIX_OFF, Bundle.EMPTY))
+            .setIconResId(R.drawable.media3_icon_minus_circle_unfilled)
+            .build()
+
     private val customLayoutCommandButtons = listOf(
         customCommandToggleShuffleModeOn,
         customCommandToggleShuffleModeOff,
@@ -109,6 +127,8 @@ open class BaseSessionCallback(protected val context: Context) :
         customCommandToggleHeartOn,
         customCommandToggleHeartOff,
         customCommandToggleHeartLoading,
+        customCommandInstantMixOn,
+        customCommandInstantMixOff
     )
 
     @OptIn(UnstableApi::class)
@@ -203,31 +223,50 @@ open class BaseSessionCallback(protected val context: Context) :
     ): ImmutableList<CommandButton> {
         val customLayout = mutableListOf<CommandButton>()
 
-        val showShuffle = Preferences.showShuffleInsteadOfHeart()
+        val allButtons = listOf(
+            "[heartID]",
+            "[repeatID]",
+            "[shuffleID]",
+            "[instantMixID]")
+        val tabButton = listOfNotNull(
+            Preferences.getCustomCommandFirstButton(),
+            Preferences.getCustomCommandSecondButton()
+        ).distinct()
 
-        if (!showShuffle) {
-            if (player.currentMediaItem != null && !isRatingPending) {
-                if ((player.mediaMetadata.userRating as HeartRating?)?.isHeart == true) {
-                    customLayout.add(customCommandToggleHeartOn)
-                } else {
-                    customLayout.add(customCommandToggleHeartOff)
-                }
-            }
-        } else {
-            customLayout.add(
-                if (player.shuffleModeEnabled) customCommandToggleShuffleModeOff
-                else customCommandToggleShuffleModeOn
-            )
+        val remainingButtons = allButtons.filter { it !in tabButton }
+
+        tabButton.forEach { id ->
+            getCommandButton(id, player, isRatingPending)?.let { customLayout.add(it) }
         }
 
-        val repeatButton = when (player.repeatMode) {
-            Player.REPEAT_MODE_ONE -> customCommandToggleRepeatModeOne
-            Player.REPEAT_MODE_ALL -> customCommandToggleRepeatModeAll
-            else -> customCommandToggleRepeatModeOff
+        remainingButtons.forEach { id ->
+            getCommandButton(id, player, isRatingPending)?.let { customLayout.add(it) }
         }
-        customLayout.add(repeatButton)
 
         return ImmutableList.copyOf(customLayout)
+    }
+
+    private fun getCommandButton(id: String, player: Player, isRatingPending: Boolean): CommandButton? {
+        return when (id) {
+            "[heartID]" -> when {
+                player.currentMediaItem == null || isRatingPending -> null
+                (player.mediaMetadata.userRating as HeartRating?)?.isHeart == true -> customCommandToggleHeartOn
+                else -> customCommandToggleHeartOff
+            }
+
+            "[shuffleID]" -> if (player.shuffleModeEnabled) customCommandToggleShuffleModeOff
+            else customCommandToggleShuffleModeOn
+
+            "[repeatID]" -> when (player.repeatMode) {
+                Player.REPEAT_MODE_ONE -> customCommandToggleRepeatModeOne
+                Player.REPEAT_MODE_ALL -> customCommandToggleRepeatModeAll
+                else -> customCommandToggleRepeatModeOff
+            }
+
+            "[instantMixID]" -> if (!MediaManager.continuousPlayIsRunning.get()) customCommandInstantMixOn
+            else customCommandInstantMixOff
+            else -> null
+        }
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -313,6 +352,17 @@ open class BaseSessionCallback(protected val context: Context) :
         Log.d(TAG, "onCustomCommand: ${customCommand.customAction}")
 
         return when (customCommand.customAction) {
+            Constants.CUSTOM_COMMAND_INSTANT_MIX_ON -> {
+                if (!MediaManager.continuousPlayIsRunning.get() && Preferences.isInstantMixUsable()) {
+                    Log.d(TAG, "onCustomCommand: start onInstantMix")
+                    service.onInstantMix(session) { updateMediaNotificationCustomLayout(session) }
+                }
+                else
+                    Log.d(TAG, "onCustomCommand: onInstantMix not usable")
+
+                updateMediaNotificationCustomLayout(session)
+                Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+            }
             Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON -> {
                 session.player.shuffleModeEnabled = true
                 updateMediaNotificationCustomLayout(session)
