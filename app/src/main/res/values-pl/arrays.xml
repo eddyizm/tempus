@@ -358,5 +358,18 @@
         <item>15</item>
 		<item>16</item>
     </string-array>
+
 	
+    <string-array name="custom_commands_titles">
+        <item>Serce</item>
+        <item>Powtarzanie</item>
+        <item>Odtwarzanie losowe</item>
+        <item>Natychmiastowy mix</item>
+    </string-array>
+    <string-array name="custom_commands_values" translatable="false">
+        <item>[heartID]</item>
+        <item>[repeatID]</item>
+        <item>[shuffleID]</item>
+        <item>[instantMixID]</item>
+    </string-array>
 </resources>
