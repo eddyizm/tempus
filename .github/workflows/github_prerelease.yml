@@ -63,11 +63,14 @@ jobs:
           mkdir -p prerelease-artifacts
           
           # Copy and rename Tempus APK with version from tag
-          cp app/build/outputs/apk/tempus/debug/*arm64-v8a*.apk ./prerelease-artifacts/app-tempus-arm64-v8a-${{ github.ref_name }}.apk 2>/dev/null || true
+          # cp app/build/outputs/apk/tempus/debug/*arm64-v8a*.apk ./prerelease-artifacts/app-tempus-arm64-v8a-${{ github.ref_name }}.apk 2>/dev/null || true
           
           # Copy and rename Degoogled APK with version from tag
-          cp app/build/outputs/apk/degoogled/debug/*arm64-v8a*.apk ./prerelease-artifacts/app-degoogled-arm64-v8a-${{ github.ref_name }}.apk 2>/dev/null || true
+          # cp app/build/outputs/apk/degoogled/debug/*arm64-v8a*.apk ./prerelease-artifacts/app-degoogled-arm64-v8a-${{ github.ref_name }}.apk 2>/dev/null || true
           
+          cp "${{ steps.sign_tempus.outputs.signedReleaseFile }}" ./prerelease-artifacts/app-tempus-arm64-v8a-${{ github.ref_name }}.apk
+          cp "${{ steps.sign_degoogled.outputs.signedReleaseFile }}" ./prerelease-artifacts/app-degoogled-arm64-v8a-${{ github.ref_name }}.apk
+
           echo "Prepared APKs with version: ${{ github.ref_name }}"
 
       - name: Create Prerelease
