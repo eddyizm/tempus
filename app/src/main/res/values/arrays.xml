@@ -371,4 +371,17 @@
         <item>2</item>
     </string-array>
 
+    <string-array name="custom_commands_titles">
+        <item>Heart</item>
+        <item>Repeat</item>
+        <item>Shuffle</item>
+        <item>Instant mix</item>
+    </string-array>
+    <string-array name="custom_commands_values" translatable="false">
+        <item>[heartID]</item>
+        <item>[repeatID]</item>
+        <item>[shuffleID]</item>
+        <item>[instantMixID]</item>
+    </string-array>
+
 </resources>
