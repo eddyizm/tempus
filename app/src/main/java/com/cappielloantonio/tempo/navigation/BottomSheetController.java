@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.controller;
+package com.cappielloantonio.tempo.navigation;
 
 import androidx.annotation.NonNull;
 
