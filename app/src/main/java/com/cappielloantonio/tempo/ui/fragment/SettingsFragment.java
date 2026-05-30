@@ -2,6 +2,14 @@ package com.cappielloantonio.tempo.ui.fragment;
 
 import static com.google.android.material.internal.ViewUtils.hideKeyboard;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.res.Configuration;
+import android.media.audiofx.AudioEffect;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +28,16 @@ public class SettingsFragment extends Fragment {
 
     private MainActivity activity;
     private FragmentSettingsBinding bind;
+    private boolean isLandscape;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         activity = (MainActivity) getActivity();
+
+        int orientation = getResources().getConfiguration().orientation;
+        isLandscape = orientation == Configuration.ORIENTATION_LANDSCAPE;
 
     }
 
@@ -64,15 +76,14 @@ public class SettingsFragment extends Fragment {
         activity.setBottomNavigationBarVisibility(false);
         activity.setBottomSheetVisibility(false);
         activity.setNavigationDrawerLock(true);
-        activity.setSystemBarsVisibility(!activity.isLandscape);
+        activity.setSystemBarsVisibility(!isLandscape);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         activity.setBottomSheetVisibility(true);
-
-        if (activity.isLandscape) {
+        if (isLandscape) {
             activity.setNavigationDrawerLock(false);
         } else if (Preferences.getEnableDrawerOnPortrait()) {
             activity.setNavigationDrawerLock(false);
