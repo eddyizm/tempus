@@ -8,4 +8,5 @@
     <dimen name="radius">2dp</dimen>
     <dimen name="dots_height">2dp</dimen>
     <dimen name="downloaded_item_padding">12dp</dimen>
+    <dimen name="artist_top_songs_height">@dimen/_147sdp</dimen>
 </resources>

@@ -364,8 +364,6 @@
     <string name="settings_audio_transcode_priority_summary">Jeżeli włączone, Tempus nie będzie wymuszał strumieniowania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
     <string name="settings_audio_transcode_priority_title">Priorytetyzuj ustawienia transkodowania serwera</string>
     <string name="settings_audio_transcode_priority_toast">Priorytet przy transkodowaniu utworu danego serwerowi</string>
-    <string name="settings_buffering_strategy">Strategia buforowania</string>
-    <string name="settings_buffering_strategy_summary">Aby zmiany przyniosły efekt, musisz ręcznie zrestartować aplikację.</string>
     <string name="settings_choose_download_folder">Wybierz folder dla pobranych plików muzycznych</string>
     <string name="settings_clear_download_folder">Wyczyść folder pobierania</string>
     <string name="settings_continuous_play_summary">Pozwala muzyce odtwarzać się dalej po końcu playlisty, odtwarza podobne piosenki</string>
@@ -622,7 +620,7 @@
     <string name="equalizer_fragment_title">Korektor dźwięku</string>
     <string name="equalizer_reset">Reset</string>
     <string name="equalizer_enable">Włączony</string>
-    <string name="equalizer_not_supported">Nie wspierane na tym urządzeniu</string>
+    <string name="equalizer_managed_externally">Nie wspierane na tym urządzeniu</string>
     <string name="settings_app_equalizer">Korektor dźwięku</string>
     <string name="settings_app_equalizer_summary">Otwórz wbudowany korektor dźwięku</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>

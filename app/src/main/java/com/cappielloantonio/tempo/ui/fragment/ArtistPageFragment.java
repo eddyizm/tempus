@@ -2,10 +2,11 @@ package com.cappielloantonio.tempo.ui.fragment;
 
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +40,6 @@ import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumCarouselAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistCarouselAdapter;
-import com.cappielloantonio.tempo.ui.adapter.ArtistCatalogueAdapter;
 import com.cappielloantonio.tempo.ui.adapter.SongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
@@ -52,6 +52,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @UnstableApi
 public class ArtistPageFragment extends Fragment implements ClickCallback {
@@ -124,12 +125,14 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     @Override
     public void onStop() {
         releaseMediaBrowser();
+        emptyTopSongsTimerHandler.removeCallbacks(emptyTopSongsTimerRunnable);
         super.onStop();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        emptyTopSongsTimerHandler.removeCallbacks(emptyTopSongsTimerRunnable);
         bind = null;
     }
 
@@ -282,6 +285,16 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         }));
     }
 
+    private static final long TOP_SONGS_TIMEOUT = 3000;
+    private final Handler emptyTopSongsTimerHandler = new Handler(Looper.getMainLooper());
+    private final Runnable emptyTopSongsTimerRunnable = () -> {
+        bind.artistPageTopSongsSector.setVisibility(View.VISIBLE);
+        bind.mostStreamedSongRecyclerView.setVisibility(View.GONE);
+        bind.mostStreamedSongRecyclerPlaceholder.setVisibility(View.GONE);
+        bind.mostStreamedSongRecyclerEmpty.setVisibility(View.VISIBLE);
+        bind.mostStreamedSongTextViewClickable.setVisibility(View.GONE);
+    };
+
     private void initTopSongsView() {
         bind.mostStreamedSongRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
@@ -289,18 +302,56 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.mostStreamedSongRecyclerView.setAdapter(songHorizontalAdapter);
         setMediaBrowserListenableFuture();
         reapplyPlayback();
-        artistPageViewModel.getArtistTopSongList().observe(getViewLifecycleOwner(), songs -> {
-            if (songs == null) {
-                if (bind != null) bind.artistPageTopSongsSector.setVisibility(View.GONE);
-            } else {
-                if (bind != null) {
-                    bind.artistPageTopSongsSector.setVisibility(!songs.isEmpty() ? View.VISIBLE : View.GONE);
-                    bind.mostStreamedSongTextViewClickable.setVisibility(songs.size() > 3 ? View.VISIBLE : View.GONE);
-                }
-                songHorizontalAdapter.setItems(songs.stream().limit(3).collect(java.util.stream.Collectors.toList()));
-                reapplyPlayback();
-            }
-        });
+
+        artistPageViewModel.getArtistTopSongList()
+                .observe(getViewLifecycleOwner(), songs -> {
+                    /* Top Songs Timer unset whenever we enter the observer */
+                    emptyTopSongsTimerHandler.removeCallbacks(emptyTopSongsTimerRunnable);
+
+                    if (songs == null) {
+                        // FETCHING -> Placeholder View
+                        bind.artistPageTopSongsSector.setVisibility(View.VISIBLE);
+                        bind.mostStreamedSongRecyclerContainer.setVisibility(View.GONE);
+                        bind.mostStreamedSongRecyclerView.setVisibility(View.GONE);
+                        bind.mostStreamedSongRecyclerPlaceholder.setVisibility(View.VISIBLE);
+                        bind.mostStreamedSongRecyclerEmpty.setVisibility(View.GONE);
+                        // Start timeout to get out of placeholder
+                        emptyTopSongsTimerHandler.postDelayed(emptyTopSongsTimerRunnable, TOP_SONGS_TIMEOUT);
+                        return;
+                    }
+
+                    if (songs.isEmpty()) {
+                        // EMPTY -> Empty View
+                        bind.artistPageTopSongsSector.setVisibility(View.VISIBLE);
+                        bind.mostStreamedSongRecyclerContainer.setVisibility(View.GONE);
+                        bind.mostStreamedSongRecyclerView.setVisibility(View.GONE);
+                        bind.mostStreamedSongRecyclerPlaceholder.setVisibility(View.GONE);
+                        bind.mostStreamedSongRecyclerEmpty.setVisibility(View.VISIBLE);
+                        bind.mostStreamedSongTextViewClickable.setVisibility(View.GONE);
+                        return;
+                    }
+
+                    // TOP SONGS -> Reycler View
+                    bind.mostStreamedSongTextViewClickable.setVisibility(View.VISIBLE);
+                    bind.artistPageTopSongsSector.setVisibility(View.VISIBLE);
+                    bind.mostStreamedSongRecyclerContainer.setVisibility(View.VISIBLE);
+                    bind.mostStreamedSongRecyclerView.setVisibility(View.VISIBLE);
+                    bind.mostStreamedSongRecyclerPlaceholder.setVisibility(View.GONE);
+                    bind.mostStreamedSongRecyclerEmpty.setVisibility(View.GONE);
+                    bind.mostStreamedSongTextViewClickable.setVisibility(
+                            songs.size() > 3 ? View.VISIBLE : View.GONE);
+
+                    songHorizontalAdapter.setItems(
+                            songs.stream().limit(3).collect(Collectors.toList()));
+                    reapplyPlayback();
+
+                });
+
+        bind.mostStreamedSongRecyclerEmpty.setOnClickListener( v -> {
+            bind.artistPageTopSongsSector.setVisibility(View.GONE);
+        }
+
+        );
     }
 
     private void initCategorizedAlbumsView() {
