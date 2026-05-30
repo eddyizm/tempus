@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -36,8 +35,8 @@ import com.cappielloantonio.tempo.navigation.NavigationController;
 import com.cappielloantonio.tempo.navigation.NavigationHelper;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.ui.activity.base.BaseActivity;
-import com.cappielloantonio.tempo.ui.controller.BottomSheetController;
-import com.cappielloantonio.tempo.ui.controller.BottomSheetHelper;
+import com.cappielloantonio.tempo.navigation.BottomSheetController;
+import com.cappielloantonio.tempo.navigation.BottomSheetHelper;
 import com.cappielloantonio.tempo.ui.dialog.ConnectionAlertDialog;
 import com.cappielloantonio.tempo.ui.dialog.GithubTempoUpdateDialog;
 import com.cappielloantonio.tempo.ui.dialog.ServerUnreachableDialog;
@@ -182,7 +181,8 @@ public class MainActivity extends BaseActivity {
                         findViewById(R.id.bottom_navigation_frame),
                         findViewById(R.id.drawer_layout),
                         findViewById(R.id.nav_view),
-                        navHostFragment
+                        navHostFragment,
+                        navController
                 );
 
         // Controller
@@ -216,6 +216,10 @@ public class MainActivity extends BaseActivity {
         bottomSheetController.addCallback(bottomSheetCallback);
         bottomSheetController.replaceFragment(R.id.player_bottom_sheet);
         bottomSheetController.checkAfterStateChanged(mainViewModel);
+    }
+
+    public BottomSheetController getBottomSheetController() {
+        return bottomSheetController;
     }
 
     public void setBottomSheetInPeek(Boolean isVisible) {
@@ -362,22 +366,28 @@ public class MainActivity extends BaseActivity {
         setBottomNavigationBarVisibility(false);
         setBottomSheetVisibility(false);
 
-        if (Objects.requireNonNull(navController.getCurrentDestination()).getId() == R.id.landingFragment) {
-            navController.navigate(R.id.action_landingFragment_to_loginFragment);
-        } else if (Objects.requireNonNull(navController.getCurrentDestination()).getId() == R.id.settingsFragment) {
-            navController.navigate(R.id.action_settingsFragment_to_loginFragment);
-        } else if (Objects.requireNonNull(navController.getCurrentDestination()).getId() == R.id.homeFragment) {
-            navController.navigate(R.id.action_homeFragment_to_loginFragment);
+        NavController nc = navigationController.getNavController();
+        int id = nc.getCurrentDestination().getId();
+
+        if (id == R.id.landingFragment) {
+           nc.navigate(R.id.action_landingFragment_to_loginFragment);
+        } else if (id == R.id.settingsFragment) {
+            nc.navigate(R.id.action_settingsFragment_to_loginFragment);
+        } else if (id == R.id.homeFragment) {
+            nc.navigate(R.id.action_homeFragment_to_loginFragment);
         }
     }
 
     private void goToHome() {
         setBottomNavigationBarVisibility(true);
 
-        if (Objects.requireNonNull(navController.getCurrentDestination()).getId() == R.id.landingFragment) {
-            navController.navigate(R.id.action_landingFragment_to_homeFragment);
-        } else if (Objects.requireNonNull(navController.getCurrentDestination()).getId() == R.id.loginFragment) {
-            navController.navigate(R.id.action_loginFragment_to_homeFragment);
+        NavController nc = navigationController.getNavController();
+        int id = nc.getCurrentDestination().getId();
+
+        if (id == R.id.landingFragment) {
+            nc.navigate(R.id.action_landingFragment_to_homeFragment);
+        } else if (id == R.id.loginFragment) {
+            nc.navigate(R.id.action_loginFragment_to_homeFragment);
         }
     }
 
@@ -491,9 +501,12 @@ public class MainActivity extends BaseActivity {
 
     private void resetView() {
         resetViewModel();
-        int id = Objects.requireNonNull(navController.getCurrentDestination()).getId();
-        navController.popBackStack(id, true);
-        navController.navigate(id);
+
+        NavController nc = navigationController.getNavController();
+        int id = nc.getCurrentDestination().getId();
+        
+        nc.popBackStack(id, true);
+        nc.navigate(id);
     }
 
     private void getOpenSubsonicExtensions() {
