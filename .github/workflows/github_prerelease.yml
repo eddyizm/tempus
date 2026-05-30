@@ -76,5 +76,5 @@ jobs:
           draft: false
           prerelease: true
           files: |
-            ${{ steps.sign_tempus.outputs.signedReleaseFile0 }}
-            ${{ steps.sign_degoogled.outputs.signedReleaseFile0 }}
+            app/build/outputs/apk/tempus/debug/*-signed.apk
+            app/build/outputs/apk/degoogled/debug/*-signed.apk
