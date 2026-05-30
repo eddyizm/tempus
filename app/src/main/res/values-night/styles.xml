@@ -97,4 +97,10 @@
         <item name="background">?attr/colorErrorContainer</item>
         <item name="android:textColor">?attr/colorOnErrorContainer</item>
     </style>
+
+    <style name="ThemeOverlay.App.Amoled" parent="">
+        <item name="android:colorBackground">@color/md_theme_amoled_background</item>
+        <item name="colorSurface">@color/md_theme_amoled_surface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_amoled_surfaceVariant</item>
+    </style>
 </resources>

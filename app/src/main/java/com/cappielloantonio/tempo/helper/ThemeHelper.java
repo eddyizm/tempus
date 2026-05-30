@@ -19,7 +19,8 @@ public class ThemeHelper {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 break;
             }
-            case DARK_MODE: {
+            case DARK_MODE:
+            case AMOLED_MODE: {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 break;
             }
