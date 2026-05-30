@@ -44,7 +44,8 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS_GITHUB }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
-          buildToolsVersion: '35.0.0'
+        env:
+           BUILD_TOOLS_VERSION: "35.0.0"
 
       - name: Sign Degoogled Debug APK
         uses: r0adkll/sign-android-release@v1
@@ -54,7 +55,8 @@ jobs:
           alias: ${{ secrets.KEY_ALIAS_GITHUB }}
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
-          buildToolsVersion: '35.0.0'
+        env:
+           BUILD_TOOLS_VERSION: "35.0.0"
 
       - name: Prepare APKs
         run: |
