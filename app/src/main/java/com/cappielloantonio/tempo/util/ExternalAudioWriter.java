@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.Normalizer;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,7 +46,10 @@ public class ExternalAudioWriter {
     }
 
     private static String normalizeForComparison(String name) {
-        return ExternalDownloadMetadataStore.normalizeKey(sanitizeFileName(name));
+        String s = sanitizeFileName(name);
+        s = Normalizer.normalize(s, Normalizer.Form.NFKD);
+        s = s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return s.toLowerCase(Locale.ROOT);
     }
 
     private static DocumentFile findFile(DocumentFile dir, String fileName) {

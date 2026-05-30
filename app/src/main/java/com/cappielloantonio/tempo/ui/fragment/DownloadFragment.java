@@ -185,6 +185,9 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                 case Constants.DOWNLOAD_TYPE_YEAR:
                     downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
                     break;
+                case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
+                    break;
             }
 
             bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
@@ -246,6 +249,10 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                 return setDownloadViewModel(Constants.DOWNLOAD_TYPE_YEAR);
             }
 
+            if (menuItem.getItemId() == R.id.menu_download_group_by_playlist) {
+                return setDownloadViewModel(Constants.DOWNLOAD_TYPE_PLAYLIST);
+            }
+
             if (menuItem.getItemId() == R.id.menu_download_set_directory) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
                 startActivityForResult(intent, REQUEST_CODE_PICK_DIRECTORY);
@@ -289,6 +296,11 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     @Override
     public void onAlbumClick(Bundle bundle) {
         downloadViewModel.pushViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_ALBUM, bundle.getString(Constants.DOWNLOAD_TYPE_ALBUM)));
+    }
+
+    @Override
+    public void onPlaylistClick(Bundle bundle) {
+        downloadViewModel.pushViewStack(new DownloadStack(Constants.DOWNLOAD_TYPE_PLAYLIST, bundle.getString(Constants.DOWNLOAD_TYPE_PLAYLIST)));
     }
 
     @Override

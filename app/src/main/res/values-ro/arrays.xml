@@ -228,19 +228,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="buffering_strategy_titles">
-        <item>Minim</item>
-        <item>Moderat</item>
-        <item>Agresiv</item>
-        <item>Extrem</item>
-    </string-array>
-    <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
-    </string-array>
-
     <string-array name="skip_min_star_rating_titles">
         <item>0 stele minim</item>
         <item>1 stea minim</item>
