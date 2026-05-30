@@ -440,6 +440,9 @@
     <string name="settings_queue_syncing_title">Sync play queue for this user [Not Fully Baked]</string>
     <string name="settings_show_mini_shuffle_button">Show Shuffle button</string>
     <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
+    <string name="settings_custom_command_first_button">First custom command</string>
+    <string name="settings_custom_command_second_button">Second custom command</string>
+
     <string name="settings_radio">Show radio</string>
     <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
     <string name="settings_enable_drawer_on_landscape">Enable drawer on portrait</string>
