@@ -440,6 +440,8 @@
     <string name="settings_queue_syncing_title">Synchronizuj kolejkę odtwarzania dla tego użytkownika [Niedokończone]</string>
     <string name="settings_show_mini_shuffle_button">Pokaż przycisk odtwarzania losowego</string>
     <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
+	<string name="settings_custom_command_first_button">Pierwsza niestandardowa komenda</string>
+    <string name="settings_custom_command_second_button">Druga niestandardowa komenda</string>
     <string name="settings_radio">Pokaż radio</string>
     <string name="settings_radio_summary">Jeżeli włączone, widoczna będzie sekcja radia. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_enable_drawer_on_landscape">Włącz szufladę w trybie pionowym</string>
