@@ -479,6 +479,27 @@ public class MediaManager {
         Preferences.setLastInstantMix();
         continuousPlayIsRunning.set(true);
 
+        // keep only 30 items in queue before starting continuous mix
+        if (existingBrowserFuture != null) {
+            existingBrowserFuture.addListener(() -> {
+                try {
+                    if (existingBrowserFuture.isDone()) {
+                        MediaBrowser browser = existingBrowserFuture.get();
+                        int currentIndex = browser.getCurrentMediaItem() != null
+                                ? browser.getCurrentMediaItemIndex()
+                                : 0;
+                        int firstToKeep = Math.max(0, currentIndex - 29);
+                        if (firstToKeep > 0) {
+                            Log.d(TAG, "Continuous Play: purging " + firstToKeep + " old items from queue");
+                            removeRange(existingBrowserFuture, 0, firstToKeep);
+                        }
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e(TAG, "Continuous Play: purge failed", e);
+                }
+            }, MoreExecutors.directExecutor());
+        }
+
         LiveData<List<Child>> instantMix =
                 getSongRepository().getContinuousMix(mediaItem.mediaId, 25);
 
