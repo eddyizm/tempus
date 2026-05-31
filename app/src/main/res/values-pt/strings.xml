@@ -240,8 +240,6 @@
     <string name="settings_audio_transcode_priority_summary">Se ativado, Tempus não forçará a transmissão da faixa com as configurações de transcodificação abaixo.</string>
     <string name="settings_audio_transcode_priority_title">Priorizar configurações de transcodificação do servidor</string>
     <string name="settings_audio_transcode_priority_toast">Prioridade na transcodificação da faixa fornecida pelo servidor</string>
-    <string name="settings_buffering_strategy">Estratégia de buffer</string>
-    <string name="settings_buffering_strategy_summary">Para que a alteração tenha efeito você deve reiniciar o aplicativo manualmente.</string>
     <string name="settings_covers_cache">Tamanho do cache das capas</string>
     <string name="settings_data_saving_mode_summary">Para reduzir o consumo de dados, evite baixar capas de álbum.</string>
     <string name="settings_data_saving_mode_title">Limitar uso de dados móveis</string>

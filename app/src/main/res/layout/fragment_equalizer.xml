@@ -81,7 +81,7 @@
         </ScrollView>
 
         <LinearLayout
-            android:id="@+id/equalizer_not_supported_container"
+            android:id="@+id/equalizer_managed_externally_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -90,20 +90,20 @@
             android:visibility="gone">
 
             <ImageView
-                android:id="@+id/equalizer_not_supported_image"
+                android:id="@+id/equalizer_managed_externally_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:maxWidth="240dp"
                 android:maxHeight="240dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/ui_eq_not_supported" />
+                android:src="@drawable/ui_eq_managed_externally" />
 
             <TextView
-                android:id="@+id/equalizer_not_supported_text"
+                android:id="@+id/equalizer_manager_externally_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/equalizer_not_supported"
+                android:text="@string/equalizer_managed_externally"
                 android:gravity="center"
                 style="@style/BodyMedium"
                 android:layout_marginTop="16dp"/>

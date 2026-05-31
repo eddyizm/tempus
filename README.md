@@ -72,7 +72,7 @@ Please note the two variants in the release assets include release/debug and 32/
 - **Instant Mix**: Full refactor of instant mix function which leverages subsonics similarSongs2 by artist/album and similarSongs endpoints to server a larger play queue more reliably.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
-- **Equalizer**: Option to use in app equalizer.
+- **Equalizer**: Option to use built-in or third-party equalizer.
 - **Widget**: New widget to keeping the basic controls on your screen at all times.
 - **Available in 11 languages**: Currently in Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish
 
@@ -144,8 +144,11 @@ All the amazing [contributors](https://github.com/eddyizm/tempus/graphs/contribu
 
 ## Donate
 
-[**Buy me a coffee**](https://ko-fi.com/eddyizm)  
-bitcoin: `3QVHSSCJvn6yXEcJ3A3cxYLMmbvFsrnUs5`  
+<a href="https://liberapay.com/eddyizm/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a>  
+
+bitcoin: `3QVHSSCJvn6yXEcJ3A3cxYLMmbvFsrnUs5`    
+
+[**Buy me a Ko-Fi**](https://ko-fi.com/eddyizm)  
 
 ## License
 

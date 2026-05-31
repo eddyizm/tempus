@@ -17,6 +17,7 @@ import com.cappielloantonio.tempo.database.dao.InternetRadioStationDao;
 import com.cappielloantonio.tempo.database.dao.LyricsDao;
 import com.cappielloantonio.tempo.database.dao.PinnedPlaylistDao;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
+import com.cappielloantonio.tempo.database.dao.PlaylistSongDao;
 import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.database.dao.RecentSearchDao;
 import com.cappielloantonio.tempo.database.dao.ServerDao;
@@ -27,6 +28,7 @@ import com.cappielloantonio.tempo.model.Favorite;
 import com.cappielloantonio.tempo.model.InternetRadioStationCache;
 import com.cappielloantonio.tempo.model.LyricsCache;
 import com.cappielloantonio.tempo.model.PinnedPlaylist;
+import com.cappielloantonio.tempo.model.PlaylistSong;
 import com.cappielloantonio.tempo.model.Queue;
 import com.cappielloantonio.tempo.model.RecentSearch;
 import com.cappielloantonio.tempo.model.Server;
@@ -35,7 +37,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 18,
+        version = 19,
         entities = {
             Queue.class,
             Server.class,
@@ -48,6 +50,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
             PinnedPlaylist.class,
             LyricsCache.class,
             InternetRadioStationCache.class,
+            PlaylistSong.class,
         },
         autoMigrations = {
                 @AutoMigration(from = 10, to = 11),
@@ -58,6 +61,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
                 @AutoMigration(from = 15, to = 16),
                 @AutoMigration(from = 16, to = 17),
                 @AutoMigration(from = 17, to = 18),
+                @AutoMigration(from = 18, to = 19),
         }
 )
 @TypeConverters({DateConverters.class, StringListConverter.class})
@@ -92,6 +96,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PlaylistDao playlistDao();
 
     public abstract PinnedPlaylistDao pinnedPlaylistDao();
+
+    public abstract PlaylistSongDao playlistSongDao();
 
     public abstract LyricsDao lyricsDao();
 

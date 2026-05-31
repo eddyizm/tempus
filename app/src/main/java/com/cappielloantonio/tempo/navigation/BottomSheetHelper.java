@@ -1,13 +1,11 @@
-package com.cappielloantonio.tempo.ui.controller;
+package com.cappielloantonio.tempo.navigation;
 
 import android.os.Handler;
 import android.view.View;
-import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
-import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.ui.fragment.PlayerBottomSheetFragment;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;

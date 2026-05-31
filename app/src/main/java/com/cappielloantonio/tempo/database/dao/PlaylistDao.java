@@ -32,6 +32,9 @@ public interface PlaylistDao {
     @Query("DELETE FROM playlist") 
     void deleteAll();
 
+    @Query("SELECT coverArt FROM playlist WHERE id = :playlistId")
+    String getPlaylistCoverArtId(String playlistId);
+
     @Query("UPDATE playlist SET name = :newName WHERE id = :playlistId")
     void updateName(String playlistId, String newName);
 

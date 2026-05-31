@@ -227,19 +227,6 @@
         <item>3</item>
     </string-array>
 
-    <string-array name="buffering_strategy_titles">
-        <item>Минимум</item>
-        <item>Умеренно</item>
-        <item>Агрессивно</item>
-        <item>Экстремально</item>
-    </string-array>
-    <string-array name="buffering_strategy_values">
-        <item>.1</item>
-        <item>1</item>
-        <item>4</item>
-        <item>8</item>
-    </string-array>
-
     <string-array name="playlist_sort_option_titles">
         <item>По названию</item>
         <item>Случайно</item>
