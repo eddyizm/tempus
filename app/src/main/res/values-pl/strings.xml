@@ -81,6 +81,7 @@
     <string name="artist_page_title_biography_section">Biografia</string>
     <string name="artist_page_title_most_streamed_song_section">Top piosenki</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Zobacz wszystkie</string>
+	<string name="artist_page_title_most_streamed_song_unavailable">Brak top piosenek\n\nNaciśnij aby ukryć</string>
     <string name="battery_optimization_negative_button">Ignoruj</string>
     <string name="battery_optimization_neutral_button">Nie pytaj ponownie</string>
     <string name="battery_optimization_positive_button">Wyłącz</string>
@@ -229,6 +230,7 @@
     <string name="menu_group_by_album">Albumy</string>
     <string name="menu_group_by_artist">Wykonawcy</string>
     <string name="menu_group_by_genre">Gatkunki</string>
+	<string name="menu_group_by_playlist">Playlisty</string>
     <string name="menu_group_by_track">Utwory</string>
     <string name="menu_group_by_year">Rok</string>
     <string name="menu_home_label">Strona główna</string>
@@ -242,13 +244,16 @@
     <string name="menu_sort_name">Nazwa</string>
     <string name="menu_sort_random">Losowo</string>
 	<string name="menu_sort_album_count">Liczba albumów</string>
+	<string name="menu_sort_song_count">Liczba piosenek</string>
+    <string name="menu_sort_date_created">Data utworzenia</string>
     <string name="menu_sort_recently_added">Ostatnio dodane</string>
     <string name="menu_sort_recently_played">Ostatnio odtwarzane</string>
     <string name="menu_sort_most_played">Najczęściej odtwarzane</string>
     <string name="menu_sort_most_recently_starred">Ostatnio oznaczone największą liczbą gwiazdek</string>
     <string name="menu_sort_least_recently_starred">Ostatnio oznaczone najniższą liczbą gwiazdek</string>
-    <string name="menu_pin_button">Dodaj do ekranu głównego</string>
-    <string name="menu_unpin_button">Usuń z ekranu głównego</string>
+    <string name="menu_pin_button">Dodaj do ulubionych</string>
+    <string name="menu_unpin_button">Usuń z ulubionych</string>
+    <string name="playlist_sort_pinned">Ulubione</string>
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
@@ -377,6 +382,8 @@
     <string name="settings_download_folder_cleared">Utworzono folder pobierania.</string>
     <string name="settings_download_folder_set">Wybrano folder pobierania</string>
     <string name="settings_set_download_folder">Ustaw folder pobierania</string>
+	<string name="settings_song_preload_buffer">Bufor wstępnego ładowania piosenek</string>
+    <string name="settings_song_preload_buffer_summary">Aktualna wartość: %1$s\nAby zmiany przyniosły efekt musisz zrestartować aplikację ręcznie.</string>
     <string name="settings_system_equalizer_summary">Zmień ustawienia audio</string>
     <string name="settings_system_equalizer_title">Korektor systemowy</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -416,6 +423,7 @@
 	<string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
 	<string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
 	<string name="settings_androidauto_shuffle_starred_tracks">Odtwarzaj losowo utwory oznaczone gwiazdką</string>
+	<string name="settings_androidauto_shuffle_playlists">Odtarzaj losowo z playlisty</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
 	<string name="settings_androidauto_artists_view">Wykonawcy są wyświetlani według albumu</string>
 	<string name="settings_androidauto_starred_for_made_for_you">Oznaczone gwiazdką do mixu stworzonego dla ciebie</string>
@@ -423,6 +431,8 @@
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
     <string name="settings_song_rating_summary">Jeżeli włączone, pokazuje ocenę w 5 gwiazdkach dla utworu na stronie piosenki\n\n*Wymaga ponownego uruchomienia aplikacji</string>
+	<string name="settings_track_number">Pokaż numer utworu</string>
+    <string name="settings_track_number_summary">Jeżeli włączone, pokazuje numer utworu piosenki która jest odtwarzana.</string>
     <string name="settings_item_rating">Pokaż oceny elementów</string>
     <string name="settings_item_rating_summary">Jeżeli włączone, ocena elementów oraz czy jest oznaczony jako ulubiony będą pokazywane.</string>
     <string name="settings_queue_syncing_countdown">Timer synchronizacji</string>
@@ -430,6 +440,8 @@
     <string name="settings_queue_syncing_title">Synchronizuj kolejkę odtwarzania dla tego użytkownika [Niedokończone]</string>
     <string name="settings_show_mini_shuffle_button">Pokaż przycisk odtwarzania losowego</string>
     <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
+	<string name="settings_custom_command_first_button">Pierwsza niestandardowa komenda</string>
+    <string name="settings_custom_command_second_button">Druga niestandardowa komenda</string>
     <string name="settings_radio">Pokaż radio</string>
     <string name="settings_radio_summary">Jeżeli włączone, widoczna będzie sekcja radia. Zrestartuj aplikację aby, zmiany przyniosły pełny efekt.</string>
     <string name="settings_enable_drawer_on_landscape">Włącz szufladę w trybie pionowym</string>
@@ -468,6 +480,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
     <string name="settings_theme">Motyw</string>
+	<string name="settings_dark_theme_style">Styl ciemnego motywu</string>
     <string name="settings_tile_size">Rozmiar kafelków</string>
     <string name="settings_title_data">Dane</string>
     <string name="settings_title_general">Ogólne</string>
@@ -620,7 +633,8 @@
     <string name="equalizer_fragment_title">Korektor dźwięku</string>
     <string name="equalizer_reset">Reset</string>
     <string name="equalizer_enable">Włączony</string>
-    <string name="equalizer_managed_externally">Nie wspierane na tym urządzeniu</string>
+    <string name="equalizer_managed_externally">Equalizer jest zarządzany przez system lub inną aplikację</string>
+    <string name="settings_app_equalizer">Wbudowany equalizer</string>
     <string name="settings_app_equalizer">Korektor dźwięku</string>
     <string name="settings_app_equalizer_summary">Otwórz wbudowany korektor dźwięku</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>
