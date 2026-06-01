@@ -512,6 +512,8 @@
     <string name="settings_version_title">Version</string>
     <string name="settings_wifi_only_summary">Ask for user confirmation before streaming over mobile network.</string>
     <string name="settings_wifi_only_title">Stream via Wi-Fi only alert</string>
+    <string name="settings_download_wifi_only_summary">Downloads will pause on mobile data and resume automatically on Wi-Fi.</string>
+    <string name="settings_download_wifi_only_title">Download only on Wi-Fi</string>
     <string name="share_bottom_sheet_copy_link">Copy link</string>
     <string name="share_bottom_sheet_delete">Delete share</string>
     <string name="share_bottom_sheet_update">Update share</string>
