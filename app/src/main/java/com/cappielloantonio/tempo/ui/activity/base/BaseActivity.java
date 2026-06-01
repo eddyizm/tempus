@@ -25,6 +25,7 @@ import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.dialog.BatteryOptimizationDialog;
 import com.cappielloantonio.tempo.util.Flavors;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -39,16 +40,24 @@ public class BaseActivity extends AppCompatActivity {
         String theme = Preferences.getTheme();
         String darkStyle = Preferences.getDarkThemeStyle();
         boolean isAmoled = ThemeHelper.AMOLED_MODE.equals(darkStyle);
+        boolean applyAmoled = false;
 
         if (ThemeHelper.DARK_MODE.equals(theme) || ThemeHelper.AMOLED_MODE.equals(theme)) {
             if (isAmoled) {
                 setTheme(R.style.AppTheme_Amoled);
+                applyAmoled = true;
             }
         } else if (ThemeHelper.DEFAULT_MODE.equals(theme)) {
             int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
             if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && isAmoled) {
                 setTheme(R.style.AppTheme_Amoled);
+                applyAmoled = true;
             }
+        }
+
+        DynamicColors.applyToActivityIfAvailable(this);
+        if (applyAmoled) {
+            getTheme().applyStyle(R.style.ThemeOverlay_App_Amoled, true);
         }
 
         super.onCreate(savedInstanceState);
