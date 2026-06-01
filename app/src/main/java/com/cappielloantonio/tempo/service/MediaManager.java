@@ -416,6 +416,21 @@ public class MediaManager {
         }
     }
 
+    public static void removeRange(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, int fromItem, int toItem) {
+        if (mediaBrowserListenableFuture != null) {
+            mediaBrowserListenableFuture.addListener(() -> {
+                try {
+                    if (mediaBrowserListenableFuture.isDone()) {
+                        mediaBrowserListenableFuture.get().removeMediaItems(fromItem, toItem);
+                        getQueueRepository().deleteRange(fromItem, toItem);
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }, MoreExecutors.directExecutor());
+        }
+    }
+
     public static void getCurrentIndex(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, MediaIndexCallback callback) {
         if (mediaBrowserListenableFuture != null) {
             mediaBrowserListenableFuture.addListener(() -> {
@@ -447,8 +462,16 @@ public class MediaManager {
 
     @OptIn(markerClass = UnstableApi.class)
     public static void continuousPlay(MediaItem mediaItem,
-                                    ListenableFuture<MediaBrowser> existingBrowserFuture) {
+                                      ListenableFuture<MediaBrowser> existingBrowserFuture) {
+        continuousPlay(mediaItem, existingBrowserFuture, null);
+    }
+    @OptIn(markerClass = UnstableApi.class)
+    public static void continuousPlay(MediaItem mediaItem,
+                                      ListenableFuture<MediaBrowser> existingBrowserFuture,
+                                      @Nullable Runnable onComplete) {
         if (continuousPlayIsRunning.get() || !Preferences.isInstantMixUsable()) {
+            Log.d(TAG, "Continuous Play: already running");
+            if (onComplete != null) onComplete.run();
             return;
         }
         Log.d(TAG, "Continuous Play");
@@ -464,33 +487,38 @@ public class MediaManager {
             public void onChanged(List<Child> media) {
                 if (media == null || media.isEmpty()) {
                     Log.w(TAG, "Continuous Play: no similar track found. Is server correctly configured?");
-                    return;
                 }
+                else
+                {
+                    if (existingBrowserFuture != null) {
+                        Log.d(TAG, "Continuous Play: found " + media.size() + " similar tracks");
 
-                if (existingBrowserFuture != null) {
-                    Log.d(TAG, "Continuous Play: found " + media.size() + " similar tracks");
+                        final MediaBrowser browser;
+                        try {
+                            browser = existingBrowserFuture.get();
+                        } catch (ExecutionException | InterruptedException e) {
+                            Log.e(TAG, "Continuous Play: browser unavailable", e);
+                            instantMix.removeObserver(this);
+                            continuousPlayIsRunning.set(false);
+                            return;
+                        }
 
-                    final MediaBrowser browser;
-                    try {
-                        browser = existingBrowserFuture.get();
-                    } catch (ExecutionException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                        List<Child> filteredMedia;
+                        List<String> currentIds = new ArrayList<>();
+                        for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
+                            currentIds.add(browser.getMediaItemAt(i).mediaId);
+                        }
+                        filteredMedia = media.stream()
+                                .filter(child -> !currentIds.contains(child.getId()))
+                                .collect(Collectors.toList());
+
+                        Log.d(TAG, "Continuous Play: adding " + filteredMedia.size() + " tracks to queue");
+                        enqueue(existingBrowserFuture, filteredMedia, true);
                     }
-
-                    List<Child> filteredMedia;
-                    List<String> currentIds = new ArrayList<>();
-                    for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
-                        currentIds.add(browser.getMediaItemAt(i).mediaId);
-                    }
-                    filteredMedia = media.stream()
-                            .filter(child -> !currentIds.contains(child.getId()))
-                            .collect(Collectors.toList());
-
-                    Log.d(TAG, "Continuous Play: adding " + filteredMedia.size() + " tracks to queue");
-                    enqueue(existingBrowserFuture, filteredMedia, true);
                 }
                 instantMix.removeObserver(this);
                 continuousPlayIsRunning.set(false);
+                if (onComplete != null) onComplete.run();
             }
         });
     }

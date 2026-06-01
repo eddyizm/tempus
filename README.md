@@ -144,8 +144,11 @@ All the amazing [contributors](https://github.com/eddyizm/tempus/graphs/contribu
 
 ## Donate
 
-[**Buy me a coffee**](https://ko-fi.com/eddyizm)  
-bitcoin: `3QVHSSCJvn6yXEcJ3A3cxYLMmbvFsrnUs5`  
+<a href="https://liberapay.com/eddyizm/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a>  
+
+bitcoin: `3QVHSSCJvn6yXEcJ3A3cxYLMmbvFsrnUs5`    
+
+[**Buy me a Ko-Fi**](https://ko-fi.com/eddyizm)  
 
 ## License
 
