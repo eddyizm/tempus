@@ -49,6 +49,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     private List<Child> songsFull;
     private List<Child> songs;
     private String currentFilter;
+    private String currentSortOrder;
 
     private String currentPlayingId;
     private boolean isPlaying;
@@ -82,6 +83,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             songs = (List<Child>) results.values;
+            if (currentSortOrder != null) applySortOrder(currentSortOrder);
             notifyDataSetChanged();
 
             for (int pos : currentPlayingPositions) {
@@ -368,6 +370,12 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     }
 
     public void sort(String order) {
+        currentSortOrder = order;
+        applySortOrder(order);
+        notifyDataSetChanged();
+    }
+
+    private void applySortOrder(String order) {
         switch (order) {
             case Constants.MEDIA_BY_TITLE:
                 songs.sort(Comparator.comparing(Child::getTitle));
@@ -379,8 +387,6 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
                 songs.sort(Comparator.comparing(Child::getStarred, Comparator.nullsLast(Comparator.naturalOrder())));
                 break;
         }
-
-        notifyDataSetChanged();
     }
 
     public void setMediaBrowserListenableFuture(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {

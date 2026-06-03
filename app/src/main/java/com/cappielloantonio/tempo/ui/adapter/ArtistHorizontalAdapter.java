@@ -29,6 +29,7 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
     private List<ArtistID3> artistsFull;
     private List<ArtistID3> artists;
     private String currentFilter;
+    private String currentSortOrder;
 
     private final Filter filtering = new Filter() {
         @Override
@@ -57,6 +58,7 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             artists = (List<ArtistID3>) results.values;
+            if (currentSortOrder != null) applySortOrder(currentSortOrder);
             notifyDataSetChanged();
         }
     };
@@ -157,6 +159,12 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
     }
 
     public void sort(String order) {
+        currentSortOrder = order;
+        applySortOrder(order);
+        notifyDataSetChanged();
+    }
+
+    private void applySortOrder(String order) {
         switch (order) {
             case Constants.ARTIST_ORDER_BY_NAME:
                 artists.sort(Comparator.comparing(ArtistID3::getName));
@@ -166,10 +174,7 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
                 break;
             case Constants.ARTIST_ORDER_BY_LEAST_RECENTLY_STARRED:
                 artists.sort(Comparator.comparing(ArtistID3::getStarred, Comparator.nullsLast(Comparator.naturalOrder())));
-
                 break;
         }
-
-        notifyDataSetChanged();
     }
 }
