@@ -262,11 +262,6 @@ public class PlayerControllerFragment extends Fragment {
             }
 
             @Override
-            public void onMediaItemTransition(@androidx.annotation.Nullable androidx.media3.common.MediaItem mediaItem, int reason) {
-                // End-of-track abort and fade logic now handled by BaseMediaService.
-            }
-
-            @Override
             public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
                 Preferences.setShuffleModeEnabled(shuffleModeEnabled);
             }
