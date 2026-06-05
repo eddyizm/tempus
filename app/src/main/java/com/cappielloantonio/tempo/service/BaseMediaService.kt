@@ -112,7 +112,7 @@ open class BaseMediaService : MediaLibraryService() {
         initializeExoPlayer()
         initializeMediaLibrarySession(exoplayer)
         initializePlayerListener(exoplayer)
-        initializeSleepTimer(exoplayer)
+        initializeSleepTimer()
         setPlayer(null, exoplayer)
     }
 
@@ -456,20 +456,20 @@ open class BaseMediaService : MediaLibraryService() {
      * that fade-out and pause happen in the service regardless of whether the
      * Fragment is attached. Call once after the player is ready.
      */
-    private fun initializeSleepTimer(player: Player) {
+    private fun initializeSleepTimer() {
         SleepTimerManager.getInstance().setServiceActionListener(object : SleepTimerManager.ServiceActionListener {
             override fun onTick(expired: Boolean) {
-                if (expired) startFadeOutThenPause(player)
+                if (expired) startFadeOutThenPause(mediaLibrarySession.player)
             }
             override fun onEndOfTrackArmed() {
-                armEndOfTrackFadePoller(player)
+                armEndOfTrackFadePoller(mediaLibrarySession.player)
             }
         })
         // If end-of-track was already armed when the service restarted (state
         // restored from SharedPreferences), re-arm the poller against the live player.
         if (SleepTimerManager.getInstance().isActive &&
                 SleepTimerManager.getInstance().isEndOfTrack) {
-            armEndOfTrackFadePoller(player)
+            armEndOfTrackFadePoller(mediaLibrarySession.player)
         }
     }
 
