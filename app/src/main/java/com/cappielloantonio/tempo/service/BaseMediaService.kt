@@ -37,6 +37,7 @@ import com.cappielloantonio.tempo.equalizer.DefaultBackend
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
+import com.cappielloantonio.tempo.util.SleepTimerManager
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import java.net.HttpURLConnection
 import java.net.URL
@@ -83,6 +84,23 @@ open class BaseMediaService : MediaLibraryService() {
 
     private val binder = LocalBinder()
 
+    // -------------------------------------------------------------------------
+    // Sleep timer — fade-out and end-of-track poller live here so they survive
+    // the Fragment lifecycle during background playback.
+    // -------------------------------------------------------------------------
+
+    private val sleepTimerHandler = Handler(Looper.getMainLooper())
+
+    /** Duration of the volume fade-out in milliseconds. */
+    private val FADE_DURATION_MS = 10_000L
+    /** Number of discrete volume steps during the fade. */
+    private val FADE_STEPS = 40
+
+    /** Set to true to abort an in-progress fade (e.g. track transition fired early). */
+    @Volatile private var abortCurrentFade = false
+
+    private var endOfTrackPoller: Runnable? = null
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_RELOAD_EQUALIZER -> reloadEqualizer()
@@ -94,6 +112,7 @@ open class BaseMediaService : MediaLibraryService() {
         initializeExoPlayer()
         initializeMediaLibrarySession(exoplayer)
         initializePlayerListener(exoplayer)
+        initializeSleepTimer(exoplayer)
         setPlayer(null, exoplayer)
     }
 
@@ -172,6 +191,18 @@ open class BaseMediaService : MediaLibraryService() {
                 // --- End add for AA ---
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
+                }
+
+                // Safety net: if a track transition fires while end-of-track is armed
+                // (e.g. stream with unknown duration that ended before the poller could
+                // trigger the fade), abort any in-progress fade and pause immediately.
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO &&
+                    SleepTimerManager.getInstance().isEndOfTrack) {
+                    abortCurrentFade = true
+                    stopEndOfTrackPoller()
+                    SleepTimerManager.getInstance().cancelTimer()
+                    player.volume = 1f
+                    player.pause()
                 }
                 
                 // Restart header checks for radio streams when media item changes
@@ -416,6 +447,102 @@ open class BaseMediaService : MediaLibraryService() {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Sleep timer — fade-out and end-of-track polling
+    // -------------------------------------------------------------------------
+
+    /**
+     * Registers a [SleepTimerManager.ServiceActionListener] on the singleton so
+     * that fade-out and pause happen in the service regardless of whether the
+     * Fragment is attached. Call once after the player is ready.
+     */
+    private fun initializeSleepTimer(player: Player) {
+        SleepTimerManager.getInstance().setServiceActionListener(object : SleepTimerManager.ServiceActionListener {
+            override fun onTick(expired: Boolean) {
+                if (expired) startFadeOutThenPause(player)
+            }
+            override fun onEndOfTrackArmed() {
+                armEndOfTrackFadePoller(player)
+            }
+        })
+        // If end-of-track was already armed when the service restarted (state
+        // restored from SharedPreferences), re-arm the poller against the live player.
+        if (SleepTimerManager.getInstance().isActive &&
+                SleepTimerManager.getInstance().isEndOfTrack) {
+            armEndOfTrackFadePoller(player)
+        }
+    }
+
+    /**
+     * Gradually lowers the player volume to zero over [FADE_DURATION_MS], then
+     * pauses and restores full volume. Respects [abortCurrentFade].
+     */
+    private fun startFadeOutThenPause(player: Player) {
+        val stepMs = FADE_DURATION_MS / FADE_STEPS
+        val decrement = 1f / FADE_STEPS
+        val volume = floatArrayOf(1f)
+
+        abortCurrentFade = false
+
+        val fadeStep = object : Runnable {
+            override fun run() {
+                if (abortCurrentFade) {
+                    player.volume = 1f
+                    return
+                }
+                volume[0] = maxOf(0f, volume[0] - decrement)
+                player.volume = volume[0]
+                if (volume[0] > 0f) {
+                    sleepTimerHandler.postDelayed(this, stepMs)
+                } else {
+                    // Fade complete — cancel the timer and pause.
+                    SleepTimerManager.getInstance().cancelTimer()
+                    player.pause()
+                    sleepTimerHandler.postDelayed({ player.volume = 1f }, 300)
+                }
+            }
+        }
+        sleepTimerHandler.post(fadeStep)
+    }
+
+    /**
+     * Polls playback position every 500 ms while end-of-track is armed.
+     * Kicks off [startFadeOutThenPause] when [FADE_DURATION_MS] or fewer
+     * milliseconds remain on the current track.
+     */
+    private fun armEndOfTrackFadePoller(player: Player) {
+        stopEndOfTrackPoller()
+        abortCurrentFade = false
+
+        endOfTrackPoller = object : Runnable {
+            var fadeStarted = false
+
+            override fun run() {
+                if (!SleepTimerManager.getInstance().isEndOfTrack) return
+                if (fadeStarted) return
+
+                val duration = player.duration
+                val position = player.currentPosition
+
+                if (duration > 0 && duration != C.TIME_UNSET) {
+                    val remaining = duration - position
+                    if (remaining in 1..FADE_DURATION_MS) {
+                        fadeStarted = true
+                        startFadeOutThenPause(player)
+                        return
+                    }
+                }
+                sleepTimerHandler.postDelayed(this, 500)
+            }
+        }
+        sleepTimerHandler.post(endOfTrackPoller!!)
+    }
+
+    private fun stopEndOfTrackPoller() {
+        endOfTrackPoller?.let { sleepTimerHandler.removeCallbacks(it) }
+        endOfTrackPoller = null
+    }
+
     open fun onInstantMix(session: MediaSession, onComplete: Runnable? = null) {
         val player = session.player
         val currentMediaItem = player.currentMediaItem
@@ -487,6 +614,8 @@ open class BaseMediaService : MediaLibraryService() {
         ReplayGainUtil.release()
         stopWidgetUpdates()
         stopRadioHeaderChecks()
+        stopEndOfTrackPoller()
+        SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
         releasePlayers()
         mediaLibrarySession.release()
