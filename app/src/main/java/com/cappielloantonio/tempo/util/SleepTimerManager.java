@@ -38,6 +38,20 @@ public class SleepTimerManager {
         void onTick(boolean expired);
     }
 
+    /**
+     * Listener registered by {@link com.cappielloantonio.tempo.service.BaseMediaService}
+     * to drive the fade-out and pause actions from the service process.
+     * Receives the same expired signal as {@link TickListener} but is kept
+     * separate so UI concerns (tick label refresh) and playback actions
+     * (fade, pause) are decoupled.
+     */
+    public interface ServiceActionListener {
+        /** Called every second for countdown updates, and with expired=true when the timer fires. */
+        void onTick(boolean expired);
+        /** Called immediately when end-of-track mode is armed, so the service can start its poller. */
+        void onEndOfTrackArmed();
+    }
+
     // SharedPreferences keys
     private static final String PREF_END_TIME_MS = "sleep_timer_end_time_ms";
     private static final String PREF_END_OF_TRACK = "sleep_timer_end_of_track";
@@ -52,6 +66,7 @@ public class SleepTimerManager {
     private boolean endOfTrack = false;
 
     private TickListener tickListener;
+    private ServiceActionListener serviceActionListener;
 
     private SleepTimerManager() {
         restoreFromPreferences();
@@ -90,6 +105,7 @@ public class SleepTimerManager {
         persistState();
         // Notify immediately so the UI can reflect the active state.
         if (tickListener != null) tickListener.onTick(false);
+        if (serviceActionListener != null) serviceActionListener.onEndOfTrackArmed();
     }
 
     /**
@@ -120,6 +136,14 @@ public class SleepTimerManager {
         long minutes = ms / 60_000;
         long seconds = (ms % 60_000) / 1000;
         return String.format("%d:%02d", minutes, seconds);
+    }
+
+    /**
+     * Attach or detach the service-side action listener.
+     * Pass {@code null} when the service is destroyed.
+     */
+    public void setServiceActionListener(ServiceActionListener listener) {
+        this.serviceActionListener = listener;
     }
 
     /**
@@ -167,8 +191,10 @@ public class SleepTimerManager {
                 scheduledTick = null;
                 clearPersistedState();
                 if (tickListener != null) tickListener.onTick(true);
+                if (serviceActionListener != null) serviceActionListener.onTick(true);
             } else {
                 if (tickListener != null) tickListener.onTick(false);
+                if (serviceActionListener != null) serviceActionListener.onTick(false);
                 scheduleNextTick();
             }
         };
