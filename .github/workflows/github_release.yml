@@ -62,6 +62,18 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "35.0.0"
 
+      - name: Rename Signed APKs to match local pattern
+        run: |
+          # Rename Tempus signed APKs
+          for file in app/build/outputs/apk/tempus/release/*-signed.apk; do
+            mv "$file" "${file/-signed.apk/-release.apk}"
+          done
+
+          # Rename Degoogled signed APKs
+          for file in app/build/outputs/apk/degoogled/release/*-signed.apk; do
+            mv "$file" "${file/-signed.apk/-release.apk}"
+          done
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -74,3 +86,4 @@ jobs:
           files: |
             app/build/outputs/apk/tempus/release/*-release.apk
             app/build/outputs/apk/degoogled/release/*-release.apk
+
