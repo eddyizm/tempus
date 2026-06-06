@@ -66,12 +66,14 @@ jobs:
         run: |
           # Rename Tempus signed APKs
           for file in app/build/outputs/apk/tempus/release/*-signed.apk; do
-            mv "$file" "${file/-signed.apk/-release.apk}"
+            new_name=$(echo "$file" | sed 's/-unsigned-signed\.apk$/.apk/' | sed 's/-signed\.apk$/.apk/')
+            mv "$file" "$new_name"
           done
 
           # Rename Degoogled signed APKs
           for file in app/build/outputs/apk/degoogled/release/*-signed.apk; do
-            mv "$file" "${file/-signed.apk/-release.apk}"
+            new_name=$(echo "$file" | sed 's/-unsigned-signed\.apk$/.apk/' | sed 's/-signed\.apk$/.apk/')
+            mv "$file" "$new_name"
           done
 
       - name: Create Release
