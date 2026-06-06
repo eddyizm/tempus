@@ -3,11 +3,12 @@ name: Github Release Workflow
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+      - 'v*'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.ref_name, '-dev') }}
     steps:
       - name: Setup JDK 17
         uses: actions/setup-java@v4
@@ -16,6 +17,8 @@ jobs:
           java-version: '17'
 
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Cache Gradle and wrapper
         uses: actions/cache@v3
@@ -28,22 +31,11 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Setup build tool version variable
-        shell: bash
-        run: |
-          BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
-          echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
-          echo Last build tool version is: $BUILD_TOOL_VERSION
-
       - name: Build All Release APKs
         id: build
         run: |
-          # Only build release variants (removed debug builds)
           bash ./gradlew assembleTempusRelease
           bash ./gradlew assembleDegoogledRelease
-
-      - name: Create Artifact Staging Directory
-        run: mkdir -p release-artifacts
 
       - name: Sign Tempus Release APKs
         id: sign_tempus_release
@@ -55,27 +47,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
         env:
-          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
-
-      - name: Prepare Signed Tempus APKs for Release
-        run: |
-          TEMPUS_PATH=app/build/outputs/apk/tempus/release
-          
-          echo "--- Tempus Files BEFORE Move ---"
-          ls -la $TEMPUS_PATH
-          echo "--------------------------------"
-          
-          # FIX: Use find/xargs for robust file matching and moving.
-          
-          # Renaming 64-bit APK and moving to safe staging directory
-          find $TEMPUS_PATH -name '*arm64-v8a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
-          mv ./release-artifacts/*arm64-v8a*signed.apk ./release-artifacts/app-tempus-arm64-v8a-release.apk
-          
-          # Renaming 32-bit APK and moving to safe staging directory
-          find $TEMPUS_PATH -name '*armeabi-v7a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
-          mv ./release-artifacts/*armeabi-v7a*signed.apk ./release-artifacts/app-tempus-armeabi-v7a-release.apk
-          
-          echo "Prepared Tempus APKs."
+          BUILD_TOOLS_VERSION: "35.0.0"
 
       - name: Sign Degoogled Release APKs
         id: sign_degoogled_release
@@ -87,28 +59,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
         env:
-          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
-
-      - name: Prepare Signed Degoogled APKs for Release
-        run: |
-          DEGOOGLED_PATH=app/build/outputs/apk/degoogled/release
-          
-          echo "--- Degoogled Files BEFORE Move ---"
-          ls -la $DEGOOGLED_PATH
-          echo "--------------------------------"
-          
-          # FIX: Use find/xargs for robust file matching and moving.
-          
-          # Renaming 64-bit APK and moving to safe staging directory
-          find $DEGOOGLED_PATH -name '*arm64-v8a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
-          mv ./release-artifacts/*arm64-v8a*signed.apk ./release-artifacts/app-degoogled-arm64-v8a-release.apk
-          
-          # Renaming 32-bit APK and moving to safe staging directory
-          find $DEGOOGLED_PATH -name '*armeabi-v7a*signed.apk' -print0 | xargs -0 mv -t ./release-artifacts/
-          mv ./release-artifacts/*armeabi-v7a*signed.apk ./release-artifacts/app-degoogled-armeabi-v7a-release.apk
-          
-          echo "Prepared Degoogled APKs."
-          ls -la ./release-artifacts/
+          BUILD_TOOLS_VERSION: "35.0.0"
 
       - name: Create Release
         id: create_release
@@ -116,14 +67,9 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-          body: '> Changelog coming soon'
-          draft: false
+          generate_release_notes: true
+          draft: true
           prerelease: false
-          files: ./release-artifacts/*.apk
-
-      - name: Upload Release APKs as artifacts (For easy pipeline access)
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-apks
-          path: ./release-artifacts/*.apk
-          retention-days: 30
+          files: |
+            app/build/outputs/apk/tempus/release/*-release.apk
+            app/build/outputs/apk/degoogled/release/*-release.apk
