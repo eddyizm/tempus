@@ -1,6 +1,7 @@
 package com.cappielloantonio.tempo.ui.dialog;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.widget.Button;
 import android.net.Uri;
@@ -14,11 +15,17 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.DialogDeleteDownloadStorageBinding;
+import com.cappielloantonio.tempo.model.Download;
+import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @OptIn(markerClass = UnstableApi.class)
 public class DeleteDownloadStorageDialog extends DialogFragment {
@@ -48,21 +55,36 @@ public class DeleteDownloadStorageDialog extends DialogFragment {
         if (dialog != null) {
             Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                if (Preferences.getDownloadDirectoryUri() == null) {
-                    DownloadUtil.getDownloadTracker(requireContext()).removeAll();
-                }
-
-                String uriString = Preferences.getDownloadDirectoryUri();
-                if (uriString != null) {
-                    DocumentFile directory = DocumentFile.fromTreeUri(requireContext(), Uri.parse(uriString));
-                    if (directory != null && directory.canWrite()) {
-                        for (DocumentFile file : directory.listFiles()) {
-                            file.delete();
-                        }
+                Context context = requireContext();
+                new Thread(() -> {
+                    if (Preferences.getDownloadDirectoryUri() == null) {
+                        DownloadUtil.getDownloadTracker(context).removeAll();
                     }
-                    ExternalAudioReader.refreshCache();
-                    ExternalDownloadMetadataStore.clear();
-                }
+
+                    String uriString = Preferences.getDownloadDirectoryUri();
+                    if (uriString != null) {
+                        DocumentFile directory = DocumentFile.fromTreeUri(context, Uri.parse(uriString));
+                        if (directory != null && directory.canWrite()) {
+                            List<Download> trackedDownloads = new DownloadRepository().getAllDownloads();
+                            Map<String, Download> trackedFilesMap = new HashMap<>();
+                            for (Download d : trackedDownloads) {
+                                if (d.getDownloadUri() != null) {
+                                    trackedFilesMap.put(d.getDownloadUri(), d);
+                                }
+                            }
+
+                            for (DocumentFile file : directory.listFiles()) {
+                                String fileUri = file.getUri().toString();
+                                if (trackedFilesMap.containsKey(fileUri)) {
+                                    file.delete();
+                                    new DownloadRepository().delete(trackedFilesMap.get(fileUri).getId());
+                                }
+                            }
+                        }
+                        ExternalAudioReader.refreshCache();
+                        ExternalDownloadMetadataStore.clear();
+                    }
+                }).start();
                 dialog.dismiss();
             });
 

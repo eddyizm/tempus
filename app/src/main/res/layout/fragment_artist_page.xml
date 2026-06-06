@@ -189,15 +189,12 @@
                     android:paddingBottom="8dp" />
             </LinearLayout>
 
-            <!--  Label and button  -->
             <LinearLayout
                 android:id="@+id/artist_page_top_songs_sector"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="22dp"
-                android:visibility="gone"
-                tools:visibility="visible">>
+                android:visibility="visible" >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -218,19 +215,71 @@
                         style="@style/TitleMedium"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingStart="5dp"
                         android:paddingEnd="16dp"
-                        android:text="@string/artist_page_title_most_streamed_song_see_all_button" />
+                        android:text="@string/artist_page_title_most_streamed_song_see_all_button"
+                        android:visibility="gone"
+                        tools:visibility="visible"/>
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/most_streamed_song_recycler_view"
+                <!-- Top Songs Placeholder View -->
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/most_streamed_song_recycler_placeholder"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:nestedScrollingEnabled="false"
-                    android:clipToPadding="false"
-                    android:paddingTop="8dp" />
+                    android:layout_height="@dimen/artist_top_songs_height"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp" >
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <include
+                            layout="@layout/item_song_placeholder"
+                            android:id="@+id/item_song_placeholder_1" />
+
+                        <include
+                            layout="@layout/item_song_placeholder"
+                            android:id="@+id/item_song_placeholder_2" />
+
+                        <include
+                            layout="@layout/item_song_placeholder"
+                            android:id="@+id/item_song_placeholder_3" />
+
+                    </LinearLayout>
+
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <!-- Top Songs Empty View -->
+                <TextView
+                    android:id="@+id/most_streamed_song_recycler_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/artist_top_songs_height"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:text="@string/artist_page_title_most_streamed_song_unavailable"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:visibility="visible"/>
+
+                <!-- Top Songs Recycler View -->
+                <LinearLayout
+                    android:id="@+id/most_streamed_song_recycler_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/artist_top_songs_height" >
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/most_streamed_song_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:nestedScrollingEnabled="false"
+                        android:clipToPadding="false"
+                        android:visibility="gone"
+                        tools:visibility="visible"/>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout

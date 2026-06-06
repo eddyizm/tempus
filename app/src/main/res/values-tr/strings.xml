@@ -285,8 +285,6 @@
     <string name="settings_audio_transcode_priority_summary">Etkinleştirildiğinde, Tempus parçayı aşağıdaki dönüştürme ayarlarıyla yayınlamayacaktır.</string>
     <string name="settings_audio_transcode_priority_title">Sunucu dönüştürme ayarlarına öncelik ver</string>
     <string name="settings_audio_transcode_priority_toast">Parçanın dönüştürülmesinde öncelik sunucuya verildi</string>
-    <string name="settings_buffering_strategy">Önbellekleme stratejisi</string>
-    <string name="settings_buffering_strategy_summary">Değişikliğin geçerli olması için uygulamayı elle yeniden başlatmalısınız.</string>
     <string name="settings_continuous_play_summary">Bir çalma listesi bittiğinde benzer şarkılar çalarak müziğin devam etmesine izin verir</string>
     <string name="settings_continuous_play_title">Sürekli çalma</string>
     <string name="settings_covers_cache">Albüm kapağı önbelleği boyutu</string>

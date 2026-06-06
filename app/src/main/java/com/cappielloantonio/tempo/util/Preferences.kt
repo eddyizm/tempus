@@ -69,7 +69,7 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_DOWNLOAD = "audio_transcode_format_download"
     private const val SHARE = "share"
     private const val SCROBBLING = "scrobbling"
-    private const val BUFFERING_STRATEGY = "buffering_strategy"
+    private const val SONG_PRELOAD_BUFFER = "song_preload_buffer"
     private const val SKIP_MIN_STAR_RATING = "skip_min_star_rating"
     private const val MIN_STAR_RATING = "min_star_rating"
     private const val ALWAYS_ON_DISPLAY = "always_on_display"
@@ -84,9 +84,12 @@ object Preferences {
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
     private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
     private const val DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER = Constants.PLAYLIST_ORDER_BY_RANDOM
+    private const val SELECTED_EQUALIZER = "selected_equalizer"
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
     private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
+    private const val CUSTOM_COMMAND_FIRST_BUTTON = "custom_command_first_button"
+    private const val CUSTOM_COMMAND_SECOND_BUTTON = "custom_command_second_button"
     private const val ALBUM_DETAIL = "album_detail"
     private const val ALBUM_SORT_ORDER = "album_sort_order"
     private const val DEFAULT_ALBUM_SORT_ORDER = Constants.ALBUM_ORDER_BY_NAME
@@ -474,6 +477,16 @@ object Preferences {
     }
 
     @JvmStatic
+    fun getCustomCommandFirstButton(): String? {
+        return App.getInstance().preferences.getString(CUSTOM_COMMAND_FIRST_BUTTON, "[heartID]")
+    }
+
+    @JvmStatic
+    fun getCustomCommandSecondButton(): String? {
+        return App.getInstance().preferences.getString(CUSTOM_COMMAND_SECOND_BUTTON, "[repeatID]")
+    }
+
+    @JvmStatic
     fun showServerUnreachableDialog(): Boolean {
         return App.getInstance().preferences.getLong(
                 SERVER_UNREACHABLE, 0
@@ -642,8 +655,8 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getBufferingStrategy(): Double {
-        return App.getInstance().preferences.getString(BUFFERING_STRATEGY, "1")!!.toDouble()
+    fun getSongPreloadBuffer(): Int {
+        return App.getInstance().preferences.getString(SONG_PRELOAD_BUFFER, "60")!!.toInt()
     }
 
     @JvmStatic
@@ -748,6 +761,17 @@ object Preferences {
     @JvmStatic
     fun isEqualizerEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(EQUALIZER_ENABLED, false)
+    }
+
+    @JvmStatic
+    fun getSelectedEqualizer(): Int {
+        return App.getInstance().preferences.getString(SELECTED_EQUALIZER, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun setSelectedEqualizer(selectedEqualizer: String) {
+        App.getInstance().preferences.edit().putString(SELECTED_EQUALIZER, selectedEqualizer)
+            .apply()
     }
 
     @JvmStatic

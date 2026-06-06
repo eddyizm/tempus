@@ -1,0 +1,9 @@
+Fixed ug album month
+Separate equalizer from mediaservice
+Added overflow menu to player
+Added song preload buffer setting
+Added fetching animation to artist top songs
+Added third party equalizer support
+Include playlist in dowloads view
+Use dynamic colors with pure black theme
+Stop deleting files not tracked in db download table

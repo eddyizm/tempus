@@ -37,6 +37,7 @@ public class NavigationHelper {
     /* Navigation components */
     private NavigationView navigationView;
     private NavHostFragment navHostFragment;
+    private NavController navController;
 
     /* States that need to be remembered */
     // -- //
@@ -46,12 +47,14 @@ public class NavigationHelper {
                             @NonNull FrameLayout bottomNavigationViewFrame,
                             @NonNull DrawerLayout drawerLayout,
                             @NonNull NavigationView navigationView,
-                            @NonNull NavHostFragment navHostFragment) {
+                            @NonNull NavHostFragment navHostFragment,
+                            @NonNull NavController navController) {
         this.bottomNavigationView = bottomNavigationView;
         this.bottomNavigationViewFrame = bottomNavigationViewFrame;
         this.drawerLayout = drawerLayout;
         this.navigationView = navigationView;
         this.navHostFragment = navHostFragment;
+        this.navController = navController;
     }
 
     public void syncWithBottomSheetBehavior(@NonNull BottomSheetBehavior<View> bottomSheetBehavior,
@@ -143,6 +146,11 @@ public class NavigationHelper {
     All of these are the "backward compatible" changes that don't break the assumption
     that everything was defined on the activity and is gobally available
      */
+
+    @NonNull
+    public NavController getNavController() {
+        return navController;
+    }
 
     @NonNull
     public BottomNavigationView getBottomNavigationView() {

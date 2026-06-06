@@ -294,6 +294,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     }
 
     private void setSongListPageSubtitle(List<Child> children) {
+        if (children == null) return;
         switch (songListPageViewModel.title) {
             case Constants.MEDIA_BY_GENRE:
                 bind.pageSubtitleLabel.setText(children.size() < songListPageViewModel.maxNumberByGenre ?
