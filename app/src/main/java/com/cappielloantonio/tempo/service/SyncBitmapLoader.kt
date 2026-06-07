@@ -57,7 +57,7 @@ class SyncBitmapLoader(
                 val bitmap = Glide.with(context)
                     .asBitmap()
                     .load(uri)
-                    .submit()
+                    .submit(MAX_ART_SIZE, MAX_ART_SIZE)
                     .get()
                 cache.put(uri, bitmap)
                 future.set(bitmap)
@@ -76,7 +76,7 @@ class SyncBitmapLoader(
                 val bitmap = Glide.with(context)
                     .asBitmap()
                     .load(uri)
-                    .submit()
+                    .submit(MAX_ART_SIZE, MAX_ART_SIZE)
                     .get()
                 cache.put(uri, bitmap)
             } catch (_: Exception) {
@@ -90,6 +90,9 @@ class SyncBitmapLoader(
 
     companion object {
         private const val TAG = "SyncBitmapLoader"
-        private const val CACHE_SIZE = 50
+        private const val CACHE_SIZE = 20
+        // Cap decode dimensions: album art over AVRCP only needs a modest cover
+        // image, and bounding this keeps the LRU cache's worst-case heap small.
+        private const val MAX_ART_SIZE = 512
     }
 }
