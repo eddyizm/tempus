@@ -528,26 +528,31 @@ public class MediaManager {
                     }
                 }
 
-                Log.w(TAG, "Continuous Play: no new similar tracks, falling back to random songs");
-                LiveData<List<Child>> randomSongs = getSongRepository().getRandomSample(25, null, null);
-                randomSongs.observeForever(new Observer<List<Child>>() {
-                    @Override
-                    public void onChanged(List<Child> random) {
-                        randomSongs.removeObserver(this);
-                        if (random != null && !random.isEmpty()) {
-                            List<Child> filtered = dedupAgainstQueue(random, existingBrowserFuture);
-                            if (!filtered.isEmpty()) {
-                                Log.d(TAG, "Continuous Play: adding " + filtered.size() + " random tracks");
-                                enqueue(existingBrowserFuture, filtered, true);
+                if (Preferences.isFallbackToRandomTracksEnabled()) {
+                    Log.w(TAG, "Continuous Play: no new similar tracks, falling back to random songs");
+                    LiveData<List<Child>> randomSongs = getSongRepository().getRandomSample(25, null, null);
+                    randomSongs.observeForever(new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> random) {
+                            randomSongs.removeObserver(this);
+                            if (random != null && !random.isEmpty()) {
+                                List<Child> filtered = dedupAgainstQueue(random, existingBrowserFuture);
+                                if (!filtered.isEmpty()) {
+                                    Log.d(TAG, "Continuous Play: adding " + filtered.size() + " random tracks");
+                                    enqueue(existingBrowserFuture, filtered, true);
+                                } else {
+                                    Log.w(TAG, "Continuous Play: random tracks already in queue");
+                                }
                             } else {
-                                Log.w(TAG, "Continuous Play: random tracks already in queue");
+                                Log.w(TAG, "Continuous Play: random fallback also empty");
                             }
-                        } else {
-                            Log.w(TAG, "Continuous Play: random fallback also empty");
+                            continuousPlayIsRunning.set(false);
                         }
-                        continuousPlayIsRunning.set(false);
-                    }
-                });
+                    });
+                } else {
+                    Log.w(TAG, "Continuous Play: no new similar tracks, random fallback disabled");
+                    continuousPlayIsRunning.set(false);
+                }
             }
         });
     }
