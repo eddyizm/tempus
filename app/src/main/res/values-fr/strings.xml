@@ -249,8 +249,9 @@
     <string name="menu_sort_most_played">Plus lus</string>
     <string name="menu_sort_most_recently_starred">Favoris les plus récents</string>
     <string name="menu_sort_least_recently_starred">Favoris les plus anciens</string>
-    <string name="menu_pin_button">Ajouter à l\'écran d\'accueil</string>
-    <string name="menu_unpin_button">Retirer de l\'écran d\'accueil</string>
+    <string name="menu_pin_button">Épingler à l\'écran d\'accueil</string>
+    <string name="menu_unpin_button">Désépingler de l\'écran d\'accueil</string>
+	<string name="playlist_sort_pinned">Épinglés</string>
     <string name="menu_sort_year">Année</string>
     <string name="player_playback_speed">%1$.2fx</string>
 	<string name="playback_speed_dialog_title">Vitesse de lecture</string>
