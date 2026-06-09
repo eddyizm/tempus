@@ -82,6 +82,7 @@
     <string name="artist_page_title_biography_section">Biographie</string>
     <string name="artist_page_title_most_streamed_song_section">Musiques les plus streamées</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Voir tout</string>
+	<string name="artist_page_title_most_streamed_song_unavailable">Aucune chanson disponible parmi les plus streamées\n\nAppuyer pour faire disparaître</string>
     <string name="battery_optimization_negative_button">Ignorer</string>
     <string name="battery_optimization_neutral_button">Ne pas me redemander</string>
     <string name="battery_optimization_positive_button">Désactiver</string>
