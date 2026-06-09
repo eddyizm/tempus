@@ -242,6 +242,8 @@
     <string name="menu_sort_name">Nom</string>
     <string name="menu_sort_random">Aléatoire</string>
     <string name="menu_sort_album_count">Nombre d\'albums</string>
+	<string name="menu_sort_song_count">Nombres de pistes</string>
+    <string name="menu_sort_date_created">Date de création</string>
     <string name="menu_sort_recently_added">Récemment ajoutés</string>
     <string name="menu_sort_recently_played">Récemment lus</string>
     <string name="menu_sort_most_played">Plus lus</string>
