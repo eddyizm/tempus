@@ -80,6 +80,7 @@ object Preferences {
     private const val NEXT_UPDATE_CHECK = "next_update_check"
     private const val GITHUB_UPDATE_CHECK = "github_update_check"
     private const val CONTINUOUS_PLAY = "continuous_play"
+    private const val FALLBACK_TO_RANDOM_TRACKS = "fallback_to_random_tracks"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
     private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
@@ -715,6 +716,18 @@ object Preferences {
     @JvmStatic
     fun isContinuousPlayEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(CONTINUOUS_PLAY, true)
+    }
+
+    @JvmStatic
+    fun isFallbackToRandomTracksEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(FALLBACK_TO_RANDOM_TRACKS, false)
+    }
+
+    @JvmStatic
+    fun setFallbackToRandomTracksEnabled(enabled: Boolean) {
+        App.getInstance().preferences.edit()
+            .putBoolean(FALLBACK_TO_RANDOM_TRACKS, enabled)
+            .apply()
     }
 
     @JvmStatic
