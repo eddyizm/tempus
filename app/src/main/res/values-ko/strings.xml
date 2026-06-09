@@ -251,8 +251,6 @@
     <string name="settings_audio_transcode_priority_summary">활성화 시, 아래 트랜스코딩 설정으로 트랙 강제 스트리밍을 하지 않습니다.</string>
     <string name="settings_audio_transcode_priority_title">서버 트랜스코딩 우선순위 설정</string>
     <string name="settings_audio_transcode_priority_toast">서버에 적용할 트랙 트랜스코딩 우선순위</string>
-    <string name="settings_buffering_strategy">버퍼링 전략</string>
-    <string name="settings_buffering_strategy_summary">변경 사항을 적용하려면 앱을 수동으로 다시 시작해야 합니다.</string>
     <string name="settings_covers_cache">앨범 커버 캐시 크기</string>
     <string name="settings_data_saving_mode_summary">데이터 소비를 줄이려면 앨범 커버 다운로드를 피하세요.</string>
     <string name="settings_data_saving_mode_title">모바일 데이터 사용량 제한</string>

@@ -13,7 +13,9 @@ import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
 import com.cappielloantonio.tempo.database.dao.PinnedPlaylistDao;
+import com.cappielloantonio.tempo.database.dao.PlaylistSongDao;
 import com.cappielloantonio.tempo.model.PinnedPlaylist;
+import com.cappielloantonio.tempo.model.PlaylistSong;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
@@ -42,6 +44,7 @@ public class PlaylistRepository {
     @androidx.media3.common.util.UnstableApi
     private final PinnedPlaylistDao pinnedPlaylistDao = AppDatabase.getInstance().pinnedPlaylistDao();
     private final PlaylistDao playlistDao = AppDatabase.getInstance().playlistDao();
+    private final PlaylistSongDao playlistSongDao = AppDatabase.getInstance().playlistSongDao();
     private static final MutableLiveData<List<Playlist>> allPlaylistsLiveData = new MutableLiveData<>();
 
     public LiveData<List<Playlist>> getAllPlaylists(LifecycleOwner owner) {
@@ -74,8 +77,6 @@ public class PlaylistRepository {
     @OptIn(markerClass = UnstableApi.class)
     private void cacheAllPlaylists(List<Playlist> playlists) {
         new Thread(() -> {
-            // clear table to prevert cross-server data bleed.
-            playlistDao.deleteAll();
             // TODO add server aware join or column.
             playlistDao.insertAll(playlists);
             android.util.Log.d("PlaylistRepository", "Cached " + playlists.size() + " playlists to local DB.");
@@ -135,15 +136,51 @@ public class PlaylistRepository {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylist() != null) {
                             List<Child> songs = response.body().getSubsonicResponse().getPlaylist().getEntries();
                             listLivePlaylistSongs.setValue(songs);
+                            cachePlaylistSongs(id, songs);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        fetchCachedPlaylistSongs(id, listLivePlaylistSongs);
                     }
                 });
 
         return listLivePlaylistSongs;
+    }
+
+    private void cachePlaylistSongs(String playlistId, List<Child> songs) {
+        new Thread(() -> {
+            List<PlaylistSong> playlistSongs = new ArrayList<>();
+            for (Child child : songs) {
+                playlistSongs.add(new PlaylistSong(playlistId, child));
+            }
+            playlistSongDao.deleteForPlaylist(playlistId);
+            playlistSongDao.insertAll(playlistSongs);
+            android.util.Log.d("PlaylistRepository", "Cached " + playlistSongs.size() + " songs for playlist " + playlistId);
+        }).start();
+    }
+
+    private void fetchCachedPlaylistSongs(String playlistId, MutableLiveData<List<Child>> liveData) {
+        new Thread(() -> {
+            List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
+            if (cached != null && !cached.isEmpty()) {
+                List<Child> songs = new ArrayList<>();
+                for (PlaylistSong ps : cached) {
+                    Child child = new Child(ps.getId());
+                    child.setTitle(ps.getTitle());
+                    child.setArtist(ps.getArtist());
+                    child.setAlbum(ps.getAlbum());
+                    child.setTrack(ps.getTrack());
+                    child.setCoverArtId(ps.getCoverArtId());
+                    child.setDuration(ps.getDuration());
+                    child.setAlbumId(ps.getAlbumId());
+                    child.setArtistId(ps.getArtistId());
+                    songs.add(child);
+                }
+                liveData.postValue(songs);
+            }
+        }).start();
     }
 
     public MutableLiveData<Playlist> getPlaylist(String id) {

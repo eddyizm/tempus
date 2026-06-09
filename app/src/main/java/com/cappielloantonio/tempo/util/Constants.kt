@@ -98,6 +98,7 @@ object Constants {
     const val DOWNLOAD_TYPE_ARTIST = "download_type_artist"
     const val DOWNLOAD_TYPE_GENRE = "download_type_genre"
     const val DOWNLOAD_TYPE_YEAR = "download_type_year"
+    const val DOWNLOAD_TYPE_PLAYLIST = "download_type_playlist"
 
     const val DOWNLOAD_GROUP = "download_group"
     const val DOWNLOAD_GROUP_TITLE = "download_group_title"
@@ -132,52 +133,13 @@ object Constants {
     const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF = "android.media3.session.demo.REPEAT_OFF"
     const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE = "android.media3.session.demo.REPEAT_ONE"
     const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL = "android.media3.session.demo.REPEAT_ALL"
+    const val CUSTOM_COMMAND_INSTANT_MIX_ON = "android.media3.session.demo.INSTANT_MIX_ON"
+    const val CUSTOM_COMMAND_INSTANT_MIX_OFF = "android.media3.session.demo.INSTANT_MIX_OFF"
     enum class SeedType {
         ARTIST, ALBUM, TRACK
     }
 
-    // Android Root function
-    const val AA_ROOT_ID = "[rootID]"
-    // Android Auto functions
-    const val AA_HOME_ID = "[homeID]"
-    const val AA_LAST_PLAYED_ID = "[lastPlayedID]"
-    const val AA_ALBUMS_ID = "[albumsID]"
-    const val AA_ARTISTS_ID = "[artistsID]"
-    const val AA_MOST_PLAYED_ID = "[mostPlayedID]"
-    const val AA_PLAYLIST_ID = "[playlistID]"
-    const val AA_PODCAST_ID = "[podcastID]"
-    const val AA_RADIO_ID = "[radioID]"
-    const val AA_RECENTLY_ADDED_ID = "[recentlyAddedID]"
-    const val AA_MADE_FOR_YOU_ID = "[madeForYouID]"
-    const val AA_STARRED_BUNDLE_ID = "[starredBundleID]"
-    const val AA_STARRED_TRACKS_ID = "[starredTracksID]"
-    const val AA_STARRED_ALBUMS_ID = "[starredAlbumsID]"
-    const val AA_STARRED_ARTISTS_ID = "[starredArtistsID]"
-    const val AA_RANDOM_ID = "[randomID]"
-    const val AA_FOLDER_ID = "[folderID]"
-    const val AA_GENRES_ID = "[genresID]"
-    const val AA_TRACKS_ID = "[TracksID]"
-    const val AA_RECENT_TRACKS_ID = "[recentTracksID]"
-
-    // Android Auto System functions
-    const val AA_INDEX_ID = "[indexID]"
-    const val AA_DIRECTORY_ID = "[directoryID]"
-    const val AA_ALBUM_ID = "[albumID]"
-    const val AA_ARTIST_ID = "[artistID]"
-    const val AA_JUMP_TO_ALBUMS_ID = "[jumpToAlbumsID]"
-    const val AA_JUMP_TO_STARRED_ALBUMS_ID = "[jumpToStarredAlbumsID]"
-    const val AA_JUMP_TO_ARTISTS_ID = "[jumpToArtistsID]"
-    const val AA_JUMP_TO_STARRED_ARTISTS_ID = "[jumpToStarredArtistsID]"
-    const val AA_ARTISTS_BY_ALBUMS_ID = "[artistsByAlbumsID]"
-    const val AA_QUICKMIX_ID = "[quickmixID]"
-    const val AA_MYMIX_ID = "[mymixID]"
-    const val AA_DISCOVERYMIX_ID = "[discoverymixID]"
-
-    // Android Auto Source tag
-    const val AA_QUEUE_CACHED_SOURCE = "[aaQueueCachedSource]"
-    const val AA_INSTANTMIX_SOURCE = "[instantMixSource]"
-    const val AA_MADE_FOR_YOU_SOURCE = "[madeForYouSource]"
-
     // Android Auto start index extra
     const val AA_START_INDEX = "aa_start_index"
+
 }

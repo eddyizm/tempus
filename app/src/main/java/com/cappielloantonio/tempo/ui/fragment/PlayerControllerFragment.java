@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +22,7 @@ import android.widget.ToggleButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -45,13 +44,13 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBinding;
-import com.cappielloantonio.tempo.service.EqualizerManager;
+import com.cappielloantonio.tempo.equalizer.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
 import com.cappielloantonio.tempo.ui.dialog.SleepTimerDialog;
 import com.cappielloantonio.tempo.util.SleepTimerManager;
-import androidx.core.content.ContextCompat;
+
 import androidx.core.widget.ImageViewCompat;
 import android.content.res.ColorStateList;
 import com.cappielloantonio.tempo.ui.dialog.RatingDialog;
@@ -69,6 +68,8 @@ import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -80,6 +81,7 @@ public class PlayerControllerFragment extends Fragment {
     private InnerFragmentPlayerControllerBinding bind;
     private ViewPager2 playerMediaCoverViewPager;
     private ToggleButton buttonFavorite;
+    private ImageButton playerOverflowButton;
     private RatingViewModel ratingViewModel;
     private RatingBar songRatingBar;
     private TextView playerMediaTitleLabel;
@@ -120,6 +122,7 @@ public class PlayerControllerFragment extends Fragment {
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
 
         init();
+        initOverflowButton();
         initQuickActionView();
         initCoverLyricsSlideView();
         initMediaListenable();
@@ -155,6 +158,7 @@ public class PlayerControllerFragment extends Fragment {
     private void init() {
         playerMediaCoverViewPager = bind.getRoot().findViewById(R.id.player_media_cover_view_pager);
         buttonFavorite = bind.getRoot().findViewById(R.id.button_favorite);
+        playerOverflowButton = bind.getRoot().findViewById(R.id.player_overflow_button);
         playerMediaTitleLabel = bind.getRoot().findViewById(R.id.player_media_title_label);
         playerArtistNameLabel = bind.getRoot().findViewById(R.id.player_artist_name_label);
         playbackSpeedButton = bind.getRoot().findViewById(R.id.player_playback_speed_button);
@@ -176,6 +180,26 @@ public class PlayerControllerFragment extends Fragment {
         sleepTimerButton = bind.getRoot().findViewById(R.id.player_sleep_timer_button);
         sleepTimerLabel  = bind.getRoot().findViewById(R.id.player_sleep_timer_label);
         checkAndSetRatingContainerVisibility();
+    }
+
+    private void initOverflowButton() {
+        // Not available on sw600dp
+        if (playerOverflowButton != null) {
+            playerOverflowButton.setOnClickListener(v -> {
+                PopupMenu popup = new PopupMenu(requireContext(), v);
+                popup.inflate(R.menu.player_overflow_menu);
+                popup.setOnMenuItemClickListener(item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_open_equalizer:
+                            navigateToEqualizerFragment();
+                            return true;
+                        default:
+                            return false;
+                    }
+                });
+                popup.show();
+            });
+        }
     }
 
     private void initQuickActionView() {
@@ -205,7 +229,6 @@ public class PlayerControllerFragment extends Fragment {
 
     private void releaseBrowser() {
         SleepTimerManager.getInstance().setTickListener(null);
-        stopEndOfTrackPoller();
         MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
     }
 
@@ -236,22 +259,6 @@ public class PlayerControllerFragment extends Fragment {
                 setMediaControllerUI(mediaBrowser);
                 setMetadata(mediaMetadata);
                 setMediaInfo(mediaMetadata);
-            }
-
-            @Override
-            public void onMediaItemTransition(@androidx.annotation.Nullable androidx.media3.common.MediaItem mediaItem, int reason) {
-                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO
-                        && SleepTimerManager.getInstance().isEndOfTrack()) {
-                    // Safety net: fires when the track ended before the position
-                    // poller could trigger the fade (e.g. unknown duration on a
-                    // stream).  Abort any in-progress fade, cancel the timer,
-                    // and pause immediately.
-                    abortCurrentFade = true;
-                    stopEndOfTrackPoller();
-                    SleepTimerManager.getInstance().cancelTimer();
-                    mediaBrowser.setVolume(1.0f);
-                    mediaBrowser.pause();
-                }
             }
 
             @Override
@@ -610,7 +617,6 @@ public class PlayerControllerFragment extends Fragment {
                 public void onEndOfTrackSet() {
                     SleepTimerManager.getInstance().startEndOfTrack();
                     connectSleepTimerTick(mediaBrowser);
-                    armEndOfTrackFadePoller(mediaBrowser);
                 }
             });
             dialog.show(requireActivity().getSupportFragmentManager(), null);
@@ -620,114 +626,13 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     /**
-     * (Re-)registers the tick listener with {@link SleepTimerManager}.
+     * (Re-)registers the UI tick listener with {@link SleepTimerManager}.
      * Called on first bind and whenever the fragment reconnects after rotation.
-     *
-     * <p>When the timer expires (countdown or end-of-track), a 10-second
-     * fade-out is applied before the player is paused, giving a much more
-     * pleasant user experience than an abrupt stop.
+     * Fade-out and pause are now handled by BaseMediaService via its own
+     * ServiceActionListener — this callback only refreshes the UI label.
      */
     private void connectSleepTimerTick(MediaBrowser mediaBrowser) {
-        SleepTimerManager.getInstance().setTickListener(expired -> {
-            if (expired) {
-                startFadeOutThenPause(mediaBrowser);
-            }
-            updateSleepTimerUI();
-        });
-    }
-
-    // -------------------------------------------------------------------------
-    // Fade-out (called when sleep timer expires)
-    // -------------------------------------------------------------------------
-
-    /** Duration of the fade-out in milliseconds. */
-    private static final long FADE_DURATION_MS = 10_000L;
-    /** Number of volume steps during the fade. */
-    private static final int  FADE_STEPS       = 40;
-
-    // End-of-track fade poller — polls position to start the fade on the right track.
-    private final Handler endOfTrackHandler = new Handler(Looper.getMainLooper());
-    private Runnable endOfTrackPoller = null;
-    /** Signals a running fade to stop and restore volume (e.g. when a transition fires early). */
-    private volatile boolean abortCurrentFade = false;
-
-    /**
-     * Gradually lowers the player volume to zero over {@link #FADE_DURATION_MS},
-     * then pauses playback and restores full volume.
-     * Respects {@link #abortCurrentFade}: if set before a step runs, the fade
-     * stops and volume is immediately restored (used when a track transition
-     * fires before the fade finishes).
-     */
-    private void startFadeOutThenPause(MediaBrowser mediaBrowser) {
-        final long stepMs     = FADE_DURATION_MS / FADE_STEPS;
-        final float decrement = 1.0f / FADE_STEPS;
-        final float[] volume  = {1.0f}; // always fade from full regardless of current value
-
-        abortCurrentFade = false;
-
-        Handler fadeHandler = new Handler(Looper.getMainLooper());
-        Runnable fadeStep = new Runnable() {
-            @Override
-            public void run() {
-                if (!isAdded() || abortCurrentFade) {
-                    mediaBrowser.setVolume(1.0f);
-                    return;
-                }
-                volume[0] = Math.max(0f, volume[0] - decrement);
-                mediaBrowser.setVolume(volume[0]);
-                if (volume[0] > 0f) {
-                    fadeHandler.postDelayed(this, stepMs);
-                } else {
-                    // Fade complete — cancel the timer (no-op if countdown already
-                    // expired) and pause.  This also resets the UI via the tick listener.
-                    SleepTimerManager.getInstance().cancelTimer();
-                    mediaBrowser.pause();
-                    fadeHandler.postDelayed(() -> mediaBrowser.setVolume(1.0f), 300);
-                }
-            }
-        };
-        fadeHandler.post(fadeStep);
-    }
-
-    /**
-     * Polls playback position every 500 ms while end-of-track is armed.
-     * Triggers {@link #startFadeOutThenPause} when the current track has
-     * {@link #FADE_DURATION_MS} or fewer milliseconds remaining, ensuring
-     * the fade happens on the correct track rather than the next one.
-     */
-    private void armEndOfTrackFadePoller(MediaBrowser mediaBrowser) {
-        stopEndOfTrackPoller();
-        abortCurrentFade = false;
-        endOfTrackPoller = new Runnable() {
-            boolean fadeStarted = false;
-
-            @Override
-            public void run() {
-                if (!isAdded() || !SleepTimerManager.getInstance().isEndOfTrack()) return;
-                if (fadeStarted) return; // fade is already running — stop polling
-
-                long duration = mediaBrowser.getDuration();
-                long position = mediaBrowser.getCurrentPosition();
-
-                if (duration > 0 && duration != androidx.media3.common.C.TIME_UNSET) {
-                    long remaining = duration - position;
-                    if (remaining > 0 && remaining <= FADE_DURATION_MS) {
-                        fadeStarted = true;
-                        startFadeOutThenPause(mediaBrowser);
-                        return; // don't reschedule — fade has taken over
-                    }
-                }
-                endOfTrackHandler.postDelayed(this, 500);
-            }
-        };
-        endOfTrackHandler.post(endOfTrackPoller);
-    }
-
-    private void stopEndOfTrackPoller() {
-        if (endOfTrackPoller != null) {
-            endOfTrackHandler.removeCallbacks(endOfTrackPoller);
-            endOfTrackPoller = null;
-        }
+        SleepTimerManager.getInstance().setTickListener(expired -> updateSleepTimerUI());
     }
 
     /**
@@ -876,15 +781,17 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void initEqualizerButton() {
-        equalizerButton.setOnClickListener(v -> {
-            NavController navController = NavHostFragment.findNavController(this);
-            NavOptions navOptions = new NavOptions.Builder()
-                    .setLaunchSingleTop(true)
-                    .setPopUpTo(R.id.equalizerFragment, true)
-                    .build();
-            navController.navigate(R.id.equalizerFragment, null, navOptions);
-            if (activity != null) activity.collapseBottomSheetDelayed();
-        });
+        equalizerButton.setOnClickListener(v -> navigateToEqualizerFragment());
+    }
+
+    private void navigateToEqualizerFragment() {
+        NavController navController = NavHostFragment.findNavController(this);
+        NavOptions navOptions = new NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setPopUpTo(R.id.equalizerFragment, true)
+                .build();
+        navController.navigate(R.id.equalizerFragment, null, navOptions);
+        if (activity != null) activity.collapseBottomSheetDelayed();
     }
 
     public void goToControllerPage() {

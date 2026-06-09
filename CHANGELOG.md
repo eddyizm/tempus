@@ -1,6 +1,36 @@
 # Changelog
 
-## Pending changes (Pre-Release)
+## [4.18.0](https://github.com/eddyizm/tempus/releases/tag/v4.18.0) (2026-06-06)
+## What's Changed
+* fix: Bug album month by @TheLudway in https://github.com/eddyizm/tempus/pull/700
+* refactor: separate equalizer from mediaservice by @tvillega in https://github.com/eddyizm/tempus/pull/658
+* feat: add overflow menu to player by @tvillega in https://github.com/eddyizm/tempus/pull/661
+* fix: stabilized Android Auto and Mini players UI on last track by @MaFo-28 in https://github.com/eddyizm/tempus/pull/663
+* refactor: extract Android Auto's constants by @MaFo-28 in https://github.com/eddyizm/tempus/pull/687
+* feat: add song preload buffer setting by @tvillega in https://github.com/eddyizm/tempus/pull/681
+* feat: add fetching animation to artist top songs by @tvillega in https://github.com/eddyizm/tempus/pull/693
+* feat: add third party equalizer support by @tvillega in https://github.com/eddyizm/tempus/pull/659
+* feat: include playlist in dowloads view by @eddyizm in https://github.com/eddyizm/tempus/pull/707
+* docs: update README.md by @tvillega in https://github.com/eddyizm/tempus/pull/711
+* refactor: navigation and bottom sheet 2 by @tvillega in https://github.com/eddyizm/tempus/pull/685
+* refactor: main activity orientation is now private by @tvillega in https://github.com/eddyizm/tempus/pull/686
+* feat: add instant mix for Android Auto and mini player by @MaFo-28 in https://github.com/eddyizm/tempus/pull/709
+* feat: signed pre-release by @eddyizm in https://github.com/eddyizm/tempus/pull/715
+* fix: added a null guard to the setSongListPageSubtitle method to ensu… by @eddyizm in https://github.com/eddyizm/tempus/pull/724
+* fix: Use dynamic colors with pure black theme by @jaime-grj in https://github.com/eddyizm/tempus/pull/718
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/720
+* fix: stop deleting files not tracked in db download table by @eddyizm in https://github.com/eddyizm/tempus/pull/722
+* fix: changed asset to if wrapper for null check. removed duplicate st… by @eddyizm in https://github.com/eddyizm/tempus/pull/726
+* feat: build release pipeline by @eddyizm in https://github.com/eddyizm/tempus/pull/732
+
+## New Contributors
+* @TheLudway made their first contribution in https://github.com/eddyizm/tempus/pull/700
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.17.0...v4.18.0
+
+
+## [4.17.0](https://github.com/eddyizm/tempus/releases/tag/v4.17.0) (2026-05-23)
+## What's Changed
 * feat: handle crashes gracefully by @tvillega in https://github.com/eddyizm/tempus/pull/611
 * feat: add Starred bundle for Android Auto by @MaFo-28 in https://github.com/eddyizm/tempus/pull/614
 * fix: quick actions visibility state not checked by @tvillega in https://github.com/eddyizm/tempus/pull/621
@@ -21,6 +51,12 @@
 * fix: npe if playlist playback happens before data fetching is done by @tvillega in https://github.com/eddyizm/tempus/pull/690
 * Revert Issue600 - Slow loading of long playlists (#627) by @eddyizm in https://github.com/eddyizm/tempus/pull/703
 
+## New Contributors
+* @pLum0 made their first contribution in https://github.com/eddyizm/tempus/pull/631
+* @REDGROUL made their first contribution in https://github.com/eddyizm/tempus/pull/635
+* @OlivierGenez made their first contribution in https://github.com/eddyizm/tempus/pull/651
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.16.0...v4.17.0
 
 ## [4.16.0](https://github.com/eddyizm/tempus/releases/tag/v4.16.0) (2026-05-06)
 ## What's Changed

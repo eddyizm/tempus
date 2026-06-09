@@ -233,8 +233,9 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                                 bind.playlistPagePlayButton.setEnabled(true);
                                 bind.playlistPageShuffleButton.setEnabled(true);
 
-                                assert bind.songRecyclerViewPlaceholder != null;
-                                bind.songRecyclerViewPlaceholder.setVisibility(View.GONE);
+                                if (bind.songRecyclerViewPlaceholder != null) {
+                                    bind.songRecyclerViewPlaceholder.setVisibility(View.GONE);
+                                }
 
                                 bind.playlistPagePlayButton.setOnClickListener(v -> {
                                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);

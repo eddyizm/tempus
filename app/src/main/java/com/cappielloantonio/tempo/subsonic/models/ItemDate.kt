@@ -26,7 +26,7 @@ open class ItemDate(
             SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault())
         }
 
-        calendar.set(year ?: 0, month ?: 1, day ?: 1)
+        calendar.set(year ?: 0, (month ?: 1) - 1, day ?: 1)
 
         return dateFormat.format(calendar.time)
     }
