@@ -479,7 +479,8 @@ public class MediaManager {
         Preferences.setLastInstantMix();
         continuousPlayIsRunning.set(true);
 
-        // keep only 30 items in queue before starting continuous mix
+        // keep only NUMBER_TRACKS_KEEP_IN_QUEUE items in queue before starting continuous play
+        int numberOfTracksKeepInQueue = Preferences.getNumberOfTracksKeepInQueue();
         if (existingBrowserFuture != null) {
             existingBrowserFuture.addListener(() -> {
                 try {
@@ -488,7 +489,7 @@ public class MediaManager {
                         int currentIndex = browser.getCurrentMediaItem() != null
                                 ? browser.getCurrentMediaItemIndex()
                                 : 0;
-                        int firstToKeep = Math.max(0, currentIndex - 29);
+                        int firstToKeep = Math.max(0, currentIndex - numberOfTracksKeepInQueue);
                         if (firstToKeep > 0) {
                             Log.d(TAG, "Continuous Play: purging " + firstToKeep + " old items from queue");
                             removeRange(existingBrowserFuture, 0, firstToKeep);
