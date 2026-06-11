@@ -156,7 +156,9 @@ open class BaseSessionCallback(
      */
     fun handlePlayerChanged(oldPlayer: Player?, newPlayer: Player) {
         oldPlayer?.removeListener(playerListener)
-        newPlayer.addListener(playerListener)
+        if (currentSession != null) {
+            newPlayer.addListener(playerListener)
+        }
     }
 
     @OptIn(UnstableApi::class)
