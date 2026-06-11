@@ -59,6 +59,7 @@ open class BaseMediaService : MediaLibraryService() {
 
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
+    protected var sessionCallback: MediaLibrarySession.Callback? = null
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
@@ -489,6 +490,7 @@ open class BaseMediaService : MediaLibraryService() {
             newPlayer.prepare()
         }
         mediaLibrarySession.player = newPlayer
+        (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
     open fun releasePlayers() {
