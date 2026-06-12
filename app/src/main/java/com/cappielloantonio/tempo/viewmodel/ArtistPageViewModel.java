@@ -1,5 +1,7 @@
 package com.cappielloantonio.tempo.viewmodel;
 
+import static java.util.stream.Collectors.groupingBy;
+
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
@@ -25,9 +27,12 @@ import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.NetworkUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,21 +44,8 @@ public class ArtistPageViewModel extends AndroidViewModel {
 
     private ArtistID3 artist;
 
-    private final MutableLiveData<List<AlbumID3>> singles = new MutableLiveData<>();
-    private final MutableLiveData<List<AlbumID3>> eps = new MutableLiveData<>();
-    private final MutableLiveData<List<AlbumID3>> mainAlbums = new MutableLiveData<>();
     private final MutableLiveData<List<AlbumID3>> appearsOn = new MutableLiveData<>();
-    private final MutableLiveData<List<AlbumID3>> compilations = new MutableLiveData<>();
-    private final MutableLiveData<List<AlbumID3>> soundtracks = new MutableLiveData<>();
-    private final MutableLiveData<List<AlbumID3>> lives = new MutableLiveData<>();
-    private final MutableLiveData<List<AlbumID3>> remixes = new MutableLiveData<>();
-
-    private static final Set<String> SECONDARY_TYPES = Set.of(
-            "compilation",
-            "soundtrack",
-            "live",
-            "remix"
-    );
+    private final MutableLiveData<Map<String, List<AlbumID3>>> mapOfAlbums = new MutableLiveData<>();
 
     public ArtistPageViewModel(@NonNull Application application) {
         super(application);
@@ -72,70 +64,15 @@ public class ArtistPageViewModel extends AndroidViewModel {
                 if (allAlbums != null) {
                     allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
 
-                    /*
-                    PRIMARY TYPES: album / single / ep
-                     */
-
-                    mainAlbums.setValue(
+                    mapOfAlbums.setValue(
                             allAlbums.stream()
-                                    .filter(a -> isType(a, "album")
-                                            && !hasSecondaryReleaseType(a.getReleaseTypes())
-                                            && sameArtist.test(a))
-                                    .collect(Collectors.toList()));
+                                    .collect(groupingBy(a -> {
+                                        Iterator<String> releaseTypes = a.getReleaseTypes().iterator();
+                                        return releaseTypes.hasNext() ? releaseTypes.next().toLowerCase() : getAutoType(a);
+                                    })));
 
-                    singles.setValue(
-                            allAlbums.stream()
-                                    .filter(a -> isType(a, "single") && sameArtist.test(a))
-                                    .collect(Collectors.toList()));
-
-                    eps.setValue(
-                            allAlbums.stream()
-                                    .filter(a -> isType(a, "ep") && sameArtist.test(a))
-                                    .collect(Collectors.toList()));
-
-                    /*
-                    SECONDARY TYPES: compilation / soundtrack / live / remix
-                     */
-
-                    compilations.setValue(
-                            allAlbums.stream()
-                                    .filter(a -> {
-                                        List<String> releaseTypes = a.getReleaseTypes();
-                                        return releaseTypes != null
-                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("compilation"))
-                                                && sameArtist.test(a);
-                                    })
-                                    .collect(Collectors.toList()));
-
-                    soundtracks.setValue(
-                            allAlbums.stream()
-                                    .filter(a -> {
-                                        List<String> releaseTypes = a.getReleaseTypes();
-                                        return releaseTypes != null
-                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("soundtrack"))
-                                                && sameArtist.test(a);
-                                    })
-                                    .collect(Collectors.toList()));
-
-                    lives.setValue(
-                            allAlbums.stream()
-                                    .filter(a -> {
-                                        List<String> releaseTypes = a.getReleaseTypes();
-                                        return releaseTypes != null
-                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("live"))
-                                                && sameArtist.test(a);
-                                    })
-                                    .collect(Collectors.toList()));
-
-                    remixes.setValue(
-                            allAlbums.stream()
-                                    .filter(a -> {
-                                        List<String> releaseTypes = a.getReleaseTypes();
-                                        return releaseTypes != null
-                                                && releaseTypes.stream().anyMatch(t -> t.equalsIgnoreCase("remix"))
-                                                && sameArtist.test(a);
-                                    })
-                                    .collect(Collectors.toList()));
+                } else {
+                    mapOfAlbums.setValue(Collections.emptyMap());
                 }
                 if (allAlbums != null) {
                     allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
@@ -149,50 +86,20 @@ public class ArtistPageViewModel extends AndroidViewModel {
         });
     }
 
-    private boolean isType(AlbumID3 album, String targetType) {
-        String normalizedTarget = targetType.toLowerCase();
-        if (album.getReleaseTypes() != null && !album.getReleaseTypes().isEmpty()) {
-            return album.getReleaseTypes().stream()
-                    .anyMatch(rt -> rt.toLowerCase().equals(normalizedTarget));
-        }
-
+    private String getAutoType(AlbumID3 album) {
         // Fallback to song count if releaseTypes is not available
         int songCount = album.getSongCount() != null ? album.getSongCount() : 0;
-        switch (targetType) {
-            case "single":
-                return songCount >= 1 && songCount <= 2;
-            case "ep":
-                return songCount >= 3 && songCount <= 7;
-            case "album":
-                return songCount >= 8;
-            default:
-                return false;
+        if (songCount >= 8) {
+            return "album";
+        } else if (songCount <= 2) {
+            return "single";
+        } else {
+            return "ep";
         }
     }
 
-    private static boolean hasSecondaryReleaseType(List<String> releaseTypes) {
-        if (releaseTypes == null || releaseTypes.isEmpty()) {
-            return false;
-        }
-
-        return releaseTypes.stream()
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .anyMatch(SECONDARY_TYPES::contains);
-    }
-
-    public LiveData<List<AlbumID3>> getSingles() { return singles; }
-    public LiveData<List<AlbumID3>> getEPs() { return eps; }
-    public LiveData<List<AlbumID3>> getMainAlbums() { return mainAlbums; }
-    public LiveData<List<AlbumID3>> getCompilations() { return compilations; }
-    public LiveData<List<AlbumID3>> getSoundtracks() { return soundtracks; }
-    public LiveData<List<AlbumID3>> getLives() { return lives; }
-    public LiveData<List<AlbumID3>> getRemixes() { return remixes; }
+    public LiveData<Map<String, List<AlbumID3>>> getMapOfAlbums() { return mapOfAlbums; }
     public LiveData<List<AlbumID3>> getAppearsOn() { return appearsOn; }
-
-    public LiveData<List<AlbumID3>> getAlbumList() {
-        return albumRepository.getArtistAlbums(artist.getId());
-    }
 
     public LiveData<ArtistInfo2> getArtistInfo(String id) {
         return artistRepository.getArtistFullInfo(id);
