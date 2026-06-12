@@ -22,6 +22,7 @@ import android.widget.ToggleButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -36,6 +37,8 @@ import androidx.media3.session.SessionToken;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.transition.ChangeBounds;
 import androidx.transition.Slide;
 import androidx.transition.TransitionManager;
@@ -44,9 +47,15 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBinding;
+import com.cappielloantonio.tempo.factory.CoverFlowViewModelFactory;
+import com.cappielloantonio.tempo.glide.CustomGlideRequest;
+import com.cappielloantonio.tempo.model.Cover;
+import com.cappielloantonio.tempo.repository.CoverRepository;
+import com.cappielloantonio.tempo.repository.MediaBrowserCoverRepository;
 import com.cappielloantonio.tempo.equalizer.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.cappielloantonio.tempo.ui.adapter.CoverFlowAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
 import com.cappielloantonio.tempo.ui.dialog.SleepTimerDialog;
 import com.cappielloantonio.tempo.util.SleepTimerManager;
@@ -60,6 +69,8 @@ import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.UIUtil;
+import com.cappielloantonio.tempo.viewmodel.CoverFlowViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.RatingViewModel;
 import com.google.android.material.chip.Chip;
@@ -71,6 +82,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -99,6 +111,8 @@ public class PlayerControllerFragment extends Fragment {
     private LinearLayout sleepTimerContainer;
     private ImageButton sleepTimerButton;
     private android.widget.TextView sleepTimerLabel;
+
+    private RecyclerView playerCoverFlow;
     private ChipGroup assetLinkChipGroup;
     private Chip playerSongLinkChip;
     private Chip playerAlbumLinkChip;
@@ -136,6 +150,78 @@ public class PlayerControllerFragment extends Fragment {
         return view;
     }
 
+    private CoverFlowViewModel viewModel;
+
+//    public CoverFlowFragment() {
+//        super(R.layout.inner_fragment_player_controller_layout);   // your layout that contains the RecyclerView
+//    }
+
+    @Override
+    public void onViewCreated(@NonNull View root, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(root, savedInstanceState);
+
+        // -----------------------------------------------------------------
+        // 1️⃣  Find the RecyclerView (the id changed to player_cover_flow)
+        // -----------------------------------------------------------------
+        playerCoverFlow = root.findViewById(R.id.player_cover_flow);
+
+        // -----------------------------------------------------------------
+        // 2️⃣  Set up the ViewModel (repository injection omitted for brevity)
+        // -----------------------------------------------------------------
+//        CoverRepository repository = new MediaBrowserCoverRepository(mediaBrowserListenableFuture);
+//        viewModel = new ViewModelProvider(this,
+//                new CoverFlowViewModelFactory(repository))
+//                .get(CoverFlowViewModel.class);
+        CoverRepository repository = new MediaBrowserCoverRepository(mediaBrowserListenableFuture);
+        CoverFlowViewModelFactory factory = new CoverFlowViewModelFactory(repository);
+
+        viewModel = new ViewModelProvider(this, factory)
+                .get(CoverFlowViewModel.class);
+
+        // -----------------------------------------------------------------
+        // 3️⃣  Observe the LiveData and build the UI when data arrives
+        // -----------------------------------------------------------------
+        viewModel.getCovers().observe(getViewLifecycleOwner(), this::setupCoverFlow);
+    }
+
+    /** Called once the list of covers is available */
+    private void setupCoverFlow(@NonNull List<Cover> covers) {
+        if (covers.isEmpty()) return;   // optionally show an empty‑state view
+
+        // -----------------------------------------------------------------
+        // 4️⃣  Create the adapter – the lambda receives the Cover object
+        //     and the ImageView that just got bound.
+        // -----------------------------------------------------------------
+        CoverFlowAdapter adapter = new CoverFlowAdapter(
+                requireContext(),
+                covers,
+                (cover, imageView) -> {
+                    // Run the *extra* Glide request only when we have a valid id.
+                    String coverArtId = cover.getCoverArtId();
+                    if (coverArtId != null) {
+                        CustomGlideRequest.Builder
+                                .from(requireContext(),
+                                        coverArtId,
+                                        CustomGlideRequest.ResourceType.Song)
+                                .build()
+                                .into(imageView);   // load into the same thumbnail ImageView
+                    }
+                });
+
+        // -----------------------------------------------------------------
+        // 5️⃣  RecyclerView basics (same as your original code)
+        // -----------------------------------------------------------------
+        playerCoverFlow.setAdapter(adapter);
+        playerCoverFlow.setLayoutManager(
+                new LinearLayoutManager(requireContext(),
+                        LinearLayoutManager.HORIZONTAL,
+                        false));
+
+        playerCoverFlow.addItemDecoration(UIUtil.horizontalSpacing(32));
+        playerCoverFlow.addOnScrollListener(UIUtil.scaleOnScroll());
+        UIUtil.centerAndSnapRecyclerView(playerCoverFlow);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -169,6 +255,7 @@ public class PlayerControllerFragment extends Fragment {
         playerOpenQueueButton = bind.getRoot().findViewById(R.id.player_open_queue_button);
         playerOpenLyricsButton = bind.getRoot().findViewById(R.id.player_open_lyrics_button);
         playerTrackInfo = bind.getRoot().findViewById(R.id.player_info_track);
+        playerCoverFlow = bind.getRoot().findViewById(R.id.player_cover_flow);
         songRatingBar =  bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
         equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
@@ -215,13 +302,19 @@ public class PlayerControllerFragment extends Fragment {
         playerOpenLyricsButton.setOnClickListener(view -> {
             int currentItem = playerMediaCoverViewPager.getCurrentItem();
             if (currentItem == 0) {
-                playerMediaCoverViewPager.setCurrentItem(1, true);
+                playerMediaCoverViewPager.setCurrentItem(1, false);
+                playerCoverFlow.setVisibility(View.GONE);
+                playerMediaCoverViewPager.setVisibility(View.VISIBLE);
             } else if (currentItem == 1) {
-                playerMediaCoverViewPager.setCurrentItem(0, true);;
+                playerMediaCoverViewPager.setCurrentItem(0, false);
+                playerCoverFlow.setVisibility(View.VISIBLE);
+                playerMediaCoverViewPager.setVisibility(View.GONE);
             }
 
         });
     }
+
+
 
     private void initializeBrowser() {
         mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
