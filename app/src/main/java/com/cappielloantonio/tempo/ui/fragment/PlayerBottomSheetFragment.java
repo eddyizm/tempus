@@ -218,8 +218,13 @@ public class PlayerBottomSheetFragment extends Fragment {
                                 : View.GONE);
             }
 
+            String coverArtId = mediaMetadata.extras.getString("coverArtId");
+            CustomGlideRequest.ResourceType resourceType = Objects.equals(type, Constants.MEDIA_TYPE_RADIO)
+                    ? CustomGlideRequest.ResourceType.Radio
+                    : CustomGlideRequest.ResourceType.Song;
+
             CustomGlideRequest.Builder
-                    .from(requireContext(), mediaMetadata.extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
+                    .from(requireContext(), coverArtId, resourceType)
                     .build()
                     .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
         }

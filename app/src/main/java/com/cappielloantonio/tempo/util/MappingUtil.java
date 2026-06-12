@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Base64;
 
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LifecycleOwner;
@@ -27,7 +26,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.nio.charset.StandardCharsets;
 
 @OptIn(markerClass = UnstableApi.class)
 public class MappingUtil {
@@ -249,30 +247,27 @@ public class MappingUtil {
 
     public static MediaItem mapInternetRadioStation(InternetRadioStation internetRadioStation) {
         Uri uri = Uri.parse(internetRadioStation.getStreamUrl());
-        Uri artworkUri = null;
-        String homePageUrl = internetRadioStation.getHomePageUrl();
-        String coverArtId = null;
+        String coverArtId = internetRadioStation.getCoverArtId();
+        Uri artworkUri = (coverArtId != null && !coverArtId.isEmpty())
+                ? AlbumArtContentProvider.contentUri(coverArtId)
+                : null;
 
-        if (homePageUrl != null && !homePageUrl.isEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
-                String encodedUrl = Base64.encodeToString(homePageUrl.getBytes(StandardCharsets.UTF_8),
-                                Base64.URL_SAFE | Base64.NO_WRAP);
-                coverArtId = "ir_" + encodedUrl;
-                artworkUri = AlbumArtContentProvider.contentUri(coverArtId);
-        }
+        // `MediaItem.setMediaId()` requires a non-null id; different Subsonic servers may return null here.
+        String radioId = internetRadioStation.getId();
+        if (radioId == null || radioId.isEmpty()) radioId = internetRadioStation.getStreamUrl();
+        if (radioId == null || radioId.isEmpty()) radioId = internetRadioStation.getName();
+        if (radioId == null) radioId = "radio";
 
         Bundle bundle = new Bundle();
-        bundle.putString("id", internetRadioStation.getId());
+        bundle.putString("id", radioId);
         bundle.putString("title", internetRadioStation.getName());
         bundle.putString("stationName", internetRadioStation.getName());
         bundle.putString("uri", uri.toString());
         bundle.putString("type", Constants.MEDIA_TYPE_RADIO);
         bundle.putString("coverArtId", coverArtId);
-        if (homePageUrl != null) {
-                bundle.putString("homepageUrl", homePageUrl);
-        }
 
         return new MediaItem.Builder()
-                .setMediaId(internetRadioStation.getId())
+                .setMediaId(radioId)
                 .setMediaMetadata(
                         new MediaMetadata.Builder()
                                 .setTitle(internetRadioStation.getName())

@@ -195,8 +195,13 @@ public class PlayerCoverFragment extends Fragment {
     }
 
     private void setCover(MediaMetadata mediaMetadata) {
+        String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
+        CustomGlideRequest.ResourceType resourceType = Constants.MEDIA_TYPE_RADIO.equals(type)
+                ? CustomGlideRequest.ResourceType.Radio
+                : CustomGlideRequest.ResourceType.Song;
+
         CustomGlideRequest.Builder
-                .from(requireContext(), mediaMetadata.extras != null ? mediaMetadata.extras.getString("coverArtId") : null, CustomGlideRequest.ResourceType.Song)
+                .from(requireContext(), mediaMetadata.extras != null ? mediaMetadata.extras.getString("coverArtId") : null, resourceType)
                 .build()
                 .into(bind.nowPlayingSongCoverImageView);
     }
