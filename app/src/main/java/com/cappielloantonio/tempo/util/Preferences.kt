@@ -516,7 +516,7 @@ object Preferences {
 
     @JvmStatic
     fun getSyncCountdownTimer(): Int {
-        return App.getInstance().preferences.getString(QUEUE_SYNCING_COUNTDOWN, "5")!!.toInt()
+        return App.getInstance().preferences.getString(QUEUE_SYNCING_COUNTDOWN, "20")!!.toInt()
     }
 
     @JvmStatic

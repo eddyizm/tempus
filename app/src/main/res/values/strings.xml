@@ -259,6 +259,7 @@
     <string name="playback_speed_dialog_title">Playback Speed</string>
     <string name="playback_speed_dialog_negative_button">Cancel</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
+    <string name="player_queue_save_queue">Save Queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
     <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>
     <string name="player_queue_load_queue">Load Queue</string>

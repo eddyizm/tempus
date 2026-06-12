@@ -189,14 +189,14 @@
     </string-array>
 
     <string-array name="queue_syncing_countdown_titles">
+        <item>Thirty seconds</item>
+        <item>Twenty seconds</item>
         <item>Ten seconds</item>
-        <item>Five seconds</item>
-        <item>Two seconds</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
+        <item>30</item>
+        <item>20</item>
         <item>10</item>
-        <item>5</item>
-        <item>2</item>
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
