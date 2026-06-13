@@ -64,15 +64,22 @@ public class ArtistPageViewModel extends AndroidViewModel {
                 if (allAlbums != null) {
                     allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
 
+                    List<AlbumID3> primaryAlbums = allAlbums.stream()
+                            .filter(sameArtist)
+                            .collect(Collectors.toList());
                     mapOfAlbums.setValue(
-                            allAlbums.stream()
+                            primaryAlbums.stream()
                                     .collect(groupingBy(a -> {
-                                        Iterator<String> releaseTypes = a.getReleaseTypes().iterator();
-                                        return releaseTypes.hasNext() ? releaseTypes.next().toLowerCase() : getAutoType(a);
+                                        List<String> releaseTypes = a.getReleaseTypes();
+                                        if (releaseTypes != null && !releaseTypes.isEmpty() && releaseTypes.get(0) != null) {
+                                            return releaseTypes.get(0).toLowerCase();
+                                        }
+                                        return getAutoType(a);
                                     })));
 
                 } else {
                     mapOfAlbums.setValue(Collections.emptyMap());
+                    appearsOn.setValue(Collections.emptyList());
                 }
                 if (allAlbums != null) {
                     allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());

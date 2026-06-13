@@ -1,7 +1,5 @@
 package com.cappielloantonio.tempo.ui.adapter;
 
-import androidx.fragment.app.Fragment;
-
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,30 +23,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
 public class AlbumSectionsAdapter extends RecyclerView.Adapter<AlbumSectionsAdapter.ViewHolder> {
     private final android.content.Context context;
     private final ClickCallback click;
     private ItemArtistReleaseSectionBinding view;
     private Map<String, List<AlbumID3>> albumMap;
-    private final BiMap<String, String> typeTitles = HashBiMap.create();
-    private final List<String> orderTypes = List.of("album", "ep", "single", "compilation", "soundtrack", "live", "remix");
+    private final Map<String, String> typeTitles;
+    private final List<String> orderTypes = List.of(
+            "album", "ep", "single",
+            "compilation", "soundtrack", "live", "remix"
+    );
 
     public AlbumSectionsAdapter(android.content.Context context, ClickCallback click) {
         this.click = click;
         this.context = context;
         this.albumMap = Collections.emptyMap();
+        this.typeTitles = Map.of(
+                "album", context.getString(R.string.artist_page_title_album_section),
+                "ep", context.getString(R.string.artist_page_title_ep_section),
+                "single", context.getString(R.string.artist_page_title_single_section),
+                "compilation", context.getString(R.string.artist_page_title_compilation_section),
+                "soundtrack", context.getString(R.string.artist_page_title_soundtrack_section),
+                "live", context.getString(R.string.artist_page_title_live_section),
+                "remix", context.getString(R.string.artist_page_title_remix_section)
+        );
         this.view = null;
-
-        this.typeTitles.put("album", context.getString(R.string.artist_page_title_album_section));
-        this.typeTitles.put("ep", context.getString(R.string.artist_page_title_ep_section));
-        this.typeTitles.put("single", context.getString(R.string.artist_page_title_single_section));
-        this.typeTitles.put("compilation", context.getString(R.string.artist_page_title_compilation_section));
-        this.typeTitles.put("soundtrack", context.getString(R.string.artist_page_title_soundtrack_section));
-        this.typeTitles.put("live", context.getString(R.string.artist_page_title_live_section));
-        this.typeTitles.put("remix", context.getString(R.string.artist_page_title_remix_section));
     }
 
     @NonNull
@@ -69,6 +68,7 @@ public class AlbumSectionsAdapter extends RecyclerView.Adapter<AlbumSectionsAdap
                 .toArray()[position].toString();
         String sectionTitle = this.typeTitles.containsKey(typeName) ? this.typeTitles.get(typeName) : Character.toUpperCase(typeName.charAt(0)) + typeName.substring(1);
         holder.item.typeTitle.setText(sectionTitle);
+        holder.item.mainAlbumsSeeAllTextView.setTag(typeName);
 
         List<AlbumID3> albums = albumMap.get(typeName);
 
@@ -107,8 +107,9 @@ public class AlbumSectionsAdapter extends RecyclerView.Adapter<AlbumSectionsAdap
                 String sectionTitle = this.item.typeTitle.getText().toString();
                 bundle.putString(Constants.ALBUM_LIST_TITLE, sectionTitle);
 
-                String typeName = typeTitles.containsValue(sectionTitle) ? typeTitles.inverse().get(sectionTitle) : sectionTitle.toLowerCase();
-                bundle.putParcelableArrayList(Constants.ALBUMS_OBJECT, new ArrayList<>(albumMap.get(typeName)));
+                String typeName = (String) this.item.mainAlbumsSeeAllTextView.getTag();
+                List<AlbumID3> sectionAlbums = albumMap.getOrDefault(typeName, Collections.emptyList());
+                bundle.putParcelableArrayList(Constants.ALBUMS_OBJECT, new ArrayList<>(sectionAlbums));
                 Navigation.findNavController(v).navigate(R.id.albumListPageFragment, bundle);
             });
         }
