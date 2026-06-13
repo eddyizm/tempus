@@ -37,6 +37,7 @@ import com.cappielloantonio.tempo.equalizer.DefaultBackend
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
+import com.cappielloantonio.tempo.util.SleepTimerManager
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import java.net.HttpURLConnection
 import java.net.URL
@@ -95,6 +96,7 @@ open class BaseMediaService : MediaLibraryService() {
         initializeExoPlayer()
         initializeMediaLibrarySession(exoplayer)
         initializePlayerListener(exoplayer)
+        initializeSleepTimer()
         setPlayer(null, exoplayer)
     }
 
@@ -173,6 +175,17 @@ open class BaseMediaService : MediaLibraryService() {
                 // --- End add for AA ---
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
+                }
+
+                // Safety net: if a track transition fires while end-of-track is armed
+                // (e.g. stream with unknown duration that ended before the poller could
+                // trigger the fade), abort any in-progress fade and pause immediately.
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO &&
+                    SleepTimerManager.getInstance().isEndOfTrack) {
+                    SleepTimerManager.getInstance().stopEndOfTrackPoller()
+                    SleepTimerManager.getInstance().cancelTimer()
+                    player.volume = 1f
+                    player.pause()
                 }
 
                 // Restart header checks for radio streams when media item changes
@@ -423,6 +436,32 @@ open class BaseMediaService : MediaLibraryService() {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Sleep timer
+    // -------------------------------------------------------------------------
+
+    /**
+     * Registers a [SleepTimerManager.ServiceActionListener] on the singleton so
+     * that fade-out and pause happen in the service regardless of whether the
+     * Fragment is attached. Call once after the player is ready.
+     */
+    private fun initializeSleepTimer() {
+        SleepTimerManager.getInstance().setServiceActionListener(object : SleepTimerManager.ServiceActionListener {
+            override fun onTick(expired: Boolean) {
+                if (expired) SleepTimerManager.getInstance().startFadeOutThenPause(mediaLibrarySession.player)
+            }
+            override fun onEndOfTrackArmed() {
+                SleepTimerManager.getInstance().armEndOfTrackFadePoller(mediaLibrarySession.player)
+            }
+        })
+        // If end-of-track was already armed when the service restarted (state
+        // restored from SharedPreferences), re-arm the poller against the live player.
+        if (SleepTimerManager.getInstance().isActive &&
+                SleepTimerManager.getInstance().isEndOfTrack) {
+            SleepTimerManager.getInstance().armEndOfTrackFadePoller(mediaLibrarySession.player)
+        }
+    }
+
     open fun onInstantMix(session: MediaSession, onComplete: Runnable? = null) {
         val player = session.player
         val currentMediaItem = player.currentMediaItem
@@ -494,6 +533,8 @@ open class BaseMediaService : MediaLibraryService() {
         ReplayGainUtil.release()
         stopWidgetUpdates()
         stopRadioHeaderChecks()
+        SleepTimerManager.getInstance().stopEndOfTrackPoller()
+        SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
         if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
         releasePlayers()
