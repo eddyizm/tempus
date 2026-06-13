@@ -656,6 +656,9 @@
     <string name="equalizer_managed_externally">Equalizer managed by system or third party app</string>
     <string name="settings_app_equalizer">Built-in equalizer</string>
     <string name="settings_app_equalizer_summary">Open the built-in equalizer</string>
+    <string name="settings_title_equalizer">Equalizer</string>
+    <string name="settings_equalizer_select">Select an equalizer to use</string>
+    <string name="settings_equalizer_dialog_title">Equalizers</string>
 
     <string name="settings_album_detail">Show album detail</string>
     <string name="settings_album_detail_summary">If enabled, show the album details like genre, song count etc. on the album page</string>
