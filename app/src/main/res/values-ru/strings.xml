@@ -68,7 +68,7 @@
     <string name="artist_page_title_biography_section">Биография</string>
     <string name="artist_page_title_most_streamed_song_section">Самые популярные треки</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Все</string>
-    <string name="artist_page_title_most_streamed_song_unavailable">Топ треков не доступен\n\nНажмите, чтобы скрыть блок</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">Топ треков недоступен\n\nНажмите, чтобы скрыть блок</string>
     <string name="battery_optimization_negative_button">Игнорировать</string>
     <string name="battery_optimization_neutral_button">Больше не спрашивать</string>
     <string name="battery_optimization_positive_button">Отключить</string>
