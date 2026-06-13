@@ -59,6 +59,7 @@ open class BaseMediaService : MediaLibraryService() {
 
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
+    protected var sessionCallback: MediaLibrarySession.Callback? = null
     private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
@@ -496,6 +497,7 @@ open class BaseMediaService : MediaLibraryService() {
             newPlayer.prepare()
         }
         mediaLibrarySession.player = newPlayer
+        (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
     open fun releasePlayers() {
