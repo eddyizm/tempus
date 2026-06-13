@@ -1,6 +1,6 @@
 [versions]
-agp = "8.8.0"
-kotlin = "1.8.0"
+agp = "9.2.1"
+kotlin = "2.2.10"
 
 # AndroidX / Material
 constraintlayout = "2.2.0"
@@ -8,7 +8,7 @@ coordinatorlayout = "1.2.0"
 preferenceKtx = "1.2.1"
 navigation = "2.8.6"
 recyclerview = "1.4.0"
-room = "2.6.1"
+room = "2.7.0"
 splashscreen = "1.0.1"
 appcompat = "1.7.0"
 swiperefreshlayout = "1.2.0"
@@ -56,6 +56,8 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 sdp-android = { group = "com.intuit.sdp", name = "sdp-android", version.ref = "sdp" }
 customactivityoncrash = { group = "cat.ereza", name = "customactivityoncrash", version.ref = "customactivityoncrash" }
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
+
+kotlin-metadata = { group = "org.jetbrains.kotlin", name = "kotlin-metadata-jvm", version.ref = "kotlin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
