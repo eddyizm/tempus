@@ -18,6 +18,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.cappielloantonio.tempo.BuildConfig;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.RadioCoverArtDownloader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,15 +55,24 @@ public class AlbumArtContentProvider extends ContentProvider {
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
         Context context = getContext();
         String albumId = uri.getLastPathSegment();
-        Uri artworkUri;
+        Uri artworkUri = null;
+        File localFile = null;
 
-        if (albumId != null && albumId.startsWith("ir_")) {
+        if (albumId != null && albumId.startsWith("rl_")) {
+            // Local radio cover: stored in our app-private files dir, which other processes
+            // (SystemUI media controls, Android Auto) cannot open directly. Reading it here in the
+            // provider's own process and piping the bytes makes it accessible cross-process.
+            localFile = RadioCoverArtDownloader.getLocalCoverFile(albumId.substring("rl_".length()));
+        } else if (albumId != null && albumId.startsWith("ir_")) {
             String encodedUrl = albumId.substring("ir_".length());
             String decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
             artworkUri = Uri.parse(decodedUrl);
         } else {
             artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
         }
+
+        final File localFileFinal = localFile;
+        final Uri artworkUriFinal = artworkUri;
 
         try {
             // use pipe to communicate between background thread and caller of openFile()
@@ -74,13 +84,15 @@ public class AlbumArtContentProvider extends ContentProvider {
             executor.execute(() -> {
                 try (OutputStream out = new ParcelFileDescriptor.AutoCloseOutputStream(writeSide)) {
 
-                    // request artwork from API using Glide
-                    File file = Glide.with(context)
-                            .asFile()
-                            .load(artworkUri)
-                            .diskCacheStrategy(DiskCacheStrategy.DATA)
-                            .submit()
-                            .get();
+                    // local radio cover: read directly from disk; otherwise fetch via Glide
+                    File file = (localFileFinal != null)
+                            ? localFileFinal
+                            : Glide.with(context)
+                                    .asFile()
+                                    .load(artworkUriFinal)
+                                    .diskCacheStrategy(DiskCacheStrategy.DATA)
+                                    .submit()
+                                    .get();
 
                     // copy artwork down pipe returned by ContentProvider
                     try (InputStream in = new FileInputStream(file)) {

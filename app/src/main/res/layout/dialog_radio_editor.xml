@@ -1,31 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:textColorHint="?android:textColorHint"
-        app:endIconMode="clear_text"
-        app:endIconTint="?android:textColorSecondary"
-        app:errorEnabled="true">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/internet_radio_station_name_text_view"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/internet_radio_station_name_layout"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="@string/radio_editor_dialog_hint_name"
-            android:inputType="textNoSuggestions"
-            android:textCursorDrawable="@null" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_weight="1"
+            android:textColorHint="?android:textColorHint"
+            app:endIconMode="clear_text"
+            app:endIconTint="?android:textColorSecondary"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/internet_radio_station_name_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/radio_editor_dialog_hint_name"
+                android:inputType="textNoSuggestions"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageButton
+            android:id="@+id/search_directory_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="top"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_search"
+            android:contentDescription="@string/radio_editor_search_directory"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="?attr/colorPrimary" />
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/internet_radio_station_stream_url_layout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,11 +64,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/radio_editor_dialog_hint_stream_url"
-            android:inputType="textNoSuggestions"
+            android:inputType="textUri"
             android:textCursorDrawable="@null" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/internet_radio_station_homepage_url_layout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,7 +85,76 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/radio_editor_dialog_hint_homepage_url"
-            android:inputType="textNoSuggestions"
+            android:inputType="textUri"
             android:textCursorDrawable="@null" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/internet_radio_station_cover_art_url_layout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:textColorHint="?android:textColorHint"
+        android:visibility="gone"
+        app:endIconMode="clear_text"
+        app:endIconTint="?android:textColorSecondary"
+        app:errorEnabled="false">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/internet_radio_station_cover_art_url_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/radio_editor_dialog_hint_cover_art_url"
+            android:inputType="textUri"
+            android:textCursorDrawable="@null" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/source_toggle_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/radio_editor_source_label"
+            android:textSize="12sp"
+            android:textColor="?android:textColorHint"
+            android:paddingBottom="4dp" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/radio_source_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/radio_source_server"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/radio_editor_source_server"
+                android:textAllCaps="false"
+                android:textSize="12sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/radio_source_local"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/radio_editor_source_local"
+                android:textAllCaps="false"
+                android:textSize="12sp" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+    </LinearLayout>
 </LinearLayout>
