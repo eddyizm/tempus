@@ -148,9 +148,24 @@ public class PlayerCoverFragment extends Fragment {
                 });
 
                 bind.innerButtonBottomRight.setOnClickListener(view -> {
-                    if (playerBottomSheetViewModel.savePlayQueue()) {
-                        Snackbar.make(requireView(), R.string.player_queue_save_queue_success, Snackbar.LENGTH_LONG).show();
+                    if (mediaBrowserListenableFuture == null) {
+                        return;
                     }
+                    mediaBrowserListenableFuture.addListener(() -> {
+                        try {
+                            MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                            long position = mediaBrowser.getCurrentPosition();
+                            if (getView() != null && getActivity() != null) {
+                                getActivity().runOnUiThread(() -> {
+                                    if (playerBottomSheetViewModel.savePlayQueue(position)) {
+                                        Snackbar.make(requireView(), R.string.player_queue_save_queue_success, Snackbar.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }, MoreExecutors.directExecutor());
                 });
 
                 bind.innerButtonBottomRightAlternative.setOnClickListener(view -> {

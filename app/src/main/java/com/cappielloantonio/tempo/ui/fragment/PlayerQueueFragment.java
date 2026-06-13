@@ -33,10 +33,10 @@ import com.cappielloantonio.tempo.ui.adapter.PlayerSongQueueAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioReader;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.ExternalAudioReader;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -60,6 +60,7 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabSaveToPlaylist;
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabDownloadAll;
     private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabLoadQueue;
+    private com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton fabSaveQueue;
 
     private boolean isMenuOpen = false;
     private final int ANIMATION_DURATION = 250; 
@@ -86,6 +87,7 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         fabSaveToPlaylist = bind.fabSaveToPlaylist;
         fabDownloadAll = bind.fabDownloadAll;
         fabLoadQueue = bind.fabLoadQueue;
+        fabSaveQueue = bind.fabSaveQueue;
 
         fabMenuToggle.setOnClickListener(v -> toggleFabMenu());
         fabClearQueue.setOnClickListener(v -> handleClearQueueClick());
@@ -94,10 +96,12 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         fabSaveToPlaylist.setOnClickListener(v -> handleSaveToPlaylistClick());
         fabDownloadAll.setOnClickListener(v -> handleDownloadAllClick());
         fabLoadQueue.setOnClickListener(v -> handleLoadQueueClick());
+        fabSaveQueue.setOnClickListener(v -> handleSaveQueueClick());
 
-        // Hide Load Queue FAB if sync is disabled
+        // Hide Load/Save Queue FAB if sync is disabled
         if (!Preferences.isSyncronizationEnabled()) {
             fabLoadQueue.setVisibility(View.GONE);
+            fabSaveQueue.setVisibility(View.GONE);
         }
 
         initQueueRecyclerView();
@@ -248,7 +252,8 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         if (isMenuOpen) {
             // CLOSE MENU (Reverse order for visual effect)
             if (Preferences.isSyncronizationEnabled()) {
-                closeFab(fabLoadQueue, 4);
+                closeFab(fabLoadQueue, 5);
+                closeFab(fabSaveQueue, 4);
             }
             closeFab(fabSaveToPlaylist, 3); 
             closeFab(fabClearQueue, 2);
@@ -263,7 +268,8 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
             openFab(fabClearQueue, 2);
             openFab(fabSaveToPlaylist, 3);
             if (Preferences.isSyncronizationEnabled()) {
-                openFab(fabLoadQueue, 4);
+                openFab(fabSaveQueue, 4);
+                openFab(fabLoadQueue, 5);
             }
             fabMenuToggle.animate().rotation(45f).setDuration(ANIMATION_DURATION).start();
         }
@@ -446,6 +452,27 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         toggleFabMenu();
     }
 
+    private void handleSaveQueueClick() {
+        Log.d(TAG, "Save Queue Clicked!");
+        if (!Preferences.isSyncronizationEnabled()) {
+            toggleFabMenu();
+            return;
+        }
+
+        mediaBrowserListenableFuture.addListener(() -> {
+            try {
+                MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
+                long position = mediaBrowser.getCurrentPosition();
+                if (playerBottomSheetViewModel.savePlayQueue(position)) {
+                    Toast.makeText(requireContext(), R.string.player_queue_save_queue_success, Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Error saving queue", e);
+            }
+            toggleFabMenu();
+        }, MoreExecutors.directExecutor());
+    }
+
     private void handleLoadQueueClick() {
         Log.d(TAG, "Load Queue Clicked!");
         if (!Preferences.isSyncronizationEnabled()) {
@@ -469,7 +496,14 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
                         }
                     }
                     
-                    MediaManager.startQueue(mediaBrowserListenableFuture, playQueue.getEntries(), currentIndex);
+                    long positionMs = playQueue.getPosition() != null ? playQueue.getPosition() : 0L;
+                    List<Child> entries = playQueue.getEntries();
+                    if (currentIndex >= 0 && currentIndex < entries.size()) {
+                        MediaManager.startQueue(mediaBrowserListenableFuture, entries.get(currentIndex), currentIndex, positionMs);
+                    } else {
+                        Log.e("PlayerQueueFragment", "Invalid currentIndex: " + currentIndex + " for entries size: " + entries.size());
+                        Toast.makeText(requireContext(), "Error loading queue: Invalid index", Toast.LENGTH_SHORT).show();
+                    }
                     
                     Toast.makeText(requireContext(), "Queue loaded", Toast.LENGTH_SHORT).show();
                 } else {

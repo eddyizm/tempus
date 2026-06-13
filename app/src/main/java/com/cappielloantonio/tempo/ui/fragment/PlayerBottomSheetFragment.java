@@ -52,6 +52,8 @@ public class PlayerBottomSheetFragment extends Fragment {
 
     private Handler progressBarHandler;
     private Runnable progressBarRunnable;
+    private Handler autoSaveHandler;
+    private Runnable autoSaveRunnable;
 
     @Nullable
     @Override
@@ -79,6 +81,8 @@ public class PlayerBottomSheetFragment extends Fragment {
 
     @Override
     public void onStop() {
+        runProgressBarHandler(false);
+        runAutoSaveHandler(false);
         releaseMediaBrowser();
         super.onStop();
     }
@@ -127,6 +131,7 @@ public class PlayerBottomSheetFragment extends Fragment {
 
     private void setMediaControllerListener(MediaBrowser mediaBrowser) {
         defineProgressBarHandler(mediaBrowser);
+        defineAutoSaveHandler(mediaBrowser);
         setMediaControllerUI(mediaBrowser);
         setMetadata(mediaBrowser.getMediaMetadata());
         setContentDuration(mediaBrowser.getContentDuration());
@@ -267,6 +272,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     private void setPlayingState(boolean isPlaying) {
         bind.playerHeaderLayout.playerHeaderButton.setChecked(isPlaying);
         runProgressBarHandler(isPlaying);
+        runAutoSaveHandler(isPlaying);
     }
 
     private void setHeaderMediaController() {
@@ -332,6 +338,24 @@ public class PlayerBottomSheetFragment extends Fragment {
             progressBarHandler.postDelayed(progressBarRunnable, 1000);
         } else {
             progressBarHandler.removeCallbacks(progressBarRunnable);
+        }
+    }
+
+    private void defineAutoSaveHandler(MediaBrowser mediaBrowser) {
+        autoSaveHandler = new Handler();
+        autoSaveRunnable = () -> {
+            if (Preferences.isSyncronizationEnabled()) {
+                playerBottomSheetViewModel.savePlayQueue(mediaBrowser.getCurrentPosition());
+            }
+            autoSaveHandler.postDelayed(autoSaveRunnable, Preferences.getSyncCountdownTimer() * 1000L);
+        };
+    }
+
+    private void runAutoSaveHandler(boolean isPlaying) {
+        if (autoSaveHandler == null || autoSaveRunnable == null) return;
+        autoSaveHandler.removeCallbacks(autoSaveRunnable);
+        if (isPlaying && Preferences.isSyncronizationEnabled()) {
+            autoSaveHandler.postDelayed(autoSaveRunnable, Preferences.getSyncCountdownTimer() * 1000L);
         }
     }
 
