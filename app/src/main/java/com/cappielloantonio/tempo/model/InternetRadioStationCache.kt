@@ -18,12 +18,18 @@ class InternetRadioStationCache(
     var streamUrl: String? = null,
     @ColumnInfo(name = "home_page_url")
     var homePageUrl: String? = null,
+    @ColumnInfo(name = "source", defaultValue = "subsonic")
+    var source: String = SOURCE_SUBSONIC,
+    @ColumnInfo(name = "cover_art_url")
+    var coverArtUrl: String? = null,
 ) {
     constructor(station: InternetRadioStation) : this(
         id = station.id ?: "",
         name = station.name,
         streamUrl = station.streamUrl,
         homePageUrl = station.homePageUrl,
+        source = station.source ?: SOURCE_SUBSONIC,
+        coverArtUrl = station.coverArt,
     )
 
     fun toInternetRadioStation(): InternetRadioStation {
@@ -32,6 +38,13 @@ class InternetRadioStationCache(
             name = name,
             streamUrl = streamUrl,
             homePageUrl = homePageUrl,
+            coverArt = coverArtUrl,
+            source = source,
         )
+    }
+
+    companion object {
+        const val SOURCE_SUBSONIC = "subsonic"
+        const val SOURCE_LOCAL = "local"
     }
 }

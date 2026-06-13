@@ -19,6 +19,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/internet_radio_station_local_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/radio_local_badge"
+        android:textSize="9sp"
+        android:textColor="?attr/colorOnPrimary"
+        android:background="@drawable/bg_radio_local_badge"
+        android:visibility="gone"
+        android:paddingStart="3dp"
+        android:paddingEnd="3dp"
+        android:paddingTop="1dp"
+        android:paddingBottom="1dp"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/internet_radio_station_cover_image_view"
+        app:layout_constraintStart_toStartOf="@+id/internet_radio_station_cover_image_view" />
+
     <View
         android:id="@+id/cover_image_separator"
         android:layout_width="12dp"
