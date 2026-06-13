@@ -129,7 +129,12 @@ dependencies {
     // Misc
     implementation libs.sdp.android
     implementation libs.customactivityoncrash
-    implementation "${libs.shimmer.get()}@aar" // we need @aar and libs.version doesn't like that
+    implementation(libs.shimmer) {
+        artifact {
+            name = 'shimmer'
+            type = 'aar'
+        }
+    }
 }
 
 java {
