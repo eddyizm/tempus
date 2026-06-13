@@ -131,6 +131,36 @@ open class BaseSessionCallback(
         customCommandInstantMixOff
     )
 
+    private val playerListener = object : Player.Listener {
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            currentSession?.let { updateMediaNotificationCustomLayout(it) }
+        }
+
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            currentSession?.let { updateMediaNotificationCustomLayout(it) }
+        }
+
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+            currentSession?.let { updateMediaNotificationCustomLayout(it) }
+        }
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            currentSession?.let { updateMediaNotificationCustomLayout(it) }
+        }
+    }
+
+    private var currentSession: MediaSession? = null
+
+    /**
+     * Updates the player listener when the player changes (e.g., when switching to Cast).
+     */
+    fun handlePlayerChanged(oldPlayer: Player?, newPlayer: Player) {
+        oldPlayer?.removeListener(playerListener)
+        if (currentSession != null) {
+            newPlayer.addListener(playerListener)
+        }
+    }
+
     @OptIn(UnstableApi::class)
     val mediaNotificationSessionCommands =
         MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
@@ -149,23 +179,10 @@ open class BaseSessionCallback(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
-        session.player.addListener(object : Player.Listener {
-            override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-                updateMediaNotificationCustomLayout(session)
-            }
-
-            override fun onRepeatModeChanged(repeatMode: Int) {
-                updateMediaNotificationCustomLayout(session)
-            }
-
-            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-                updateMediaNotificationCustomLayout(session)
-            }
-
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                updateMediaNotificationCustomLayout(session)
-            }
-        })
+        if (currentSession == null) {
+            currentSession = session
+            session.player.addListener(playerListener)
+        }
 
         val previousButton =
             CommandButton.Builder(CommandButton.ICON_PREVIOUS)
@@ -211,8 +228,9 @@ open class BaseSessionCallback(
         session: MediaSession,
         isRatingPending: Boolean = false
     ) {
+        val controller = session.mediaNotificationControllerInfo ?: return
         session.setCustomLayout(
-            session.mediaNotificationControllerInfo!!,
+            controller,
             buildCustomLayout(session.player, isRatingPending)
         )
     }
