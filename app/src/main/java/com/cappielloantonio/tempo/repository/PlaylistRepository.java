@@ -135,6 +135,9 @@ public class PlaylistRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylist() != null) {
                             List<Child> songs = response.body().getSubsonicResponse().getPlaylist().getEntries();
+                            if (songs == null) {
+                                songs = new ArrayList<>();
+                            }
                             listLivePlaylistSongs.setValue(songs);
                             cachePlaylistSongs(id, songs);
                         }
@@ -151,6 +154,11 @@ public class PlaylistRepository {
 
     private void cachePlaylistSongs(String playlistId, List<Child> songs) {
         new Thread(() -> {
+            if (songs == null || songs.isEmpty()) {
+                playlistSongDao.deleteForPlaylist(playlistId);
+                android.util.Log.d("PlaylistRepository", "No songs to cache for playlist " + playlistId);
+                return;
+            }
             List<PlaylistSong> playlistSongs = new ArrayList<>();
             for (Child child : songs) {
                 playlistSongs.add(new PlaylistSong(playlistId, child));
