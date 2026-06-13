@@ -21,6 +21,7 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 
+import com.bumptech.glide.Glide;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerCoverBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
@@ -32,6 +33,7 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
+import com.cappielloantonio.tempo.util.RadioCoverArtDownloader;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.cappielloantonio.tempo.subsonic.models.Child;
@@ -195,8 +197,23 @@ public class PlayerCoverFragment extends Fragment {
     }
 
     private void setCover(MediaMetadata mediaMetadata) {
+        Bundle extras = mediaMetadata.extras;
+
+        // Radio stations carry their resolved artwork (local cover file, server cover-art content
+        // uri, or homepage image) in artworkUri, not as a Song coverArtId. Load it directly with
+        // the radio placeholder as fallback.
+        if (extras != null && Constants.MEDIA_TYPE_RADIO.equals(extras.getString("type"))) {
+            com.bumptech.glide.RequestBuilder<android.graphics.drawable.Drawable> request = Glide.with(requireContext())
+                    .load(mediaMetadata.artworkUri)
+                    .apply(CustomGlideRequest.createRequestOptions(requireContext(),
+                            extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Radio));
+            request = RadioCoverArtDownloader.applyLocalFileSignature(request, mediaMetadata.artworkUri);
+            request.into(bind.nowPlayingSongCoverImageView);
+            return;
+        }
+
         CustomGlideRequest.Builder
-                .from(requireContext(), mediaMetadata.extras != null ? mediaMetadata.extras.getString("coverArtId") : null, CustomGlideRequest.ResourceType.Song)
+                .from(requireContext(), extras != null ? extras.getString("coverArtId") : null, CustomGlideRequest.ResourceType.Song)
                 .build()
                 .into(bind.nowPlayingSongCoverImageView);
     }
