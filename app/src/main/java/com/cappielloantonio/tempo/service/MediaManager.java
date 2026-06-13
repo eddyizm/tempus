@@ -229,13 +229,17 @@ public class MediaManager {
     }
 
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, Child media) {
+        startQueue(mediaBrowserListenableFuture, media, 0, 0);
+    }
+    
+    public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, Child media, int startIndex, long positionMs) {
         if (mediaBrowserListenableFuture != null) {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
                         justStarted.set(true);
-                        browser.setMediaItem(MappingUtil.mapMediaItem(media));
+                        browser.setMediaItem(MappingUtil.mapMediaItem(media), positionMs);
                         browser.prepare();
                         browser.play();
                         enqueueDatabase(media, true, 0);

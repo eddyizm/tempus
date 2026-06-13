@@ -496,7 +496,14 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
                         }
                     }
                     
-                    MediaManager.startQueue(mediaBrowserListenableFuture, playQueue.getEntries(), currentIndex);
+                    long positionMs = playQueue.getPosition() != null ? playQueue.getPosition() : 0L;
+                    List<Child> entries = playQueue.getEntries();
+                    if (currentIndex >= 0 && currentIndex < entries.size()) {
+                        MediaManager.startQueue(mediaBrowserListenableFuture, entries.get(currentIndex), currentIndex, positionMs);
+                    } else {
+                        Log.e("PlayerQueueFragment", "Invalid currentIndex: " + currentIndex + " for entries size: " + entries.size());
+                        Toast.makeText(requireContext(), "Error loading queue: Invalid index", Toast.LENGTH_SHORT).show();
+                    }
                     
                     Toast.makeText(requireContext(), "Queue loaded", Toast.LENGTH_SHORT).show();
                 } else {

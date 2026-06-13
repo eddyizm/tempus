@@ -341,10 +341,10 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     private void runAutoSaveHandler(boolean isPlaying) {
+        if (autoSaveHandler == null || autoSaveRunnable == null) return;
+        autoSaveHandler.removeCallbacks(autoSaveRunnable);
         if (isPlaying && Preferences.isSyncronizationEnabled()) {
             autoSaveHandler.postDelayed(autoSaveRunnable, Preferences.getSyncCountdownTimer() * 1000L);
-        } else if (autoSaveHandler != null) {
-            autoSaveHandler.removeCallbacks(autoSaveRunnable);
         }
     }
 
