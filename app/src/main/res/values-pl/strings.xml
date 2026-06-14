@@ -315,7 +315,7 @@
     <string name="podcast_info_empty_subtitle">Gdy dodasz kanał, znajdziesz go tutaj</string>
     <string name="podcast_info_empty_title">Nie znaleziono podcastów!</string>
     <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
-    <string name="radio_editor_dialog_hint_homepage_url">URL strony stacji</string>
+    <string name="radio_editor_dialog_hint_homepage_url">Adres URL strony stacji</string>
     <string name="radio_editor_dialog_hint_name">Nazwa stacji radiowej</string>
     <string name="radio_editor_dialog_hint_stream_url">Adres URL z strumieniem stacji</string>
     <string name="radio_editor_dialog_negative_button">Anuluj</string>
