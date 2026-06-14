@@ -511,6 +511,8 @@
     <string name="settings_version_title">Wersja</string>
     <string name="settings_wifi_only_summary">Pytaj o potwierdzenie od użytkownika przed strumieniowaniem przez sieć komórkową.</string>
     <string name="settings_wifi_only_title">Alert o strumieniowaniu tylko przez Wi-Fi</string>
+    <string name="settings_download_wifi_only_summary">Pobierania zostaną wstrzymane podczas używania danych komórkowych i zostaną automatycznie wznowione po połączeniu z Wi-Fi.</string>
+    <string name="settings_download_wifi_only_title">Pobieraj tylko przez Wi-Fi</string>
     <string name="share_bottom_sheet_copy_link">Kopiuj link</string>
     <string name="share_bottom_sheet_delete">Usuń udostępnianie</string>
     <string name="share_bottom_sheet_update">Zaktualizuj udostępnianie</string>
