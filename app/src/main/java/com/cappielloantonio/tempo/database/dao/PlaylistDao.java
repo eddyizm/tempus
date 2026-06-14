@@ -29,7 +29,10 @@ public interface PlaylistDao {
     @Delete
     void delete(Playlist playlist);
 
-    @Query("DELETE FROM playlist") 
+    @Query("DELETE FROM playlist WHERE id = :playlistId")
+    void deleteById(String playlistId);
+
+    @Query("DELETE FROM playlist")
     void deleteAll();
 
     @Query("SELECT coverArt FROM playlist WHERE id = :playlistId")
