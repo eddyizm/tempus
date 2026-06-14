@@ -10,8 +10,8 @@ android {
         minSdkVersion 24
         targetSdk 35
 
-        versionCode 29
-        versionName '4.18.1'
+        versionCode 30
+        versionName '4.18.4-dev'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -23,6 +23,10 @@ android {
             }
         }
 
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 
     splits {
@@ -72,12 +76,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -130,6 +134,10 @@ dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.1.1'
     implementation 'cat.ereza:customactivityoncrash:2.4.0'
     implementation 'com.facebook.shimmer:shimmer:0.5.0@aar'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:5.12.0'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:5.4.0'
 }
 java {
     toolchain {

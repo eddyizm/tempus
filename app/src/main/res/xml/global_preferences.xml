@@ -307,6 +307,12 @@
             android:key="wifi_only" />
 
         <SwitchPreference
+            android:title="@string/settings_download_wifi_only_title"
+            android:defaultValue="false"
+            android:summary="@string/settings_download_wifi_only_summary"
+            android:key="download_wifi_only" />
+
+        <SwitchPreference
             android:title="@string/settings_data_saving_mode_title"
             android:defaultValue="false"
             android:summary="@string/settings_data_saving_mode_summary"
