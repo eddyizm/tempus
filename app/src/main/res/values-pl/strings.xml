@@ -293,6 +293,10 @@
     <string name="playlist_editor_dialog_neutral_button">Usuń</string>
     <string name="playlist_editor_dialog_positive_button">Zapisz</string>
     <string name="playlist_editor_dialog_title">Edytuj playlistę</string>
+    <string name="playlist_editor_dialog_action_delete_success">Playlista usunięta</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
+    <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>
+    <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
     <string name="playlist_page_play_button">Odtwórz</string>
     <string name="playlist_page_shuffle_button">Odtwarzaj losowo</string>
     <string name="playlist_song_count">Playlista  •  %1$d piosenek</string>
