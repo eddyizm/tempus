@@ -31,7 +31,10 @@ class MediaService : BaseMediaService(), SessionAvailabilityListener {
     }
 
     override fun getMediaLibrarySessionCallback(): MediaLibrarySession.Callback {
-        return MediaLibrarySessionCallback(baseContext,this, automotiveRepository)
+        if (sessionCallback == null) {
+            sessionCallback = MediaLibrarySessionCallback(baseContext, this, automotiveRepository)
+        }
+        return sessionCallback!!
     }
 
     override fun playerInitHook() {
