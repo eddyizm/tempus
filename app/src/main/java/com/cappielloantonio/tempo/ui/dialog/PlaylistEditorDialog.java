@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.DialogPlaylistEditorBinding;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
+import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.ui.adapter.PlaylistDialogSongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
@@ -92,22 +93,65 @@ public class PlaylistEditorDialog extends DialogFragment {
 
         alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             if (validateInput()) {
-                if (playlistEditorViewModel.getSongsToAdd() != null) {
-                    playlistEditorViewModel.createPlaylist(playlistName);
-                } else if (playlistEditorViewModel.getPlaylistToEdit() != null) {
-                    playlistEditorViewModel.updatePlaylist(playlistName);
-                }
+                PlaylistRepository.PlaylistActionCallback callback = new PlaylistRepository.PlaylistActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_success, Toast.LENGTH_SHORT).show();
+                                dialogDismiss();
+                            });
+                        } else {
+                            dialogDismiss();
+                        }
+                    }
 
-                dialogDismiss();
+                    @Override
+                    public void onFailure() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_failure, Toast.LENGTH_SHORT).show();
+                                // Don't dismiss on failure? The user might want to try again.
+                                // Let's keep the dialog open if it fails.
+                            });
+                        }
+                    }
+                };
+
+                if (playlistEditorViewModel.getSongsToAdd() != null) {
+                    playlistEditorViewModel.createPlaylist(playlistName, callback);
+                } else if (playlistEditorViewModel.getPlaylistToEdit() != null) {
+                    playlistEditorViewModel.updatePlaylist(playlistName, callback);
+                }
             }
         });
 
-        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> Toast.makeText(requireContext(), R.string.playlist_editor_dialog_action_delete_toast, Toast.LENGTH_SHORT).show());
+        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
+            playlistEditorViewModel.deletePlaylist(new PlaylistRepository.PlaylistActionCallback() {
+                @Override
+                public void onSuccess() {
+                    if (isAdded() && getContext() != null) {
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_success, Toast.LENGTH_SHORT).show();
+                            dialogDismiss();
+                        });
+                    } else {
+                        dialogDismiss();
+                    }
+                }
 
-        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnLongClickListener(v -> {
-            playlistEditorViewModel.deletePlaylist();
-            dialogDismiss();
-            return false;
+                @Override
+                public void onFailure() {
+                    if (isAdded() && getContext() != null) {
+                        requireActivity().runOnUiThread(() -> {
+                            Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_failure, Toast.LENGTH_SHORT).show();
+                            dialogDismiss();
+                        });
+                    } else {
+                        dialogDismiss();
+                    }
+                }
+            });
         });
 
         bind.playlistShareButton.setOnClickListener(view -> {

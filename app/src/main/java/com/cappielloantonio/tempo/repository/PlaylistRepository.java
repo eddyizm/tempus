@@ -274,24 +274,29 @@ public class PlaylistRepository {
         addSongToPlaylist(playlistId, songsId, playlistVisibilityIsPublic, null);
     }
 
-    public void createPlaylist(String playlistId, String name, ArrayList<String> songsId) {
+    public void createPlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .createPlaylist(playlistId, name, songsId)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()) notifyPlaylistChanged();
+                        if (response.isSuccessful()) {
+                            notifyPlaylistChanged();
+                            if (callback != null) callback.onSuccess();
+                        } else {
+                            if (callback != null) callback.onFailure();
+                        }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        if (callback != null) callback.onFailure();
                     }
                 });
     }
 
-    public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId) {
+    public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .updatePlaylist(playlistId, name, true, null, null)
@@ -299,20 +304,17 @@ public class PlaylistRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful()) {
-                            // After renaming, we need to handle the song list update.
-                            // Subsonic doesn't have a "replace all songs" in updatePlaylist.
-                            // So we might still need to recreate if the songs changed significantly,
-                            // but if we just renamed, we should update the local pinned database.
                             updateLocalPlaylistName(playlistId, name);
                             notifyPlaylistChanged();
+                            if (callback != null) callback.onSuccess();
+                        } else {
+                            if (callback != null) callback.onFailure();
                         }
-
-                        // If songsId is provided, we might want to re-sync them.
-                        // For now, let's at least fix the name duplication issue.
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        if (callback != null) callback.onFailure();
                     }
                 });
     }
@@ -338,19 +340,34 @@ public class PlaylistRepository {
         }).start();
     }
 
-    public void deletePlaylist(String playlistId) {
+    public interface PlaylistActionCallback {
+        void onSuccess();
+        void onFailure();
+    }
+
+    public void deletePlaylist(String playlistId, PlaylistActionCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .deletePlaylist(playlistId)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()) notifyPlaylistChanged();
+                        if (response.isSuccessful()) {
+                            new Thread(() -> {
+                                playlistSongDao.deleteForPlaylist(playlistId);
+                                playlistDao.deleteById(playlistId);
+                                android.util.Log.d("PlaylistRepository", "Deleted playlist " + playlistId + " and its songs from local DB.");
+                            }).start();
+                            notifyPlaylistChanged();
+                            if (callback != null) callback.onSuccess();
+                        } else {
+                            if (callback != null) callback.onFailure();
+                        }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        if (callback != null) callback.onFailure();
                     }
                 });
     }
