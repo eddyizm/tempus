@@ -299,7 +299,7 @@ public class PlaylistRepository {
     public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
-                .updatePlaylist(playlistId, name, true, null, null)
+                .updatePlaylist(playlistId, name, true, songsId, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {

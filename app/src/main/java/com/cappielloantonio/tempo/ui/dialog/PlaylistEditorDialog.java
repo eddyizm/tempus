@@ -101,8 +101,6 @@ public class PlaylistEditorDialog extends DialogFragment {
                                 Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_success, Toast.LENGTH_SHORT).show();
                                 dialogDismiss();
                             });
-                        } else {
-                            dialogDismiss();
                         }
                     }
 
@@ -111,8 +109,6 @@ public class PlaylistEditorDialog extends DialogFragment {
                         if (isAdded() && getContext() != null) {
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_failure, Toast.LENGTH_SHORT).show();
-                                // Don't dismiss on failure? The user might want to try again.
-                                // Let's keep the dialog open if it fails.
                             });
                         }
                     }
@@ -126,33 +122,34 @@ public class PlaylistEditorDialog extends DialogFragment {
             }
         });
 
-        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            playlistEditorViewModel.deletePlaylist(new PlaylistRepository.PlaylistActionCallback() {
-                @Override
-                public void onSuccess() {
-                    if (isAdded() && getContext() != null) {
-                        requireActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_success, Toast.LENGTH_SHORT).show();
-                            dialogDismiss();
-                        });
-                    } else {
-                        dialogDismiss();
+        View neutralButton = alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL);
+        if (playlistEditorViewModel.getPlaylistToEdit() == null) {
+            neutralButton.setVisibility(View.GONE);
+        } else {
+            neutralButton.setVisibility(View.VISIBLE);
+            neutralButton.setOnClickListener(v -> {
+                playlistEditorViewModel.deletePlaylist(new PlaylistRepository.PlaylistActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_success, Toast.LENGTH_SHORT).show();
+                                dialogDismiss();
+                            });
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure() {
-                    if (isAdded() && getContext() != null) {
-                        requireActivity().runOnUiThread(() -> {
-                            Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_failure, Toast.LENGTH_SHORT).show();
-                            dialogDismiss();
-                        });
-                    } else {
-                        dialogDismiss();
+                    @Override
+                    public void onFailure() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_failure, Toast.LENGTH_SHORT).show();
+                            });
+                        }
                     }
-                }
+                });
             });
-        });
+        }
 
         bind.playlistShareButton.setOnClickListener(view -> {
             playlistEditorViewModel.sharePlaylist().observe(requireActivity(), sharedPlaylist -> {
@@ -231,7 +228,10 @@ public class PlaylistEditorDialog extends DialogFragment {
     }
 
     private void dialogDismiss() {
-        Objects.requireNonNull(getDialog()).dismiss();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.dismiss();
+        }
         if (playlistCallback != null) {
             playlistCallback.onDismiss();
         }
