@@ -14,6 +14,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cappielloantonio.tempo.R;
@@ -81,8 +82,10 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            songs = (List<Child>) results.values;
-            notifyDataSetChanged();
+            List<Child> newSongs = (List<Child>) results.values;
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new SongDiffCallback(songs, newSongs));
+            songs = newSongs;
+            diffResult.dispatchUpdatesTo(SongHorizontalAdapter.this);
 
             for (int pos : currentPlayingPositions) {
                 if (pos >= 0 && pos < songs.size()) {
@@ -176,9 +179,11 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
 
             if (songs.get(position).getDiscNumber() != null && !Objects.requireNonNull(songs.get(position).getDiscNumber()).toString().isBlank()) {
                 holder.item.discTitleTextView.setText(holder.itemView.getContext().getString(R.string.disc_titleless, songs.get(position).getDiscNumber().toString()));
-                holder.item.differentDiskDividerSector.setVisibility(View.VISIBLE);
+                holder.item.discTitleTextView.setVisibility(View.VISIBLE);
+                holder.item.differentDiskDivider.setVisibility(View.VISIBLE);
             } else {
-                holder.item.differentDiskDividerSector.setVisibility(View.GONE);
+                holder.item.discTitleTextView.setVisibility(View.GONE);
+                holder.item.differentDiskDivider.setVisibility(View.GONE);
             }
 
             if (album.getDiscTitles() != null) {
@@ -248,10 +253,16 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         return songs.size();
     }
 
+    @Override
+    public void onViewRecycled(@NonNull ViewHolder holder) {
+        super.onViewRecycled(holder);
+        com.bumptech.glide.Glide.with(holder.itemView.getContext()).clear(holder.item.songCoverImageView);
+    }
+
+
     public void setItems(List<Child> songs) {
         this.songsFull = songs != null ? songs : Collections.emptyList();
         filtering.filter(currentFilter);
-        notifyDataSetChanged();
     }
 
     @Override
