@@ -25,6 +25,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
     private boolean isOffline;
 
     private final MutableLiveData<List<Child>> songLiveList = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> playlistMissingEvent = new MutableLiveData<>();
 
     public PlaylistPageViewModel(@NonNull Application application) {
         super(application);
@@ -35,6 +36,14 @@ public class PlaylistPageViewModel extends AndroidViewModel {
                 refreshSongs();
             }
         });
+    }
+
+    public LiveData<Boolean> getPlaylistMissingEvent() {
+        return playlistMissingEvent;
+    }
+
+    public void clearPlaylistMissingEvent() {
+        playlistMissingEvent.setValue(false);
     }
 
     public LiveData<List<Child>> getPlaylistSongLiveList() {
@@ -50,7 +59,11 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         remoteData.observeForever(new androidx.lifecycle.Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> songs) {
-                songLiveList.postValue(songs);
+                if (songs == null) {
+                    playlistMissingEvent.postValue(true);
+                } else {
+                    songLiveList.postValue(songs);
+                }
                 remoteData.removeObserver(this);
             }
         });

@@ -26,7 +26,9 @@ import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,7 +47,7 @@ public class PlaylistRepository {
         refreshAllPlaylists();
     }
 
-    private void handleMissingPlaylist(String id) {
+    private void handleMissingPlaylist(String id, Runnable onMissing) {
         new Thread(() -> {
             // Must delete dependent records first to avoid foreign key constraint violations
             playlistSongDao.deleteForPlaylist(id);
@@ -53,6 +55,7 @@ public class PlaylistRepository {
             playlistDao.deleteById(id);
             
             new Handler(Looper.getMainLooper()).post(() -> {
+                if (onMissing != null) onMissing.run();
                 Toast.makeText(App.getContext(), R.string.playlist_error_not_found, Toast.LENGTH_SHORT).show();
             });
             refreshAllPlaylists();
@@ -98,15 +101,13 @@ public class PlaylistRepository {
             // Remove playlists from DB that are not in the new list
             List<Playlist> cachedPlaylists = playlistDao.getAllSync();
             if (cachedPlaylists != null) {
+                Set<String> remoteIds = new HashSet<>();
+                for (Playlist remote : playlists) {
+                    remoteIds.add(remote.getId());
+                }
+
                 for (Playlist cached : cachedPlaylists) {
-                    boolean exists = false;
-                    for (Playlist remote : playlists) {
-                        if (remote.getId().equals(cached.getId())) {
-                            exists = true;
-                            break;
-                        }
-                    }
-                    if (!exists) {
+                    if (!remoteIds.contains(cached.getId())) {
                         playlistSongDao.deleteForPlaylist(cached.getId());
                         pinnedPlaylistDao.unpin(cached.getId());
                         playlistDao.delete(cached);
@@ -180,7 +181,9 @@ public class PlaylistRepository {
                                 cachePlaylistSongs(id, songs);
                             } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
                                 // Subsonic Standard Error Code 70: The requested data was not found.
-                                handleMissingPlaylist(id);
+                                handleMissingPlaylist(id, null);
+                                listLivePlaylistSongs.setValue(null);
+                            } else {
                                 listLivePlaylistSongs.setValue(null);
                             }
                         } else {
@@ -251,7 +254,7 @@ public class PlaylistRepository {
                                 playlistLiveData.setValue(sr.getPlaylist());
                             } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
                                 // Subsonic Standard Error Code 70: The requested data was not found.
-                                handleMissingPlaylist(id);
+                                handleMissingPlaylist(id, null);
                                 playlistLiveData.setValue(null);
                             } else {
                                 playlistLiveData.setValue(null);
