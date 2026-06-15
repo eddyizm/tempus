@@ -1,5 +1,7 @@
 package com.cappielloantonio.tempo.repository;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
 import com.cappielloantonio.tempo.database.dao.PinnedPlaylistDao;
@@ -19,10 +22,13 @@ import com.cappielloantonio.tempo.model.PlaylistSong;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
+import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +45,20 @@ public class PlaylistRepository {
     public void notifyPlaylistChanged() {
         playlistUpdateTrigger.postValue(true);
         refreshAllPlaylists();
+    }
+
+    private void handleMissingPlaylist(String id, Runnable onMissing) {
+        new Thread(() -> {
+            // Must delete dependent records first to avoid foreign key constraint violations
+            playlistSongDao.deleteForPlaylist(id);
+            pinnedPlaylistDao.unpin(id);
+            playlistDao.deleteById(id);
+            
+            if (onMissing != null) {
+                new Handler(Looper.getMainLooper()).post(onMissing);
+            }
+            refreshAllPlaylists();
+        }).start();
     }
 
     @androidx.media3.common.util.UnstableApi
@@ -77,7 +97,23 @@ public class PlaylistRepository {
     @OptIn(markerClass = UnstableApi.class)
     private void cacheAllPlaylists(List<Playlist> playlists) {
         new Thread(() -> {
-            // TODO add server aware join or column.
+            // Remove playlists from DB that are not in the new list
+            List<Playlist> cachedPlaylists = playlistDao.getAllSync();
+            if (cachedPlaylists != null) {
+                Set<String> remoteIds = new HashSet<>();
+                for (Playlist remote : playlists) {
+                    remoteIds.add(remote.getId());
+                }
+
+                for (Playlist cached : cachedPlaylists) {
+                    if (!remoteIds.contains(cached.getId())) {
+                        playlistSongDao.deleteForPlaylist(cached.getId());
+                        pinnedPlaylistDao.unpin(cached.getId());
+                        playlistDao.delete(cached);
+                        android.util.Log.d("PlaylistRepository", "Removed orphaned playlist " + cached.getId() + " from local DB.");
+                    }
+                }
+            }
             playlistDao.insertAll(playlists);
             android.util.Log.d("PlaylistRepository", "Cached " + playlists.size() + " playlists to local DB.");
         }).start();
@@ -133,13 +169,24 @@ public class PlaylistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylist() != null) {
-                            List<Child> songs = response.body().getSubsonicResponse().getPlaylist().getEntries();
-                            if (songs == null) {
-                                songs = new ArrayList<>();
+                        if (response.isSuccessful() && response.body() != null) {
+                            SubsonicResponse sr = response.body().getSubsonicResponse();
+                            if (sr.getPlaylist() != null) {
+                                List<Child> songs = sr.getPlaylist().getEntries();
+                                if (songs == null) {
+                                    songs = new ArrayList<>();
+                                }
+                                listLivePlaylistSongs.setValue(songs);
+                                cachePlaylistSongs(id, songs);
+                            } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
+                                // Subsonic Standard Error Code 70: The requested data was not found.
+                                handleMissingPlaylist(id, null);
+                                listLivePlaylistSongs.setValue(null);
+                            } else {
+                                listLivePlaylistSongs.setValue(null);
                             }
-                            listLivePlaylistSongs.setValue(songs);
-                            cachePlaylistSongs(id, songs);
+                        } else {
+                            listLivePlaylistSongs.setValue(null);
                         }
                     }
 
@@ -200,10 +247,17 @@ public class PlaylistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()
-                                && response.body() != null
-                                && response.body().getSubsonicResponse().getPlaylist() != null) {
-                            playlistLiveData.setValue(response.body().getSubsonicResponse().getPlaylist());
+                        if (response.isSuccessful() && response.body() != null) {
+                            SubsonicResponse sr = response.body().getSubsonicResponse();
+                            if (sr.getPlaylist() != null) {
+                                playlistLiveData.setValue(sr.getPlaylist());
+                            } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
+                                // Subsonic Standard Error Code 70: The requested data was not found.
+                                handleMissingPlaylist(id, null);
+                                playlistLiveData.setValue(null);
+                            } else {
+                                playlistLiveData.setValue(null);
+                            }
                         } else {
                             playlistLiveData.setValue(null);
                         }
