@@ -26,7 +26,7 @@ public class SongDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldList.get(oldItemPosition).getId().equals(newList.get(newItemPosition).getId());
+        return java.util.Objects.equals(oldList.get(oldItemPosition).getId(), newList.get(newItemPosition).getId());
     }
 
     @Override
