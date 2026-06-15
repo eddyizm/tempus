@@ -54,10 +54,9 @@ public class PlaylistRepository {
             pinnedPlaylistDao.unpin(id);
             playlistDao.deleteById(id);
             
-            new Handler(Looper.getMainLooper()).post(() -> {
-                if (onMissing != null) onMissing.run();
-                Toast.makeText(App.getContext(), R.string.playlist_error_not_found, Toast.LENGTH_SHORT).show();
-            });
+            if (onMissing != null) {
+                new Handler(Looper.getMainLooper()).post(onMissing);
+            }
             refreshAllPlaylists();
         }).start();
     }

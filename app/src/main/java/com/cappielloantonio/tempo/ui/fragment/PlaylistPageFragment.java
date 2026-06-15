@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -128,6 +129,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                     .setMessage(R.string.playlist_error_not_found)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         playlistPageViewModel.clearPlaylistMissingEvent();
+                        Toast.makeText(requireContext(), R.string.playlist_error_not_found, Toast.LENGTH_SHORT).show();
                         if (activity != null && activity.navController != null) activity.navController.navigateUp();
                     })
                     .setCancelable(false)
