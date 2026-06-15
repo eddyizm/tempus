@@ -37,6 +37,7 @@ import com.cappielloantonio.tempo.equalizer.DefaultBackend
 import com.cappielloantonio.tempo.repository.QueueRepository
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
+import com.cappielloantonio.tempo.util.SleepTimerManager
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
 import java.net.HttpURLConnection
 import java.net.URL
@@ -58,6 +59,8 @@ open class BaseMediaService : MediaLibraryService() {
 
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
+    protected var sessionCallback: MediaLibrarySession.Callback? = null
+    private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
@@ -94,6 +97,7 @@ open class BaseMediaService : MediaLibraryService() {
         initializeExoPlayer()
         initializeMediaLibrarySession(exoplayer)
         initializePlayerListener(exoplayer)
+        initializeSleepTimer()
         setPlayer(null, exoplayer)
     }
 
@@ -173,7 +177,18 @@ open class BaseMediaService : MediaLibraryService() {
                 if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK || reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
                     MediaManager.setLastPlayedTimestamp(mediaItem)
                 }
-                
+
+                // Safety net: if a track transition fires while end-of-track is armed
+                // (e.g. stream with unknown duration that ended before the poller could
+                // trigger the fade), abort any in-progress fade and pause immediately.
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO &&
+                    SleepTimerManager.getInstance().isEndOfTrack) {
+                    SleepTimerManager.getInstance().stopEndOfTrackPoller()
+                    SleepTimerManager.getInstance().cancelTimer()
+                    player.volume = 1f
+                    player.pause()
+                }
+
                 // Restart header checks for radio streams when media item changes
                 val mediaType = mediaItem.mediaMetadata.extras?.getString("type")
                 if (mediaType == Constants.MEDIA_TYPE_RADIO && player.isPlaying) {
@@ -182,7 +197,7 @@ open class BaseMediaService : MediaLibraryService() {
                 } else if (mediaType != Constants.MEDIA_TYPE_RADIO) {
                     stopRadioHeaderChecks()
                 }
-                
+
                 updateWidget(player)
             }
 
@@ -192,6 +207,12 @@ open class BaseMediaService : MediaLibraryService() {
                     ReplayGainUtil.prefetchQueueGains(player)
                 } catch (t: Throwable) {
                     Log.w(TAG, "prefetchQueueGains failed: $t")
+                }
+                if (timeline.isEmpty) return
+                val window = Timeline.Window()
+                for (i in 0 until timeline.windowCount) {
+                    timeline.getWindow(i, window)
+                    window.mediaItem.mediaMetadata.artworkUri?.let { bitmapLoader.prewarm(it) }
                 }
             }
 
@@ -416,6 +437,32 @@ open class BaseMediaService : MediaLibraryService() {
         }
     }
 
+    // -------------------------------------------------------------------------
+    // Sleep timer
+    // -------------------------------------------------------------------------
+
+    /**
+     * Registers a [SleepTimerManager.ServiceActionListener] on the singleton so
+     * that fade-out and pause happen in the service regardless of whether the
+     * Fragment is attached. Call once after the player is ready.
+     */
+    private fun initializeSleepTimer() {
+        SleepTimerManager.getInstance().setServiceActionListener(object : SleepTimerManager.ServiceActionListener {
+            override fun onTick(expired: Boolean) {
+                if (expired) SleepTimerManager.getInstance().startFadeOutThenPause(mediaLibrarySession.player)
+            }
+            override fun onEndOfTrackArmed() {
+                SleepTimerManager.getInstance().armEndOfTrackFadePoller(mediaLibrarySession.player)
+            }
+        })
+        // If end-of-track was already armed when the service restarted (state
+        // restored from SharedPreferences), re-arm the poller against the live player.
+        if (SleepTimerManager.getInstance().isActive &&
+                SleepTimerManager.getInstance().isEndOfTrack) {
+            SleepTimerManager.getInstance().armEndOfTrackFadePoller(mediaLibrarySession.player)
+        }
+    }
+
     open fun onInstantMix(session: MediaSession, onComplete: Runnable? = null) {
         val player = session.player
         val currentMediaItem = player.currentMediaItem
@@ -450,6 +497,7 @@ open class BaseMediaService : MediaLibraryService() {
             newPlayer.prepare()
         }
         mediaLibrarySession.player = newPlayer
+        (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
     open fun releasePlayers() {
@@ -487,7 +535,10 @@ open class BaseMediaService : MediaLibraryService() {
         ReplayGainUtil.release()
         stopWidgetUpdates()
         stopRadioHeaderChecks()
+        SleepTimerManager.getInstance().stopEndOfTrackPoller()
+        SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
+        if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
         releasePlayers()
         mediaLibrarySession.release()
         super.onDestroy()
@@ -552,10 +603,13 @@ open class BaseMediaService : MediaLibraryService() {
                 getPendingIntent(0, FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
             }
 
+        bitmapLoader = SyncBitmapLoader(applicationContext)
+
         mediaLibrarySession =
             MediaLibrarySession.Builder(this, player, getMediaLibrarySessionCallback())
                 .setSessionActivity(sessionActivityPendingIntent)
                 .setPeriodicPositionUpdateEnabled(false)
+                .setBitmapLoader(bitmapLoader)
                 .build()
     }
 

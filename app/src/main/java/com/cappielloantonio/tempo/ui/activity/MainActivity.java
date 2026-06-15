@@ -353,6 +353,14 @@ public class MainActivity extends BaseActivity {
                         }
                     }
                 });
+                // If a session is already active on (re)connect — e.g. radio still playing after
+                // the app was swiped away — peek the bar. Radio isn't persisted to the queue DB,
+                // so the queue-count check (isQueueLoaded) misses it on reopen. onIsPlayingChanged
+                // also won't fire here since playback didn't change state.
+                if (getMediaBrowserListenableFuture().get().getCurrentMediaItem() != null
+                        && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    setBottomSheetInPeek(true);
+                }
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
