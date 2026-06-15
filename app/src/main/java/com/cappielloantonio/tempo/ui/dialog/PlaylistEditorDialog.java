@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.DialogPlaylistEditorBinding;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
+import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.ui.adapter.PlaylistDialogSongHorizontalAdapter;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
@@ -92,23 +93,63 @@ public class PlaylistEditorDialog extends DialogFragment {
 
         alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             if (validateInput()) {
-                if (playlistEditorViewModel.getSongsToAdd() != null) {
-                    playlistEditorViewModel.createPlaylist(playlistName);
-                } else if (playlistEditorViewModel.getPlaylistToEdit() != null) {
-                    playlistEditorViewModel.updatePlaylist(playlistName);
-                }
+                PlaylistRepository.PlaylistActionCallback callback = new PlaylistRepository.PlaylistActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_success, Toast.LENGTH_SHORT).show();
+                                dialogDismiss();
+                            });
+                        }
+                    }
 
-                dialogDismiss();
+                    @Override
+                    public void onFailure() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_failure, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                };
+
+                if (playlistEditorViewModel.getSongsToAdd() != null) {
+                    playlistEditorViewModel.createPlaylist(playlistName, callback);
+                } else if (playlistEditorViewModel.getPlaylistToEdit() != null) {
+                    playlistEditorViewModel.updatePlaylist(playlistName, callback);
+                }
             }
         });
 
-        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> Toast.makeText(requireContext(), R.string.playlist_editor_dialog_action_delete_toast, Toast.LENGTH_SHORT).show());
+        View neutralButton = alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL);
+        if (playlistEditorViewModel.getPlaylistToEdit() == null) {
+            neutralButton.setVisibility(View.GONE);
+        } else {
+            neutralButton.setVisibility(View.VISIBLE);
+            neutralButton.setOnClickListener(v -> {
+                playlistEditorViewModel.deletePlaylist(new PlaylistRepository.PlaylistActionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_success, Toast.LENGTH_SHORT).show();
+                                dialogDismiss();
+                            });
+                        }
+                    }
 
-        alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnLongClickListener(v -> {
-            playlistEditorViewModel.deletePlaylist();
-            dialogDismiss();
-            return false;
-        });
+                    @Override
+                    public void onFailure() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_delete_failure, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+                });
+            });
+        }
 
         bind.playlistShareButton.setOnClickListener(view -> {
             playlistEditorViewModel.sharePlaylist().observe(requireActivity(), sharedPlaylist -> {
@@ -187,7 +228,10 @@ public class PlaylistEditorDialog extends DialogFragment {
     }
 
     private void dialogDismiss() {
-        Objects.requireNonNull(getDialog()).dismiss();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.dismiss();
+        }
         if (playlistCallback != null) {
             playlistCallback.onDismiss();
         }

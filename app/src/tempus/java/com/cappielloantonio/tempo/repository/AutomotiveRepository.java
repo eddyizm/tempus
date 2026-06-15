@@ -21,6 +21,7 @@ import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
 import com.cappielloantonio.tempo.model.Chronology;
+import com.cappielloantonio.tempo.model.InternetRadioStationCache;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
@@ -778,19 +779,30 @@ public class AutomotiveRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getInternetRadioStations() != null && response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations() != null) {
 
-                            List<InternetRadioStation> radioStations = response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations();
+                            List<InternetRadioStation> radioStations = new ArrayList<>(response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations());
 
-                            List<MediaItem> mediaItems = new ArrayList<>();
+                            new Thread(() -> {
+                                List<InternetRadioStationCache> localCaches = AppDatabase.getInstance().internetRadioStationDao().getLocal();
+                                for (InternetRadioStationCache cache : localCaches) {
+                                    radioStations.add(cache.toInternetRadioStation());
+                                }
 
-                            for (InternetRadioStation radioStation : radioStations) {
-                                mediaItems.add(MappingUtil.mapInternetRadioStation(radioStation));
-                            }
+                                radioStations.sort(java.util.Comparator.comparing(
+                                        station -> station.getName() == null ? "" : station.getName(),
+                                        String.CASE_INSENSITIVE_ORDER));
 
-                            setInternetRadioStationsMetadata(radioStations);
+                                List<MediaItem> mediaItems = new ArrayList<>();
 
-                            LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+                                for (InternetRadioStation radioStation : radioStations) {
+                                    mediaItems.add(MappingUtil.mapInternetRadioStation(radioStation));
+                                }
 
-                            listenableFuture.set(libraryResult);
+                                setInternetRadioStationsMetadata(radioStations);
+
+                                LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
+
+                                listenableFuture.set(libraryResult);
+                            }).start();
                         } else {
                             listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }

@@ -1,5 +1,7 @@
 package com.cappielloantonio.tempo.repository;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.PlaylistDao;
 import com.cappielloantonio.tempo.database.dao.PinnedPlaylistDao;
@@ -19,10 +22,13 @@ import com.cappielloantonio.tempo.model.PlaylistSong;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
+import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,6 +45,20 @@ public class PlaylistRepository {
     public void notifyPlaylistChanged() {
         playlistUpdateTrigger.postValue(true);
         refreshAllPlaylists();
+    }
+
+    private void handleMissingPlaylist(String id, Runnable onMissing) {
+        new Thread(() -> {
+            // Must delete dependent records first to avoid foreign key constraint violations
+            playlistSongDao.deleteForPlaylist(id);
+            pinnedPlaylistDao.unpin(id);
+            playlistDao.deleteById(id);
+            
+            if (onMissing != null) {
+                new Handler(Looper.getMainLooper()).post(onMissing);
+            }
+            refreshAllPlaylists();
+        }).start();
     }
 
     @androidx.media3.common.util.UnstableApi
@@ -77,7 +97,23 @@ public class PlaylistRepository {
     @OptIn(markerClass = UnstableApi.class)
     private void cacheAllPlaylists(List<Playlist> playlists) {
         new Thread(() -> {
-            // TODO add server aware join or column.
+            // Remove playlists from DB that are not in the new list
+            List<Playlist> cachedPlaylists = playlistDao.getAllSync();
+            if (cachedPlaylists != null) {
+                Set<String> remoteIds = new HashSet<>();
+                for (Playlist remote : playlists) {
+                    remoteIds.add(remote.getId());
+                }
+
+                for (Playlist cached : cachedPlaylists) {
+                    if (!remoteIds.contains(cached.getId())) {
+                        playlistSongDao.deleteForPlaylist(cached.getId());
+                        pinnedPlaylistDao.unpin(cached.getId());
+                        playlistDao.delete(cached);
+                        android.util.Log.d("PlaylistRepository", "Removed orphaned playlist " + cached.getId() + " from local DB.");
+                    }
+                }
+            }
             playlistDao.insertAll(playlists);
             android.util.Log.d("PlaylistRepository", "Cached " + playlists.size() + " playlists to local DB.");
         }).start();
@@ -133,10 +169,24 @@ public class PlaylistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylist() != null) {
-                            List<Child> songs = response.body().getSubsonicResponse().getPlaylist().getEntries();
-                            listLivePlaylistSongs.setValue(songs);
-                            cachePlaylistSongs(id, songs);
+                        if (response.isSuccessful() && response.body() != null) {
+                            SubsonicResponse sr = response.body().getSubsonicResponse();
+                            if (sr.getPlaylist() != null) {
+                                List<Child> songs = sr.getPlaylist().getEntries();
+                                if (songs == null) {
+                                    songs = new ArrayList<>();
+                                }
+                                listLivePlaylistSongs.setValue(songs);
+                                cachePlaylistSongs(id, songs);
+                            } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
+                                // Subsonic Standard Error Code 70: The requested data was not found.
+                                handleMissingPlaylist(id, null);
+                                listLivePlaylistSongs.setValue(null);
+                            } else {
+                                listLivePlaylistSongs.setValue(null);
+                            }
+                        } else {
+                            listLivePlaylistSongs.setValue(null);
                         }
                     }
 
@@ -151,6 +201,11 @@ public class PlaylistRepository {
 
     private void cachePlaylistSongs(String playlistId, List<Child> songs) {
         new Thread(() -> {
+            if (songs == null || songs.isEmpty()) {
+                playlistSongDao.deleteForPlaylist(playlistId);
+                android.util.Log.d("PlaylistRepository", "No songs to cache for playlist " + playlistId);
+                return;
+            }
             List<PlaylistSong> playlistSongs = new ArrayList<>();
             for (Child child : songs) {
                 playlistSongs.add(new PlaylistSong(playlistId, child));
@@ -192,10 +247,17 @@ public class PlaylistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()
-                                && response.body() != null
-                                && response.body().getSubsonicResponse().getPlaylist() != null) {
-                            playlistLiveData.setValue(response.body().getSubsonicResponse().getPlaylist());
+                        if (response.isSuccessful() && response.body() != null) {
+                            SubsonicResponse sr = response.body().getSubsonicResponse();
+                            if (sr.getPlaylist() != null) {
+                                playlistLiveData.setValue(sr.getPlaylist());
+                            } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
+                                // Subsonic Standard Error Code 70: The requested data was not found.
+                                handleMissingPlaylist(id, null);
+                                playlistLiveData.setValue(null);
+                            } else {
+                                playlistLiveData.setValue(null);
+                            }
                         } else {
                             playlistLiveData.setValue(null);
                         }
@@ -266,45 +328,47 @@ public class PlaylistRepository {
         addSongToPlaylist(playlistId, songsId, playlistVisibilityIsPublic, null);
     }
 
-    public void createPlaylist(String playlistId, String name, ArrayList<String> songsId) {
+    public void createPlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .createPlaylist(playlistId, name, songsId)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()) notifyPlaylistChanged();
+                        if (response.isSuccessful()) {
+                            notifyPlaylistChanged();
+                            if (callback != null) callback.onSuccess();
+                        } else {
+                            if (callback != null) callback.onFailure();
+                        }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        if (callback != null) callback.onFailure();
                     }
                 });
     }
 
-    public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId) {
+    public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
-                .updatePlaylist(playlistId, name, true, null, null)
+                .updatePlaylist(playlistId, name, true, songsId, null)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful()) {
-                            // After renaming, we need to handle the song list update.
-                            // Subsonic doesn't have a "replace all songs" in updatePlaylist.
-                            // So we might still need to recreate if the songs changed significantly,
-                            // but if we just renamed, we should update the local pinned database.
                             updateLocalPlaylistName(playlistId, name);
                             notifyPlaylistChanged();
+                            if (callback != null) callback.onSuccess();
+                        } else {
+                            if (callback != null) callback.onFailure();
                         }
-
-                        // If songsId is provided, we might want to re-sync them.
-                        // For now, let's at least fix the name duplication issue.
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        if (callback != null) callback.onFailure();
                     }
                 });
     }
@@ -330,19 +394,34 @@ public class PlaylistRepository {
         }).start();
     }
 
-    public void deletePlaylist(String playlistId) {
+    public interface PlaylistActionCallback {
+        void onSuccess();
+        void onFailure();
+    }
+
+    public void deletePlaylist(String playlistId, PlaylistActionCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .deletePlaylist(playlistId)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()) notifyPlaylistChanged();
+                        if (response.isSuccessful()) {
+                            new Thread(() -> {
+                                playlistSongDao.deleteForPlaylist(playlistId);
+                                playlistDao.deleteById(playlistId);
+                                android.util.Log.d("PlaylistRepository", "Deleted playlist " + playlistId + " and its songs from local DB.");
+                            }).start();
+                            notifyPlaylistChanged();
+                            if (callback != null) callback.onSuccess();
+                        } else {
+                            if (callback != null) callback.onFailure();
+                        }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        if (callback != null) callback.onFailure();
                     }
                 });
     }
