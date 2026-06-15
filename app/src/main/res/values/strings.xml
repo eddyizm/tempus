@@ -293,6 +293,10 @@
     <string name="playlist_editor_dialog_neutral_button">Delete</string>
     <string name="playlist_editor_dialog_positive_button">Save</string>
     <string name="playlist_editor_dialog_title">Edit playlist</string>
+    <string name="playlist_editor_dialog_action_delete_success">Playlist deleted</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Failed to delete playlist</string>
+    <string name="playlist_editor_dialog_action_save_success">Playlist saved</string>
+    <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
     <string name="playlist_page_play_button">Play</string>
     <string name="playlist_page_shuffle_button">Shuffle</string>
     <string name="playlist_song_count">Playlist  •  %1$d songs</string>
@@ -728,4 +732,7 @@
 
         The data is not sent anywhere without your consent.
     </string>
+    <string name="playlist_error_not_found_title">Playlist not found</string>
+    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
+    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
 </resources>
