@@ -101,6 +101,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private ShareHorizontalAdapter shareHorizontalAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private Observer<List<Child>> bestOfObserver = null;
 
     @Nullable
     @Override
@@ -1313,18 +1314,19 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                 homeViewModel.getArtistInstantMix(getViewLifecycleOwner(), bundle.getParcelable(Constants.ARTIST_OBJECT)).observe(getViewLifecycleOwner(), songs -> {
                     MusicUtil.ratingFilter(songs);
 
-                    if (!songs.isEmpty()) {
+                    if (songs != null && !songs.isEmpty()) {
                         MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                         activity.setBottomSheetInPeek(true);
                     }
                 });
             }
         } else if (bundle.containsKey(Constants.MEDIA_BEST_OF) && bundle.getBoolean(Constants.MEDIA_BEST_OF)) {
+            ArtistID3 artist = bundle.getParcelable(Constants.ARTIST_OBJECT);
+            if (artist == null) return;
             if (mediaBrowserListenableFuture != null) {
-                homeViewModel.getArtistBestOf(getViewLifecycleOwner(), bundle.getParcelable(Constants.ARTIST_OBJECT)).observe(getViewLifecycleOwner(), songs -> {
+                homeViewModel.getArtistBestOf(artist).observe(getViewLifecycleOwner(), songs -> {
                     MusicUtil.ratingFilter(songs);
-
-                    if (!songs.isEmpty()) {
+                    if (songs != null && !songs.isEmpty()) {
                         MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                         activity.setBottomSheetInPeek(true);
                     }

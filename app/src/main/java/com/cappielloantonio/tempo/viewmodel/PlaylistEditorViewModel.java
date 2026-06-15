@@ -37,16 +37,16 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
         sharingRepository = new SharingRepository();
     }
 
-    public void createPlaylist(String name) {
-        playlistRepository.createPlaylist(null, name, new ArrayList(Lists.transform(toAdd, Child::getId)));
+    public void createPlaylist(String name, PlaylistRepository.PlaylistActionCallback callback) {
+        playlistRepository.createPlaylist(null, name, new ArrayList(Lists.transform(toAdd, Child::getId)), callback);
     }
 
-    public void updatePlaylist(String name) {
-        playlistRepository.updatePlaylist(toEdit.getId(), name, getPlaylistSongIds());
+    public void updatePlaylist(String name, PlaylistRepository.PlaylistActionCallback callback) {
+        playlistRepository.updatePlaylist(toEdit.getId(), name, getPlaylistSongIds(), callback);
     }
 
-    public void deletePlaylist() {
-        if (toEdit != null) playlistRepository.deletePlaylist(toEdit.getId());
+    public void deletePlaylist(PlaylistRepository.PlaylistActionCallback callback) {
+        if (toEdit != null) playlistRepository.deletePlaylist(toEdit.getId(), callback);
     }
 
     public void setSongsToAdd(ArrayList<Child> songs) {

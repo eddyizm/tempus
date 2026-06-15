@@ -42,6 +42,7 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_WIFI = "audio_transcode_format_wifi"
     private const val AUDIO_TRANSCODE_FORMAT_MOBILE = "audio_transcode_format_mobile"
     private const val WIFI_ONLY = "wifi_only"
+    private const val DOWNLOAD_WIFI_ONLY = "download_wifi_only"
     private const val DATA_SAVING_MODE = "data_saving_mode"
     private const val SERVER_UNREACHABLE = "server_unreachable"
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
@@ -417,6 +418,16 @@ object Preferences {
     @JvmStatic
     fun isWifiOnly(): Boolean {
         return App.getInstance().preferences.getBoolean(WIFI_ONLY, false)
+    }
+
+    @JvmStatic
+    fun isDownloadWifiOnly(): Boolean {
+        return App.getInstance().preferences.getBoolean(DOWNLOAD_WIFI_ONLY, false)
+    }
+
+    @JvmStatic
+    fun setDownloadWifiOnly(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(DOWNLOAD_WIFI_ONLY, enabled).apply()
     }
 
     @JvmStatic
