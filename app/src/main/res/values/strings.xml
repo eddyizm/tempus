@@ -732,5 +732,7 @@
 
         The data is not sent anywhere without your consent.
     </string>
-    <string name="playlist_error_not_found">Playlist not found on server. Removing from local cache.</string>
+    <string name="playlist_error_not_found_title">Playlist not found</string>
+    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
+    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
 </resources>

@@ -123,13 +123,15 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         initSongsView();
         
         playlistPageViewModel.getPlaylistMissingEvent().observe(getViewLifecycleOwner(), isMissing -> {
-            if (isMissing) {
-                new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.playlist_error_not_found)
-                    .setMessage(R.string.playlist_error_not_found)
+            if (isMissing && getContext() != null) {
+                new androidx.appcompat.app.AlertDialog.Builder(getContext())
+                    .setTitle(R.string.playlist_error_not_found_title)
+                    .setMessage(R.string.playlist_error_not_found_message)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                         playlistPageViewModel.clearPlaylistMissingEvent();
-                        Toast.makeText(requireContext(), R.string.playlist_error_not_found, Toast.LENGTH_SHORT).show();
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(), R.string.playlist_error_not_found_toast, Toast.LENGTH_SHORT).show();
+                        }
                         if (activity != null && activity.navController != null) activity.navController.navigateUp();
                     })
                     .setCancelable(false)
