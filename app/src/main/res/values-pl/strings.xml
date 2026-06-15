@@ -727,4 +727,5 @@
 
         Te dane nie są nigdzie wysyłane bez twojej zgody.
     </string>
+    <string name="playlist_error_not_found">Playlista nie została odnaleziona na serwerze. Usuwam z lokalnej pamięci podręcznej.</string>
 </resources>
