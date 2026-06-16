@@ -19,9 +19,12 @@
         android:orientation="horizontal">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/playlist_info_scroll_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="75dp">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/app_bar_layout"
@@ -216,7 +219,7 @@
             android:layout_weight="1.2"
             android:clipToPadding="false"
             android:paddingTop="8dp"
-            android:paddingBottom="@dimen/global_padding_bottom" />
+            android:paddingBottom="75dp" />
 
     </LinearLayout>
 </LinearLayout>
