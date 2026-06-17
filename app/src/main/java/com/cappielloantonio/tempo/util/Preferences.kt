@@ -42,6 +42,7 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_WIFI = "audio_transcode_format_wifi"
     private const val AUDIO_TRANSCODE_FORMAT_MOBILE = "audio_transcode_format_mobile"
     private const val WIFI_ONLY = "wifi_only"
+    private const val DOWNLOAD_WIFI_ONLY = "download_wifi_only"
     private const val DATA_SAVING_MODE = "data_saving_mode"
     private const val SERVER_UNREACHABLE = "server_unreachable"
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
@@ -80,6 +81,7 @@ object Preferences {
     private const val NEXT_UPDATE_CHECK = "next_update_check"
     private const val GITHUB_UPDATE_CHECK = "github_update_check"
     private const val CONTINUOUS_PLAY = "continuous_play"
+    private const val NUMBER_TRACKS_KEEP_IN_QUEUE = "number_tracks_keep_in_queue"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
     private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
@@ -420,6 +422,16 @@ object Preferences {
     }
 
     @JvmStatic
+    fun isDownloadWifiOnly(): Boolean {
+        return App.getInstance().preferences.getBoolean(DOWNLOAD_WIFI_ONLY, false)
+    }
+
+    @JvmStatic
+    fun setDownloadWifiOnly(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(DOWNLOAD_WIFI_ONLY, enabled).apply()
+    }
+
+    @JvmStatic
     fun isDataSavingMode(): Boolean {
         return App.getInstance().preferences.getBoolean(DATA_SAVING_MODE, false)
     }
@@ -717,6 +729,10 @@ object Preferences {
         return App.getInstance().preferences.getBoolean(CONTINUOUS_PLAY, true)
     }
 
+    @JvmStatic
+    fun getNumberOfTracksKeepInQueue(): Int {
+        return App.getInstance().preferences.getInt(NUMBER_TRACKS_KEEP_IN_QUEUE, 30) - 1
+    }
     @JvmStatic
     fun setLastInstantMix() {
         App.getInstance().preferences.edit().putLong(LAST_INSTANT_MIX, System.currentTimeMillis()).apply()

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +46,8 @@ import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaylistPageViewModel;
+import com.cappielloantonio.tempo.ui.dialog.PlaylistEditorDialog;
+import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -120,6 +123,23 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         initMusicButton();
         initBackCover();
         initSongsView();
+        
+        playlistPageViewModel.getPlaylistMissingEvent().observe(getViewLifecycleOwner(), isMissing -> {
+            if (isMissing && getContext() != null) {
+                new androidx.appcompat.app.AlertDialog.Builder(getContext())
+                    .setTitle(R.string.playlist_error_not_found_title)
+                    .setMessage(R.string.playlist_error_not_found_message)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        playlistPageViewModel.clearPlaylistMissingEvent();
+                        if (getContext() != null) {
+                            Toast.makeText(getContext(), R.string.playlist_error_not_found_toast, Toast.LENGTH_SHORT).show();
+                        }
+                        if (activity != null && activity.navController != null) activity.navController.navigateUp();
+                    })
+                    .setCancelable(false)
+                    .show();
+            }
+        });
 
         return view;
     }
@@ -181,6 +201,24 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         } else if (item.getItemId() == R.id.action_unpin_playlist) {
             playlistPageViewModel.setPinned(false);
             return true;
+        } else if (item.getItemId() == R.id.action_add_to_queue) {
+            List<Child> songs = playlistPageViewModel.getPlaylistSongLiveList().getValue();
+            if (isVisible() && getActivity() != null && songs != null && !songs.isEmpty()) {
+                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+            }
+            return true;
+        } else if (item.getItemId() == R.id.action_edit_playlist) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlistPageViewModel.getPlaylist());
+            PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
+                @Override
+                public void onDismiss() {
+                    // Refresh?
+                }
+            });
+            dialog.setArguments(bundle);
+            dialog.show(activity.getSupportFragmentManager(), null);
+            return true;
         }
 
         return false;
@@ -233,8 +271,9 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                                 bind.playlistPagePlayButton.setEnabled(true);
                                 bind.playlistPageShuffleButton.setEnabled(true);
 
-                                assert bind.songRecyclerViewPlaceholder != null;
-                                bind.songRecyclerViewPlaceholder.setVisibility(View.GONE);
+                                if (bind.songRecyclerViewPlaceholder != null) {
+                                    bind.songRecyclerViewPlaceholder.setVisibility(View.GONE);
+                                }
 
                                 bind.playlistPagePlayButton.setOnClickListener(v -> {
                                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
@@ -290,6 +329,17 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     private void initSongsView() {
         bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.songRecyclerView.setHasFixedSize(true);
+
+        // Synchronize scrolling between the list and the header in landscape mode
+        if (bind.playlistInfoScrollView != null) {
+            bind.songRecyclerView.addOnScrollListener(new androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    bind.playlistInfoScrollView.scrollBy(0, dy);
+                }
+            });
+        }
 
         songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.songRecyclerView.setAdapter(songHorizontalAdapter);

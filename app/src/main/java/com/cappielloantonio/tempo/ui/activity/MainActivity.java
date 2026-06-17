@@ -48,7 +48,6 @@ import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.color.DynamicColors;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -86,7 +85,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen.installSplashScreen(this);
-        DynamicColors.applyToActivityIfAvailable(this);
 
         super.onCreate(savedInstanceState);
 
@@ -355,6 +353,14 @@ public class MainActivity extends BaseActivity {
                         }
                     }
                 });
+                // If a session is already active on (re)connect — e.g. radio still playing after
+                // the app was swiped away — peek the bar. Radio isn't persisted to the queue DB,
+                // so the queue-count check (isQueueLoaded) misses it on reopen. onIsPlayingChanged
+                // also won't fire here since playback didn't change state.
+                if (getMediaBrowserListenableFuture().get().getCurrentMediaItem() != null
+                        && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    setBottomSheetInPeek(true);
+                }
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }

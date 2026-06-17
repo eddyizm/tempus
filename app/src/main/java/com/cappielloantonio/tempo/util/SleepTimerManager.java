@@ -4,6 +4,9 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.media3.common.C;
+import androidx.media3.common.Player;
+
 import com.cappielloantonio.tempo.App;
 
 /**
@@ -22,10 +25,15 @@ import com.cappielloantonio.tempo.App;
  * in-process tick loop from the correct wall-clock end time.
  *
  * <h3>End-of-track mode</h3>
- * {@link #startEndOfTrack()} arms a one-shot stop that fires the next time
- * the caller invokes {@link #notifyTrackEnded()}.  This is deliberately
- * driven from the outside (the UI layer owns the player listener) so that
- * this class stays free of Android-framework player dependencies.
+ * {@link #startEndOfTrack()} arms a one-shot stop.  Once armed,
+ * {@link #armEndOfTrackFadePoller(Player)} polls playback position and
+ * triggers a fade-out when the track is about to end.
+ *
+ * <h3>Fade-out</h3>
+ * {@link #startFadeOutThenPause(Player)} and {@link #armEndOfTrackFadePoller(Player)}
+ * live here (not in BaseMediaService) so that all sleep-timer logic is
+ * consolidated in one place and BaseMediaService stays free of auxiliary
+ * sleep-timer state.
  */
 public class SleepTimerManager {
 
@@ -38,6 +46,23 @@ public class SleepTimerManager {
         void onTick(boolean expired);
     }
 
+    /**
+     * Listener registered by {@link com.cappielloantonio.tempo.service.BaseMediaService}
+     * to drive the fade-out and pause actions from the service process.
+     * Receives the same expired signal as {@link TickListener} but is kept
+     * separate so UI concerns (tick label refresh) and playback actions
+     * (fade, pause) are decoupled.
+     */
+    public interface ServiceActionListener {
+        /** Called every second for countdown updates, and with expired=true when the timer fires. */
+        void onTick(boolean expired);
+        /**
+         * Called immediately when end-of-track mode is armed, so the service can
+         * call {@link SleepTimerManager#armEndOfTrackFadePoller(Player)} against the live player.
+         */
+        void onEndOfTrackArmed();
+    }
+
     // SharedPreferences keys
     private static final String PREF_END_TIME_MS = "sleep_timer_end_time_ms";
     private static final String PREF_END_OF_TRACK = "sleep_timer_end_of_track";
@@ -47,11 +72,22 @@ public class SleepTimerManager {
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Runnable scheduledTick;
 
+    /** Duration of the volume fade-out in milliseconds. */
+    private static final long FADE_DURATION_MS = 10_000L;
+    /** Number of discrete volume steps during the fade. */
+    private static final int FADE_STEPS = 40;
+
+    /** Set to true to abort an in-progress fade (e.g. track transition fired early). */
+    private volatile boolean abortCurrentFade = false;
+
+    private Runnable endOfTrackPoller;
+
     private long endTimeMs = 0;
     private boolean active = false;
     private boolean endOfTrack = false;
 
     private TickListener tickListener;
+    private ServiceActionListener serviceActionListener;
 
     private SleepTimerManager() {
         restoreFromPreferences();
@@ -90,6 +126,7 @@ public class SleepTimerManager {
         persistState();
         // Notify immediately so the UI can reflect the active state.
         if (tickListener != null) tickListener.onTick(false);
+        if (serviceActionListener != null) serviceActionListener.onEndOfTrackArmed();
     }
 
     /**
@@ -123,6 +160,14 @@ public class SleepTimerManager {
     }
 
     /**
+     * Attach or detach the service-side action listener.
+     * Pass {@code null} when the service is destroyed.
+     */
+    public void setServiceActionListener(ServiceActionListener listener) {
+        this.serviceActionListener = listener;
+    }
+
+    /**
      * Attach a listener that receives ticks and the expiry event.
      * Pass {@code null} to disconnect (do this in onStop to avoid leaks).
      * Immediately fires {@link TickListener#onTick(boolean)} with the current
@@ -131,6 +176,85 @@ public class SleepTimerManager {
     public void setTickListener(TickListener listener) {
         this.tickListener = listener;
         if (listener != null) listener.onTick(false);
+    }
+
+    // -------------------------------------------------------------------------
+    // Fade-out and end-of-track polling
+    // -------------------------------------------------------------------------
+
+    /**
+     * Gradually lowers the player volume to zero over {@link #FADE_DURATION_MS}, then
+     * pauses and restores full volume. Respects {@link #abortCurrentFade}.
+     */
+    public void startFadeOutThenPause(Player player) {
+        long stepMs = FADE_DURATION_MS / FADE_STEPS;
+        float decrement = 1f / FADE_STEPS;
+        float[] volume = {1f};
+
+        abortCurrentFade = false;
+
+        Runnable fadeStep = new Runnable() {
+            @Override
+            public void run() {
+                if (abortCurrentFade) {
+                    player.setVolume(1f);
+                    return;
+                }
+                volume[0] = Math.max(0f, volume[0] - decrement);
+                player.setVolume(volume[0]);
+                if (volume[0] > 0f) {
+                    handler.postDelayed(this, stepMs);
+                } else {
+                    // Fade complete — cancel the timer and pause.
+                    cancelTimer();
+                    player.pause();
+                    handler.postDelayed(() -> player.setVolume(1f), 300);
+                }
+            }
+        };
+        handler.post(fadeStep);
+    }
+
+    /**
+     * Polls playback position every 500 ms while end-of-track is armed.
+     * Kicks off {@link #startFadeOutThenPause(Player)} when {@link #FADE_DURATION_MS}
+     * or fewer milliseconds remain on the current track.
+     */
+    public void armEndOfTrackFadePoller(Player player) {
+        stopEndOfTrackPoller();
+        abortCurrentFade = false;
+
+        endOfTrackPoller = new Runnable() {
+            boolean fadeStarted = false;
+
+            @Override
+            public void run() {
+                if (!isEndOfTrack()) return;
+                if (fadeStarted) return;
+
+                long duration = player.getDuration();
+                long position = player.getCurrentPosition();
+
+                if (duration > 0 && duration != C.TIME_UNSET) {
+                    long remaining = duration - position;
+                    if (remaining >= 1 && remaining <= FADE_DURATION_MS) {
+                        fadeStarted = true;
+                        startFadeOutThenPause(player);
+                        return;
+                    }
+                }
+                handler.postDelayed(this, 500);
+            }
+        };
+        handler.post(endOfTrackPoller);
+    }
+
+    /** Cancels any running end-of-track position poller. */
+    public void stopEndOfTrackPoller() {
+        if (endOfTrackPoller != null) {
+            handler.removeCallbacks(endOfTrackPoller);
+            endOfTrackPoller = null;
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -146,10 +270,12 @@ public class SleepTimerManager {
         active = false;
         endOfTrack = false;
         endTimeMs = 0;
+        abortCurrentFade = true;
         if (scheduledTick != null) {
             handler.removeCallbacks(scheduledTick);
             scheduledTick = null;
         }
+        stopEndOfTrackPoller();
         clearPersistedState();
         if (notifyListener && tickListener != null) {
             // expired=false: player keeps playing after a manual cancel.
@@ -167,8 +293,10 @@ public class SleepTimerManager {
                 scheduledTick = null;
                 clearPersistedState();
                 if (tickListener != null) tickListener.onTick(true);
+                if (serviceActionListener != null) serviceActionListener.onTick(true);
             } else {
                 if (tickListener != null) tickListener.onTick(false);
+                if (serviceActionListener != null) serviceActionListener.onTick(false);
                 scheduleNextTick();
             }
         };

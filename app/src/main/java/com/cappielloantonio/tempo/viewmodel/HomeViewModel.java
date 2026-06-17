@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.cappielloantonio.tempo.interfaces.StarCallback;
 import com.cappielloantonio.tempo.model.Chronology;
@@ -67,7 +68,6 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Chronology>> thisGridTopSong = new MutableLiveData<>(null);
     private final MutableLiveData<List<Child>> mediaInstantMix = new MutableLiveData<>(null);
     private final MutableLiveData<List<Child>> artistInstantMix = new MutableLiveData<>(null);
-    private final MutableLiveData<List<Child>> artistBestOf = new MutableLiveData<>(null);
     private final MutableLiveData<List<Playlist>> pinnedPlaylists = new MutableLiveData<>(null);
     private final MutableLiveData<List<Share>> shares = new MutableLiveData<>(null);
 
@@ -237,12 +237,23 @@ public class HomeViewModel extends AndroidViewModel {
         return artistInstantMix;
     }
 
-    public LiveData<List<Child>> getArtistBestOf(LifecycleOwner owner, ArtistID3 artist) {
-        artistBestOf.setValue(Collections.emptyList());
+    public LiveData<List<Child>> getArtistBestOf(ArtistID3 artist) {
+        MutableLiveData<List<Child>> result = new MutableLiveData<>();
+        if (artist == null) {
+            result.setValue(new ArrayList<>());
+            return result;
+        }
 
-        artistRepository.getTopSongs(artist.getName(), 10).observe(owner, artistBestOf::postValue);
+        artistRepository.getTopSongs(artist.getName(), 10).observeForever(new Observer<List<Child>>() {
+            @Override
+            public void onChanged(List<Child> songs) {
+                List<Child> safeSongs = songs != null ? songs : new ArrayList<>();
+                result.setValue(safeSongs);
+                artistRepository.getTopSongs(artist.getName(), 10).removeObserver(this);
+            }
+        });
 
-        return artistBestOf;
+        return result;
     }
 
     public LiveData<List<Playlist>> getPinnedPlaylists(LifecycleOwner owner) {

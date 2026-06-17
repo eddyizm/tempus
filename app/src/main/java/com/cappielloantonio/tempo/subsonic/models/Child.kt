@@ -95,4 +95,84 @@ open class Child @JvmOverloads constructor(
     @Embedded(prefix = "rg_")
     @SerializedName("replayGain")
     var replayGain: ReplayGainInfo? = null
-) : Parcelable
+) : Parcelable {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Child) return false
+
+        if (id != other.id) return false
+        if (parentId != other.parentId) return false
+        if (isDir != other.isDir) return false
+        if (title != other.title) return false
+        if (album != other.album) return false
+        if (artist != other.artist) return false
+        if (track != other.track) return false
+        if (year != other.year) return false
+        if (genre != other.genre) return false
+        if (coverArtId != other.coverArtId) return false
+        if (size != other.size) return false
+        if (contentType != other.contentType) return false
+        if (suffix != other.suffix) return false
+        if (transcodedContentType != other.transcodedContentType) return false
+        if (transcodedSuffix != other.transcodedSuffix) return false
+        if (duration != other.duration) return false
+        if (bitrate != other.bitrate) return false
+        if (samplingRate != other.samplingRate) return false
+        if (bitDepth != other.bitDepth) return false
+        if (path != other.path) return false
+        if (isVideo != other.isVideo) return false
+        if (userRating != other.userRating) return false
+        if (averageRating != other.averageRating) return false
+        if (playCount != other.playCount) return false
+        if (discNumber != other.discNumber) return false
+        if (created != other.created) return false
+        if (starred != other.starred) return false
+        if (albumId != other.albumId) return false
+        if (artistId != other.artistId) return false
+        if (type != other.type) return false
+        if (bookmarkPosition != other.bookmarkPosition) return false
+        if (originalWidth != other.originalWidth) return false
+        if (originalHeight != other.originalHeight) return false
+        if (replayGain != other.replayGain) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + (parentId?.hashCode() ?: 0)
+        result = 31 * result + isDir.hashCode()
+        result = 31 * result + (title?.hashCode() ?: 0)
+        result = 31 * result + (album?.hashCode() ?: 0)
+        result = 31 * result + (artist?.hashCode() ?: 0)
+        result = 31 * result + (track ?: 0)
+        result = 31 * result + (year ?: 0)
+        result = 31 * result + (genre?.hashCode() ?: 0)
+        result = 31 * result + (coverArtId?.hashCode() ?: 0)
+        result = 31 * result + (size?.hashCode() ?: 0)
+        result = 31 * result + (contentType?.hashCode() ?: 0)
+        result = 31 * result + (suffix?.hashCode() ?: 0)
+        result = 31 * result + (transcodedContentType?.hashCode() ?: 0)
+        result = 31 * result + (transcodedSuffix?.hashCode() ?: 0)
+        result = 31 * result + (duration ?: 0)
+        result = 31 * result + (bitrate ?: 0)
+        result = 31 * result + (samplingRate ?: 0)
+        result = 31 * result + (bitDepth ?: 0)
+        result = 31 * result + (path?.hashCode() ?: 0)
+        result = 31 * result + isVideo.hashCode()
+        result = 31 * result + (userRating ?: 0)
+        result = 31 * result + (averageRating?.hashCode() ?: 0)
+        result = 31 * result + (playCount?.hashCode() ?: 0)
+        result = 31 * result + (discNumber ?: 0)
+        result = 31 * result + (created?.hashCode() ?: 0)
+        result = 31 * result + (starred?.hashCode() ?: 0)
+        result = 31 * result + (albumId?.hashCode() ?: 0)
+        result = 31 * result + (artistId?.hashCode() ?: 0)
+        result = 31 * result + (type?.hashCode() ?: 0)
+        result = 31 * result + (bookmarkPosition?.hashCode() ?: 0)
+        result = 31 * result + (originalWidth ?: 0)
+        result = 31 * result + (originalHeight ?: 0)
+        result = 31 * result + (replayGain?.hashCode() ?: 0)
+        return result
+    }
+}

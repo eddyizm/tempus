@@ -9,7 +9,16 @@
         <item>ciemny</item>
         <item>domyślny</item>
     </string-array>
-
+	
+	<string-array name="dark_theme_style_titles">
+        <item>Standardowy</item>
+        <item>AMOLED (Czysta czerń)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+	
     <string-array name="pref_cache_size_titles">
         <item>Duży</item>
         <item>Średni</item>
@@ -226,14 +235,35 @@
         <item>2</item>
         <item>3</item>
     </string-array>
-    
+
+    <string-array name="song_preload_buffer_titles">
+        <item>5 sekund</item>
+        <item>30 sekund</item>
+        <item>1 minuta</item>
+        <item>3 minuty</item>
+        <item>5 minut</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+	
    <string-array name="playlist_sort_option_titles">
         <item>Po nazwie</item>
         <item>Losowo</item>
+	    <item>Data utworzenia</item>
+        <item>Liczba piosenek</item>
+        <item>Ulubione</item>
     </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>
         <item>ORDER_BY_RANDOM</item>
+		<item>ORDER_BY_DATE</item>
+        <item>ORDER_BY_SONGS</item>
+        <item>ORDER_BY_PINNED</item>
     </string-array>
     
     <string-array name="skip_min_star_rating_titles">
@@ -279,7 +309,18 @@
         <item>3</item>
         <item>2</item>
     </string-array>
-    
+
+	    <string-array name="selected_equalizer_entries">
+        <item>Domyślny</item>
+        <item>Wbudowany</item>
+        <item>Zewnętrzny</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+	
     <string-array name="aa_tab_titles">
         <item>Nie wyświetlaj</item>
         <item>Strona główna</item>
@@ -317,5 +358,12 @@
         <item>15</item>
 		<item>16</item>
     </string-array>
+
 	
+    <string-array name="custom_commands_titles">
+        <item>Serce</item>
+        <item>Powtarzanie</item>
+        <item>Odtwarzanie losowe</item>
+        <item>Natychmiastowy mix</item>
+    </string-array>
 </resources>
