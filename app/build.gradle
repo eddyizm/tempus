@@ -6,8 +6,8 @@ plugins {
 
 android {
     namespace 'com.cappielloantonio.tempo'
-    compileSdk 35
-    buildToolsVersion = '35.0.0'
+    compileSdk = 35
+    buildToolsVersion = '36.0.0'
 
     defaultConfig {
         minSdkVersion 24
@@ -139,6 +139,7 @@ dependencies {
             type = 'aar'
         }
     }
+    implementation libs.kotlin.metadata
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.12.0'
