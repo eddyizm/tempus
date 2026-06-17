@@ -46,7 +46,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
         env:
-          BUILD_TOOLS_VERSION: "35.0.0"
+          BUILD_TOOLS_VERSION: "36.0.0"
 
       - name: Sign Degoogled Debug APK
         id: sign_degoogled
@@ -58,7 +58,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
         env:
-          BUILD_TOOLS_VERSION: "35.0.0"
+          BUILD_TOOLS_VERSION: "36.0.0"
 
       - name: Create Prerelease
         uses: softprops/action-gh-release@v1

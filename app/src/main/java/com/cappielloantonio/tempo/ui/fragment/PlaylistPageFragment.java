@@ -330,6 +330,17 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.songRecyclerView.setHasFixedSize(true);
 
+        // Synchronize scrolling between the list and the header in landscape mode
+        if (bind.playlistInfoScrollView != null) {
+            bind.songRecyclerView.addOnScrollListener(new androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    bind.playlistInfoScrollView.scrollBy(0, dy);
+                }
+            });
+        }
+
         songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.songRecyclerView.setAdapter(songHorizontalAdapter);
         setMediaBrowserListenableFuture();
