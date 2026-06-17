@@ -63,10 +63,12 @@
     <string name="artist_page_switch_layout_button">Сменить вид</string>
     <string name="artist_page_title_album_more_like_this_button">Больше подобного</string>
     <string name="artist_page_title_album_section">Альбомы</string>
+    <string name="artist_page_title_appears_on_section">Ещё с исполнителем</string>
     <string name="artist_page_title_biography_more_button">Больше</string>
     <string name="artist_page_title_biography_section">Биография</string>
     <string name="artist_page_title_most_streamed_song_section">Самые популярные треки</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Все</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">Топ треков недоступен\n\nНажмите, чтобы скрыть блок</string>
     <string name="battery_optimization_negative_button">Игнорировать</string>
     <string name="battery_optimization_neutral_button">Больше не спрашивать</string>
     <string name="battery_optimization_positive_button">Отключить</string>
@@ -106,6 +108,8 @@
     <string name="download_refresh_no_changes">Отсутствующие загрузки не найдены.</string>
     <plurals name="download_refresh_removed">
         <item quantity="one">Удалена %d отсутствующая загрузка.</item>
+        <item quantity="few">Удалено %d отсутствующих загрузок.</item>
+        <item quantity="many">Удалено %d отсутствующих загрузок.</item>
         <item quantity="other">Удалено %d отсутствующих загрузок.</item>
     </plurals>
     <string name="download_refresh_button_content_description">Обновить список загрузок</string>
@@ -156,6 +160,8 @@
     <string name="home_sync_starred_artists_subtitle">У вас есть любимые артисты, музыка которых не скачана</string>
     <plurals name="home_sync_starred_songs_count">
         <item quantity="one">%d трек требует синхронизации</item>
+        <item quantity="few">%d треков требуют синхронизации</item>
+        <item quantity="many">%d треков требуют синхронизации</item>
         <item quantity="other">%d треков требуют синхронизации</item>
     </plurals>
     <string name="home_title_best_of">Лучшее из</string>
@@ -213,6 +219,7 @@
     <string name="menu_group_by_album">Альбом</string>
     <string name="menu_group_by_artist">Исполнитель</string>
     <string name="menu_group_by_genre">Жанр</string>
+    <string name="menu_group_by_playlist">Плейлист</string>
     <string name="menu_group_by_track">Трек</string>
     <string name="menu_group_by_year">Год</string>
     <string name="menu_home_label">Главная</string>
@@ -226,11 +233,13 @@
     <string name="menu_sort_name">Название</string>
     <string name="menu_sort_random">Случайно</string>
     <string name="menu_sort_album_count">Количество альбомов</string>
+    <string name="menu_sort_date_created">Дата создания</string>
     <string name="menu_sort_recently_added">Недавно добавленные</string>
     <string name="menu_sort_recently_played">Недавно воспроизведенные</string>
     <string name="menu_sort_most_played">Популярные</string>
     <string name="menu_sort_most_recently_starred">Недавно понравившиеся</string>
     <string name="menu_sort_least_recently_starred">Давно понравившиеся</string>
+    <string name="playlist_sort_pinned">Любимые</string>
     <string name="menu_sort_year">Год</string>
     <string name="menu_pin_button">Добавить на главный экран</string>
     <string name="menu_unpin_button">Убрать с главного экрана</string>
@@ -513,7 +522,7 @@
     <string name="song_list_page_recently_added">Недавно добавленные треки</string>
     <string name="song_list_page_recently_played">Недавно воспроизведенные треки</string>
     <string name="song_list_page_starred">Избранные треки</string>
-    <string name="song_list_page_top">%1$s лучших треков</string>
+    <string name="song_list_page_top">Топ лучших треков: %1$s</string>
     <string name="song_list_page_year">Год %1$d</string>
     <string name="song_subtitle_formatter">%1$s • %2$s %3$s</string>
     <string name="starred_sync_dialog_negative_button">Отмена</string>
@@ -573,14 +582,20 @@
     <string name="widget_content_desc_repeat">Изменить режим повтора</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">Альбомов для синхронизации: %d</item>
+        <item quantity="few">Альбомов для синхронизации: %d</item>
+        <item quantity="many">Альбомов для синхронизации: %d</item>
         <item quantity="other">Альбомов для синхронизации: %d</item>
     </plurals>
     <plurals name="home_sync_starred_artists_count">
         <item quantity="one">Исполнителей для синхронизации: %d</item>
+        <item quantity="few">Исполнителей для синхронизации: %d</item>
+        <item quantity="many">Исполнителей для синхронизации: %d</item>
         <item quantity="other">Исполнителей для синхронизации: %d</item>
     </plurals>
     <plurals name="songs_download_started">
         <item quantity="one">Скачивание %d трека</item>
+        <item quantity="few">Скачивание %d треков</item>
+        <item quantity="many">Скачивание %d треков</item>
         <item quantity="other">Скачивание %d треков</item>
     </plurals>
     <string name="equalizer_fragment_title">Эквалайзер</string>
@@ -601,4 +616,11 @@
 
     <string name="search_sort_title">Сортировать недавние поиски по времени</string>
     <string name="search_sort_summary">Если включено, поиски сортируются по времени. Если отключено - по имени.</string>
+    <string name="artist_page_title_ep_section">Мини-альбомы</string>
+    <string name="artist_page_title_single_section">Синглы</string>
+    <string name="artist_page_title_compilation_section">Сборники</string>
+    <string name="artist_page_title_soundtrack_section">Саундтреки</string>
+    <string name="artist_page_title_live_section">Лайв-альбомы</string>
+    <string name="artist_page_title_remix_section">Ремиксы</string>
+    <string name="menu_sort_song_count">Количество песен</string>
 </resources>
