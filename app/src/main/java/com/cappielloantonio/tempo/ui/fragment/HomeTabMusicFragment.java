@@ -37,12 +37,14 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.HomeSector;
+import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.Share;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
@@ -1360,16 +1362,40 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     }
 
     @Override
-    public void onPlaylistLongClick(Bundle bundle) {
-        PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
-            @Override
-            public void onDismiss() {
-                refreshPlaylistView();
-            }
-        });
+    public void onPlaylistLongClick(View view, Bundle bundle) {
+        PopupMenu popup = new PopupMenu(requireContext(), view);
+        popup.getMenuInflater().inflate(R.menu.playlist_popup_menu, popup.getMenu());
+        
+        popup.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.action_go_to_playlist) {
+                onPlaylistClick(bundle);
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    new PlaylistRepository().getPlaylistSongs(playlist.getId()).observe(getViewLifecycleOwner(), songs -> {
+                        if (songs != null && !songs.isEmpty()) {
+                            MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                            Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
+                PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
+                    @Override
+                    public void onDismiss() {
+                        refreshPlaylistView();
+                    }
+                });
 
-        dialog.setArguments(bundle);
-        dialog.show(activity.getSupportFragmentManager(), null);
+                dialog.setArguments(bundle);
+                dialog.show(activity.getSupportFragmentManager(), null);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
     }
 
     @Override
