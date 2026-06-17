@@ -202,11 +202,10 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
             playlistPageViewModel.setPinned(false);
             return true;
         } else if (item.getItemId() == R.id.action_add_to_queue) {
-            playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
-                if (isVisible() && getActivity() != null) {
-                    MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                }
-            });
+            List<Child> songs = playlistPageViewModel.getPlaylistSongLiveList().getValue();
+            if (isVisible() && getActivity() != null && songs != null && !songs.isEmpty()) {
+                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+            }
             return true;
         } else if (item.getItemId() == R.id.action_edit_playlist) {
             Bundle bundle = new Bundle();
