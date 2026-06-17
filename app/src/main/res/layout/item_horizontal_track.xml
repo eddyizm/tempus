@@ -116,6 +116,7 @@
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:background="@drawable/ic_favorite"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/rating_bar_layout"
         app:layout_constraintEnd_toStartOf="@+id/search_result_download_indicator_image_view"
