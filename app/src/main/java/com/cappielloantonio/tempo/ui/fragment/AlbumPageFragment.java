@@ -86,7 +86,13 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         Bundle args = getArguments();
-        AlbumID3 albumArg = args != null ? args.getParcelable(Constants.ALBUM_OBJECT) : null;
+        if (args == null) {
+            Log.e("AlbumPageFragment", "Arguments are null after process restoration.");
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        AlbumID3 albumArg = args.getParcelable(Constants.ALBUM_OBJECT);
         if (albumArg == null) {
             if (activity != null && activity.navController != null) activity.navController.navigateUp();
             return view;
