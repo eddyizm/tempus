@@ -636,6 +636,9 @@
     <string name="equalizer_managed_externally">Equalizer jest zarządzany przez system lub inną aplikację</string>
     <string name="settings_app_equalizer">Wbudowany equalizer</string>
     <string name="settings_app_equalizer_summary">Otwórz wbudowany korektor dźwięku</string>
+    <string name="settings_title_equalizer">Equalizer</string>
+    <string name="settings_equalizer_select">Wybierz equalizer do użycia</string>
+    <string name="settings_equalizer_dialog_title">Equalizery</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>
     <string name="settings_album_detail_summary">Jeżeli włączone, pokaż szczegóły albumu takie jak gatunek, ilość piosenek itp. na stronie albumu</string>
     <string name="settings_artist_sort_by_album_count">Sortuj wykonawców po ilości albumów</string>

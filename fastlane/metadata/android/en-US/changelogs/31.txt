@@ -1,0 +1,9 @@
+fix: Move sleep timer logic from PlayerControllerFragment to BaseMediaService
+feat: Add WiFi-only download constraint
+fix: album art missing for same-album tracks over Bluetooth on Tesla
+feat: local radio station management, directory search, and radio cover art
+fix: handle empty playlist crashes
+fix: prevent crashes on "Best Of"and "Radio Station" home music tab
+fix: deletes local db playlist entry when updating server side
+fix: fixing out of sync playlists
+ui: add trailing dot to track number
