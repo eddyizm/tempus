@@ -232,7 +232,7 @@
             android:key="number_tracks_keep_in_queue"
             android:title="@string/settings_number_tracks_keep_in_queue"
             android:summary="@string/settings_number_tracks_keep_in_queue_summary"
-            android:max="100"
+            android:max="1000"
             app:min="20"
             app:showSeekBarValue="true"
             app:adjustable="true" />
