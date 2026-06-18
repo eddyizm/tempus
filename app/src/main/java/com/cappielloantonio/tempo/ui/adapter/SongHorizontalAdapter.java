@@ -186,7 +186,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
                 )
         ) {
 
-            if (differ.getCurrentList().get(position).getDiscNumber() != null && !Objects.requireNonNull(differ.getCurrentList().get(position).getDiscNumber()).toString().isBlank()) {
+            if (differ.getCurrentList().get(position).getDiscNumber() != null) {
                 holder.item.discTitleTextView.setText(holder.itemView.getContext().getString(R.string.disc_titleless, differ.getCurrentList().get(position).getDiscNumber().toString()));
                 holder.item.differentDiskDividerSector.setVisibility(View.VISIBLE);
                 holder.item.discTitleTextView.setVisibility(View.VISIBLE);
