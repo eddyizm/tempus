@@ -1,17 +1,20 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-parcelize'
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
+}
 
 android {
-    compileSdk 35
-    buildToolsVersion = '35.0.0'
+    namespace 'com.cappielloantonio.tempo'
+    compileSdk = 35
+    buildToolsVersion = '36.0.0'
 
     defaultConfig {
         minSdkVersion 24
         targetSdk 35
 
-        versionCode 30
-        versionName '4.18.6-dev'
+        versionCode 31
+        versionName '4.19.1-dev'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -22,7 +25,6 @@ android {
                 ]
             }
         }
-
     }
 
     testOptions {
@@ -58,7 +60,6 @@ android {
             dimension = "default"
             applicationId "com.eddyizm.degoogled.tempus"
         }
-
     }
 
     buildTypes {
@@ -88,57 +89,64 @@ android {
         viewBinding true
         buildConfig true
     }
-
-    namespace 'com.cappielloantonio.tempo'
 }
 
 dependencies {
     implementation files('../libs/lib-decoder-ffmpeg-release.aar')
 
     // AndroidX
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
-    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-    implementation 'androidx.preference:preference-ktx:1.2.1'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.8.6'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.8.6'
-    implementation 'androidx.recyclerview:recyclerview:1.4.0'
-    implementation 'androidx.room:room-runtime:2.6.1'
-    implementation 'androidx.core:core-splashscreen:1.0.1'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.2.0"
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.preference.ktx
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
+    implementation libs.androidx.recyclerview
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.splashscreen
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.swiperefreshlayout
 
     // Android Material
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation libs.material
 
     // Glide
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    implementation 'com.github.bumptech.glide:annotations:4.16.0'
+    implementation libs.glide
+    implementation libs.glide.annotations
+    annotationProcessor libs.glide.compiler
 
     // Media3
-    implementation 'androidx.media3:media3-session:1.8.0'
-    implementation 'androidx.media3:media3-common:1.8.0'
-    implementation 'androidx.media3:media3-exoplayer:1.8.0'
-    implementation 'androidx.media3:media3-ui:1.8.0'
-    implementation 'androidx.media3:media3-exoplayer-hls:1.8.0'
-    tempusImplementation 'androidx.media3:media3-cast:1.8.0'
+    implementation libs.media3.session
+    implementation libs.media3.common
+    implementation libs.media3.exoplayer
+    implementation libs.media3.ui
+    implementation libs.media3.exoplayer.hls
+    tempusImplementation libs.media3.cast
 
-
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+    // Room Compiler
+    annotationProcessor libs.androidx.room.compiler
 
     // Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.14'
-    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation libs.retrofit
+    implementation libs.retrofit.converter.gson
+    implementation libs.okhttp.logging
 
-    implementation 'com.intuit.sdp:sdp-android:1.1.1'
-    implementation 'cat.ereza:customactivityoncrash:2.4.0'
-    implementation 'com.facebook.shimmer:shimmer:0.5.0@aar'
+    // Misc
+    implementation libs.sdp.android
+    implementation libs.customactivityoncrash
+    implementation(libs.shimmer) {
+        artifact {
+            name = 'shimmer'
+            type = 'aar'
+        }
+    }
+    implementation libs.kotlin.metadata
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.12.0'
     testImplementation 'org.mockito.kotlin:mockito-kotlin:5.4.0'
+
 }
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)

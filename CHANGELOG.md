@@ -1,6 +1,28 @@
 # Changelog
 
-## [4.18.0](https://github.com/eddyizm/tempus/releases/tag/v4.18.0) (2026-06-06)
+## [4.19.0](https://github.com/eddyizm/tempus/releases/tag/v4.19.0) (2026-06-15)
+## What's Changed
+* fix: Move sleep timer logic from PlayerControllerFragment to BaseMediaService by @CtznSniiips in https://github.com/eddyizm/tempus/pull/730
+* Add WiFi-only download constraint by @funkypc in https://github.com/eddyizm/tempus/pull/727
+* fix: album art missing for same-album tracks over Bluetooth on Tesla (#470) by @chunjiw in https://github.com/eddyizm/tempus/pull/719
+* feat: local radio station management, directory search, and radio cover art by @pLum0 in https://github.com/eddyizm/tempus/pull/731
+* fix: keep the mini-player visible when reopening the app during radio playback by @pLum0 in https://github.com/eddyizm/tempus/pull/740
+* fix: handle api zero count and handle null on cached playlist method by @eddyizm in https://github.com/eddyizm/tempus/pull/759
+* fix: added null check for mediaNotificationControllerInfo in BaseSess… by @eddyizm in https://github.com/eddyizm/tempus/pull/752
+* fix: prevent crashes on "Best Of"and "Radio Station" home music tab  … by @eddyizm in https://github.com/eddyizm/tempus/pull/761
+* chore(i18n): Make some of the equalizer strings translatable by @skajmer in https://github.com/eddyizm/tempus/pull/743
+* fix: deletes local db playlist entry when updating server successfull… by @eddyizm in https://github.com/eddyizm/tempus/pull/766
+* fix: another stab and fixing out of sync playlists by @eddyizm in https://github.com/eddyizm/tempus/pull/767
+* fix: handle devices already in bad state by @eddyizm in https://github.com/eddyizm/tempus/pull/768
+* feat: add trailing dot to track number by @tvillega in https://github.com/eddyizm/tempus/pull/765
+
+## New Contributors
+* @funkypc made their first contribution in https://github.com/eddyizm/tempus/pull/727
+* @chunjiw made their first contribution in https://github.com/eddyizm/tempus/pull/719
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.18.2...v4.19.0
+
+## [4.18.2](https://github.com/eddyizm/tempus/releases/tag/v4.18.2) (2026-06-06)
 ## What's Changed
 * fix: Bug album month by @TheLudway in https://github.com/eddyizm/tempus/pull/700
 * refactor: separate equalizer from mediaservice by @tvillega in https://github.com/eddyizm/tempus/pull/658
