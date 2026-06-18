@@ -188,20 +188,22 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
 
             if (differ.getCurrentList().get(position).getDiscNumber() != null && !Objects.requireNonNull(differ.getCurrentList().get(position).getDiscNumber()).toString().isBlank()) {
                 holder.item.discTitleTextView.setText(holder.itemView.getContext().getString(R.string.disc_titleless, differ.getCurrentList().get(position).getDiscNumber().toString()));
+                holder.item.differentDiskDividerSector.setVisibility(View.VISIBLE);
                 holder.item.discTitleTextView.setVisibility(View.VISIBLE);
                 holder.item.differentDiskDivider.setVisibility(View.VISIBLE);
             } else {
-                holder.item.discTitleTextView.setVisibility(View.GONE);
-                holder.item.differentDiskDivider.setVisibility(View.GONE);
+                holder.item.differentDiskDividerSector.setVisibility(View.GONE);
             }
 
-            if (album.getDiscTitles() != null) {
+            if (album != null && album.getDiscTitles() != null) {
                 Optional<DiscTitle> discTitle = album.getDiscTitles().stream().filter(title -> Objects.equals(title.getDisc(), differ.getCurrentList().get(position).getDiscNumber())).findFirst();
 
                 if (discTitle.isPresent() && discTitle.get().getDisc() != null && discTitle.get().getTitle() != null && !discTitle.get().getTitle().isEmpty()) {
                     holder.item.discTitleTextView.setText(holder.itemView.getContext().getString(R.string.disc_titlefull, discTitle.get().getDisc().toString() , discTitle.get().getTitle()));
                 }
             }
+        } else {
+            holder.item.differentDiskDividerSector.setVisibility(View.GONE);
         }
 
         if (Preferences.showItemRating()) {

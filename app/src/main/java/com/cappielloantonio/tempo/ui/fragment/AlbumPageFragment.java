@@ -352,6 +352,18 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                 bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
                 bind.songRecyclerView.setHasFixedSize(true);
 
+                // Synchronize scrolling if info scroll view exists (landscape)
+                if (bind.getRoot().findViewById(R.id.album_info_scroll_view) != null) {
+                    androidx.core.widget.NestedScrollView albumInfoScrollView = bind.getRoot().findViewById(R.id.album_info_scroll_view);
+                    bind.songRecyclerView.addOnScrollListener(new androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                        @Override
+                        public void onScrolled(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView, int dx, int dy) {
+                            super.onScrolled(recyclerView, dx, dy);
+                            albumInfoScrollView.scrollBy(0, dy);
+                        }
+                    });
+                }
+
                 songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, false, false, album);
                 bind.songRecyclerView.setAdapter(songHorizontalAdapter);
                 setMediaBrowserListenableFuture();
