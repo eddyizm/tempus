@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @UnstableApi
-public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHorizontalAdapter.ViewHolder> {
+public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHorizontalAdapter.ViewHolder> implements StandardViewTypeAdapter {
     private final ClickCallback click;
 
     private String view;
@@ -100,11 +100,6 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
 
     public List<Child> getShuffling() {
         return shuffling;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
     }
 
     @Override
