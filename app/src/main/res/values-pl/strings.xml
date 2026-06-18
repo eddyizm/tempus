@@ -222,6 +222,8 @@
     <string name="media_route_menu_title">Przesyłanie</string>
     <string name="menu_add_button">Dodaj</string>
     <string name="menu_add_to_playlist_button">Dodaj do playlisty</string>
+    <string name="menu_add_to_queue_button">Dodaj do kolejki</string>
+    <string name="menu_edit_playlist_button">Edytuj playlistę</string>
     <string name="menu_download_all_button">Pobierz wszystko</string>
     <string name="menu_rate_album">Oceń album</string>
     <string name="menu_download_label">Pobrane</string>
