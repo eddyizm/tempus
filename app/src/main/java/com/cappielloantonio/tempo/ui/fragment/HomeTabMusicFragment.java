@@ -1368,7 +1368,15 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == R.id.action_go_to_playlist) {
-                onPlaylistClick(bundle);
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    new PlaylistRepository().getPlaylistSongs(playlist.getId()).observe(getViewLifecycleOwner(), songs -> {
+                        if (songs != null && !songs.isEmpty()) {
+                            MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                            activity.setBottomSheetInPeek(true);
+                        }
+                    });
+                }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
                 Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
