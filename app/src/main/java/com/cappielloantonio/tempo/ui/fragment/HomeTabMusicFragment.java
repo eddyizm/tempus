@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -1370,23 +1371,35 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             if (menuItem.getItemId() == R.id.action_go_to_playlist) {
                 Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    new PlaylistRepository().getPlaylistSongs(playlist.getId()).observe(getViewLifecycleOwner(), songs -> {
-                        if (songs != null && !songs.isEmpty()) {
-                            MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                            activity.setBottomSheetInPeek(true);
+                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
+                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> songs) {
+                            if (songs != null && !songs.isEmpty()) {
+                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                                activity.setBottomSheetInPeek(true);
+                                live.removeObserver(this);
+                            }
                         }
-                    });
+                    };
+                    live.observe(getViewLifecycleOwner(), observer);
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
                 Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    new PlaylistRepository().getPlaylistSongs(playlist.getId()).observe(getViewLifecycleOwner(), songs -> {
-                        if (songs != null && !songs.isEmpty()) {
-                            MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                            Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
+                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> songs) {
+                            if (songs != null && !songs.isEmpty()) {
+                                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                                Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                                live.removeObserver(this);
+                            }
                         }
-                    });
+                    };
+                    live.observe(getViewLifecycleOwner(), observer);
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_edit_playlist) {

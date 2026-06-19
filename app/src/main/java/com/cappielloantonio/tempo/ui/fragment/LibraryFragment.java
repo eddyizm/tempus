@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -33,6 +35,7 @@ import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
 import com.cappielloantonio.tempo.navigation.NavigationController;
 import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.service.MediaManager;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistAdapter;
@@ -47,6 +50,7 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.List;
 import java.util.Objects;
 
 @UnstableApi
@@ -325,23 +329,35 @@ public class LibraryFragment extends Fragment implements ClickCallback {
             if (menuItem.getItemId() == R.id.action_go_to_playlist) {
                 com.cappielloantonio.tempo.subsonic.models.Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    new PlaylistRepository().getPlaylistSongs(playlist.getId()).observe(getViewLifecycleOwner(), songs -> {
-                        if (songs != null && !songs.isEmpty()) {
-                            MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                            activity.setBottomSheetInPeek(true);
+                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
+                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> songs) {
+                            if (songs != null && !songs.isEmpty()) {
+                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                                activity.setBottomSheetInPeek(true);
+                                live.removeObserver(this);
+                            }
                         }
-                    });
+                    };
+                    live.observe(getViewLifecycleOwner(), observer);
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
                 com.cappielloantonio.tempo.subsonic.models.Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    new PlaylistRepository().getPlaylistSongs(playlist.getId()).observe(getViewLifecycleOwner(), songs -> {
-                        if (songs != null && !songs.isEmpty()) {
-                            MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                            Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
+                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> songs) {
+                            if (songs != null && !songs.isEmpty()) {
+                                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                                Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                                live.removeObserver(this);
+                            }
                         }
-                    });
+                    };
+                    live.observe(getViewLifecycleOwner(), observer);
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
