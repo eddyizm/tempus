@@ -4,6 +4,9 @@
         android:id="@+id/action_go_to_playlist"
         android:title="@string/menu_go_to_playlist_button" />
     <item
+        android:id="@+id/action_play_shuffle"
+        android:title="@string/menu_play_shuffle_button" />
+    <item
         android:id="@+id/action_add_to_queue"
         android:title="@string/menu_add_to_queue_button" />
     <item

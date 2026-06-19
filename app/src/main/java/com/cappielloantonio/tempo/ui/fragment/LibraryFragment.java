@@ -343,6 +343,24 @@ public class LibraryFragment extends Fragment implements ClickCallback {
                     live.observe(getViewLifecycleOwner(), observer);
                 }
                 return true;
+            } else if (menuItem.getItemId() == R.id.action_play_shuffle) {
+                com.cappielloantonio.tempo.subsonic.models.Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    final LiveData<List<Child>> liveShuffle = new PlaylistRepository().getPlaylistSongs(playlist.getId());
+                    final Observer<List<Child>> observerShuffle = new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> songs) {
+                            if (songs != null && !songs.isEmpty()) {
+                                java.util.Collections.shuffle(songs);
+                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                                activity.setBottomSheetInPeek(true);
+                                liveShuffle.removeObserver(this);
+                            }
+                        }
+                    };
+                    liveShuffle.observe(getViewLifecycleOwner(), observerShuffle);
+                }
+                return true;
             } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
                 com.cappielloantonio.tempo.subsonic.models.Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
