@@ -1,6 +1,7 @@
 package com.cappielloantonio.tempo.subsonic
 
 import com.cappielloantonio.tempo.App
+import com.cappielloantonio.tempo.BuildConfig
 import com.cappielloantonio.tempo.subsonic.utils.CacheUtil
 import com.cappielloantonio.tempo.subsonic.utils.EmptyDateTypeAdapter
 import com.cappielloantonio.tempo.util.ClientCertManager
@@ -57,7 +58,11 @@ class RetrofitClient(subsonic: Subsonic) {
 
     private fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        if (BuildConfig.DEBUG) {
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS)
+        } else {
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE)
+        }
         return loggingInterceptor
     }
 
