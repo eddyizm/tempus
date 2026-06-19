@@ -36,6 +36,7 @@ import com.cappielloantonio.tempo.navigation.NavigationController;
 import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistAdapter;
@@ -44,12 +45,14 @@ import com.cappielloantonio.tempo.ui.adapter.MusicFolderAdapter;
 import com.cappielloantonio.tempo.ui.adapter.PlaylistHorizontalAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistEditorDialog;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.LiveDataUtils;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.LibraryViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -327,55 +330,31 @@ public class LibraryFragment extends Fragment implements ClickCallback {
         
         popup.setOnMenuItemClickListener(menuItem -> {
             if (menuItem.getItemId() == R.id.action_go_to_playlist) {
-                com.cappielloantonio.tempo.subsonic.models.Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
-                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
-                        @Override
-                        public void onChanged(List<Child> songs) {
-                            if (songs != null && !songs.isEmpty()) {
-                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                                activity.setBottomSheetInPeek(true);
-                                live.removeObserver(this);
-                            }
-                        }
-                    };
-                    live.observe(getViewLifecycleOwner(), observer);
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_play_shuffle) {
-                com.cappielloantonio.tempo.subsonic.models.Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    final LiveData<List<Child>> liveShuffle = new PlaylistRepository().getPlaylistSongs(playlist.getId());
-                    final Observer<List<Child>> observerShuffle = new Observer<List<Child>>() {
-                        @Override
-                        public void onChanged(List<Child> songs) {
-                            if (songs != null && !songs.isEmpty()) {
-                                java.util.Collections.shuffle(songs);
-                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                                activity.setBottomSheetInPeek(true);
-                                liveShuffle.removeObserver(this);
-                            }
-                        }
-                    };
-                    liveShuffle.observe(getViewLifecycleOwner(), observerShuffle);
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        Collections.shuffle(songs);
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
-                com.cappielloantonio.tempo.subsonic.models.Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
-                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
-                        @Override
-                        public void onChanged(List<Child> songs) {
-                            if (songs != null && !songs.isEmpty()) {
-                                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                                Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
-                                live.removeObserver(this);
-                            }
-                        }
-                    };
-                    live.observe(getViewLifecycleOwner(), observer);
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                        Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                    });
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_edit_playlist) {

@@ -64,6 +64,7 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.LiveDataUtils;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -75,6 +76,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -1371,53 +1373,29 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             if (menuItem.getItemId() == R.id.action_go_to_playlist) {
                 Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
-                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
-                        @Override
-                        public void onChanged(List<Child> songs) {
-                            if (songs != null && !songs.isEmpty()) {
-                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                                activity.setBottomSheetInPeek(true);
-                                live.removeObserver(this);
-                            }
-                        }
-                    };
-                    live.observe(getViewLifecycleOwner(), observer);
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_play_shuffle) {
                 Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    final LiveData<List<Child>> liveShuffle = new PlaylistRepository().getPlaylistSongs(playlist.getId());
-                    final Observer<List<Child>> observerShuffle = new Observer<List<Child>>() {
-                        @Override
-                        public void onChanged(List<Child> songs) {
-                            if (songs != null && !songs.isEmpty()) {
-                                java.util.Collections.shuffle(songs);
-                                MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                                activity.setBottomSheetInPeek(true);
-                                liveShuffle.removeObserver(this);
-                            }
-                        }
-                    };
-                    liveShuffle.observe(getViewLifecycleOwner(), observerShuffle);
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        Collections.shuffle(songs);
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
                 Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
-                    final LiveData<List<Child>> live = new PlaylistRepository().getPlaylistSongs(playlist.getId());
-                    final Observer<List<Child>> observer = new Observer<List<Child>>() {
-                        @Override
-                        public void onChanged(List<Child> songs) {
-                            if (songs != null && !songs.isEmpty()) {
-                                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                                Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
-                                live.removeObserver(this);
-                            }
-                        }
-                    };
-                    live.observe(getViewLifecycleOwner(), observer);
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                        Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                    });
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
@@ -1436,6 +1414,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
         popup.show();
     }
+
 
     @Override
     public void onShareLongClick(Bundle bundle) {
