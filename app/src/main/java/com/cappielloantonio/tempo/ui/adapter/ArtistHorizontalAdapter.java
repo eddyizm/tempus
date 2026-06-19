@@ -115,7 +115,7 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        return 0;
     }
 
     @Override
