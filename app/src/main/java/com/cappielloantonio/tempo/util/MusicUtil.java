@@ -337,6 +337,26 @@ public class MusicUtil {
         return Preferences.getAudioTranscodeFormatTranscodedDownload();
     }
 
+    // Maps a Media3 sample MIME type (e.g. "audio/flac") to a short, user-facing format
+    // label (e.g. "flac"). Returns null when the mime is null. Used to show the format the
+    // player is actually decoding rather than the requested transcode preference. See #579.
+    public static String audioFormatLabel(String sampleMimeType) {
+        if (sampleMimeType == null) return null;
+        String mime = sampleMimeType.toLowerCase();
+        if (mime.contains("flac")) return "flac";
+        if (mime.contains("opus")) return "opus";
+        if (mime.contains("vorbis")) return "vorbis";
+        if (mime.contains("mp4a") || mime.contains("aac")) return "aac";
+        if (mime.contains("mpeg") || mime.contains("mp3")) return "mp3";
+        if (mime.contains("alac")) return "alac";
+        if (mime.contains("eac3")) return "eac3";
+        if (mime.contains("ac3")) return "ac3";
+        if (mime.contains("pcm") || mime.contains("raw") || mime.contains("wav")) return "wav";
+        if (mime.contains("ogg")) return "ogg";
+        int slash = mime.indexOf('/');
+        return slash >= 0 && slash < mime.length() - 1 ? mime.substring(slash + 1) : mime;
+    }
+
     public static List<Child> limitPlayableMedia(List<Child> toLimit, int position) {
         if (!toLimit.isEmpty() && toLimit.size() > Constants.PLAYABLE_MEDIA_LIMIT) {
             int from = position < Constants.PRE_PLAYABLE_MEDIA ? 0 : position - Constants.PRE_PLAYABLE_MEDIA;
