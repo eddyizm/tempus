@@ -547,6 +547,7 @@
     <string name="share_unsupported_error">Udostępnianie nie jest wspierane lub włączone</string>
 	<string name="toolbar_navigation_drawer_open">Szuflada nawigacji otwarta</string>
     <string name="toolbar_navigation_drawer_closed">Szuflada nawigacji zamknięta</string>
+    <string name="favorite_icon_description">Polub</string>
     <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
     <string name="asset_link_label_song">UID piosenki</string>
     <string name="asset_link_label_album">UID albumu</string>
