@@ -201,11 +201,23 @@ public class PlaylistRepository {
 
     private void cachePlaylistSongs(String playlistId, List<Child> songs) {
         new Thread(() -> {
+            List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
             if (songs == null || songs.isEmpty()) {
-                playlistSongDao.deleteForPlaylist(playlistId);
-                android.util.Log.d("PlaylistRepository", "No songs to cache for playlist " + playlistId);
+                if (cached != null && !cached.isEmpty()) {
+                    playlistSongDao.deleteForPlaylist(playlistId);
+                    android.util.Log.d("PlaylistRepository", "Cleared songs for playlist " + playlistId);
+                }
                 return;
             }
+
+            // Simple check: compare sizes
+            if (cached != null && cached.size() == songs.size()) {
+                // If sizes match, assume no change for now to avoid expensive deep equality check
+                // TODO it would be better to check update/create dates if possible then do actual song id comparison
+                android.util.Log.d("PlaylistRepository", "Songs for playlist " + playlistId + " already cached (size match).");
+                return;
+            }
+
             List<PlaylistSong> playlistSongs = new ArrayList<>();
             for (Child child : songs) {
                 playlistSongs.add(new PlaylistSong(playlistId, child));

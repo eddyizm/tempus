@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PodcastChannelCatalogueAdapter extends RecyclerView.Adapter<PodcastChannelCatalogueAdapter.ViewHolder> implements Filterable {
+public class PodcastChannelCatalogueAdapter extends RecyclerView.Adapter<PodcastChannelCatalogueAdapter.ViewHolder> implements Filterable, StandardViewTypeAdapter {
     private final ClickCallback click;
     private final Filter filtering = new Filter() {
         @Override
@@ -93,11 +93,6 @@ public class PodcastChannelCatalogueAdapter extends RecyclerView.Adapter<Podcast
         this.podcastChannels = podcastChannels;
         this.podcastChannelsFull = new ArrayList<>(podcastChannels);
         notifyDataSetChanged();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
     }
 
     @Override
