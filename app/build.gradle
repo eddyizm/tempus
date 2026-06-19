@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.cappielloantonio.tempo'
+    namespace = 'com.cappielloantonio.tempo'
     compileSdk = 35
     buildToolsVersion = '36.0.0'
 
@@ -33,11 +33,11 @@ android {
 
     splits {
         abi {
-            enable true
+            enable = true
             reset()
             //noinspection ChromeOsAbiSupport
             include 'armeabi-v7a', 'arm64-v8a'
-            universalApk false
+            universalApk = false
         }
     }
 
@@ -53,41 +53,32 @@ android {
     productFlavors {
         tempus {
             dimension = "default"
-            applicationId 'com.eddyizm.tempus'
+            applicationId = 'com.eddyizm.tempus'
         }
 
         degoogled {
             dimension = "default"
-            applicationId "com.eddyizm.degoogled.tempus"
+            applicationId = "com.eddyizm.degoogled.tempus"
         }
     }
 
     buildTypes {
         release {
-            shrinkResources true
-            minifyEnabled true
-            debuggable false
+            shrinkResources = true
+            minifyEnabled = true
+            debuggable = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
-            applicationIdSuffix ".debug"
-            debuggable true
+            applicationIdSuffix = ".debug"
+            debuggable = true
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -149,6 +140,6 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
