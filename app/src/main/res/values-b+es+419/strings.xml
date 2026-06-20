@@ -14,9 +14,16 @@
     <string name="aa_genres">Géneros</string>
     <string name="aa_recent_albums">Nuevos Álbumes</string>
     <string name="aa_song_recently_played">Canciones Reproducidas recientemente</string>
+    <string name="aa_starred">Favoritos</string>
     <string name="aa_starred_albums">★ Álbumes</string>
     <string name="aa_starred_artists">★ Artistas</string>
     <string name="aa_starred_tracks">★ Canciones</string>
+    <string name="aa_instant_mix">Mix instantáneo</string>
+    <string name="aa_view_by_albums">Ver álbumes</string>
+    <string name="aa_tracks">Canciones</string>
+    <string name="aa_quick_mix">Mix rápido</string>
+    <string name="aa_my_mix">Mi mix</string>
+    <string name="aa_discovery_mix">Descubre canciones</string>
 
     <string name="activity_battery_optimizations_conclusion">Puedes visitar https://dontkillmyapp.com para saber cómo desactivar cualquier función de ahorro de energía que puede afectar el rendimiento de la app.</string>
     <string name="activity_battery_optimizations_summary">Por favor, desactiva las optimizaciones de energía para la reproducción en segundo plano.</string>
@@ -75,6 +82,7 @@
     <string name="artist_page_title_biography_section">Biografia</string>
     <string name="artist_page_title_most_streamed_song_section">Mejores canciones</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Ver todo</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">No se encontraron canciones\n\nPresiona para ocultar</string>
     <string name="battery_optimization_negative_button">Ignorar</string>
     <string name="battery_optimization_neutral_button">No preguntar de nuevo</string>
     <string name="battery_optimization_positive_button">Desactivar</string>
@@ -83,8 +91,9 @@
     <string name="connection_alert_dialog_negative_button">Cancelar</string>
     <string name="connection_alert_dialog_neutral_button">Activar ahorro de datos</string>
     <string name="connection_alert_dialog_positive_button">Aceptar</string>
-    <string name="connection_alert_dialog_summary">El acceso al servidor Subsonic a través de conexiones que no sean Wi-Fi ha sido restringido. Para evitar que este diálogo de alerta vuelva a aparecer, desactiva la verificación de conexión en los ajustes de la aplicación.</string>    <string name="connection_alert_dialog_title">Wi-Fi not connected</string>
+    <string name="connection_alert_dialog_summary">El acceso al servidor Subsonic a través de conexiones que no sean Wi-Fi ha sido restringido. Para evitar que este diálogo de alerta vuelva a aparecer, desactiva la verificación de conexión en los ajustes de la aplicación.</string>
     <string name="content_description_shuffle_button">Aleatorio</string>
+    <string name="connection_alert_dialog_title">No hay conexión a internet</string>
     <string name="delete_download_storage_dialog_negative_button">Cancelar</string>
     <string name="delete_download_storage_dialog_positive_button">Continuar</string>
     <string name="delete_download_storage_dialog_summary">Ten en cuenta que al continuar todas las canciones que hayas descargado se eliminarán permanentemente de todos los servidores.</string>
@@ -113,8 +122,7 @@
     <string name="download_refresh_no_changes">Todo parece bien, no faltan descargas!</string>
     <plurals name="download_refresh_removed">
         <item quantity="one">Se quito %d descarga que faltaban.</item>
-        <item quantity="other">Se quitaron %d descargas que faltaban.</item>
-        <item quantity="many">Se quitaron %d descargas que faltaban.</item>
+        <item quantity="other">Se quitaron %d descargas que faltaban.</item> <item quantity="many">Se quitaron %d descargas que faltaban.</item>
     </plurals>
     <string name="download_refresh_button_content_description">Actualizar elementos descargados</string>
     <string name="downloaded_bottom_sheet_add_to_queue">Añadir a la cola de reproducción</string>
@@ -164,8 +172,7 @@
     <string name="home_sync_starred_artists_subtitle">Tienes artistas favoritos con música sin descargar</string>
     <plurals name="home_sync_starred_songs_count">
         <item quantity="one">1 canción necesita sincronizar</item>
-        <item quantity="other">%d canciones necesitan sincronizar</item>
-        <item quantity="many">%d canciones necesitan syncronizar</item>
+        <item quantity="other">%d canciones necesitan sincronizar</item> <item quantity="many">%d canciones necesitan syncronizar</item>
     </plurals>
     <string name="home_title_best_of">Lo mejor de</string>
     <string name="home_title_discovery">Descubrir</string>
@@ -215,6 +222,11 @@
     <string name="media_route_menu_title">Transmitir</string>
     <string name="menu_add_button">Añadir</string>
     <string name="menu_add_to_playlist_button">Añadir a una lista de reproducción</string>
+    <string name="playlist_added_to_queue">¡Se añadió la lista a la cola!</string>
+    <string name="menu_go_to_playlist_button">Reproducir</string>
+    <string name="menu_play_shuffle_button">Reproducir en aleatorio</string>
+    <string name="menu_add_to_queue_button">Añadir a la cola de reproducción</string>
+    <string name="menu_edit_playlist_button">Editar</string>
     <string name="menu_download_all_button">Descargar todo</string>
     <string name="menu_rate_album">Valorar Álbum</string>
     <string name="menu_download_label">Descargas</string>
@@ -223,6 +235,7 @@
     <string name="menu_group_by_album">Álbum</string>
     <string name="menu_group_by_artist">Artista</string>
     <string name="menu_group_by_genre">Género</string>
+    <string name="menu_group_by_playlist">Lista de reproducción</string>
     <string name="menu_group_by_track">Canción</string>
     <string name="menu_group_by_year">Año</string>
     <string name="menu_home_label">Inicio</string>
@@ -236,13 +249,16 @@
     <string name="menu_sort_name">Nombre</string>
     <string name="menu_sort_random">Aleatorio</string>
     <string name="menu_sort_album_count">Mayor número de álbumes</string>
+    <string name="menu_sort_song_count">Número de canciones</string>
+    <string name="menu_sort_date_created">Fecha de creación</string>
     <string name="menu_sort_recently_added">Añadido recientemente</string>
     <string name="menu_sort_recently_played">Reproducido recientemente</string>
     <string name="menu_sort_most_played">Más reproducido</string>
     <string name="menu_sort_most_recently_starred">Favorito más reciente</string>
     <string name="menu_sort_least_recently_starred">Favorito menos reciente</string>
-    <string name="menu_pin_button">Añadir a la pantalla de inicio</string>
-    <string name="menu_unpin_button">Quitar de la pantalla de incio</string>
+    <string name="menu_pin_button">Añadir a favoritos</string>
+    <string name="menu_unpin_button">Quitar de favoritos</string>
+    <string name="playlist_sort_pinned">Favoritos</string>
     <string name="menu_sort_year">Año</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Velocidad de reproducción</string>
@@ -282,6 +298,10 @@
     <string name="playlist_editor_dialog_neutral_button">Borrar</string>
     <string name="playlist_editor_dialog_positive_button">Guardar</string>
     <string name="playlist_editor_dialog_title">Editar lista de reproducción</string>
+    <string name="playlist_editor_dialog_action_delete_success">¡Se borro la lista de reproducción!</string>
+    <string name="playlist_editor_dialog_action_delete_failure">No se pudo borrar la lista</string>
+    <string name="playlist_editor_dialog_action_save_success">¡Lista guardada!</string>
+    <string name="playlist_editor_dialog_action_save_failure">No se pudieron guardar los cambios</string>
     <string name="playlist_page_play_button">Reproducir</string>
     <string name="playlist_page_shuffle_button">Aleatorio</string>
     <string name="playlist_song_count">Lista de reproducción • %1$d canciones</string>
@@ -317,6 +337,24 @@
     <string name="radio_station_info_empty_subtitle">Cuando agreges una radio la encontrarás aquí</string>
     <string name="radio_station_info_empty_title">No se encontraron estaciones radio</string>
     <string name="radio_dialog_not_supported_snackbar">El servidor no soporta estaciones de radio</string>
+    <string name="radio_editor_source_label">Guardar</string>
+    <string name="radio_editor_source_server">Servidor</string>
+    <string name="radio_editor_source_local">Local</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">Cover Art URL (opcional)</string>
+    <string name="radio_local_badge">LOCAL</string>
+    <string name="radio_search_dialog_title">Buscar estaciones de radio</string>
+    <string name="radio_search_hint">Nombre de la radio</string>
+    <string name="radio_search_button">Buscar</string>
+    <string name="radio_search_add">Añadir</string>
+    <string name="radio_search_no_results">No se encontraron estaciones</string>
+    <string name="radio_search_empty_query">Escribe el nombre de una radio</string>
+    <string name="radio_search_error">La busqueda falló: %s</string>
+    <string name="radio_search_duplicate">La estación de radio ya existe</string>
+    <string name="radio_search_station_added">Radio añadida localmente</string>
+    <string name="radio_search_directory_button">Folder</string>
+    <string name="radio_editor_search_directory">Buscar radios</string>
+    <string name="radio_search_country_hint">País</string>
+    <string name="radio_search_use">Uso</string>
     <string name="rating_dialog_negative_button">Cancelar</string>
     <string name="rating_dialog_positive_button">Guardar</string>
     <string name="rating_dialog_title">Valorar</string>
@@ -362,7 +400,9 @@
     <string name="settings_clear_download_folder">Vaciar carpeta de descargas</string>
     <string name="settings_continuous_play_summary">Permite seguir reproduciendo música cuando una lista de reproducción terminó; reproduciendo canciones similares</string>
     <string name="settings_continuous_play_title">Reproducción continua</string>
-    <string name="settings_covers_cache">Tamaño imágenes en caché</string>
+    <string name="settings_number_tracks_keep_in_queue">Número de canciones en la cola de reproducción</string>
+    <string name="settings_number_tracks_keep_in_queue_summary">Ajusta el número de canciones que quieres tener en la cola antes de empezar a añadir nuevas canciones con la reproducción continua</string>
+    <string name="settings_covers_cache">Tamaño de imágenes en caché</string>
     <string name="settings_data_saving_mode_summary">Para reducir el consumo de datos, evita descargar las portadas.</string>
     <string name="settings_data_saving_mode_title">Limitar uso de datos mobiles</string>
     <string name="settings_delete_download_storage_summary">Si continuas no podrás revertir los cambios. Esto borrará todos las canciones descargados.</string>
@@ -371,6 +411,8 @@
     <string name="settings_download_folder_cleared">Almacenamiento de descargas borrado.</string>
     <string name="settings_download_folder_set">Seleccionar folder de descargas</string>
     <string name="settings_set_download_folder">Seleccionar folder de descargas</string>
+    <string name="settings_song_preload_buffer">Búfer de precarga de canciones</string>
+    <string name="settings_song_preload_buffer_summary">Valor actual: %1$s\nPara que los cambios tengan efecto debes reiniar la app.</string>
     <string name="settings_system_equalizer_summary">Modificar ajustes de audio</string>
     <string name="settings_system_equalizer_title">Ecualizador del sistema</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -409,18 +451,27 @@
     <string name="settings_androidauto_third_tab">Tercera pestaña</string>
     <string name="settings_androidauto_fourth_tab">Cuarta pestaña</string>
     <string name="settings_androidauto_shuffle_genre_songs">Reproducción aleatoria en géneros</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Reproducde canciones aleatorias cuando seleccionas un género</string>
+    <string name="settings_androidauto_shuffle_starred_tracks">Reproducir aleatoriamente tus canciones favoritas</string>
+    <string name="settings_androidauto_shuffle_playlists">Listas de reprodución en aleatorio</string>
+    <string name="settings_androidauto_shuffle_genre_songs_summary">Reproduce canciones aleatorias cuando seleccionas un género</string>
+    <string name="settings_androidauto_artists_view">Los artistas se muestran por álbum</string>
+    <string name="settings_androidauto_starred_for_made_for_you">Mix de tus canciones favoritas hecho para ti</string>
     <string name="settings_audio_quality">Mostrar calidad de audio</string>
-    <string name="settings_audio_quality_summary">La tasa de bits y el formato de audio se mostrará en cada canción que reproduscas</string>
+    <string name="settings_audio_quality_summary">La tasa de bits y el formato de audio se mostrará en cada canción que reproduzcas</string>
     <string name="settings_song_rating">Mostrar valoración</string>
     <string name="settings_song_rating_summary">Si está activado, mostrará la valoración de 5 estrellas para cada canción en las listas\n\n*Reinicia la aplicación para tenga efecto</string>
-    <string name="settings_item_rating">Mostrar favoritos</string>
+    <string name="settings_track_number">Mostrar número de pista</string>
+    <string name="settings_track_number_summary">Si está activado, mostrará el número de pista (en el álbum) de la canción que estás escuchando.</string>
+    <string name="settings_item_rating">Mostrar valoración de estrellas</string>
     <string name="settings_item_rating_summary">Si está activado, mostrará si la canción esta marcada como favorita en las listas.</string>
     <string name="settings_queue_syncing_countdown">Periodo de sincronización</string>
     <string name="settings_queue_syncing_summary">Si está activado, podrás guardar tu cola de reproducción actual al abrir la aplicación.</string>
     <string name="settings_queue_syncing_title">Sincronizar la cola de reproducción para el usuario [Puede no funcionar bien]</string>
     <string name="settings_show_mini_shuffle_button">Mostrar botón de aleatorio en las notificaciones</string>
     <string name="settings_show_mini_shuffle_button_summary">Si está activado, mostrará el botón de aleatorio en el mini reproductor de las notificaciones, reemplazando el botón de favorito</string>
+    <string name="settings_custom_command_first_button">Primera acción personalizada</string>
+    <string name="settings_custom_command_second_button">Segunda acción personalizada</string>
+
     <string name="settings_radio">Mostrar radio</string>
     <string name="settings_radio_summary">Si está activado, mostrará la sección de radio. Reinicia la app para que tenga efecto.</string>
     <string name="settings_enable_drawer_on_landscape">Habilitar el panel lateral en modo vertical</string>
@@ -443,6 +494,7 @@
     <string name="settings_sub_summary_scrobble">Ten en cuenta que el rastreo de música (scrobbling) también depende de que el servidor lo tenga habilitado para recibir esta información..</string>
     <string name="settings_summary_skip_min_star_rating">Cuando escuchas la radio de un artista, un mix instantáneo o cuando reproduces en aleatorio, las canciones por debajo de esta valoración serán ignoradas.</string>
     <string name="settings_summary_replay_gain">La ganancia de reproducción es una función que ajustará el nivel de volumen de las canciones para tener una mejor experiencia. Pero solo está disponible si la canción tiene los metadatos necesarios.</string>
+    <string name="settings_summary_loudness">Permite corregir el volumen de la reproducción de audio en varios dispositivos (por ejemplo: parlantes).\n\nPara la ganancia, un valor de -6 es recomendado, ya que ayuda a evitar que experimentes algunos problemas como escuchar recortes.</string>
     <string name="settings_summary_scrobble">El rastreo de música (scrobbling) le permite a tu dispositivo enviar información sobre las canciones que escuchas a tu servidor de música. Lo cual ayuda a crear recomendaciones personalizadas.</string>
     <string name="settings_summary_share">Permite compartir canciones con un link. El servidor debe soportar está función (y tiene que estar habilitada), solo se pueden compartir canciones individuales, álbumes y listas de reproducción.</string>
     <string name="settings_summary_syncing">Restaura la cola de reproducción del usuario. Lo cual incluye: Todas las canciones, la canción que estabas escuchando, y la posición. El servidor debe soportar la función también.\n*Este ajuste no funciona al 100% con todos los servidores y dispositivos.</string>
@@ -462,13 +514,22 @@
     <string name="settings_tile_size">Tamaño de los elementos</string>
     <string name="settings_title_data">Almacenamiento</string>
     <string name="settings_title_general">General</string>
+    <string name="settings_title_misc">Varios</string>
+    <string name="settings_title_players">Reproductores</string>
     <string name="settings_title_playlist">Listas de reproducción</string>
     <string name="settings_title_rating">Valoración</string>
+    <string name="settings_title_loudness">Correción de ruido</string>
+    <string name="settings_loudness_preamp_title">Pre-amplificación</string>
+    <string name="settings_loudness_preamp_summary">Pueder poner valores positivos para obtener un sonido más fuerte.\nY valores negativos para un sonido más calmado.</string>
+    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_title_replay_gain">Ganancia de reproducción</string>
+    <string name="settings_replay_gain_prevent_clipping_title">Prevenir recortes</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Reduce la ganancia cuando la etiqueta (tag) de pico de las canciones o álbum indique que la señal se saturaría tras aplicar la ganancia.</string>
     <string name="settings_title_scrobble">Rastreo de música (scrobbling)</string>
     <string name="settings_title_skip_min_star_rating">Ignorar música basado en valoración</string>
     <string name="settings_title_skip_min_star_rating_dialog">Canciones con valoración de:</string>
     <string name="settings_title_share">Compartir</string>
+    <string name="settings_title_sound">Sonido</string>
     <string name="settings_title_syncing">Sincronizar</string>
     <string name="settings_title_transcoding">Transcodificación</string>
     <string name="settings_title_transcoding_download">Transcodificación de descargas</string>
@@ -480,12 +541,17 @@
     <string name="settings_version_title">Versión</string>
     <string name="settings_wifi_only_summary">Preguntar por confirmanción antes de transmitir usando datos mobiles.</string>
     <string name="settings_wifi_only_title">Alerta de transmitir usando solamente Wi-Fi</string>
+    <string name="settings_download_wifi_only_summary">Las descargas se pausarán cuando uses datos mobiles y se reanudarán automaticamente en Wi-Fi</string>
+    <string name="settings_download_wifi_only_title">Descargar solo conectado a Wi-Fi</string>
     <string name="share_bottom_sheet_copy_link">Copiar link</string>
     <string name="share_bottom_sheet_delete">Borrar compartido</string>
     <string name="share_bottom_sheet_update">Actualizar compartido</string>
     <string name="share_subtitle_item">Fecha de expiración: %1$s</string>
     <string name="share_no_expiration">Nunca</string>
     <string name="share_unsupported_error">Compartir no está soportado o no está habilitado</string>
+    <string name="toolbar_navigation_drawer_open">Panel de navegación abierto</string>
+    <string name="toolbar_navigation_drawer_closed">Panel de navegación cerrado</string>
+    <string name="favorite_icon_description">Favoritos</string>
     <string name="asset_link_clipboard_label">Tempus asset link</string>
     <string name="asset_link_label_song">Canción UID</string>
     <string name="asset_link_label_album">Álbum UID</string>
@@ -585,18 +651,15 @@
     <string name="widget_content_desc_repeat">Modo de repetición</string>
     <plurals name="home_sync_starred_albums_count">
         <item quantity="one">%d álbum para sincronizar</item>
-        <item quantity="other">%d álbumes para sincronizar</item>
-        <item quantity="many">%d álbumes para sincronizar</item>
+        <item quantity="other">%d álbumes para sincronizar</item> <item quantity="many">%d álbumes para sincronizar</item>
     </plurals>
     <plurals name="home_sync_starred_artists_count">
         <item quantity="one">%d artistas para sincronizar</item>
-        <item quantity="other">%d artistas para sincronizar</item>
-        <item quantity="many">%d artistas para sincronizar</item>
+        <item quantity="other">%d artistas para sincronizar</item> <item quantity="many">%d artistas para sincronizar</item>
     </plurals>
     <plurals name="songs_download_started">
         <item quantity="one">Descargando %d canción</item>
-        <item quantity="other">Descargando %d canciones</item>
-        <item quantity="many">Descargando %d canciones</item>
+        <item quantity="other">Descargando %d canciones</item> <item quantity="many">Descargando %d canciones</item>
     </plurals>
     <string name="equalizer_fragment_title">Ecualizador</string>
     <string name="equalizer_reset">Reiniciar</string>
@@ -604,6 +667,9 @@
     <string name="equalizer_managed_externally">No soportado por este dispositivo</string>
     <string name="settings_app_equalizer">Ecualizador</string>
     <string name="settings_app_equalizer_summary">Abrir el ecualizador incorporado en Tempus</string>
+    <string name="settings_title_equalizer">Ecualizador</string>
+    <string name="settings_equalizer_select">Selecciona un ecualizador para usar</string>
+    <string name="settings_equalizer_dialog_title">Ecualizadores</string>
 
     <string name="settings_album_detail">Mostrar detalle de los álbumes</string>
     <string name="settings_album_detail_summary">Si está activado, mostrará los álbumes con más detalles, cómo: género, número de canciones, etc. En la página de álbum</string>
@@ -616,9 +682,65 @@
 
     <string name="search_sort_title">Ordenar búsquedas recientes cronológicamente</string>
     <string name="search_sort_summary">Si está activado, ordenará las búsquedas cronológicamente. Si está desactivado, las ordenará por nombre.</string>
-    <string name="search_all_songs_loading">Obteniendo todas las canciones…</string>
+    <string name="search_all_songs_loading">Obteniendo las canciones…</string>
     <string name="search_all_songs">todas las %1$s canciones</string>
     <string name="search_all_songs_play">Reproducir %1$s</string>
 
     <string name="nav_drawer_index">Index</string>
+
+    <!-- Sleep timer -->
+    <string name="sleep_timer_dialog_title">Temporizador</string>
+    <string name="sleep_timer_dialog_active_message">Temporizador activo — quedan %1$s</string>
+    <string name="sleep_timer_dialog_cancel_timer">Cancelar temporizador</string>
+    <string name="sleep_timer_dialog_close">Cerrar</string>
+    <string name="sleep_timer_custom_hint">En minutos</string>
+    <string name="sleep_timer_custom_set">Programar</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Se pausará cuando acabe esta canción</string>
+    <string name="sleep_timer_end_of_track_label">Acabando la canción</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>15 minutos</item>
+        <item>20 minutos</item>
+        <item>30 minutos</item>
+        <item>45 minutos</item>
+        <item>60 minutos</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Personalizado\u2026</item>
+    </string-array>
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus falló.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus falló</string>
+    <string name="ca_info_description">
+        Por favor, abre un ticket en GitHub e incluye una copia del log para poder solucionar el fallo.
+    </string>
+    <string name="ca_info_button_close">Cerrar app</string>
+    <string name="ca_info_button_restart">Reiniciar app</string>
+
+    <string name="ca_logs_label">Logs</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+    <string name="ca_logs_description">
+        Esto es lo que salió mal.
+    </string>
+    <string name="ca_export_button_copy">Copiar logs</string>
+    <string name="ca_export_button_share">Compartir logs</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">¡El log se copió al portapapeles!</string>
+
+    <string name="ca_export_label">Exportar</string>
+    <string name="ca_export_title">Exportar logs</string>
+    <string name="ca_export_description">
+        Las apk de depuración (pre-release) proporciona un registro (logs) más detallados lo cual nos ayuda
+        a entender que salió mal dentro la app.\n\n
+
+        Los datos no se envían a ningún lado sin tu consentimiento.
+    </string>
+    <string name="playlist_error_not_found_title">No se encontró la lista de reproducción</string>
+    <string name="playlist_error_not_found_message">No se pudo encontrar la lista en el servidor. Será elminará del caché local</string>
+    <string name="playlist_error_not_found_toast">Lista de reproducción eliminada del caché</string>
+
 </resources>
