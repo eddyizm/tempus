@@ -87,7 +87,7 @@ public class CustomGlideRequest {
 
         StringBuilder uri = new StringBuilder();
 
-        uri.append(App.getSubsonicClientInstance(false).getUrl(App.getContext()));
+        uri.append(App.getSubsonicClientInstance(false).getUrl());
         uri.append("getCoverArt");
 
         if (params.containsKey("u") && params.get("u") != null)

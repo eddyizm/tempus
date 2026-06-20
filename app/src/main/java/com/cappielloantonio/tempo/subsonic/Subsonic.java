@@ -1,10 +1,5 @@
 package com.cappielloantonio.tempo.subsonic;
 
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
-
 import com.cappielloantonio.tempo.subsonic.api.albumsonglist.AlbumSongListClient;
 import com.cappielloantonio.tempo.subsonic.api.bookmarks.BookmarksClient;
 import com.cappielloantonio.tempo.subsonic.api.browsing.BrowsingClient;
@@ -20,12 +15,8 @@ import com.cappielloantonio.tempo.subsonic.api.sharing.SharingClient;
 import com.cappielloantonio.tempo.subsonic.api.system.SystemClient;
 import com.cappielloantonio.tempo.subsonic.base.Version;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import okhttp3.HttpUrl;
 
 public class Subsonic {
     private static final Version API_MAX_VERSION = Version.of("1.15.0");
@@ -146,33 +137,9 @@ public class Subsonic {
         return openClient;
     }
 
-    public String getUrl(Context context) {
-        String serverUrl = preferences.getServerUrl();
-        if (serverUrl == null || serverUrl.trim().isEmpty()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                Toast.makeText(
-                        context.getApplicationContext(),
-                        "Invalid Server URL.",
-                        Toast.LENGTH_LONG
-                ).show();
-            });
-            return "http://bad_fqdn";
-        }
-        HttpUrl baseUrl = HttpUrl.parse(serverUrl);
-        if (baseUrl == null || baseUrl.host().isEmpty()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                Toast.makeText(
-                        context.getApplicationContext(),
-                        "Invalid Server URL.",
-                        Toast.LENGTH_LONG
-                ).show();
-            });
-            return "http://bad_fqdn";
-        }
-        return baseUrl.newBuilder()
-                .addPathSegment("rest")
-                .build()
-                .toString();
+    public String getUrl() {
+        String url = preferences.getServerUrl() + "/rest/";
+        return url.replace("//rest", "/rest");
     }
 
     public Map<String, String> getParams() {

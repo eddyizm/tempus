@@ -36,7 +36,7 @@ public class MusicUtil {
 
         StringBuilder uri = new StringBuilder();
 
-        uri.append(App.getSubsonicClientInstance(false).getUrl(App.getContext()));
+        uri.append(App.getSubsonicClientInstance(false).getUrl());
         uri.append("stream");
 
         if (params.containsKey("u") && params.get("u") != null)
@@ -107,7 +107,7 @@ public class MusicUtil {
         if (download == null || download.getDownloadUri().isEmpty()) {
             Map<String, String> params = App.getSubsonicClientInstance(false).getParams();
 
-            uri.append(App.getSubsonicClientInstance(false).getUrl(App.getContext()));
+            uri.append(App.getSubsonicClientInstance(false).getUrl());
             uri.append("download");
 
             if (params.containsKey("u") && params.get("u") != null)
@@ -138,7 +138,7 @@ public class MusicUtil {
 
         StringBuilder uri = new StringBuilder();
 
-        uri.append(App.getSubsonicClientInstance(false).getUrl(App.getContext()));
+        uri.append(App.getSubsonicClientInstance(false).getUrl());
         uri.append("stream");
 
         if (params.containsKey("u") && params.get("u") != null)
