@@ -6,6 +6,7 @@ import com.cappielloantonio.tempo.subsonic.utils.EmptyDateTypeAdapter
 import com.cappielloantonio.tempo.util.ClientCertManager
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -23,10 +24,39 @@ class RetrofitClient(subsonic: Subsonic) {
             .create()
 
         retrofit = Retrofit.Builder()
-            .baseUrl(subsonic.url)
+            .baseUrl(sanitizeBaseUrl(subsonic.url))
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(getOkHttpClient())
             .build()
+    }
+
+    /**
+     * Retrofit requires a syntactically valid base URL with an http/https scheme AND a parseable
+     * host, throwing IllegalArgumentException otherwise. Two distinct failure modes reach here:
+     *
+     *  - unconfigured / blank / scheme-less address (timed-out first login, half-configured local
+     *    address) -> "Expected URL scheme 'http' or 'https'" (issues #776, #758)
+     *  - a scheme is present but the host is malformed, e.g. a typo'd FQDN with a space
+     *    ("http://navi.example com") -> "Invalid URL host" (issue #795)
+     *
+     * Parsing with OkHttp (the same parser Retrofit uses) catches both: an unparseable address
+     * yields null, so we fall back to an unreachable placeholder. The client then builds and
+     * requests fail through the normal onFailure callbacks instead of taking down the process.
+     */
+    private fun sanitizeBaseUrl(url: String?): String {
+        val trimmed = url?.trim().orEmpty()
+        val parsed = trimmed.toHttpUrlOrNull()
+        return if (parsed != null && parsed.host.isNotEmpty()) {
+            trimmed
+        } else {
+            PLACEHOLDER_BASE_URL
+        }
+    }
+
+    /** Constants for [RetrofitClient]. */
+    companion object {
+        /** Syntactically valid but unreachable; used only when no usable server URL is configured. */
+        private const val PLACEHOLDER_BASE_URL = "https://localhost/rest/"
     }
 
     private fun getOkHttpClient(): OkHttpClient {
