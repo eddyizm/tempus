@@ -157,12 +157,12 @@
 
     <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_sound">
 
-        <PreferenceCategory app:title="Equalizer">
+        <PreferenceCategory app:title="@string/settings_title_equalizer">
             <ListPreference
                 android:key="selected_equalizer"
-                android:title="Select an equalizer to use"
+                android:title="@string/settings_equalizer_select"
                 android:summary="None"
-                android:dialogTitle="Equalizers"
+                android:dialogTitle="@string/settings_equalizer_dialog_title"
                 android:entries="@array/selected_equalizer_entries"
                 android:entryValues="@array/selected_equalizer_values"
                 android:defaultValue="0" />
@@ -226,6 +226,16 @@
             android:defaultValue="true"
             android:summary="@string/settings_continuous_play_summary"
             android:key="continuous_play" />
+
+        <SeekBarPreference
+            android:defaultValue="30"
+            android:key="number_tracks_keep_in_queue"
+            android:title="@string/settings_number_tracks_keep_in_queue"
+            android:summary="@string/settings_number_tracks_keep_in_queue_summary"
+            android:max="100"
+            app:min="20"
+            app:showSeekBarValue="true"
+            app:adjustable="true" />
 
         <ListPreference
             app:defaultValue="[heartID]"

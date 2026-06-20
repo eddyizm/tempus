@@ -20,21 +20,38 @@ import java.util.List;
 @UnstableApi
 public class PlaylistPageViewModel extends AndroidViewModel {
     private final PlaylistRepository playlistRepository;
+    private final androidx.lifecycle.Observer<Boolean> playlistUpdateObserver;
 
     private Playlist playlist;
     private boolean isOffline;
 
     private final MutableLiveData<List<Child>> songLiveList = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> playlistMissingEvent = new MutableLiveData<>();
 
     public PlaylistPageViewModel(@NonNull Application application) {
         super(application);
 
         playlistRepository = new PlaylistRepository();
-        playlistRepository.getPlaylistUpdateTrigger().observeForever(needsRefresh -> {
+        playlistUpdateObserver = needsRefresh -> {
             if (needsRefresh != null && needsRefresh && playlist != null) {
                 refreshSongs();
             }
-        });
+        };
+        playlistRepository.getPlaylistUpdateTrigger().observeForever(playlistUpdateObserver);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        playlistRepository.getPlaylistUpdateTrigger().removeObserver(playlistUpdateObserver);
+    }
+
+    public LiveData<Boolean> getPlaylistMissingEvent() {
+        return playlistMissingEvent;
+    }
+
+    public void clearPlaylistMissingEvent() {
+        playlistMissingEvent.setValue(false);
     }
 
     public LiveData<List<Child>> getPlaylistSongLiveList() {
@@ -50,7 +67,11 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         remoteData.observeForever(new androidx.lifecycle.Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> songs) {
-                songLiveList.postValue(songs);
+                if (songs == null) {
+                    playlistMissingEvent.postValue(true);
+                } else {
+                    songLiveList.postValue(songs);
+                }
                 remoteData.removeObserver(this);
             }
         });

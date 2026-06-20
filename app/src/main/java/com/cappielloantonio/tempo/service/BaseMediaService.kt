@@ -59,6 +59,8 @@ open class BaseMediaService : MediaLibraryService() {
 
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
+    protected var sessionCallback: MediaLibrarySession.Callback? = null
+    private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
@@ -143,8 +145,35 @@ open class BaseMediaService : MediaLibraryService() {
     private var lastRadioArtist: String? = null
     private var lastRadioTitle: String? = null
 
+    // Throttle for onPlayerError re-prepare recovery (see #682).
+    private var lastPlayerErrorRecoveryMs = 0L
+    private val playerErrorRecoveryThrottleMs = 5_000L
+
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
+            override fun onPlayerError(error: PlaybackException) {
+                // A network switch (WiFi <-> mobile) surfaces here as a source/network
+                // error. Without recovery the player goes idle and stays silent until the
+                // app is restarted (issue #682). Re-prepare to resume from the current
+                // position, but only for recoverable IO errors and throttled so a permanent
+                // failure (bad URL, auth) can't spin in an endless prepare loop.
+                Log.w(TAG, "onPlayerError: ${error.errorCodeName}", error)
+
+                val recoverable = when (error.errorCode) {
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> true
+                    else -> false
+                }
+                if (!recoverable) return
+
+                val now = android.os.SystemClock.elapsedRealtime()
+                if (now - lastPlayerErrorRecoveryMs >= playerErrorRecoveryThrottleMs) {
+                    lastPlayerErrorRecoveryMs = now
+                    player.prepare()
+                }
+            }
+
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
@@ -186,7 +215,7 @@ open class BaseMediaService : MediaLibraryService() {
                     player.volume = 1f
                     player.pause()
                 }
-                
+
                 // Restart header checks for radio streams when media item changes
                 val mediaType = mediaItem.mediaMetadata.extras?.getString("type")
                 if (mediaType == Constants.MEDIA_TYPE_RADIO && player.isPlaying) {
@@ -195,7 +224,7 @@ open class BaseMediaService : MediaLibraryService() {
                 } else if (mediaType != Constants.MEDIA_TYPE_RADIO) {
                     stopRadioHeaderChecks()
                 }
-                
+
                 updateWidget(player)
             }
 
@@ -205,6 +234,12 @@ open class BaseMediaService : MediaLibraryService() {
                     ReplayGainUtil.prefetchQueueGains(player)
                 } catch (t: Throwable) {
                     Log.w(TAG, "prefetchQueueGains failed: $t")
+                }
+                if (timeline.isEmpty) return
+                val window = Timeline.Window()
+                for (i in 0 until timeline.windowCount) {
+                    timeline.getWindow(i, window)
+                    window.mediaItem.mediaMetadata.artworkUri?.let { bitmapLoader.prewarm(it) }
                 }
             }
 
@@ -489,6 +524,7 @@ open class BaseMediaService : MediaLibraryService() {
             newPlayer.prepare()
         }
         mediaLibrarySession.player = newPlayer
+        (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
     open fun releasePlayers() {
@@ -529,6 +565,7 @@ open class BaseMediaService : MediaLibraryService() {
         SleepTimerManager.getInstance().stopEndOfTrackPoller()
         SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
+        if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
         releasePlayers()
         mediaLibrarySession.release()
         super.onDestroy()
@@ -593,10 +630,13 @@ open class BaseMediaService : MediaLibraryService() {
                 getPendingIntent(0, FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
             }
 
+        bitmapLoader = SyncBitmapLoader(applicationContext)
+
         mediaLibrarySession =
             MediaLibrarySession.Builder(this, player, getMediaLibrarySessionCallback())
                 .setSessionActivity(sessionActivityPendingIntent)
                 .setPeriodicPositionUpdateEnabled(false)
+                .setBitmapLoader(bitmapLoader)
                 .build()
     }
 

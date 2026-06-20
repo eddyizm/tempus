@@ -341,7 +341,7 @@ public class ArtistRepository {
     }
 
     public MutableLiveData<List<Child>> getTopSongs(String artistName, int count) {
-        MutableLiveData<List<Child>> topSongs = new MutableLiveData<>(null);
+        MutableLiveData<List<Child>> topSongs = new MutableLiveData<>(new ArrayList<>());
 
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
@@ -360,13 +360,13 @@ public class ArtistRepository {
                                     .getTopSongs()
                                     .getSongs();
                         }
-                        topSongs.setValue(fetched);
+                        topSongs.setValue(fetched != null ? fetched : new ArrayList<>());
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call,
                                           @NonNull Throwable t) {
-                        topSongs.setValue(null);
+                        topSongs.setValue(new ArrayList<>());
                     }
                 });
 

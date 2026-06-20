@@ -2,6 +2,7 @@ package com.cappielloantonio.tempo.ui.adapter;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -117,9 +118,9 @@ public class PlaylistHorizontalAdapter extends RecyclerView.Adapter<PlaylistHori
             item.playlistTitleTextView.setSelected(true);
 
             itemView.setOnClickListener(v -> onClick());
-            itemView.setOnLongClickListener(v -> onLongClick());
+            itemView.setOnLongClickListener(this::onLongClick);
 
-            item.playlistMoreButton.setOnClickListener(v -> onLongClick());
+            item.playlistMoreButton.setOnClickListener(this::onLongClick);
         }
 
         public void onClick() {
@@ -129,11 +130,11 @@ public class PlaylistHorizontalAdapter extends RecyclerView.Adapter<PlaylistHori
             click.onPlaylistClick(bundle);
         }
 
-        public boolean onLongClick() {
+        public boolean onLongClick(View v) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlists.get(getBindingAdapterPosition()));
 
-            click.onPlaylistLongClick(bundle);
+            click.onPlaylistLongClick(v, bundle);
 
             return true;
         }

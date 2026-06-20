@@ -321,7 +321,7 @@ public class PlayerControllerFragment extends Fragment {
                 Preferences.getTrackNumberVisible()
                         && mediaMetadata.trackNumber != null
                         && !String.valueOf(mediaMetadata.trackNumber).isEmpty()
-                        ? String.format("%02d", mediaMetadata.trackNumber)+ " " + String.valueOf(mediaMetadata.title)
+                        ? String.format("%02d", mediaMetadata.trackNumber)+ ". " + String.valueOf(mediaMetadata.title)
                         : String.valueOf(mediaMetadata.title)
         );
         playerArtistNameLabel.setText(

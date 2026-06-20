@@ -8,12 +8,18 @@ import androidx.annotation.NonNull;
 import androidx.media3.common.util.UnstableApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
+import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.ItemHomeInternetRadioStationBinding;
 import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.RadioCoverArtDownloader;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,14 +48,51 @@ public class InternetRadioStationAdapter extends RecyclerView.Adapter<InternetRa
         holder.item.internetRadioStationTitleTextView.setText(internetRadioStation.getName());
         holder.item.internetRadioStationSubtitleTextView.setText(internetRadioStation.getStreamUrl());
 
-        String imageId = internetRadioStation.getHomePageUrl();
-        if (imageId == null || imageId.isEmpty()) {
-            imageId = internetRadioStation.getStreamUrl();
+        if (internetRadioStation.getId() != null && internetRadioStation.getId().startsWith("local_")) {
+            holder.item.internetRadioStationLocalBadge.setVisibility(android.view.View.VISIBLE);
+        } else {
+            holder.item.internetRadioStationLocalBadge.setVisibility(android.view.View.GONE);
         }
 
-        CustomGlideRequest.Builder
-                .from(holder.itemView.getContext(), imageId, CustomGlideRequest.ResourceType.Radio)
-                .build()
+        loadCoverArt(holder, internetRadioStation);
+    }
+
+    private void loadCoverArt(ViewHolder holder, InternetRadioStation station) {
+        if (station.getId() != null) {
+            File localCover = RadioCoverArtDownloader.getLocalCoverFile(station.getId());
+            if (localCover.exists()) {
+                Glide.with(holder.itemView.getContext())
+                        .load(localCover)
+                        .apply(CustomGlideRequest.createRequestOptions(holder.itemView.getContext(), station.getId(), CustomGlideRequest.ResourceType.Radio))
+                        // Cache-bust by file mtime so an edited cover (same path) refreshes.
+                        .signature(new ObjectKey(localCover.lastModified()))
+                        .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade())
+                        .into(holder.item.internetRadioStationCoverImageView);
+                return;
+            }
+        }
+
+        if (station.getCoverArt() != null && !station.getCoverArt().isEmpty()) {
+            CustomGlideRequest.Builder
+                    .from(holder.itemView.getContext(), station.getCoverArt(), CustomGlideRequest.ResourceType.Radio)
+                    .build()
+                    .into(holder.item.internetRadioStationCoverImageView);
+            return;
+        }
+
+        String homePageUrl = station.getHomePageUrl();
+        if (homePageUrl != null && !homePageUrl.isEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
+            Glide.with(holder.itemView.getContext())
+                    .load(homePageUrl)
+                    .apply(CustomGlideRequest.createRequestOptions(holder.itemView.getContext(), homePageUrl, CustomGlideRequest.ResourceType.Radio))
+                    .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade())
+                    .into(holder.item.internetRadioStationCoverImageView);
+            return;
+        }
+
+        Glide.with(holder.itemView.getContext())
+                .load((String) null)
+                .apply(CustomGlideRequest.createRequestOptions(holder.itemView.getContext(), null, CustomGlideRequest.ResourceType.Radio))
                 .into(holder.item.internetRadioStationCoverImageView);
     }
 

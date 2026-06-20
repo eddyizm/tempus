@@ -14,6 +14,15 @@
         android:title="@string/menu_download_all_button"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_add_to_queue"
+        android:icon="@drawable/ic_queue"
+        android:title="@string/menu_add_to_queue_button"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_edit_playlist"
+        android:title="@string/menu_edit_playlist_button"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_pin_playlist"
         android:icon="@drawable/ic_add"
         android:title="@string/menu_pin_button"
