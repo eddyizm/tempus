@@ -23,7 +23,7 @@ class RetrofitClient(subsonic: Subsonic) {
             .create()
 
         retrofit = Retrofit.Builder()
-            .baseUrl(subsonic.url)
+            .baseUrl(subsonic.getUrl(App.getContext()))
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(getOkHttpClient())
             .build()
