@@ -149,7 +149,14 @@ public class Subsonic {
     public String getUrl(Context context) {
         String serverUrl = preferences.getServerUrl();
         if (serverUrl == null || serverUrl.trim().isEmpty()) {
-            return "http://bad.fqdn";
+            new Handler(Looper.getMainLooper()).post(() -> {
+                Toast.makeText(
+                        context.getApplicationContext(),
+                        "Invalid Server URL.",
+                        Toast.LENGTH_LONG
+                ).show();
+            });
+            return "http://bad_fqdn";
         }
         HttpUrl baseUrl = HttpUrl.parse(serverUrl);
         if (baseUrl == null || baseUrl.host().isEmpty()) {
