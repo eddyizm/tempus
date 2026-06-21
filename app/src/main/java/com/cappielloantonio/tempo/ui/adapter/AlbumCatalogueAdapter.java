@@ -23,7 +23,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAdapter.ViewHolder> implements Filterable {
+public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAdapter.ViewHolder> implements Filterable, StandardViewTypeAdapter {
     private final ClickCallback click;
     private String currentFilter;
     private boolean showArtist;
@@ -103,11 +103,6 @@ public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAd
     public void setItems(List<AlbumID3> albums) {
         this.albumsFull = new ArrayList<>(albums);
         filtering.filter(currentFilter);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
     }
 
     @Override

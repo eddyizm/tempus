@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_go_to_playlist"
+        android:title="@string/menu_go_to_playlist_button" />
+    <item
+        android:id="@+id/action_play_shuffle"
+        android:title="@string/menu_play_shuffle_button" />
+    <item
+        android:id="@+id/action_add_to_queue"
+        android:title="@string/menu_add_to_queue_button" />
+    <item
+        android:id="@+id/action_edit_playlist"
+        android:title="@string/menu_edit_playlist_button" />
+</menu>

@@ -73,7 +73,7 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
 
     @Override
     public int getItemViewType(int position) {
-        return position;
+        return 0;
     }
 
     @Override

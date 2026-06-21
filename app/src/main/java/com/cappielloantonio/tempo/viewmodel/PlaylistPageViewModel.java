@@ -20,6 +20,7 @@ import java.util.List;
 @UnstableApi
 public class PlaylistPageViewModel extends AndroidViewModel {
     private final PlaylistRepository playlistRepository;
+    private final androidx.lifecycle.Observer<Boolean> playlistUpdateObserver;
 
     private Playlist playlist;
     private boolean isOffline;
@@ -31,11 +32,18 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         super(application);
 
         playlistRepository = new PlaylistRepository();
-        playlistRepository.getPlaylistUpdateTrigger().observeForever(needsRefresh -> {
+        playlistUpdateObserver = needsRefresh -> {
             if (needsRefresh != null && needsRefresh && playlist != null) {
                 refreshSongs();
             }
-        });
+        };
+        playlistRepository.getPlaylistUpdateTrigger().observeForever(playlistUpdateObserver);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        playlistRepository.getPlaylistUpdateTrigger().removeObserver(playlistUpdateObserver);
     }
 
     public LiveData<Boolean> getPlaylistMissingEvent() {
