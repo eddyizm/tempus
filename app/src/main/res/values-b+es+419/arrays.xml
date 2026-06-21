@@ -363,7 +363,7 @@
     <string-array name="aa_starred_for_made_for_you_titles">
         <item>Artistas favoritos</item>
         <item>Álbumes favoritos</item>
-        <item>Cacniones favoritas</item>
+        <item>Canciones favoritas</item>
     </string-array>
     <string-array name="aa_starred_for_made_for_you_values" translatable="false">
         <item>0</item>
