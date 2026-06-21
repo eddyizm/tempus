@@ -102,11 +102,11 @@ public class HomeTabRadioFragment extends Fragment implements ClickCallback, Rad
         bind.internetRadioStationRecyclerView.setAdapter(internetRadioStationAdapter);
         radioViewModel.getInternetRadioStations(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), internetRadioStations -> {
             if (internetRadioStations == null) {
-                if (bind != null) bind.homeRadioStationSector.setVisibility(View.GONE);
+                if (bind != null) bind.internetRadioStationRecyclerView.setVisibility(View.GONE);
                 if (bind != null) bind.emptyRadioStationLayout.setVisibility(View.GONE);
             } else {
                 if (bind != null)
-                    bind.homeRadioStationSector.setVisibility(!internetRadioStations.isEmpty() ? View.VISIBLE : View.GONE);
+                    bind.internetRadioStationRecyclerView.setVisibility(!internetRadioStations.isEmpty() ? View.VISIBLE : View.GONE);
                 if (bind != null)
                     bind.emptyRadioStationLayout.setVisibility(internetRadioStations.isEmpty() ? View.VISIBLE : View.GONE);
 
