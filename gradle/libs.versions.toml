@@ -23,6 +23,10 @@ sdp = "1.1.1"
 customactivityoncrash = "2.4.0"
 shimmer = "0.5.0"
 
+# Testing
+androidxTestExtJunit = "1.2.1"
+androidxTestRunner = "1.6.2"
+
 [libraries]
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
@@ -58,6 +62,9 @@ customactivityoncrash = { group = "cat.ereza", name = "customactivityoncrash", v
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
 
 kotlin-metadata = { group = "org.jetbrains.kotlin", name = "kotlin-metadata-jvm", version.ref = "kotlin" }
+
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
