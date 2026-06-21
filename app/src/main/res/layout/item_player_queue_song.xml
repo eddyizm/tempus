@@ -81,7 +81,7 @@
         android:paddingVertical="8dp"
         android:layout_marginHorizontal="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/queue_song_cover_image_view"
-        app:layout_constraintEnd_toStartOf="@+id/queue_song_holder_image"
+        app:layout_constraintEnd_toStartOf="@+id/download_indicator_icon"
         app:layout_constraintStart_toEndOf="@+id/queue_song_title_text_view"
         app:layout_constraintTop_toTopOf="@+id/queue_song_cover_image_view">
 
@@ -145,7 +145,8 @@
         android:layout_height="20dp"
         android:layout_marginEnd="8dp"
         android:visibility="gone"
-        android:src="@drawable/ic_download"  app:layout_constraintBottom_toBottomOf="@+id/queue_song_cover_image_view"
+        android:src="@drawable/ic_download"
+        app:layout_constraintBottom_toBottomOf="@+id/queue_song_cover_image_view"
         app:layout_constraintEnd_toStartOf="@+id/queue_song_holder_image"
         app:layout_constraintTop_toTopOf="@+id/queue_song_cover_image_view"
         tools:visibility="visible" />
@@ -158,6 +159,5 @@
         android:src="@drawable/ic_drag_handle"
         app:layout_constraintBottom_toBottomOf="@+id/queue_song_cover_image_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/rating_indicator_image_view"
         app:layout_constraintTop_toTopOf="@+id/queue_song_cover_image_view" />
 </androidx.constraintlayout.widget.ConstraintLayout>
