@@ -1,6 +1,7 @@
 package com.cappielloantonio.tempo.ui.fragment;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,23 +22,34 @@ import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.session.MediaBrowser;
+import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.FragmentPlaylistCatalogueBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
+import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
+import com.cappielloantonio.tempo.service.MediaManager;
+import com.cappielloantonio.tempo.service.MediaService;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.PlaylistHorizontalAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistEditorDialog;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.LiveDataUtils;
 import com.cappielloantonio.tempo.viewmodel.PlaylistCatalogueViewModel;
+import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.Collections;
 
 @UnstableApi
 public class PlaylistCatalogueFragment extends Fragment implements ClickCallback {
     private FragmentPlaylistCatalogueBinding bind;
     private MainActivity activity;
     private PlaylistCatalogueViewModel playlistCatalogueViewModel;
+    private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     private PlaylistHorizontalAdapter playlistHorizontalAdapter;
 
@@ -71,6 +84,7 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
     public void onDestroyView() {
         super.onDestroyView();
         bind = null;
+        MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
     }
 
     private void init(Bundle args) {
@@ -107,6 +121,8 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
 
         playlistCatalogueViewModel.getSortedPlaylistList().observe(getViewLifecycleOwner(), playlists -> {
             if (playlists != null) {
@@ -195,10 +211,57 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
     }
 
     @Override
-    public void onPlaylistLongClick(Bundle bundle) {
-        PlaylistEditorDialog dialog = new PlaylistEditorDialog(null);
-        dialog.setArguments(bundle);
-        dialog.show(activity.getSupportFragmentManager(), null);
-        hideKeyboard(requireView());
+    public void onPlaylistLongClick(View view, Bundle bundle) {
+        PopupMenu popup = new PopupMenu(requireContext(), view);
+        popup.getMenuInflater().inflate(R.menu.playlist_popup_menu, popup.getMenu());
+        
+        popup.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.action_go_to_playlist) {
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
+                }
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_play_shuffle) {
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        Collections.shuffle(songs);
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
+                }
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                        Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                    });
+                }
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
+                PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
+                    @Override
+                    public void onDismiss() {
+                        refreshPlaylistView();
+                    }
+                });
+
+                dialog.setArguments(bundle);
+                dialog.show(activity.getSupportFragmentManager(), null);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
+    }
+
+    private void refreshPlaylistView() {
+        playlistCatalogueViewModel.getPlaylistList(getViewLifecycleOwner());
     }
 }
