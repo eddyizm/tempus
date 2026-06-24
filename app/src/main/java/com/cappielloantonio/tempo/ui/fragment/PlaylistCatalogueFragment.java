@@ -33,6 +33,7 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.PlaylistHorizontalAdapter;
@@ -42,7 +43,9 @@ import com.cappielloantonio.tempo.util.LiveDataUtils;
 import com.cappielloantonio.tempo.viewmodel.PlaylistCatalogueViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @UnstableApi
 public class PlaylistCatalogueFragment extends Fragment implements ClickCallback {
@@ -229,8 +232,9 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
                 Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
                 if (playlist != null) {
                     LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
-                        Collections.shuffle(songs);
-                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        List<Child> shuffledSongs = new ArrayList<>(songs);
+                        Collections.shuffle(shuffledSongs);
+                        MediaManager.startQueue(mediaBrowserListenableFuture, shuffledSongs, 0);
                         activity.setBottomSheetInPeek(true);
                     });
                 }
