@@ -290,7 +290,14 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initBackCover() {
-        playlistPageViewModel.getPlaylistSongLiveList().observe(requireActivity(), songs -> {
+        // Observe with the view lifecycle, not the activity. The view model is
+        // activity-scoped, so observing its shared LiveData with requireActivity()
+        // left one observer per opened playlist registered for the whole session,
+        // each retaining this fragment's view tree (the cover ImageViews) — the
+        // heap climbed with every playlist opened until OOM. getViewLifecycleOwner()
+        // removes the observer at onDestroyView so the view tree can be collected.
+        // See issue #696.
+        playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
             if (bind != null && songs != null && !songs.isEmpty()) {
                 java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> randomSongs = new java.util.ArrayList<>(songs);
                 java.util.Collections.shuffle(randomSongs);

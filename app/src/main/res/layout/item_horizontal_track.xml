@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
     android:clipChildren="false"
+    android:orientation="horizontal"
     android:paddingTop="2dp"
     android:paddingBottom="2dp">
 
@@ -38,7 +39,6 @@
             android:id="@+id/different_disk_divider"
             style="@style/Divider"
             android:layout_width="0dp"
-            android:layout_height="1dp"
             app:layout_constraintBottom_toBottomOf="@+id/disc_title_text_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/disc_title_text_view"
@@ -49,6 +49,7 @@
         android:id="@+id/song_cover_image_view"
         android:layout_width="52dp"
         android:layout_height="52dp"
+        android:layout_gravity="center"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,8 +70,8 @@
         android:id="@+id/play_pause_icon"
         android:layout_width="28dp"
         android:layout_height="28dp"
+        android:layout_gravity="center"
         android:layout_marginStart="28dp"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/different_disk_divider_sector" />
@@ -92,6 +93,7 @@
         android:layout_width="12dp"
         android:layout_height="52dp"
         app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
+        app:layout_constraintEnd_toStartOf="@+id/search_result_song_title_text_view"
         app:layout_constraintStart_toEndOf="@+id/song_cover_image_view"
         app:layout_constraintTop_toTopOf="@+id/song_cover_image_view" />
 
@@ -131,14 +133,14 @@
         android:paddingVertical="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
         app:layout_constraintEnd_toStartOf="@+id/search_result_download_indicator_image_view"
+        app:layout_constraintStart_toEndOf="@+id/search_result_song_title_text_view"
         app:layout_constraintTop_toTopOf="@+id/song_cover_image_view">
 
         <ImageView
             android:id="@+id/preferred_icon"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:src="@drawable/ic_favorite"
-            android:contentDescription="@string/favorite_icon_description"
+            android:background="@drawable/ic_favorite"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -150,18 +152,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/preferred_icon"
-            tools:visibility="visible">
+            app:layout_constraintTop_toBottomOf="@id/preferred_icon">
 
-            <ImageView android:id="@+id/one_star_icon" android:layout_width="8dp" android:layout_height="8dp" tools:src="@drawable/ic_star" />
-            <ImageView android:id="@+id/two_star_icon" android:layout_width="8dp" android:layout_height="8dp" tools:src="@drawable/ic_star" />
-            <ImageView android:id="@+id/three_star_icon" android:layout_width="8dp" android:layout_height="8dp" tools:src="@drawable/ic_star" />
-            <ImageView android:id="@+id/four_star_icon" android:layout_width="8dp" android:layout_height="8dp" tools:src="@drawable/ic_star" />
-            <ImageView android:id="@+id/five_star_icon" android:layout_width="8dp" android:layout_height="8dp" tools:src="@drawable/ic_star" />
+            <ImageView
+                android:id="@+id/one_star_icon"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                tools:src="@drawable/ic_star" />
+
+            <ImageView
+                android:id="@+id/two_star_icon"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                tools:src="@drawable/ic_star" />
+
+            <ImageView
+                android:id="@+id/three_star_icon"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                tools:src="@drawable/ic_star" />
+
+            <ImageView
+                android:id="@+id/four_star_icon"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                tools:src="@drawable/ic_star" />
+
+            <ImageView
+                android:id="@+id/five_star_icon"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                tools:src="@drawable/ic_star" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -170,7 +194,10 @@
         android:id="@+id/search_result_download_indicator_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
         app:layout_constraintEnd_toStartOf="@+id/search_result_song_more_button"
@@ -180,14 +207,18 @@
         <ImageView
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:background="@drawable/ic_download" />
+            android:background="@drawable/ic_download"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/search_result_song_more_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/song_cover_image_view">
@@ -198,5 +229,4 @@
             android:background="@drawable/ic_more_vert"
             android:foreground="?android:attr/selectableItemBackgroundBorderless" />
     </FrameLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
