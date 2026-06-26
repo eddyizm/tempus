@@ -107,12 +107,24 @@ open class BaseMediaService : MediaLibraryService() {
 
     fun updateMediaItems(player: Player) {
         Log.d(TAG, "update items")
-        val n = player.mediaItemCount
-        val k = player.currentMediaItemIndex
-        val current = player.currentPosition
-        val items = (0..n - 1).map { MappingUtil.mapMediaItem(player.getMediaItemAt(it)) }
-        player.clearMediaItems()
-        player.setMediaItems(items, k, current)
+        // Re-resolve per-network stream URLs (maxBitRate/format) for the queue WITHOUT
+        // interrupting the currently-playing track. The previous implementation called
+        // clearMediaItems() + setMediaItems() over the live player, which discards the
+        // active item's forward buffer and forces a re-prepare on every WiFi<->cellular
+        // switch — an audible ~0.5s gap (and, on some devices, the failed re-prepare that
+        // #682 recovers from). Instead, replace only the non-current items, and only when
+        // the resolved URI actually changed, so the active item is never touched while
+        // upcoming tracks still pick up the new network's transcoding settings.
+        val current = player.currentMediaItemIndex
+        if (current == C.INDEX_UNSET) return
+        for (i in 0 until player.mediaItemCount) {
+            if (i == current) continue
+            val old = player.getMediaItemAt(i)
+            val mapped = MappingUtil.mapMediaItem(old)
+            if (mapped.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
+                player.replaceMediaItem(i, mapped)
+            }
+        }
     }
 
     fun restorePlayerFromQueue(player: Player) {
@@ -145,8 +157,35 @@ open class BaseMediaService : MediaLibraryService() {
     private var lastRadioArtist: String? = null
     private var lastRadioTitle: String? = null
 
+    // Throttle for onPlayerError re-prepare recovery (see #682).
+    private var lastPlayerErrorRecoveryMs = 0L
+    private val playerErrorRecoveryThrottleMs = 5_000L
+
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
+            override fun onPlayerError(error: PlaybackException) {
+                // A network switch (WiFi <-> mobile) surfaces here as a source/network
+                // error. Without recovery the player goes idle and stays silent until the
+                // app is restarted (issue #682). Re-prepare to resume from the current
+                // position, but only for recoverable IO errors and throttled so a permanent
+                // failure (bad URL, auth) can't spin in an endless prepare loop.
+                Log.w(TAG, "onPlayerError: ${error.errorCodeName}", error)
+
+                val recoverable = when (error.errorCode) {
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> true
+                    else -> false
+                }
+                if (!recoverable) return
+
+                val now = android.os.SystemClock.elapsedRealtime()
+                if (now - lastPlayerErrorRecoveryMs >= playerErrorRecoveryThrottleMs) {
+                    lastPlayerErrorRecoveryMs = now
+                    player.prepare()
+                }
+            }
+
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return

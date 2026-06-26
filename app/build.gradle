@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.cappielloantonio.tempo'
+    namespace = 'com.cappielloantonio.tempo'
     compileSdk = 35
     buildToolsVersion = '36.0.0'
 
@@ -14,7 +14,7 @@ android {
         targetSdk 35
 
         versionCode 31
-        versionName '4.19.1-dev'
+        versionName '4.19.3-dev'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -33,11 +33,11 @@ android {
 
     splits {
         abi {
-            enable true
+            enable = true
             reset()
             //noinspection ChromeOsAbiSupport
             include 'armeabi-v7a', 'arm64-v8a'
-            universalApk false
+            universalApk = false
         }
     }
 
@@ -53,41 +53,32 @@ android {
     productFlavors {
         tempus {
             dimension = "default"
-            applicationId 'com.eddyizm.tempus'
+            applicationId = 'com.eddyizm.tempus'
         }
 
         degoogled {
             dimension = "default"
-            applicationId "com.eddyizm.degoogled.tempus"
+            applicationId = "com.eddyizm.degoogled.tempus"
         }
     }
 
     buildTypes {
         release {
-            shrinkResources true
-            minifyEnabled true
-            debuggable false
+            shrinkResources = true
+            minifyEnabled = true
+            debuggable = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
 
         debug {
-            applicationIdSuffix ".debug"
-            debuggable true
+            applicationIdSuffix = ".debug"
+            debuggable = true
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -144,11 +135,12 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.12.0'
     testImplementation 'org.mockito.kotlin:mockito-kotlin:5.4.0'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
 
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }

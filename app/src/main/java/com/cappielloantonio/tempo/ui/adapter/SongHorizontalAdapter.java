@@ -42,7 +42,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 @UnstableApi
-public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAdapter.ViewHolder> implements Filterable {
+public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAdapter.ViewHolder> implements Filterable, StandardViewTypeAdapter {
     private final ClickCallback click;
     private final boolean showCoverArt;
     private final boolean showAlbum;
@@ -274,11 +274,6 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     public void setItems(List<Child> songs) {
         this.songsFull = songs != null ? songs : Collections.emptyList();
         filtering.filter(currentFilter);
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
     }
 
     @Override
