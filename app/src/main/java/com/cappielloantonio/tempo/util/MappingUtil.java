@@ -36,7 +36,18 @@ public class MappingUtil {
         ArrayList<MediaItem> mediaItems = new ArrayList<>();
 
         for (int i = 0; i < items.size(); i++) {
-            mediaItems.add(mapMediaItem(items.get(i)));
+            Child item = items.get(i);
+            try {
+                mediaItems.add(mapMediaItem(item));
+            } catch (Exception e) {
+                // A single un-mappable saved song (e.g. a cached queue entry whose
+                // Subsonic data lost fields after a server/library change) must not
+                // abort the whole batch. This runs during play-queue restore in
+                // MediaService.onCreate, so a thrown exception crashed the app on
+                // launch. Skip the bad item and keep the rest. See issue #705.
+                Log.e(TAG, "Skipping un-mappable song in queue restore: "
+                        + (item != null ? item.getId() : "null"), e);
+            }
         }
 
         return mediaItems;
