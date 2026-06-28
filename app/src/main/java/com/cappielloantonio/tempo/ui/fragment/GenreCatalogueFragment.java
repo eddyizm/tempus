@@ -61,6 +61,7 @@ public class GenreCatalogueFragment extends Fragment implements ClickCallback {
         bind = FragmentGenreCatalogueBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
         genreCatalogueViewModel = new ViewModelProvider(requireActivity()).get(GenreCatalogueViewModel.class);
+        genreCatalogueViewModel.loadGenreList();
 
         TileSizeManager.getInstance().calculateGenreSize( requireContext() );
         spanCount = TileSizeManager.getInstance().getGenreSpanCount( requireContext() );
@@ -136,14 +137,15 @@ public class GenreCatalogueFragment extends Fragment implements ClickCallback {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                genreCatalogueAdapter.getFilter().filter(query);
                 searchView.clearFocus();
-                return false;
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
                 genreCatalogueAdapter.getFilter().filter(newText);
-                return false;
+                return true;
             }
         });
 
