@@ -284,6 +284,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private final Handler emptyTopSongsTimerHandler = new Handler(Looper.getMainLooper());
     private final Runnable emptyTopSongsTimerRunnable = () -> {
         bind.artistPageTopSongsSector.setVisibility(View.VISIBLE);
+        bind.mostStreamedSongRecyclerContainer.setVisibility(View.GONE);
         bind.mostStreamedSongRecyclerView.setVisibility(View.GONE);
         bind.mostStreamedSongRecyclerPlaceholder.setVisibility(View.GONE);
         bind.mostStreamedSongRecyclerEmpty.setVisibility(View.VISIBLE);
@@ -303,7 +304,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                     /* Top Songs Timer unset whenever we enter the observer */
                     emptyTopSongsTimerHandler.removeCallbacks(emptyTopSongsTimerRunnable);
 
-                    if (songs == null) {
+                    if (songs.isEmpty()) {
                         // FETCHING -> Placeholder View
                         bind.artistPageTopSongsSector.setVisibility(View.VISIBLE);
                         bind.mostStreamedSongRecyclerContainer.setVisibility(View.GONE);
@@ -312,17 +313,6 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                         bind.mostStreamedSongRecyclerEmpty.setVisibility(View.GONE);
                         // Start timeout to get out of placeholder
                         emptyTopSongsTimerHandler.postDelayed(emptyTopSongsTimerRunnable, TOP_SONGS_TIMEOUT);
-                        return;
-                    }
-
-                    if (songs.isEmpty()) {
-                        // EMPTY -> Empty View
-                        bind.artistPageTopSongsSector.setVisibility(View.VISIBLE);
-                        bind.mostStreamedSongRecyclerContainer.setVisibility(View.GONE);
-                        bind.mostStreamedSongRecyclerView.setVisibility(View.GONE);
-                        bind.mostStreamedSongRecyclerPlaceholder.setVisibility(View.GONE);
-                        bind.mostStreamedSongRecyclerEmpty.setVisibility(View.VISIBLE);
-                        bind.mostStreamedSongTextViewClickable.setVisibility(View.GONE);
                         return;
                     }
 
