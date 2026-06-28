@@ -22,3 +22,27 @@ $ANDROID_HOME/cmdline-tools/latest/bin/retrace app/build/outputs/mapping/tempusR
 ```
 
 Now the final users don't need to install debug apk's to generate readable logs.
+
+### Pull PR's from GitHub
+
+> [!NOTE]
+> Source: https://stackoverflow.com/a/30584951
+
+Forking allows to have a copy of the repo and submit new PR's, however
+to review existent PR's we have to pull them locally.
+
+To ease that chore, add upstream as a new remote:
+
+```bash
+git remote add upstream git@github.com:eddyizm/tempus.git
+```
+
+Then pull the PR from it into a local branch:
+```bash
+git fetch upstream pull/$ID/head:pr-$ID
+```
+
+Now you can checkout to the PR locally:
+```bash
+git checkout pr-$ID
+```
