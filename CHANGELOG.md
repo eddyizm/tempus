@@ -1,5 +1,40 @@
 # Changelog
 
+## [4.20.0](https://github.com/eddyizm/tempus/releases/tag/v4.20.0) (2026-06-27)
+## What's Changed
+* feat: improve Continuous Play by @MaFo-28 in https://github.com/eddyizm/tempus/pull/721
+* ui: Release Type sections on artist page rework by @haunders in https://github.com/eddyizm/tempus/pull/756
+* fix: handle aggressive memory killing to restore album fragment by @eddyizm in https://github.com/eddyizm/tempus/pull/772
+* chore: update gradle to version catalogues by @tvillega in https://github.com/eddyizm/tempus/pull/762
+* chore: upgrade to agp 9.x by @tvillega in https://github.com/eddyizm/tempus/pull/763
+* devops: updated build tool version to match gradle bump and reverted … by @eddyizm in https://github.com/eddyizm/tempus/pull/778
+* fix: handled OOM/ANR with large playlist. landscape still needs work by @eddyizm in https://github.com/eddyizm/tempus/pull/769
+* feat: add to queue, edit playlist in main playlist page by @eddyizm in https://github.com/eddyizm/tempus/pull/773
+* fix: album layout padding updated to match new playlist layout by @eddyizm in https://github.com/eddyizm/tempus/pull/784
+* chore: set java 21 target by @tvillega in https://github.com/eddyizm/tempus/pull/779
+* chore: lower http logging by @eddyizm in https://github.com/eddyizm/tempus/pull/785
+* feat: Playlist menu changes by @eddyizm in https://github.com/eddyizm/tempus/pull/793
+* fix: playlist-browsing OOM from a leaked LiveData observer (#696) by @herrerad85 in https://github.com/eddyizm/tempus/pull/796
+* chore(i18n): Update Spanish (Latinoamerica) translation by @Kurami32 in https://github.com/eddyizm/tempus/pull/798
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/794
+* fix: unsanitized fqdn crashes login by @tvillega in https://github.com/eddyizm/tempus/pull/797
+* fix: recover playback after a network switch instead of freezing (#682) by @herrerad85 in https://github.com/eddyizm/tempus/pull/790
+* Revert login fix abea68b4 by @eddyizm in https://github.com/eddyizm/tempus/pull/802
+* fix: wrong fetching animations condition of artist top songs by @tvillega in https://github.com/eddyizm/tempus/pull/803
+* fix: avoid playback gap on WiFi/cellular switch by not rebuilding the active item by @chunjiw in https://github.com/eddyizm/tempus/pull/805
+* fix: Sanitize the Subsonic base URL before handing it to Retrofit (#795) by @herrerad85 in https://github.com/eddyizm/tempus/pull/804
+* fix: applying main layout to current buggy changes by @eddyizm in https://github.com/eddyizm/tempus/pull/806
+* chore(i18n): Update arrays for Spanish (Latin America). by @Kurami32 in https://github.com/eddyizm/tempus/pull/807
+* feat: updated playlist catalog menu to match new behavior by @eddyizm in https://github.com/eddyizm/tempus/pull/812
+* fix: skip un-mappable songs when restoring the play queue (#705) by @herrerad85 in https://github.com/eddyizm/tempus/pull/791
+* fix: cancel leaked player/home callbacks that retain MainActivity (#777) by @herrerad85 in https://github.com/eddyizm/tempus/pull/792
+
+## New Contributors
+* @haunders made their first contribution in https://github.com/eddyizm/tempus/pull/756
+* @herrerad85 made their first contribution in https://github.com/eddyizm/tempus/pull/796
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.19.0...v4.20.0
+
 ## [4.19.0](https://github.com/eddyizm/tempus/releases/tag/v4.19.0) (2026-06-15)
 ## What's Changed
 * fix: Move sleep timer logic from PlayerControllerFragment to BaseMediaService by @CtznSniiips in https://github.com/eddyizm/tempus/pull/730

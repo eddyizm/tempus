@@ -177,7 +177,7 @@ public class PlaylistRepository {
                                     songs = new ArrayList<>();
                                 }
                                 listLivePlaylistSongs.setValue(songs);
-                                cachePlaylistSongs(id, songs);
+                                cachePlaylistSongs(sr.getPlaylist(), songs);
                             } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
                                 // Subsonic Standard Error Code 70: The requested data was not found.
                                 handleMissingPlaylist(id, null);
@@ -199,8 +199,16 @@ public class PlaylistRepository {
         return listLivePlaylistSongs;
     }
 
-    private void cachePlaylistSongs(String playlistId, List<Child> songs) {
+    private void cachePlaylistSongs(Playlist playlist, List<Child> songs) {
         new Thread(() -> {
+            String playlistId = playlist.getId();
+            // playlist_song has a foreign key to playlist.id, so the playlist row must
+            // exist before its songs are inserted. The full-list path caches playlists via
+            // cacheAllPlaylists, but the single-playlist endpoint (used by deep links) does
+            // not — without this the songs insert crashes with a FOREIGN KEY constraint.
+            // Insert before the early-return dedup checks so the row is ensured even when
+            // the songs are already cached. See issue #729.
+            playlistDao.insertIfAbsent(playlist);
             List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
             if (songs == null || songs.isEmpty()) {
                 if (cached != null && !cached.isEmpty()) {

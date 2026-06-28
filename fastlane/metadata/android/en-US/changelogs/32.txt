@@ -1,0 +1,9 @@
+Added to queue, edit playlist in playlist & catalog page
+Improved Continuous Play
+Several language updates for spanish/polish
+Playlist-browsing OOM fixed
+Fix crashes on restoring play queue, app resume
+Recover playback after a network switch instead of freezing
+Avoid playback gap on WiFi/cellular switch by not rebuilding the active item
+Sanitize the Subsonic base URL before handing it to Retrofit
+see full change log ->
