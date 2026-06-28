@@ -6,13 +6,13 @@ pluginManagement {
     }
 }
 
-// plugins {
-//     /*
-//     Can't use fancy libs.versions.toml notation here
-//     This thing auto-downloads java for local development (no need to mess with system java)
-//      */
-//     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
-// }
+plugins {
+    /*
+    Can't use fancy libs.versions.toml notation here
+    This thing auto-downloads java for local development (no need to mess with system java)
+     */
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
