@@ -79,6 +79,9 @@ public class PlayerCoverFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // #777: drop the pending tap-button-hide runnable (postDelayed 10s) so its
+        // queued main-thread message can't retain this destroyed fragment.
+        handler.removeCallbacksAndMessages(null);
         bind = null;
     }
 

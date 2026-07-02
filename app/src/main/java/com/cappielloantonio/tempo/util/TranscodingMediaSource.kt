@@ -275,12 +275,19 @@ class TranscodingMediaSource(
             val selections = lastSelections ?: return
             val flags = lastMayRetainStreamFlags ?: return
 
-            val childStreams = arrayOfNulls<SampleStream>(activeWrappers.size)
-            val streamResetFlags = BooleanArray(activeWrappers.size)
+            // Ensure the selections array size matches activeWrappers size
+            // to prevent ArrayIndexOutOfBoundsException during selectTracks
+            val validSize = minOf(selections.size, activeWrappers.size)
+            if (validSize == 0) return
 
-            currentPeriod.selectTracks(selections, flags, childStreams, streamResetFlags, 0)
+            val childStreams = arrayOfNulls<SampleStream>(validSize)
+            val streamResetFlags = BooleanArray(validSize)
+            val validSelections = selections.sliceArray(0 until validSize)
+            val validFlags = flags.sliceArray(0 until validSize)
 
-            for (i in activeWrappers.indices) {
+            currentPeriod.selectTracks(validSelections, validFlags, childStreams, streamResetFlags, 0)
+
+            for (i in 0 until validSize) {
                 activeWrappers[i]?.childStream = childStreams[i]
             }
         }
