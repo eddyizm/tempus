@@ -35,6 +35,7 @@ jobs:
       - name: Build All Release APKs
         id: build
         run: |
+          sed -ri '/org.gradle.toolchains.foojay-resolver-convention/d' settings.gradle
           bash ./gradlew assembleTempusRelease
           bash ./gradlew assembleDegoogledRelease
 
