@@ -16,7 +16,7 @@ material = "1.10.0"
 
 # Third-party
 glide = "4.16.0"
-media3 = "1.8.0"
+media3 = "1.9.2"
 retrofit = "2.11.0"
 okhttpLogging = "5.0.0-alpha.14"
 sdp = "1.1.1"
