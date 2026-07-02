@@ -41,6 +41,7 @@ class MediaLibrarySessionCallback(
         browser: MediaSession.ControllerInfo,
         params: MediaLibraryService.LibraryParams?
     ): ListenableFuture<LibraryResult<MediaItem>> {
+        Log.d(TAG, "onGetLibraryRoot Start pkg=${browser.packageName}")
         MediaBrowserTree.buildTree()
         return Futures.immediateFuture(LibraryResult.ofItem(MediaBrowserTree.getRootItem(), params))
     }
