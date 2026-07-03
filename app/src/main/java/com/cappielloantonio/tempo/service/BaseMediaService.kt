@@ -111,7 +111,6 @@ open class BaseMediaService : MediaLibraryService() {
         return BaseSessionCallback(baseContext, this)
     }
 
-    private val mainHandler = Handler(Looper.getMainLooper())
     fun updateMediaItems(player: Player) {
         Log.d(TAG, "update items")
         // Re-resolve per-network stream URLs (maxBitRate/format) for the queue WITHOUT
@@ -126,7 +125,7 @@ open class BaseMediaService : MediaLibraryService() {
         // Threading: the heavy computation (MappingUtil + isDownloaded) runs on a background
         // thread to avoid blocking the main thread. Only items from current+1 onward are
         // processed — already-played items are skipped. replaceMediaItem() is dispatched back
-        // to the main thread via mainHandler. The guard i < player.mediaItemCount protects
+        // to the main thread via widgetUpdateHandler. The guard i < player.mediaItemCount protects
         // against queue changes during the background computation.
 
         val current = player.currentMediaItemIndex
@@ -138,7 +137,8 @@ open class BaseMediaService : MediaLibraryService() {
         }
         if (itemsToProcess.isEmpty()) return
 
-        val executor = MoreExecutors.listeningDecorator(Executors.newSingleThreadExecutor())
+        val delegate = Executors.newSingleThreadExecutor()
+        val executor = MoreExecutors.listeningDecorator(delegate)
         val future: ListenableFuture<List<Pair<Int, MediaItem>>> = executor.submit(Callable {
             itemsToProcess.mapNotNull { (i, old) ->
                 val mapped = MappingUtil.mapMediaItem(old)
@@ -147,12 +147,15 @@ open class BaseMediaService : MediaLibraryService() {
                 } else null
             }
         })
+        delegate.shutdown()
 
         Futures.addCallback(future, object : FutureCallback<List<Pair<Int, MediaItem>>> {
             override fun onSuccess(updates: List<Pair<Int, MediaItem>>) {
-                mainHandler.post {
+                widgetUpdateHandler.post {
                     updates.forEach { (i, mapped) ->
-                        if (i < player.mediaItemCount) {
+                        if (i > player.currentMediaItemIndex
+                            && i < player.mediaItemCount
+                            && player.getMediaItemAt(i).mediaId == mapped.mediaId) {
                             player.replaceMediaItem(i, mapped)
                         }
                     }
