@@ -17,5 +17,5 @@
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/menu_settings_button"
-        app:showAsAction="never" />
+        app:showAsAction="always" />
 </menu>

@@ -1,5 +1,31 @@
 <?xml version="1.0"?>
 <resources>
+    <string name="aa_albums">Àlbums</string>
+    <string name="aa_album_most_played">Àlbums més reproduïts</string>
+	<string name="aa_album_recently_added">Àlbums afegits</string>
+    <string name="aa_artists">Artistes</string>
+    <string name="aa_home">Inici</string>
+	<string name="aa_made_for_you">Per a vós</string>
+    <string name="aa_more">Més</string>
+    <string name="aa_music_folder">Carpeta</string>
+    <string name="aa_playlists">Llistes de reproducció</string>
+	<string name="aa_podcast">Pòdcasts</string>
+	<string name="aa_radio">Ràdio</string>
+    <string name="aa_random">Aleatori</string>
+    <string name="aa_genres">Gèneres</string>
+    <string name="aa_recent_albums">Recents</string>
+    <string name="aa_song_recently_played">Pistes reproduïdes</string>
+    <string name="aa_starred">Preferits</string>
+    <string name="aa_starred_albums">Àlbums amb ★</string>
+    <string name="aa_starred_artists">Artistes amb ★</string>
+    <string name="aa_starred_tracks">Pistes amb ★</string>
+    <string name="aa_instant_mix">Mescla instantània</string>
+    <string name="aa_view_by_albums">Visualitza per àlbums</string>
+    <string name="aa_tracks">Pistes</string>
+    <string name="aa_quick_mix">Mescla ràpida</string>
+    <string name="aa_my_mix">La meva mescla</string>
+    <string name="aa_discovery_mix">Mescla de descobriment</string>
+
     <string name="activity_battery_optimizations_conclusion">Si teniu problemes, visiteu https://dontkillmyapp.com. S\'hi proporcionen instruccions detallades sobre com inhabilitar qualsevol característica d\'estalvi de bateria que pugui afectar el rendiment de l\'aplicació.</string>
     <string name="activity_battery_optimizations_summary">Inhabiliteu les optimitzacions de la bateria per a la reproducció multimèdia mentre la pantalla està apagada.</string>
     <string name="activity_battery_optimizations_title">Optimitzacions de la bateria</string>
@@ -40,18 +66,29 @@
     <string name="artist_list_page_downloaded">Artistes baixats</string>
     <string name="artist_list_page_starred">Artistes amb estrelles</string>
     <string name="artist_list_page_title">Artistes</string>
+    <string name="artist_no_artist_info_toast">No hi ha informació addicional de l\'artista</string>
     <string name="artist_page_radio_button">Ràdio</string>
     <string name="artist_page_shuffle_button">Reprodueix aleatòriament</string>
     <string name="artist_page_switch_layout_button">Canvia de disposició</string>
     <string name="artist_page_title_album_more_like_this_button">Més com això</string>
     <string name="artist_page_title_album_section">Àlbums</string>
+    <string name="artist_page_title_ep_section">EP</string>
+    <string name="artist_page_title_single_section">Senzills</string>
+    <string name="artist_page_title_compilation_section">Compilacions</string>
+    <string name="artist_page_title_soundtrack_section">Bandes sonores</string>
+    <string name="artist_page_title_live_section">Directes</string>
+    <string name="artist_page_title_remix_section">Remescles</string>
+    <string name="artist_page_title_appears_on_section">Apareix a</string>
     <string name="artist_page_title_biography_more_button">Més</string>
     <string name="artist_page_title_biography_section">Biografia</string>
-    <string name="artist_page_title_most_streamed_song_section">Cançons més transmeses</string>
+    <string name="artist_page_title_most_streamed_song_section">Cançons principals</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Visualitza-ho tot</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">No hi ha cançons principals disponibles\n\nToqueu per a ocultar-ho</string>
     <string name="battery_optimization_negative_button">Ignora</string>
     <string name="battery_optimization_neutral_button">No ho tornis a preguntar</string>
     <string name="battery_optimization_positive_button">Inhabilita</string>
+    <string name="bottom_sheet_generating_instant_mix">S\'està generant la mescla instantània...</string>
+    <string name="bottom_sheet_problem_generating_instant_mix">No s\'han pogut recuperar les pistes del servidor del Subsonic.</string>
     <string name="connection_alert_dialog_negative_button">Cancel·la</string>
     <string name="connection_alert_dialog_neutral_button">Habilita l\'estalvi de dades</string>
     <string name="connection_alert_dialog_positive_button">D\'acord</string>
@@ -62,7 +99,7 @@
     <string name="delete_download_storage_dialog_positive_button">Continua</string>
     <string name="delete_download_storage_dialog_summary">Tingueu en compte que, si continueu, se suprimiran permanentment tots els elements baixats de tots els servidors.</string>
     <string name="delete_download_storage_dialog_title">Suprimeix els elements desats</string>
-    <string name="description_empty_title">No hi ha cap descripció disponible</string>
+    <string name="description_empty_title">No hi ha lletres disponibles</string>
     <string name="disc_titlefull">Disc %1$s - %2$s</string>
     <string name="disc_titleless">Disc %1$s</string>
     <string name="download_directory_dialog_negative_button">Cancel·la</string>
@@ -127,13 +164,17 @@
     <string name="home_subtitle_new_internet_radio_station">Afegeix una ràdio nova</string>
     <string name="home_subtitle_new_podcast_channel">Afegeix un canal de pòdcasts nou</string>
     <string name="home_sync_starred_cancel">Cancel·la</string>
-    <string name="home_sync_starred_download">Baixa</string>
+    <string name="home_sync_starred_download">Baixades</string>
     <string name="home_sync_starred_subtitle">Baixar aquestes pistes pot suposar un ús de dades important</string>
     <string name="home_sync_starred_title">Sembla que hi ha pistes amb estrelles pendents de sincronitzar</string>
     <string name="home_sync_starred_albums_title">Sincronitza els àlbums amb estrelles</string>
     <string name="home_sync_starred_albums_subtitle">Els àlbums marcats amb una estrella estaran disponibles fora de línia</string>
     <string name="home_sync_starred_artists_title">Sincronització dels artistes amb estrelles</string>
     <string name="home_sync_starred_artists_subtitle">Teniu artistes amb estrella amb música sense baixar</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">Cal sincronitzar %d cançó</item>
+        <item quantity="other">Cal sincronitzar %d cançons</item>
+    </plurals>
     <string name="home_title_best_of">El millor de</string>
     <string name="home_title_discovery">Descobriment</string>
     <string name="home_title_discovery_shuffle_all_button">Reprodueix-ho tot aleatòriament</string>
@@ -175,12 +216,18 @@
     <string name="library_title_music_folder">Carpetes de música</string>
     <string name="library_title_playlist">Llistes de reproducció</string>
     <string name="library_title_playlist_see_all_button">Visualitza-ho tot</string>
+    <string name="library_toast_long_press_to_refresh">Manteniu-ho premut per a actualitzar-ho</string>
     <string name="login_empty">No s\'ha afegit cap servidor</string>
     <string name="login_title">Servidors del Subsonic</string>
     <string name="login_title_expanded">Servidors del Subsonic</string>
     <string name="media_route_menu_title">Emissió</string>
     <string name="menu_add_button">Afegeix</string>
     <string name="menu_add_to_playlist_button">Afegeix a la llista de reproducció</string>
+    <string name="playlist_added_to_queue">S\'ha afegit la llista de reproducció a la cua</string>
+    <string name="menu_go_to_playlist_button">Reprodueix</string>
+    <string name="menu_play_shuffle_button">Reprodueix aleatòriament</string>
+    <string name="menu_add_to_queue_button">Afegeix a la cua</string>
+    <string name="menu_edit_playlist_button">Edició de la llista de reproducció</string>
     <string name="menu_download_all_button">Baixa-ho tot</string>
     <string name="menu_rate_album">Valora l\'àlbum</string>
     <string name="menu_download_label">Baixa</string>
@@ -189,6 +236,7 @@
     <string name="menu_group_by_album">Àlbum</string>
     <string name="menu_group_by_artist">Artista</string>
     <string name="menu_group_by_genre">Gènere</string>
+    <string name="menu_group_by_playlist">Llista de reproducció</string>
     <string name="menu_group_by_track">Pista</string>
     <string name="menu_group_by_year">Any</string>
     <string name="menu_home_label">Inici</string>
@@ -202,17 +250,24 @@
     <string name="menu_sort_name">Nom</string>
     <string name="menu_sort_random">Aleatori</string>
     <string name="menu_sort_album_count">Nombre d\'àlbums</string>
+    <string name="menu_sort_song_count">Nombre de cançons</string>
+    <string name="menu_sort_date_created">Data de creació</string>
     <string name="menu_sort_recently_added">Addicions recents</string>
     <string name="menu_sort_recently_played">Reproduccions recents</string>
     <string name="menu_sort_most_played">Més reproduccions</string>
     <string name="menu_sort_most_recently_starred">Estrelles més recents</string>
     <string name="menu_sort_least_recently_starred">Estrelles menys recents</string>
-    <string name="menu_pin_button">Afegeix a la pantalla d\'inici</string>
-    <string name="menu_unpin_button">Suprimeix de la pantalla d\'inici</string>
+    <string name="menu_pin_button">Afegeix als preferits</string>
+    <string name="menu_unpin_button">Suprimeix dels preferits</string>
+    <string name="playlist_sort_pinned">Preferits</string>
     <string name="menu_sort_year">Any</string>
     <string name="player_playback_speed">%1$.2fx</string>
+    <string name="playback_speed_dialog_title">Velocitat de reproducció</string>
+    <string name="playback_speed_dialog_negative_button">Cancel·la</string>
     <string name="player_queue_clean_all_button">Esborra la cua de reproducció</string>
     <string name="player_queue_save_queue_success">S\'ha desat la cua de reproducció</string>
+    <string name="player_queue_save_to_playlist">Desa la cua en una llista de reproducció</string>
+    <string name="player_queue_load_queue">Carrega la cua</string>
     <string name="player_lyrics_download_content_description">Baixa les lletres per a la reproducció fora de línia</string>
     <string name="player_lyrics_downloaded_content_description">Lletres baixades per a la reproducció fora de línia</string>
     <string name="player_lyrics_download_success">S\'han desat les lletres per a la reproducció fora de línia.</string>
@@ -229,7 +284,13 @@
     <string name="playlist_chooser_dialog_title">Addició a una llista de reproducció</string>
     <string name="playlist_chooser_dialog_toast_add_success">S\'han afegit les cançons a la llista de reproducció</string>
     <string name="playlist_chooser_dialog_toast_add_failure">No s\'han pogut afegir les cançons a la llista de reproducció</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">S\'ha suprimit la cançó de la llista de reproducció</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">No s\'ha pogut suprimir la cançó de la llista de reproducció</string>
     <string name="playlist_chooser_dialog_toast_all_skipped">S\'han omès totes les cançons com a duplicades</string>
+    <string name="playlist_chooser_dialog_visibility_public">Pública</string>
+    <string name="playlist_chooser_dialog_visibility_private">Privada</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Marca la llista de reproducció com a pública</string>
+    <string name="playlist_chooser_dialog_visibility_summary">El servidor actualitza la visibilitat a cada sol·licitud. Per defecte, és privada.</string>
     <string name="playlist_counted_tracks">%1$d pistes •  %2$s</string>
     <string name="playlist_duration">Durada  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Manteniu-ho premut per a suprimir-ho</string>
@@ -238,6 +299,10 @@
     <string name="playlist_editor_dialog_neutral_button">Suprimeix</string>
     <string name="playlist_editor_dialog_positive_button">Desa</string>
     <string name="playlist_editor_dialog_title">Edició de la llista de reproducció</string>
+    <string name="playlist_editor_dialog_action_delete_success">S\'ha suprimit la llista de reproducció</string>
+    <string name="playlist_editor_dialog_action_delete_failure">No s\'ha pogut suprimir la llista de reproducció</string>
+    <string name="playlist_editor_dialog_action_save_success">S\'ha desat la llista de reproducció</string>
+    <string name="playlist_editor_dialog_action_save_failure">No s\'ha pogut desar la llista de reproducció</string>
     <string name="playlist_page_play_button">Reprodueix</string>
     <string name="playlist_page_shuffle_button">Reprodueix aleatòriament</string>
     <string name="playlist_song_count">Llista de reproducció  •  %1$d cançons</string>
@@ -251,6 +316,7 @@
     <string name="podcast_channel_catalogue_title_expanded">Exploració de canals</string>
     <string name="podcast_channel_editor_dialog_hint_rss_url">URL de l\'RSS</string>
     <string name="podcast_channel_editor_dialog_title">Canal de pòdcast</string>
+    <string name="podcast_channel_not_supported_snackbar">Aquest servidor no és compatible amb els pòdcasts.</string>
     <string name="podcast_channel_page_title_description_section">Descripció</string>
     <string name="podcast_channel_page_title_episode_section">Episodis</string>
     <string name="podcast_channel_page_title_no_episode_available">No hi ha cap episodi disponible</string>
@@ -265,10 +331,31 @@
     <string name="radio_editor_dialog_negative_button">Cancel·la</string>
     <string name="radio_editor_dialog_neutral_button">Suprimeix</string>
     <string name="radio_editor_dialog_positive_button">Desa</string>
+    <string name="radio_editor_dialog_added">S\'ha afegit l\'emissora de ràdio</string>
+    <string name="radio_editor_dialog_updated">S\'ha actualitzat l\'emissora de ràdio</string>
     <string name="radio_editor_dialog_title">Emissora de ràdio per Internet</string>
     <string name="radio_station_info_empty_button">Feu clic per a ocultar la secció.\nEls efectes seran visibles quan reinicieu l\'aplicació.</string>
     <string name="radio_station_info_empty_subtitle">Quan afegiu una emissora de ràdio, la trobareu aquí.</string>
     <string name="radio_station_info_empty_title">No s\'ha trobat cap emissora.</string>
+    <string name="radio_dialog_not_supported_snackbar">Aquest servidor no és compatible amb la gestió de ràdio per Internet.</string>
+    <string name="radio_editor_source_label">Desa a</string>
+    <string name="radio_editor_source_server">Servidor</string>
+    <string name="radio_editor_source_local">Local</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">URL de la caràtula (opcional)</string>
+    <string name="radio_local_badge">LOCAL</string>
+    <string name="radio_search_dialog_title">Cerca al directori de ràdio</string>
+    <string name="radio_search_hint">Nom de l\'emissora</string>
+    <string name="radio_search_button">Cerca</string>
+    <string name="radio_search_add">Afegeix</string>
+    <string name="radio_search_no_results">No s\'ha trobat cap emissora</string>
+    <string name="radio_search_empty_query">Introduïu el nom d\'una emissora</string>
+    <string name="radio_search_error">No s\'ha pogut cercar: %s</string>
+    <string name="radio_search_duplicate">L\'emissora ja existeix</string>
+    <string name="radio_search_station_added">S\'ha afegit l\'emissora localment</string>
+    <string name="radio_search_directory_button">Carpeta</string>
+    <string name="radio_editor_search_directory">Cerca al directori</string>
+    <string name="radio_search_country_hint">País</string>
+    <string name="radio_search_use">Utilitza</string>
     <string name="rating_dialog_negative_button">Cancel·la</string>
     <string name="rating_dialog_positive_button">Desa</string>
     <string name="rating_dialog_title">Valoració</string>
@@ -284,6 +371,7 @@
     <string name="server_signup_dialog_hint_password">Contrasenya</string>
     <string name="server_signup_dialog_hint_url">URL del servidor</string>
     <string name="server_signup_dialog_hint_username">Nom d\'usuari</string>
+    <string name="server_signup_dialog_hint_client_certificate">Certificat del client (opcional)</string>
     <string name="server_signup_dialog_negative_button">Cancel·la</string>
     <string name="server_signup_dialog_neutral_button">Suprimeix</string>
     <string name="server_signup_dialog_positive_button">Desa</string>
@@ -293,26 +381,28 @@
     <string name="server_unreachable_dialog_positive_button">Continua igualment</string>
     <string name="server_unreachable_dialog_summary">El servidor sol·licitat no està disponible. Si trieu continuar, aquest quadre de diàleg no apareixerà durant una hora.</string>
     <string name="server_unreachable_dialog_title">Servidor no disponible</string>
-    <string name="settings_about_summary">Tempus és un client de música lliure i lleuger per al Subsonic, dissenyat i creat nativament per a l\'Android.</string>
+    <string name="settings_about_summary">El Tempus és un client de música lliure i lleuger per al Subsonic, dissenyat i creat nativament per a l\'Android.</string>
     <string name="settings_about_title">Quant a</string>
     <string name="settings_always_on_display">Pantalla sempre encesa</string>
     <string name="settings_allow_playlist_duplicates">Permet afegir duplicats a una llista de reproducció</string>
     <string name="settings_allow_playlist_duplicates_summary">Si s\'habilita, no es comprovarà si hi ha elements duplicats en afegir-los a una llista de reproducció.</string>
     <string name="settings_audio_transcode_download_format">Format de transcodificació</string>
-    <string name="settings_audio_transcode_download_priority_summary">Si s\'habilita, Tempus no forçarà la baixada de la pista amb els paràmetres de transcodificació següents.</string>
+    <string name="settings_audio_transcode_download_priority_summary">Si s\'habilita, el Tempus no forçarà la baixada de la pista amb els paràmetres de transcodificació següents.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioritza els paràmetres del servidor per a la transmissió a les baixades</string>
-    <string name="settings_audio_transcode_download_summary">Si s\'habilita, Tempus baixarà les pistes transcodificades.</string>
+    <string name="settings_audio_transcode_download_summary">Si s\'habilita, el Tempus baixarà les pistes transcodificades.</string>
     <string name="settings_audio_transcode_download_title">Baixa les pistes transcodificades</string>
     <string name="settings_audio_transcode_format_download">Format de transcodificació per a les baixades</string>
     <string name="settings_audio_transcode_format_mobile">Format de transcodificació amb dades mòbils</string>
     <string name="settings_audio_transcode_format_wifi">Format de transcodificació amb wifi</string>
-    <string name="settings_audio_transcode_priority_summary">Si s\'habilita, Tempus no forçarà la transmissió de la pista amb els paràmetres de transcodificació següents.</string>
+    <string name="settings_audio_transcode_priority_summary">Si s\'habilita, el Tempus no forçarà la transmissió de la pista amb els paràmetres de transcodificació següents.</string>
     <string name="settings_audio_transcode_priority_title">Prioritza els paràmetres de transcodificació del servidor</string>
     <string name="settings_audio_transcode_priority_toast">Prioritat de transcodificació de la pista proporcionada al servidor</string>
     <string name="settings_choose_download_folder">Trieu una carpeta per als fitxers de música baixats.</string>
     <string name="settings_clear_download_folder">Esborra la carpeta de baixades</string>
     <string name="settings_continuous_play_summary">Permet que segueixi sonant música quan acabi una llista de reproducció; es reproduiran cançons similars.</string>
     <string name="settings_continuous_play_title">Reproducció contínua</string>
+    <string name="settings_number_tracks_keep_in_queue">Nombre de pistes a mantenir a la cua</string>
+    <string name="settings_number_tracks_keep_in_queue_summary">Ajusta el nombre de pistes a mantenir a la cua abans de començar a afegir pistes amb la reproducció contínua.</string>
     <string name="settings_covers_cache">Mida de la memòria cau de les caràtules</string>
     <string name="settings_data_saving_mode_summary">Per a reduir el consum de dades, evita la baixada de les caràtules.</string>
     <string name="settings_data_saving_mode_title">Limita l\'ús de les dades mòbils</string>
@@ -322,12 +412,14 @@
     <string name="settings_download_folder_cleared">S\'ha esborrat la carpeta de baixades.</string>
     <string name="settings_download_folder_set">S\'ha definit la carpeta de baixades.</string>
     <string name="settings_set_download_folder">Defineix la carpeta de baixades</string>
+    <string name="settings_song_preload_buffer">Memòria intermèdia de precàrrega de cançons</string>
+    <string name="settings_song_preload_buffer_summary">Valor actual: %1$s\nPerquè el canvi tingui efecte, heu de reiniciar l\'aplicació manualment.</string>
     <string name="settings_system_equalizer_summary">Ajusteu els paràmetres d\'àudio</string>
     <string name="settings_system_equalizer_title">Equalitzador del sistema</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
     <string name="settings_github_summary">Seguiu el desenvolupament</string>
     <string name="settings_github_title">Github</string>
-    <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
+    <string name="settings_support_discussion_link" translatable="false">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_github_update">Actualitzacions</string>
     <string name="settings_github_update_title">Comprova si hi ha actualitzacions a GitHub</string>
     <string name="settings_github_update_summary">Si feu servir la versió de GitHub, per defecte l\'aplicació comprovarà si hi ha noves versions en format APK. Canvieu-ho per a inhabilitar les comprovacions automàtiques de GitHub.</string>
@@ -337,6 +429,9 @@
     <string name="settings_image_size">Resolució de les imatges</string>
     <string name="settings_language">Llengua</string>
     <string name="settings_logout_title">Tanca la sessió</string>
+    <string name="settings_ping_timeout_title">Temps d\'espera de ping del servidor</string>
+    <string name="settings_ping_timeout_summary">Permet definir el temps d\'espera de l\'URL local. Per defecte són 2 segons. (El servidor remot farà servir aquest valor multiplicat per 3 fins a un màxim de 10 segons).</string>
+    <string name="settings_ping_timeout_dialog">Permet definir el temps d\'espera base en segons.</string>
     <string name="settings_max_bitrate_download">Taxa de bits de les baixades</string>
     <string name="settings_max_bitrate_mobile">Taxa de bits amb dades mòbils</string>
     <string name="settings_max_bitrate_wifi">Taxa de bits amb wifi</string>
@@ -345,10 +440,29 @@
     <string name="settings_music_directory_summary">Si s\'habilita, es mostra la secció de carpetes de música. Tingueu en compte que, perquè la navegació amb carpetes funcioni correctament, el servidor ha de ser compatible amb aquesta característica.</string>
     <string name="settings_podcast">Mostra els pòdcasts</string>
     <string name="settings_podcast_summary">Si s\'habilita, es mostra la secció de pòdcasts. Reinicieu l\'aplicació perquè tingui efecte completament.</string>
+    <string name="settings_playlist_sort">Ordre de les llistes de reproducció</string>
+	<string name="settings_androidauto">Android Auto</string>
+	<string name="settings_androidauto_album_view">Visualització de quadrícula per als àlbums i artistes</string>
+	<string name="settings_androidauto_home_view">Visualització de quadrícula per a l\'inici</string>
+    <string name="settings_androidauto_playlist_view">Visualització de quadrícula per a les llistes de reproducció</string>
+    <string name="settings_androidauto_podcast_view">Visualització de quadrícula per als pòdcasts</string>
+    <string name="settings_androidauto_radio_view">Visualització de quadrícula per a la ràdio</string>
+	<string name="settings_androidauto_first_tab">Primera pestanya</string>
+	<string name="settings_androidauto_second_tab">Segona pestanya</string>
+	<string name="settings_androidauto_third_tab">Tercera pestanya</string>
+	<string name="settings_androidauto_fourth_tab">Quarta pestanya</string>
+    <string name="settings_androidauto_shuffle_genre_songs">Reprodueix aleatòriament les cançons del gènere</string>
+    <string name="settings_androidauto_shuffle_starred_tracks">Reprodueix aleatòriament les pistes amb estrelles</string>
+    <string name="settings_androidauto_shuffle_playlists">Reprodueix aleatòriament les llistes de reproducció</string>
+    <string name="settings_androidauto_shuffle_genre_songs_summary">Reprodueix cançons aleatòries en seleccionar un gènere</string>
+    <string name="settings_androidauto_artists_view">Els artistes es mostren per àlbum</string>
+    <string name="settings_androidauto_starred_for_made_for_you">Estrelles per a la mescla personal</string>
     <string name="settings_audio_quality">Mostra la qualitat de l\'àudio</string>
     <string name="settings_audio_quality_summary">Es mostraran la taxa de bits i el format d\'àudio per a cada pista d\'àudio.</string>
     <string name="settings_song_rating">Mostra la valoració amb estrelles de les cançons</string>
     <string name="settings_song_rating_summary">Si s\'habilita, es mostra la valoració de 5 estrelles d\'una pista a la pàgina de la cançó.\n\n*Cal reiniciar l\'aplicació</string>
+    <string name="settings_track_number">Mostra el número de pista</string>
+    <string name="settings_track_number_summary">Si s\'habilita, mostra el número de pista de la cançó en reproducció.</string>
     <string name="settings_item_rating">Mostra la valoració dels elements</string>
     <string name="settings_item_rating_summary">Si s\'habilita, es mostrarà la valoració dels elements i si s\'han marcat com a preferits.</string>
     <string name="settings_queue_syncing_countdown">Temporitzador de sincronització</string>
@@ -356,8 +470,15 @@
     <string name="settings_queue_syncing_title">Sincronitza la cua de reproducció d\'aquest usuari (implantat parcialment)</string>
     <string name="settings_show_mini_shuffle_button">Mostra el botó de reproducció aleatòria</string>
     <string name="settings_show_mini_shuffle_button_summary">Si s\'habilita, es mostra el botó de reproducció aleatòria i se suprimeix el cor del minireproductor.</string>
+    <string name="settings_custom_command_first_button">Primera ordre personalitzada</string>
+    <string name="settings_custom_command_second_button">Segona ordre personalitzada</string>
+
     <string name="settings_radio">Mostra la ràdio</string>
     <string name="settings_radio_summary">Si s\'habilita, es mostra la secció de ràdio. Reinicieu l\'aplicació perquè tingui efecte completament.</string>
+    <string name="settings_enable_drawer_on_landscape">Habilita el calaix en mode vertical</string>
+    <string name="settings_enable_drawer_on_landscape_summary">Desbloqueja el menú lateral del mode horitzontal en mode vertical.</string>
+    <string name="settings_hide_bottom_navbar_on_portrait">Amaga la barra de navegació inferior en el mode vertical [experimental]</string>
+    <string name="settings_hide_bottom_navbar_on_portrait_summary">Elimina la barra de navegació inferior per a incrementar l\'espai vertical. Els canvis tindran efecte quan reinicieu l\'aplicació.</string>
     <string name="settings_auto_download_lyrics">Baixa les lletres automàticament</string>
     <string name="settings_auto_download_lyrics_summary">Desa automàticament les lletres quan estiguin disponibles perquè es puguin mostrar fora de línia.</string>
     <string name="settings_replay_gain">Mode de ReplayGain</string>
@@ -373,7 +494,8 @@
     <string name="settings_streaming_cache_storage_title">Emmagatzematge de la memòria cau de transmissió</string>
     <string name="settings_sub_summary_scrobble">Tingueu en compte que l\'anàlisi musical també depèn que el servidor tingui habilitada la recepció d\'aquestes dades.</string>
     <string name="settings_summary_skip_min_star_rating">En escoltar la ràdio d\'un artista, una mescla instantània o totes les cançons aleatòriament, les pistes per sota d\'un llindar de l\'usuari s\'ignoraran.</string>
-    <string name="settings_summary_replay_gain">ReplayGain és una característica que us permet ajustar el nivell de volum de les pistes d\'àudio perquè l\'escolta sigui coherent. Aquest paràmetre només és efectiu si la pista conté les metadades necessàries.</string>
+    <string name="settings_summary_replay_gain">Normalitza el nivell de volum de les pistes d\'àudio. Els fitxers han de contenir les metadades necessàries.</string>
+    <string name="settings_summary_loudness">Permet corregir el volum dels dispositius de reproducció d\'àudio (p. ex., altaveus).\n\nEs recomana -6 per al ReplayGain per a evitar conflictes amb la prevenció de la saturació.</string>
     <string name="settings_summary_scrobble">L\'anàlisi musical és una característica que permet al vostre dispositiu enviar informació sobre les cançons que escolteu al servidor de música. Aquesta informació ajuda a crear recomanacions personalitzades a partir de les vostres preferències musicals.</string>
     <string name="settings_summary_share">Permet que l\'usuari comparteixi música mitjançant un enllaç. El servidor ha de ser compatible i tenir habilitada aquesta característica i es limita a pistes individuals, àlbums i llistes de reproducció.</string>
     <string name="settings_summary_syncing">Retorna l\'estat de la cua de reproducció per a aquest usuari. Això inclou les pistes a la cua de reproducció, la pista en reproducció actualment i la posició de la pista. El servidor ha de ser compatible amb aquesta característica.\n*Aquest paràmetre no funciona al 100% en tots els servidors/dispositius.</string>
@@ -381,6 +503,7 @@
     <string name="settings_summary_transcoding">Es dona prioritat al mode de transcodificació. Si s\'estableix en «Reproducció directa», la taxa de bits del fitxer no canviarà.</string>
     <string name="settings_summary_transcoding_download">Baixa el contingut multimèdia transcodificat. Si s\'habilita, no es farà servir l\'extrem de baixada, sinó els paràmetres següents. \n\nSi s\'estableix «Format de transcodificació per a les baixades» en «Baixada directa», la taxa de bits del fitxer no canviarà.</string>
     <string name="settings_summary_transcoding_estimate_content_length">Quan el fitxer es transcodifica en temps real, el client normalment no mostra la durada de la pista. És possible sol·licitar una estimació de la durada de la pista en reproducció als servidors compatibles, però els temps de resposta poden ser més llargs.</string>
+    <string name="settings_summary_landscape_items_per_row">S\'aplica a totes les llistes d\'àlbums i artistes. Per defecte és 4</string>
     <string name="settings_sync_starred_artists_for_offline_use_summary">Si s\'habilita, els artistes amb estrelles es baixaran per a l\'ús fora de línia.</string>
     <string name="settings_sync_starred_artists_for_offline_use_title">Sincronitza els artistes amb estrelles per a l\'ús fora de línia</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Si s\'habilita, els àlbums amb estrelles es baixaran per a l\'ús fora de línia.</string>
@@ -388,31 +511,50 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Si s\'habilita, les pistes amb estrelles es baixaran per a l\'ús fora de línia.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sincronitza les pistes amb estrelles per a l\'ús fora de línia</string>
     <string name="settings_theme">Tema</string>
+    <string name="settings_dark_theme_style">Estil de tema fosc</string>
+	<string name="settings_tile_size">Mida dels mosaics</string>
     <string name="settings_title_data">Dades</string>
     <string name="settings_title_general">General</string>
+    <string name="settings_title_misc">Miscel·lània</string>
+    <string name="settings_title_players">Reproductors</string>
     <string name="settings_title_playlist">Llista de reproducció</string>
     <string name="settings_title_rating">Valoració</string>
+    <string name="settings_title_loudness">Correcció de la sonoritat</string>
+    <string name="settings_loudness_preamp_title">Preamplificació</string>
+    <string name="settings_loudness_preamp_summary">Definiu valors positius per a sons més alts.\nDefiniu valors negatius per a sons més baixos.</string>
+    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_title_replay_gain">ReplayGain</string>
+    <string name="settings_replay_gain_prevent_clipping_title">Impedeix la saturació</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Redueix el guany quan l\'etiqueta de pic de la pista o l\'àlbum indica que el senyal se saturaria després d\'aplicar el ReplayGain.</string>
     <string name="settings_title_scrobble">Anàlisi musical</string>
     <string name="settings_title_skip_min_star_rating">Ignora les pistes segons la valoració</string>
     <string name="settings_title_skip_min_star_rating_dialog">Cançons amb una valoració de:</string>
     <string name="settings_title_share">Comparteix</string>
+    <string name="settings_title_sound">So</string>
     <string name="settings_title_syncing">Sincronització</string>
     <string name="settings_title_transcoding">Transcodificació</string>
     <string name="settings_title_transcoding_download">Baixada transcodificada</string>
     <string name="settings_title_ui">Interfície d\'usuari</string>
+    <string name="settings_title_ui_landscape_items_per_row">Elements per fila en apaïsat</string>
+    <string name="settings_title_ui_landscape_items_per_row_dialog">Nombre d\'elements per fila</string>
     <string name="settings_transcoded_download">Baixada transcodificada</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
     <string name="settings_version_title">Versió</string>
     <string name="settings_wifi_only_summary">Demana la confirmació de l\'usuari abans d\'iniciar la transmissió per la xarxa mòbil.</string>
     <string name="settings_wifi_only_title">Alerta de transmissió només per wifi</string>
+    <string name="settings_download_wifi_only_summary">Les baixades es posaran en pausa amb dades mòbils i es reprendran automàticament amb wifi.</string>
+    <string name="settings_download_wifi_only_title">Baixa només per wifi</string>
     <string name="share_bottom_sheet_copy_link">Copia l\'enllaç</string>
     <string name="share_bottom_sheet_delete">Suprimeix l\'element compartit</string>
     <string name="share_bottom_sheet_update">Actualitza l\'element compartit</string>
     <string name="share_subtitle_item">Data de venciment: %1$s</string>
     <string name="share_no_expiration">Mai</string>
     <string name="share_unsupported_error">L\'ús compartit no s\'admet o no està habilitat</string>
-    <string name="asset_link_clipboard_label">Enllaç a recurs de Tempus</string>
+    <string name="toolbar_navigation_drawer_open">Calaix de navegació obert</string>
+    <string name="toolbar_navigation_drawer_closed">Calaix de navegació tancat</string>
+    <string name="favorite_icon_description">Preferit</string>
+
+    <string name="asset_link_clipboard_label">Enllaç a recursos del Tempus</string>
     <string name="asset_link_label_song">UID de la cançó</string>
     <string name="asset_link_label_album">UID de l\'àlbum</string>
     <string name="asset_link_label_artist">UID de l\'artista</string>
@@ -443,7 +585,8 @@
     <string name="song_bottom_sheet_instant_mix">Mescla instantània</string>
     <string name="song_bottom_sheet_play_next">Reprodueix a continuació</string>
     <string name="song_bottom_sheet_rate">Valoració</string>
-    <string name="song_bottom_sheet_remove">Suprimeix</string>
+    <string name="song_bottom_sheet_remove">Suprimeix del dispositiu</string>
+    <string name="song_bottom_sheet_remove_from_playlist">Suprimeix de la llista de reproducció</string>
     <string name="song_bottom_sheet_share">Comparteix</string>
     <string name="song_list_page_downloaded">Baixades</string>
     <string name="song_list_page_most_played">Pistes més reproduïdes</string>
@@ -467,7 +610,7 @@
     <string name="streaming_cache_storage_dialog_title">Selecció de l\'opció d\'emmagatzematge</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">Extern</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Intern</string>
-    <string name="support_url">https://ko-fi.com/eddyizm</string>
+    <string name="support_url" translatable="false">https://ko-fi.com/eddyizm</string>
     <string name="track_info_album">Àlbum</string>
     <string name="track_info_artist">Artista</string>
     <string name="track_info_bit_depth">Profunditat de bits</string>
@@ -490,15 +633,16 @@
     <string name="track_info_summary_transcoding_codec">L\'aplicació sol·licitarà al servidor la transcodificació del fitxer. El còdec sol·licitat per l\'usuari és %1$s, mentre que la taxa de bits serà la mateixa que la del fitxer d\'origen. La transcodificació potencial del fitxer en el format triat depèn del servidor, que pot admetre l\'operació o no.</string>
     <string name="track_info_title">Títol</string>
     <string name="track_info_track_number">Número de pista</string>
+    <string name="track_info_station">Emissora</string>
     <string name="track_info_transcoded_content_type">Tipus de contingut transcodificat</string>
     <string name="track_info_transcoded_suffix">Sufix de la transcodificació</string>
     <string name="track_info_year">Any</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">Volem donar un agraïment especial a UnDraw; aquesta aplicació no seria tan bonica sense les seves il·lustracions.</string>
-    <string name="undraw_url">https://undraw.co/</string>
-    <string name="widget_label">Giny de Tempus</string>
+    <string name="undraw_url" translatable="false">https://undraw.co/</string>
+    <string name="widget_label">Giny del Tempus</string>
     <string name="widget_not_playing">No hi ha res en reproducció</string>
-    <string name="widget_placeholder_subtitle">Obre Tempus</string>
+    <string name="widget_placeholder_subtitle">Obre el Tempus</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_content_desc_album_art">Caràtula de l\'àlbum</string>
@@ -522,12 +666,79 @@
     <string name="equalizer_fragment_title">Equalitzador</string>
     <string name="equalizer_reset">Reinicialitza</string>
     <string name="equalizer_enable">Habilita</string>
-    <string name="equalizer_managed_externally">No és compatible amb aquest dispositiu</string>
-    <string name="settings_app_equalizer">Equalitzador</string>
+    <string name="equalizer_managed_externally">Equalitzador gestionat pel sistema o una aplicació de tercers</string>
+    <string name="settings_app_equalizer">Equalitzador incorporat</string>
     <string name="settings_app_equalizer_summary">Obre l\'equalitzador integrat</string>
+    <string name="settings_title_equalizer">Equalitzador</string>
+    <string name="settings_equalizer_select">Seleccioneu l\'equalitzador que voleu utilitzar</string>
+    <string name="settings_equalizer_dialog_title">Equalitzadors</string>
 
     <string name="settings_album_detail">Mostra els detalls de l\'àlbum</string>
     <string name="settings_album_detail_summary">Si s\'habilita, es mostren els detalls de l\'àlbum, com el gènere i el nombre de cançons, a la pàgina de l\'àlbum.</string>
     <string name="settings_artist_sort_by_album_count">Ordena els artistes per nombre d\'àlbums</string>
     <string name="settings_artist_sort_by_album_count_summary">Si s\'habilita, ordena els artistes per nombre d\'àlbums. Si no, s\'ordenen per nom.</string>
+
+    <string name="folder_play_collecting">S\'estan recopilant les cançons de la carpeta...</string>
+    <string name="folder_play_playing">S\'estan reproduint %d cançons</string>
+    <string name="folder_play_no_songs">No s\'ha trobat cap cançó a la carpeta</string>
+
+    <string name="search_sort_title">Ordena les cerques recents cronològicament</string>
+    <string name="search_sort_summary">Si s\'habilita, les cerques recents s\'ordenen cronològicament. Si no, s\'ordenen per nom.</string>
+    <string name="search_all_songs_loading">S\'estan obtenint totes les cançons...</string>
+    <string name="search_all_songs">les %1$s cançons</string>
+    <string name="search_all_songs_play">Reprodueix %1$s</string>
+
+    <string name="nav_drawer_index">Índex</string>
+
+    <!-- Sleep timer -->
+    <string name="sleep_timer_dialog_title">Temporitzador</string>
+    <string name="sleep_timer_dialog_active_message">Temporitzador actiu: queden %1$s</string>
+    <string name="sleep_timer_dialog_cancel_timer">Cancel·la el temporitzador</string>
+    <string name="sleep_timer_dialog_close">Tanca</string>
+    <string name="sleep_timer_custom_hint">Indiqueu els minuts</string>
+    <string name="sleep_timer_custom_set">Estableix</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Atura després d\'aquesta cançó</string>
+    <string name="sleep_timer_end_of_track_label">Fi de la pista</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minuts</item>
+        <item>10 minuts</item>
+        <item>15 minuts</item>
+        <item>20 minuts</item>
+        <item>30 minuts</item>
+        <item>45 minuts</item>
+        <item>60 minuts</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Personalitzat\u2026</item>
+    </string-array>
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">El Tempus ha fallat.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Informació</string>
+    <string name="ca_info_title">El Tempus ha fallat</string>
+    <string name="ca_info_description">        Obriu una incidència a GitHub i incloeu-hi una còpia dels registres perquè investiguem la fallada.
+    </string>
+    <string name="ca_info_button_close">Tanca l\'aplicació</string>
+    <string name="ca_info_button_restart">Reinicia l\'aplicació</string>
+
+    <string name="ca_logs_label">Registres</string>
+    <string name="ca_logs_title">Traça de la pila del Java</string>
+    <string name="ca_logs_description">        Això és el que ha fallat.
+    </string>
+    <string name="ca_export_button_copy">Copia el registre</string>
+    <string name="ca_export_button_share">Comparteix el registre</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">S\'ha copiat el registre al porta-retalls</string>
+
+    <string name="ca_export_label">Exporta</string>
+    <string name="ca_export_title">Recuperació de registres</string>
+    <string name="ca_export_description">        Un APK de depuració (prellançament) proporciona un registre més extens i ens ajuda
+        a entendre què ha fallat dins de l\'aplicació.\n\n
+
+        Les dades no s\'envien enlloc sense el vostre consentiment.
+    </string>
+    <string name="playlist_error_not_found_title">No s\'ha trobat la llista de reproducció</string>
+    <string name="playlist_error_not_found_message">No s\'ha trobat aquesta llista de reproducció al servidor. Se suprimirà de la memòria cau local.</string>
+    <string name="playlist_error_not_found_toast">S\'ha suprimit la llista de reproducció de la memòria cau</string>
 </resources>
