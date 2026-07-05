@@ -179,7 +179,13 @@ open class BaseSessionCallback(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
-        if (currentSession == null) {
+        // Reset listener on every AA connection to avoid stale state after reconnection.
+        // AA may call onConnect multiple times (double gearhead event observed in logs).
+        if (currentSession == null
+            || session.isAutomotiveController(controller)
+            || session.isAutoCompanionController(controller)) {
+            Log.d(TAG, "onConnect: remove and add listener")
+            currentSession?.let { session.player.removeListener(playerListener) }
             currentSession = session
             session.player.addListener(playerListener)
         }
