@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.20.5](https://github.com/eddyizm/tempus/releases/tag/v4.20.5) (2026-07-04)
+## What's Changed
+* docs: add CONTRIBUTING.md by @tvillega in https://github.com/eddyizm/tempus/pull/823
+* fix: deep-linked playlist loads no songs and crashes from null id (#729) by @herrerad85 in https://github.com/eddyizm/tempus/pull/789
+* fix: Fix genre search not working by @kongwoojin in https://github.com/eddyizm/tempus/pull/817
+* fix: Ensure the selections array size matches activeWrappers size (#820) by @eddyizm in https://github.com/eddyizm/tempus/pull/824
+* chore: container/build script for new ffmpeg lib by @eddyizm in https://github.com/eddyizm/tempus/pull/822
+* chore: update ci pipelines to java 21 (#831) by @eddyizm in https://github.com/eddyizm/tempus/pull/832
+* feat: replaced settings 3dot to gear icon (#833) by @eddyizm in https://github.com/eddyizm/tempus/pull/834
+* chore: Update Catalan i18n by @marcriera in https://github.com/eddyizm/tempus/pull/830
+
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.20.0...v4.20.4
+
 ## [4.20.0](https://github.com/eddyizm/tempus/releases/tag/v4.20.0) (2026-06-27)
 ## What's Changed
 * feat: improve Continuous Play by @MaFo-28 in https://github.com/eddyizm/tempus/pull/721
