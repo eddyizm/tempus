@@ -11,6 +11,15 @@
         <item>default</item>
     </string-array>
 
+    <string-array name="dark_theme_style_titles">
+        <item>Estàndard</item>
+        <item>AMOLED (negre pur)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+
     <string-array name="pref_cache_size_titles">
         <item>Alta</item>
         <item>Mitjana</item>
@@ -228,6 +237,37 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="song_preload_buffer_titles">
+        <item>5 segons</item>
+        <item>30 segons</item>
+        <item>1 minut</item>
+        <item>3 minuts</item>
+        <item>5 minuts</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="playlist_sort_option_titles">
+        <item>Nom</item>
+        <item>Aleatori</item>
+        <item>Data de creació</item>
+        <item>Nombre de cançons</item>
+        <item>Preferit</item>
+    </string-array>
+    <string-array name="playlist_sort_option_values">
+        <item>ORDER_BY_NAME</item>
+        <item>ORDER_BY_RANDOM</item>
+        <item>ORDER_BY_DATE</item>
+        <item>ORDER_BY_SONGS</item>
+        <item>ORDER_BY_PINNED</item>
+    </string-array>
+
+
     <string-array name="skip_min_star_rating_titles">
         <item>Mínim 0 estrelles</item>
         <item>Mínim 1 estrella</item>
@@ -242,4 +282,107 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3&quot;</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+		
+    <string-array name="tile_size_titles">
+        <item>Molt petita</item>
+        <item>Petita</item>
+        <item>Mitjana</item>
+        <item>Gran</item>
+        <item>Per defecte</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="selected_equalizer_entries">
+        <item>Per defecte</item>
+        <item>Incorporat</item>
+        <item>Extern</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="aa_tab_titles">
+        <item>No ho mostris</item>
+        <item>Inici</item>
+        <item>Recents</item>
+        <item>Àlbums</item>
+        <item>Artistes</item>
+        <item>Llistes de reproducció</item>
+        <item>Pòdcasts</item>
+        <item>Ràdio</item>
+        <item>Carpeta</item>
+        <item>Àlbums més reproduïts</item>
+        <item>Àlbums afegits</item>
+        <item>Per a vós</item>
+        <item>Preferits</item>
+        <item>Pistes</item>
+        <item>Gèneres</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Artistes amb estrelles</item>
+        <item>Àlbums amb estrelles</item>
+        <item>Pistes amb estrelles</item>
+    </string-array>
+    <string-array name="aa_starred_for_made_for_you_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="custom_commands_titles">
+        <item>Cor</item>
+        <item>Repeteix</item>
+        <item>Reprodueix aleatòriament</item>
+        <item>Mescla instantània</item>
+    </string-array>
+    <string-array name="custom_commands_values" translatable="false">
+        <item>[heartID]</item>
+        <item>[repeatID]</item>
+        <item>[shuffleID]</item>
+        <item>[instantMixID]</item>
+    </string-array>
+
 </resources>
