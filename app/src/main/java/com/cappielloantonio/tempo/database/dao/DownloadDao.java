@@ -15,6 +15,21 @@ public interface DownloadDao {
     @Query("SELECT * FROM download WHERE download_state = 1 ORDER BY artist, album, disc_number, track ASC")
     LiveData<List<Download>> getAll();
 
+    @Query("SELECT * FROM download WHERE download_state = 0 ORDER BY queue_position ASC, id ASC")
+    LiveData<List<Download>> getQueue();
+
+    @Query("SELECT * FROM download WHERE download_state = 0 ORDER BY queue_position ASC, id ASC")
+    List<Download> getQueueSync();
+
+    @Query("SELECT COUNT(*) FROM download WHERE download_state = 0")
+    int getPendingCount();
+
+    @Query("SELECT MAX(queue_position) FROM download WHERE download_state = 0")
+    Integer getMaxQueuePosition();
+
+    @Query("UPDATE download SET queue_position = :queuePosition WHERE id = :id")
+    void updateQueuePosition(String id, int queuePosition);
+
     @Query("SELECT * FROM download WHERE download_state = 1 ORDER BY artist, album, disc_number, track ASC")
     List<Download> getAllSync();
 

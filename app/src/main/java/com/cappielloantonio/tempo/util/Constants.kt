@@ -86,6 +86,7 @@ object Constants {
 
     const val DOWNLOAD_URI = "rest/download"
     const val ACTION_PLAY_EXTERNAL_DOWNLOAD = "com.cappielloantonio.tempo.action.PLAY_EXTERNAL_DOWNLOAD"
+    const val ACTION_OPEN_DOWNLOAD_QUEUE = "com.cappielloantonio.tempo.ACTION_OPEN_DOWNLOAD_QUEUE"
     const val EXTRA_DOWNLOAD_URI = "EXTRA_DOWNLOAD_URI"
     const val EXTRA_DOWNLOAD_MEDIA_ID = "EXTRA_DOWNLOAD_MEDIA_ID"
     const val EXTRA_DOWNLOAD_TITLE = "EXTRA_DOWNLOAD_TITLE"

@@ -181,6 +181,123 @@ public class DownloadRepository {
         thread.start();
     }
 
+    public LiveData<List<Download>> getLiveDownloadQueue() {
+        return downloadDao.getQueue();
+    }
+
+    public List<Download> getDownloadQueueSync() {
+        GetDownloadQueueThreadSafe getQueue = new GetDownloadQueueThreadSafe(downloadDao);
+        Thread thread = new Thread(getQueue);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return getQueue.getQueue();
+    }
+
+    public int getPendingCountSync() {
+        GetPendingCountThreadSafe count = new GetPendingCountThreadSafe(downloadDao);
+        Thread thread = new Thread(count);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return count.getCount();
+    }
+
+    public Integer getMaxQueuePositionSync() {
+        GetMaxQueuePositionThreadSafe pos = new GetMaxQueuePositionThreadSafe(downloadDao);
+        Thread thread = new Thread(pos);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return pos.getPosition();
+    }
+
+    public void updateQueuePosition(String id, int position) {
+        UpdateQueuePositionThreadSafe update = new UpdateQueuePositionThreadSafe(downloadDao, id, position);
+        Thread thread = new Thread(update);
+        thread.start();
+    }
+
+    private static class GetDownloadQueueThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private List<Download> queue;
+
+        public GetDownloadQueueThreadSafe(DownloadDao downloadDao) {
+            this.downloadDao = downloadDao;
+        }
+
+        @Override
+        public void run() {
+            queue = downloadDao.getQueueSync();
+        }
+
+        public List<Download> getQueue() {
+            return queue;
+        }
+    }
+
+    private static class GetPendingCountThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private int count;
+
+        public GetPendingCountThreadSafe(DownloadDao downloadDao) {
+            this.downloadDao = downloadDao;
+        }
+
+        @Override
+        public void run() {
+            count = downloadDao.getPendingCount();
+        }
+
+        public int getCount() {
+            return count;
+        }
+    }
+
+    private static class GetMaxQueuePositionThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private Integer position;
+
+        public GetMaxQueuePositionThreadSafe(DownloadDao downloadDao) {
+            this.downloadDao = downloadDao;
+        }
+
+        @Override
+        public void run() {
+            position = downloadDao.getMaxQueuePosition();
+        }
+
+        public Integer getPosition() {
+            return position;
+        }
+    }
+
+    private static class UpdateQueuePositionThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private final String id;
+        private final int position;
+
+        public UpdateQueuePositionThreadSafe(DownloadDao downloadDao, String id, int position) {
+            this.downloadDao = downloadDao;
+            this.id = id;
+            this.position = position;
+        }
+
+        @Override
+        public void run() {
+            downloadDao.updateQueuePosition(id, position);
+        }
+    }
+
     private static class DeleteThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private final String id;

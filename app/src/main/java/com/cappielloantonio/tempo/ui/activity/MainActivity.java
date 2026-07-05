@@ -550,6 +550,15 @@ public class MainActivity extends BaseActivity {
 
     private void maybeSchedulePlaybackIntent(Intent intent) {
         if (intent == null) return;
+        if (Constants.ACTION_OPEN_DOWNLOAD_QUEUE.equals(intent.getAction())) {
+            if (navController != null) {
+                try {
+                    navController.navigate(R.id.downloadFragment);
+                } catch (Exception e) {
+                    android.util.Log.e("MainActivity", "Failed to navigate to downloadFragment", e);
+                }
+            }
+        }
         if (Constants.ACTION_PLAY_EXTERNAL_DOWNLOAD.equals(intent.getAction())
                 || intent.hasExtra(Constants.EXTRA_DOWNLOAD_URI)) {
             pendingDownloadPlaybackIntent = new Intent(intent);

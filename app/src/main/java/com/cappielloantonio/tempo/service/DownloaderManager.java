@@ -70,6 +70,26 @@ public class DownloaderManager {
     }
 
     public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
+        download(mediaItem, download, null);
+    }
+
+    private void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download, @Nullable Integer queuePosition) {
+        com.cappielloantonio.tempo.model.Download existing = getDownloadRepository().getDownload(mediaItem.mediaId);
+        if (existing != null && existing.getDownloadState() == 1) {
+            return;
+        }
+
+        int pos = 0;
+        if (queuePosition != null) {
+            pos = queuePosition;
+        } else {
+            Integer maxPos = getDownloadRepository().getMaxQueuePositionSync();
+            if (maxPos != null) {
+                pos = maxPos + 1;
+            }
+        }
+        download.setQueuePosition(pos);
+
         download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
 
         DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
@@ -77,8 +97,14 @@ public class DownloaderManager {
     }
 
     public void download(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
+        int nextPosition = 0;
+        Integer maxPos = getDownloadRepository().getMaxQueuePositionSync();
+        if (maxPos != null) {
+            nextPosition = maxPos + 1;
+        }
+
         for (int counter = 0; counter < mediaItems.size(); counter++) {
-            download(mediaItems.get(counter), downloads.get(counter));
+            download(mediaItems.get(counter), downloads.get(counter), nextPosition++);
         }
     }
 
