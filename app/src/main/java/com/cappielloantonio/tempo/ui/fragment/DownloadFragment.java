@@ -287,14 +287,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     }
 
     private void reconcileMissingFiles() {
-        List<Child> songs = downloadViewModel.getDownloadedTracks(getViewLifecycleOwner()).getValue();
-        if (songs != null) {
-            List<Child> validSongs = songs.stream()
-                    .filter(song -> fileExists(song.getPath()))
-                    .collect(Collectors.toList());
-
-            downloadViewModel.setDownloadedTracks(validSongs);
-        }
+        downloadViewModel.refreshExternalDownloads();
     }
 
     @Override

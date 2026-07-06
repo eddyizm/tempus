@@ -20,9 +20,10 @@ class Download(
     var downloadState: Int = 0,
     @ColumnInfo(name = "download_uri", defaultValue = "")
     var downloadUri: String? = null,
-    @ColumnInfo(name = "queue_position", defaultValue = "0")
-    var queuePosition: Int = 0,
 ) : Child(id) {
+    @ColumnInfo(name = "queue_position", defaultValue = "0")
+    var queuePosition: Int = 0
+
     constructor(child: Child) : this(child.id) {
         parentId = child.parentId
         isDir = child.isDir
