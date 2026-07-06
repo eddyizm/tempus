@@ -36,6 +36,7 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.MappingUtil;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
@@ -45,7 +46,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -63,8 +63,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     private Chip albumLinkChip;
     private Chip artistLinkChip;
     private AssetLinkUtil.AssetLink currentSongLink;
-    private AssetLinkUtil.AssetLink currentAlbumLink;
-    private AssetLinkUtil.AssetLink currentArtistLink;
+        private AssetLinkUtil.AssetLink currentArtistLink;
 
     private boolean isFirstBatch = true;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
@@ -210,7 +209,13 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
                         new Download(song)
                 );
             } else {
-                ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                // Delegate to DownloadManager/tracker and record an export target so the file
+                // will be written to the user folder after the DownloadManager completes it.
+                ExternalDownloadMetadataStore.recordExportTarget(song.getId(), Preferences.getDownloadDirectoryUri());
+                DownloadUtil.getDownloadTracker(requireContext()).download(
+                        MappingUtil.mapDownload(song),
+                        new Download(song)
+                );
             }
             dismissBottomSheet();
         });
@@ -347,7 +352,6 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         artistLinkChip = root.findViewById(R.id.asset_link_artist_chip);
 
         currentSongLink = bindAssetLinkChip(songLinkChip, AssetLinkUtil.TYPE_SONG, song.getId());
-        currentAlbumLink = bindAssetLinkChip(albumLinkChip, AssetLinkUtil.TYPE_ALBUM, song.getAlbumId());
         currentArtistLink = bindAssetLinkChip(artistLinkChip, AssetLinkUtil.TYPE_ARTIST, song.getArtistId());
         syncAssetLinkGroupVisibility();
     }

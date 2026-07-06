@@ -30,6 +30,7 @@ import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
+import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
@@ -41,7 +42,7 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.AlbumPageViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -157,7 +158,10 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                         songs.stream().map(Download::new).collect(Collectors.toList())
                     );
                 } else {
-                    songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+                    for (Child child : songs) {
+                        ExternalDownloadMetadataStore.recordExportTarget(child.getId(), Preferences.getDownloadDirectoryUri());
+                        DownloadUtil.getDownloadTracker(requireContext()).download(MappingUtil.mapDownload(child), new Download(child));
+                    }
                 }
             });
             return true;

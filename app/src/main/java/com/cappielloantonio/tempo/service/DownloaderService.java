@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.offline.Download;
 import androidx.media3.exoplayer.offline.DownloadManager;
-import androidx.media3.exoplayer.offline.DownloadNotificationHelper;
 import androidx.media3.exoplayer.scheduler.PlatformScheduler;
 import androidx.media3.exoplayer.scheduler.Requirements;
 import androidx.media3.exoplayer.scheduler.Scheduler;
@@ -20,6 +19,8 @@ import androidx.media3.exoplayer.scheduler.Scheduler;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 
 import java.util.List;
 import java.util.Locale;
@@ -293,6 +294,18 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             // Only responsible for DB side-effects.
             if (download.state == Download.STATE_COMPLETED) {
                 DownloaderManager.updateRequestDownload(download);
+
+                // If this download was requested to be exported to the user directory,
+                // trigger the export (performed asynchronously by ExternalAudioWriter).
+                try {
+                    String exportTarget = ExternalDownloadMetadataStore.getExportTarget(download.request.id);
+                    if (exportTarget != null) {
+                        ExternalAudioWriter.exportDownloadById(context, download.request.id);
+                        ExternalDownloadMetadataStore.removeExportTarget(download.request.id);
+                    }
+                } catch (Exception e) {
+                    // Don't let export failures affect notification handling.
+                }
             }
         }
 

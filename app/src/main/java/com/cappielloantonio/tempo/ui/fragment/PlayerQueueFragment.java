@@ -34,7 +34,7 @@ import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -423,7 +423,9 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         } else {
             for (Child song : queueSongs) {
                 if (ExternalAudioReader.getUri(song) == null) {
-                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                    // Delegate to DownloadManager and record export target so consolidated notifications are used
+                    ExternalDownloadMetadataStore.recordExportTarget(song.getId(), Preferences.getDownloadDirectoryUri());
+                    DownloadUtil.getDownloadTracker(requireContext()).download(MappingUtil.mapDownload(song), new com.cappielloantonio.tempo.model.Download(song));
                     downloadCount++;
                 }
             }

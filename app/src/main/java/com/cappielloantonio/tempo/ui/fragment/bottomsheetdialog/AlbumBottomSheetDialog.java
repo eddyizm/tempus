@@ -37,8 +37,8 @@ import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.viewmodel.AlbumBottomSheetViewModel;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -188,7 +188,14 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                 if (Preferences.getDownloadDirectoryUri() == null) {
                     DownloadUtil.getDownloadTracker(requireContext()).download(mediaItems, downloads);
                 } else {
-                    songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+                    // Delegate to DownloadManager/tracker so DownloaderService handles consolidated notifications.
+                    for (Child child : songs) {
+                        MediaItem mediaItem = MappingUtil.mapDownload(child);
+                        Download d = new Download(child);
+                        // Record that this download should be exported to the user directory after completion
+                        ExternalDownloadMetadataStore.recordExportTarget(child.getId(), Preferences.getDownloadDirectoryUri());
+                        DownloadUtil.getDownloadTracker(requireContext()).download(mediaItem, d);
+                    }
                 }
                 dismissBottomSheet();
             });

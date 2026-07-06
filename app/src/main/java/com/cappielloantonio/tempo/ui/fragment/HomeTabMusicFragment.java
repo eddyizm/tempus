@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -38,7 +36,6 @@ import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.HomeSector;
-import com.cappielloantonio.tempo.repository.PlaylistRepository;
 import com.cappielloantonio.tempo.service.DownloaderManager;
 import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
@@ -63,12 +60,11 @@ import com.cappielloantonio.tempo.ui.dialog.PlaylistEditorDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.util.LiveDataUtils;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.Preferences;
-import com.cappielloantonio.tempo.util.TileSizeManager;
 import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.HomeViewModel;
 import com.cappielloantonio.tempo.viewmodel.PlaybackViewModel;
@@ -384,7 +380,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                             } else {
                                 for (Child song : songs) {
                                     if (ExternalAudioReader.getUri(song) == null) {
-                                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                                        ExternalDownloadMetadataStore.recordExportTarget(song.getId(), Preferences.getDownloadDirectoryUri());
+                                    DownloadUtil.getDownloadTracker(requireContext()).download(MappingUtil.mapDownload(song), new Download(song));
                                         downloadedCount++;
                                     }
                                 }
@@ -445,7 +442,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                         } else {
                             for (Child song : allSongs) {
                                 if (ExternalAudioReader.getUri(song) == null) {
-                                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                                    ExternalDownloadMetadataStore.recordExportTarget(song.getId(), Preferences.getDownloadDirectoryUri());
+                                    DownloadUtil.getDownloadTracker(requireContext()).download(MappingUtil.mapDownload(song), new Download(song));
                                     songsToDownload++;
                                 }
                             }
@@ -584,7 +582,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                         } else {
                             for (Child song : allSongs) {
                                 if (ExternalAudioReader.getUri(song) == null) {
-                                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                                    ExternalDownloadMetadataStore.recordExportTarget(song.getId(), Preferences.getDownloadDirectoryUri());
+                                    DownloadUtil.getDownloadTracker(requireContext()).download(MappingUtil.mapDownload(song), new Download(song));
                                     songsToDownload++;
                                 }
                             }

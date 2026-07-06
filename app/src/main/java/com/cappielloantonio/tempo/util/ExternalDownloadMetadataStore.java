@@ -19,6 +19,7 @@ import java.util.Set;
 public final class ExternalDownloadMetadataStore {
 
     private static final String PREF_KEY = "external_download_metadata";
+    private static final String PREF_KEY_EXPORT = "external_download_exports";
 
     private ExternalDownloadMetadataStore() {
     }
@@ -119,5 +120,42 @@ public final class ExternalDownloadMetadataStore {
         if (changed) {
             writeAll(object);
         }
+    }
+
+    // Export target store: maps media id -> target directory URI
+    private static JSONObject readExports() {
+        String raw = preferences().getString(PREF_KEY_EXPORT, "{}");
+        try {
+            return new JSONObject(raw);
+        } catch (JSONException e) {
+            return new JSONObject();
+        }
+    }
+
+    private static void writeExports(JSONObject object) {
+        preferences().edit().putString(PREF_KEY_EXPORT, object.toString()).apply();
+    }
+
+    public static synchronized void recordExportTarget(String key, String targetUri) {
+        if (key == null || targetUri == null) return;
+        JSONObject object = readExports();
+        try {
+            object.put(key, targetUri);
+        } catch (JSONException ignored) {}
+        writeExports(object);
+    }
+
+    public static synchronized String getExportTarget(String key) {
+        if (key == null) return null;
+        JSONObject object = readExports();
+        if (!object.has(key)) return null;
+        return object.optString(key, null);
+    }
+
+    public static synchronized void removeExportTarget(String key) {
+        if (key == null) return;
+        JSONObject object = readExports();
+        object.remove(key);
+        writeExports(object);
     }
 }

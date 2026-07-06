@@ -40,6 +40,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -148,6 +149,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
             if (count == -1) {
                 Toast.makeText(requireContext(), R.string.download_refresh_no_directory, Toast.LENGTH_SHORT).show();
             } else if (count == 0) {
+                reconcileMissingFiles();
                 Toast.makeText(requireContext(), R.string.download_refresh_no_changes, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(
@@ -276,6 +278,22 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
     private void releaseMediaBrowser() {
         MediaBrowser.releaseFuture(mediaBrowserListenableFuture);
+    }
+
+    private boolean fileExists(String filePath) {
+        File file = new File(filePath);
+        return file.exists();
+    }
+
+    private void reconcileMissingFiles() {
+        List<Child> songs = downloadViewModel.getDownloadedTracks(getViewLifecycleOwner()).getValue();
+        if (songs != null) {
+            List<Child> validSongs = songs.stream()
+                    .filter(song -> fileExists(song.getPath()))
+                    .collect(Collectors.toList());
+
+            downloadViewModel.updateDownloadedTracks(validSongs);
+        }
     }
 
     @Override

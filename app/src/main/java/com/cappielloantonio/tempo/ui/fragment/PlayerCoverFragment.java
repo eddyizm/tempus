@@ -34,7 +34,7 @@ import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.RadioCoverArtDownloader;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.google.android.material.snackbar.Snackbar;
@@ -128,7 +128,9 @@ public class PlayerCoverFragment extends Fragment {
                                 new Download(song)
                         );
                     } else {
-                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                        // Delegate to DownloadManager so consolidated notifications are used
+                        ExternalDownloadMetadataStore.recordExportTarget(song.getId(), Preferences.getDownloadDirectoryUri());
+                        DownloadUtil.getDownloadTracker(requireContext()).download(MappingUtil.mapDownload(song), new Download(song));
                     }
                 });
 

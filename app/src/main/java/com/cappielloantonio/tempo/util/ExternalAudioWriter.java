@@ -8,9 +8,11 @@ import android.net.Uri;
 import android.provider.Settings;
 import android.webkit.MimeTypeMap;
 
+import androidx.annotation.OptIn;
 import androidx.core.app.NotificationCompat;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.repository.DownloadRepository;
@@ -74,19 +76,20 @@ public class ExternalAudioWriter {
         MediaItem mediaItem = MappingUtil.mapDownload(child);
         String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
         
-        EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName));
+        // direct UI-initiated downloads should emit per-file notifications
+        EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName, true));
     }
 
-    private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
+    public static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName, boolean emitNotifications) {
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
-            notifyUnavailable(context);
+            if (emitNotifications) notifyUnavailable(context);
             return;
         }
 
         DocumentFile directory = DocumentFile.fromTreeUri(context, Uri.parse(uriString));
         if (directory == null || !directory.canWrite()) {
-            notifyFailure(context, "Cannot write to folder.");
+            if (emitNotifications) notifyFailure(context, "Cannot write to folder.");
             return;
         }
 
@@ -128,7 +131,7 @@ public class ExternalAudioWriter {
 
                 int responseCode = connection.getResponseCode();
                 if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-                    notifyFailure(context, "Server returned " + responseCode);
+                    if (emitNotifications) notifyFailure(context, "Server returned " + responseCode);
                     ExternalDownloadMetadataStore.remove(metadataKey);
                     return;
                 }
@@ -224,7 +227,7 @@ public class ExternalAudioWriter {
             try (InputStream in = openInputStream(context, mediaUri, scheme, connection, sourceFile);
                  OutputStream out = context.getContentResolver().openOutputStream(targetUri)) {
                 if (out == null) {
-                    notifyFailure(context, "Cannot open output stream.");
+                    if (emitNotifications) notifyFailure(context, "Cannot open output stream.");
                     targetFile.delete();
                     return;
                 }
@@ -241,20 +244,20 @@ public class ExternalAudioWriter {
                 if (total <= 0) {
                     targetFile.delete();
                     ExternalDownloadMetadataStore.remove(metadataKey);
-                    notifyFailure(context, "Empty download.");
+                    if (emitNotifications) notifyFailure(context, "Empty download.");
                     return;
                 }
 
                 if (remoteLength > 0 && total != remoteLength) {
                     targetFile.delete();
                     ExternalDownloadMetadataStore.remove(metadataKey);
-                    notifyFailure(context, "Incomplete download.");
+                    if (emitNotifications) notifyFailure(context, "Incomplete download.");
                     return;
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
                 recordDownload(child, targetUri, playlistId, playlistName);
-                notifySuccess(context, fileName, child, targetUri);
+                if (emitNotifications) notifySuccess(context, fileName, child, targetUri);
                 ExternalAudioReader.refreshCacheAsync();
             }
         } catch (Exception e) {
@@ -262,7 +265,7 @@ public class ExternalAudioWriter {
                 targetFile.delete();
             }
             ExternalDownloadMetadataStore.remove(metadataKey);
-            notifyFailure(context, e.getMessage() != null ? e.getMessage() : "Download failed");
+            if (emitNotifications) notifyFailure(context, e.getMessage() != null ? e.getMessage() : "Download failed");
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -270,6 +273,23 @@ public class ExternalAudioWriter {
         }
     }
 
+    /**
+     * Export an already-tracked Download (by media id) into the user-selected directory.
+     * This is invoked after DownloadManager reports completion for downloads that were
+     * initiated with an export target recorded in ExternalDownloadMetadataStore.
+     */
+    public static void exportDownloadById(Context context, String mediaId) {
+        if (context == null || mediaId == null) return;
+        DownloadRepository repo = new DownloadRepository();
+        Download download = repo.getDownload(mediaId);
+        if (download == null) return;
+
+        MediaItem mediaItem = MappingUtil.mapDownload(download);
+        String fallbackName = download.getTitle() != null ? download.getTitle() : download.getId();
+        EXECUTOR.execute(() -> performDownload(context.getApplicationContext(), mediaItem, fallbackName, download, download.getPlaylistId(), download.getPlaylistName(), false));
+    }
+
+    @OptIn(markerClass = UnstableApi.class)
     private static void notifyUnavailable(Context context) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -289,6 +309,7 @@ public class ExternalAudioWriter {
         manager.notify(1011, builder.build());
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     private static void notifyFailure(Context context, String message) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
@@ -299,6 +320,7 @@ public class ExternalAudioWriter {
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     private static void notifySuccess(Context context, String name, Child child, Uri fileUri) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
@@ -328,8 +350,9 @@ public class ExternalAudioWriter {
         }
 
         new DownloadRepository().insert(download);
-    }   
+    }
 
+    @OptIn(markerClass = UnstableApi.class)
     private static void notifyExists(Context context, String name) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
@@ -340,6 +363,7 @@ public class ExternalAudioWriter {
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     private static PendingIntent buildPlayIntent(Context context, Child child, Uri fileUri) {
         if (fileUri == null) return null;
         Intent intent = new Intent(context, MainActivity.class)

@@ -29,7 +29,6 @@ import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.repository.DirectoryRepository;
 import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.Directory;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ import com.cappielloantonio.tempo.ui.adapter.MusicDirectoryAdapter;
 import com.cappielloantonio.tempo.ui.dialog.DownloadDirectoryDialog;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
+import com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.DirectoryViewModel;
@@ -125,7 +124,10 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
                                         songs.stream().map(Download::new).collect(Collectors.toList())
                                 );
                             } else {
-                                songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+                                for (Child child : songs) {
+                                    ExternalDownloadMetadataStore.recordExportTarget(child.getId(), Preferences.getDownloadDirectoryUri());
+                                    DownloadUtil.getDownloadTracker(requireContext()).download(MappingUtil.mapDownload(child), new Download(child));
+                                }
                             }
                         }
                     });
