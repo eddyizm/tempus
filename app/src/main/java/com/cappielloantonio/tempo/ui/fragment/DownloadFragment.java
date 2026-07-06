@@ -293,7 +293,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                     .filter(song -> fileExists(song.getPath()))
                     .collect(Collectors.toList());
 
-            downloadViewModel.updateDownloadedTracks(validSongs);
+            downloadViewModel.setDownloadedTracks(validSongs);
         }
     }
 
