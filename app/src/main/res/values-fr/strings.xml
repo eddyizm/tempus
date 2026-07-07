@@ -220,6 +220,11 @@
     <string name="media_route_menu_title">Cast</string>
     <string name="menu_add_button">Ajouter</string>
     <string name="menu_add_to_playlist_button">Ajouter à une playlist</string>
+    <string name="playlist_added_to_queue">Playlist ajoutée à la file d\'attente</string>
+    <string name="menu_go_to_playlist_button">Lire</string>
+    <string name="menu_play_shuffle_button">Lire dans le désordre</string>
+    <string name="menu_add_to_queue_button">Ajouter à la file d\'attente</string>
+    <string name="menu_edit_playlist_button">Modifier la playlist</string>
     <string name="menu_download_all_button">Télécharger tout</string>
     <string name="menu_rate_album">Noter l\'album</string>
     <string name="menu_download_label">Téléchargé</string>
