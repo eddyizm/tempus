@@ -85,14 +85,19 @@ public class AlbumArtContentProvider extends ContentProvider {
                 try (OutputStream out = new ParcelFileDescriptor.AutoCloseOutputStream(writeSide)) {
 
                     // local radio cover: read directly from disk; otherwise fetch via Glide
-                    File file = (localFileFinal != null)
-                            ? localFileFinal
-                            : Glide.with(context)
-                                    .asFile()
-                                    .load(artworkUriFinal)
-                                    .diskCacheStrategy(DiskCacheStrategy.DATA)
-                                    .submit()
-                                    .get();
+                    File file;
+                    if (localFileFinal != null) {
+                        file = localFileFinal;
+                    } else {
+                        var fileRequest = Glide.with(context)
+                                .asFile()
+                                .load(artworkUriFinal)
+                                .diskCacheStrategy(DiskCacheStrategy.DATA);
+                        if (Preferences.isDataSavingMode()) {
+                            fileRequest = fileRequest.onlyRetrieveFromCache(true);
+                        }
+                        file = fileRequest.submit().get();
+                    }
 
                     // copy artwork down pipe returned by ContentProvider
                     try (InputStream in = new FileInputStream(file)) {

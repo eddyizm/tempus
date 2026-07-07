@@ -1,0 +1,42 @@
+# Use Debian slim (glibc‑based) for full Android SDK compatibility
+FROM debian:bullseye-slim
+
+# Environment variables (no interactive prompts)
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV NDK_PATH=${ANDROID_SDK_ROOT}/ndk/29.0.14206865
+ENV PATH="${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${NDK_PATH}:${PATH}"
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git curl wget unzip \
+    openjdk-17-jdk \
+    python3 make g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Download and install Android command‑line tools
+RUN mkdir -p ${ANDROID_SDK_ROOT}/cmdline-tools && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O /tmp/cmdline-tools.zip && \
+    unzip -q /tmp/cmdline-tools.zip -d ${ANDROID_SDK_ROOT}/cmdline-tools/ && \
+    mv ${ANDROID_SDK_ROOT}/cmdline-tools/cmdline-tools ${ANDROID_SDK_ROOT}/cmdline-tools/latest && \
+    rm /tmp/cmdline-tools.zip
+
+# Accept all Android SDK licenses (non‑interactive) – this is mandatory for sdkmanager to actually download packages
+RUN yes | sdkmanager --licenses
+
+# Install the required NDK version (this will now download correctly)
+RUN sdkmanager "ndk;29.0.14206865"
+
+# Verify NDK is present (fail early if missing)
+RUN test -f ${NDK_PATH}/build/cmake/android.toolchain.cmake
+
+# Create working directory
+WORKDIR /build
+
+# Copy the build script (ensure it's executable)
+COPY build.sh /build/build.sh
+RUN chmod +x /build/build.sh
+
+# Default command: keep the container alive for interactive exec (optional)
+# Override with "/build/build.sh" to build immediately
+CMD ["sleep", "infinity"]
