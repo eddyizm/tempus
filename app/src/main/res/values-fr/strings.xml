@@ -400,6 +400,8 @@
     <string name="settings_continuous_play_title">Lecture continue</string>
     <string name="settings_number_tracks_keep_in_queue">Nombre de morceaux à garder en file d\'attente</string>
     <string name="settings_number_tracks_keep_in_queue_summary">Ajuste le nombre de morceaux à garder en file d\'attente avant de commencer l\'ajout avec la lecture continue</string>
+    <string name="settings_fallback_to_random_tracks_summary">Jouer des titres au hasard par défaut en l\'absence de titres similaires</string>
+    <string name="settings_fallback_to_random_tracks_title">Titres aléatoires par défaut</string>
     <string name="settings_covers_cache">Taille du cache des illustrations</string>
     <string name="settings_data_saving_mode_summary">Pour réduire la consommation de données, éviter de télécharger les illustrations.</string>
     <string name="settings_data_saving_mode_title">Limiter l\'utilisation des données mobiles</string>
