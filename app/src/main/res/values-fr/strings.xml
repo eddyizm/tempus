@@ -468,6 +468,9 @@
     <string name="settings_queue_syncing_title">Synchroniser la file d\'attente pour cet utilisateur [fonctionnalité en évolution]</string>
     <string name="settings_show_mini_shuffle_button">Afficher le bouton Mélanger</string>
     <string name="settings_show_mini_shuffle_button_summary">Si activé, le bouton Mélanger sera visible et le bouton Cœur caché sur le mini-lecteur</string>
+    <string name="settings_custom_command_first_button">Première commande personnalisée</string>
+    <string name="settings_custom_command_second_button">Seconde commande personnalisée</string>
+
     <string name="settings_radio">Voir les radios</string>
     <string name="settings_radio_summary">Si activé, rend visible la section Radio. Redémarrez l\'application pour appliquer ce paramètre.</string>
     <string name="settings_hide_bottom_navbar_on_portrait">Cacher la barre de navigation en mode portrait [Expérimental]</string>
