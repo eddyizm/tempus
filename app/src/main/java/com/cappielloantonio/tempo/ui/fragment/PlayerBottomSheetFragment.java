@@ -30,8 +30,10 @@ import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.PlayQueue;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.fragment.pager.PlayerControllerVerticalPager;
+import com.bumptech.glide.Glide;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.RadioCoverArtDownloader;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.PlayerBottomSheetViewModel;
 import com.google.android.material.elevation.SurfaceColors;
@@ -84,6 +86,13 @@ public class PlayerBottomSheetFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // #777: cancel the self-reposting progress updater. Otherwise its pending
+        // Handler message keeps this destroyed fragment alive — and, via the
+        // MediaBrowser the runnable captures, the whole MainActivity and its
+        // cover-art bitmaps — leaking ~3MB per Activity recreation until OOM.
+        if (progressBarHandler != null) {
+            progressBarHandler.removeCallbacks(progressBarRunnable);
+        }
         bind = null;
     }
 
@@ -218,10 +227,19 @@ public class PlayerBottomSheetFragment extends Fragment {
                                 : View.GONE);
             }
 
-            CustomGlideRequest.Builder
-                    .from(requireContext(), mediaMetadata.extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
-                    .build()
-                    .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            if (Constants.MEDIA_TYPE_RADIO.equals(mediaMetadata.extras.getString("type"))) {
+                com.bumptech.glide.RequestBuilder<android.graphics.drawable.Drawable> request = Glide.with(requireContext())
+                        .load(mediaMetadata.artworkUri)
+                        .apply(CustomGlideRequest.createRequestOptions(requireContext(),
+                                mediaMetadata.extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Radio));
+                request = RadioCoverArtDownloader.applyLocalFileSignature(request, mediaMetadata.artworkUri);
+                request.into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            } else {
+                CustomGlideRequest.Builder
+                        .from(requireContext(), mediaMetadata.extras.getString("coverArtId"), CustomGlideRequest.ResourceType.Song)
+                        .build()
+                        .into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            }
         }
     }
 

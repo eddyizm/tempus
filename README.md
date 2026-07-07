@@ -31,7 +31,7 @@
 -->
   
 
-**Tempus** is an open-source and lightweight music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device. 
+**Tempus** is an open-source and privacy focused music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device. 
 
 Tempus does not rely on magic algorithms to decide what you should listen to. Instead, the interface is built around your listening history, randomness, and optionally integrates with services like Listenbrainz.org and Last.fm to personalize your music experience (These must be supported by your backend). 
 
@@ -68,13 +68,14 @@ Please note the two variants in the release assets include release/debug and 32/
 - **Gapless Playback**: Experience uninterrupted playback with gapless listening mode.
 - **ReplayGain**: Volume normalization, preamp offset and clipping prevention if your metadata provide the information.
 - **Scrobbling Integration**: Optionally integrate Tempus with Last.fm or Listenbrainz.org to scrobble your played tracks, gather music insights, and further personalize your music recommendations, if supported by your Subsonic server.
-- **Podcasts and Radio**: If your Subsonic server supports it, listen to podcasts and radio shows directly within Tempus, expanding your audio entertainment options.
+- **Podcasts**: If your Subsonic server supports it, listen to podcasts directly within Tempus, expanding your audio entertainment options.
+- **Radio**: Tempus can now also search and save Internet radio stations on local device even without a backend subsonic api support. 
 - **Instant Mix**: Full refactor of instant mix function which leverages subsonics similarSongs2 by artist/album and similarSongs endpoints to server a larger play queue more reliably.
 - **Transcoding Support**: Activate transcoding of tracks on your Subsonic server, allowing you to set a transcoding profile for optimized streaming directly from the app. This feature requires support from your Subsonic server.
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
 - **Equalizer**: Option to use built-in or third-party equalizer.
 - **Widget**: New widget to keeping the basic controls on your screen at all times.
-- **Available in 11 languages**: Currently in Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish
+- **Available in 12 languages**: Currently in Catalan, Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish
 
 ### 🟥GitHub version only
 - **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.
@@ -93,7 +94,7 @@ Please note the two variants in the release assets include release/debug and 32/
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_light.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_light.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_light.png" width=200>
-    <!-- <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_light.png" width=200> -->
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7_light.png" width=200>
 </p>
 
 <br>
@@ -109,7 +110,7 @@ Please note the two variants in the release assets include release/debug and 32/
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4_dark.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/5_dark.png" width=200>
     <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/6_dark.png" width=200>
-    <!-- <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/8_dark.png" width=200> -->
+    <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/7_dark.png" width=200>
     
 </p>
 

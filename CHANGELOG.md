@@ -1,6 +1,77 @@
 # Changelog
 
-## [4.18.0](https://github.com/eddyizm/tempus/releases/tag/v4.18.0) (2026-06-06)
+## [4.20.5](https://github.com/eddyizm/tempus/releases/tag/v4.20.5) (2026-07-04)
+## What's Changed
+* docs: add CONTRIBUTING.md by @tvillega in https://github.com/eddyizm/tempus/pull/823
+* fix: deep-linked playlist loads no songs and crashes from null id (#729) by @herrerad85 in https://github.com/eddyizm/tempus/pull/789
+* fix: Fix genre search not working by @kongwoojin in https://github.com/eddyizm/tempus/pull/817
+* fix: Ensure the selections array size matches activeWrappers size (#820) by @eddyizm in https://github.com/eddyizm/tempus/pull/824
+* chore: container/build script for new ffmpeg lib by @eddyizm in https://github.com/eddyizm/tempus/pull/822
+* chore: update ci pipelines to java 21 (#831) by @eddyizm in https://github.com/eddyizm/tempus/pull/832
+* feat: replaced settings 3dot to gear icon (#833) by @eddyizm in https://github.com/eddyizm/tempus/pull/834
+* chore: Update Catalan i18n by @marcriera in https://github.com/eddyizm/tempus/pull/830
+
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.20.0...v4.20.4
+
+## [4.20.0](https://github.com/eddyizm/tempus/releases/tag/v4.20.0) (2026-06-27)
+## What's Changed
+* feat: improve Continuous Play by @MaFo-28 in https://github.com/eddyizm/tempus/pull/721
+* ui: Release Type sections on artist page rework by @haunders in https://github.com/eddyizm/tempus/pull/756
+* fix: handle aggressive memory killing to restore album fragment by @eddyizm in https://github.com/eddyizm/tempus/pull/772
+* chore: update gradle to version catalogues by @tvillega in https://github.com/eddyizm/tempus/pull/762
+* chore: upgrade to agp 9.x by @tvillega in https://github.com/eddyizm/tempus/pull/763
+* devops: updated build tool version to match gradle bump and reverted … by @eddyizm in https://github.com/eddyizm/tempus/pull/778
+* fix: handled OOM/ANR with large playlist. landscape still needs work by @eddyizm in https://github.com/eddyizm/tempus/pull/769
+* feat: add to queue, edit playlist in main playlist page by @eddyizm in https://github.com/eddyizm/tempus/pull/773
+* fix: album layout padding updated to match new playlist layout by @eddyizm in https://github.com/eddyizm/tempus/pull/784
+* chore: set java 21 target by @tvillega in https://github.com/eddyizm/tempus/pull/779
+* chore: lower http logging by @eddyizm in https://github.com/eddyizm/tempus/pull/785
+* feat: Playlist menu changes by @eddyizm in https://github.com/eddyizm/tempus/pull/793
+* fix: playlist-browsing OOM from a leaked LiveData observer (#696) by @herrerad85 in https://github.com/eddyizm/tempus/pull/796
+* chore(i18n): Update Spanish (Latinoamerica) translation by @Kurami32 in https://github.com/eddyizm/tempus/pull/798
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/794
+* fix: unsanitized fqdn crashes login by @tvillega in https://github.com/eddyizm/tempus/pull/797
+* fix: recover playback after a network switch instead of freezing (#682) by @herrerad85 in https://github.com/eddyizm/tempus/pull/790
+* Revert login fix abea68b4 by @eddyizm in https://github.com/eddyizm/tempus/pull/802
+* fix: wrong fetching animations condition of artist top songs by @tvillega in https://github.com/eddyizm/tempus/pull/803
+* fix: avoid playback gap on WiFi/cellular switch by not rebuilding the active item by @chunjiw in https://github.com/eddyizm/tempus/pull/805
+* fix: Sanitize the Subsonic base URL before handing it to Retrofit (#795) by @herrerad85 in https://github.com/eddyizm/tempus/pull/804
+* fix: applying main layout to current buggy changes by @eddyizm in https://github.com/eddyizm/tempus/pull/806
+* chore(i18n): Update arrays for Spanish (Latin America). by @Kurami32 in https://github.com/eddyizm/tempus/pull/807
+* feat: updated playlist catalog menu to match new behavior by @eddyizm in https://github.com/eddyizm/tempus/pull/812
+* fix: skip un-mappable songs when restoring the play queue (#705) by @herrerad85 in https://github.com/eddyizm/tempus/pull/791
+* fix: cancel leaked player/home callbacks that retain MainActivity (#777) by @herrerad85 in https://github.com/eddyizm/tempus/pull/792
+
+## New Contributors
+* @haunders made their first contribution in https://github.com/eddyizm/tempus/pull/756
+* @herrerad85 made their first contribution in https://github.com/eddyizm/tempus/pull/796
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.19.0...v4.20.0
+
+## [4.19.0](https://github.com/eddyizm/tempus/releases/tag/v4.19.0) (2026-06-15)
+## What's Changed
+* fix: Move sleep timer logic from PlayerControllerFragment to BaseMediaService by @CtznSniiips in https://github.com/eddyizm/tempus/pull/730
+* Add WiFi-only download constraint by @funkypc in https://github.com/eddyizm/tempus/pull/727
+* fix: album art missing for same-album tracks over Bluetooth on Tesla (#470) by @chunjiw in https://github.com/eddyizm/tempus/pull/719
+* feat: local radio station management, directory search, and radio cover art by @pLum0 in https://github.com/eddyizm/tempus/pull/731
+* fix: keep the mini-player visible when reopening the app during radio playback by @pLum0 in https://github.com/eddyizm/tempus/pull/740
+* fix: handle api zero count and handle null on cached playlist method by @eddyizm in https://github.com/eddyizm/tempus/pull/759
+* fix: added null check for mediaNotificationControllerInfo in BaseSess… by @eddyizm in https://github.com/eddyizm/tempus/pull/752
+* fix: prevent crashes on "Best Of"and "Radio Station" home music tab  … by @eddyizm in https://github.com/eddyizm/tempus/pull/761
+* chore(i18n): Make some of the equalizer strings translatable by @skajmer in https://github.com/eddyizm/tempus/pull/743
+* fix: deletes local db playlist entry when updating server successfull… by @eddyizm in https://github.com/eddyizm/tempus/pull/766
+* fix: another stab and fixing out of sync playlists by @eddyizm in https://github.com/eddyizm/tempus/pull/767
+* fix: handle devices already in bad state by @eddyizm in https://github.com/eddyizm/tempus/pull/768
+* feat: add trailing dot to track number by @tvillega in https://github.com/eddyizm/tempus/pull/765
+
+## New Contributors
+* @funkypc made their first contribution in https://github.com/eddyizm/tempus/pull/727
+* @chunjiw made their first contribution in https://github.com/eddyizm/tempus/pull/719
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.18.2...v4.19.0
+
+## [4.18.2](https://github.com/eddyizm/tempus/releases/tag/v4.18.2) (2026-06-06)
 ## What's Changed
 * fix: Bug album month by @TheLudway in https://github.com/eddyizm/tempus/pull/700
 * refactor: separate equalizer from mediaservice by @tvillega in https://github.com/eddyizm/tempus/pull/658

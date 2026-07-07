@@ -371,6 +371,8 @@
     <string name="settings_clear_download_folder">Vider le répertoire de téléchargement</string>
     <string name="settings_continuous_play_summary">Permet de prolonger la lecture après la fin d\'une playlist avec des titres similaires</string>
     <string name="settings_continuous_play_title">Lecture continue</string>
+    <string name="settings_number_tracks_keep_in_queue">Nombre de morceaux à garder en file d\'attente</string>
+    <string name="settings_number_tracks_keep_in_queue_summary">Ajuste le nombre de morceaux à garder en file d\'attente avant de commencer l\'ajout avec la lecture continue</string>
     <string name="settings_covers_cache">Taille du cache des illustrations</string>
     <string name="settings_data_saving_mode_summary">Pour réduire la consommation de données, éviter de télécharger les illustrations.</string>
     <string name="settings_data_saving_mode_title">Limiter l\'utilisation des données mobiles</string>

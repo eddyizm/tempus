@@ -47,8 +47,7 @@ public class GenreCatalogueAdapter extends RecyclerView.Adapter<GenreCatalogueAd
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            genres.clear();
-            if (results.count > 0) genres.addAll((List) results.values);
+            genres = ((ArrayList<Genre>) results.values);
             notifyDataSetChanged();
         }
     };

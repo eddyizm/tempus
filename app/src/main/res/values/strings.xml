@@ -222,6 +222,11 @@
     <string name="media_route_menu_title">Cast</string>
     <string name="menu_add_button">Add</string>
     <string name="menu_add_to_playlist_button">Add to playlist</string>
+    <string name="playlist_added_to_queue">Playlist added to queue</string>
+    <string name="menu_go_to_playlist_button">Play</string>
+    <string name="menu_play_shuffle_button">Play shuffle</string>
+    <string name="menu_add_to_queue_button">Add to queue</string>
+    <string name="menu_edit_playlist_button">Edit playlist</string>
     <string name="menu_download_all_button">Download all</string>
     <string name="menu_rate_album">Rate album</string>
     <string name="menu_download_label">Download</string>
@@ -293,6 +298,10 @@
     <string name="playlist_editor_dialog_neutral_button">Delete</string>
     <string name="playlist_editor_dialog_positive_button">Save</string>
     <string name="playlist_editor_dialog_title">Edit playlist</string>
+    <string name="playlist_editor_dialog_action_delete_success">Playlist deleted</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Failed to delete playlist</string>
+    <string name="playlist_editor_dialog_action_save_success">Playlist saved</string>
+    <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
     <string name="playlist_page_play_button">Play</string>
     <string name="playlist_page_shuffle_button">Shuffle</string>
     <string name="playlist_song_count">Playlist  •  %1$d songs</string>
@@ -328,6 +337,24 @@
     <string name="radio_station_info_empty_subtitle">Once you add a radio station, you\'ll find it here</string>
     <string name="radio_station_info_empty_title">No stations found!</string>
     <string name="radio_dialog_not_supported_snackbar">Internet radio management are not supported by this server.</string>
+    <string name="radio_editor_source_label">Save to</string>
+    <string name="radio_editor_source_server">Server</string>
+    <string name="radio_editor_source_local">Local</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">Cover Art URL (optional)</string>
+    <string name="radio_local_badge">LOCAL</string>
+    <string name="radio_search_dialog_title">Search Radio Directory</string>
+    <string name="radio_search_hint">Station name</string>
+    <string name="radio_search_button">Search</string>
+    <string name="radio_search_add">Add</string>
+    <string name="radio_search_no_results">No stations found</string>
+    <string name="radio_search_empty_query">Enter a station name</string>
+    <string name="radio_search_error">Search failed: %s</string>
+    <string name="radio_search_duplicate">Station already exists</string>
+    <string name="radio_search_station_added">Station added locally</string>
+    <string name="radio_search_directory_button">Directory</string>
+    <string name="radio_editor_search_directory">Search directory</string>
+    <string name="radio_search_country_hint">Country</string>
+    <string name="radio_search_use">Use</string>
     <string name="rating_dialog_negative_button">Cancel</string>
     <string name="rating_dialog_positive_button">Save</string>
     <string name="rating_dialog_title">Rate</string>
@@ -373,6 +400,10 @@
     <string name="settings_clear_download_folder">Clear download folder</string>
     <string name="settings_continuous_play_summary">Allows music to keep playing after a playlist has ended, playing similar songs</string>
     <string name="settings_continuous_play_title">Continuous play</string>
+    <string name="settings_number_tracks_keep_in_queue">Number of tracks to keep in queue</string>
+    <string name="settings_number_tracks_keep_in_queue_summary">Adjust the number of tracks to keep in queue before starting to add tracks with continuous play</string>
+    <string name="settings_fallback_to_random_tracks_summary">Play random songs as a fallback when similar tracks are unavailable</string>
+    <string name="settings_fallback_to_random_tracks_title">Fallback to random tracks</string>
     <string name="settings_covers_cache">Size of artwork cache</string>
     <string name="settings_data_saving_mode_summary">In order to reduce data consumption, avoid downloading covers.</string>
     <string name="settings_data_saving_mode_title">Limit mobile data usage</string>
@@ -512,6 +543,8 @@
     <string name="settings_version_title">Version</string>
     <string name="settings_wifi_only_summary">Ask for user confirmation before streaming over mobile network.</string>
     <string name="settings_wifi_only_title">Stream via Wi-Fi only alert</string>
+    <string name="settings_download_wifi_only_summary">Downloads will pause on mobile data and resume automatically on Wi-Fi.</string>
+    <string name="settings_download_wifi_only_title">Download only on Wi-Fi</string>
     <string name="share_bottom_sheet_copy_link">Copy link</string>
     <string name="share_bottom_sheet_delete">Delete share</string>
     <string name="share_bottom_sheet_update">Update share</string>
@@ -520,6 +553,7 @@
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
     <string name="toolbar_navigation_drawer_open">Navigation drawer open</string>
     <string name="toolbar_navigation_drawer_closed">Navigation drawer closed</string>
+    <string name="favorite_icon_description">Favorite</string>
 
     <string name="asset_link_clipboard_label">Tempus asset link</string>
     <string name="asset_link_label_song">Song UID</string>
@@ -636,6 +670,9 @@
     <string name="equalizer_managed_externally">Equalizer managed by system or third party app</string>
     <string name="settings_app_equalizer">Built-in equalizer</string>
     <string name="settings_app_equalizer_summary">Open the built-in equalizer</string>
+    <string name="settings_title_equalizer">Equalizer</string>
+    <string name="settings_equalizer_select">Select an equalizer to use</string>
+    <string name="settings_equalizer_dialog_title">Equalizers</string>
 
     <string name="settings_album_detail">Show album detail</string>
     <string name="settings_album_detail_summary">If enabled, show the album details like genre, song count etc. on the album page</string>
@@ -705,4 +742,7 @@
 
         The data is not sent anywhere without your consent.
     </string>
+    <string name="playlist_error_not_found_title">Playlist not found</string>
+    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
+    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
 </resources>

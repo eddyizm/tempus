@@ -35,7 +35,9 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -479,48 +481,101 @@ public class MediaManager {
         Preferences.setLastInstantMix();
         continuousPlayIsRunning.set(true);
 
+        // keep only NUMBER_TRACKS_KEEP_IN_QUEUE items in queue before starting continuous play
+        int numberOfTracksKeepInQueue = Preferences.getNumberOfTracksKeepInQueue();
+        if (existingBrowserFuture != null) {
+            existingBrowserFuture.addListener(() -> {
+                try {
+                    if (existingBrowserFuture.isDone()) {
+                        MediaBrowser browser = existingBrowserFuture.get();
+                        int currentIndex = browser.getCurrentMediaItem() != null
+                                ? browser.getCurrentMediaItemIndex()
+                                : 0;
+                        int firstToKeep = Math.max(0, currentIndex - numberOfTracksKeepInQueue);
+                        if (firstToKeep > 0) {
+                            Log.d(TAG, "Continuous Play: purging " + firstToKeep + " old items from queue");
+                            removeRange(existingBrowserFuture, 0, firstToKeep);
+                        }
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.e(TAG, "Continuous Play: purge failed", e);
+                }
+            }, MoreExecutors.directExecutor());
+        }
+        String trackId = mediaItem.mediaId;
+        String artistId = mediaItem.mediaMetadata.extras != null
+                ? mediaItem.mediaMetadata.extras.getString("artistId")
+                : null;
+
         LiveData<List<Child>> instantMix =
-                getSongRepository().getContinuousMix(mediaItem.mediaId, 25);
+                getSongRepository().getContinuousMix(trackId, artistId, 25);
 
         instantMix.observeForever(new Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> media) {
-                if (media == null || media.isEmpty()) {
-                    Log.w(TAG, "Continuous Play: no similar track found. Is server correctly configured?");
-                }
-                else
-                {
-                    if (existingBrowserFuture != null) {
-                        Log.d(TAG, "Continuous Play: found " + media.size() + " similar tracks");
+                instantMix.removeObserver(this);
 
-                        final MediaBrowser browser;
-                        try {
-                            browser = existingBrowserFuture.get();
-                        } catch (ExecutionException | InterruptedException e) {
-                            Log.e(TAG, "Continuous Play: browser unavailable", e);
-                            instantMix.removeObserver(this);
-                            continuousPlayIsRunning.set(false);
-                            return;
-                        }
-
-                        List<Child> filteredMedia;
-                        List<String> currentIds = new ArrayList<>();
-                        for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
-                            currentIds.add(browser.getMediaItemAt(i).mediaId);
-                        }
-                        filteredMedia = media.stream()
-                                .filter(child -> !currentIds.contains(child.getId()))
-                                .collect(Collectors.toList());
-
-                        Log.d(TAG, "Continuous Play: adding " + filteredMedia.size() + " tracks to queue");
-                        enqueue(existingBrowserFuture, filteredMedia, true);
+                // Filter against current queue before deciding if we need fallback.
+                // getSimilarSongs2 doesn't know what's already queued, so it may
+                // return tracks we already have. Filter first, then decide.
+                if (media != null && !media.isEmpty()) {
+                    List<Child> filtered = dedupAgainstQueue(media, existingBrowserFuture);
+                    if (!filtered.isEmpty()) {
+                        Log.d(TAG, "Continuous Play: adding " + filtered.size() + " similar tracks");
+                        enqueue(existingBrowserFuture, filtered, true);
+                        continuousPlayIsRunning.set(false);
+                        return;
                     }
                 }
-                instantMix.removeObserver(this);
-                continuousPlayIsRunning.set(false);
-                if (onComplete != null) onComplete.run();
+
+                if (Preferences.isFallbackToRandomTracksEnabled()) {
+                    Log.w(TAG, "Continuous Play: no new similar tracks, falling back to random songs");
+                    LiveData<List<Child>> randomSongs = getSongRepository().getRandomSample(25, null, null);
+                    randomSongs.observeForever(new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> random) {
+                            randomSongs.removeObserver(this);
+                            if (random != null && !random.isEmpty()) {
+                                List<Child> filtered = dedupAgainstQueue(random, existingBrowserFuture);
+                                if (!filtered.isEmpty()) {
+                                    Log.d(TAG, "Continuous Play: adding " + filtered.size() + " random tracks");
+                                    enqueue(existingBrowserFuture, filtered, true);
+                                } else {
+                                    Log.w(TAG, "Continuous Play: random tracks already in queue");
+                                }
+                            } else {
+                                Log.w(TAG, "Continuous Play: random fallback also empty");
+                            }
+                            continuousPlayIsRunning.set(false);
+                        }
+                    });
+                } else {
+                    Log.w(TAG, "Continuous Play: no new similar tracks, random fallback disabled");
+                    continuousPlayIsRunning.set(false);
+                }
             }
         });
+    }
+
+    private static List<Child> dedupAgainstQueue(List<Child> candidates,
+                                                  ListenableFuture<MediaBrowser> existingBrowserFuture) {
+        if (existingBrowserFuture == null) return new ArrayList<>(candidates);
+
+        final MediaBrowser browser;
+        try {
+            browser = existingBrowserFuture.get();
+        } catch (ExecutionException | InterruptedException e) {
+            return new ArrayList<>(candidates);
+        }
+
+        Set<String> currentIds = new HashSet<>();
+        for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
+            currentIds.add(browser.getMediaItemAt(i).mediaId);
+        }
+
+        return candidates.stream()
+                .filter(child -> !currentIds.contains(child.getId()))
+                .collect(Collectors.toList());
     }
 
     public static void saveChronology(MediaItem mediaItem) {

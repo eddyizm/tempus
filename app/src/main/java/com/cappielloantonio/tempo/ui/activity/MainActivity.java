@@ -353,6 +353,14 @@ public class MainActivity extends BaseActivity {
                         }
                     }
                 });
+                // If a session is already active on (re)connect — e.g. radio still playing after
+                // the app was swiped away — peek the bar. Radio isn't persisted to the queue DB,
+                // so the queue-count check (isQueueLoaded) misses it on reopen. onIsPlayingChanged
+                // also won't fire here since playback didn't change state.
+                if (getMediaBrowserListenableFuture().get().getCurrentMediaItem() != null
+                        && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    setBottomSheetInPeek(true);
+                }
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -466,11 +474,21 @@ public class MainActivity extends BaseActivity {
         if (Preferences.isInUseServerAddressLocal()) {
             mainViewModel.ping().observe(this, subsonicResponse -> {
                 if (subsonicResponse == null) {
-                    Preferences.setServerSwitchableTimer();
-                    Preferences.switchInUseServerAddress();
-                    App.refreshSubsonicClient();
-                    pingServer();
-                    resetView();
+                    // Switching only helps when remote and local are different addresses. When
+                    // they're equal (issue #242) switchInUseServerAddress() is a no-op, so we'd
+                    // re-enter this branch forever (ping/refresh/resetView loop). Treat that case
+                    // like an unreachable server instead of looping.
+                    String server = Preferences.getServer();
+                    if (server != null && !server.equals(Preferences.getLocalAddress())) {
+                        Preferences.setServerSwitchableTimer();
+                        Preferences.switchInUseServerAddress();
+                        App.refreshSubsonicClient();
+                        pingServer();
+                        resetView();
+                    } else if (Preferences.showServerUnreachableDialog()) {
+                        ServerUnreachableDialog dialog = new ServerUnreachableDialog();
+                        dialog.show(getSupportFragmentManager(), null);
+                    }
                 } else {
                     Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
                 }

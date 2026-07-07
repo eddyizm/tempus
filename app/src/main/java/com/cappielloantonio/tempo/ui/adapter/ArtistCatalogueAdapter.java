@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ArtistCatalogueAdapter extends RecyclerView.Adapter<ArtistCatalogueAdapter.ViewHolder> implements Filterable {
+public class ArtistCatalogueAdapter extends RecyclerView.Adapter<ArtistCatalogueAdapter.ViewHolder> implements Filterable, StandardViewTypeAdapter {
     private final ClickCallback click;
 
     private final Filter filtering = new Filter() {
@@ -95,11 +95,6 @@ public class ArtistCatalogueAdapter extends RecyclerView.Adapter<ArtistCatalogue
         this.artists = artists;
         this.artistFull = new ArrayList<>(artists);
         notifyDataSetChanged();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return position;
     }
 
     @Override

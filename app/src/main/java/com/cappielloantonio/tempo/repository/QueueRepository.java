@@ -145,7 +145,8 @@ public class QueueRepository {
             }
 
             final List<Queue> finalMedia = media;
-            List<Child> filteredToAdd = toAdd.stream()
+            List<Child> toAddCopy = new ArrayList<>(toAdd);
+            List<Child> filteredToAdd = toAddCopy.stream()
                     .filter(child -> !isMediaInQueue(finalMedia, child))
                     .collect(Collectors.toList());
 

@@ -222,6 +222,11 @@
     <string name="media_route_menu_title">Przesyłanie</string>
     <string name="menu_add_button">Dodaj</string>
     <string name="menu_add_to_playlist_button">Dodaj do playlisty</string>
+    <string name="playlist_added_to_queue">Playlista dodana do kolejki</string>
+    <string name="menu_go_to_playlist_button">Odtwarzaj</string>
+    <string name="menu_play_shuffle_button">Odtwarzaj losowo</string>
+    <string name="menu_add_to_queue_button">Dodaj do kolejki</string>
+    <string name="menu_edit_playlist_button">Edytuj playlistę</string>
     <string name="menu_download_all_button">Pobierz wszystko</string>
     <string name="menu_rate_album">Oceń album</string>
     <string name="menu_download_label">Pobrane</string>
@@ -293,6 +298,10 @@
     <string name="playlist_editor_dialog_neutral_button">Usuń</string>
     <string name="playlist_editor_dialog_positive_button">Zapisz</string>
     <string name="playlist_editor_dialog_title">Edytuj playlistę</string>
+    <string name="playlist_editor_dialog_action_delete_success">Playlista usunięta</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
+    <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>
+    <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
     <string name="playlist_page_play_button">Odtwórz</string>
     <string name="playlist_page_shuffle_button">Odtwarzaj losowo</string>
     <string name="playlist_song_count">Playlista  •  %1$d piosenek</string>
@@ -315,9 +324,9 @@
     <string name="podcast_info_empty_subtitle">Gdy dodasz kanał, znajdziesz go tutaj</string>
     <string name="podcast_info_empty_title">Nie znaleziono podcastów!</string>
     <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
-    <string name="radio_editor_dialog_hint_homepage_url">URL Strony Radia</string>
-    <string name="radio_editor_dialog_hint_name">Nazwa Radia</string>
-    <string name="radio_editor_dialog_hint_stream_url">URL Z Strumieniem Radia</string>
+    <string name="radio_editor_dialog_hint_homepage_url">Adres URL strony stacji</string>
+    <string name="radio_editor_dialog_hint_name">Nazwa stacji radiowej</string>
+    <string name="radio_editor_dialog_hint_stream_url">Adres URL z strumieniem stacji</string>
     <string name="radio_editor_dialog_negative_button">Anuluj</string>
     <string name="radio_editor_dialog_neutral_button">Usuń</string>
     <string name="radio_editor_dialog_positive_button">Zapisz</string>
@@ -328,6 +337,24 @@
     <string name="radio_station_info_empty_subtitle">Gdy dodasz stację radiową, znajdziesz ją tutaj</string>
     <string name="radio_station_info_empty_title">Nie znaleziono stacji!</string>
     <string name="radio_dialog_not_supported_snackbar">Zarządzanie internetowymi stacjami radiowymi nie jest obsługiwane przez ten serwer.</string>
+    <string name="radio_editor_source_label">Zapisz na</string>
+    <string name="radio_editor_source_server">Serwerze</string>
+    <string name="radio_editor_source_local">Lokalnie</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">Adres URL okładki (opcjonalny)</string>
+    <string name="radio_local_badge">LOKALNA</string>
+    <string name="radio_search_dialog_title">Przeszukaj katalog stacji</string>
+    <string name="radio_search_hint">Nazwa stacji</string>
+    <string name="radio_search_button">Szukaj</string>
+    <string name="radio_search_add">Dodaj</string>
+    <string name="radio_search_no_results">Nie znaleziono stacji</string>
+    <string name="radio_search_empty_query">Wpisz nazwę stacji</string>
+    <string name="radio_search_error">Wyszukiwanie nieudane: %s</string>
+    <string name="radio_search_duplicate">Stacja już istnieje</string>
+    <string name="radio_search_station_added">Stacja dodana lokalnie</string>
+    <string name="radio_search_directory_button">Katalog</string>
+    <string name="radio_editor_search_directory">Katalog wyszukiwania</string>
+    <string name="radio_search_country_hint">Kraj</string>
+    <string name="radio_search_use">Użyj</string>
     <string name="rating_dialog_negative_button">Anuluj</string>
     <string name="rating_dialog_positive_button">Zapisz</string>
     <string name="rating_dialog_title">Oceń</string>
@@ -373,6 +400,8 @@
     <string name="settings_clear_download_folder">Wyczyść folder pobierania</string>
     <string name="settings_continuous_play_summary">Pozwala muzyce odtwarzać się dalej po końcu playlisty, odtwarza podobne piosenki</string>
     <string name="settings_continuous_play_title">Odtwarzanie bez przerwy</string>
+    <string name="settings_number_tracks_keep_in_queue">Liczba utworów do utrzymania w kolejce</string>
+    <string name="settings_number_tracks_keep_in_queue_summary">Dostosuj liczbę utworów utrzymywanych w kolejce zanim zostaną dodane utwory z odtwarzania bez przerwy</string>
     <string name="settings_covers_cache">Rozmiar cache dla okładek</string>
     <string name="settings_data_saving_mode_summary">Aby zmniejszyć zużycie danych, unikaj pobierania okładek.</string>
     <string name="settings_data_saving_mode_title">Ogranicz zużycie danych komórkowych</string>
@@ -511,6 +540,8 @@
     <string name="settings_version_title">Wersja</string>
     <string name="settings_wifi_only_summary">Pytaj o potwierdzenie od użytkownika przed strumieniowaniem przez sieć komórkową.</string>
     <string name="settings_wifi_only_title">Alert o strumieniowaniu tylko przez Wi-Fi</string>
+    <string name="settings_download_wifi_only_summary">Pobierania zostaną wstrzymane podczas używania danych komórkowych i zostaną automatycznie wznowione po połączeniu z Wi-Fi.</string>
+    <string name="settings_download_wifi_only_title">Pobieraj tylko przez Wi-Fi</string>
     <string name="share_bottom_sheet_copy_link">Kopiuj link</string>
     <string name="share_bottom_sheet_delete">Usuń udostępnianie</string>
     <string name="share_bottom_sheet_update">Zaktualizuj udostępnianie</string>
@@ -519,6 +550,7 @@
     <string name="share_unsupported_error">Udostępnianie nie jest wspierane lub włączone</string>
 	<string name="toolbar_navigation_drawer_open">Szuflada nawigacji otwarta</string>
     <string name="toolbar_navigation_drawer_closed">Szuflada nawigacji zamknięta</string>
+    <string name="favorite_icon_description">Polub</string>
     <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
     <string name="asset_link_label_song">UID piosenki</string>
     <string name="asset_link_label_album">UID albumu</string>
@@ -636,6 +668,9 @@
     <string name="equalizer_managed_externally">Equalizer jest zarządzany przez system lub inną aplikację</string>
     <string name="settings_app_equalizer">Wbudowany equalizer</string>
     <string name="settings_app_equalizer_summary">Otwórz wbudowany korektor dźwięku</string>
+    <string name="settings_title_equalizer">Equalizer</string>
+    <string name="settings_equalizer_select">Wybierz equalizer do użycia</string>
+    <string name="settings_equalizer_dialog_title">Equalizery</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>
     <string name="settings_album_detail_summary">Jeżeli włączone, pokaż szczegóły albumu takie jak gatunek, ilość piosenek itp. na stronie albumu</string>
     <string name="settings_artist_sort_by_album_count">Sortuj wykonawców po ilości albumów</string>
@@ -700,4 +735,7 @@
 
         Te dane nie są nigdzie wysyłane bez twojej zgody.
     </string>
+    <string name="playlist_error_not_found_title">Playlista nie odnaleziona</string>
+    <string name="playlist_error_not_found_message">Tej playlisty nie udało się odnaleźć na serwerze. Zostanie ona usunięta z twojej lokalnej pamięci podręcznej.</string>
+    <string name="playlist_error_not_found_toast">Playlista usunięta z pamięci podręcznej</string>
 </resources>

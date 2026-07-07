@@ -24,6 +24,7 @@ import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
 import com.google.common.collect.ImmutableList;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,7 +36,18 @@ public class MappingUtil {
         ArrayList<MediaItem> mediaItems = new ArrayList<>();
 
         for (int i = 0; i < items.size(); i++) {
-            mediaItems.add(mapMediaItem(items.get(i)));
+            Child item = items.get(i);
+            try {
+                mediaItems.add(mapMediaItem(item));
+            } catch (Exception e) {
+                // A single un-mappable saved song (e.g. a cached queue entry whose
+                // Subsonic data lost fields after a server/library change) must not
+                // abort the whole batch. This runs during play-queue restore in
+                // MediaService.onCreate, so a thrown exception crashed the app on
+                // launch. Skip the bad item and keep the rest. See issue #705.
+                Log.e(TAG, "Skipping un-mappable song in queue restore: "
+                        + (item != null ? item.getId() : "null"), e);
+            }
         }
 
         return mediaItems;
@@ -250,14 +262,36 @@ public class MappingUtil {
     public static MediaItem mapInternetRadioStation(InternetRadioStation internetRadioStation) {
         Uri uri = Uri.parse(internetRadioStation.getStreamUrl());
         Uri artworkUri = null;
-        String homePageUrl = internetRadioStation.getHomePageUrl();
         String coverArtId = null;
 
-        if (homePageUrl != null && !homePageUrl.isEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
-                String encodedUrl = Base64.encodeToString(homePageUrl.getBytes(StandardCharsets.UTF_8),
-                                Base64.URL_SAFE | Base64.NO_WRAP);
-                coverArtId = "ir_" + encodedUrl;
-                artworkUri = AlbumArtContentProvider.contentUri(coverArtId);
+        if (internetRadioStation.getId() != null) {
+            File localCover = RadioCoverArtDownloader.getLocalCoverFile(internetRadioStation.getId());
+            if (localCover.exists()) {
+                // Serve via the content provider (not a file:// uri into app-private storage) so
+                // cross-process consumers (SystemUI media controls, Android Auto) can read it.
+                // The ?v=<mtime> busts caches when the cover is edited. coverArtId stays null on
+                // purpose: it drives server getCoverArt loads (e.g. the widget), and a local cover
+                // has no server id — the artworkUri above already carries it.
+                String localCoverId = "rl_" + internetRadioStation.getId();
+                artworkUri = AlbumArtContentProvider.contentUri(localCoverId).buildUpon()
+                        .appendQueryParameter("v", String.valueOf(localCover.lastModified()))
+                        .build();
+            }
+        }
+
+        if (artworkUri == null && internetRadioStation.getCoverArt() != null && !internetRadioStation.getCoverArt().isEmpty()) {
+            coverArtId = internetRadioStation.getCoverArt();
+            artworkUri = AlbumArtContentProvider.contentUri(coverArtId);
+        }
+
+        if (artworkUri == null) {
+            String homePageUrl = internetRadioStation.getHomePageUrl();
+            if (homePageUrl != null && !homePageUrl.isEmpty() && MusicUtil.isImageUrl(homePageUrl)) {
+                    String encodedUrl = Base64.encodeToString(homePageUrl.getBytes(StandardCharsets.UTF_8),
+                                    Base64.URL_SAFE | Base64.NO_WRAP);
+                    coverArtId = "ir_" + encodedUrl;
+                    artworkUri = AlbumArtContentProvider.contentUri(coverArtId);
+            }
         }
 
         Bundle bundle = new Bundle();
@@ -267,6 +301,7 @@ public class MappingUtil {
         bundle.putString("uri", uri.toString());
         bundle.putString("type", Constants.MEDIA_TYPE_RADIO);
         bundle.putString("coverArtId", coverArtId);
+        String homePageUrl = internetRadioStation.getHomePageUrl();
         if (homePageUrl != null) {
                 bundle.putString("homepageUrl", homePageUrl);
         }

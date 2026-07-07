@@ -194,11 +194,13 @@
         android:id="@+id/search_result_download_indicator_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
         app:layout_constraintEnd_toStartOf="@+id/search_result_song_more_button"
-        app:layout_constraintStart_toEndOf="@+id/rating_indicator_image_view"
         app:layout_constraintTop_toTopOf="@+id/song_cover_image_view"
         tools:visibility="visible">
 
@@ -213,10 +215,12 @@
         android:id="@+id/search_result_song_more_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="12dp"
         app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/search_result_download_indicator_image_view"
         app:layout_constraintTop_toTopOf="@+id/song_cover_image_view">
 
         <ImageView

@@ -39,8 +39,13 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
 import com.cappielloantonio.tempo.util.SleepTimerManager
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
+import com.google.common.util.concurrent.FutureCallback
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
@@ -55,10 +60,13 @@ open class BaseMediaService : MediaLibraryService() {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
         const val ACTION_RELOAD_EQUALIZER = "com.cappielloantonio.tempo.service.ACTION_RELOAD_EQUALIZER"
+        var activeBrowserCount = 0
     }
 
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
+    protected var sessionCallback: MediaLibrarySession.Callback? = null
+    private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
@@ -105,12 +113,58 @@ open class BaseMediaService : MediaLibraryService() {
 
     fun updateMediaItems(player: Player) {
         Log.d(TAG, "update items")
-        val n = player.mediaItemCount
-        val k = player.currentMediaItemIndex
-        val current = player.currentPosition
-        val items = (0..n - 1).map { MappingUtil.mapMediaItem(player.getMediaItemAt(it)) }
-        player.clearMediaItems()
-        player.setMediaItems(items, k, current)
+        // Re-resolve per-network stream URLs (maxBitRate/format) for the queue WITHOUT
+        // interrupting the currently-playing track. The previous implementation called
+        // clearMediaItems() + setMediaItems() over the live player, which discards the
+        // active item's forward buffer and forces a re-prepare on every WiFi<->cellular
+        // switch — an audible ~0.5s gap (and, on some devices, the failed re-prepare that
+        // #682 recovers from). Instead, replace only the non-current items, and only when
+        // the resolved URI actually changed, so the active item is never touched while
+        // upcoming tracks still pick up the new network's transcoding settings.
+
+        // Threading: the heavy computation (MappingUtil + isDownloaded) runs on a background
+        // thread to avoid blocking the main thread. Only items from current+1 onward are
+        // processed — already-played items are skipped. replaceMediaItem() is dispatched back
+        // to the main thread via widgetUpdateHandler. The guard i < player.mediaItemCount protects
+        // against queue changes during the background computation.
+
+        val current = player.currentMediaItemIndex
+        if (current == C.INDEX_UNSET) return
+
+        // read all items
+        val itemsToProcess = (current + 1 until player.mediaItemCount).map { i ->
+            Pair(i, player.getMediaItemAt(i))
+        }
+        if (itemsToProcess.isEmpty()) return
+
+        val delegate = Executors.newSingleThreadExecutor()
+        val executor = MoreExecutors.listeningDecorator(delegate)
+        val future: ListenableFuture<List<Pair<Int, MediaItem>>> = executor.submit(Callable {
+            itemsToProcess.mapNotNull { (i, old) ->
+                val mapped = MappingUtil.mapMediaItem(old)
+                if (mapped.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
+                    Pair(i, mapped)
+                } else null
+            }
+        })
+        delegate.shutdown()
+
+        Futures.addCallback(future, object : FutureCallback<List<Pair<Int, MediaItem>>> {
+            override fun onSuccess(updates: List<Pair<Int, MediaItem>>) {
+                widgetUpdateHandler.post {
+                    updates.forEach { (i, mapped) ->
+                        if (i > player.currentMediaItemIndex
+                            && i < player.mediaItemCount
+                            && player.getMediaItemAt(i).mediaId == mapped.mediaId) {
+                            player.replaceMediaItem(i, mapped)
+                        }
+                    }
+                }
+            }
+            override fun onFailure(t: Throwable) {
+                Log.e(TAG, "updateMediaItems failed", t)
+            }
+        }, MoreExecutors.directExecutor())
     }
 
     fun restorePlayerFromQueue(player: Player) {
@@ -143,8 +197,35 @@ open class BaseMediaService : MediaLibraryService() {
     private var lastRadioArtist: String? = null
     private var lastRadioTitle: String? = null
 
+    // Throttle for onPlayerError re-prepare recovery (see #682).
+    private var lastPlayerErrorRecoveryMs = 0L
+    private val playerErrorRecoveryThrottleMs = 5_000L
+
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
+            override fun onPlayerError(error: PlaybackException) {
+                // A network switch (WiFi <-> mobile) surfaces here as a source/network
+                // error. Without recovery the player goes idle and stays silent until the
+                // app is restarted (issue #682). Re-prepare to resume from the current
+                // position, but only for recoverable IO errors and throttled so a permanent
+                // failure (bad URL, auth) can't spin in an endless prepare loop.
+                Log.w(TAG, "onPlayerError: ${error.errorCodeName}", error)
+
+                val recoverable = when (error.errorCode) {
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                    PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_TIMEOUT,
+                    PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> true
+                    else -> false
+                }
+                if (!recoverable) return
+
+                val now = android.os.SystemClock.elapsedRealtime()
+                if (now - lastPlayerErrorRecoveryMs >= playerErrorRecoveryThrottleMs) {
+                    lastPlayerErrorRecoveryMs = now
+                    player.prepare()
+                }
+            }
+
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
@@ -186,7 +267,7 @@ open class BaseMediaService : MediaLibraryService() {
                     player.volume = 1f
                     player.pause()
                 }
-                
+
                 // Restart header checks for radio streams when media item changes
                 val mediaType = mediaItem.mediaMetadata.extras?.getString("type")
                 if (mediaType == Constants.MEDIA_TYPE_RADIO && player.isPlaying) {
@@ -195,7 +276,7 @@ open class BaseMediaService : MediaLibraryService() {
                 } else if (mediaType != Constants.MEDIA_TYPE_RADIO) {
                     stopRadioHeaderChecks()
                 }
-                
+
                 updateWidget(player)
             }
 
@@ -205,6 +286,12 @@ open class BaseMediaService : MediaLibraryService() {
                     ReplayGainUtil.prefetchQueueGains(player)
                 } catch (t: Throwable) {
                     Log.w(TAG, "prefetchQueueGains failed: $t")
+                }
+                if (timeline.isEmpty) return
+                val window = Timeline.Window()
+                for (i in 0 until timeline.windowCount) {
+                    timeline.getWindow(i, window)
+                    window.mediaItem.mediaMetadata.artworkUri?.let { bitmapLoader.prewarm(it) }
                 }
             }
 
@@ -489,6 +576,7 @@ open class BaseMediaService : MediaLibraryService() {
             newPlayer.prepare()
         }
         mediaLibrarySession.player = newPlayer
+        (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
     open fun releasePlayers() {
@@ -529,6 +617,7 @@ open class BaseMediaService : MediaLibraryService() {
         SleepTimerManager.getInstance().stopEndOfTrackPoller()
         SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
+        if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
         releasePlayers()
         mediaLibrarySession.release()
         super.onDestroy()
@@ -593,10 +682,13 @@ open class BaseMediaService : MediaLibraryService() {
                 getPendingIntent(0, FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
             }
 
+        bitmapLoader = SyncBitmapLoader(applicationContext)
+
         mediaLibrarySession =
             MediaLibrarySession.Builder(this, player, getMediaLibrarySessionCallback())
                 .setSessionActivity(sessionActivityPendingIntent)
                 .setPeriodicPositionUpdateEnabled(false)
+                .setBitmapLoader(bitmapLoader)
                 .build()
     }
 

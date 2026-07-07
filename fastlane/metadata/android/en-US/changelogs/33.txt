@@ -1,0 +1,7 @@
+fix: deep-linked playlist loads no songs and crashes from null id
+fix: Fix genre search not working
+fix: Ensure the selections array size matches activeWrappers size (#820)
+chore: container/build script for new ffmpeg lib
+chore: update ci pipelines to java 21 (#831)
+feat: replaced settings 3dot to gear icon (#833)
+chore: Update Catalan i18n

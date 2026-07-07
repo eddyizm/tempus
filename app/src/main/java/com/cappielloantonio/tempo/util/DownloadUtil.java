@@ -21,6 +21,7 @@ import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.RenderersFactory;
 import androidx.media3.exoplayer.offline.DownloadManager;
 import androidx.media3.exoplayer.offline.DownloadNotificationHelper;
+import androidx.media3.exoplayer.scheduler.Requirements;
 
 import com.cappielloantonio.tempo.service.DownloaderManager;
 
@@ -174,6 +175,10 @@ public final class DownloadUtil {
                     getHttpDataSourceFactory(),
                     Executors.newFixedThreadPool(6)
             );
+
+            if (Preferences.isDownloadWifiOnly()) {
+                downloadManager.setRequirements(new Requirements(Requirements.NETWORK_UNMETERED));
+            }
 
             downloaderManager = new DownloaderManager(context, getHttpDataSourceFactory(), downloadManager);
         }

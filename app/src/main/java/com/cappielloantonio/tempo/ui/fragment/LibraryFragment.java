@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -18,6 +20,7 @@ import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
 
 import android.content.ComponentName;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -30,6 +33,10 @@ import com.cappielloantonio.tempo.helper.recyclerview.CustomLinearSnapHelper;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.interfaces.PlaylistCallback;
 import com.cappielloantonio.tempo.navigation.NavigationController;
+import com.cappielloantonio.tempo.repository.PlaylistRepository;
+import com.cappielloantonio.tempo.service.MediaManager;
+import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.adapter.AlbumAdapter;
 import com.cappielloantonio.tempo.ui.adapter.ArtistAdapter;
@@ -38,12 +45,15 @@ import com.cappielloantonio.tempo.ui.adapter.MusicFolderAdapter;
 import com.cappielloantonio.tempo.ui.adapter.PlaylistHorizontalAdapter;
 import com.cappielloantonio.tempo.ui.dialog.PlaylistEditorDialog;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.LiveDataUtils;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.LibraryViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 @UnstableApi
@@ -314,16 +324,54 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     }
 
     @Override
-    public void onPlaylistLongClick(Bundle bundle) {
-        PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
-            @Override
-            public void onDismiss() {
-                refreshPlaylistView();
-            }
-        });
+    public void onPlaylistLongClick(View view, Bundle bundle) {
+        PopupMenu popup = new PopupMenu(requireContext(), view);
+        popup.getMenuInflater().inflate(R.menu.playlist_popup_menu, popup.getMenu());
+        
+        popup.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.action_go_to_playlist) {
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
+                }
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_play_shuffle) {
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        Collections.shuffle(songs);
+                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                        activity.setBottomSheetInPeek(true);
+                    });
+                }
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
+                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
+                if (playlist != null) {
+                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
+                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                        Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
+                    });
+                }
+                return true;
+            } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
+                PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
+                    @Override
+                    public void onDismiss() {
+                        refreshPlaylistView();
+                    }
+                });
 
-        dialog.setArguments(bundle);
-        dialog.show(activity.getSupportFragmentManager(), null);
+                dialog.setArguments(bundle);
+                dialog.show(activity.getSupportFragmentManager(), null);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
     }
 
     @Override

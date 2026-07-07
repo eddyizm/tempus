@@ -29,6 +29,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.offline.DownloadService;
+import androidx.media3.exoplayer.scheduler.Requirements;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
@@ -48,6 +50,7 @@ import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.interfaces.DialogClickCallback;
 import com.cappielloantonio.tempo.interfaces.ScanCallback;
 import com.cappielloantonio.tempo.equalizer.EqualizerManager;
+import com.cappielloantonio.tempo.service.DownloaderService;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.DeleteDownloadStorageDialog;
@@ -240,6 +243,21 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                         }
                         return true;
                     });
+        }
+
+        SwitchPreference downloadWifiOnlyPreference = findPreference("download_wifi_only");
+        if (downloadWifiOnlyPreference != null) {
+            downloadWifiOnlyPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                if (newValue instanceof Boolean) {
+                    boolean enabled = (Boolean) newValue;
+                    Preferences.setDownloadWifiOnly(enabled);
+                    Requirements requirements = enabled
+                            ? new Requirements(Requirements.NETWORK_UNMETERED)
+                            : new Requirements(0);
+                    DownloadService.sendSetRequirements(requireContext(), DownloaderService.class, requirements, false);
+                }
+                return true;
+            });
         }
     }
 

@@ -86,7 +86,13 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         Bundle args = getArguments();
-        AlbumID3 albumArg = args != null ? args.getParcelable(Constants.ALBUM_OBJECT) : null;
+        if (args == null) {
+            Log.e("AlbumPageFragment", "Arguments are null after process restoration.");
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
+        AlbumID3 albumArg = args.getParcelable(Constants.ALBUM_OBJECT);
         if (albumArg == null) {
             if (activity != null && activity.navController != null) activity.navController.navigateUp();
             return view;
@@ -341,11 +347,23 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initSongsView() {
+        bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        bind.songRecyclerView.setHasFixedSize(true);
+
+        // Synchronize scrolling if info scroll view exists (landscape)
+        if (bind.getRoot().findViewById(R.id.album_info_scroll_view) != null) {
+            androidx.core.widget.NestedScrollView albumInfoScrollView = bind.getRoot().findViewById(R.id.album_info_scroll_view);
+            bind.songRecyclerView.addOnScrollListener(new androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    albumInfoScrollView.scrollBy(0, dy);
+                }
+            });
+        }
+
         albumPageViewModel.getAlbum().observe(getViewLifecycleOwner(), album -> {
             if (bind != null && album != null) {
-                bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-                bind.songRecyclerView.setHasFixedSize(true);
-
                 songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, false, false, album);
                 bind.songRecyclerView.setAdapter(songHorizontalAdapter);
                 setMediaBrowserListenableFuture();

@@ -23,13 +23,23 @@ public interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Playlist playlist);
 
+    // Insert only if the row is absent. REPLACE would delete-then-reinsert an existing
+    // playlist, which fails the playlist_song foreign key when its songs already exist
+    // (and can race when several callers cache the same playlist at once). Used to make
+    // sure a deep-linked playlist's row exists before caching its songs. See issue #729.
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertIfAbsent(Playlist playlist);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Playlist> playlists);
 
     @Delete
     void delete(Playlist playlist);
 
-    @Query("DELETE FROM playlist") 
+    @Query("DELETE FROM playlist WHERE id = :playlistId")
+    void deleteById(String playlistId);
+
+    @Query("DELETE FROM playlist")
     void deleteAll();
 
     @Query("SELECT coverArt FROM playlist WHERE id = :playlistId")
