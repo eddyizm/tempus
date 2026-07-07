@@ -411,6 +411,8 @@
     <string name="settings_download_folder_cleared">Répertoire de téléchargement vidé.</string>
     <string name="settings_download_folder_set">Répertoire de téléchargement réglé</string>
     <string name="settings_set_download_folder">Régler le répertoire de téléchargement</string>
+    <string name="settings_song_preload_buffer">Mémoire tampon de préchargement de titres</string>
+    <string name="settings_song_preload_buffer_summary">Valeur actuelle : %1$s\nRedémarrez l\'app pour appliquer les changements.</string>
     <string name="settings_system_equalizer_summary">Ajuster les paramètres audio</string>
     <string name="settings_system_equalizer_title">Égaliseur du système</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
