@@ -239,27 +239,51 @@ public class SongRepository {
     }
 
 
-    public MutableLiveData<List<Child>> getContinuousMix(String id, int count) {
-        MutableLiveData<List<Child>> instantMix = new MutableLiveData<>();
+    public MutableLiveData<List<Child>> getContinuousMix(String trackId, String artistId, int count) {
+        MutableLiveData<List<Child>> continuousMix = new MutableLiveData<>();
 
+        if (artistId != null && !artistId.isEmpty()) {
+            App.getSubsonicClientInstance(false)
+                    .getBrowsingClient()
+                    .getSimilarSongs2(artistId, count)
+                    .enqueue(new Callback<ApiResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                            List<Child> songs = extractSongs(response, "similarSongs2");
+                            if (!songs.isEmpty()) {
+                                continuousMix.postValue(songs);
+                            } else {
+                                fetchContinuousFallback(trackId, count, continuousMix);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                            fetchContinuousFallback(trackId, count, continuousMix);
+                        }
+                    });
+        } else {
+            fetchContinuousFallback(trackId, count, continuousMix);
+        }
+
+        return continuousMix;
+    }
+
+    private void fetchContinuousFallback(String trackId, int count, MutableLiveData<List<Child>> target) {
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
-                .getSimilarSongs(id, count)
+                .getSimilarSongs(trackId, count)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSimilarSongs() != null) {
-                            instantMix.setValue(response.body().getSubsonicResponse().getSimilarSongs().getSongs());
-                        }
+                        target.postValue(extractSongs(response, "similarSongs"));
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        instantMix.setValue(null);
+                        target.postValue(new ArrayList<>());
                     }
                 });
-
-        return instantMix;
     }
 
     private List<Child> extractSongs(Response<ApiResponse> response, String type) {
