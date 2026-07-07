@@ -87,7 +87,7 @@
     <string name="battery_optimization_neutral_button">Ne pas me redemander</string>
     <string name="battery_optimization_positive_button">Désactiver</string>
     <string name="bottom_sheet_generating_instant_mix">Génération du mix instantané…</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Echec de récupération de pistes du serveur Subsonic.</string>
+    <string name="bottom_sheet_problem_generating_instant_mix">Échec de récupération de pistes du serveur Subsonic.</string>
     <string name="connection_alert_dialog_negative_button">Annuler</string>
     <string name="connection_alert_dialog_neutral_button">Activer l\'économie de données</string>
     <string name="connection_alert_dialog_positive_button">OK</string>
@@ -296,6 +296,10 @@
     <string name="playlist_editor_dialog_neutral_button">Supprimer</string>
     <string name="playlist_editor_dialog_positive_button">Enregistrer</string>
     <string name="playlist_editor_dialog_title">Créer une playlist</string>
+    <string name="playlist_editor_dialog_action_delete_success">Playlist supprimée</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Échec de suppression de la playlist</string>
+    <string name="playlist_editor_dialog_action_save_success">Playlist sauvegardée</string>
+    <string name="playlist_editor_dialog_action_save_failure">Échec de sauvegarde de la playlist</string>
     <string name="playlist_page_play_button">Lire</string>
     <string name="playlist_page_shuffle_button">Mélanger</string>
     <string name="playlist_song_count">Playlist  •  %1$d titres</string>
@@ -500,10 +504,10 @@
     <string name="asset_link_label_year">UID année</string>
     <string name="asset_link_label_unknown">UID ressource</string>
     <string name="asset_link_error_unsupported">Lien ressource non supportée</string>
-    <string name="asset_link_error_song">Echec d\'accès au titre</string>
-    <string name="asset_link_error_album">Echec d\'accès à l\'album</string>
-    <string name="asset_link_error_artist">Echec d\'accès à l\'artiste</string>
-    <string name="asset_link_error_playlist">Echec d\'accès à la playlist</string>
+    <string name="asset_link_error_song">Échec d\'accès au titre</string>
+    <string name="asset_link_error_album">Échec d\'accès à l\'album</string>
+    <string name="asset_link_error_artist">Échec d\'accès à l\'artiste</string>
+    <string name="asset_link_error_playlist">Échec d\'accès à la playlist</string>
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_copied_toast">%1$s ressource(s) copiée(s) dans le presse-papier</string>
     <string name="asset_link_debug_toast">Lien ressource : %1$s</string>
