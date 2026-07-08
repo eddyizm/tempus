@@ -664,6 +664,9 @@
     <string name="equalizer_managed_externally">Non supporté sur cet appareil</string>
     <string name="settings_app_equalizer">Égaliseur</string>
     <string name="settings_app_equalizer_summary">Ouvrir l\'égaliseur intégré</string>
+    <string name="settings_title_equalizer">Égaliseur</string>
+    <string name="settings_equalizer_select">Sélectionner un égaliseur à utiliser</string>
+    <string name="settings_equalizer_dialog_title">Égaliseurs</string>
 
     <string name="settings_album_detail">Afficher les détails de l\'album</string>
     <string name="settings_album_detail_summary">Si activé, affiche les détails de l\'album tels que le genre, le nombre de titres etc. sur l\'écran de l\'album</string>
@@ -679,4 +682,61 @@
     <string name="search_all_songs_loading">Récupération de tous les titres…</string>
     <string name="search_all_songs">tous les titres de %1$s</string>
     <string name="search_all_songs_play">Jouer %1$s</string>
+
+    <string name="nav_drawer_index">Index</string>
+
+    <!-- Sleep timer -->
+    <string name="sleep_timer_dialog_title">Minuteur de mise en pause</string>
+    <string name="sleep_timer_dialog_active_message">Minuteur actif — %1$s restante(s)</string>
+    <string name="sleep_timer_dialog_cancel_timer">Annuler le minuteur</string>
+    <string name="sleep_timer_dialog_close">Fermer</string>
+    <string name="sleep_timer_custom_hint">Saisir des minutes</string>
+    <string name="sleep_timer_custom_set">Régler</string>
+    <string name="sleep_timer_dialog_end_of_track_active">Arrêter après ce titre</string>
+    <string name="sleep_timer_end_of_track_label">Fin de titre</string>
+    <!-- Duration options shown in the sleep-timer picker.
+         The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
+    <string-array name="sleep_timer_duration_labels">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>20 minutes</item>
+        <item>30 minutes</item>
+        <item>45 minutes</item>
+        <item>60 minutes</item>
+        <item>@string/sleep_timer_end_of_track_label</item>
+        <item>Custom\u2026</item>
+    </string-array>
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus a planté.</string>
+
+    <!-- Crash Activity -->
+
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus a planté</string>
+    <string name="ca_info_description">
+        Veuillez créer une fiche problème sur GitHub en incluant une copie des rapports pour signaler ce plantage.
+    </string>
+    <string name="ca_info_button_close">Fermer l\'app</string>
+    <string name="ca_info_button_restart">Redémarrer l\'app</string>
+
+    <string name="ca_logs_label">Rapports</string>
+    <string name="ca_logs_title">Trace d\'appels Java</string>
+    <string name="ca_logs_description">
+        Voici ce qui a mal fonctionné.
+    </string>
+    <string name="ca_export_button_copy">Copier le rapport</string>
+    <string name="ca_export_button_share">Partager le rapport</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Rapport copié dans le presse-papiers</string>
+
+    <string name="ca_export_label">Exporter</string>
+    <string name="ca_export_title">Récupération des rapports</string>
+    <string name="ca_export_description">
+		Un APK de débogage (version préliminaire) fournit des rapports plus détaillés
+		qui nous aident à comprendre le dysfonctionnement de l\'app.\n\n
+
+        Ces données ne seront envoyées nulle part sans votre consentement.
+    </string>
+    <string name="playlist_error_not_found_title">Playlist introuvable</string>
+    <string name="playlist_error_not_found_message">Cette playlist n\'a pas été trouvée sur le serveur. Elle sera supprimée de votre cache local.</string>
+    <string name="playlist_error_not_found_toast">Playlist supprimée du cache</string>
 </resources>
