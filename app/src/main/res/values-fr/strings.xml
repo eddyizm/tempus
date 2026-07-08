@@ -82,7 +82,7 @@
     <string name="artist_page_title_biography_section">Biographie</string>
     <string name="artist_page_title_most_streamed_song_section">Musiques les plus streamées</string>
     <string name="artist_page_title_most_streamed_song_see_all_button">Voir tout</string>
-	<string name="artist_page_title_most_streamed_song_unavailable">Aucune chanson disponible parmi les plus streamées\n\nAppuyer pour faire disparaître</string>
+	<string name="artist_page_title_most_streamed_song_unavailable">Aucun titre disponible parmi les plus streamés\n\nAppuyer pour faire disparaître</string>
     <string name="battery_optimization_negative_button">Ignorer</string>
     <string name="battery_optimization_neutral_button">Ne pas me redemander</string>
     <string name="battery_optimization_positive_button">Désactiver</string>
@@ -352,7 +352,7 @@
     <string name="radio_search_directory_button">Directory</string>
     <string name="radio_editor_search_directory">Chercher dans le répertoire</string>
     <string name="radio_search_country_hint">Pays</string>
-    <string name="radio_search_use">Utiliser</string>
+    <string name="radio_search_use">Ajouter</string>
     <string name="rating_dialog_negative_button">Annuler</string>
     <string name="rating_dialog_positive_button">Enregistrer</string>
     <string name="rating_dialog_title">Noter</string>
@@ -400,8 +400,8 @@
     <string name="settings_continuous_play_title">Lecture continue</string>
     <string name="settings_number_tracks_keep_in_queue">Nombre de morceaux à garder en file d\'attente</string>
     <string name="settings_number_tracks_keep_in_queue_summary">Ajuste le nombre de morceaux à garder en file d\'attente avant de commencer l\'ajout avec la lecture continue</string>
-    <string name="settings_fallback_to_random_tracks_summary">Jouer des titres au hasard par défaut en l\'absence de titres similaires</string>
-    <string name="settings_fallback_to_random_tracks_title">Titres aléatoires par défaut</string>
+    <string name="settings_fallback_to_random_tracks_summary">Lire des titres aléatoires si aucun titre similaire n\'est disponible</string>
+    <string name="settings_fallback_to_random_tracks_title">Continuer avec des titres aléatoires</string>
     <string name="settings_covers_cache">Taille du cache des illustrations</string>
     <string name="settings_data_saving_mode_summary">Pour réduire la consommation de données, éviter de télécharger les illustrations.</string>
     <string name="settings_data_saving_mode_title">Limiter l\'utilisation des données mobiles</string>
@@ -443,8 +443,8 @@
 	<string name="settings_androidauto_album_view">Vue en grille pour les albums et les artistes</string>
 	<string name="settings_androidauto_home_view">Vue en grille pour la page d\'accueil</string>
     <string name="settings_androidauto_playlist_view">Vue en grille pour les playlists</string>
-    <string name="settings_androidauto_podcast_view">Vue en grille pour podcast</string>
-    <string name="settings_androidauto_radio_view">Vue en grille pour radio</string>
+    <string name="settings_androidauto_podcast_view">Vue en grille pour les podcasts</string>
+    <string name="settings_androidauto_radio_view">Vue en grille pour les radios</string>
 	<string name="settings_androidauto_first_tab">Premier onglet</string>
 	<string name="settings_androidauto_second_tab">Deuxième onglet</string>
 	<string name="settings_androidauto_third_tab">Troisième onglet</string>
@@ -452,9 +452,9 @@
     <string name="settings_androidauto_shuffle_genre_songs">Mélanger les titres par genre</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Mélanger les titres favoris</string>
     <string name="settings_androidauto_shuffle_playlists">Mélanger les playlists</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Jouer les titres aléatoirement à la sélection d\'un genre</string>
+    <string name="settings_androidauto_shuffle_genre_songs_summary">Lire les titres aléatoirement à la sélection d\'un genre</string>
     <string name="settings_androidauto_artists_view">Les artistes sont affichés par album</string>
-    <string name="settings_androidauto_starred_for_made_for_you">Sélectionnés pour le mix Faits pour vous</string>
+    <string name="settings_androidauto_starred_for_made_for_you">Sélectionnés pour le mix Pour vous</string>
 	<string name="settings_audio_quality">Afficher la qualité audio</string>
     <string name="settings_audio_quality_summary">Le débit binaire et le format audio seront affichés pour chaque piste.</string>
     <string name="settings_song_rating">Afficher la note de la piste</string>
@@ -517,7 +517,7 @@
     <string name="settings_title_players">Lecteurs</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Note</string>
-    <string name="settings_title_loudness">Correction de bruyance</string>
+    <string name="settings_title_loudness">Compensation du niveau sonore</string>
     <string name="settings_loudness_preamp_title">Préamplification</string>
     <string name="settings_loudness_preamp_summary">Fixer des valeurs positives pour un son plus intense, négatives pour un son moins intense.</string>
     <string name="settings_loudness_preamp_db">%1$d dB</string>
