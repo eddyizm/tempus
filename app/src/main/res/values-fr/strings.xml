@@ -629,8 +629,9 @@
     <string name="track_info_summary_transcoding_codec">L\'application demandera au serveur de transcoder le fichier. Le codec choisi par l\'utilisateur est le %1$s, tandis que le débit binaire sera le même que celui du fichier source. Le transcodage éventuel du fichier dans le codec choisi dépend du serveur, qui peut ou non prendre en charge l\'opération.</string>
     <string name="track_info_title">Titre</string>
     <string name="track_info_track_number">Numéro de piste</string>
-    <string name="track_info_transcoded_content_type">Transcodé type de contenu</string>
-    <string name="track_info_transcoded_suffix">Transcodé suffixe</string>
+    <string name="track_info_station">Station</string>
+    <string name="track_info_transcoded_content_type">Type de contenu de transcodage</string>
+    <string name="track_info_transcoded_suffix">Suffixe de transcodage</string>
     <string name="track_info_year">Année</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">Un grand merci à unDraw, nous n\'aurions pas pu rendre cette application aussi belle sans leurs illustrations.</string>
