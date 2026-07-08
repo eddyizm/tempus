@@ -607,7 +607,6 @@
     <string name="streaming_cache_storage_dialog_title">Sélectionner une option de stockage</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">Externe</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Interne</string>
-    <string name="support_url">https://buymeacoffee.com/a.cappiello</string>
     <string name="track_info_album">Album</string>
     <string name="track_info_artist">Artiste</string>
     <string name="track_info_bit_depth">Résolution audio</string>
@@ -619,7 +618,6 @@
     <string name="track_info_duration">Durée</string>
     <string name="track_info_genre">Genre</string>
     <string name="track_info_path">Chemin</string>
-	<string name="track_info_station">Station</string>
     <string name="track_info_sampling_rate">Fréquence d\'échantillonnage</string>
     <string name="track_info_size">Taille</string>
     <string name="track_info_suffix">Suffixe</string>
