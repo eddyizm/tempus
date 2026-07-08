@@ -493,7 +493,7 @@
     <string name="settings_sub_summary_scrobble">À noter que le scrobbling doit être activé sur le serveur pour qu\'il puisse recevoir ces données</string>
     <string name="settings_summary_skip_min_star_rating">Lors de l\'écoute de la radio d\'un artiste, d\'un mix instantané ou de tout la bibliothèque en aléatoire, les pistes en dessous d\'une certaine note seront ignorées.</string>
     <string name="settings_summary_replay_gain">Le Replay Gain est une fonctionnalité qui vous permet d\'ajuster le volume des pistes audio pour une expérience d\'écoute cohérente. Fonctionne uniquement si la piste contient les métadonnées nécessaires.</string>
-    <string name="settings_summary_loudness">Permet de corriger le volume des périphériques de lecture audio (par ex. haut-parleurs).\n\nPour le ReplayGain, la valeur -6 est recommandée pour éviter des conflits avec la protection contre le clipping.</string>
+    <string name="settings_summary_loudness">Permet de corriger le volume des périphériques de lecture audio (par ex. haut-parleurs).\n\nPour le ReplayGain, la valeur -6 est recommandée pour éviter des conflits avec la protection contre l\'écrêtement.</string>
     <string name="settings_summary_scrobble">Le scrobbling permet à votre appareil d\'envoyer des informations sur les musiques que vous écoutez au serveur afin de créer des recommendations personnalisées basées sur vos préférences musicales.</string>
     <string name="settings_summary_share">Permet à l\'utilisateur de partager de la musique via un lien. Cette fonctionnalité doit être supportée et activée sur le serveur et est limitée aux pistes, albums et playlists individuellement.</string>
     <string name="settings_summary_syncing">Renvoie l\'état de la file d\'attente de cet utilisateur. Cela inclut les pistes dans la file, la piste actuellement écoutée et la position dans la piste. Cette fonctionnalité doit être supportée par le serveur.</string>
@@ -517,8 +517,14 @@
     <string name="settings_title_players">Lecteurs</string>
     <string name="settings_title_playlist">Playlist</string>
     <string name="settings_title_rating">Note</string>
-    <string name="settings_title_replay_gain">Replay Gain</string>
-    <string name="settings_title_scrobble">Scrobble</string>
+    <string name="settings_title_loudness">Correction de bruyance</string>
+    <string name="settings_loudness_preamp_title">Préamplification</string>
+    <string name="settings_loudness_preamp_summary">Fixer des valeurs positives pour un son plus intense, négatives pour un son moins intense.</string>
+    <string name="settings_loudness_preamp_db">%1$d dB</string>
+    <string name="settings_title_replay_gain">ReplayGain</string>
+    <string name="settings_replay_gain_prevent_clipping_title">Protection contre l\'écrêtement</string>
+    <string name="settings_replay_gain_prevent_clipping_summary">Réduit le gain audio quand la valeur de pic de la piste ou de l\'album indique que le signal serait écrêté après application du ReplayGain.</string>
+    <string name="settings_title_scrobble">Scrobbling</string>
     <string name="settings_title_skip_min_star_rating">Ignorer des musiques selon leur note</string>
     <string name="settings_title_skip_min_star_rating_dialog">Musiques avec une note de :</string>
     <string name="settings_title_share">Partage</string>
