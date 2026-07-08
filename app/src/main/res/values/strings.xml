@@ -640,6 +640,7 @@
     <string name="track_info_year">Year</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
+	<string name="undraw_url" translatable="false">https://undraw.co/</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Not playing</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>
