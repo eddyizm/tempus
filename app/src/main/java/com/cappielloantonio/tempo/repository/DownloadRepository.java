@@ -209,18 +209,6 @@ public class DownloadRepository {
         return count.getCount();
     }
 
-    public Integer getMaxQueuePositionSync() {
-        GetMaxQueuePositionThreadSafe pos = new GetMaxQueuePositionThreadSafe(downloadDao);
-        Thread thread = new Thread(pos);
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return pos.getPosition();
-    }
-
     public void updateQueuePosition(String id, int position) {
         UpdateQueuePositionThreadSafe update = new UpdateQueuePositionThreadSafe(downloadDao, id, position);
         Thread thread = new Thread(update);
@@ -260,24 +248,6 @@ public class DownloadRepository {
 
         public int getCount() {
             return count;
-        }
-    }
-
-    private static class GetMaxQueuePositionThreadSafe implements Runnable {
-        private final DownloadDao downloadDao;
-        private Integer position;
-
-        public GetMaxQueuePositionThreadSafe(DownloadDao downloadDao) {
-            this.downloadDao = downloadDao;
-        }
-
-        @Override
-        public void run() {
-            position = downloadDao.getMaxQueuePosition();
-        }
-
-        public Integer getPosition() {
-            return position;
         }
     }
 
@@ -325,6 +295,36 @@ public class DownloadRepository {
         @Override
         public void run() {
             downloadDao.deleteByIds(ids);
+        }
+    }
+
+    public Integer getMaxQueuePositionSync() {
+        GetMaxQueuePositionThreadSafe pos = new GetMaxQueuePositionThreadSafe(downloadDao);
+        Thread thread = new Thread(pos);
+        thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return pos.getPosition();
+    }
+
+    private static class GetMaxQueuePositionThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private Integer position;
+
+        public GetMaxQueuePositionThreadSafe(DownloadDao downloadDao) {
+            this.downloadDao = downloadDao;
+        }
+
+        @Override
+        public void run() {
+            position = downloadDao.getMaxQueuePosition();
+        }
+
+        public Integer getPosition() {
+            return position;
         }
     }
 }
