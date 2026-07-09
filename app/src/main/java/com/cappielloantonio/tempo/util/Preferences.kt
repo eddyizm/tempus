@@ -82,6 +82,7 @@ object Preferences {
     private const val GITHUB_UPDATE_CHECK = "github_update_check"
     private const val CONTINUOUS_PLAY = "continuous_play"
     private const val NUMBER_TRACKS_KEEP_IN_QUEUE = "number_tracks_keep_in_queue"
+    private const val FALLBACK_TO_RANDOM_TRACKS = "fallback_to_random_tracks"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
     private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
@@ -733,6 +734,19 @@ object Preferences {
     fun getNumberOfTracksKeepInQueue(): Int {
         return App.getInstance().preferences.getInt(NUMBER_TRACKS_KEEP_IN_QUEUE, 30) - 1
     }
+
+    @JvmStatic
+    fun isFallbackToRandomTracksEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(FALLBACK_TO_RANDOM_TRACKS, false)
+    }
+
+    @JvmStatic
+    fun setFallbackToRandomTracksEnabled(enabled: Boolean) {
+        App.getInstance().preferences.edit()
+            .putBoolean(FALLBACK_TO_RANDOM_TRACKS, enabled)
+            .apply()
+    }
+
     @JvmStatic
     fun setLastInstantMix() {
         App.getInstance().preferences.edit().putLong(LAST_INSTANT_MIX, System.currentTimeMillis()).apply()

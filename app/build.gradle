@@ -6,15 +6,17 @@ plugins {
 
 android {
     namespace = 'com.cappielloantonio.tempo'
-    compileSdk = 35
+    //noinspection GradleDependency
+    compileSdk = 36
     buildToolsVersion = '36.0.0'
 
     defaultConfig {
         minSdkVersion 24
-        targetSdk 35
+        //noinspection OldTargetApi
+        targetSdk = 36
 
-        versionCode 32
-        versionName '4.20.2-dev'
+        versionCode 33
+        versionName '4.20.5'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -36,8 +38,7 @@ android {
             enable = true
             reset()
             //noinspection ChromeOsAbiSupport
-            include 'armeabi-v7a', 'arm64-v8a'
-            universalApk = false
+            universalApk = true
         }
     }
 

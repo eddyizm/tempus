@@ -48,6 +48,7 @@ open class BaseSessionCallback(
         CommandButton.Builder(CommandButton.ICON_SHUFFLE_OFF)
             .setDisplayName(context.getString(R.string.exo_controls_shuffle_on_description))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON, Bundle.EMPTY))
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @SuppressLint("PrivateResource")
@@ -55,6 +56,7 @@ open class BaseSessionCallback(
         CommandButton.Builder(CommandButton.ICON_SHUFFLE_ON)
             .setDisplayName(context.getString(R.string.exo_controls_shuffle_off_description))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_OFF, Bundle.EMPTY))
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @SuppressLint("PrivateResource")
@@ -62,6 +64,7 @@ open class BaseSessionCallback(
         CommandButton.Builder(CommandButton.ICON_REPEAT_OFF)
             .setDisplayName(context.getString(R.string.exo_controls_repeat_off_description))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_OFF, Bundle.EMPTY))
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @SuppressLint("PrivateResource")
@@ -69,6 +72,7 @@ open class BaseSessionCallback(
         CommandButton.Builder(CommandButton.ICON_REPEAT_ONE)
             .setDisplayName(context.getString(R.string.exo_controls_repeat_one_description))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ONE, Bundle.EMPTY))
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @SuppressLint("PrivateResource")
@@ -76,6 +80,7 @@ open class BaseSessionCallback(
         CommandButton.Builder(CommandButton.ICON_REPEAT_ALL)
             .setDisplayName(context.getString(R.string.exo_controls_repeat_all_description))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL, Bundle.EMPTY))
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @Suppress("DEPRECATION")
@@ -84,6 +89,7 @@ open class BaseSessionCallback(
             .setDisplayName(context.getString(R.string.exo_controls_heart_on_description))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON, Bundle.EMPTY))
             .setIconResId(R.drawable.ic_favorite)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @Suppress("DEPRECATION")
@@ -92,6 +98,7 @@ open class BaseSessionCallback(
             .setDisplayName(context.getString(R.string.exo_controls_heart_off_description))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF, Bundle.EMPTY))
             .setIconResId(R.drawable.ic_favorites_outlined)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @Suppress("DEPRECATION")
@@ -100,6 +107,7 @@ open class BaseSessionCallback(
             .setDisplayName(context.getString(R.string.cast_expanded_controller_loading))
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_HEART_LOADING, Bundle.EMPTY))
             .setIconResId(R.drawable.ic_bookmark_sync)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @Suppress("DEPRECATION")
@@ -108,6 +116,7 @@ open class BaseSessionCallback(
             .setDisplayName("instantmix on")
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_INSTANT_MIX_ON, Bundle.EMPTY))
             .setIconResId(R.drawable.ic_instantmix_on)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
     @Suppress("DEPRECATION")
@@ -116,6 +125,27 @@ open class BaseSessionCallback(
             .setDisplayName("instantmix off")
             .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_INSTANT_MIX_OFF, Bundle.EMPTY))
             .setIconResId(R.drawable.media3_icon_minus_circle_unfilled)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
+            .build()
+
+    // Standard transport controls. Kept pinned in setMediaButtonPreferences so the custom
+    // overflow buttons can't take their place on the last track (see #663).
+    private val previousButton =
+        CommandButton.Builder(CommandButton.ICON_PREVIOUS)
+            .setPlayerCommand(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+            .setDisplayName("Previous")
+            .build()
+
+    private val playPauseButton =
+        CommandButton.Builder(CommandButton.ICON_PLAY)
+            .setPlayerCommand(Player.COMMAND_PLAY_PAUSE)
+            .setDisplayName("Play/Pause")
+            .build()
+
+    private val nextButton =
+        CommandButton.Builder(CommandButton.ICON_NEXT)
+            .setPlayerCommand(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+            .setDisplayName("Next")
             .build()
 
     private val customLayoutCommandButtons = listOf(
@@ -179,7 +209,13 @@ open class BaseSessionCallback(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
-        if (currentSession == null) {
+        // Reset listener on every AA connection to avoid stale state after reconnection.
+        // AA may call onConnect multiple times (double gearhead event observed in logs).
+        if (currentSession == null
+            || session.isAutomotiveController(controller)
+            || session.isAutoCompanionController(controller)) {
+            Log.d(TAG, "onConnect: remove and add listener")
+            currentSession?.let { session.player.removeListener(playerListener) }
             currentSession = session
             session.player.addListener(playerListener)
         }
@@ -208,14 +244,7 @@ open class BaseSessionCallback(
         ) {
             return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
                 .setAvailableSessionCommands(mediaNotificationSessionCommands)
-                .setMediaButtonPreferences(
-                    ImmutableList.of(
-                        previousButton,
-                        playPauseButton,
-                        nextButton
-                    )
-                )
-                .setCustomLayout(buildCustomLayout(session.player))
+                .setMediaButtonPreferences(buildMediaButtonPreferences(session.player))
                 .build()
         }
 
@@ -232,10 +261,23 @@ open class BaseSessionCallback(
         isRatingPending: Boolean = false
     ) {
         val controller = session.mediaNotificationControllerInfo ?: return
-        session.setCustomLayout(
+        session.setMediaButtonPreferences(
             controller,
-            buildCustomLayout(session.player, isRatingPending)
+            buildMediaButtonPreferences(session.player, isRatingPending)
         )
+    }
+
+    // Pinned transport controls + the custom buttons (each in SLOT_OVERFLOW), built as one
+    // media-button-preferences list so the custom buttons actually render in the notification on
+    // Android 13 (#787); the deprecated setCustomLayout stopped applying them there once
+    // setMediaButtonPreferences was introduced for #663.
+    private fun buildMediaButtonPreferences(
+        player: Player,
+        isRatingPending: Boolean = false
+    ): ImmutableList<CommandButton> {
+        val buttons = mutableListOf(previousButton, playPauseButton, nextButton)
+        buttons.addAll(buildCustomLayout(player, isRatingPending))
+        return ImmutableList.copyOf(buttons)
     }
 
     protected fun buildCustomLayout(

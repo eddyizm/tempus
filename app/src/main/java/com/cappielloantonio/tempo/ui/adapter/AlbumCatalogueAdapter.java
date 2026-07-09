@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAdapter.ViewHolder> implements Filterable, StandardViewTypeAdapter {
     private final ClickCallback click;
@@ -164,10 +165,14 @@ public class AlbumCatalogueAdapter extends RecyclerView.Adapter<AlbumCatalogueAd
                 ));
                 break;
             case Constants.ALBUM_ORDER_BY_ARTIST:
+                // If we call thenComparing() on the Comparator, the Java compiler seems unable
+                // to figure out that album is supposed to be an AlbumID3, so we explicitly assign
+                // the lambda to a variable so that we can specify the type.
+                Function<AlbumID3, String> getArtist = album -> album.getArtist() != null ? album.getArtist() : "";
                 albums.sort(Comparator.comparing(
-                    album -> album.getArtist() != null ? album.getArtist() : "",
-                    String.CASE_INSENSITIVE_ORDER
-                ));
+                        getArtist,
+                        String.CASE_INSENSITIVE_ORDER
+                ).thenComparing(AlbumID3::getYear));
                 break;
             case Constants.ALBUM_ORDER_BY_YEAR:
                 albums.sort(Comparator.comparing(AlbumID3::getYear));
