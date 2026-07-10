@@ -89,4 +89,5 @@ jobs:
           files: |
             app/build/outputs/apk/tempus/release/*-release.apk
             app/build/outputs/apk/degoogled/release/*-release.apk
-
+            app/build/outputs/mapping/tempusRelease/mapping.txt
+            app/build/outputs/mapping/degoogledRelease/mapping.txt
