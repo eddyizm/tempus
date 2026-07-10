@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ public class PlaybackSpeedDialog extends DialogFragment {
     private static final float MIN_SPEED = 0.5f;
     private static final float MAX_SPEED = 2.0f;
     private static final float STEP_SIZE = 0.05f;
+    private static final float DEFAULT_SPEED = 1.0f;
 
     public interface PlaybackSpeedListener {
         void onSpeedSelected(float speed);
@@ -68,15 +70,41 @@ public class PlaybackSpeedDialog extends DialogFragment {
             }
         });
 
-        return new MaterialAlertDialogBuilder(requireActivity())
+        Dialog dialog = new MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(R.string.playback_speed_dialog_title)
                 .setView(view)
-                .setNegativeButton(R.string.playback_speed_dialog_negative_button, (dialog, id) -> dialog.cancel())
+                .setNeutralButton(R.string.playback_speed_dialog_reset_button, null)
+                .setNegativeButton(R.string.playback_speed_dialog_negative_button,
+                        (dialogInterface, id) -> dialogInterface.cancel())
                 .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            Button resetButton = dialog.findViewById(android.R.id.button3);
+            updateResetButtonState(resetButton, normalizeSpeed(playbackSpeedSlider.getValue()));
+
+            playbackSpeedSlider.addOnChangeListener(
+                    (slider, value, fromUser) -> updateResetButtonState(resetButton, normalizeSpeed(value)));
+
+            resetButton.setOnClickListener(v -> {
+                playbackSpeedSlider.setValue(DEFAULT_SPEED);
+                updateSpeedLabel(playbackSpeedValueTextView, DEFAULT_SPEED);
+                Preferences.setPlaybackSpeed(DEFAULT_SPEED);
+                updateResetButtonState(resetButton, DEFAULT_SPEED);
+                if (listener != null) {
+                    listener.onSpeedSelected(DEFAULT_SPEED);
+                }
+            });
+        });
+
+        return dialog;
     }
 
     private void updateSpeedLabel(TextView textView, float speed) {
         textView.setText(getString(R.string.player_playback_speed, speed));
+    }
+
+    private void updateResetButtonState(Button resetButton, float speed) {
+        resetButton.setEnabled(speed != DEFAULT_SPEED);
     }
 
     private float normalizeSpeed(float speed) {
