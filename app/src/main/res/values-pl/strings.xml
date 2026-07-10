@@ -402,6 +402,8 @@
     <string name="settings_continuous_play_title">Odtwarzanie bez przerwy</string>
     <string name="settings_number_tracks_keep_in_queue">Liczba utworów do utrzymania w kolejce</string>
     <string name="settings_number_tracks_keep_in_queue_summary">Dostosuj liczbę utworów utrzymywanych w kolejce zanim zostaną dodane utwory z odtwarzania bez przerwy</string>
+    <string name="settings_fallback_to_random_tracks_summary">Play random songs as a fallback when similar tracks are unavailable Odtwarzaj zastępczo losowe piosenki jeśli podobne utwory nie są dostępne</string>
+    <string name="settings_fallback_to_random_tracks_title">Fallback to random tracks Zastąpienie losowymi utworami</string>
     <string name="settings_covers_cache">Rozmiar cache dla okładek</string>
     <string name="settings_data_saving_mode_summary">Aby zmniejszyć zużycie danych, unikaj pobierania okładek.</string>
     <string name="settings_data_saving_mode_title">Ogranicz zużycie danych komórkowych</string>
