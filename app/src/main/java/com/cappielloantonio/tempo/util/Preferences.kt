@@ -25,6 +25,7 @@ object Preferences {
     private const val IN_USE_SERVER_ADDRESS = "in_use_server_address"
     private const val NEXT_SERVER_SWITCH = "next_server_switch"
     private const val PLAYBACK_SPEED = "playback_speed"
+    private const val PLAYBACK_SPEED_PITCH = "playback_speed_pitch"
     private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val QUICK_ACTION_VISIBLE = "quick_action_visible"
     private const val TRACK_NUMBER_VISIBLE = "track_number_visible"
@@ -305,6 +306,16 @@ object Preferences {
     @JvmStatic
     fun setPlaybackSpeed(playbackSpeed: Float) {
         App.getInstance().preferences.edit().putFloat(PLAYBACK_SPEED, playbackSpeed).apply()
+    }
+
+    @JvmStatic
+    fun isPlaybackSpeedPitchEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(PLAYBACK_SPEED_PITCH, false)
+    }
+
+    @JvmStatic
+    fun setPlaybackSpeedPitchEnabled(isEnabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(PLAYBACK_SPEED_PITCH, isEnabled).apply()
     }
 
     @JvmStatic

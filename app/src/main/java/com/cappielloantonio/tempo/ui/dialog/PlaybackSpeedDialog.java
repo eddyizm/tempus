@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.slider.Slider;
 
 public class PlaybackSpeedDialog extends DialogFragment {
@@ -36,8 +37,10 @@ public class PlaybackSpeedDialog extends DialogFragment {
         View view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_playback_speed, null);
         TextView playbackSpeedValueTextView = view.findViewById(R.id.playback_speed_value_text_view);
         Slider playbackSpeedSlider = view.findViewById(R.id.playback_speed_slider);
+        MaterialSwitch playbackSpeedPitchSwitch = view.findViewById(R.id.playback_speed_pitch_switch);
 
         float currentSpeed = normalizeSpeed(Preferences.getPlaybackSpeed());
+        playbackSpeedPitchSwitch.setChecked(Preferences.isPlaybackSpeedPitchEnabled());
         playbackSpeedSlider.setValueFrom(MIN_SPEED);
         playbackSpeedSlider.setValueTo(MAX_SPEED);
         playbackSpeedSlider.setStepSize(STEP_SIZE);
@@ -55,6 +58,13 @@ public class PlaybackSpeedDialog extends DialogFragment {
             Preferences.setPlaybackSpeed(speed);
             if (listener != null) {
                 listener.onSpeedSelected(speed);
+            }
+        });
+
+        playbackSpeedPitchSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Preferences.setPlaybackSpeedPitchEnabled(isChecked);
+            if (listener != null) {
+                listener.onSpeedSelected(normalizeSpeed(playbackSpeedSlider.getValue()));
             }
         });
 

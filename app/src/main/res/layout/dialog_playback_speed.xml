@@ -23,4 +23,11 @@
         android:layout_marginTop="16dp"
         app:labelBehavior="floating" />
 
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/playback_speed_pitch_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/playback_speed_pitch_switch_title" />
+
 </LinearLayout>
