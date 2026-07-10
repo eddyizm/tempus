@@ -150,7 +150,6 @@ public class DownloadFragment extends Fragment implements ClickCallback {
             if (count == -1) {
                 Toast.makeText(requireContext(), R.string.download_refresh_no_directory, Toast.LENGTH_SHORT).show();
             } else if (count == 0) {
-                reconcileMissingFiles();
                 Toast.makeText(requireContext(), R.string.download_refresh_no_changes, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(
@@ -284,10 +283,6 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     private boolean fileExists(String filePath) {
         File file = new File(filePath);
         return file.exists();
-    }
-
-    private void reconcileMissingFiles() {
-        downloadViewModel.refreshExternalDownloads();
     }
 
     @Override
