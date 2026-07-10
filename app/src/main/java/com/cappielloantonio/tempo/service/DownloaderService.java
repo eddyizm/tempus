@@ -229,13 +229,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         String text = total == 1
                 ? "1 track downloaded successfully"
                 : String.format(Locale.getDefault(), "%d tracks downloaded successfully", total);
-
-        PendingIntent dismissIntent = PendingIntent.getBroadcast(
-                context,
-                0,
-                new Intent(), // no-op broadcast
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-
+ 
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
                         .setSmallIcon(R.drawable.ic_done)
@@ -243,12 +237,8 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                         .setContentText(text)
                         .setContentIntent(buildOpenQueueIntent(context))
                         .setAutoCancel(true)
-                        .setOnlyAlertOnce(true)
-                        .addAction(new NotificationCompat.Action.Builder(
-                                R.drawable.ic_done,
-                                "Done",
-                                dismissIntent).build());
-
+                        .setOnlyAlertOnce(true);
+ 
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (nm != null) nm.notify(COMPLETION_NOTIFICATION_ID, builder.build());
     }
