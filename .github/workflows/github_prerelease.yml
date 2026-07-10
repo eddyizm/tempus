@@ -69,9 +69,9 @@ jobs:
           body: |
             Development prerelease from commit ${{ github.sha }}
             
-            **Note:** This is a prerelease and may be unstable. We will add a link so you can capture debug logs to help us find issues/bugs.
+            **Note:** This is a prerelease and may be unstable. 
             **Branch:** development
-            **Architecture:** 32-bit (armeabi-v7a) & 64-bit (arm64-v8a)
+            **Architecture:** 32/64-bit Universal apk
             **Build type:** Debug (signed with release keystore)
           draft: false
           prerelease: true
