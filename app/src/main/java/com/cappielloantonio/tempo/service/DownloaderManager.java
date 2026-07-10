@@ -79,33 +79,32 @@ public class DownloaderManager {
             return;
         }
 
-        int pos = 0;
         if (queuePosition != null) {
-            pos = queuePosition;
+            download.setQueuePosition(queuePosition);
+            download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
+            DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
+            insertDatabase(download);
         } else {
-            Integer maxPos = getDownloadRepository().getMaxQueuePositionSync();
-            if (maxPos != null) {
-                pos = maxPos + 1;
-            }
+            download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
+            DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
+            insertDatabaseWithQueuePosition(download);
         }
-        download.setQueuePosition(pos);
-
-        download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
-
-        DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
-        insertDatabase(download);
     }
 
     public void download(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
-        int nextPosition = 0;
-        Integer maxPos = getDownloadRepository().getMaxQueuePositionSync();
-        if (maxPos != null) {
-            nextPosition = maxPos + 1;
-        }
+        downloadBatchAsyncQueuePosition(mediaItems, downloads);
+    }
 
-        for (int counter = 0; counter < mediaItems.size(); counter++) {
-            download(mediaItems.get(counter), downloads.get(counter), nextPosition++);
-        }
+    private void downloadBatchAsyncQueuePosition(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
+        Thread thread = new Thread(() -> {
+            Integer maxPos = getDownloadRepository().getMaxQueuePositionSync();
+            int nextPosition = maxPos != null ? maxPos + 1 : 0;
+
+            for (int counter = 0; counter < mediaItems.size(); counter++) {
+                download(mediaItems.get(counter), downloads.get(counter), nextPosition++);
+            }
+        });
+        thread.start();
     }
 
     public void remove(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
@@ -158,6 +157,10 @@ public class DownloaderManager {
 
     private static void insertDatabase(com.cappielloantonio.tempo.model.Download download) {
         getDownloadRepository().insert(download);
+    }
+
+    private static void insertDatabaseWithQueuePosition(com.cappielloantonio.tempo.model.Download download) {
+        getDownloadRepository().insertWithQueuePosition(download);
     }
 
     private static void deleteDatabase(String id) {

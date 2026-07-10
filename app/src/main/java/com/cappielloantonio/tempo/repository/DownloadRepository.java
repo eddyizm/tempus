@@ -93,6 +93,12 @@ public class DownloadRepository {
         thread.start();
     }
 
+    public void insertWithQueuePosition(Download download) {
+        InsertWithQueuePositionThreadSafe insert = new InsertWithQueuePositionThreadSafe(downloadDao, download);
+        Thread thread = new Thread(insert);
+        thread.start();
+    }
+
     private static class InsertThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private final Download download;
@@ -104,6 +110,27 @@ public class DownloadRepository {
 
         @Override
         public void run() {
+            downloadDao.insert(download);
+        }
+    }
+
+    private static class InsertWithQueuePositionThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private final Download download;
+
+        public InsertWithQueuePositionThreadSafe(DownloadDao downloadDao, Download download) {
+            this.downloadDao = downloadDao;
+            this.download = download;
+        }
+
+        @Override
+        public void run() {
+            Integer maxPos = downloadDao.getMaxQueuePosition();
+            if (maxPos != null) {
+                download.setQueuePosition(maxPos + 1);
+            } else {
+                download.setQueuePosition(0);
+            }
             downloadDao.insert(download);
         }
     }
