@@ -238,6 +238,7 @@ open class BaseMediaService : MediaLibraryService() {
                 }
 
                 updateWidget(player)
+                QueuePreloader.preload(this@BaseMediaService, player)
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -247,6 +248,7 @@ open class BaseMediaService : MediaLibraryService() {
                 } catch (t: Throwable) {
                     Log.w(TAG, "prefetchQueueGains failed: $t")
                 }
+                QueuePreloader.preload(this@BaseMediaService, player)
                 if (timeline.isEmpty) return
                 val window = Timeline.Window()
                 for (i in 0 until timeline.windowCount) {
@@ -569,6 +571,7 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        QueuePreloader.cancel()
         releaseNetworkCallback()
         equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
