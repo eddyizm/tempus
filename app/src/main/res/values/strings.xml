@@ -262,7 +262,13 @@
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
-    <string name="playback_speed_pitch_switch_title">Adjust pitch</string>
+    <string name="playback_speed_decrease_button_content_description">Decrease playback speed</string>
+    <string name="playback_speed_increase_button_content_description">Increase playback speed</string>
+    <string name="playback_speed_pitch_switch_title">Preserve pitch</string>
+    <string name="playback_speed_manual_pitch_switch_title">Manual pitch</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Decrease manual pitch</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Increase manual pitch</string>
     <string name="playback_speed_dialog_reset_button">Reset</string>
     <string name="playback_speed_dialog_negative_button">Cancel</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>

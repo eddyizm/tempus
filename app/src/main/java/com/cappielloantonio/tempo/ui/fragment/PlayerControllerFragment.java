@@ -874,8 +874,16 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private PlaybackParameters getPlaybackParameters(float speed) {
-        float pitch = Preferences.isPlaybackSpeedPitchEnabled() ? speed : 1.0f;
+        float pitch = Preferences.isPlaybackSpeedPitchEnabled()
+                ? getAdjustedPitch(speed)
+                : 1.0f;
         return new PlaybackParameters(speed, pitch);
+    }
+
+    private float getAdjustedPitch(float speed) {
+        return Preferences.isPlaybackSpeedManualPitchEnabled()
+                ? Preferences.getPlaybackSpeedManualPitch()
+                : speed;
     }
 
     private final ServiceConnection serviceConnection = new ServiceConnection() {

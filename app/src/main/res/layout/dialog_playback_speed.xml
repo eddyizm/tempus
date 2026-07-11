@@ -16,12 +16,39 @@
         android:gravity="center"
         android:text="" />
 
-    <com.google.android.material.slider.Slider
-        android:id="@+id/playback_speed_slider"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:labelBehavior="floating" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/playback_speed_decrease_button"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/playback_speed_decrease_button_content_description"
+            app:icon="@drawable/ic_minus" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/playback_speed_slider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="-8dp"
+            android:layout_marginEnd="-8dp"
+            android:layout_weight="1"
+            app:labelBehavior="floating" />
+
+        <Button
+            android:id="@+id/playback_speed_increase_button"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/playback_speed_increase_button_content_description"
+            app:icon="@drawable/ic_add" />
+
+    </LinearLayout>
 
     <com.google.android.material.materialswitch.MaterialSwitch
         android:id="@+id/playback_speed_pitch_switch"
@@ -29,5 +56,63 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/playback_speed_pitch_switch_title" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/playback_speed_manual_pitch_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/playback_speed_manual_pitch_switch_title" />
+
+    <LinearLayout
+        android:id="@+id/playback_speed_manual_pitch_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/playback_speed_manual_pitch_value_text_view"
+            style="@style/TitleMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/playback_speed_manual_pitch_decrease_button"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/playback_speed_manual_pitch_decrease_button_content_description"
+                app:icon="@drawable/ic_minus" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/playback_speed_manual_pitch_slider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-8dp"
+                android:layout_marginEnd="-8dp"
+                android:layout_weight="1"
+                app:labelBehavior="floating" />
+
+            <Button
+                android:id="@+id/playback_speed_manual_pitch_increase_button"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/playback_speed_manual_pitch_increase_button_content_description"
+                app:icon="@drawable/ic_add" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>
