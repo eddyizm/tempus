@@ -36,6 +36,7 @@ import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
 import com.cappielloantonio.tempo.subsonic.models.Genre;
 import com.cappielloantonio.tempo.util.ConstantsAA;
 import com.cappielloantonio.tempo.util.MappingUtil;
@@ -133,6 +134,15 @@ public class AutomotiveRepository {
                 .setMediaMetadata(mediaMetadata)
                 .setUri("")
                 .build();
+    }
+
+    private static SubsonicResponse getSubsonicResponseOrNull(Response<ApiResponse> response) {
+        try {
+            return response.body() != null ? response.body().getSubsonicResponse() : null;
+        } catch (RuntimeException e) {
+            // subsonicResponse is a lateinit property: a body without "subsonic-response" throws on access instead of returning null
+            return null;
+        }
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size, Boolean isRootCall) {
@@ -538,7 +548,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getIndexes() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getIndexes() != null) {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             if (response.body().getSubsonicResponse().getIndexes().getIndices() != null) {
@@ -620,7 +631,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getDirectory() != null && response.body().getSubsonicResponse().getDirectory().getChildren() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getDirectory() != null && subsonicResponse.getDirectory().getChildren() != null) {
                             Directory directory = response.body().getSubsonicResponse().getDirectory();
 
                             List<MediaItem> mediaItems = new ArrayList<>();
@@ -863,7 +875,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getArtist() != null && response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getArtist() != null && subsonicResponse.getArtist().getAlbums() != null) {
 
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
 
@@ -1005,7 +1018,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylist() != null && response.body().getSubsonicResponse().getPlaylist().getEntries() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getPlaylist() != null && subsonicResponse.getPlaylist().getEntries() != null) {
                             List<Child> tracks = response.body().getSubsonicResponse().getPlaylist().getEntries();
 
                             if( !Preferences.isAndroidAutoShufflePlaylistsEnabled() ) {
@@ -1164,7 +1178,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSearchResult3() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getSearchResult3() != null) {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getArtists() != null) {
