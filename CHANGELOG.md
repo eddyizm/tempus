@@ -1,5 +1,25 @@
 # Changelog
 
+## [4.21.0](https://github.com/eddyizm/tempus/releases/tag/v4.21.0) (2026-07-12)
+## What's Changed
+* fix: show cached cover art when Limit mobile data usage is enabled by @funkypc in https://github.com/eddyizm/tempus/pull/836
+* Show local radios in Android Auto when the server has none (#810) by @herrerad85 in https://github.com/eddyizm/tempus/pull/826
+* fix: Android Auto connectivity (#811) by @MaFo-28 in https://github.com/eddyizm/tempus/pull/835
+* fix: restore heart/repeat buttons in the media notification on Android 13 (#787) by @herrerad85 in https://github.com/eddyizm/tempus/pull/842
+* Improve the "Artist" sort order by secondarily sorting by year by @JuliusBrueggemann in https://github.com/eddyizm/tempus/pull/813
+* chore: generate universal apk by @tvillega in https://github.com/eddyizm/tempus/pull/825
+* fix: stop server-ping loop when local and remote addresses match (#242) by @eddyizm in https://github.com/eddyizm/tempus/pull/844
+* fix: bottom padding for song_recycler_view by @xandreiAThome in https://github.com/eddyizm/tempus/pull/847
+* Fallback to random track if getsimilar returns empty by @spicyPoke in https://github.com/eddyizm/tempus/pull/728
+* devops: add mapping file to release and updated text to reflect (#855) by @eddyizm in https://github.com/eddyizm/tempus/pull/856
+
+## New Contributors
+* @JuliusBrueggemann made their first contribution in https://github.com/eddyizm/tempus/pull/813
+* @xandreiAThome made their first contribution in https://github.com/eddyizm/tempus/pull/847
+* @spicyPoke made their first contribution in https://github.com/eddyizm/tempus/pull/728
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.20.5...v4.21.0
+
 ## [4.20.5](https://github.com/eddyizm/tempus/releases/tag/v4.20.5) (2026-07-04)
 ## What's Changed
 * docs: add CONTRIBUTING.md by @tvillega in https://github.com/eddyizm/tempus/pull/823
