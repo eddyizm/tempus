@@ -86,8 +86,6 @@ public class InstantMixBuilder {
                             Random random = new Random();
 
                             fetchNextTrack(albums, 0, mixTracks, usedTrackIds, random, count, count * 4, browserFuture);
-
-                            isRunning.set(false);
                         } else {
                             Log.e(TAG, "Failed to retrieve albums for artistId=" + artistId);
                             isRunning.set(false);
@@ -135,11 +133,13 @@ public class InstantMixBuilder {
         if (mixTracks.size() >= maxTracks || attemptsLeft <= 0) {
             if (mixTracks.isEmpty()) {
                 Log.w(TAG, "No tracks collected, nothing to enqueue");
+                isRunning.set(false);
                 return;
             }
             Log.d(TAG, "Mix complete with " + mixTracks.size() + "/" + maxTracks + " tracks, enqueuing");
             repository.setChildrenMetadata(mixTracks);
             enqueue(browserFuture, mixTracks, true);
+            isRunning.set(false);
             return;
         }
 
