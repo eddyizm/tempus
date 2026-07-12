@@ -86,7 +86,7 @@ object QueuePreloader {
         var index = currentIndex
 
         while (uris.size < count) {
-            index = timeline.getNextWindowIndex(index, Player.REPEAT_MODE_OFF, player.shuffleModeEnabled)
+            index = timeline.getNextWindowIndex(index, player.repeatMode, player.shuffleModeEnabled)
             if (index == C.INDEX_UNSET || index == currentIndex) break
 
             val mediaItem = player.getMediaItemAt(index)

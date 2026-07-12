@@ -970,6 +970,10 @@ open class BaseMediaService : MediaLibraryService() {
                 wasWifi = isWifi
                 widgetUpdateHandler.post {
                     updateMediaItems(mediaLibrarySession.player)
+                    // preload() re-evaluates the network itself: it cancels any
+                    // in-flight precache when the new network is not allowed and
+                    // restarts it when it is.
+                    QueuePreloader.preload(this@BaseMediaService, mediaLibrarySession.player)
                 }
             }
         }
