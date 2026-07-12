@@ -283,12 +283,10 @@ class MediaLibrarySessionCallback(
     private fun resolveVoiceQuery(query: String): ListenableFuture<List<MediaItem>> {
         Log.d(TAG, "Resolving voice query \"$query\"")
 
-        if (query.isEmpty()) {
+        val routed = if (query.isEmpty()) {
             // "Play some music" without specifics: same behaviour as the Random browse node
-            return toItemList(automotiveRepository.getRandomSongs(ConstantsAA.MAX_SHUFFLE_ITEMS))
-        }
-
-        val routed = Futures.transformAsync(
+            toItemList(automotiveRepository.getRandomSongs(ConstantsAA.MAX_SHUFFLE_ITEMS))
+        } else Futures.transformAsync(
             automotiveRepository.search(query, ConstantsAA.ALBUM_ID, ConstantsAA.ARTIST_ID),
             { result ->
                 val matches: List<MediaItem> = result?.value ?: emptyList()
