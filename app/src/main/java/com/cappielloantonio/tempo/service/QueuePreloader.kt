@@ -13,6 +13,7 @@ import androidx.media3.datasource.cache.ContentMetadata
 import com.cappielloantonio.tempo.util.Constants
 import com.cappielloantonio.tempo.util.DownloadUtil
 import com.cappielloantonio.tempo.util.Preferences
+import com.cappielloantonio.tempo.util.StreamingCacheKeyFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -38,10 +39,15 @@ object QueuePreloader {
     @Volatile
     private var activeWriter: CacheWriter? = null
 
+    /** Target of the task currently queued/executing; empty when idle. */
+    @Volatile
+    private var runningUris: List<Uri> = emptyList()
+
     /** Must be called from the player's application thread. */
     fun preload(context: Context, player: Player) {
         val count = Preferences.getPrecacheTracksCount()
         if (count <= 0) return
+        if (Preferences.getStreamingCacheSize() <= 0L) return
 
         val appContext = context.applicationContext
 
@@ -54,7 +60,14 @@ object QueuePreloader {
 
         val myGeneration: Int
         synchronized(this) {
+            // The in-flight task is already working towards exactly this target:
+            // leave it alone. preload() fires on every timeline/metadata/network
+            // event, and restarting the writer each time discards all progress on
+            // unknown-length (transcoded) content, so the precache never finishes.
+            if (uris == runningUris) return
+
             myGeneration = generation.incrementAndGet()
+            runningUris = uris
             activeWriter?.cancel()
         }
 
@@ -63,7 +76,13 @@ object QueuePreloader {
         executor.execute {
             for (uri in uris) {
                 if (generation.get() != myGeneration) return@execute
+                if (isFullyCached(appContext, uri)) continue
                 cacheTrack(appContext, uri, myGeneration)
+            }
+            // Clear the target so the next preload() retries tracks that failed
+            // (fully cached ones are skipped by the check above anyway).
+            synchronized(this) {
+                if (generation.get() == myGeneration) runningUris = emptyList()
             }
         }
     }
@@ -71,6 +90,7 @@ object QueuePreloader {
     fun cancel() {
         synchronized(this) {
             generation.incrementAndGet()
+            runningUris = emptyList()
             activeWriter?.cancel()
         }
     }
@@ -112,6 +132,12 @@ object QueuePreloader {
     private fun cacheTrack(context: Context, uri: Uri, myGeneration: Int) {
         val dataSpec = DataSpec.Builder().setUri(uri).build()
         val dataSource = DownloadUtil.getStreamingCacheWriterFactory(context).createDataSource()
+        val cacheKey = dataSource.cacheKeyFactory.buildCacheKey(dataSpec)
+
+        // A leftover unknown-length partial from an interrupted earlier run can't
+        // be resumed with a range request; drop it so this run starts clean.
+        removePartialResource(context, cacheKey)
+
         val writer = CacheWriter(dataSource, dataSpec, null, null)
 
         // Re-check the generation while holding the same lock cancel() takes:
@@ -128,11 +154,30 @@ object QueuePreloader {
             Log.d(TAG, "Pre-cached $uri")
         } catch (exception: Exception) {
             Log.d(TAG, "Pre-cache aborted for $uri: $exception")
-            removePartialResource(context, dataSource.cacheKeyFactory.buildCacheKey(dataSpec))
+            // When connectivity was just lost, keep whatever got cached: it is a
+            // valid prefix written in one continuous run, and it is exactly what
+            // an imminent offline skip needs to keep playing. The player's own
+            // close() policy (and the start-clean removal above) cleans it up
+            // later. While still online, apply the usual unknown-length cleanup
+            // so playback never resumes into a mismatched fresh transcode.
+            if (hasActiveNetwork(context)) {
+                removePartialResource(context, cacheKey)
+            }
         } finally {
             synchronized(this) {
                 if (activeWriter === writer) activeWriter = null
             }
+        }
+    }
+
+    private fun isFullyCached(context: Context, uri: Uri): Boolean {
+        return try {
+            val cache = DownloadUtil.getStreamingCacheForPreload(context)
+            val cacheKey = StreamingCacheKeyFactory().buildCacheKey(DataSpec.Builder().setUri(uri).build())
+            val contentLength = ContentMetadata.getContentLength(cache.getContentMetadata(cacheKey))
+            contentLength != C.LENGTH_UNSET.toLong() && cache.isCached(cacheKey, 0, contentLength)
+        } catch (exception: Exception) {
+            false
         }
     }
 
@@ -156,5 +201,10 @@ object QueuePreloader {
     private fun isMetered(context: Context): Boolean {
         val connectivityManager = context.getSystemService(ConnectivityManager::class.java) ?: return true
         return connectivityManager.isActiveNetworkMetered
+    }
+
+    private fun hasActiveNetwork(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(ConnectivityManager::class.java) ?: return false
+        return connectivityManager.activeNetwork != null
     }
 }
