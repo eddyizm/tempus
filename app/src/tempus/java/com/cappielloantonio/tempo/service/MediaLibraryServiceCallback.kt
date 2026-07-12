@@ -174,6 +174,11 @@ class MediaLibrarySessionCallback(
     ): ListenableFuture<List<MediaItem>> {
         Log.d(TAG, "Resolve queue for item")
 
+        val voiceQuery = firstItem.requestMetadata.searchQuery
+        if (voiceQuery != null && firstItem.mediaId.isBlank()) {
+            return resolveVoiceQuery(voiceQuery.trim())
+        }
+
         val extras = firstItem.requestMetadata.extras ?: firstItem.mediaMetadata.extras
         val parentId = extras?.getString("parent_id")
 
@@ -267,6 +272,73 @@ class MediaLibrarySessionCallback(
                 updatedResolved[0] = newFirstResolved
                 updatedResolved
             },
+            MoreExecutors.directExecutor()
+        )
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Android Auto — voice queries ("Hey Google, play ... on Tempus")
+    // ─────────────────────────────────────────────────────────────
+
+    private fun resolveVoiceQuery(query: String): ListenableFuture<List<MediaItem>> {
+        Log.d(TAG, "Resolving voice query \"$query\"")
+
+        if (query.isEmpty()) {
+            // "Play some music" without specifics: same behaviour as the Random browse node
+            return toItemList(automotiveRepository.getRandomSongs(ConstantsAA.MAX_SHUFFLE_ITEMS))
+        }
+
+        val routed = Futures.transformAsync(
+            automotiveRepository.search(query, ConstantsAA.ALBUM_ID, ConstantsAA.ARTIST_ID),
+            { result ->
+                val matches: List<MediaItem> = result?.value ?: emptyList()
+
+                val artistId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ARTIST_ID) &&
+                            it.mediaMetadata.title?.toString().equals(query, ignoreCase = true)
+                }?.mediaId?.removePrefix(ConstantsAA.ARTIST_ID)
+
+                val albumId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ALBUM_ID) &&
+                            it.mediaMetadata.title?.toString().equals(query, ignoreCase = true)
+                }?.mediaId?.removePrefix(ConstantsAA.ALBUM_ID)
+
+                when {
+                    artistId != null -> {
+                        // connect handle so the mix keeps extending itself during playback
+                        MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
+                        toItemList(
+                            automotiveRepository.getInstantMix(
+                                artistId,
+                                ConstantsAA.NUMBER_OF_TRACKS_IN_MEDIUM_MIX
+                            )
+                        )
+                    }
+
+                    albumId != null -> toItemList(automotiveRepository.getAlbumTracks(albumId))
+
+                    else -> Futures.immediateFuture(
+                        matches.filter { it.mediaMetadata.isPlayable == true }
+                    )
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
+
+        return Futures.catching(
+            routed,
+            Exception::class.java,
+            { emptyList() },
+            MoreExecutors.directExecutor()
+        )
+    }
+
+    private fun toItemList(
+        future: ListenableFuture<LibraryResult<ImmutableList<MediaItem>>>
+    ): ListenableFuture<List<MediaItem>> {
+        return Futures.transform(
+            future,
+            { it?.value ?: emptyList() },
             MoreExecutors.directExecutor()
         )
     }
