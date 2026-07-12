@@ -373,20 +373,26 @@ public class AutomotiveRepository {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
         new Thread(() -> {
-            List<Download> downloads = AppDatabase.getInstance().downloadDao().getAllSync();
+            // Any throw here must resolve the future, otherwise the Android Auto
+            // browse request hangs forever with no error feedback.
+            try {
+                List<Download> downloads = AppDatabase.getInstance().downloadDao().getAllSync();
 
-            if (downloads != null && !downloads.isEmpty()) {
-                downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_ITEMS, downloads.size()));
+                if (downloads != null && !downloads.isEmpty()) {
+                    downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_ITEMS, downloads.size()));
 
-                List<Child> songs = new ArrayList<>(downloads);
+                    List<Child> songs = new ArrayList<>(downloads);
 
-                setChildrenMetadata(songs);
+                    setChildrenMetadata(songs);
 
-                List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
+                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
 
-                listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
-            } else {
-                listenableFuture.set(LibraryResult.ofItemList(ImmutableList.of(), null));
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
+                } else {
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.of(), null));
+                }
+            } catch (Exception e) {
+                listenableFuture.setException(e);
             }
         }).start();
 
