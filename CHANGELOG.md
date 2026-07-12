@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.21.0](https://github.com/eddyizm/tempus/releases/tag/v4.21.0) (2026-07-12)
+## [4.21.2](https://github.com/eddyizm/tempus/releases/tag/v4.21.2) (2026-07-12)
 ## What's Changed
 * fix: show cached cover art when Limit mobile data usage is enabled by @funkypc in https://github.com/eddyizm/tempus/pull/836
 * Show local radios in Android Auto when the server has none (#810) by @herrerad85 in https://github.com/eddyizm/tempus/pull/826

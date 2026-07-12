@@ -16,7 +16,7 @@ android {
         targetSdk = 36
 
         versionCode 34
-        versionName '4.21.0'
+        versionName '4.21.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
