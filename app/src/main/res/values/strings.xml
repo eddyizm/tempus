@@ -423,6 +423,10 @@
     <string name="settings_set_download_folder">Set download folder</string>
     <string name="settings_song_preload_buffer">Song preload buffer</string>
     <string name="settings_song_preload_buffer_summary">Current value: %1$s\nFor the change to take effect you must manually restart the app.</string>
+    <string name="settings_precache_tracks">Pre-cache upcoming tracks</string>
+    <string name="settings_precache_tracks_summary">Fully cache the next tracks of the queue in the background, so skips start instantly and playback survives short signal drops</string>
+    <string name="settings_precache_wifi_only">Pre-cache on Wi-Fi only</string>
+    <string name="settings_precache_wifi_only_summary">Pause pre-caching while on a metered connection</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>

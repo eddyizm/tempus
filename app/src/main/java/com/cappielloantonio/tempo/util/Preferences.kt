@@ -75,6 +75,8 @@ object Preferences {
     private const val SHARE = "share"
     private const val SCROBBLING = "scrobbling"
     private const val SONG_PRELOAD_BUFFER = "song_preload_buffer"
+    private const val PRECACHE_TRACKS_COUNT = "precache_tracks_count"
+    private const val PRECACHE_WIFI_ONLY = "precache_wifi_only"
     private const val SKIP_MIN_STAR_RATING = "skip_min_star_rating"
     private const val MIN_STAR_RATING = "min_star_rating"
     private const val ALWAYS_ON_DISPLAY = "always_on_display"
@@ -715,6 +717,16 @@ object Preferences {
     @JvmStatic
     fun getSongPreloadBuffer(): Int {
         return App.getInstance().preferences.getString(SONG_PRELOAD_BUFFER, "60")!!.toInt()
+    }
+
+    @JvmStatic
+    fun getPrecacheTracksCount(): Int {
+        return App.getInstance().preferences.getString(PRECACHE_TRACKS_COUNT, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun isPrecacheWifiOnly(): Boolean {
+        return App.getInstance().preferences.getBoolean(PRECACHE_WIFI_ONLY, true)
     }
 
     @JvmStatic
