@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.util
 
+import android.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.cache.CacheKeyFactory
@@ -14,6 +15,8 @@ import androidx.media3.datasource.cache.CacheKeyFactory
  * of those change. maxBitRate/format stay part of the key because a different
  * transcode really is different audio.
  */
+private const val TAG = "StreamingCacheKeyFactory"
+
 @UnstableApi
 class StreamingCacheKeyFactory : CacheKeyFactory {
     override fun buildCacheKey(dataSpec: DataSpec): String {
@@ -26,7 +29,9 @@ class StreamingCacheKeyFactory : CacheKeyFactory {
         val id = try {
             uri.getQueryParameter("id")
         } catch (exception: UnsupportedOperationException) {
-            null // opaque uri, cannot be parsed for query parameters
+            // opaque uri, cannot be parsed for query parameters
+            Log.d(TAG, "Opaque URI, falling back to URL-based cache key", exception)
+            null
         } ?: return uri.toString()
 
         val bitrate = uri.getQueryParameter("maxBitRate").orEmpty()
