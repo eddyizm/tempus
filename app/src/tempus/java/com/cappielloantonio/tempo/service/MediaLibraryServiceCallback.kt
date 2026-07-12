@@ -291,15 +291,33 @@ class MediaLibrarySessionCallback(
             { result ->
                 val matches: List<MediaItem> = result?.value ?: emptyList()
 
-                val artistId = matches.firstOrNull {
+                val exactArtistId = matches.firstOrNull {
                     it.mediaId.startsWith(ConstantsAA.ARTIST_ID) &&
                             it.mediaMetadata.title?.toString().equals(query, ignoreCase = true)
                 }?.mediaId?.removePrefix(ConstantsAA.ARTIST_ID)
 
-                val albumId = matches.firstOrNull {
+                val exactAlbumId = matches.firstOrNull {
                     it.mediaId.startsWith(ConstantsAA.ALBUM_ID) &&
                             it.mediaMetadata.title?.toString().equals(query, ignoreCase = true)
                 }?.mediaId?.removePrefix(ConstantsAA.ALBUM_ID)
+
+                val playableSongs = matches.filter { it.mediaMetadata.isPlayable == true }
+
+                // No exact match and no playable songs: assume the query was a near miss
+                // (misheard artist/album name) and fall back to the closest search result,
+                // otherwise the Assistant announces playback but nothing plays.
+                val fuzzyArtistId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ARTIST_ID)
+                }?.mediaId?.removePrefix(ConstantsAA.ARTIST_ID)
+
+                val fuzzyAlbumId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ALBUM_ID)
+                }?.mediaId?.removePrefix(ConstantsAA.ALBUM_ID)
+
+                val artistId = exactArtistId
+                    ?: if (exactAlbumId == null && playableSongs.isEmpty()) fuzzyArtistId else null
+                val albumId = exactAlbumId
+                    ?: if (artistId == null && playableSongs.isEmpty()) fuzzyAlbumId else null
 
                 when {
                     artistId != null -> {
@@ -315,9 +333,7 @@ class MediaLibrarySessionCallback(
 
                     albumId != null -> toItemList(automotiveRepository.getAlbumTracks(albumId))
 
-                    else -> Futures.immediateFuture(
-                        matches.filter { it.mediaMetadata.isPlayable == true }
-                    )
+                    else -> Futures.immediateFuture(playableSongs)
                 }
             },
             MoreExecutors.directExecutor()
