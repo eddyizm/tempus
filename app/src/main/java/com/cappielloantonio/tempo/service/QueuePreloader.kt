@@ -52,8 +52,11 @@ object QueuePreloader {
 
         val uris = collectUpcomingStreamUris(appContext, player, count)
 
-        val myGeneration = generation.incrementAndGet()
-        activeWriter?.cancel()
+        val myGeneration: Int
+        synchronized(this) {
+            myGeneration = generation.incrementAndGet()
+            activeWriter?.cancel()
+        }
 
         if (uris.isEmpty()) return
 
@@ -66,8 +69,10 @@ object QueuePreloader {
     }
 
     fun cancel() {
-        generation.incrementAndGet()
-        activeWriter?.cancel()
+        synchronized(this) {
+            generation.incrementAndGet()
+            activeWriter?.cancel()
+        }
     }
 
     private fun collectUpcomingStreamUris(context: Context, player: Player, count: Int): List<Uri> {
@@ -109,7 +114,14 @@ object QueuePreloader {
         val dataSource = DownloadUtil.getStreamingCacheWriterFactory(context).createDataSource()
         val writer = CacheWriter(dataSource, dataSpec, null, null)
 
-        activeWriter = writer
+        // Re-check the generation while holding the same lock cancel() takes:
+        // otherwise a cancel() landing between the caller's generation check and
+        // this assignment would miss the writer and the stale write would run to
+        // completion.
+        synchronized(this) {
+            if (generation.get() != myGeneration) return
+            activeWriter = writer
+        }
 
         try {
             writer.cache()
@@ -118,7 +130,9 @@ object QueuePreloader {
             Log.d(TAG, "Pre-cache aborted for $uri: $exception")
             removePartialResource(context, dataSource.cacheKeyFactory.buildCacheKey(dataSpec))
         } finally {
-            if (activeWriter === writer) activeWriter = null
+            synchronized(this) {
+                if (activeWriter === writer) activeWriter = null
+            }
         }
     }
 
