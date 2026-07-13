@@ -206,6 +206,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Starred bundle
 - Tracks bundle
 - Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
+- Downloads : the 500 first downloaded tracks OR 100 random downloaded tracks if "shuffle downloaded tracks" is selected. Shown at the top of the Home tab and playable without connectivity
 
 <p align="left">
     <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
