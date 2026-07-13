@@ -379,7 +379,13 @@ public class AutomotiveRepository {
                 List<Download> downloads = AppDatabase.getInstance().downloadDao().getAllSync();
 
                 if (downloads != null && !downloads.isEmpty()) {
-                    downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_ITEMS, downloads.size()));
+                    if( !Preferences.isAndroidAutoShuffleDownloadedTracksEnabled() ) {
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_ITEMS, downloads.size()));
+                    }
+                    else {
+                        Collections.shuffle(downloads);
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_SHUFFLE_ITEMS, downloads.size()));
+                    }
 
                     List<Child> songs = new ArrayList<>(downloads);
 
