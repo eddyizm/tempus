@@ -11,6 +11,14 @@ ANDROID_API=24
 ENABLED_DECODERS=(alac)
 MEDIA3_VERSION="1.9.2"
 
+# ------------------------------------------------------------------
+# Deterministic build flags – must match F-Droid
+export CFLAGS="-fno-ident -ffile-prefix-map=${PWD}=. -fdebug-prefix-map=${PWD}=."
+export LDFLAGS="-Wl,--build-id=none"
+export SOURCE_DATE_EPOCH=0
+export ARFLAGS="rcsD"
+# ------------------------------------------------------------------
+
 # Helper
 step() {
   echo "============================================================"
