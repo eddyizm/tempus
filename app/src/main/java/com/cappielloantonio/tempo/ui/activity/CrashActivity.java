@@ -52,7 +52,6 @@ public class CrashActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         DynamicColors.applyToActivityIfAvailable(this);
 
-        setUpEdgeToEdge(this);
         super.onCreate(savedInstanceState);
 
         bind = ActivityCrashBinding.inflate(getLayoutInflater());
