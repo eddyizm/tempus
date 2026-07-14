@@ -191,7 +191,7 @@ public class CrashActivity extends AppCompatActivity {
         View rootView = findViewById(android.R.id.content);
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
             Insets innerPadding = insets.getInsets(
-                    WindowInsetsCompat.Type.navigationBars() | WindowInsetsCompat.Type.statusBars()
+                    WindowInsetsCompat.Type.statusBars()
             );
             rootView.setPadding(
                     innerPadding.left,

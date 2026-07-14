@@ -319,7 +319,7 @@ public class MainActivity extends BaseActivity {
 
         if (!isLandscape) {
             // Show app navbar + show system bars
-            bottomSheetController.setPeekHeight(136, displayDensity);
+            bottomSheetController.setPeekHeight(184, displayDensity);
             navigationController.setNavbarVisibility(true);
             navigationController.setSystemBarsVisibility(this, true);
         } else {
@@ -670,7 +670,7 @@ public class MainActivity extends BaseActivity {
         View rootView = findViewById(android.R.id.content);
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
             Insets innerPadding = insets.getInsets(
-                    WindowInsetsCompat.Type.navigationBars() | WindowInsetsCompat.Type.statusBars()
+                    WindowInsetsCompat.Type.statusBars()
             );
             rootView.setPadding(
                     innerPadding.left,
