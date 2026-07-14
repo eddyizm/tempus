@@ -319,7 +319,7 @@ public class MainActivity extends BaseActivity {
 
         if (!isLandscape) {
             // Show app navbar + show system bars
-            bottomSheetController.setPeekHeight(184, displayDensity);
+            bottomSheetController.setPeekHeight(136, displayDensity);
             navigationController.setNavbarVisibility(true);
             navigationController.setSystemBarsVisibility(this, true);
         } else {

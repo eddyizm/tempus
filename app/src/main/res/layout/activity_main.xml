@@ -23,6 +23,8 @@
             android:id="@+id/player_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:enableEdgeToEdge="true"
+            app:paddingBottomSystemWindowInsets="true"
             app:behavior_hideable="true"
             app:behavior_peekHeight="@dimen/bottom_sheet_behavior_peek_height"
             app:layout_behavior="@string/bottom_sheet_behavior" />
