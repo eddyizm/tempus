@@ -53,7 +53,6 @@ public class CrashActivity extends AppCompatActivity {
         DynamicColors.applyToActivityIfAvailable(this);
 
         setUpEdgeToEdge(this);
-        fixUpEdgeToEdge();
         super.onCreate(savedInstanceState);
 
         bind = ActivityCrashBinding.inflate(getLayoutInflater());
@@ -184,22 +183,5 @@ public class CrashActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-    }
-
-
-    private void fixUpEdgeToEdge() {
-        View rootView = findViewById(android.R.id.content);
-        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
-            Insets innerPadding = insets.getInsets(
-                    WindowInsetsCompat.Type.statusBars()
-            );
-            rootView.setPadding(
-                    innerPadding.left,
-                    innerPadding.top,
-                    innerPadding.right,
-                    innerPadding.bottom
-            );
-            return insets;
-        });
     }
 }
