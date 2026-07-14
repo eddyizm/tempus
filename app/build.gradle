@@ -15,8 +15,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 36
 
-        versionCode 34
-        versionName '4.21.2'
+        versionCode 35
+        versionName '4.21.3'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -87,6 +87,7 @@ dependencies {
     implementation files('../libs/lib-decoder-ffmpeg-release.aar')
 
     // AndroidX
+    implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.coordinatorlayout
     implementation libs.androidx.preference.ktx
