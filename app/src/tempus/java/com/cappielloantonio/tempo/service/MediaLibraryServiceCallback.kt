@@ -321,14 +321,10 @@ class MediaLibrarySessionCallback(
 
                 when {
                     artistId != null -> {
-                        // connect handle so the mix keeps extending itself during playback
+                        // connect handle so the mix keeps extending itself during playback;
+                        // it stays idle when the artist falls back to a plain album queue
                         MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
-                        toItemList(
-                            automotiveRepository.getInstantMix(
-                                artistId,
-                                ConstantsAA.NUMBER_OF_TRACKS_IN_MEDIUM_MIX
-                            )
-                        )
+                        toItemList(automotiveRepository.getInstantMix(artistId))
                     }
 
                     albumId != null -> toItemList(automotiveRepository.getAlbumTracks(albumId))
