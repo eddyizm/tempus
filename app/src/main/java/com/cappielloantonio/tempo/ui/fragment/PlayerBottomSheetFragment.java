@@ -61,7 +61,6 @@ public class PlayerBottomSheetFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bind = FragmentPlayerBottomSheetBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
-        fixUpEdgeToEdge();
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
 
@@ -382,21 +381,5 @@ public class PlayerBottomSheetFragment extends Fragment {
                     bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.GONE);
             }, Preferences.getSyncCountdownTimer() * 1000L);
         }
-    }
-
-    private void fixUpEdgeToEdge() {
-        View rootView = bind.getRoot();
-        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
-            Insets innerPadding = insets.getInsets(
-                    WindowInsetsCompat.Type.navigationBars()
-            );
-            rootView.setPadding(
-                    innerPadding.left,
-                    innerPadding.top,
-                    innerPadding.right,
-                    innerPadding.bottom
-            );
-            return insets;
-        });
     }
 }
