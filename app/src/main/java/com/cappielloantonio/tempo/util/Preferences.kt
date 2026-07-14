@@ -28,6 +28,7 @@ object Preferences {
     private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val QUICK_ACTION_VISIBLE = "quick_action_visible"
     private const val TRACK_NUMBER_VISIBLE = "track_number_visible"
+    private const val ALBUM_YEAR_VISIBLE = "album_year_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -333,8 +334,18 @@ object Preferences {
         return App.getInstance().preferences.getBoolean(TRACK_NUMBER_VISIBLE, false)
     }
 
+    @JvmStatic
     fun setTrackNumberVisible(trackNumberVisible: Boolean) {
         App.getInstance().preferences.edit().putBoolean(TRACK_NUMBER_VISIBLE, trackNumberVisible).apply()
+    }
+
+    @JvmStatic
+    fun getAlbumYearVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(ALBUM_YEAR_VISIBLE, false)
+    }
+
+    fun setAlbumYearVisible(albumYearVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(ALBUM_YEAR_VISIBLE, albumYearVisible).apply()
     }
 
     @JvmStatic
