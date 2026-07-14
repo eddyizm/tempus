@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -58,6 +61,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         bind = FragmentPlayerBottomSheetBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
+        fixUpEdgeToEdge();
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
 
@@ -378,5 +382,21 @@ public class PlayerBottomSheetFragment extends Fragment {
                     bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.GONE);
             }, Preferences.getSyncCountdownTimer() * 1000L);
         }
+    }
+
+    private void fixUpEdgeToEdge() {
+        View rootView = bind.getRoot();
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            Insets innerPadding = insets.getInsets(
+                    WindowInsetsCompat.Type.navigationBars()
+            );
+            rootView.setPadding(
+                    innerPadding.left,
+                    innerPadding.top,
+                    innerPadding.right,
+                    innerPadding.bottom
+            );
+            return insets;
+        });
     }
 }

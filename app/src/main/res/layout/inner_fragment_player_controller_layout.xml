@@ -402,8 +402,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player_quick_action_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_98sdp"
-        android:paddingBottom="@dimen/_48sdp"
+        android:layout_height="@dimen/_50sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
