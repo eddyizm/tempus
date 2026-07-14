@@ -1,5 +1,7 @@
 package com.cappielloantonio.tempo.ui.activity;
 
+import static com.cappielloantonio.tempo.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -10,7 +12,11 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
@@ -46,6 +52,8 @@ public class CrashActivity extends AppCompatActivity {
         SplashScreen.installSplashScreen(this);
         DynamicColors.applyToActivityIfAvailable(this);
 
+        setUpEdgeToEdge(this);
+        fixUpEdgeToEdge();
         super.onCreate(savedInstanceState);
 
         bind = ActivityCrashBinding.inflate(getLayoutInflater());
@@ -176,5 +184,22 @@ public class CrashActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+    }
+
+
+    private void fixUpEdgeToEdge() {
+        View rootView = findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            Insets innerPadding = insets.getInsets(
+                    WindowInsetsCompat.Type.navigationBars() | WindowInsetsCompat.Type.statusBars()
+            );
+            rootView.setPadding(
+                    innerPadding.left,
+                    innerPadding.top,
+                    innerPadding.right,
+                    innerPadding.bottom
+            );
+            return insets;
+        });
     }
 }
