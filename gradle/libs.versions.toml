@@ -3,6 +3,7 @@ agp = "9.2.1"
 kotlin = "2.2.10"
 
 # AndroidX / Material
+activity = "1.13.0"
 constraintlayout = "2.2.0"
 coordinatorlayout = "1.2.0"
 preferenceKtx = "1.2.1"
@@ -24,6 +25,7 @@ customactivityoncrash = "2.4.0"
 shimmer = "0.5.0"
 
 [libraries]
+androidx-activity = { group = "androidx.activity", name="activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
