@@ -465,6 +465,8 @@
     <string name="settings_song_rating_summary">Jeżeli włączone, pokazuje ocenę w 5 gwiazdkach dla utworu na stronie piosenki\n\n*Wymaga ponownego uruchomienia aplikacji</string>
 	<string name="settings_track_number">Pokaż numer utworu</string>
     <string name="settings_track_number_summary">Jeżeli włączone, pokazuje numer utworu piosenki która jest odtwarzana.</string>
+	<string name="settings_album_year">Pokazuj rok wydania albumu</string>
+    <string name="settings_album_year_summary">Jeżeli włączone, pokazuje rok każdego albumu na stronie wykonawcy.</string>
     <string name="settings_item_rating">Pokaż oceny elementów</string>
     <string name="settings_item_rating_summary">Jeżeli włączone, ocena elementów oraz czy jest oznaczony jako ulubiony będą pokazywane.</string>
     <string name="settings_queue_syncing_countdown">Timer synchronizacji</string>
