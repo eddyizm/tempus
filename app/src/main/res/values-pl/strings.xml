@@ -455,6 +455,7 @@
 	<string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
 	<string name="settings_androidauto_shuffle_starred_tracks">Odtwarzaj losowo utwory oznaczone gwiazdką</string>
 	<string name="settings_androidauto_shuffle_playlists">Odtarzaj losowo z playlisty</string>
+	<string name="settings_androidauto_shuffle_downloaded_tracks">Odtwarzaj losowo pobrane utwory</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
 	<string name="settings_androidauto_artists_view">Wykonawcy są wyświetlani według albumu</string>
 	<string name="settings_androidauto_starred_for_made_for_you">Oznaczone gwiazdką do mixu stworzonego dla ciebie</string>
