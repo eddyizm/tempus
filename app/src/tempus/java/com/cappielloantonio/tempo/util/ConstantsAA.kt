@@ -32,6 +32,7 @@ object ConstantsAA {
     const val GENRES_ID = "[genresID]"
     const val TRACKS_ID = "[TracksID]"
     const val RECENT_TRACKS_ID = "[recentTracksID]"
+    const val DOWNLOADED_ID = "[downloadedID]"
 
     // Android Auto System functions
     const val INDEX_ID = "[indexID]"

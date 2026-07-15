@@ -116,6 +116,7 @@ object Preferences {
     private const val DARK_THEME_STYLE = "dark_theme_style"
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
     private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
+    private const val AA_SHUFFLE_DOWNLOADED_TRACKS = "androidauto_shuffle_downloaded_tracks"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -945,6 +946,11 @@ object Preferences {
     @JvmStatic
     fun isAndroidAutoShufflePlaylistsEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_SHUFFLE_PLAYLISTS, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoShuffleDownloadedTracksEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_DOWNLOADED_TRACKS, false)
     }
 
     @JvmStatic
