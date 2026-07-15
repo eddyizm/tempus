@@ -21,6 +21,7 @@ import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
 import com.cappielloantonio.tempo.model.Chronology;
+import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.InternetRadioStationCache;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
@@ -364,6 +365,42 @@ public class AutomotiveRepository {
                 chronologyDao.getLastPlayed(server, count).removeObserver(this);
             }
         });
+
+        return listenableFuture;
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getDownloadedSongs() {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+
+        new Thread(() -> {
+            // Any throw here must resolve the future, otherwise the Android Auto
+            // browse request hangs forever with no error feedback.
+            try {
+                List<Download> downloads = AppDatabase.getInstance().downloadDao().getAllSync();
+
+                if (downloads != null && !downloads.isEmpty()) {
+                    if( !Preferences.isAndroidAutoShuffleDownloadedTracksEnabled() ) {
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_ITEMS, downloads.size()));
+                    }
+                    else {
+                        Collections.shuffle(downloads);
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_SHUFFLE_ITEMS, downloads.size()));
+                    }
+
+                    List<Child> songs = new ArrayList<>(downloads);
+
+                    setChildrenMetadata(songs);
+
+                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
+
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
+                } else {
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.of(), null));
+                }
+            } catch (Exception e) {
+                listenableFuture.setException(e);
+            }
+        }).start();
 
         return listenableFuture;
     }
