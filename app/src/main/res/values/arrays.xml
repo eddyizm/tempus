@@ -251,6 +251,21 @@
         <item>600</item>
     </string-array>
 
+    <string-array name="precache_tracks_titles">
+        <item>Disabled</item>
+        <item>Next track</item>
+        <item>Next 2 tracks</item>
+        <item>Next 3 tracks</item>
+        <item>Next 5 tracks</item>
+    </string-array>
+    <string-array name="precache_tracks_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
     <string-array name="playlist_sort_option_titles">
         <item>Name</item>
         <item>Random</item>
