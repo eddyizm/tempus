@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.SystemBarStyle;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -152,18 +153,11 @@ public class MainActivity extends BaseActivity {
         consumePendingPlaybackIntent();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
-            collapseBottomSheetDelayed();
-        else
-            super.onBackPressed();
-    }
-
     public void init() {
 
         initBottomSheet();
         initNavigation();
+        initBackPressedDispatcher();
 
         if (Preferences.getPassword() != null || (Preferences.getToken() != null && Preferences.getSalt() != null)) {
             goFromLogin();
@@ -228,6 +222,18 @@ public class MainActivity extends BaseActivity {
         bottomSheetController.addCallback(bottomSheetCallback);
         bottomSheetController.replaceFragment(R.id.player_bottom_sheet);
         bottomSheetController.checkAfterStateChanged(mainViewModel);
+    }
+
+    public void initBackPressedDispatcher() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
+                    collapseBottomSheetDelayed();
+                else
+                    finishAffinity();
+            }
+        });
     }
 
     public BottomSheetController getBottomSheetController() {
