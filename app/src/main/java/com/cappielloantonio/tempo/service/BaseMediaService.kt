@@ -644,6 +644,20 @@ open class BaseMediaService : MediaLibraryService() {
 
         exoplayer.shuffleModeEnabled = Preferences.isShuffleModeEnabled()
         exoplayer.repeatMode = Preferences.getRepeatMode()
+        exoplayer.playbackParameters = getPlaybackParameters(Preferences.getPlaybackSpeed())
+    }
+
+    private fun getPlaybackParameters(speed: Float): PlaybackParameters {
+        val pitch = if (Preferences.isPlaybackSpeedPitchEnabled()) getAdjustedPitch(speed) else 1.0f
+        return PlaybackParameters(speed, pitch)
+    }
+
+    private fun getAdjustedPitch(speed: Float): Float {
+        return if (Preferences.isPlaybackSpeedManualPitchEnabled()) {
+            Preferences.getPlaybackSpeedManualPitch()
+        } else {
+            speed
+        }
     }
 
     private fun initializeEqualizer() {
