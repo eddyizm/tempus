@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -336,6 +338,22 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     private void initSongsView() {
         bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.songRecyclerView.setHasFixedSize(true);
+
+        /* Edge-to-edge dynamic inset for bottom padding */
+        bind.songRecyclerView.setClipToPadding(false);
+        bind.songRecyclerView.post(() -> {
+            if (bind == null) return;
+            int peekHeight = (int) getResources().getDimension(R.dimen.bottom_sheet_behavior_peek_height);
+            WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(
+                    requireActivity().getWindow().getDecorView());
+            int navBottom = rootInsets == null ? 0
+                    : rootInsets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            bind.songRecyclerView.setPadding(
+                    bind.songRecyclerView.getPaddingLeft(),
+                    bind.songRecyclerView.getPaddingTop(),
+                    bind.songRecyclerView.getPaddingRight(),
+                    navBottom+peekHeight);
+        });
 
         // Synchronize scrolling between the list and the header in landscape mode
         if (bind.playlistInfoScrollView != null) {
