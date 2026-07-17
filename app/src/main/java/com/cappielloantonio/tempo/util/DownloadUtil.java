@@ -111,6 +111,7 @@ public final class DownloadUtil {
     public static synchronized DataSource.Factory getCacheDataSourceFactory(Context context) {
         CacheDataSource.Factory streamCacheFactory = new CacheDataSource.Factory()
                 .setCache(getStreamingCache(context))
+                .setCacheKeyFactory(new StreamingCacheKeyFactory())
                 .setUpstreamDataSourceFactory(getUpstreamDataSourceFactory(context));
 
         ResolvingDataSource.Factory resolvingFactory = new ResolvingDataSource.Factory(
