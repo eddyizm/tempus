@@ -84,7 +84,7 @@ rm lib-decoder-ffmpeg-release.aar
 find . -name "*.so" -exec "${NDK_PATH}/toolchains/llvm/prebuilt/${HOST_PLATFORM}/bin/llvm-strip" --remove-section=.note.gnu.build-id {} \;
 
 # Repack the stripped assets directly into your target output location
-zip -q -r /build/output/lib-decoder-ffmpeg-release.aar *
+zip -q -X -r /build/output/lib-decoder-ffmpeg-release.aar *
 cd /build
 rm -rf "$TEMP_DIR"
 echo "✅ AAR safely repacked with stripped native libraries"
