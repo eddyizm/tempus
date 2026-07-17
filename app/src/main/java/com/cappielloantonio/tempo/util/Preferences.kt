@@ -25,9 +25,13 @@ object Preferences {
     private const val IN_USE_SERVER_ADDRESS = "in_use_server_address"
     private const val NEXT_SERVER_SWITCH = "next_server_switch"
     private const val PLAYBACK_SPEED = "playback_speed"
+    private const val PLAYBACK_SPEED_PITCH = "playback_speed_pitch"
+    private const val PLAYBACK_SPEED_MANUAL_PITCH = "playback_speed_manual_pitch"
+    private const val PLAYBACK_SPEED_MANUAL_PITCH_VALUE = "playback_speed_manual_pitch_value"
     private const val BITRATE_VISIBLE = "bitrate_visible"
     private const val QUICK_ACTION_VISIBLE = "quick_action_visible"
     private const val TRACK_NUMBER_VISIBLE = "track_number_visible"
+    private const val ALBUM_YEAR_VISIBLE = "album_year_visible"
     private const val SKIP_SILENCE = "skip_silence"
     private const val SHUFFLE_MODE = "shuffle_mode"
     private const val REPEAT_MODE = "repeat_mode"
@@ -82,6 +86,7 @@ object Preferences {
     private const val GITHUB_UPDATE_CHECK = "github_update_check"
     private const val CONTINUOUS_PLAY = "continuous_play"
     private const val NUMBER_TRACKS_KEEP_IN_QUEUE = "number_tracks_keep_in_queue"
+    private const val FALLBACK_TO_RANDOM_TRACKS = "fallback_to_random_tracks"
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
     private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
@@ -115,6 +120,7 @@ object Preferences {
     private const val DARK_THEME_STYLE = "dark_theme_style"
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
     private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
+    private const val AA_SHUFFLE_DOWNLOADED_TRACKS = "androidauto_shuffle_downloaded_tracks"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -308,6 +314,36 @@ object Preferences {
     }
 
     @JvmStatic
+    fun isPlaybackSpeedPitchEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(PLAYBACK_SPEED_PITCH, false)
+    }
+
+    @JvmStatic
+    fun setPlaybackSpeedPitchEnabled(isEnabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(PLAYBACK_SPEED_PITCH, isEnabled).apply()
+    }
+
+    @JvmStatic
+    fun isPlaybackSpeedManualPitchEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(PLAYBACK_SPEED_MANUAL_PITCH, false)
+    }
+
+    @JvmStatic
+    fun setPlaybackSpeedManualPitchEnabled(isEnabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(PLAYBACK_SPEED_MANUAL_PITCH, isEnabled).apply()
+    }
+
+    @JvmStatic
+    fun getPlaybackSpeedManualPitch(): Float {
+        return App.getInstance().preferences.getFloat(PLAYBACK_SPEED_MANUAL_PITCH_VALUE, 1f)
+    }
+
+    @JvmStatic
+    fun setPlaybackSpeedManualPitch(pitch: Float) {
+        App.getInstance().preferences.edit().putFloat(PLAYBACK_SPEED_MANUAL_PITCH_VALUE, pitch).apply()
+    }
+
+    @JvmStatic
     fun getBitrateVisible(): Boolean {
         return App.getInstance().preferences.getBoolean(BITRATE_VISIBLE, true)
     }
@@ -332,8 +368,18 @@ object Preferences {
         return App.getInstance().preferences.getBoolean(TRACK_NUMBER_VISIBLE, false)
     }
 
+    @JvmStatic
     fun setTrackNumberVisible(trackNumberVisible: Boolean) {
         App.getInstance().preferences.edit().putBoolean(TRACK_NUMBER_VISIBLE, trackNumberVisible).apply()
+    }
+
+    @JvmStatic
+    fun getAlbumYearVisible(): Boolean {
+        return App.getInstance().preferences.getBoolean(ALBUM_YEAR_VISIBLE, false)
+    }
+
+    fun setAlbumYearVisible(albumYearVisible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(ALBUM_YEAR_VISIBLE, albumYearVisible).apply()
     }
 
     @JvmStatic
@@ -733,6 +779,19 @@ object Preferences {
     fun getNumberOfTracksKeepInQueue(): Int {
         return App.getInstance().preferences.getInt(NUMBER_TRACKS_KEEP_IN_QUEUE, 30) - 1
     }
+
+    @JvmStatic
+    fun isFallbackToRandomTracksEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(FALLBACK_TO_RANDOM_TRACKS, false)
+    }
+
+    @JvmStatic
+    fun setFallbackToRandomTracksEnabled(enabled: Boolean) {
+        App.getInstance().preferences.edit()
+            .putBoolean(FALLBACK_TO_RANDOM_TRACKS, enabled)
+            .apply()
+    }
+
     @JvmStatic
     fun setLastInstantMix() {
         App.getInstance().preferences.edit().putLong(LAST_INSTANT_MIX, System.currentTimeMillis()).apply()
@@ -931,6 +990,11 @@ object Preferences {
     @JvmStatic
     fun isAndroidAutoShufflePlaylistsEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(AA_SHUFFLE_PLAYLISTS, false)
+    }
+
+    @JvmStatic
+    fun isAndroidAutoShuffleDownloadedTracksEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_SHUFFLE_DOWNLOADED_TRACKS, false)
     }
 
     @JvmStatic

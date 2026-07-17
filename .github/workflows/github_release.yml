@@ -77,6 +77,16 @@ jobs:
             mv "$file" "$new_name"
           done
 
+      - name: Rename Mapping Files
+        run: |
+          mv -v app/build/outputs/mapping/tempusRelease/mapping.txt app/build/outputs/mapping/tempusRelease/mapping_Tempus.txt
+          mv -v app/build/outputs/mapping/degoogledRelease/mapping.txt app/build/outputs/mapping/degoogledRelease/mapping_Degoogled.txt
+
+      - name: Compress Mapping Files
+        run: |
+          gzip -v app/build/outputs/mapping/tempusRelease/mapping_Tempus.txt
+          gzip -v app/build/outputs/mapping/degoogledRelease/mapping_Degoogled.txt
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -89,4 +99,5 @@ jobs:
           files: |
             app/build/outputs/apk/tempus/release/*-release.apk
             app/build/outputs/apk/degoogled/release/*-release.apk
-
+            app/build/outputs/mapping/tempusRelease/mapping_Tempus.txt.gz
+            app/build/outputs/mapping/degoogledRelease/mapping_Degoogled.txt.gz

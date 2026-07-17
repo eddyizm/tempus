@@ -262,6 +262,14 @@
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
+    <string name="playback_speed_decrease_button_content_description">Decrease playback speed</string>
+    <string name="playback_speed_increase_button_content_description">Increase playback speed</string>
+    <string name="playback_speed_pitch_switch_title">Preserve pitch</string>
+    <string name="playback_speed_manual_pitch_switch_title">Manual pitch</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Decrease manual pitch</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Increase manual pitch</string>
+    <string name="playback_speed_dialog_reset_button">Reset</string>
     <string name="playback_speed_dialog_negative_button">Cancel</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
@@ -402,6 +410,8 @@
     <string name="settings_continuous_play_title">Continuous play</string>
     <string name="settings_number_tracks_keep_in_queue">Number of tracks to keep in queue</string>
     <string name="settings_number_tracks_keep_in_queue_summary">Adjust the number of tracks to keep in queue before starting to add tracks with continuous play</string>
+    <string name="settings_fallback_to_random_tracks_summary">Play random songs as a fallback when similar tracks are unavailable</string>
+    <string name="settings_fallback_to_random_tracks_title">Fallback to random tracks</string>
     <string name="settings_covers_cache">Size of artwork cache</string>
     <string name="settings_data_saving_mode_summary">In order to reduce data consumption, avoid downloading covers.</string>
     <string name="settings_data_saving_mode_title">Limit mobile data usage</string>
@@ -453,6 +463,7 @@
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
+    <string name="settings_androidauto_shuffle_downloaded_tracks">Shuffle downloaded tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
@@ -462,6 +473,8 @@
     <string name="settings_song_rating_summary">If enabled, shows 5 star rating for track on song page\n\n*Requires App restart</string>
     <string name="settings_track_number">Show track number</string>
     <string name="settings_track_number_summary">If enabled, shows the track number of the song being played.</string>
+    <string name="settings_album_year">Show album year</string>
+    <string name="settings_album_year_summary">If enabled, shows the year of each album on the artist page.</string>
     <string name="settings_item_rating">Show item rating</string>
     <string name="settings_item_rating_summary">If enabled, the item\'s rating and whether it is marked as a favorite will be displayed.</string>
     <string name="settings_queue_syncing_countdown">Sync timer</string>
@@ -638,7 +651,7 @@
     <string name="track_info_year">Year</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
-    <string name="undraw_url" translatable="false">https://undraw.co/</string>
+	<string name="undraw_url" translatable="false">https://undraw.co/</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Not playing</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>

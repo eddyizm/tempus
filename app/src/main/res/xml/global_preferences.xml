@@ -107,6 +107,12 @@
             android:key="track_number_visible" />
 
         <SwitchPreference
+            android:title="@string/settings_album_year"
+            android:defaultValue="false"
+            android:summary="@string/settings_album_year_summary"
+            android:key="album_year_visible" />
+
+        <SwitchPreference
             android:title="@string/settings_item_rating"
             android:defaultValue="false"
             android:summary="@string/settings_item_rating_summary"
@@ -236,6 +242,12 @@
             app:min="20"
             app:showSeekBarValue="true"
             app:adjustable="true" />
+
+        <SwitchPreference
+            android:title="@string/settings_fallback_to_random_tracks_title"
+            android:defaultValue="false"
+            android:summary="@string/settings_fallback_to_random_tracks_summary"
+            android:key="fallback_to_random_tracks" />
 
         <ListPreference
             app:defaultValue="[heartID]"
@@ -592,6 +604,11 @@
             android:title="@string/settings_androidauto_shuffle_playlists"
             android:defaultValue="false"
             android:key="androidauto_shuffle_playlists" />
+
+        <SwitchPreference
+            android:title="@string/settings_androidauto_shuffle_downloaded_tracks"
+            android:defaultValue="false"
+            android:key="androidauto_shuffle_downloaded_tracks" />
 
         <ListPreference
             app:defaultValue="0"

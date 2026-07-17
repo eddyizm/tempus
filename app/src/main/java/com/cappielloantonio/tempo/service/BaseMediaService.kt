@@ -39,8 +39,13 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
 import com.cappielloantonio.tempo.util.SleepTimerManager
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
+import com.google.common.util.concurrent.FutureCallback
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
@@ -55,6 +60,7 @@ open class BaseMediaService : MediaLibraryService() {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
         const val ACTION_RELOAD_EQUALIZER = "com.cappielloantonio.tempo.service.ACTION_RELOAD_EQUALIZER"
+        var activeBrowserCount = 0
     }
 
     protected lateinit var exoplayer: ExoPlayer
@@ -115,16 +121,50 @@ open class BaseMediaService : MediaLibraryService() {
         // #682 recovers from). Instead, replace only the non-current items, and only when
         // the resolved URI actually changed, so the active item is never touched while
         // upcoming tracks still pick up the new network's transcoding settings.
+
+        // Threading: the heavy computation (MappingUtil + isDownloaded) runs on a background
+        // thread to avoid blocking the main thread. Only items from current+1 onward are
+        // processed — already-played items are skipped. replaceMediaItem() is dispatched back
+        // to the main thread via widgetUpdateHandler. The guard i < player.mediaItemCount protects
+        // against queue changes during the background computation.
+
         val current = player.currentMediaItemIndex
         if (current == C.INDEX_UNSET) return
-        for (i in 0 until player.mediaItemCount) {
-            if (i == current) continue
-            val old = player.getMediaItemAt(i)
-            val mapped = MappingUtil.mapMediaItem(old)
-            if (mapped.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
-                player.replaceMediaItem(i, mapped)
-            }
+
+        // read all items
+        val itemsToProcess = (current + 1 until player.mediaItemCount).map { i ->
+            Pair(i, player.getMediaItemAt(i))
         }
+        if (itemsToProcess.isEmpty()) return
+
+        val delegate = Executors.newSingleThreadExecutor()
+        val executor = MoreExecutors.listeningDecorator(delegate)
+        val future: ListenableFuture<List<Pair<Int, MediaItem>>> = executor.submit(Callable {
+            itemsToProcess.mapNotNull { (i, old) ->
+                val mapped = MappingUtil.mapMediaItem(old)
+                if (mapped.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
+                    Pair(i, mapped)
+                } else null
+            }
+        })
+        delegate.shutdown()
+
+        Futures.addCallback(future, object : FutureCallback<List<Pair<Int, MediaItem>>> {
+            override fun onSuccess(updates: List<Pair<Int, MediaItem>>) {
+                widgetUpdateHandler.post {
+                    updates.forEach { (i, mapped) ->
+                        if (i > player.currentMediaItemIndex
+                            && i < player.mediaItemCount
+                            && player.getMediaItemAt(i).mediaId == mapped.mediaId) {
+                            player.replaceMediaItem(i, mapped)
+                        }
+                    }
+                }
+            }
+            override fun onFailure(t: Throwable) {
+                Log.e(TAG, "updateMediaItems failed", t)
+            }
+        }, MoreExecutors.directExecutor())
     }
 
     fun restorePlayerFromQueue(player: Player) {
@@ -604,6 +644,20 @@ open class BaseMediaService : MediaLibraryService() {
 
         exoplayer.shuffleModeEnabled = Preferences.isShuffleModeEnabled()
         exoplayer.repeatMode = Preferences.getRepeatMode()
+        exoplayer.playbackParameters = getPlaybackParameters(Preferences.getPlaybackSpeed())
+    }
+
+    private fun getPlaybackParameters(speed: Float): PlaybackParameters {
+        val pitch = if (Preferences.isPlaybackSpeedPitchEnabled()) getAdjustedPitch(speed) else 1.0f
+        return PlaybackParameters(speed, pitch)
+    }
+
+    private fun getAdjustedPitch(speed: Float): Float {
+        return if (Preferences.isPlaybackSpeedManualPitchEnabled()) {
+            Preferences.getPlaybackSpeedManualPitch()
+        } else {
+            speed
+        }
     }
 
     private fun initializeEqualizer() {

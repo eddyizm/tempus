@@ -1,9 +1,13 @@
 package com.cappielloantonio.tempo.ui.activity;
 
+import static androidx.core.view.WindowCompat.enableEdgeToEdge;
+import static com.cappielloantonio.tempo.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -12,8 +16,16 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.SystemBarStyle;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -48,6 +60,7 @@ import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.internal.EdgeToEdgeUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -86,6 +99,8 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen.installSplashScreen(this);
 
+        setUpEdgeToEdge(this);
+        fixUpEdgeToEdge();
         super.onCreate(savedInstanceState);
 
         bind = ActivityMainBinding.inflate(getLayoutInflater());
@@ -138,18 +153,11 @@ public class MainActivity extends BaseActivity {
         consumePendingPlaybackIntent();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
-            collapseBottomSheetDelayed();
-        else
-            super.onBackPressed();
-    }
-
     public void init() {
 
         initBottomSheet();
         initNavigation();
+        initBackPressedDispatcher();
 
         if (Preferences.getPassword() != null || (Preferences.getToken() != null && Preferences.getSalt() != null)) {
             goFromLogin();
@@ -214,6 +222,18 @@ public class MainActivity extends BaseActivity {
         bottomSheetController.addCallback(bottomSheetCallback);
         bottomSheetController.replaceFragment(R.id.player_bottom_sheet);
         bottomSheetController.checkAfterStateChanged(mainViewModel);
+    }
+
+    public void initBackPressedDispatcher() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
+                    collapseBottomSheetDelayed();
+                else
+                    finishAffinity();
+            }
+        });
     }
 
     public BottomSheetController getBottomSheetController() {
@@ -474,11 +494,21 @@ public class MainActivity extends BaseActivity {
         if (Preferences.isInUseServerAddressLocal()) {
             mainViewModel.ping().observe(this, subsonicResponse -> {
                 if (subsonicResponse == null) {
-                    Preferences.setServerSwitchableTimer();
-                    Preferences.switchInUseServerAddress();
-                    App.refreshSubsonicClient();
-                    pingServer();
-                    resetView();
+                    // Switching only helps when remote and local are different addresses. When
+                    // they're equal (issue #242) switchInUseServerAddress() is a no-op, so we'd
+                    // re-enter this branch forever (ping/refresh/resetView loop). Treat that case
+                    // like an unreachable server instead of looping.
+                    String server = Preferences.getServer();
+                    if (server != null && !server.equals(Preferences.getLocalAddress())) {
+                        Preferences.setServerSwitchableTimer();
+                        Preferences.switchInUseServerAddress();
+                        App.refreshSubsonicClient();
+                        pingServer();
+                        resetView();
+                    } else if (Preferences.showServerUnreachableDialog()) {
+                        ServerUnreachableDialog dialog = new ServerUnreachableDialog();
+                        dialog.show(getSupportFragmentManager(), null);
+                    }
                 } else {
                     Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
                 }
@@ -640,5 +670,21 @@ public class MainActivity extends BaseActivity {
                 .build();
 
         MediaManager.playDownloadedMediaItem(getMediaBrowserListenableFuture(), mediaItem);
+    }
+
+    private void fixUpEdgeToEdge() {
+        View rootView = findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            Insets innerPadding = insets.getInsets(
+                    WindowInsetsCompat.Type.statusBars()
+            );
+            rootView.setPadding(
+                    innerPadding.left,
+                    innerPadding.top,
+                    innerPadding.right,
+                    innerPadding.bottom
+            );
+            return insets;
+        });
     }
 }
