@@ -225,14 +225,20 @@ public class MainActivity extends BaseActivity {
     }
 
     public void initBackPressedDispatcher() {
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        OnBackPressedCallback callback = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
-                if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
-                    collapseBottomSheetDelayed();
-                else
-                    finishAffinity();
+                collapseBottomSheetDelayed();
             }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                callback.setEnabled(newState == BottomSheetBehavior.STATE_EXPANDED);
+            }
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
         });
     }
 
