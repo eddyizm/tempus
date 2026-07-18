@@ -225,7 +225,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public void initBackPressedDispatcher() {
-        OnBackPressedCallback callback = new OnBackPressedCallback(false) {
+        OnBackPressedCallback callback = new OnBackPressedCallback(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             @Override
             public void handleOnBackPressed() {
                 collapseBottomSheetDelayed();
