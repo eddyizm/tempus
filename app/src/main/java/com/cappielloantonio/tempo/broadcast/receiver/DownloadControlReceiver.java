@@ -21,16 +21,11 @@ import java.io.IOException;
 /**
  * BroadcastReceiver that handles Pause / Resume / Cancel actions
  * from the consolidated download notification.
- *
+ * still not working perfectly but better than yesterday
  * Using a BroadcastReceiver keeps action handling decoupled from the service
  * internals and avoids fighting Media3's DownloadService.onStartCommand() flow.
  *
- * Action constants are defined in Constants.kt:
- *   - ACTION_PAUSE_DOWNLOADS   → DownloadService.sendPauseDownloads()
- *   - ACTION_RESUME_DOWNLOADS  → DownloadService.sendResumeDownloads()
- *   - ACTION_CANCEL_DOWNLOADS  → removes only QUEUED/DOWNLOADING/STOPPED downloads,
- *                                 leaving already-COMPLETED tracks intact in the cache.
- */
+  */
 @OptIn(markerClass = UnstableApi.class)
 public class DownloadControlReceiver extends BroadcastReceiver {
 
@@ -42,12 +37,13 @@ public class DownloadControlReceiver extends BroadcastReceiver {
 
         switch (intent.getAction()) {
             case Constants.ACTION_PAUSE_DOWNLOADS:
-                Log.d(TAG, "Pausing downloads");
+                Log.d(TAG, "Pausing downloads via sendPauseDownloads");
                 DownloadService.sendPauseDownloads(context, DownloaderService.class, false);
+                DownloaderService.postPausedNotification(context);
                 break;
 
             case Constants.ACTION_RESUME_DOWNLOADS:
-                Log.d(TAG, "Resuming downloads");
+                Log.d(TAG, "Resuming downloads via sendResumeDownloads");
                 DownloadService.sendResumeDownloads(context, DownloaderService.class, false);
                 break;
 

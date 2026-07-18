@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.offline.Download;
+import androidx.media3.exoplayer.offline.DownloadCursor;
+import androidx.media3.exoplayer.offline.DownloadIndex;
 import androidx.media3.exoplayer.offline.DownloadManager;
 import androidx.media3.exoplayer.offline.DownloadNotificationHelper;
 import androidx.media3.exoplayer.scheduler.PlatformScheduler;
@@ -23,33 +25,13 @@ import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * Foreground service that drives Media3 DownloadManager.
- *
- * ── Change log ──────────────────────────────────────────────────────────────
- * Step 1.1  Removed per-track notification spam (nextNotificationId++).
- *           TerminalStateNotificationHelper now only updates Room DB.
- *           Added listenerRegistered guard (Bug 2 prevention).
- *
- * Step 1.2  getForegroundNotification shows "N of M" batch progress.
- *           Uses Media3's downloads list as ground truth (Bug 3 prevention).
- *           batchTotal high-water mark avoids countdown regression (Bug 1).
- *
- * Step 1.3  Current song title shown as the notification content text.
- *           Looks for the first actively DOWNLOADING item and resolves its
- *           title via DownloaderManager.getDownloadNotificationMessage().
- *
- * Step 1.4  Download speed (KB/s or MB/s) calculated per notification tick
- *           from the summed bytesDownloaded delta across all active downloads.
- *
- * Step 1.5  Pause / Cancel and Resume / Cancel action buttons.
- *           "Pause" is shown while downloading; tapping it flips to "Resume".
- *           Cancel removes only QUEUED/DOWNLOADING/STOPPED items, keeping
- *           already-COMPLETED downloads intact.
- *           Button taps are handled by DownloadControlReceiver.
  * ────────────────────────────────────────────────────────────────────────────
  */
 @UnstableApi
@@ -58,31 +40,17 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
     private static final int JOB_ID = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
-    // ── Batch progress tracking ──────────────────────────────────────────────
-    // High-water mark: grows to the max active+queued count seen in a batch.
-    // Resets when the batch drains to 0. Never shrinks mid-batch (Bug 1 fix).
     private static volatile int batchTotal = 0;
 
-    // Guard: only register the TerminalStateNotificationHelper once per
-    // DownloadManager instance, even though getDownloadManager() may be called
-    // many times by the framework (Bug 2 fix).
     private static boolean listenerRegistered = false;
 
-    // ── Speed tracking ───────────────────────────────────────────────────────
-    // Accumulated bytes across all active downloads at the last notification tick.
     private static long lastTotalBytesDownloaded = 0L;
-    // Wall-clock time of the last notification tick (ms).
     private static long lastSpeedCheckTimeMs = 0L;
-    // Last computed speed string ("1.2 MB/s", "340 KB/s", etc.).
     private static String lastSpeedLabel = "";
 
-    // ── Pause state ──────────────────────────────────────────────────────────
-    // True while all active downloads are STATE_STOPPED (paused by user).
-    // Drives whether we show "Pause" or "Resume" button.
     private static volatile boolean isPaused = false;
     public static volatile boolean isCancelling = false;
 
-    // Pending intent request codes (must be unique per PendingIntent).
     private static final int RC_PAUSE   = 10;
     private static final int RC_RESUME  = 11;
     private static final int RC_CANCEL  = 12;
@@ -116,9 +84,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         return new PlatformScheduler(this, JOB_ID);
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    // getForegroundNotification — Steps 1.2 + 1.3 + 1.4 + 1.5
-    // ────────────────────────────────────────────────────────────────────────
 
     @NonNull
     @Override
@@ -126,10 +91,9 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             @NonNull List<Download> downloads,
             @Requirements.RequirementFlags int notMetRequirements) {
 
-        // ── Step 1.2: Batch progress ─────────────────────────────────────────
         int activeCount = 0;
         long totalBytesDownloaded = 0L;
-        Download activeDownload = null;   // used for Step 1.3 (track title)
+        Download activeDownload = null;
 
         for (Download download : downloads) {
             switch (download.state) {
@@ -143,16 +107,14 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                     activeCount++;
                     totalBytesDownloaded += download.getBytesDownloaded();
                     if (activeDownload == null) {
-                        activeDownload = download; // first actively transferring item
+                        activeDownload = download;
                     }
                     break;
                 default:
-                    // STATE_COMPLETED / STATE_FAILED: terminal, not counted
                     break;
             }
         }
 
-        // Grow the high-water mark; never shrink during an active batch.
         if (activeCount > batchTotal) {
             batchTotal = activeCount;
         }
@@ -172,14 +134,11 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         lastTotalBytesDownloaded = totalBytesDownloaded;
         lastSpeedCheckTimeMs = nowMs;
 
-        // ── Step 1.3: Track title ─────────────────────────────────────────────
-        // Prefer the actively downloading item's title; fall back to any queued item.
         String trackTitle = null;
         if (activeDownload != null) {
             trackTitle = DownloaderManager.getDownloadNotificationMessage(activeDownload.request.id);
         }
         if (trackTitle == null) {
-            // Fall back to the first queued item when nothing is actively transferring yet.
             for (Download d : downloads) {
                 if (d.state == Download.STATE_QUEUED || d.state == Download.STATE_RESTARTING) {
                     trackTitle = DownloaderManager.getDownloadNotificationMessage(d.request.id);
@@ -188,8 +147,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             }
         }
 
-        // ── Step 1.5: Detect pause state ─────────────────────────────────────
-        // Consider the batch paused if every non-terminal download is STOPPED.
         boolean allStopped = activeCount > 0;
         for (Download download : downloads) {
             if (download.state == Download.STATE_QUEUED
@@ -201,9 +158,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         }
         isPaused = allStopped;
 
-        // ── Reset when batch drains ───────────────────────────────────────────
         if (activeCount == 0 && batchTotal > 0) {
-            // Step 1.8: One-shot completion notification
             if (!isCancelling) {
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 NotificationCompat.Builder doneBuilder = new NotificationCompat.Builder(
@@ -221,13 +176,10 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             lastSpeedLabel = "";
             isCancelling = false;
             
-            // Clear paused notification if batch just finished/cancelled
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(2);
         }
 
-        // ── Build notification content ─────────────────────────────────────────
-        // Title: "Downloading 3 of 10  •  1.2 MB/s" (or "Downloads Paused  3 of 10")
         String notifTitle;
         String speedSuffix = (!lastSpeedLabel.isEmpty() && !isPaused)
                 ? "  •  " + lastSpeedLabel : "";
@@ -242,10 +194,8 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             notifTitle = "Downloading" + speedSuffix;
         }
 
-        // Content text = current track title (Step 1.3)
         String contentText = trackTitle;
 
-        // ── Step 1.5: Build action buttons ────────────────────────────────────
         NotificationCompat.Action pauseOrResumeAction = isPaused
                 ? buildAction(R.drawable.ic_play,
                         getString(R.string.notification_action_resume),
@@ -259,7 +209,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                 getString(R.string.notification_action_cancel),
                 Constants.ACTION_CANCEL_DOWNLOADS, RC_CANCEL);
 
-        // ── Assemble final notification ───────────────────────────────────────
         NotificationCompat.Builder builder = new NotificationCompat.Builder(
                 this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_download)
@@ -274,20 +223,11 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             builder.setContentText(contentText);
         }
 
-        // Show indeterminate progress bar while actively downloading.
         if (activeCount > 0 && !isPaused) {
             builder.setProgress(0, 0, true);
         }
 
         Notification finalNotification = builder.build();
-
-        // ── Step 1.7: Durable paused notification ─────────────────────────────
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (isPaused && activeCount > 0) {
-            notificationManager.notify(2, finalNotification);
-        } else if (activeCount > 0) {
-            notificationManager.cancel(2);
-        }
 
         return finalNotification;
     }
@@ -321,14 +261,120 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         }
     }
 
+    /**
+     * Build and post a durable paused notification that persists even when the
+     * service stops being a foreground service. Called from DownloadControlReceiver
+     * when the user taps "Pause".
+     */
+    public static void postPausedNotification(Context context) {
+        DownloadManager downloadManager = DownloadUtil.getDownloadManager(context);
+        DownloadIndex downloadIndex = downloadManager.getDownloadIndex();
+        List<Download> downloads = new ArrayList<>();
+        try (DownloadCursor cursor = downloadIndex.getDownloads()) {
+            while (cursor.moveToNext()) {
+                downloads.add(cursor.getDownload());
+            }
+        } catch (IOException e) {
+            return;
+        }
+
+        // Calculate the same state as getForegroundNotification
+        int activeCount = 0;
+        long totalBytesDownloaded = 0L;
+        Download activeDownload = null;
+        for (Download download : downloads) {
+            switch (download.state) {
+                case Download.STATE_QUEUED:
+                case Download.STATE_RESTARTING:
+                case Download.STATE_STOPPED:
+                    activeCount++;
+                    totalBytesDownloaded += download.getBytesDownloaded();
+                    break;
+                case Download.STATE_DOWNLOADING:
+                    activeCount++;
+                    totalBytesDownloaded += download.getBytesDownloaded();
+                    if (activeDownload == null) {
+                        activeDownload = download;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (activeCount == 0) {
+            return;
+        }
+
+        int completed = batchTotal - activeCount;
+        if (completed < 0) completed = 0;
+
+        // Determine track title
+        String trackTitle = null;
+        if (activeDownload != null) {
+            trackTitle = DownloaderManager.getDownloadNotificationMessage(activeDownload.request.id);
+        }
+        if (trackTitle == null) {
+            for (Download d : downloads) {
+                if (d.state == Download.STATE_QUEUED || d.state == Download.STATE_RESTARTING) {
+                    trackTitle = DownloaderManager.getDownloadNotificationMessage(d.request.id);
+                    if (trackTitle != null) break;
+                }
+            }
+        }
+
+        // Build paused notification
+        String notifTitle = "Downloads Paused — " + completed + " of " + batchTotal;
+
+        NotificationCompat.Action resumeAction = buildActionStatic(
+                context, R.drawable.ic_play,
+                context.getString(R.string.notification_action_resume),
+                Constants.ACTION_RESUME_DOWNLOADS, RC_RESUME);
+
+        NotificationCompat.Action cancelAction = buildActionStatic(
+                context, R.drawable.ic_close,
+                context.getString(R.string.notification_action_cancel),
+                Constants.ACTION_CANCEL_DOWNLOADS, RC_CANCEL);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(
+                context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_download)
+                .setContentTitle(notifTitle)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setShowWhen(false)
+                .addAction(resumeAction)
+                .addAction(cancelAction);
+
+        if (trackTitle != null && !trackTitle.isEmpty()) {
+            builder.setContentText(trackTitle);
+        }
+
+        Notification finalNotification = builder.build();
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(2, finalNotification);
+    }
+
+    /**
+     * Static version of buildAction for use in static context.
+     */
+    private static NotificationCompat.Action buildActionStatic(Context context, int iconRes, String label, String action, int requestCode) {
+        Intent intent = new Intent(action);
+        intent.setClass(context, DownloadControlReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context,
+                requestCode,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        return new NotificationCompat.Action(iconRes, label, pendingIntent);
+    }
+
     // ────────────────────────────────────────────────────────────────────────
-    // TerminalStateNotificationHelper — Step 1.1
+    // TerminalStateNotificationHelper
     // ────────────────────────────────────────────────────────────────────────
 
     /**
      * Listens for terminal download state changes and updates the Room database.
-     * Per-track notification posting removed in Step 1.1.
-     * notificationHelper retained for Step 1.8 (one-shot completion notification).
      */
     private static final class TerminalStateNotificationHelper implements DownloadManager.Listener {
         private final Context context;

@@ -71,16 +71,45 @@ public class DownloaderManager {
         return mediaItems.stream().anyMatch(this::isDownloaded);
     }
 
-    public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
-        download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
-
+    public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download, boolean forceResume) {
         String externalUri = Preferences.getDownloadDirectoryUri();
+
         if (externalUri != null) {
+            // For external downloads, set download_uri to the expected exported file URI
+            // so that DeleteDownloadStorageDialog can match files for deletion.
+            String artist = download.getArtist() != null ? download.getArtist() : "";
+            String title = download.getTitle() != null ? download.getTitle() : download.getId();
+            String album = download.getAlbum() != null ? download.getAlbum() : "";
+            String baseName = artist.isEmpty() ? title : artist + " - " + title;
+            if (!album.isEmpty()) baseName += " (" + album + ")";
+            String sanitized = baseName.replaceAll("[\\\\/:*?\"<>|]", "_").replaceAll("\\s+", " ").trim();
+            if (sanitized.isEmpty()) sanitized = "download";
+            String extension = download.getSuffix();
+            if (extension == null || extension.isEmpty()) extension = "mp3";
+            download.setDownloadUri(externalUri + "/" + sanitized + "." + extension);
+
             com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore.recordExportTarget(mediaItem.mediaId, externalUri);
+        } else {
+            // For internal downloads, set download_uri to the HTTP streaming URI
+            // (internal .exo files are managed by Media3's DownloadManager cache)
+            download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
         }
 
-        DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
-        insertDatabase(download);
+        // Check if already downloaded and not failed before starting
+        if (isDownloaded(mediaItem) && !hasFailedDownloads()) {
+            return; // Already downloaded and not failed, skip
+        }
+
+        // If forceResume is true, force a fresh download from queued state
+        if (forceResume) {
+            DownloadService.sendRemoveDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem).id, false);
+            insertDatabase(download);
+            DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
+        } else {
+            // Just add the download - Media3 will manage the queue and persistence
+            DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
+            insertDatabase(download);
+        }
     }
 
     public void download(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
@@ -135,6 +164,17 @@ public class DownloaderManager {
 
     private static DownloadRepository getDownloadRepository() {
         return new DownloadRepository();
+    }
+
+    private static boolean hasFailedDownloads() {
+        if (downloads == null) return false;
+        return downloads.values().stream()
+            .anyMatch(d -> d.state == Download.STATE_FAILED);
+    }
+
+    // For backward compatibility with existing callers
+    public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
+        download(mediaItem, download, false);
     }
 
     private static void insertDatabase(com.cappielloantonio.tempo.model.Download download) {
