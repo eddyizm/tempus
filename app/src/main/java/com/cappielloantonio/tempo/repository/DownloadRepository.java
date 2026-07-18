@@ -181,6 +181,29 @@ public class DownloadRepository {
         thread.start();
     }
 
+    public void updateDownloadUri(String id, String uri) {
+        UpdateDownloadUriThreadSafe update = new UpdateDownloadUriThreadSafe(downloadDao, id, uri);
+        Thread thread = new Thread(update);
+        thread.start();
+    }
+
+    private static class UpdateDownloadUriThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private final String id;
+        private final String uri;
+
+        public UpdateDownloadUriThreadSafe(DownloadDao downloadDao, String id, String uri) {
+            this.downloadDao = downloadDao;
+            this.id = id;
+            this.uri = uri;
+        }
+
+        @Override
+        public void run() {
+            downloadDao.updateDownloadUri(id, uri);
+        }
+    }
+
     private static class DeleteThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private final String id;

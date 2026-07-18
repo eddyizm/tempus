@@ -170,6 +170,10 @@ public class ExternalAudioWriter {
 
                 ExternalAudioReader.refreshCacheAsync();
 
+                // Update download_uri in database to point to the actual exported file URI
+                // This allows "Delete all downloads" to find and delete the external files
+                new DownloadRepository().updateDownloadUri(mediaId, targetFile.getUri().toString());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
