@@ -70,204 +70,110 @@ public class ExternalAudioWriter {
 
     public static void downloadToUserDirectory(Context context, Child child, String playlistId, String playlistName) {
         if (context == null || child == null) return;
-        Context appContext = context.getApplicationContext();
-        MediaItem mediaItem = MappingUtil.mapDownload(child);
-        String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
-        
-        EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName));
-    }
-
-    private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
             notifyUnavailable(context);
             return;
         }
 
-        DocumentFile directory = DocumentFile.fromTreeUri(context, Uri.parse(uriString));
-        if (directory == null || !directory.canWrite()) {
-            notifyFailure(context, "Cannot write to folder.");
+        MediaItem mediaItem = com.cappielloantonio.tempo.util.MappingUtil.mapDownload(child);
+        Download download = new Download(child);
+        download.setPlaylistId(playlistId);
+        download.setPlaylistName(playlistName);
+        
+        DownloadUtil.getDownloadTracker(context).download(mediaItem, download);
+    }
+
+    public static void exportDownloadById(Context context, String mediaId) {
+        String targetDirUri = ExternalDownloadMetadataStore.getExportTarget(mediaId);
+        if (targetDirUri == null) {
             return;
         }
 
-        String artist = child.getArtist() != null ? child.getArtist() : "";
-        String title = child.getTitle() != null ? child.getTitle() : fallbackName;
-        String album = child.getAlbum() != null ? child.getAlbum() : "";
-        String baseName = artist.isEmpty() ? title : artist + " - " + title;
-        if (!album.isEmpty()) baseName += " (" + album + ")";
-        if (baseName.isEmpty()) {
-            baseName = fallbackName != null ? fallbackName : "download";
-        }
-        String metadataKey = normalizeForComparison(baseName);
+        EXECUTOR.execute(() -> {
+            try {
+                // Remove export target now that we are attempting it
+                ExternalDownloadMetadataStore.remove(mediaId);
 
-        Uri mediaUri = mediaItem != null && mediaItem.requestMetadata != null
-                ? mediaItem.requestMetadata.mediaUri
-                : null;
-        if (mediaUri == null) {
-            notifyFailure(context, "Invalid media URI.");
-            ExternalDownloadMetadataStore.remove(metadataKey);
-            return;
-        }
-
-        String scheme = mediaUri.getScheme() != null ? mediaUri.getScheme().toLowerCase(Locale.ROOT) : "";
-
-        HttpURLConnection connection = null;
-        DocumentFile sourceDocument = null;
-        File sourceFile = null;
-        long remoteLength = -1;
-        String mimeType = null;
-        DocumentFile targetFile = null;
-
-        try {
-            if (scheme.equals("http") || scheme.equals("https")) {
-                connection = (HttpURLConnection) new URL(mediaUri.toString()).openConnection();
-                connection.setConnectTimeout(CONNECT_TIMEOUT_MS);
-                connection.setReadTimeout(READ_TIMEOUT_MS);
-                connection.setRequestProperty("Accept-Encoding", "identity");
-                connection.connect();
-
-                int responseCode = connection.getResponseCode();
-                if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-                    notifyFailure(context, "Server returned " + responseCode);
-                    ExternalDownloadMetadataStore.remove(metadataKey);
+                // Get the internal download
+                androidx.media3.exoplayer.offline.DownloadManager manager = DownloadUtil.getDownloadManager(context);
+                androidx.media3.exoplayer.offline.Download exoDownload = manager.getDownloadIndex().getDownload(mediaId);
+                if (exoDownload == null || exoDownload.state != androidx.media3.exoplayer.offline.Download.STATE_COMPLETED) {
                     return;
                 }
 
-                mimeType = connection.getContentType();
-                remoteLength = connection.getContentLengthLong();
-            } else if (scheme.equals("content")) {
-                sourceDocument = DocumentFile.fromSingleUri(context, mediaUri);
-                mimeType = context.getContentResolver().getType(mediaUri);
-                if (sourceDocument != null) {
-                    remoteLength = sourceDocument.length();
-                }
-            } else if (scheme.equals("file")) {
-                String path = mediaUri.getPath();
-                if (path != null) {
-                    sourceFile = new File(path);
-                    if (sourceFile.exists()) {
-                        remoteLength = sourceFile.length();
-                    }
-                }
-                String ext = MimeTypeMap.getFileExtensionFromUrl(mediaUri.toString());
-                if (ext != null && !ext.isEmpty()) {
-                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
-                }
-            } else {
-                notifyFailure(context, "Unsupported media URI.");
-                ExternalDownloadMetadataStore.remove(metadataKey);
-                return;
-            }
+                // Get the database tracking item to know the metadata
+                Download dbDownload = new DownloadRepository().getDownload(mediaId);
+                if (dbDownload == null) return;
 
-            if (mimeType == null || mimeType.isEmpty()) {
-                mimeType = "application/octet-stream";
-            }
-
-            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
-            if ((extension == null || extension.isEmpty()) && sourceDocument != null && sourceDocument.getName() != null) {
-                String name = sourceDocument.getName();
-                int dot = name.lastIndexOf('.');
-                if (dot >= 0 && dot < name.length() - 1) {
-                    extension = name.substring(dot + 1);
-                }
-            }
-            if ((extension == null || extension.isEmpty()) && sourceFile != null) {
-                String name = sourceFile.getName();
-                int dot = name.lastIndexOf('.');
-                if (dot >= 0 && dot < name.length() - 1) {
-                    extension = name.substring(dot + 1);
-                }
-            }
-            if (extension == null || extension.isEmpty()) {
-                String suffix = child.getSuffix();
-                if (suffix != null && !suffix.isEmpty()) {
-                    extension = suffix;
-                } else {
-                    extension = "bin";
-                }
-            }
-
-            String sanitized = sanitizeFileName(baseName);
-            if (sanitized.isEmpty()) sanitized = sanitizeFileName(fallbackName);
-            if (sanitized.isEmpty()) sanitized = "download";
-            String fileName = sanitized + "." + extension;
-
-            DocumentFile existingFile = findFile(directory, fileName);
-            Long recordedSize = ExternalDownloadMetadataStore.getSize(metadataKey);
-            if (existingFile != null && existingFile.exists()) {
-                long localLength = existingFile.length();
-                boolean matches = false;
-                if (remoteLength > 0 && localLength == remoteLength) {
-                    matches = true;
-                } else if (remoteLength <= 0 && recordedSize != null && localLength == recordedSize) {
-                    matches = true;
-                }
-                if (matches) {
-                    ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
-                    recordDownload(child, existingFile.getUri(), playlistId, playlistName);
-                    ExternalAudioReader.refreshCacheAsync();
-                    notifyExists(context, fileName);
-                    return;
-                } else {
-                    existingFile.delete();
-                    ExternalDownloadMetadataStore.remove(metadataKey);
-                }
-            }
-
-            targetFile = directory.createFile(mimeType, fileName);
-            if (targetFile == null) {
-                notifyFailure(context, "Failed to create file.");
-                return;
-            }
-
-            Uri targetUri = targetFile.getUri();
-            try (InputStream in = openInputStream(context, mediaUri, scheme, connection, sourceFile);
-                 OutputStream out = context.getContentResolver().openOutputStream(targetUri)) {
-                if (out == null) {
-                    notifyFailure(context, "Cannot open output stream.");
-                    targetFile.delete();
+                DocumentFile directory = DocumentFile.fromTreeUri(context, Uri.parse(targetDirUri));
+                if (directory == null || !directory.canWrite()) {
                     return;
                 }
 
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int len;
-                long total = 0;
-                while ((len = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, len);
-                    total += len;
-                }
-                out.flush();
+                String artist = dbDownload.getArtist() != null ? dbDownload.getArtist() : "";
+                String title = dbDownload.getTitle() != null ? dbDownload.getTitle() : dbDownload.getId();
+                String album = dbDownload.getAlbum() != null ? dbDownload.getAlbum() : "";
+                String baseName = artist.isEmpty() ? title : artist + " - " + title;
+                if (!album.isEmpty()) baseName += " (" + album + ")";
 
-                if (total <= 0) {
-                    targetFile.delete();
-                    ExternalDownloadMetadataStore.remove(metadataKey);
-                    notifyFailure(context, "Empty download.");
+                String extension = dbDownload.getSuffix();
+                if (extension == null || extension.isEmpty()) extension = "mp3";
+
+                String sanitized = sanitizeFileName(baseName);
+                if (sanitized.isEmpty()) sanitized = "download";
+                String fileName = sanitized + "." + extension;
+
+                DocumentFile targetFile = findFile(directory, fileName);
+                if (targetFile != null && targetFile.exists()) {
                     return;
                 }
 
-                if (remoteLength > 0 && total != remoteLength) {
-                    targetFile.delete();
-                    ExternalDownloadMetadataStore.remove(metadataKey);
-                    notifyFailure(context, "Incomplete download.");
-                    return;
+                String mimeType = dbDownload.getContentType();
+                if (mimeType == null || mimeType.isEmpty()) mimeType = "audio/mpeg";
+
+                targetFile = directory.createFile(mimeType, fileName);
+                if (targetFile == null) return;
+
+                androidx.media3.datasource.DataSource dataSource = DownloadUtil.getUpstreamDataSourceFactory(context).createDataSource();
+                androidx.media3.datasource.DataSpec dataSpec = new androidx.media3.datasource.DataSpec(exoDownload.request.uri);
+                long length = dataSource.open(dataSpec);
+
+                try (InputStream in = new InputStream() {
+                        byte[] single = new byte[1];
+                        @Override
+                        public int read() throws IOException {
+                            int r = read(single);
+                            return r == -1 ? -1 : (single[0] & 0xFF);
+                        }
+                        @Override
+                        public int read(byte[] b, int off, int len) throws IOException {
+                            return dataSource.read(b, off, len);
+                        }
+                     };
+                     OutputStream out = context.getContentResolver().openOutputStream(targetFile.getUri())) {
+
+                     if (out == null) {
+                         targetFile.delete();
+                         return;
+                     }
+
+                     byte[] buffer = new byte[BUFFER_SIZE];
+                     int len;
+                     while ((len = in.read(buffer)) != -1) {
+                         out.write(buffer, 0, len);
+                     }
+                     out.flush();
+                } finally {
+                    dataSource.close();
                 }
 
-                ExternalDownloadMetadataStore.recordSize(metadataKey, total);
-                recordDownload(child, targetUri, playlistId, playlistName);
-                notifySuccess(context, fileName, child, targetUri);
                 ExternalAudioReader.refreshCacheAsync();
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            if (targetFile != null) {
-                targetFile.delete();
-            }
-            ExternalDownloadMetadataStore.remove(metadataKey);
-            notifyFailure(context, e.getMessage() != null ? e.getMessage() : "Download failed");
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-        }
+        });
     }
 
     private static void notifyUnavailable(Context context) {
@@ -289,109 +195,4 @@ public class ExternalAudioWriter {
         manager.notify(1011, builder.build());
     }
 
-    private static void notifyFailure(Context context, String message) {
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Download failed")
-                .setContentText(message)
-                .setSmallIcon(android.R.drawable.stat_notify_error)
-                .setAutoCancel(true);
-        manager.notify((int) System.currentTimeMillis(), builder.build());
-    }
-
-    private static void notifySuccess(Context context, String name, Child child, Uri fileUri) {
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Download complete")
-                .setContentText(name)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                .setAutoCancel(true);
-
-        PendingIntent playIntent = buildPlayIntent(context, child, fileUri);
-        if (playIntent != null) {
-            builder.setContentIntent(playIntent);
-        }
-
-        manager.notify((int) System.currentTimeMillis(), builder.build());
-    }
-
-    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName) {
-        if (child == null) return;
-
-        Download download = new Download(child);
-        download.setDownloadState(1);
-        download.setPlaylistId(playlistId);
-        download.setPlaylistName(playlistName);
-
-        if (fileUri != null) {
-            download.setDownloadUri(fileUri.toString());
-        }
-
-        new DownloadRepository().insert(download);
-    }   
-
-    private static void notifyExists(Context context, String name) {
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Already downloaded")
-                .setContentText(name)
-                .setSmallIcon(android.R.drawable.stat_sys_warning)
-                .setAutoCancel(true);
-        manager.notify((int) System.currentTimeMillis(), builder.build());
-    }
-
-    private static PendingIntent buildPlayIntent(Context context, Child child, Uri fileUri) {
-        if (fileUri == null) return null;
-        Intent intent = new Intent(context, MainActivity.class)
-                .setAction(Constants.ACTION_PLAY_EXTERNAL_DOWNLOAD)
-                .putExtra(Constants.EXTRA_DOWNLOAD_URI, fileUri.toString())
-                .putExtra(Constants.EXTRA_DOWNLOAD_MEDIA_ID, child.getId())
-                .putExtra(Constants.EXTRA_DOWNLOAD_TITLE, child.getTitle())
-                .putExtra(Constants.EXTRA_DOWNLOAD_ARTIST, child.getArtist())
-                .putExtra(Constants.EXTRA_DOWNLOAD_ALBUM, child.getAlbum())
-                .putExtra(Constants.EXTRA_DOWNLOAD_DURATION, child.getDuration() != null ? child.getDuration() : 0)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        int requestCode;
-        if (child.getId() != null) {
-            requestCode = Math.abs(child.getId().hashCode());
-        } else {
-            requestCode = Math.abs(fileUri.toString().hashCode());
-        }
-
-        return PendingIntent.getActivity(
-                context,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-    }
-
-    private static InputStream openInputStream(Context context,
-                                               Uri mediaUri,
-                                               String scheme,
-                                               HttpURLConnection connection,
-                                               File sourceFile) throws IOException {
-        switch (scheme) {
-            case "http":
-            case "https":
-                if (connection == null) {
-                    throw new IOException("Connection not initialized");
-                }
-                return connection.getInputStream();
-            case "content":
-                InputStream contentStream = context.getContentResolver().openInputStream(mediaUri);
-                if (contentStream == null) {
-                    throw new IOException("Cannot open content stream");
-                }
-                return contentStream;
-            case "file":
-                if (sourceFile == null || !sourceFile.exists()) {
-                    throw new IOException("Missing source file");
-                }
-                return new FileInputStream(sourceFile);
-            default:
-                throw new IOException("Unsupported scheme " + scheme);
-        }
-    }
 }

@@ -19,7 +19,9 @@ import androidx.media3.exoplayer.offline.DownloadRequest;
 import androidx.media3.exoplayer.offline.DownloadService;
 
 import com.cappielloantonio.tempo.repository.DownloadRepository;
+import com.cappielloantonio.tempo.service.DownloaderService;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.Preferences;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -71,6 +73,11 @@ public class DownloaderManager {
 
     public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
         download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
+
+        String externalUri = Preferences.getDownloadDirectoryUri();
+        if (externalUri != null) {
+            com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore.recordExportTarget(mediaItem.mediaId, externalUri);
+        }
 
         DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
         insertDatabase(download);

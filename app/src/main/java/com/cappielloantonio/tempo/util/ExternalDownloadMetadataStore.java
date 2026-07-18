@@ -16,9 +16,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Stores export intent (mediaId -> target export URI) for downloads that
+ * should be copied to external storage upon completion by Media3.
+ */
 public final class ExternalDownloadMetadataStore {
 
-    private static final String PREF_KEY = "external_download_metadata";
+    private static final String PREF_KEY = "external_download_metadata_v2";
 
     private ExternalDownloadMetadataStore() {
     }
@@ -44,80 +48,39 @@ public final class ExternalDownloadMetadataStore {
         writeAll(new JSONObject());
     }
 
-    public static synchronized void recordSize(String key, long size) {
-        if (key == null || size <= 0) {
+    /**
+     * Records the target directory URI for a specific media item.
+     */
+    public static synchronized void recordExportTarget(String mediaId, String directoryUri) {
+        if (mediaId == null || directoryUri == null) {
             return;
         }
         JSONObject object = readAll();
         try {
-            object.put(key, size);
+            object.put(mediaId, directoryUri);
         } catch (JSONException ignored) {
         }
         writeAll(object);
     }
 
-    public static synchronized void remove(String key) {
-        if (key == null) {
+    public static synchronized void remove(String mediaId) {
+        if (mediaId == null) {
             return;
         }
         JSONObject object = readAll();
-        object.remove(key);
+        object.remove(mediaId);
         writeAll(object);
     }
 
     @Nullable
-    public static synchronized Long getSize(String key) {
-        if (key == null) {
+    public static synchronized String getExportTarget(String mediaId) {
+        if (mediaId == null) {
             return null;
         }
         JSONObject object = readAll();
-        if (!object.has(key)) {
+        if (!object.has(mediaId)) {
             return null;
         }
-        long size = object.optLong(key, -1L);
-        return size > 0 ? size : null;
-    }
-
-    public static synchronized Map<String, Long> snapshot() {
-        JSONObject object = readAll();
-        if (object.length() == 0) {
-            return Collections.emptyMap();
-        }
-        Map<String, Long> sizes = new HashMap<>();
-        Iterator<String> keys = object.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            long size = object.optLong(key, -1L);
-            if (size > 0) {
-                sizes.put(key, size);
-            }
-        }
-        return sizes;
-    }
-
-    public static synchronized void retainOnly(Set<String> keysToKeep) {
-        if (keysToKeep == null || keysToKeep.isEmpty()) {
-            clear();
-            return;
-        }
-        JSONObject object = readAll();
-        if (object.length() == 0) {
-            return;
-        }
-        Set<String> keys = new HashSet<>();
-        Iterator<String> iterator = object.keys();
-        while (iterator.hasNext()) {
-            keys.add(iterator.next());
-        }
-        boolean changed = false;
-        for (String key : keys) {
-            if (!keysToKeep.contains(key)) {
-                object.remove(key);
-                changed = true;
-            }
-        }
-        if (changed) {
-            writeAll(object);
-        }
+        return object.optString(mediaId, null);
     }
 }
