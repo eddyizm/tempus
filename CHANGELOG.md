@@ -1,5 +1,30 @@
 # Changelog
 
+## [4.22.0](https://github.com/eddyizm/tempus/releases/tag/v4.21.2) (2026-07-18)
+## What's Changed
+* chore: Update strings.xml (French) by @benoit-smith in https://github.com/eddyizm/tempus/pull/851
+* chore: compress mapping.txt by @tvillega in https://github.com/eddyizm/tempus/pull/884
+* fix: directory fragment tries to read 0 arguments by @tvillega in https://github.com/eddyizm/tempus/pull/885
+* feat: add Downloads section for offline playback in Android Auto by @sinful1992 in https://github.com/eddyizm/tempus/pull/862
+* fix: pass through click on lyric view by @tvillega in https://github.com/eddyizm/tempus/pull/880
+* feat: show year of album on artist page by @tvillega in https://github.com/eddyizm/tempus/pull/882
+* fix: Migrate to OnBackPressedDispatcher from deprecated onBackPressed by @kongwoojin in https://github.com/eddyizm/tempus/pull/887
+* Improve playback speed dialog by @michioxd in https://github.com/eddyizm/tempus/pull/857
+* perf: stable content-based keys for the streaming cache by @sinful1992 in https://github.com/eddyizm/tempus/pull/865
+* Keep the album list scroll position when returning from an album by @herrerad85 in https://github.com/eddyizm/tempus/pull/888
+* Keep the player sheet opaque and its queue clear of the navigation bar by @herrerad85 in https://github.com/eddyizm/tempus/pull/890
+* fix: bottom padding for song_recycler_view under edge-to-edge by @tvillega in https://github.com/eddyizm/tempus/pull/891
+* feat: optional pre-cache of upcoming queue tracks by @sinful1992 in https://github.com/eddyizm/tempus/pull/866
+* Chore/make ffmpeg build deterministic by @eddyizm in https://github.com/eddyizm/tempus/pull/893
+* docs: update fdroid description by @tvillega in https://github.com/eddyizm/tempus/pull/894
+* fix: Replace lateinit var with an initialized default that sets statu… by @eddyizm in https://github.com/eddyizm/tempus/pull/895
+
+## New Contributors
+* @sinful1992 made their first contribution in https://github.com/eddyizm/tempus/pull/862
+* @michioxd made their first contribution in https://github.com/eddyizm/tempus/pull/857
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.21.3...v4.22.0
+
 ## [4.21.2](https://github.com/eddyizm/tempus/releases/tag/v4.21.2) (2026-07-12)
 ## What's Changed
 * fix: show cached cover art when Limit mobile data usage is enabled by @funkypc in https://github.com/eddyizm/tempus/pull/836
@@ -18,7 +43,7 @@
 * @xandreiAThome made their first contribution in https://github.com/eddyizm/tempus/pull/847
 * @spicyPoke made their first contribution in https://github.com/eddyizm/tempus/pull/728
 
-**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.20.5...v4.21.0
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.20.5...v4.21.2
 
 ## [4.20.5](https://github.com/eddyizm/tempus/releases/tag/v4.20.5) (2026-07-04)
 ## What's Changed
@@ -32,7 +57,7 @@
 * chore: Update Catalan i18n by @marcriera in https://github.com/eddyizm/tempus/pull/830
 
 
-**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.20.0...v4.20.4
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.20.0...v4.20.5
 
 ## [4.20.0](https://github.com/eddyizm/tempus/releases/tag/v4.20.0) (2026-06-27)
 ## What's Changed
