@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.Observer;
@@ -157,6 +159,23 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     private void initQueueRecyclerView() {
         bind.playerQueueRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.playerQueueRecyclerView.setHasFixedSize(true);
+
+        // #883: the queue list draws to the bottom of the screen under the navigation bar (the
+        // player sheet never gets a bottom inset). Pad the list by the bottom system bar inset,
+        // read from the decor view, and let items scroll past it so the last row clears the bar.
+        bind.playerQueueRecyclerView.setClipToPadding(false);
+        bind.playerQueueRecyclerView.post(() -> {
+            if (bind == null) return;
+            WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(
+                    requireActivity().getWindow().getDecorView());
+            int navBottom = rootInsets == null ? 0
+                    : rootInsets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            bind.playerQueueRecyclerView.setPadding(
+                    bind.playerQueueRecyclerView.getPaddingLeft(),
+                    bind.playerQueueRecyclerView.getPaddingTop(),
+                    bind.playerQueueRecyclerView.getPaddingRight(),
+                    navBottom);
+        });
 
         playerSongQueueAdapter = new PlayerSongQueueAdapter(this);
         bind.playerQueueRecyclerView.setAdapter(playerSongQueueAdapter);
