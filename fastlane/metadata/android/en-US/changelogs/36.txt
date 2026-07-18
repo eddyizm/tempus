@@ -1,0 +1,8 @@
+fix pass through click on lyric view
+show year of album on artist page
+Improve playback speed dialog
+Keep the album list scroll position when returning from an album
+Keep the player sheet opaque and its queue clear of the navigation bar
+fix bottom padding for song_recycler_view under edge-to-edge
+optional pre-cache of upcoming queue tracks
+fix bandcamp crashing on login
