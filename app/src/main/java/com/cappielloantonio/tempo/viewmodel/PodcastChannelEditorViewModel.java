@@ -60,7 +60,7 @@ public class PodcastChannelEditorViewModel extends AndroidViewModel {
                         if (response.isSuccessful() && response.body() != null) {
                             ApiResponse apiResponse = response.body();
 
-                            String status = apiResponse.subsonicResponse.getStatus();
+                            String status = apiResponse.getSubsonicResponse().getStatus();
                             if ("ok".equals(status)) {
                                 isSuccess.setValue(true);
                             }
