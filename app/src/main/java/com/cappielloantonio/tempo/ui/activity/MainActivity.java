@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
             parcel.writeBundle(outState);
             int size = parcel.dataSize();
             if (size > MAX_SAVED_STATE_BYTES) {
-                Log.w("MainActivity", "Saved instance state is " + size + " bytes (limit "
+                Log.w(TAG, "Saved instance state is " + size + " bytes (limit "
                         + MAX_SAVED_STATE_BYTES + "); clearing it to avoid TransactionTooLargeException on background (#688)");
                 outState.clear();
             }
