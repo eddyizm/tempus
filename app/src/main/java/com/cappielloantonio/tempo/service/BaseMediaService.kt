@@ -496,6 +496,15 @@ open class BaseMediaService : MediaLibraryService() {
                     if (newPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.setLastPlayedTimestamp(newPosition.mediaItem)
                     }
+                } else if (oldPosition.mediaItemIndex != newPosition.mediaItemIndex) {
+                    // Manual skip to another track: scrobble the track being left if it passed the Last.fm threshold.
+                    if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
+                        val durationMs = ((oldPosition.mediaItem?.mediaMetadata?.extras?.getInt("duration") ?: 0).toLong()) * 1000L
+                        if (MediaManager.meetsScrobbleThreshold(oldPosition.positionMs, durationMs)) {
+                            MediaManager.scrobble(oldPosition.mediaItem, true)
+                            MediaManager.saveChronology(oldPosition.mediaItem)
+                        }
+                    }
                 }
             }
 
