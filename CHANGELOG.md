@@ -1,6 +1,11 @@
 # Changelog
 
-## [4.22.0](https://github.com/eddyizm/tempus/releases/tag/v4.21.2) (2026-07-18)
+## [4.22.1](https://github.com/eddyizm/tempus/releases/tag/v4.22.1) (2026-07-19)
+## What's Changed
+* fix: quit on backpress (#901)
+
+
+## [4.22.0](https://github.com/eddyizm/tempus/releases/tag/v4.22.0) (2026-07-18)
 ## What's Changed
 * chore: Update strings.xml (French) by @benoit-smith in https://github.com/eddyizm/tempus/pull/851
 * chore: compress mapping.txt by @tvillega in https://github.com/eddyizm/tempus/pull/884
