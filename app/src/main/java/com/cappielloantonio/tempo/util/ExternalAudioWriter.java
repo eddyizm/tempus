@@ -91,6 +91,7 @@ public class ExternalAudioWriter {
         }
 
         EXECUTOR.execute(() -> {
+            DocumentFile targetFile = null;
             try {
                 // Remove export target now that we are attempting it
                 ExternalDownloadMetadataStore.remove(mediaId);
@@ -124,7 +125,7 @@ public class ExternalAudioWriter {
                 if (sanitized.isEmpty()) sanitized = "download";
                 String fileName = sanitized + "." + extension;
 
-                DocumentFile targetFile = findFile(directory, fileName);
+                targetFile = findFile(directory, fileName);
                 if (targetFile != null && targetFile.exists()) {
                     return;
                 }
@@ -174,9 +175,13 @@ public class ExternalAudioWriter {
                 // This allows "Delete all downloads" to find and delete the external files
                 new DownloadRepository().updateDownloadUri(mediaId, targetFile.getUri().toString());
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // Remove the partial file so streaming/early failures cannot
+                    // leave a truncated download that the reader would surface as
+                    // complete and skip re-downloading.
+                    if (targetFile != null) targetFile.delete();
+                }
         });
     }
 
