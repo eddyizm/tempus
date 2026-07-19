@@ -46,7 +46,7 @@ public class DownloadRepository {
             e.printStackTrace();
         }
 
-        return download != null && (download.getDownloadState() == 0 || download.getDownloadState() == 1) ? download : null;
+        return download;
     }
 
     /**
