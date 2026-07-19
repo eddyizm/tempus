@@ -17,6 +17,7 @@ import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionCommand;
+import androidx.media3.session.SessionResult;
 
 import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
@@ -374,8 +375,22 @@ public class MediaManager {
         args.putInt(Constants.PLAY_NEXT_INSERT_POS, insertPos);
         args.putInt(Constants.PLAY_NEXT_COUNT, items.size());
         args.putInt(Constants.PLAY_NEXT_TARGET_COUNT, targetCount);
-        browser.sendCustomCommand(
-                new SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY), args);
+        ListenableFuture<SessionResult> fixup =
+                browser.sendCustomCommand(
+                        new SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY), args);
+        Futures.addCallback(fixup, new FutureCallback<SessionResult>() {
+            @Override
+            public void onSuccess(SessionResult result) {
+                if (result.resultCode != SessionResult.RESULT_SUCCESS) {
+                    Log.e(TAG, "insertPlayNext: play-next fixup rejected with code " + result.resultCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(TAG, "insertPlayNext: play-next fixup command failed", t);
+            }
+        }, MoreExecutors.directExecutor());
         browser.addMediaItems(insertPos, items);
     }
 

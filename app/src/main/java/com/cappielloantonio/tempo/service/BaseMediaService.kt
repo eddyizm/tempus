@@ -167,59 +167,60 @@ open class BaseMediaService : MediaLibraryService() {
         }, MoreExecutors.directExecutor())
     }
 
-    // #329: "Play next" puts a track right after the current one on the TIMELINE, but under
-    // shuffle the play order is the ExoPlayer shuffle order, which the controller can't set
-    // and which ExoPlayer randomizes on insert. The UI sends this request (insert position,
-    // item count, and expected post-insert item count) and separately inserts the items; the
-    // two arrive in any order, and addMediaItems is applied asynchronously by the session, so
-    // we stash the request and apply it from onTimelineChanged once the insert is actually
-    // visible on the service player. Applying rebuilds the shuffle order so the inserted items
-    // play immediately after the current track. No-op when shuffle is off (timeline == play
-    // order) or when the item count doesn't match (resolution changed it — fail safe).
-    private var playNextInsertPos = -1
-    private var playNextCount = 0
-    private var playNextTarget = -1
+    // "Play next" under shuffle: the UI inserts items at current+1 on the timeline and asks
+    // the service to splice them into shuffle position current+1. Inserts land asynchronously,
+    // so requests are queued and applied from onTimelineChanged once each target count is visible.
+    private data class PlayNextRequest(val insertPos: Int, val count: Int, val target: Int)
+    private val playNextQueue = ArrayDeque<PlayNextRequest>()
 
     fun requestPlayNextFixup(insertPos: Int, count: Int, target: Int) {
         if (insertPos < 0 || count <= 0 || target < 0) return
-        playNextInsertPos = insertPos
-        playNextCount = count
-        playNextTarget = target
+        playNextQueue.addLast(PlayNextRequest(insertPos, count, target))
         tryApplyPlayNextFixup()
     }
 
     private fun tryApplyPlayNextFixup() {
-        if (playNextTarget < 0) return
         val player = exoplayer
-        if (player.mediaItemCount < playNextTarget) return   // insert not visible yet — wait for onTimelineChanged
-        val insertPos = playNextInsertPos
-        val count = playNextCount
-        val target = playNextTarget
-        playNextTarget = -1                                  // consume the request
-        if (!player.shuffleModeEnabled) return               // timeline == play order; nothing to fix
-        if (player.mediaItemCount != target) return          // item count changed unexpectedly — bail safely
-        val current = player.currentMediaItemIndex
-        if (current == C.INDEX_UNSET || insertPos + count > target) return
+        while (playNextQueue.isNotEmpty()) {
+            val req = playNextQueue.first()
+            if (player.mediaItemCount < req.target) return  // insert not visible yet — wait for onTimelineChanged
+            if (player.mediaItemCount != req.target) {       // count drifted — drop the stale request
+                playNextQueue.removeFirst()
+                continue
+            }
+            if (!player.shuffleModeEnabled) {                // timeline == play order; nothing to fix
+                playNextQueue.removeFirst()
+                continue
+            }
+            val current = player.currentMediaItemIndex
+            if (current == C.INDEX_UNSET || req.insertPos + req.count > req.target) {
+                playNextQueue.removeFirst()
+                continue
+            }
 
-        // Current play order (timeline indices in shuffle sequence), minus the new items.
-        val timeline = player.currentTimeline
-        val base = ArrayList<Int>(target)
-        var w = timeline.getFirstWindowIndex(true)
-        while (w != C.INDEX_UNSET) {
-            if (w < insertPos || w >= insertPos + count) base.add(w)
-            w = timeline.getNextWindowIndex(w, Player.REPEAT_MODE_OFF, true)
-        }
-        val curPos = base.indexOf(current)
-        if (curPos < 0) return
+            // Build the current shuffle order minus the new items, then splice them in after current.
+            val timeline = player.currentTimeline
+            val base = ArrayList<Int>(req.target)
+            var w = timeline.getFirstWindowIndex(true)
+            while (w != C.INDEX_UNSET) {
+                if (w < req.insertPos || w >= req.insertPos + req.count) base.add(w)
+                w = timeline.getNextWindowIndex(w, Player.REPEAT_MODE_OFF, true)
+            }
+            val curPos = base.indexOf(current)
+            if (curPos < 0) {
+                playNextQueue.removeFirst()
+                continue
+            }
 
-        // Splice the new timeline indices back in, immediately after the current track.
-        val newOrder = ArrayList<Int>(target)
-        newOrder.addAll(base)
-        for (j in 0 until count) {
-            newOrder.add(curPos + 1 + j, insertPos + j)
+            val newOrder = ArrayList<Int>(req.target)
+            newOrder.addAll(base)
+            for (j in 0 until req.count) {
+                newOrder.add(curPos + 1 + j, req.insertPos + j)
+            }
+            player.shuffleOrder = DefaultShuffleOrder(newOrder.toIntArray(), Random.nextLong())
+            Log.d(TAG, "playNextFixup: ${req.count} item(s) moved to shuffle position ${curPos + 1}")
+            playNextQueue.removeFirst()
         }
-        player.shuffleOrder = DefaultShuffleOrder(newOrder.toIntArray(), Random.nextLong())
-        Log.d(TAG, "playNextFixup: $count item(s) moved to shuffle position ${curPos + 1}")
     }
 
     fun restorePlayerFromQueue(player: Player) {
