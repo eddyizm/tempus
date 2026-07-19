@@ -223,16 +223,19 @@ public class DownloaderManager {
         return null;
     }
 
+    private static final String INTERNAL_DOWNLOAD_URI_MARKER = "stream";
+
     /**
      * Derives the human-readable filename shown in the notification. For
      * user-directory (external) downloads this is the sanitized
      * "Artist - Title (Album).ext" the file is actually saved as. For internal
-     * Media3 cache downloads it falls back to the last path segment of the
-     * stream URI.
+     * Media3 cache downloads the URI is a streaming URL (e.g. ".../stream?id=...")
+     * whose last path segment is "stream", so we instead build the name from the
+     * track title and artist to avoid showing a meaningless "stream" filename.
      */
     private static String getDisplayFileName(com.cappielloantonio.tempo.model.Download download) {
         String uri = download.getDownloadUri();
-        if (uri != null && !uri.isEmpty()) {
+        if (uri != null && !uri.isEmpty() && !isInternalStreamUri(uri)) {
             int slash = uri.lastIndexOf('/');
             String segment = slash >= 0 ? uri.substring(slash + 1) : uri;
             // Strip query string (stream URIs carry ?u=...&id=... params)
@@ -243,9 +246,26 @@ public class DownloaderManager {
         if (download.getTitle() != null && !download.getTitle().isEmpty()) {
             String ext = download.getSuffix();
             if (ext == null || ext.isEmpty()) ext = "mp3";
+            String artist = download.getArtist();
+            if (artist != null && !artist.isEmpty()) {
+                return artist + " - " + download.getTitle() + "." + ext;
+            }
             return download.getTitle() + "." + ext;
         }
         return null;
+    }
+
+    /**
+     * Internal Media3 cache downloads store a streaming URL whose final path
+     * segment ("stream") is not a real filename, so the display name must be
+     * derived from the track metadata instead.
+     */
+    private static boolean isInternalStreamUri(String uri) {
+        int slash = uri.lastIndexOf('/');
+        String segment = slash >= 0 ? uri.substring(slash + 1) : uri;
+        int q = segment.indexOf('?');
+        if (q >= 0) segment = segment.substring(0, q);
+        return INTERNAL_DOWNLOAD_URI_MARKER.equals(segment);
     }
 
     public static void updateRequestDownload(Download download) {

@@ -30,17 +30,18 @@ class DownloaderManagerNotificationTest {
     }
 
     @Test
-    fun notificationMessage_stripsQueryStringFromStreamUri() {
+    fun notificationMessage_streamUriUsesArtistTitle() {
         val download = Download("tr-2")
         download.artist = "The Band"
         download.title = "Track Nine"
+        download.suffix = "opus"
         download.downloadUri = "http://host:5082/rest/stream?u=x&id=tr-2&format=opus"
 
         val cache = ConcurrentHashMap<String, Download>()
         cache["tr-2"] = download
         DownloaderManager.setMetadataCache(cache)
 
-        assertEquals("stream", DownloaderManager.getDownloadNotificationMessage("tr-2"))
+        assertEquals("The Band - Track Nine.opus", DownloaderManager.getDownloadNotificationMessage("tr-2"))
     }
 
     @Test
