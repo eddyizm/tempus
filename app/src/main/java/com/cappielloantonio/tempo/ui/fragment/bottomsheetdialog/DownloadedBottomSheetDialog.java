@@ -24,8 +24,6 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
-import com.cappielloantonio.tempo.util.MusicUtil;
-import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -125,11 +123,16 @@ public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment imple
                 List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
                 DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
             } else {
-                DownloadRepository downloadRepository = new DownloadRepository();
+                List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
+                List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
                 for (Child song : songs) {
                     ExternalAudioReader.delete(song);
-                    downloadRepository.delete(song.getId());
                 }
+                // remove() purges Media3's persistent download index, the in-memory
+                // map, the metadata cache and the Room row. Without purging the
+                // persistent index, isDownloaded() keeps reporting the tracks as
+                // downloaded and a later "download all" silently skips them.
+                DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
             }
 
             dismissBottomSheet();

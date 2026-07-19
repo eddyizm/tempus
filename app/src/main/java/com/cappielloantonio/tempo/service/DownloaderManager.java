@@ -80,7 +80,24 @@ public class DownloaderManager {
 
     public boolean isDownloaded(String mediaId) {
         @Nullable Download download = downloads.get(mediaId);
-        return download != null && download.state != Download.STATE_FAILED;
+        boolean inIndexNotFailed = download != null && download.state != Download.STATE_FAILED;
+
+        // The Media3 in-memory index is a weak signal: it is reconstructed from
+        // Media3's persistent download index at startup and is NOT purged when a
+        // track is deleted through the external-directory path (the .exo cache
+        // index lives in Media3, not in our Room table). A stale "completed"
+        // entry there would otherwise make a re-download of a deleted track
+        // silently no-op. The Room table is the authoritative record of what we
+        // actually downloaded, so require a DB row to agree with the index.
+        com.cappielloantonio.tempo.model.Download dbRow = inIndexNotFailed ? getDownloadRepository().getDownloadById(mediaId) : null;
+        boolean result = dbRow != null;
+
+        Log.d(TAG, "isDownloaded(" + mediaId + ") -> " + result
+                + " | inIndex=" + (download != null)
+                + " | state=" + (download != null ? download.state : "n/a")
+                + " | dbRow=" + (dbRow != null)
+                + " | indexSize=" + (downloads != null ? downloads.size() : "null"));
+        return result;
     }
 
     public boolean isDownloaded(MediaItem mediaItem) {
@@ -93,6 +110,10 @@ public class DownloaderManager {
 
     public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download, boolean forceResume) {
         String externalUri = Preferences.getDownloadDirectoryUri();
+        Log.d(TAG, "download() enter mediaId=" + mediaItem.mediaId
+                + " | externalUri=" + externalUri
+                + " | forceResume=" + forceResume
+                + " | hasFailed=" + hasFailedDownloads());
 
         if (externalUri != null) {
             // For external downloads, set download_uri to the expected exported file URI
@@ -115,9 +136,8 @@ public class DownloaderManager {
             download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
         }
 
-        // Check if already downloaded and not failed before starting
         if (isDownloaded(mediaItem) && !hasFailedDownloads()) {
-            return; // Already downloaded and not failed, skip
+            return;
         }
 
         // If forceResume is true, force a fresh download from queued state
@@ -138,7 +158,9 @@ public class DownloaderManager {
 
     public void download(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
         for (int counter = 0; counter < mediaItems.size(); counter++) {
-            download(mediaItems.get(counter), downloads.get(counter));
+            if (!isDownloaded(mediaItems.get(counter)) || hasFailedDownloads()) {
+                download(mediaItems.get(counter), downloads.get(counter));
+            }
         }
     }
 
