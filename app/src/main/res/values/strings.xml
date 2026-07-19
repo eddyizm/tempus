@@ -259,6 +259,9 @@
     <string name="menu_pin_button">Add to faves</string>
     <string name="menu_unpin_button">Remove from faves</string>
     <string name="playlist_sort_pinned">Faves</string>
+    <string name="playlist_sort_last_played">Last played</string>
+    <string name="playlist_sort_last_updated">Last updated</string>
+    <string name="playlist_sort_both">Recently active</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>

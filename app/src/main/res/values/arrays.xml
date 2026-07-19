@@ -272,6 +272,9 @@
         <item>Date Created</item>
         <item>Song Count</item>
         <item>Faved</item>
+        <item>Last played</item>
+        <item>Last updated</item>
+        <item>Recently active</item>
     </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>
@@ -279,6 +282,9 @@
         <item>ORDER_BY_DATE</item>
         <item>ORDER_BY_SONGS</item>
         <item>ORDER_BY_PINNED</item>
+        <item>ORDER_BY_LAST_PLAYED</item>
+        <item>ORDER_BY_LAST_UPDATED</item>
+        <item>ORDER_BY_BOTH</item>
     </string-array>
 
 

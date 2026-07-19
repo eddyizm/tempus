@@ -48,6 +48,9 @@ public interface PlaylistDao {
     @Query("UPDATE playlist SET name = :newName WHERE id = :playlistId")
     void updateName(String playlistId, String newName);
 
+    @Query("UPDATE playlist SET lastPlayed = :timestamp WHERE id = :playlistId")
+    void updateLastPlayed(String playlistId, long timestamp);
+
     /**
      * Full list query used by PlaylistCatalogueFragment.
      */
@@ -59,7 +62,10 @@ public interface PlaylistDao {
        "CASE WHEN :sortMethod = 'ORDER_BY_PINNED' THEN pp.playlistId IS NOT NULL END DESC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_NAME' THEN p.name END ASC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_DATE' THEN p.created END DESC, " +
-       "CASE WHEN :sortMethod = 'ORDER_BY_SONGS' THEN p.songCount END DESC")
+       "CASE WHEN :sortMethod = 'ORDER_BY_SONGS' THEN p.songCount END DESC, " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_LAST_PLAYED' THEN p.lastPlayed END DESC, " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_LAST_UPDATED' THEN p.changed END DESC, " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_BOTH' THEN MAX(p.lastPlayed, p.changed) END DESC")
     LiveData<List<Playlist>> getSortedPlaylists(String sortMethod);
 
     /**
@@ -74,7 +80,10 @@ public interface PlaylistDao {
        "CASE WHEN :sortMethod = 'ORDER_BY_PINNED' THEN pp.playlistId IS NOT NULL END DESC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_NAME' THEN p.name END ASC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_DATE' THEN p.created END DESC, " +
-       "CASE WHEN :sortMethod = 'ORDER_BY_SONGS' THEN p.songCount END DESC " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_SONGS' THEN p.songCount END DESC, " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_LAST_PLAYED' THEN p.lastPlayed END DESC, " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_LAST_UPDATED' THEN p.changed END DESC, " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_BOTH' THEN MAX(p.lastPlayed, p.changed) END DESC " +
        "LIMIT :limit")
     LiveData<List<Playlist>> getSortedPlaylistsPreview(String sortMethod, int limit);
 
