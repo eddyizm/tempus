@@ -61,7 +61,7 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
         env:
-          BUILD_TOOLS_VERSION: "36.0.0"
+          BUILD_TOOLS_VERSION: "34.0.0"
 
       - name: Rename Signed APKs to match local pattern
         run: |
