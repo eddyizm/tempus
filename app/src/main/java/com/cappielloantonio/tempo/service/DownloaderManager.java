@@ -47,7 +47,15 @@ public class DownloaderManager {
      * single source of truth that keeps the notification title in sync with
      * what Media3 is actually downloading.
      */
-    private static final Map<String, com.cappielloantonio.tempo.model.Download> metadataCache = new ConcurrentHashMap<>();
+    static Map<String, com.cappielloantonio.tempo.model.Download> metadataCache = new ConcurrentHashMap<>();
+
+    /**
+     * Test seam: lets unit tests seed the metadata cache without going through
+     * the Media3 download path.
+     */
+    static void setMetadataCache(Map<String, com.cappielloantonio.tempo.model.Download> cache) {
+        metadataCache = cache;
+    }
 
     public DownloaderManager(Context context, DataSource.Factory dataSourceFactory, DownloadManager downloadManager) {
         this.context = context.getApplicationContext();
@@ -176,23 +184,45 @@ public class DownloaderManager {
         }
         if (download == null) return null;
 
+        // Display format: "Filename.EXT" so the user can see what file
+        // is currently being downloaded, kept in sync with the exported filename.
+        String artist = download.getArtist();
+        String fileName = getDisplayFileName(download);
+
+        if (fileName != null) {
+            return fileName;
+        }
+        if (artist != null && !artist.isEmpty()) {
+            return artist;
+        }
         if (download.getTitle() != null && !download.getTitle().isEmpty()) {
             return download.getTitle();
         }
-        
-        String artist = download.getArtist();
-        String album = download.getAlbum();
-        if (artist != null && !artist.isEmpty()) {
-            if (album != null && !album.isEmpty()) {
-                return artist + " - " + album;
-            }
-            return artist;
+        return null;
+    }
+
+    /**
+     * Derives the human-readable filename shown in the notification. For
+     * user-directory (external) downloads this is the sanitized
+     * "Artist - Title (Album).ext" the file is actually saved as. For internal
+     * Media3 cache downloads it falls back to the last path segment of the
+     * stream URI.
+     */
+    private static String getDisplayFileName(com.cappielloantonio.tempo.model.Download download) {
+        String uri = download.getDownloadUri();
+        if (uri != null && !uri.isEmpty()) {
+            int slash = uri.lastIndexOf('/');
+            String segment = slash >= 0 ? uri.substring(slash + 1) : uri;
+            // Strip query string (stream URIs carry ?u=...&id=... params)
+            int q = segment.indexOf('?');
+            if (q >= 0) segment = segment.substring(0, q);
+            if (!segment.isEmpty()) return segment;
         }
-        
-        if (album != null && !album.isEmpty()) {
-            return album;
+        if (download.getTitle() != null && !download.getTitle().isEmpty()) {
+            String ext = download.getSuffix();
+            if (ext == null || ext.isEmpty()) ext = "mp3";
+            return download.getTitle() + "." + ext;
         }
-        
         return null;
     }
 

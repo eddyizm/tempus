@@ -39,20 +39,20 @@ public class ExternalAudioWriter {
     private ExternalAudioWriter() {
     }
 
-    private static String sanitizeFileName(String name) {
+    static String sanitizeFileName(String name) {
         String sanitized = name.replaceAll("[\\/:*?\\\"<>|]", "_");
         sanitized = sanitized.replaceAll("\\s+", " ").trim();
         return sanitized;
     }
 
-    private static String normalizeForComparison(String name) {
+    static String normalizeForComparison(String name) {
         String s = sanitizeFileName(name);
         s = Normalizer.normalize(s, Normalizer.Form.NFKD);
         s = s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         return s.toLowerCase(Locale.ROOT);
     }
 
-    private static DocumentFile findFile(DocumentFile dir, String fileName) {
+    static DocumentFile findFile(DocumentFile dir, String fileName) {
         String normalized = normalizeForComparison(fileName);
         for (DocumentFile file : dir.listFiles()) {
             if (file.isDirectory()) continue;

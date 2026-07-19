@@ -44,7 +44,18 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
     private static volatile int batchTotal = 0;
 
-    private static boolean listenerRegistered = false;
+    /**
+     * Tracks downloads that have actually reached STATE_COMPLETED via the
+     * DownloadManager listener. Deriving "N of M" from a single snapshot of the
+     * download index under-counts completed tracks (Media3 runs several
+     * downloads in parallel and only refreshes the foreground notification
+     * occasionally), which made the counter lag by a few tracks. Counting real
+     * terminal transitions keeps it accurate.
+     */
+    private static final java.util.Set<String> completedDownloadIds =
+            java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
+
+    private static volatile boolean listenerRegistered = false;
 
     private static long lastTotalBytesDownloaded = 0L;
     private static long lastSpeedCheckTimeMs = 0L;
@@ -121,7 +132,11 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             batchTotal = activeCount;
         }
 
-        int completed = batchTotal - activeCount;
+        // Use the listener-tracked completed count (accurate under parallel
+        // downloads) rather than deriving it from a single snapshot, which
+        // under-counted completed tracks because the foreground notification is
+        // only refreshed occasionally.
+        int completed = Math.min(completedDownloadIds.size(), batchTotal);
 
         // ── Step 1.4: Speed calculation ──────────────────────────────────────
         long nowMs = System.currentTimeMillis();
@@ -177,6 +192,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             lastSpeedCheckTimeMs = 0L;
             lastSpeedLabel = "";
             isCancelling = false;
+            completedDownloadIds.clear();
             
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(PAUSED_NOTIFICATION_ID);
@@ -397,6 +413,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         public void onDownloadChanged(@NonNull DownloadManager downloadManager,
                 Download download, @Nullable Exception finalException) {
             if (download.state == Download.STATE_COMPLETED) {
+                completedDownloadIds.add(download.request.id);
                 DownloaderManager.updateRequestDownload(download);
                 ExternalAudioWriter.exportDownloadById(context, download.request.id);
             }
@@ -404,6 +421,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
         @Override
         public void onDownloadRemoved(@NonNull DownloadManager downloadManager, Download download) {
+            completedDownloadIds.remove(download.request.id);
             DownloaderManager.removeRequestDownload(download);
         }
     }

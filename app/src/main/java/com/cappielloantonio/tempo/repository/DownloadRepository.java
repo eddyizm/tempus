@@ -12,7 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadRepository {
-    private final DownloadDao downloadDao = AppDatabase.getInstance().downloadDao();
+    private final DownloadDao downloadDao;
+
+    public DownloadRepository() {
+        this(AppDatabase.getInstance().downloadDao());
+    }
+
+    /**
+     * Test-only constructor that injects a DAO, bypassing the Room singleton
+     * (which needs an Android Context and cannot be built on the JVM).
+     */
+    DownloadRepository(DownloadDao downloadDao) {
+        this.downloadDao = downloadDao;
+    }
 
     public LiveData<List<Download>> getLiveDownload() {
         return downloadDao.getAll();
