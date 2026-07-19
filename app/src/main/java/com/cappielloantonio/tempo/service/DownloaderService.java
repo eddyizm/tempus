@@ -39,6 +39,8 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
     private static final int JOB_ID = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
+    private static final int PAUSED_NOTIFICATION_ID = 2;
+    private static final int COMPLETE_NOTIFICATION_ID = 3;
 
     private static volatile int batchTotal = 0;
 
@@ -177,7 +179,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             isCancelling = false;
             
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.cancel(2);
+            manager.cancel(PAUSED_NOTIFICATION_ID);
         }
 
         String notifTitle;
@@ -352,7 +354,11 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
         Notification finalNotification = builder.build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(2);
         notificationManager.notify(2, finalNotification);
+
+        notificationManager.cancel(FOREGROUND_NOTIFICATION_ID);
+        notificationManager.cancel(1);
     }
 
     /**

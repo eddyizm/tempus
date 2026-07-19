@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.broadcast.receiver;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -44,6 +45,9 @@ public class DownloadControlReceiver extends BroadcastReceiver {
 
             case Constants.ACTION_RESUME_DOWNLOADS:
                 Log.d(TAG, "Resuming downloads via sendResumeDownloads");
+                // Cancel the paused notification before resuming
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.cancel(2);
                 DownloadService.sendResumeDownloads(context, DownloaderService.class, false);
                 break;
 
