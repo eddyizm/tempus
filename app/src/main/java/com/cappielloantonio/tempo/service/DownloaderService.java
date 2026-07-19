@@ -206,7 +206,8 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             if (isPaused) {
                 notifTitle = "Downloads Paused — " + completed + " of " + batchTotal;
             } else {
-                notifTitle = "Downloading " + (completed + 1) + " of " + batchTotal + speedSuffix;
+                int current = Math.min(completed + 1, batchTotal);
+                notifTitle = "Downloading " + current + " of " + batchTotal + speedSuffix;
             }
         } else {
             notifTitle = "Downloading" + speedSuffix;
