@@ -26,6 +26,8 @@ import com.cappielloantonio.tempo.util.Preferences;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @UnstableApi
 public class DownloaderManager {
@@ -36,6 +38,16 @@ public class DownloaderManager {
     private final DownloadIndex downloadIndex;
 
     private static HashMap<String, Download> downloads;
+
+    /**
+     * In-memory cache of download metadata (title/artist/album) keyed by the
+     * same media id Media3 uses for the DownloadRequest. Populated at enqueue
+     * time so the notification can resolve the title of the actively
+     * transferring track without a racy / filtered Room DB lookup. This is the
+     * single source of truth that keeps the notification title in sync with
+     * what Media3 is actually downloading.
+     */
+    private static final Map<String, com.cappielloantonio.tempo.model.Download> metadataCache = new ConcurrentHashMap<>();
 
     public DownloaderManager(Context context, DataSource.Factory dataSourceFactory, DownloadManager downloadManager) {
         this.context = context.getApplicationContext();
@@ -110,6 +122,10 @@ public class DownloaderManager {
             DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
             insertDatabase(download);
         }
+
+        // Cache metadata keyed by the same id Media3 uses so the notification
+        // can resolve the current track title without a racy Room lookup.
+        metadataCache.put(mediaItem.mediaId, download);
     }
 
     public void download(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
@@ -122,6 +138,7 @@ public class DownloaderManager {
         DownloadService.sendRemoveDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem).id, false);
         deleteDatabase(download.getId());
         downloads.remove(download.getId());
+        metadataCache.remove(mediaItem.mediaId);
     }
 
     public void remove(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
@@ -134,6 +151,7 @@ public class DownloaderManager {
         DownloadService.sendRemoveAllDownloads(context, DownloaderService.class, false);
         deleteAllDatabase();
         DownloadUtil.eraseDownloadFolder(context);
+        metadataCache.clear();
     }
 
     private void loadDownloads() {
@@ -148,8 +166,34 @@ public class DownloaderManager {
     }
 
     public static String getDownloadNotificationMessage(String id) {
-        com.cappielloantonio.tempo.model.Download download = getDownloadRepository().getDownload(id);
-        return download != null ? download.getTitle() : null;
+        // Prefer the in-memory metadata captured at enqueue time: it is keyed
+        // by the same id Media3 uses and is always in sync with the active
+        // download, avoiding the disconnected/racy Room lookup that previously
+        // caused the notification to show a pending track's title.
+        com.cappielloantonio.tempo.model.Download download = metadataCache.get(id);
+        if (download == null) {
+            download = getDownloadRepository().getDownloadById(id);
+        }
+        if (download == null) return null;
+
+        if (download.getTitle() != null && !download.getTitle().isEmpty()) {
+            return download.getTitle();
+        }
+        
+        String artist = download.getArtist();
+        String album = download.getAlbum();
+        if (artist != null && !artist.isEmpty()) {
+            if (album != null && !album.isEmpty()) {
+                return artist + " - " + album;
+            }
+            return artist;
+        }
+        
+        if (album != null && !album.isEmpty()) {
+            return album;
+        }
+        
+        return null;
     }
 
     public static void updateRequestDownload(Download download) {
@@ -160,6 +204,7 @@ public class DownloaderManager {
     public static void removeRequestDownload(Download download) {
         deleteDatabase(download.request.id);
         downloads.remove(download.request.id);
+        metadataCache.remove(download.request.id);
     }
 
     private static DownloadRepository getDownloadRepository() {

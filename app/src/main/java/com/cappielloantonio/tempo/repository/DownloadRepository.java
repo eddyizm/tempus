@@ -46,6 +46,29 @@ public class DownloadRepository {
             e.printStackTrace();
         }
 
+        return download != null && (download.getDownloadState() == 0 || download.getDownloadState() == 1) ? download : null;
+    }
+
+    /**
+     * Returns the download row for the given id regardless of its state.
+     * Used by the notification path where we need the title even while the
+     * track is actively transferring (state 0) and must not be subject to the
+     * pending/completed filter used elsewhere.
+     */
+    public Download getDownloadById(String id) {
+        Download download = null;
+
+        GetDownloadThreadSafe getDownloadThreadSafe = new GetDownloadThreadSafe(downloadDao, id);
+        Thread thread = new Thread(getDownloadThreadSafe);
+        thread.start();
+
+        try {
+            thread.join();
+            download = getDownloadThreadSafe.getDownload();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return download;
     }
 
