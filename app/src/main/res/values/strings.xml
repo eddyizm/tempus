@@ -217,6 +217,11 @@
     <string name="library_title_playlist_see_all_button">See all</string>
     <string name="library_toast_long_press_to_refresh">Long press to refresh</string>
     <string name="login_empty">No server added</string>
+    <string name="login_error_credentials">Wrong username or password</string>
+    <string name="login_error_generic">Login failed</string>
+    <string name="login_error_invalid_response">The server returned an unexpected response</string>
+    <string name="login_error_server">Server error (HTTP %1$d)</string>
+    <string name="login_error_unreachable">Couldn\'t reach the server</string>
     <string name="login_title">Subsonic servers</string>
     <string name="login_title_expanded">Subsonic servers</string>
     <string name="media_route_menu_title">Cast</string>
