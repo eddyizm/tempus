@@ -48,11 +48,18 @@ public class ServerRepository {
             return server;
         }
 
+        String encrypted = CryptoUtil.encrypt(password);
+        // If encryption fails (e.g. an unavailable Keystore key), keep the original row rather than
+        // writing null into the non-null password column. Reads still tolerate the plaintext.
+        if (encrypted == null) {
+            return server;
+        }
+
         return new Server(
                 server.getServerId(),
                 server.getServerName(),
                 server.getUsername(),
-                CryptoUtil.encrypt(password),
+                encrypted,
                 server.getAddress(),
                 server.getLocalAddress(),
                 server.getTimestamp(),

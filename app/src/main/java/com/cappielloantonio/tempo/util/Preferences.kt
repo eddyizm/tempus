@@ -197,7 +197,10 @@ object Preferences {
         for (key in arrayOf(PASSWORD, TOKEN, SALT)) {
             val stored = preferences.getString(key, null)
             if (stored != null && !CryptoUtil.isEncrypted(stored)) {
-                preferences.edit().putString(key, CryptoUtil.encrypt(stored)).apply()
+                // Only replace the plaintext once we actually have ciphertext; if encryption fails
+                // (e.g. an unavailable Keystore key) leave the value as-is rather than losing it.
+                val encrypted = CryptoUtil.encrypt(stored) ?: continue
+                preferences.edit().putString(key, encrypted).apply()
             }
         }
     }
