@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.text.Html;
 import android.util.Log;
 
@@ -302,40 +303,47 @@ public class MusicUtil {
         return "enc:" + plainPassword.chars().mapToObj(Integer::toHexString).collect(Collectors.joining());
     }
 
-    public static String getBitratePreference() {
+    // One second memo of the active network transport so the per song bitrate and format
+    // lookups stop firing a getActiveNetwork binder call for every song.
+    private static final int TRANSPORT_NONE = -1;
+    private static final int TRANSPORT_OTHER = -2;
+    private static final long NETWORK_CACHE_TTL_MS = 1000;
+    private static volatile int cachedTransport = TRANSPORT_NONE;
+    private static volatile long cachedTransportAt = -1;
+
+    private static int getActiveTransport() {
+        long now = SystemClock.elapsedRealtime();
+        if (cachedTransportAt >= 0 && now - cachedTransportAt < NETWORK_CACHE_TTL_MS) return cachedTransport;
+
         Network network = getConnectivityManager().getActiveNetwork();
-        NetworkCapabilities networkCapabilities = getConnectivityManager().getNetworkCapabilities(network);
-        String audioTranscodeFormat = getTranscodingFormatPreference();
+        NetworkCapabilities caps = network == null ? null : getConnectivityManager().getNetworkCapabilities(network);
 
-        if (audioTranscodeFormat.equals("raw") || network == null || networkCapabilities == null)
+        int transport;
+        if (network == null || caps == null) transport = TRANSPORT_NONE;
+        else if (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) transport = NetworkCapabilities.TRANSPORT_WIFI;
+        else if (caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) transport = NetworkCapabilities.TRANSPORT_CELLULAR;
+        else transport = TRANSPORT_OTHER;
+
+        cachedTransport = transport;
+        cachedTransportAt = now;
+        return transport;
+    }
+
+    public static String getBitratePreference() {
+        int transport = getActiveTransport();
+        if (getTranscodingFormatPreference().equals("raw") || transport == TRANSPORT_NONE)
             return "0";
-
-        if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-            return Preferences.getMaxBitrateWifi();
-        } else if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+        if (transport == NetworkCapabilities.TRANSPORT_CELLULAR)
             return Preferences.getMaxBitrateMobile();
-        } else {
-            return Preferences.getMaxBitrateWifi();
-        }
+        return Preferences.getMaxBitrateWifi();
     }
 
     public static String getTranscodingFormatPreference() {
-        Network network = getConnectivityManager().getActiveNetwork();
-        NetworkCapabilities networkCapabilities = getConnectivityManager().getNetworkCapabilities(network);
-
-        if (network == null || networkCapabilities == null) return "raw";
-
-        String format;
-        if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-            format = Preferences.getAudioTranscodeFormatWifi();
-            Log.d(TAG, "DEBUG: Using WIFI Format: " + format);
-        } else if (networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-            format = Preferences.getAudioTranscodeFormatMobile();
-            Log.d(TAG, "DEBUG: Using MOBILE Format: " + format);
-        } else {
-            format = Preferences.getAudioTranscodeFormatWifi();
-        }
-        return format;
+        int transport = getActiveTransport();
+        if (transport == TRANSPORT_NONE) return "raw";
+        if (transport == NetworkCapabilities.TRANSPORT_CELLULAR)
+            return Preferences.getAudioTranscodeFormatMobile();
+        return Preferences.getAudioTranscodeFormatWifi();
     }
 
     public static String getBitratePreferenceForDownload() {

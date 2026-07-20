@@ -71,6 +71,10 @@ open class BaseMediaService : MediaLibraryService() {
     private lateinit var equalizerManager: EqualizerManager
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
     private var widgetUpdateScheduled = false
+    // Set in onDestroy. restorePlayerFromQueue maps the saved queue on a background thread and
+    // posts the player calls back to this handler; if the service is destroyed mid map (the app
+    // swiped away during launch), that post must not touch the now released player.
+    @Volatile private var serviceDestroyed = false
     private val widgetUpdateRunnable = object : Runnable {
         override fun run() {
             val player = mediaLibrarySession.player
@@ -226,28 +230,38 @@ open class BaseMediaService : MediaLibraryService() {
     fun restorePlayerFromQueue(player: Player) {
         if (player.mediaItemCount > 0) return
 
-        val queueRepository = QueueRepository()
-        val storedQueue = queueRepository.media
-        if (storedQueue.isNullOrEmpty()) return
+        // Map off the main thread: mapMediaItems does a blocking lookup per song, so a
+        // large saved queue froze the UI on launch (#600).
+        Thread {
+            val queueRepository = QueueRepository()
+            val storedQueue = queueRepository.media
+            if (storedQueue.isNullOrEmpty()) return@Thread
 
-        val mediaItems = MappingUtil.mapMediaItems(storedQueue)
-        if (mediaItems.isEmpty()) return
+            val mediaItems = MappingUtil.mapMediaItems(storedQueue)
+            if (mediaItems.isEmpty()) return@Thread
 
-        val lastIndex = try {
-            queueRepository.lastPlayedMediaIndex
-        } catch (_: Exception) {
-            0
-        }.coerceIn(0, mediaItems.size - 1)
+            val lastIndex = try {
+                queueRepository.lastPlayedMediaIndex
+            } catch (_: Exception) {
+                0
+            }.coerceIn(0, mediaItems.size - 1)
 
-        val lastPosition = try {
-            queueRepository.lastPlayedMediaTimestamp
-        } catch (_: Exception) {
-            0L
-        }.let { if (it < 0L) 0L else it }
+            val lastPosition = try {
+                queueRepository.lastPlayedMediaTimestamp
+            } catch (_: Exception) {
+                0L
+            }.let { if (it < 0L) 0L else it }
 
-        player.setMediaItems(mediaItems, lastIndex, lastPosition)
-        player.prepare()
-        updateWidget(player)
+            widgetUpdateHandler.post {
+                // onDestroy may have released the player while this queue was still mapping, and
+                // the mediaItemCount check below cannot detect a released player, so bail first.
+                if (serviceDestroyed) return@post
+                if (player.mediaItemCount > 0) return@post
+                player.setMediaItems(mediaItems, lastIndex, lastPosition)
+                player.prepare()
+                updateWidget(player)
+            }
+        }.start()
     }
 
     private var lastRadioArtist: String? = null
@@ -678,6 +692,7 @@ open class BaseMediaService : MediaLibraryService() {
 
     override fun onDestroy() {
         QueuePreloader.cancel()
+        serviceDestroyed = true
         releaseNetworkCallback()
         equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()

@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.util;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.Base64;
 
@@ -27,7 +28,9 @@ import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.nio.charset.StandardCharsets;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -456,14 +459,32 @@ public class MappingUtil {
         return child;
     }
 
-    private static Uri getUri(Child media) {
-        // Check if it's in our local SQL Database
-        DownloadRepository repo = new DownloadRepository();
-        Download localDownload = repo.getDownload(media.getId());
+    // One second memo of the download table so a mapping burst does one query instead of
+    // a Thread spawn and join per song. A download finishing inside the window streams for it.
+    private static final long DOWNLOAD_CACHE_TTL_MS = 1000;
+    private static volatile Map<String, String> cachedDownloadUris;
+    private static volatile long cachedDownloadsAt = -1;
 
-        if (localDownload != null && localDownload.getDownloadUri() != null && !localDownload.getDownloadUri().isEmpty()) {
-            Log.d(TAG, "Playing local file for: " + media.getTitle());
-            return Uri.parse(localDownload.getDownloadUri());
+    private static Map<String, String> getDownloadUris() {
+        Map<String, String> cache = cachedDownloadUris;
+        long now = SystemClock.elapsedRealtime();
+        if (cache != null && cachedDownloadsAt >= 0 && now - cachedDownloadsAt < DOWNLOAD_CACHE_TTL_MS)
+            return cache;
+
+        Map<String, String> map = new HashMap<>();
+        for (Download download : new DownloadRepository().getAllDownloads()) {
+            if (download.getId() != null && download.getDownloadUri() != null && !download.getDownloadUri().isEmpty())
+                map.put(download.getId(), download.getDownloadUri());
+        }
+        cachedDownloadUris = map;
+        cachedDownloadsAt = now;
+        return map;
+    }
+
+    private static Uri getUri(Child media) {
+        String localUri = getDownloadUris().get(media.getId());
+        if (localUri != null) {
+            return Uri.parse(localUri);
         }
 
         // Legacy check for external directory, i think this was broken/buggy
@@ -473,7 +494,6 @@ public class MappingUtil {
         }
 
         // Fallback to streaming
-        Log.d(TAG, "No local file found. Streaming: " + media.getTitle());
         return MusicUtil.getStreamUri(media.getId());
     }
 
