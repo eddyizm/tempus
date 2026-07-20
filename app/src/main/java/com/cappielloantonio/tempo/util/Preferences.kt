@@ -157,32 +157,49 @@ object Preferences {
 
     @JvmStatic
     fun getPassword(): String? {
-        return App.getInstance().preferences.getString(PASSWORD, null)
+        return CryptoUtil.decrypt(App.getInstance().preferences.getString(PASSWORD, null))
     }
 
     @JvmStatic
     fun setPassword(password: String?) {
-        App.getInstance().preferences.edit().putString(PASSWORD, password).apply()
+        App.getInstance().preferences.edit().putString(PASSWORD, CryptoUtil.encrypt(password)).apply()
     }
 
     @JvmStatic
     fun getToken(): String? {
-        return App.getInstance().preferences.getString(TOKEN, null)
+        return CryptoUtil.decrypt(App.getInstance().preferences.getString(TOKEN, null))
     }
 
     @JvmStatic
     fun setToken(token: String?) {
-        App.getInstance().preferences.edit().putString(TOKEN, token).apply()
+        App.getInstance().preferences.edit().putString(TOKEN, CryptoUtil.encrypt(token)).apply()
     }
 
     @JvmStatic
     fun getSalt(): String? {
-        return App.getInstance().preferences.getString(SALT, null)
+        return CryptoUtil.decrypt(App.getInstance().preferences.getString(SALT, null))
     }
 
     @JvmStatic
     fun setSalt(salt: String?) {
-        App.getInstance().preferences.edit().putString(SALT, salt).apply()
+        App.getInstance().preferences.edit().putString(SALT, CryptoUtil.encrypt(salt)).apply()
+    }
+
+    /**
+     * Re-encrypts any credential values written before at-rest encryption was introduced, then
+     * clears the plaintext copies from disk. Reads already tolerate plaintext via [CryptoUtil.decrypt];
+     * this removes it so the stored preferences never keep the raw values around.
+     */
+    @JvmStatic
+    fun migrateCredentialsToEncrypted() {
+        val preferences = App.getInstance().preferences
+
+        for (key in arrayOf(PASSWORD, TOKEN, SALT)) {
+            val stored = preferences.getString(key, null)
+            if (stored != null && !CryptoUtil.isEncrypted(stored)) {
+                preferences.edit().putString(key, CryptoUtil.encrypt(stored)).apply()
+            }
+        }
     }
 
     @JvmStatic

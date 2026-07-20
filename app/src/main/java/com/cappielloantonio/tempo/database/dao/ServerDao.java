@@ -16,6 +16,9 @@ public interface ServerDao {
     @Query("SELECT * FROM server")
     LiveData<List<Server>> getAll();
 
+    @Query("SELECT * FROM server")
+    List<Server> getAllSync();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Server server);
 

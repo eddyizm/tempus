@@ -27,6 +27,7 @@ import com.cappielloantonio.tempo.model.Server;
 import com.cappielloantonio.tempo.repository.SystemRepository;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.ServerSignupDialog;
+import com.cappielloantonio.tempo.util.CryptoUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.LoginViewModel;
 
@@ -117,7 +118,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
     @Override
     public void onServerClick(Bundle bundle) {
         Server server = bundle.getParcelable("server_object");
-        saveServerPreference(server.getServerId(), server.getAddress(), server.getLocalAddress(), server.getUsername(), server.getPassword(), server.isLowSecurity(), server.getClientCert());
+        saveServerPreference(server.getServerId(), server.getAddress(), server.getLocalAddress(), server.getUsername(), CryptoUtil.decrypt(server.getPassword()), server.isLowSecurity(), server.getClientCert());
 
         SystemRepository systemRepository = new SystemRepository();
         systemRepository.checkUserCredential(new SystemCallback() {
