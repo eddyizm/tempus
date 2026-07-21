@@ -357,6 +357,28 @@ public class MusicUtil {
         return slash >= 0 && slash < mime.length() - 1 ? mime.substring(slash + 1) : mime;
     }
 
+    // The player reports the decoded codec (aac, vorbis, opus), but the source "suffix" is often a
+    // container name (m4a, ogg, oga) that legitimately holds that codec. Treating a container/codec
+    // pair as a mismatch would tag direct-played files as "(transcoding)". Only report a transcode
+    // when the decoded codec is not one the source container can carry. See issue 579 and 669.
+    public static boolean isTranscodedFormat(String decodedLabel, String sourceSuffix) {
+        if (decodedLabel == null || decodedLabel.isEmpty()) return false;
+        if (sourceSuffix == null || sourceSuffix.isEmpty()) return false;
+        if (decodedLabel.equalsIgnoreCase(sourceSuffix)) return false;
+        switch (sourceSuffix.toLowerCase()) {
+            case "m4a":
+            case "m4b":
+            case "mp4":
+                return !decodedLabel.equals("aac") && !decodedLabel.equals("alac");
+            case "ogg":
+            case "oga":
+                return !decodedLabel.equals("vorbis") && !decodedLabel.equals("opus")
+                        && !decodedLabel.equals("flac");
+            default:
+                return true;
+        }
+    }
+
     public static List<Child> limitPlayableMedia(List<Child> toLimit, int position) {
         if (!toLimit.isEmpty() && toLimit.size() > Constants.PLAYABLE_MEDIA_LIMIT) {
             int from = position < Constants.PRE_PLAYABLE_MEDIA ? 0 : position - Constants.PRE_PLAYABLE_MEDIA;

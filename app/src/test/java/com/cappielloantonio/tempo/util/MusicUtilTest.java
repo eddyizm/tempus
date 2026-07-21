@@ -1,7 +1,9 @@
 package com.cappielloantonio.tempo.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,5 +50,32 @@ public class MusicUtilTest {
     @Test
     public void audioFormatLabel_returnsNullForNull() {
         assertNull(MusicUtil.audioFormatLabel(null));
+    }
+
+    @Test
+    public void isTranscodedFormat_sameCodecIsNotTranscoded() {
+        assertFalse(MusicUtil.isTranscodedFormat("flac", "flac"));
+        assertFalse(MusicUtil.isTranscodedFormat("FLAC", "flac"));
+    }
+
+    @Test
+    public void isTranscodedFormat_containerCodecIsNotTranscoded() {
+        assertFalse(MusicUtil.isTranscodedFormat("aac", "m4a"));
+        assertFalse(MusicUtil.isTranscodedFormat("alac", "m4a"));
+        assertFalse(MusicUtil.isTranscodedFormat("vorbis", "ogg"));
+        assertFalse(MusicUtil.isTranscodedFormat("opus", "oga"));
+    }
+
+    @Test
+    public void isTranscodedFormat_differentCodecIsTranscoded() {
+        assertTrue(MusicUtil.isTranscodedFormat("mp3", "flac"));
+        assertTrue(MusicUtil.isTranscodedFormat("mp3", "m4a"));
+        assertTrue(MusicUtil.isTranscodedFormat("opus", "flac"));
+    }
+
+    @Test
+    public void isTranscodedFormat_missingSuffixIsNotTranscoded() {
+        assertFalse(MusicUtil.isTranscodedFormat("flac", null));
+        assertFalse(MusicUtil.isTranscodedFormat("flac", ""));
     }
 }

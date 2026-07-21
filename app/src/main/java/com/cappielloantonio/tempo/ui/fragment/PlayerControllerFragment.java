@@ -465,7 +465,7 @@ public class PlayerControllerFragment extends Fragment {
         String actual = MusicUtil.audioFormatLabel(format.sampleMimeType);
         if (actual != null && !actual.isEmpty()) {
             String original = getCurrentOriginalSuffix();
-            boolean transcoded = original != null && !original.isEmpty() && !actual.equalsIgnoreCase(original);
+            boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
             playerMediaExtension.setText(transcoded
                     ? actual + " (" + getString(R.string.player_transcoding) + ")"
                     : actual);
