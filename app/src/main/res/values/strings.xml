@@ -262,6 +262,14 @@
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
+    <string name="playback_speed_decrease_button_content_description">Decrease playback speed</string>
+    <string name="playback_speed_increase_button_content_description">Increase playback speed</string>
+    <string name="playback_speed_pitch_switch_title">Preserve pitch</string>
+    <string name="playback_speed_manual_pitch_switch_title">Manual pitch</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Decrease manual pitch</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Increase manual pitch</string>
+    <string name="playback_speed_dialog_reset_button">Reset</string>
     <string name="playback_speed_dialog_negative_button">Cancel</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
@@ -415,6 +423,10 @@
     <string name="settings_set_download_folder">Set download folder</string>
     <string name="settings_song_preload_buffer">Song preload buffer</string>
     <string name="settings_song_preload_buffer_summary">Current value: %1$s\nFor the change to take effect you must manually restart the app.</string>
+    <string name="settings_precache_tracks">Pre-cache upcoming tracks [Experimental]</string>
+    <string name="settings_precache_tracks_summary">Fully cache the next tracks of the queue in the background, so skips start instantly and playback survives short signal drops</string>
+    <string name="settings_precache_wifi_only">Pre-cache on Wi-Fi only</string>
+    <string name="settings_precache_wifi_only_summary">Pause pre-caching while on a metered connection</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -455,6 +467,7 @@
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
+    <string name="settings_androidauto_shuffle_downloaded_tracks">Shuffle downloaded tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
@@ -464,6 +477,8 @@
     <string name="settings_song_rating_summary">If enabled, shows 5 star rating for track on song page\n\n*Requires App restart</string>
     <string name="settings_track_number">Show track number</string>
     <string name="settings_track_number_summary">If enabled, shows the track number of the song being played.</string>
+    <string name="settings_album_year">Show album year</string>
+    <string name="settings_album_year_summary">If enabled, shows the year of each album on the artist page.</string>
     <string name="settings_item_rating">Show item rating</string>
     <string name="settings_item_rating_summary">If enabled, the item\'s rating and whether it is marked as a favorite will be displayed.</string>
     <string name="settings_queue_syncing_countdown">Sync timer</string>
@@ -640,7 +655,7 @@
     <string name="track_info_year">Year</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
-    <string name="undraw_url" translatable="false">https://undraw.co/</string>
+	<string name="undraw_url" translatable="false">https://undraw.co/</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Not playing</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>
