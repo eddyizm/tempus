@@ -226,6 +226,8 @@
     <string name="menu_go_to_playlist_button">Play</string>
     <string name="menu_play_shuffle_button">Play shuffle</string>
     <string name="menu_add_to_queue_button">Add to queue</string>
+    <string name="menu_play_next_button">Play next</string>
+    <string name="menu_instant_mix_button">Instant mix</string>
     <string name="menu_edit_playlist_button">Edit playlist</string>
     <string name="menu_download_all_button">Download all</string>
     <string name="menu_rate_album">Rate album</string>

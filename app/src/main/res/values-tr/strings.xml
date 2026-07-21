@@ -8,7 +8,7 @@
     <string name="album_bottom_sheet_download_all">Tümünü indir</string>
     <string name="album_bottom_sheet_go_to_artist">Sanatçıya git</string>
     <string name="album_bottom_sheet_instant_mix">Anında karışım</string>
-    <string name="album_bottom_sheet_play_next">Sıradakini çal</string>
+    <string name="album_bottom_sheet_play_next">Sonra çal</string>
     <string name="album_bottom_sheet_remove_all">Tümünü kaldır</string>
     <string name="album_bottom_sheet_share">Paylaş</string>
     <string name="album_bottom_sheet_shuffle">Karıştır</string>
@@ -449,4 +449,7 @@
     <string name="widget_content_desc_prev">Önceki parça</string>
     <string name="settings_song_rating">Şarkının yıldız derecelendirmesini göster</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">"Etkinleştirildiğinde yıldızlı albümler çevrimdışı kullanım için indirilecek. "</string>
+    <string name="menu_add_to_queue_button">Sıraya ekle</string>
+    <string name="menu_play_next_button">Sonra çal</string>
+    <string name="menu_instant_mix_button">Anında karışım</string>
 </resources>

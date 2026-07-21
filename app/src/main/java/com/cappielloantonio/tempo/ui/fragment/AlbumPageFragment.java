@@ -62,6 +62,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     private PlaybackViewModel playbackViewModel;
     private SongHorizontalAdapter songHorizontalAdapter;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private boolean isFirstBatch = true;
 
     /** @noinspection deprecation*/
     @Override
@@ -172,6 +173,46 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                 PlaylistChooserDialog dialog = new PlaylistChooserDialog();
                 dialog.setArguments(bundle);
                 dialog.show(requireActivity().getSupportFragmentManager(), null);
+            });
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_instant_mix) {
+
+            isFirstBatch = true;
+            Toast.makeText(requireContext(), R.string.bottom_sheet_generating_instant_mix, Toast.LENGTH_SHORT).show();
+
+            albumPageViewModel.getAlbumInstantMix(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), songs -> {
+                if (songs == null || songs.isEmpty()) return;
+                if (getActivity() == null) return;
+
+                MusicUtil.ratingFilter(songs);
+
+                if (isFirstBatch) {
+                    isFirstBatch = false;
+
+                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+                    activity.setBottomSheetInPeek(true);
+                } else {
+                    MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
+                }
+            });
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_play_next) {
+            albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
+                MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
+                activity.setBottomSheetInPeek(true);
+            });
+
+            return true;
+        }
+
+        if (item.getItemId() == R.id.action_add_to_queue) {
+            albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
+                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                activity.setBottomSheetInPeek(true);
             });
             return true;
         }

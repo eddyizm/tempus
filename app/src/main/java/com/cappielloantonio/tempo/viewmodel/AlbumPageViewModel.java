@@ -18,6 +18,7 @@ import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.subsonic.models.Child;
 import com.cappielloantonio.tempo.util.NetworkUtil;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class AlbumPageViewModel extends AndroidViewModel {
     private String albumId;
     private String artistId;
     private final MutableLiveData<AlbumID3> album = new MutableLiveData<>(null);
+    private final MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(null);
 
     public AlbumPageViewModel(@NonNull Application application) {
         super(application);
@@ -116,5 +118,20 @@ public class AlbumPageViewModel extends AndroidViewModel {
 
     public LiveData<AlbumInfo> getAlbumInfo() {
         return albumRepository.getAlbumInfo(albumId);
+    }
+
+    public LiveData<List<Child>> getAlbumInstantMix(LifecycleOwner owner) {
+        AlbumID3 currentAlbum = album.getValue();
+        if (currentAlbum == null) return null;
+
+        instantMix.setValue(Collections.emptyList());
+        albumRepository.getInstantMix(currentAlbum, 30).observe(owner, instantMix::postValue);
+        return instantMix;
+    }
+
+    public MutableLiveData<List<Child>> getAlbumTracks() {
+        AlbumID3 currentAlbum = album.getValue();
+        if (currentAlbum == null) return null;
+        return albumRepository.getAlbumTracks(currentAlbum.getId());
     }
 }
