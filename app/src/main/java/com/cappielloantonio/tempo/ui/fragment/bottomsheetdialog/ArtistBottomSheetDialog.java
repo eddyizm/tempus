@@ -47,6 +47,9 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         View view = inflater.inflate(R.layout.bottom_sheet_artist_dialog, container, false);
 
         artist = this.requireArguments().getParcelable(Constants.ARTIST_OBJECT);
+        if (artist != null) {
+            artist = artist.strippedForNav();
+        }
 
         artistBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(ArtistBottomSheetViewModel.class);
         artistBottomSheetViewModel.setArtist(artist);
