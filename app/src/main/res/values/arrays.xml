@@ -267,14 +267,14 @@
     </string-array>
 
     <string-array name="playlist_sort_option_titles">
-        <item>Name</item>
-        <item>Random</item>
-        <item>Date Created</item>
-        <item>Song Count</item>
-        <item>Faved</item>
-        <item>Last played</item>
-        <item>Last updated</item>
-        <item>Recently active</item>
+        <item>@string/menu_sort_name</item>
+        <item>@string/menu_sort_random</item>
+        <item>@string/menu_sort_date_created</item>
+        <item>@string/menu_sort_song_count</item>
+        <item>@string/playlist_sort_pinned</item>
+        <item>@string/playlist_sort_last_played</item>
+        <item>@string/playlist_sort_last_updated</item>
+        <item>@string/playlist_sort_both</item>
     </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>

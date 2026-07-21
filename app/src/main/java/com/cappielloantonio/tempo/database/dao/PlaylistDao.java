@@ -65,7 +65,7 @@ public interface PlaylistDao {
        "CASE WHEN :sortMethod = 'ORDER_BY_SONGS' THEN p.songCount END DESC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_LAST_PLAYED' THEN p.lastPlayed END DESC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_LAST_UPDATED' THEN p.changed END DESC, " +
-       "CASE WHEN :sortMethod = 'ORDER_BY_BOTH' THEN MAX(p.lastPlayed, p.changed) END DESC")
+       "CASE WHEN :sortMethod = 'ORDER_BY_BOTH' THEN MAX(p.lastPlayed, IFNULL(p.changed, 0)) END DESC")
     LiveData<List<Playlist>> getSortedPlaylists(String sortMethod);
 
     /**
@@ -83,7 +83,7 @@ public interface PlaylistDao {
        "CASE WHEN :sortMethod = 'ORDER_BY_SONGS' THEN p.songCount END DESC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_LAST_PLAYED' THEN p.lastPlayed END DESC, " +
        "CASE WHEN :sortMethod = 'ORDER_BY_LAST_UPDATED' THEN p.changed END DESC, " +
-       "CASE WHEN :sortMethod = 'ORDER_BY_BOTH' THEN MAX(p.lastPlayed, p.changed) END DESC " +
+       "CASE WHEN :sortMethod = 'ORDER_BY_BOTH' THEN MAX(p.lastPlayed, IFNULL(p.changed, 0)) END DESC " +
        "LIMIT :limit")
     LiveData<List<Playlist>> getSortedPlaylistsPreview(String sortMethod, int limit);
 
