@@ -39,7 +39,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
     private static final int JOB_ID = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
-    private static final int PAUSED_NOTIFICATION_ID = 2;
+    public static final int PAUSED_NOTIFICATION_ID = 2;
     private static final int COMPLETE_NOTIFICATION_ID = 3;
 
     private static volatile int batchTotal = 0;

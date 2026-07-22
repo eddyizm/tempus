@@ -39,7 +39,7 @@ public class ExternalAudioWriter {
     private ExternalAudioWriter() {
     }
 
-    static String sanitizeFileName(String name) {
+    public static String sanitizeFileName(String name) {
         String sanitized = name.replaceAll("[\\/:*?\\\"<>|]", "_");
         sanitized = sanitized.replaceAll("\\s+", " ").trim();
         return sanitized;
