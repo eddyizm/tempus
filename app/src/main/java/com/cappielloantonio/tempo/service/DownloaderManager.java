@@ -21,6 +21,7 @@ import androidx.media3.exoplayer.offline.DownloadService;
 import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.service.DownloaderService;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 import com.cappielloantonio.tempo.util.Preferences;
 
 import java.io.IOException;
@@ -115,7 +116,7 @@ public class DownloaderManager {
                 + " | forceResume=" + forceResume
                 + " | hasFailed=" + hasFailedDownloads());
 
-        if (externalUri != null) {
+if (externalUri != null) {
             // For external downloads, set download_uri to the expected exported file URI
             // so that DeleteDownloadStorageDialog can match files for deletion.
             String artist = download.getArtist() != null ? download.getArtist() : "";
@@ -123,7 +124,7 @@ public class DownloaderManager {
             String album = download.getAlbum() != null ? download.getAlbum() : "";
             String baseName = artist.isEmpty() ? title : artist + " - " + title;
             if (!album.isEmpty()) baseName += " (" + album + ")";
-            String sanitized = baseName.replaceAll("[\\\\/:*?\"<>|]", "_").replaceAll("\\s+", " ").trim();
+            String sanitized = ExternalAudioWriter.sanitizeFileName(baseName);
             if (sanitized.isEmpty()) sanitized = "download";
             String extension = download.getSuffix();
             if (extension == null || extension.isEmpty()) extension = "mp3";
