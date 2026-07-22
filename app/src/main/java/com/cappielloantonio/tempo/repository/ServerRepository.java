@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ServerDao;
 import com.cappielloantonio.tempo.model.Server;
+import com.cappielloantonio.tempo.util.CryptoUtil;
 
 import java.util.List;
 
@@ -18,9 +19,53 @@ public class ServerRepository {
     }
 
     public void insert(Server server) {
-        InsertThreadSafe insert = new InsertThreadSafe(serverDao, server);
+        InsertThreadSafe insert = new InsertThreadSafe(serverDao, withEncryptedPassword(server));
         Thread thread = new Thread(insert);
         thread.start();
+    }
+
+    /**
+     * Re-encrypts any server passwords stored as plaintext before at-rest encryption was introduced.
+     * Reads already tolerate plaintext via {@link CryptoUtil#decrypt}; this rewrites the stored rows
+     * so the raw password no longer sits in the database. Idempotent: rows already encrypted are skipped.
+     */
+    public void encryptStoredPasswords() {
+        new Thread(() -> {
+            for (Server server : serverDao.getAllSync()) {
+                String password = server.getPassword();
+                if (password != null && !CryptoUtil.isEncrypted(password)) {
+                    serverDao.insert(withEncryptedPassword(server));
+                }
+            }
+        }).start();
+    }
+
+    // Single choke point: callers pass a plaintext password and it is encrypted before it reaches the
+    // database. Already-encrypted values (e.g. from the migration pass) are left untouched.
+    private static Server withEncryptedPassword(Server server) {
+        String password = server.getPassword();
+        if (password == null || CryptoUtil.isEncrypted(password)) {
+            return server;
+        }
+
+        String encrypted = CryptoUtil.encrypt(password);
+        // If encryption fails (e.g. an unavailable Keystore key), keep the original row rather than
+        // writing null into the non-null password column. Reads still tolerate the plaintext.
+        if (encrypted == null) {
+            return server;
+        }
+
+        return new Server(
+                server.getServerId(),
+                server.getServerName(),
+                server.getUsername(),
+                encrypted,
+                server.getAddress(),
+                server.getLocalAddress(),
+                server.getTimestamp(),
+                server.isLowSecurity(),
+                server.getClientCert()
+        );
     }
 
     public void delete(Server server) {
