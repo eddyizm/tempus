@@ -184,7 +184,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                         .setContentTitle("Download Complete")
                         .setContentText(batchTotal + " tracks downloaded successfully")
                         .setAutoCancel(true);
-                manager.notify(3, doneBuilder.build());
+                manager.notify(COMPLETE_NOTIFICATION_ID, doneBuilder.build());
             }
 
             batchTotal = 0;
@@ -371,11 +371,10 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
         Notification finalNotification = builder.build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(2);
-        notificationManager.notify(2, finalNotification);
+        notificationManager.cancel(PAUSED_NOTIFICATION_ID);
+        notificationManager.notify(PAUSED_NOTIFICATION_ID, finalNotification);
 
         notificationManager.cancel(FOREGROUND_NOTIFICATION_ID);
-        notificationManager.cancel(1);
     }
 
     /**

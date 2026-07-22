@@ -47,7 +47,7 @@ public class DownloadControlReceiver extends BroadcastReceiver {
                 Log.d(TAG, "Resuming downloads via sendResumeDownloads");
                 // Cancel the paused notification before resuming
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.cancel(2);
+                notificationManager.cancel(DownloaderService.PAUSED_NOTIFICATION_ID);
                 DownloadService.sendResumeDownloads(context, DownloaderService.class, false);
                 break;
 
