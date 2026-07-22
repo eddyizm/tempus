@@ -22,9 +22,9 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.ui.adapter.ServerAdapter;
 import com.cappielloantonio.tempo.databinding.FragmentLoginBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
-import com.cappielloantonio.tempo.interfaces.SystemCallback;
 import com.cappielloantonio.tempo.model.Server;
 import com.cappielloantonio.tempo.repository.SystemRepository;
+import com.cappielloantonio.tempo.subsonic.base.NetworkError;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.ServerSignupDialog;
 import com.cappielloantonio.tempo.util.Preferences;
@@ -120,19 +120,33 @@ public class LoginFragment extends Fragment implements ClickCallback {
         saveServerPreference(server.getServerId(), server.getAddress(), server.getLocalAddress(), server.getUsername(), server.getPassword(), server.isLowSecurity(), server.getClientCert());
 
         SystemRepository systemRepository = new SystemRepository();
-        systemRepository.checkUserCredential(new SystemCallback() {
-            @Override
-            public void onError(Exception exception) {
+        systemRepository.checkUserCredential(resource -> {
+            if (resource.isSuccess()) {
+                activity.goFromLogin();
+            } else if (resource.isError()) {
                 Preferences.switchInUseServerAddress();
                 resetServerPreference();
-                Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onSuccess(String password, String token, String salt) {
-                activity.goFromLogin();
+                Toast.makeText(requireContext(), loginErrorMessage(resource.getError()), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private String loginErrorMessage(NetworkError error) {
+        if (error == null) return getString(R.string.login_error_generic);
+
+        switch (error.getType()) {
+            case AUTH_FAILED:
+                return getString(R.string.login_error_credentials);
+            case UNREACHABLE:
+                return getString(R.string.login_error_unreachable);
+            case SERVER_ERROR:
+                return getString(R.string.login_error_server, error.getCode() != null ? error.getCode() : 0);
+            case INVALID_RESPONSE:
+                return getString(R.string.login_error_invalid_response);
+            case API_ERROR:
+            default:
+                return error.getMessage() != null ? error.getMessage() : getString(R.string.login_error_generic);
+        }
     }
 
     @Override
