@@ -3,4 +3,8 @@
     <item
         android:id="@+id/action_open_equalizer"
         android:title="@string/settings_app_equalizer" />
+
+    <item
+        android:id="@+id/action_add_to_playlist"
+        android:title="Add to playlist" />
 </menu>

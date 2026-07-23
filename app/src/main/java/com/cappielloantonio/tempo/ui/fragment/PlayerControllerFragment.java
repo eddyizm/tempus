@@ -47,6 +47,7 @@ import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBindi
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
+import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
 import com.cappielloantonio.tempo.ui.dialog.SleepTimerDialog;
 import com.cappielloantonio.tempo.util.SleepTimerManager;
 
@@ -68,6 +69,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -186,6 +188,9 @@ public class PlayerControllerFragment extends Fragment {
                     switch (item.getItemId()) {
                         case R.id.action_open_equalizer:
                             navigateToEqualizerFragment();
+                            return true;
+                        case R.id.action_add_to_playlist:
+                            openAddToPlaylistDialog();
                             return true;
                         default:
                             return false;
@@ -797,6 +802,17 @@ public class PlayerControllerFragment extends Fragment {
         skipSilenceToggleButton.setOnClickListener(view -> {
             Preferences.setSkipSilenceMode(!skipSilenceToggleButton.isChecked());
         });
+    }
+
+    private void openAddToPlaylistDialog() {
+        var song = playerBottomSheetViewModel.getLiveMedia().getValue();
+        if (song != null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(Collections.singletonList(song)));
+            PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+            dialog.setArguments(bundle);
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
+        }
     }
 
     private void navigateToEqualizerFragment() {
