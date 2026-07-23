@@ -6,5 +6,5 @@
 
     <item
         android:id="@+id/action_add_to_playlist"
-        android:title="Add to playlist" />
+        android:title="@string/player_overflow_menu_add_to_playlist" />
 </menu>
