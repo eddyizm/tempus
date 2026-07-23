@@ -95,7 +95,6 @@ public class PlayerControllerFragment extends Fragment {
     private ImageButton playerOpenLyricsButton;
     private ImageButton playerTrackInfo;
     private LinearLayout ratingContainer;
-    private ImageButton equalizerButton;
     private LinearLayout sleepTimerContainer;
     private ImageButton sleepTimerButton;
     private android.widget.TextView sleepTimerLabel;
@@ -128,7 +127,6 @@ public class PlayerControllerFragment extends Fragment {
         initMediaListenable();
         initMediaLabelButton();
         initArtistLabelButton();
-        initEqualizerButton();
 
         // Sync UI immediately in case a timer survived a rotation.
         updateSleepTimerUI();
@@ -171,7 +169,6 @@ public class PlayerControllerFragment extends Fragment {
         playerTrackInfo = bind.getRoot().findViewById(R.id.player_info_track);
         songRatingBar = bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
-        equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
         assetLinkChipGroup = bind.getRoot().findViewById(R.id.asset_link_chip_group);
         playerSongLinkChip = bind.getRoot().findViewById(R.id.asset_link_song_chip);
         playerAlbumLinkChip = bind.getRoot().findViewById(R.id.asset_link_album_chip);
@@ -805,10 +802,6 @@ public class PlayerControllerFragment extends Fragment {
         });
     }
 
-    private void initEqualizerButton() {
-        equalizerButton.setOnClickListener(v -> navigateToEqualizerFragment());
-    }
-
     private void navigateToEqualizerFragment() {
         NavController navController = NavHostFragment.findNavController(this);
         NavOptions navOptions = new NavOptions.Builder()
@@ -912,24 +905,6 @@ public class PlayerControllerFragment extends Fragment {
         if (mediaServiceBinder != null) {
             EqualizerManager eqManager = mediaServiceBinder.getEqualizerManager();
             short numBands = eqManager.getNumberOfBands();
-
-            if (equalizerButton != null && sleepTimerContainer != null) {
-                ConstraintLayout.LayoutParams sleepParams = (ConstraintLayout.LayoutParams) sleepTimerContainer
-                        .getLayoutParams();
-                if (numBands == 0) {
-                    equalizerButton.setVisibility(View.GONE);
-                    // Equalizer gone: anchor sleep timer to parent start so the
-                    // two remaining buttons (sleep timer + queue) stay centred.
-                    sleepParams.startToEnd = ConstraintLayout.LayoutParams.UNSET;
-                    sleepParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-                } else {
-                    equalizerButton.setVisibility(View.VISIBLE);
-                    // Equalizer visible: restore the three-button spread chain.
-                    sleepParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
-                    sleepParams.startToEnd = R.id.player_open_equalizer_button;
-                }
-                sleepTimerContainer.setLayoutParams(sleepParams);
-            }
         }
     }
 
