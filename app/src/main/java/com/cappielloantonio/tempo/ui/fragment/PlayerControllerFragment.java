@@ -44,7 +44,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBinding;
-import com.cappielloantonio.tempo.equalizer.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
@@ -68,8 +67,6 @@ import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -884,7 +881,6 @@ public class PlayerControllerFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mediaServiceBinder = (MediaService.LocalBinder) service;
             isServiceBound = true;
-            checkEqualizerBands();
         }
 
         @Override
@@ -899,13 +895,6 @@ public class PlayerControllerFragment extends Fragment {
         intent.setAction(MediaService.ACTION_BIND_EQUALIZER);
         requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         isServiceBound = true;
-    }
-
-    private void checkEqualizerBands() {
-        if (mediaServiceBinder != null) {
-            EqualizerManager eqManager = mediaServiceBinder.getEqualizerManager();
-            short numBands = eqManager.getNumberOfBands();
-        }
     }
 
     @Override
