@@ -26,7 +26,6 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.media3.common.C;
 import androidx.media3.common.Format;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackParameters;
@@ -270,18 +269,13 @@ public class PlayerControllerFragment extends Fragment {
 
             @Override
             public void onTracksChanged(@NonNull Tracks tracks) {
-                // The real decoded format is only known once the player has loaded the
-                // track, which happens after the metadata change, so refresh then. See #579.
-                applyActualPlaybackFormat();
+                setMediaFormatFromFileReturnedByServer();
             }
 
             @Override
             public void onPlaybackStateChanged(int playbackState) {
-                // onTracksChanged can arrive before the audio track is fully synced on the
-                // first load, so re-apply once the player reaches READY, when the decoded
-                // format is reliably available and without needing a track change. See #579.
                 if (playbackState == Player.STATE_READY) {
-                    applyActualPlaybackFormat();
+                    setMediaFormatFromFileReturnedByServer();
                 }
             }
 
@@ -371,7 +365,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
-        boolean isLocal = isCurrentTrackLocal();
+        boolean isLocal = MusicUtil.isCurrentTrackLocal(getBrowser());
 
         if (mediaMetadata.extras != null) {
             String extension = mediaMetadata.extras.getString("suffix", getString(R.string.player_unknown_format));
@@ -405,12 +399,7 @@ public class PlayerControllerFragment extends Fragment {
         }
 
         if (!isLocal) {
-            // Show the format/bitrate the player is actually decoding (the server's real
-            // output) instead of the client's requested transcode preference, which the
-            // server can ignore or override, e.g. when server settings are prioritized, or
-            // when the server has no matching transcoding rule and serves the original.
-            // See issue #579.
-            applyActualPlaybackFormat();
+            setMediaFormatFromFileReturnedByServer();
         }
 
         playerTrackInfo.setOnClickListener(view -> {
@@ -425,46 +414,30 @@ public class PlayerControllerFragment extends Fragment {
         playerMediaBitrate.setOnLongClickListener(v -> toggleQuickActionVisiblity());
     }
 
-    // True when the current item is played from the device (content://, file://) rather than
-    // streamed/transcoded by the server.
-    private boolean isCurrentTrackLocal() {
-        if (mediaBrowserListenableFuture != null && mediaBrowserListenableFuture.isDone()) {
-            try {
-                MediaBrowser browser = mediaBrowserListenableFuture.get();
-                if (browser != null && browser.getCurrentMediaItem() != null) {
-                    android.net.Uri currentUri = browser.getCurrentMediaItem().requestMetadata.mediaUri;
-                    if (currentUri != null) {
-                        String scheme = currentUri.getScheme();
-                        return "content".equals(scheme) || "file".equals(scheme);
-                    }
-                }
-            } catch (Exception e) {
-                Log.e("DEBUG_PLAYER", "Error resolving current track locality", e);
-            }
+    private MediaBrowser getBrowser() {
+        if (mediaBrowserListenableFuture == null || !mediaBrowserListenableFuture.isDone()) return null;
+        try {
+            return mediaBrowserListenableFuture.get();
+        } catch (Exception e) {
+            Log.e(TAG, "Unable to resolve media browser", e);
+            return null;
         }
-        return false;
     }
 
-    // Reads the audio format the player is actually decoding (the server's output) and shows
-    // it, rather than the client's requested transcode preference. The server can ignore the
-    // request (server settings prioritized, or no matching transcoding rule), so the requested
-    // format/bitrate may differ from what is really playing. See issue #579.
-    // Scope note: TrackInfoDialog still reports the requested transcode preference, so that
-    // dialog and this player label can intentionally differ for the same track.
-    private void applyActualPlaybackFormat() {
+    private void setMediaFormatFromFileReturnedByServer() {
         if (playerMediaExtension == null) return;
-        // Local files are played from disk, not transcoded, so their format/bitrate must come
-        // from the file metadata (handled in setMediaInfo), not the decoder label. onTracksChanged
-        // also calls this, so guard here to keep both entry points consistent and stop a local
-        // file's display from being overwritten with the decoded-format label. See #579.
-        if (isCurrentTrackLocal()) return;
 
-        Format format = getCurrentAudioFormat();
-        if (format == null) return; // tracks not ready yet; onTracksChanged will retry
+        MediaBrowser browser = getBrowser();
+        // Guard against local files here too: onTracksChanged also calls this, and a local
+        // file's format comes from its metadata in setMediaInfo, not the decoder label.
+        if (MusicUtil.isCurrentTrackLocal(browser)) return;
+
+        Format format = MusicUtil.getCurrentAudioFormat(browser);
+        if (format == null) return;
 
         String actual = MusicUtil.audioFormatLabel(format.sampleMimeType);
         if (actual != null && !actual.isEmpty()) {
-            String original = getCurrentOriginalSuffix();
+            String original = MusicUtil.getCurrentOriginalSuffix(browser);
             boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
             playerMediaExtension.setText(transcoded
                     ? actual + " (" + getString(R.string.player_transcoding) + ")"
@@ -475,42 +448,6 @@ public class PlayerControllerFragment extends Fragment {
             playerMediaBitrate.setText((format.bitrate / 1000) + "kbps");
             playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.VISIBLE : View.GONE);
         }
-    }
-
-    private Format getCurrentAudioFormat() {
-        try {
-            if (mediaBrowserListenableFuture == null || !mediaBrowserListenableFuture.isDone()) return null;
-            MediaBrowser browser = mediaBrowserListenableFuture.get();
-            if (browser == null) return null;
-            // Prefer the selected audio track. On the first load the controller can report
-            // tracks before any is marked selected, so fall back to the first audio track and
-            // show the format immediately instead of only after the next track change. See #579.
-            Format firstAudio = null;
-            for (Tracks.Group group : browser.getCurrentTracks().getGroups()) {
-                if (group.getType() != C.TRACK_TYPE_AUDIO) continue;
-                for (int i = 0; i < group.length; i++) {
-                    if (group.isTrackSelected(i)) return group.getTrackFormat(i);
-                    if (firstAudio == null) firstAudio = group.getTrackFormat(i);
-                }
-            }
-            return firstAudio;
-        } catch (Exception e) {
-            Log.e(TAG, "Unable to read current audio format", e);
-        }
-        return null;
-    }
-
-    private String getCurrentOriginalSuffix() {
-        try {
-            if (mediaBrowserListenableFuture == null || !mediaBrowserListenableFuture.isDone()) return null;
-            MediaBrowser browser = mediaBrowserListenableFuture.get();
-            if (browser != null && browser.getMediaMetadata().extras != null) {
-                return browser.getMediaMetadata().extras.getString("suffix", null);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Unable to read original suffix", e);
-        }
-        return null;
     }
 
     private void toggleBitrateVisibility() {

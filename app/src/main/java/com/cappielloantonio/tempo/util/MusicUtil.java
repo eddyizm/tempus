@@ -8,6 +8,12 @@ import android.net.Uri;
 import android.text.Html;
 import android.util.Log;
 
+import androidx.media3.common.C;
+import androidx.media3.common.Format;
+import androidx.media3.common.Tracks;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.session.MediaBrowser;
+
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.model.Download;
@@ -377,6 +383,46 @@ public class MusicUtil {
             default:
                 return true;
         }
+    }
+
+    // True when the current item is played from the device (a content or file uri scheme)
+    // rather than streamed and transcoded by the server. Returns false when the browser is
+    // null or the current item has no resolvable uri. See issue 579.
+    @UnstableApi
+    public static boolean isCurrentTrackLocal(MediaBrowser browser) {
+        if (browser == null || browser.getCurrentMediaItem() == null) return false;
+        Uri currentUri = browser.getCurrentMediaItem().requestMetadata.mediaUri;
+        if (currentUri == null) return false;
+        String scheme = currentUri.getScheme();
+        return "content".equals(scheme) || "file".equals(scheme);
+    }
+
+    // The audio Format the player is currently decoding, so callers can show what is really
+    // playing instead of the requested transcode preference. Prefers the selected audio track;
+    // on the first load the controller can report tracks before one is marked selected, so it
+    // falls back to the first audio track and returns null only when no audio track is
+    // available yet. See issue 579.
+    @UnstableApi
+    public static Format getCurrentAudioFormat(MediaBrowser browser) {
+        if (browser == null) return null;
+        Format firstAudio = null;
+        for (Tracks.Group group : browser.getCurrentTracks().getGroups()) {
+            if (group.getType() != C.TRACK_TYPE_AUDIO) continue;
+            for (int i = 0; i < group.length; i++) {
+                if (group.isTrackSelected(i)) return group.getTrackFormat(i);
+                if (firstAudio == null) firstAudio = group.getTrackFormat(i);
+            }
+        }
+        return firstAudio;
+    }
+
+    // The original source suffix (for example "flac" or "m4a") stored on the current item's
+    // metadata, used to decide whether the decoded format differs from the source. Returns
+    // null when the browser is null or no suffix is present. See issue 579.
+    @UnstableApi
+    public static String getCurrentOriginalSuffix(MediaBrowser browser) {
+        if (browser == null || browser.getMediaMetadata().extras == null) return null;
+        return browser.getMediaMetadata().extras.getString("suffix", null);
     }
 
     public static List<Child> limitPlayableMedia(List<Child> toLimit, int position) {
