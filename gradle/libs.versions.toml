@@ -1,6 +1,6 @@
 [versions]
 agp = "9.2.1"
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 
 # AndroidX / Material
 activity = "1.13.0"
