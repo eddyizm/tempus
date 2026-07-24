@@ -224,13 +224,20 @@ open class BaseSessionCallback(
             session.isAutomotiveController(controller) ||
             session.isAutoCompanionController(controller)
         ) {
-            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
-                .setAvailableSessionCommands(mediaNotificationSessionCommands)
-                .setMediaButtonPreferences(buildMediaButtonPreferences(session.player))
-                .build()
+        return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+            .setAvailableSessionCommands(mediaNotificationSessionCommands)
+            .setMediaButtonPreferences(buildMediaButtonPreferences(session.player))
+            .build()
         }
 
-        return MediaSession.ConnectionResult.AcceptedResultBuilder(session).build()
+        val sessionCommands =
+            MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
+                .add(SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY))
+                .build()
+
+        return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+            .setAvailableSessionCommands(sessionCommands)
+            .build()
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -406,6 +413,14 @@ open class BaseSessionCallback(
                     Log.d(TAG, "onCustomCommand: onInstantMix not usable")
 
                 updateMediaNotificationCustomLayout(session)
+                Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+            }
+            Constants.CUSTOM_COMMAND_PLAY_NEXT -> {
+                service.requestPlayNextFixup(
+                    args.getInt(Constants.PLAY_NEXT_INSERT_POS, -1),
+                    args.getInt(Constants.PLAY_NEXT_COUNT, 0),
+                    args.getInt(Constants.PLAY_NEXT_TARGET_COUNT, -1)
+                )
                 Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
             }
             Constants.CUSTOM_COMMAND_TOGGLE_SHUFFLE_MODE_ON -> {

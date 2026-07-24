@@ -167,6 +167,62 @@ open class BaseMediaService : MediaLibraryService() {
         }, MoreExecutors.directExecutor())
     }
 
+    // "Play next" under shuffle: the UI inserts items at current+1 on the timeline and asks
+    // the service to splice them into shuffle position current+1. Inserts land asynchronously,
+    // so requests are queued and applied from onTimelineChanged once each target count is visible.
+    private data class PlayNextRequest(val insertPos: Int, val count: Int, val target: Int)
+    private val playNextQueue = ArrayDeque<PlayNextRequest>()
+
+    fun requestPlayNextFixup(insertPos: Int, count: Int, target: Int) {
+        if (insertPos < 0 || count <= 0 || target < 0) return
+        playNextQueue.addLast(PlayNextRequest(insertPos, count, target))
+        tryApplyPlayNextFixup()
+    }
+
+    private fun tryApplyPlayNextFixup() {
+        val player = exoplayer
+        while (playNextQueue.isNotEmpty()) {
+            val req = playNextQueue.first()
+            if (player.mediaItemCount < req.target) return  // insert not visible yet — wait for onTimelineChanged
+            if (player.mediaItemCount != req.target) {       // count drifted — drop the stale request
+                playNextQueue.removeFirst()
+                continue
+            }
+            if (!player.shuffleModeEnabled) {                // timeline == play order; nothing to fix
+                playNextQueue.removeFirst()
+                continue
+            }
+            val current = player.currentMediaItemIndex
+            if (current == C.INDEX_UNSET || req.insertPos + req.count > req.target) {
+                playNextQueue.removeFirst()
+                continue
+            }
+
+            // Build the current shuffle order minus the new items, then splice them in after current.
+            val timeline = player.currentTimeline
+            val base = ArrayList<Int>(req.target)
+            var w = timeline.getFirstWindowIndex(true)
+            while (w != C.INDEX_UNSET) {
+                if (w < req.insertPos || w >= req.insertPos + req.count) base.add(w)
+                w = timeline.getNextWindowIndex(w, Player.REPEAT_MODE_OFF, true)
+            }
+            val curPos = base.indexOf(current)
+            if (curPos < 0) {
+                playNextQueue.removeFirst()
+                continue
+            }
+
+            val newOrder = ArrayList<Int>(req.target)
+            newOrder.addAll(base)
+            for (j in 0 until req.count) {
+                newOrder.add(curPos + 1 + j, req.insertPos + j)
+            }
+            player.shuffleOrder = DefaultShuffleOrder(newOrder.toIntArray(), Random.nextLong())
+            Log.d(TAG, "playNextFixup: ${req.count} item(s) moved to shuffle position ${curPos + 1}")
+            playNextQueue.removeFirst()
+        }
+    }
+
     fun restorePlayerFromQueue(player: Player) {
         if (player.mediaItemCount > 0) return
 
@@ -283,6 +339,7 @@ open class BaseMediaService : MediaLibraryService() {
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                 Log.d(TAG, "onTimelineChanged reason=$reason")
+                tryApplyPlayNextFixup()
                 try {
                     ReplayGainUtil.prefetchQueueGains(player)
                 } catch (t: Throwable) {
@@ -495,6 +552,15 @@ open class BaseMediaService : MediaLibraryService() {
 
                     if (newPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.setLastPlayedTimestamp(newPosition.mediaItem)
+                    }
+                } else if (reason == Player.DISCONTINUITY_REASON_SEEK && oldPosition.mediaItemIndex != newPosition.mediaItemIndex) {
+                    // SEEK only: scrobble a genuine user skip, not other index changes such as removing the currently playing track (REMOVE).
+                    if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
+                        val durationMs = ((oldPosition.mediaItem?.mediaMetadata?.extras?.getInt("duration") ?: 0).toLong()) * 1000L
+                        if (MediaManager.meetsScrobbleThreshold(oldPosition.positionMs, durationMs)) {
+                            MediaManager.scrobble(oldPosition.mediaItem, true)
+                            MediaManager.saveChronology(oldPosition.mediaItem)
+                        }
                     }
                 }
             }
