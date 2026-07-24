@@ -200,6 +200,12 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
                 playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_DATE);
             } else if (id == R.id.menu_playlist_sort_songs) {
                 playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_SONGS);
+            } else if (id == R.id.menu_playlist_sort_last_played) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_LAST_PLAYED);
+            } else if (id == R.id.menu_playlist_sort_last_updated) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_LAST_UPDATED);
+            } else if (id == R.id.menu_playlist_sort_both) {
+                playlistCatalogueViewModel.setSortOrder(Constants.PLAYLIST_ORDER_BY_BOTH);
             }
             return true;
         });

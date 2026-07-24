@@ -134,6 +134,10 @@
     <string name="error_required">Required</string>
     <string name="error_server_prefix">http or https prefix required</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="notification_action_resume">Resume</string>
+    <string name="notification_action_cancel">Cancel</string>
+
     <string name="exo_controls_heart_off_description">Toggle Heart off</string>
     <string name="exo_controls_heart_on_description">Toggle Heart on</string>
     <string name="cast_expanded_controller_loading">Loading…</string>
@@ -259,6 +263,9 @@
     <string name="menu_pin_button">Add to faves</string>
     <string name="menu_unpin_button">Remove from faves</string>
     <string name="playlist_sort_pinned">Faves</string>
+    <string name="playlist_sort_last_played">Last played</string>
+    <string name="playlist_sort_last_updated">Last updated</string>
+    <string name="playlist_sort_both">Recently active</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>

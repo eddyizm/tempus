@@ -1,13 +1,10 @@
 package com.cappielloantonio.tempo.ui.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
-import android.widget.Button;
+import android.view.LayoutInflater;
+import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 
@@ -18,72 +15,42 @@ import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.StarredSyncViewModel;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.stream.Collectors;
 
 @OptIn(markerClass = UnstableApi.class)
-public class StarredSyncDialog extends DialogFragment {
-    private StarredSyncViewModel starredSyncViewModel;
-
-    private Runnable onCancel;
-
+public class StarredSyncDialog extends BaseSyncDialog {
     public StarredSyncDialog(Runnable onCancel) {
-        this.onCancel = onCancel;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        DialogStarredSyncBinding bind = DialogStarredSyncBinding.inflate(getLayoutInflater());
-
-        starredSyncViewModel = new ViewModelProvider(requireActivity()).get(StarredSyncViewModel.class);
-
-        return new MaterialAlertDialogBuilder(getActivity())
-                .setView(bind.getRoot())
-                .setTitle(R.string.starred_sync_dialog_title)
-                .setPositiveButton(R.string.starred_sync_dialog_positive_button, null)
-                .setNeutralButton(R.string.starred_sync_dialog_neutral_button, null)
-                .setNegativeButton(R.string.starred_sync_dialog_negative_button, null)
-                .create();
+        super(onCancel);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        setButtonAction(requireContext());
+    protected int getDialogTitleResId() {
+        return R.string.starred_sync_dialog_title;
     }
 
-    private void setButtonAction(Context context) {
-        androidx.appcompat.app.AlertDialog dialog = (androidx.appcompat.app.AlertDialog) getDialog();
+    @Override
+    protected View createDialogView(LayoutInflater layoutInflater) {
+        DialogStarredSyncBinding bind = DialogStarredSyncBinding.inflate(layoutInflater);
+        return bind.getRoot();
+    }
 
-        if (dialog != null) {
-            Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
-            positiveButton.setOnClickListener(v -> {
-                starredSyncViewModel.getStarredTracks(requireActivity()).observe(requireActivity(), songs -> {
-                    if (songs != null && Preferences.getDownloadDirectoryUri() == null) {
-                        DownloadUtil.getDownloadTracker(context).download(
-                                MappingUtil.mapDownloads(songs),
-                                songs.stream().map(Download::new).collect(Collectors.toList())
-                        );
-                    }
+    @Override
+    protected void performSync(Context context, Runnable onDismiss) {
+        StarredSyncViewModel viewModel = new ViewModelProvider(requireActivity()).get(StarredSyncViewModel.class);
+        viewModel.getStarredTracks(requireActivity()).observe(this, songs -> {
+            if (songs != null && !songs.isEmpty()) {
+                DownloadUtil.getDownloadTracker(context).download(
+                        MappingUtil.mapDownloads(songs),
+                        songs.stream().map(Download::new).collect(Collectors.toList())
+                );
+            }
+            onDismiss.run();
+        });
+    }
 
-                    dialog.dismiss();
-                });
-            });
-
-            Button neutralButton = dialog.getButton(Dialog.BUTTON_NEUTRAL);
-            neutralButton.setOnClickListener(v -> {
-                Preferences.setStarredSyncEnabled(true);
-                dialog.dismiss();
-            });
-
-            Button negativeButton = dialog.getButton(Dialog.BUTTON_NEGATIVE);
-            negativeButton.setOnClickListener(v -> {
-                Preferences.setStarredSyncEnabled(false);
-                if (onCancel != null) onCancel.run();
-                dialog.dismiss();
-            });
-        }
+    @Override
+    protected void setSyncPreference(boolean enabled) {
+        Preferences.setStarredSyncEnabled(enabled);
     }
 }
