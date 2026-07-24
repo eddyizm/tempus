@@ -1,0 +1,8 @@
+Show cached cover art when Limit mobile data usage is enabled
+Show local radios in Android Auto when the server has none
+Restore heart/repeat buttons in the media notification on Android 13
+Improve the "Artist" sort order by secondarily sorting by year
+Generate universal apk
+Stop server-ping loop when local and remote addresses match
+Fix bottom padding for song_recycler_view
+Fallback to random track if getsimilar returns empty

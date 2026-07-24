@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.service;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -9,11 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
+import androidx.media3.session.SessionCommand;
+import androidx.media3.session.SessionResult;
 
 import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
@@ -35,7 +39,10 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -309,9 +316,10 @@ public class MediaManager {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.d(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItems(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItems(media));
+                        int current = browser.getCurrentMediaItemIndex();
+                        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
+                            enqueueDatabase(media, false, current + 1);
+                            insertPlayNext(browser, MappingUtil.mapMediaItems(media));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItems(MappingUtil.mapMediaItems(media));
@@ -331,9 +339,10 @@ public class MediaManager {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.e(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItem(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItem(media));
+                        int current = browser.getCurrentMediaItemIndex();
+                        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
+                            enqueueDatabase(media, false, current + 1);
+                            insertPlayNext(browser, Collections.singletonList(MappingUtil.mapMediaItem(media)));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItem(MappingUtil.mapMediaItem(media));
@@ -344,6 +353,45 @@ public class MediaManager {
                 }
             }, MoreExecutors.directExecutor());
         }
+    }
+
+    // "Play next": insert the items right after the current item on the timeline, then —
+    // once the insert has actually applied — ask the service to move them next in the
+    // ExoPlayer shuffle order too. The timeline insert keeps URI/large-list handling on the
+    // normal onAddMediaItems path; the shuffle-order fixup must run on the service (only it
+    // can setShuffleOrder). addMediaItems and a custom command are NOT ordered relative to
+    // each other, so we send the fixup from a one-shot timeline listener once the insert is
+    // visible (same pattern startQueue uses), otherwise the fixup would be clobbered by
+    // addMediaItems' own internal shuffle insert. The fixup is a no-op when shuffle is off.
+    private static void insertPlayNext(MediaBrowser browser, List<MediaItem> items) {
+        if (items.isEmpty()) return;
+        int insertPos = browser.getCurrentMediaItemIndex() + 1;
+        int targetCount = browser.getMediaItemCount() + items.size();
+        // Send the fixup request and do the timeline insert. These two are NOT ordered
+        // relative to each other (and addMediaItems updates the controller optimistically
+        // before the session's async onAddMediaItems even runs), so the service stashes the
+        // request and applies it from its own onTimelineChanged once the insert is visible.
+        Bundle args = new Bundle();
+        args.putInt(Constants.PLAY_NEXT_INSERT_POS, insertPos);
+        args.putInt(Constants.PLAY_NEXT_COUNT, items.size());
+        args.putInt(Constants.PLAY_NEXT_TARGET_COUNT, targetCount);
+        ListenableFuture<SessionResult> fixup =
+                browser.sendCustomCommand(
+                        new SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY), args);
+        Futures.addCallback(fixup, new FutureCallback<SessionResult>() {
+            @Override
+            public void onSuccess(SessionResult result) {
+                if (result.resultCode != SessionResult.RESULT_SUCCESS) {
+                    Log.e(TAG, "insertPlayNext: play-next fixup rejected with code " + result.resultCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(TAG, "insertPlayNext: play-next fixup command failed", t);
+            }
+        }, MoreExecutors.directExecutor());
+        browser.addMediaItems(insertPos, items);
     }
 
     public static void shuffle(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex, int endIndex) {
@@ -500,49 +548,80 @@ public class MediaManager {
                 }
             }, MoreExecutors.directExecutor());
         }
+        String trackId = mediaItem.mediaId;
+        String artistId = mediaItem.mediaMetadata.extras != null
+                ? mediaItem.mediaMetadata.extras.getString("artistId")
+                : null;
 
         LiveData<List<Child>> instantMix =
-                getSongRepository().getContinuousMix(mediaItem.mediaId, 25);
+                getSongRepository().getContinuousMix(trackId, artistId, 25);
 
         instantMix.observeForever(new Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> media) {
-                if (media == null || media.isEmpty()) {
-                    Log.w(TAG, "Continuous Play: no similar track found. Is server correctly configured?");
-                }
-                else
-                {
-                    if (existingBrowserFuture != null) {
-                        Log.d(TAG, "Continuous Play: found " + media.size() + " similar tracks");
+                instantMix.removeObserver(this);
 
-                        final MediaBrowser browser;
-                        try {
-                            browser = existingBrowserFuture.get();
-                        } catch (ExecutionException | InterruptedException e) {
-                            Log.e(TAG, "Continuous Play: browser unavailable", e);
-                            instantMix.removeObserver(this);
-                            continuousPlayIsRunning.set(false);
-                            return;
-                        }
-
-                        List<Child> filteredMedia;
-                        List<String> currentIds = new ArrayList<>();
-                        for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
-                            currentIds.add(browser.getMediaItemAt(i).mediaId);
-                        }
-                        filteredMedia = media.stream()
-                                .filter(child -> !currentIds.contains(child.getId()))
-                                .collect(Collectors.toList());
-
-                        Log.d(TAG, "Continuous Play: adding " + filteredMedia.size() + " tracks to queue");
-                        enqueue(existingBrowserFuture, filteredMedia, true);
+                // Filter against current queue before deciding if we need fallback.
+                // getSimilarSongs2 doesn't know what's already queued, so it may
+                // return tracks we already have. Filter first, then decide.
+                if (media != null && !media.isEmpty()) {
+                    List<Child> filtered = dedupAgainstQueue(media, existingBrowserFuture);
+                    if (!filtered.isEmpty()) {
+                        Log.d(TAG, "Continuous Play: adding " + filtered.size() + " similar tracks");
+                        enqueue(existingBrowserFuture, filtered, true);
+                        continuousPlayIsRunning.set(false);
+                        return;
                     }
                 }
-                instantMix.removeObserver(this);
-                continuousPlayIsRunning.set(false);
-                if (onComplete != null) onComplete.run();
+
+                if (Preferences.isFallbackToRandomTracksEnabled()) {
+                    Log.w(TAG, "Continuous Play: no new similar tracks, falling back to random songs");
+                    LiveData<List<Child>> randomSongs = getSongRepository().getRandomSample(25, null, null);
+                    randomSongs.observeForever(new Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> random) {
+                            randomSongs.removeObserver(this);
+                            if (random != null && !random.isEmpty()) {
+                                List<Child> filtered = dedupAgainstQueue(random, existingBrowserFuture);
+                                if (!filtered.isEmpty()) {
+                                    Log.d(TAG, "Continuous Play: adding " + filtered.size() + " random tracks");
+                                    enqueue(existingBrowserFuture, filtered, true);
+                                } else {
+                                    Log.w(TAG, "Continuous Play: random tracks already in queue");
+                                }
+                            } else {
+                                Log.w(TAG, "Continuous Play: random fallback also empty");
+                            }
+                            continuousPlayIsRunning.set(false);
+                        }
+                    });
+                } else {
+                    Log.w(TAG, "Continuous Play: no new similar tracks, random fallback disabled");
+                    continuousPlayIsRunning.set(false);
+                }
             }
         });
+    }
+
+    private static List<Child> dedupAgainstQueue(List<Child> candidates,
+                                                  ListenableFuture<MediaBrowser> existingBrowserFuture) {
+        if (existingBrowserFuture == null) return new ArrayList<>(candidates);
+
+        final MediaBrowser browser;
+        try {
+            browser = existingBrowserFuture.get();
+        } catch (ExecutionException | InterruptedException e) {
+            return new ArrayList<>(candidates);
+        }
+
+        Set<String> currentIds = new HashSet<>();
+        for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
+            currentIds.add(browser.getMediaItemAt(i).mediaId);
+        }
+
+        return candidates.stream()
+                .filter(child -> !currentIds.contains(child.getId()))
+                .collect(Collectors.toList());
     }
 
     public static void saveChronology(MediaItem mediaItem) {

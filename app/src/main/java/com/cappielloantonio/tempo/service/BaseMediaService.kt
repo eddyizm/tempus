@@ -39,8 +39,13 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.*
 import com.cappielloantonio.tempo.util.SleepTimerManager
 import com.cappielloantonio.tempo.widget.WidgetUpdateManager
+import com.google.common.util.concurrent.FutureCallback
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
@@ -55,6 +60,7 @@ open class BaseMediaService : MediaLibraryService() {
         const val ACTION_BIND_EQUALIZER = "com.cappielloantonio.tempo.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.cappielloantonio.tempo.service.EQUALIZER_UPDATED"
         const val ACTION_RELOAD_EQUALIZER = "com.cappielloantonio.tempo.service.ACTION_RELOAD_EQUALIZER"
+        var activeBrowserCount = 0
     }
 
     protected lateinit var exoplayer: ExoPlayer
@@ -115,15 +121,105 @@ open class BaseMediaService : MediaLibraryService() {
         // #682 recovers from). Instead, replace only the non-current items, and only when
         // the resolved URI actually changed, so the active item is never touched while
         // upcoming tracks still pick up the new network's transcoding settings.
+
+        // Threading: the heavy computation (MappingUtil + isDownloaded) runs on a background
+        // thread to avoid blocking the main thread. Only items from current+1 onward are
+        // processed — already-played items are skipped. replaceMediaItem() is dispatched back
+        // to the main thread via widgetUpdateHandler. The guard i < player.mediaItemCount protects
+        // against queue changes during the background computation.
+
         val current = player.currentMediaItemIndex
         if (current == C.INDEX_UNSET) return
-        for (i in 0 until player.mediaItemCount) {
-            if (i == current) continue
-            val old = player.getMediaItemAt(i)
-            val mapped = MappingUtil.mapMediaItem(old)
-            if (mapped.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
-                player.replaceMediaItem(i, mapped)
+
+        // read all items
+        val itemsToProcess = (current + 1 until player.mediaItemCount).map { i ->
+            Pair(i, player.getMediaItemAt(i))
+        }
+        if (itemsToProcess.isEmpty()) return
+
+        val delegate = Executors.newSingleThreadExecutor()
+        val executor = MoreExecutors.listeningDecorator(delegate)
+        val future: ListenableFuture<List<Pair<Int, MediaItem>>> = executor.submit(Callable {
+            itemsToProcess.mapNotNull { (i, old) ->
+                val mapped = MappingUtil.mapMediaItem(old)
+                if (mapped.requestMetadata.mediaUri != old.requestMetadata.mediaUri) {
+                    Pair(i, mapped)
+                } else null
             }
+        })
+        delegate.shutdown()
+
+        Futures.addCallback(future, object : FutureCallback<List<Pair<Int, MediaItem>>> {
+            override fun onSuccess(updates: List<Pair<Int, MediaItem>>) {
+                widgetUpdateHandler.post {
+                    updates.forEach { (i, mapped) ->
+                        if (i > player.currentMediaItemIndex
+                            && i < player.mediaItemCount
+                            && player.getMediaItemAt(i).mediaId == mapped.mediaId) {
+                            player.replaceMediaItem(i, mapped)
+                        }
+                    }
+                }
+            }
+            override fun onFailure(t: Throwable) {
+                Log.e(TAG, "updateMediaItems failed", t)
+            }
+        }, MoreExecutors.directExecutor())
+    }
+
+    // "Play next" under shuffle: the UI inserts items at current+1 on the timeline and asks
+    // the service to splice them into shuffle position current+1. Inserts land asynchronously,
+    // so requests are queued and applied from onTimelineChanged once each target count is visible.
+    private data class PlayNextRequest(val insertPos: Int, val count: Int, val target: Int)
+    private val playNextQueue = ArrayDeque<PlayNextRequest>()
+
+    fun requestPlayNextFixup(insertPos: Int, count: Int, target: Int) {
+        if (insertPos < 0 || count <= 0 || target < 0) return
+        playNextQueue.addLast(PlayNextRequest(insertPos, count, target))
+        tryApplyPlayNextFixup()
+    }
+
+    private fun tryApplyPlayNextFixup() {
+        val player = exoplayer
+        while (playNextQueue.isNotEmpty()) {
+            val req = playNextQueue.first()
+            if (player.mediaItemCount < req.target) return  // insert not visible yet — wait for onTimelineChanged
+            if (player.mediaItemCount != req.target) {       // count drifted — drop the stale request
+                playNextQueue.removeFirst()
+                continue
+            }
+            if (!player.shuffleModeEnabled) {                // timeline == play order; nothing to fix
+                playNextQueue.removeFirst()
+                continue
+            }
+            val current = player.currentMediaItemIndex
+            if (current == C.INDEX_UNSET || req.insertPos + req.count > req.target) {
+                playNextQueue.removeFirst()
+                continue
+            }
+
+            // Build the current shuffle order minus the new items, then splice them in after current.
+            val timeline = player.currentTimeline
+            val base = ArrayList<Int>(req.target)
+            var w = timeline.getFirstWindowIndex(true)
+            while (w != C.INDEX_UNSET) {
+                if (w < req.insertPos || w >= req.insertPos + req.count) base.add(w)
+                w = timeline.getNextWindowIndex(w, Player.REPEAT_MODE_OFF, true)
+            }
+            val curPos = base.indexOf(current)
+            if (curPos < 0) {
+                playNextQueue.removeFirst()
+                continue
+            }
+
+            val newOrder = ArrayList<Int>(req.target)
+            newOrder.addAll(base)
+            for (j in 0 until req.count) {
+                newOrder.add(curPos + 1 + j, req.insertPos + j)
+            }
+            player.shuffleOrder = DefaultShuffleOrder(newOrder.toIntArray(), Random.nextLong())
+            Log.d(TAG, "playNextFixup: ${req.count} item(s) moved to shuffle position ${curPos + 1}")
+            playNextQueue.removeFirst()
         }
     }
 
@@ -238,15 +334,18 @@ open class BaseMediaService : MediaLibraryService() {
                 }
 
                 updateWidget(player)
+                QueuePreloader.preload(this@BaseMediaService, player)
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
                 Log.d(TAG, "onTimelineChanged reason=$reason")
+                tryApplyPlayNextFixup()
                 try {
                     ReplayGainUtil.prefetchQueueGains(player)
                 } catch (t: Throwable) {
                     Log.w(TAG, "prefetchQueueGains failed: $t")
                 }
+                QueuePreloader.preload(this@BaseMediaService, player)
                 if (timeline.isEmpty) return
                 val window = Timeline.Window()
                 for (i in 0 until timeline.windowCount) {
@@ -569,6 +668,7 @@ open class BaseMediaService : MediaLibraryService() {
     }
 
     override fun onDestroy() {
+        QueuePreloader.cancel()
         releaseNetworkCallback()
         equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
@@ -604,6 +704,20 @@ open class BaseMediaService : MediaLibraryService() {
 
         exoplayer.shuffleModeEnabled = Preferences.isShuffleModeEnabled()
         exoplayer.repeatMode = Preferences.getRepeatMode()
+        exoplayer.playbackParameters = getPlaybackParameters(Preferences.getPlaybackSpeed())
+    }
+
+    private fun getPlaybackParameters(speed: Float): PlaybackParameters {
+        val pitch = if (Preferences.isPlaybackSpeedPitchEnabled()) getAdjustedPitch(speed) else 1.0f
+        return PlaybackParameters(speed, pitch)
+    }
+
+    private fun getAdjustedPitch(speed: Float): Float {
+        return if (Preferences.isPlaybackSpeedManualPitchEnabled()) {
+            Preferences.getPlaybackSpeedManualPitch()
+        } else {
+            speed
+        }
     }
 
     private fun initializeEqualizer() {
@@ -913,6 +1027,10 @@ open class BaseMediaService : MediaLibraryService() {
                 wasWifi = isWifi
                 widgetUpdateHandler.post {
                     updateMediaItems(mediaLibrarySession.player)
+                    // preload() re-evaluates the network itself: it cancels any
+                    // in-flight precache when the new network is not allowed and
+                    // restarts it when it is.
+                    QueuePreloader.preload(this@BaseMediaService, mediaLibrarySession.player)
                 }
             }
         }

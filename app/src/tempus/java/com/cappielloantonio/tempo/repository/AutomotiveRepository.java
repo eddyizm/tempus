@@ -21,6 +21,7 @@ import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
 import com.cappielloantonio.tempo.model.Chronology;
+import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.InternetRadioStationCache;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
@@ -374,6 +375,42 @@ public class AutomotiveRepository {
                 chronologyDao.getLastPlayed(server, count).removeObserver(this);
             }
         });
+
+        return listenableFuture;
+    }
+
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getDownloadedSongs() {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+
+        new Thread(() -> {
+            // Any throw here must resolve the future, otherwise the Android Auto
+            // browse request hangs forever with no error feedback.
+            try {
+                List<Download> downloads = AppDatabase.getInstance().downloadDao().getAllSync();
+
+                if (downloads != null && !downloads.isEmpty()) {
+                    if( !Preferences.isAndroidAutoShuffleDownloadedTracksEnabled() ) {
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_ITEMS, downloads.size()));
+                    }
+                    else {
+                        Collections.shuffle(downloads);
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_SHUFFLE_ITEMS, downloads.size()));
+                    }
+
+                    List<Child> songs = new ArrayList<>(downloads);
+
+                    setChildrenMetadata(songs);
+
+                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
+
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
+                } else {
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.of(), null));
+                }
+            } catch (Exception e) {
+                listenableFuture.setException(e);
+            }
+        }).start();
 
         return listenableFuture;
     }
@@ -793,35 +830,31 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        // Server radios are optional here: a server with no stations omits the list, but
+                        // the user's locally-added radios must still appear. Collect whatever the server
+                        // returned (possibly none); the local cache is always merged in below. See #810.
+                        final List<InternetRadioStation> serverStations = new ArrayList<>();
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getInternetRadioStations() != null && response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations() != null) {
-
-                            List<InternetRadioStation> radioStations = new ArrayList<>(response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations());
-
-                            new Thread(() -> {
-                                List<InternetRadioStationCache> localCaches = AppDatabase.getInstance().internetRadioStationDao().getLocal();
-                                for (InternetRadioStationCache cache : localCaches) {
-                                    radioStations.add(cache.toInternetRadioStation());
-                                }
-
-                                radioStations.sort(java.util.Comparator.comparing(
-                                        station -> station.getName() == null ? "" : station.getName(),
-                                        String.CASE_INSENSITIVE_ORDER));
-
-                                List<MediaItem> mediaItems = new ArrayList<>();
-
-                                for (InternetRadioStation radioStation : radioStations) {
-                                    mediaItems.add(MappingUtil.mapInternetRadioStation(radioStation));
-                                }
-
-                                setInternetRadioStationsMetadata(radioStations);
-
-                                LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
-
-                                listenableFuture.set(libraryResult);
-                            }).start();
-                        } else {
-                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
+                            serverStations.addAll(response.body().getSubsonicResponse().getInternetRadioStations().getInternetRadioStations());
                         }
+
+                        new Thread(() -> {
+                            List<InternetRadioStation> localStations = new ArrayList<>();
+                            for (InternetRadioStationCache cache : AppDatabase.getInstance().internetRadioStationDao().getLocal()) {
+                                localStations.add(cache.toInternetRadioStation());
+                            }
+
+                            List<InternetRadioStation> radioStations = mergeAndSortRadioStations(serverStations, localStations);
+
+                            List<MediaItem> mediaItems = new ArrayList<>();
+                            for (InternetRadioStation radioStation : radioStations) {
+                                mediaItems.add(MappingUtil.mapInternetRadioStation(radioStation));
+                            }
+
+                            setInternetRadioStationsMetadata(radioStations);
+
+                            listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
+                        }).start();
                     }
 
                     @Override
@@ -831,6 +864,21 @@ public class AutomotiveRepository {
                 });
 
         return listenableFuture;
+    }
+
+    // Merge the server's internet radios with the user's locally-added ones, sorted by name
+    // (case-insensitive, null names first). Pulled out so the #810 behavior, locals always
+    // included even when the server returns none, is covered by a unit test.
+    static List<InternetRadioStation> mergeAndSortRadioStations(
+            List<InternetRadioStation> serverStations,
+            List<InternetRadioStation> localStations) {
+        List<InternetRadioStation> merged = new ArrayList<>();
+        if (serverStations != null) merged.addAll(serverStations);
+        if (localStations != null) merged.addAll(localStations);
+        merged.sort(java.util.Comparator.comparing(
+                station -> station.getName() == null ? "" : station.getName(),
+                String.CASE_INSENSITIVE_ORDER));
+        return merged;
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbumTracks(String id) {

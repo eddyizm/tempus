@@ -6,15 +6,17 @@ plugins {
 
 android {
     namespace = 'com.cappielloantonio.tempo'
-    compileSdk = 35
+    //noinspection GradleDependency
+    compileSdk = 36
     buildToolsVersion = '36.0.0'
 
     defaultConfig {
         minSdkVersion 24
-        targetSdk 35
+        //noinspection OldTargetApi
+        targetSdk = 36
 
-        versionCode 33
-        versionName '4.20.5'
+        versionCode 38
+        versionName '4.22.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -36,8 +38,7 @@ android {
             enable = true
             reset()
             //noinspection ChromeOsAbiSupport
-            include 'armeabi-v7a', 'arm64-v8a'
-            universalApk = false
+            universalApk = true
         }
     }
 
@@ -86,6 +87,7 @@ dependencies {
     implementation files('../libs/lib-decoder-ffmpeg-release.aar')
 
     // AndroidX
+    implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.coordinatorlayout
     implementation libs.androidx.preference.ktx

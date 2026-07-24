@@ -16,6 +16,8 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -136,18 +138,18 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
-    /** @noinspection deprecation*/
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_rate_album) {
-            Bundle bundle = new Bundle();
-            AlbumID3 album = albumPageViewModel.getAlbum().getValue();
-            bundle.putParcelable(Constants.ALBUM_OBJECT, album);
-            RatingDialog dialog = new RatingDialog();
-            dialog.setArguments(bundle);
-            dialog.show(requireActivity().getSupportFragmentManager(), null);
-            return true;
-        }
+        /** @noinspection deprecation*/
+        @Override
+        public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+            if (item.getItemId() == R.id.action_rate_album) {
+                Bundle bundle = new Bundle();
+                AlbumID3 album = albumPageViewModel.getAlbum().getValue();
+                bundle.putParcelable(Constants.ALBUM_OBJECT, album.strippedForNav());
+                RatingDialog dialog = new RatingDialog();
+                dialog.setArguments(bundle);
+                dialog.show(requireActivity().getSupportFragmentManager(), null);
+                return true;
+            }
 
         if (item.getItemId() == R.id.action_download_album) {
             albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
@@ -289,7 +291,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         bind.albumArtistLabel.setOnClickListener(v -> albumPageViewModel.getArtist().observe(getViewLifecycleOwner(), artist -> {
             if (artist != null) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.ARTIST_OBJECT, artist);
+                bundle.putParcelable(Constants.ARTIST_OBJECT, artist.strippedForNav());
                 activity.navController.navigate(R.id.action_albumPageFragment_to_artistPageFragment, bundle);
             } else
                 Toast.makeText(requireContext(), getString(R.string.album_error_retrieving_artist), Toast.LENGTH_SHORT).show();
@@ -349,6 +351,22 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     private void initSongsView() {
         bind.songRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.songRecyclerView.setHasFixedSize(true);
+
+        /* Edge-to-edge dynamic inset for bottom padding */
+        bind.songRecyclerView.setClipToPadding(false);
+        bind.songRecyclerView.post(() -> {
+            if (bind == null) return;
+            int peekHeight = (int) getResources().getDimension(R.dimen.bottom_sheet_behavior_peek_height);
+            WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(
+                    requireActivity().getWindow().getDecorView());
+            int navBottom = rootInsets == null ? 0
+                    : rootInsets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            bind.songRecyclerView.setPadding(
+                    bind.songRecyclerView.getPaddingLeft(),
+                    bind.songRecyclerView.getPaddingTop(),
+                    bind.songRecyclerView.getPaddingRight(),
+                    navBottom+peekHeight);
+        });
 
         // Synchronize scrolling if info scroll view exists (landscape)
         if (bind.getRoot().findViewById(R.id.album_info_scroll_view) != null) {

@@ -401,6 +401,13 @@ public class PlaylistRepository {
     }
 
     @OptIn(markerClass = UnstableApi.class)
+    public void updateLastPlayed(String playlistId) {
+        new Thread(() -> {
+            playlistDao.updateLastPlayed(playlistId, System.currentTimeMillis());
+        }).start();
+    }
+
+    @OptIn(markerClass = UnstableApi.class)
     public void pin(String id) {
         new Thread(() -> {
             pinnedPlaylistDao.pin(id);
