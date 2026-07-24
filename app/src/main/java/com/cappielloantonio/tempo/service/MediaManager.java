@@ -508,6 +508,12 @@ public class MediaManager {
         }
     }
 
+    // Last.fm rule: a play counts once it has passed half the track or 4 minutes, whichever comes first; never under 30 seconds.
+    public static boolean meetsScrobbleThreshold(long positionMs, long durationMs) {
+        if (durationMs <= 30_000L) return false;
+        return positionMs >= Math.min(durationMs / 2, 240_000L);
+    }
+
     @OptIn(markerClass = UnstableApi.class)
     public static void continuousPlay(MediaItem mediaItem,
                                       ListenableFuture<MediaBrowser> existingBrowserFuture) {

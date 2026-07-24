@@ -553,6 +553,15 @@ open class BaseMediaService : MediaLibraryService() {
                     if (newPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.setLastPlayedTimestamp(newPosition.mediaItem)
                     }
+                } else if (reason == Player.DISCONTINUITY_REASON_SEEK && oldPosition.mediaItemIndex != newPosition.mediaItemIndex) {
+                    // SEEK only: scrobble a genuine user skip, not other index changes such as removing the currently playing track (REMOVE).
+                    if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
+                        val durationMs = ((oldPosition.mediaItem?.mediaMetadata?.extras?.getInt("duration") ?: 0).toLong()) * 1000L
+                        if (MediaManager.meetsScrobbleThreshold(oldPosition.positionMs, durationMs)) {
+                            MediaManager.scrobble(oldPosition.mediaItem, true)
+                            MediaManager.saveChronology(oldPosition.mediaItem)
+                        }
+                    }
                 }
             }
 
