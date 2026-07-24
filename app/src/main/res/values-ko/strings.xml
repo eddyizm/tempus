@@ -166,6 +166,9 @@
     <string name="menu_sort_random">랜덤</string>
     <string name="menu_unpin_button">홈화면에서 제거</string>
     <string name="menu_sort_year">년도</string>
+    <string name="menu_add_to_queue_button">재생목록에 추가</string>
+    <string name="menu_play_next_button">다음 재생</string>
+    <string name="menu_instant_mix_button">인스턴트 믹스</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">재생목록 비우기</string>
     <string name="player_server_priority">서버 우선순위</string>
@@ -420,4 +423,5 @@
     <string name="starred_album_sync_dialog_summary">즐겨찾기한 앨범을 다운로드할 시 많은 양의 데이터가 필요할 수 있습니다.</string>
     <string name="starred_album_sync_dialog_title">즐겨찾기 한 앨범 동기화</string>
     <string name="settings_item_rating">평점 표시하기</string>
+
 </resources>

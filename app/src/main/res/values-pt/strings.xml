@@ -153,6 +153,9 @@
     <string name="menu_sort_name">Nome</string>
     <string name="menu_sort_random">Aleatório</string>
     <string name="menu_sort_year">Ano</string>
+    <string name="menu_add_to_queue_button">Adicionar à fila</string>
+    <string name="menu_play_next_button">Tocar em seguida</string>
+    <string name="menu_instant_mix_button">Mixagem instantânea</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Limpar fila de reprodução</string>
     <string name="player_server_priority">Prioridade do Servidor</string>
