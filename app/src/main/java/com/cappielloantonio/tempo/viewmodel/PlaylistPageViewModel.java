@@ -109,4 +109,8 @@ public class PlaylistPageViewModel extends AndroidViewModel {
             playlistRepository.unpin(playlist.getId());
         }
     }
+
+    public void updateLastPlayed(String playlistId) {
+        playlistRepository.updateLastPlayed(playlistId);
+    }
 }

@@ -99,7 +99,7 @@ public final class AssetLinkNavigator {
                     return;
                 }
                 Bundle args = new Bundle();
-                args.putParcelable(Constants.ALBUM_OBJECT, album);
+                args.putParcelable(Constants.ALBUM_OBJECT, album.strippedForNav());
                 navigateSafely(R.id.albumPageFragment, args);
             }
         };
@@ -117,7 +117,7 @@ public final class AssetLinkNavigator {
                     return;
                 }
                 Bundle args = new Bundle();
-                args.putParcelable(Constants.ARTIST_OBJECT, artist);
+                args.putParcelable(Constants.ARTIST_OBJECT, artist.strippedForNav());
                 navigateSafely(R.id.artistPageFragment, args);
             }
         };
