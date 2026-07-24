@@ -128,10 +128,6 @@ public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment imple
                 for (Child song : songs) {
                     ExternalAudioReader.delete(song);
                 }
-                // remove() purges Media3's persistent download index, the in-memory
-                // map, the metadata cache and the Room row. Without purging the
-                // persistent index, isDownloaded() keeps reporting the tracks as
-                // downloaded and a later "download all" silently skips them.
                 DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
             }
 

@@ -80,8 +80,6 @@ public class DownloaderManager {
     }
 
     public boolean isDownloaded(String mediaId) {
-        // If it's an external download, we don't care if the Media3 .exo file is present.
-        // We purge it after export to save space. Just rely on the authoritative DB row.
         if (Preferences.getDownloadDirectoryUri() != null) {
             com.cappielloantonio.tempo.model.Download dbRow = getDownloadRepository().getDownloadById(mediaId);
             return dbRow != null;
@@ -90,13 +88,6 @@ public class DownloaderManager {
         @Nullable Download download = downloads.get(mediaId);
         boolean inIndexNotFailed = download != null && download.state != Download.STATE_FAILED;
 
-        // The Media3 in-memory index is a weak signal: it is reconstructed from
-        // Media3's persistent download index at startup and is NOT purged when a
-        // track is deleted through the external-directory path (the .exo cache
-        // index lives in Media3, not in our Room table). A stale "completed"
-        // entry there would otherwise make a re-download of a deleted track
-        // silently no-op. The Room table is the authoritative record of what we
-        // actually downloaded, so require a DB row to agree with the index.
         com.cappielloantonio.tempo.model.Download dbRow = inIndexNotFailed ? getDownloadRepository().getDownloadById(mediaId) : null;
         boolean result = dbRow != null;
 
@@ -148,19 +139,15 @@ if (externalUri != null) {
             return;
         }
 
-        // If forceResume is true, force a fresh download from queued state
         if (forceResume) {
             DownloadService.sendRemoveDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem).id, false);
             insertDatabase(download);
             DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
         } else {
-            // Just add the download - Media3 will manage the queue and persistence
             DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
             insertDatabase(download);
         }
 
-        // Cache metadata keyed by the same id Media3 uses so the notification
-        // can resolve the current track title without a racy Room lookup.
         metadataCache.put(mediaItem.mediaId, download);
     }
 
@@ -211,18 +198,12 @@ if (externalUri != null) {
     }
 
     public static String getDownloadNotificationMessage(String id) {
-        // Prefer the in-memory metadata captured at enqueue time: it is keyed
-        // by the same id Media3 uses and is always in sync with the active
-        // download, avoiding the disconnected/racy Room lookup that previously
-        // caused the notification to show a pending track's title.
         com.cappielloantonio.tempo.model.Download download = metadataCache.get(id);
         if (download == null) {
             download = getDownloadRepository().getDownloadById(id);
         }
         if (download == null) return null;
 
-        // Display format: "Filename.EXT" so the user can see what file
-        // is currently being downloaded, kept in sync with the exported filename.
         String artist = download.getArtist();
         String fileName = getDisplayFileName(download);
 
@@ -253,7 +234,6 @@ if (externalUri != null) {
         if (uri != null && !uri.isEmpty() && !isInternalStreamUri(uri)) {
             int slash = uri.lastIndexOf('/');
             String segment = slash >= 0 ? uri.substring(slash + 1) : uri;
-            // Strip query string (stream URIs carry ?u=...&id=... params)
             int q = segment.indexOf('?');
             if (q >= 0) segment = segment.substring(0, q);
             if (!segment.isEmpty()) return segment;

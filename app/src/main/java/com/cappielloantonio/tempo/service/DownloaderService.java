@@ -30,10 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Foreground service that drives Media3 DownloadManager.
- * ────────────────────────────────────────────────────────────────────────────
- */
 @UnstableApi
 public class DownloaderService extends androidx.media3.exoplayer.offline.DownloadService {
 
@@ -44,14 +40,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
     private static volatile int batchTotal = 0;
 
-    /**
-     * Tracks downloads that have actually reached STATE_COMPLETED via the
-     * DownloadManager listener. Deriving "N of M" from a single snapshot of the
-     * download index under-counts completed tracks (Media3 runs several
-     * downloads in parallel and only refreshes the foreground notification
-     * occasionally), which made the counter lag by a few tracks. Counting real
-     * terminal transitions keeps it accurate.
-     */
     private static final java.util.Set<String> completedDownloadIds =
             java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
 
@@ -132,13 +120,8 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             batchTotal = activeCount;
         }
 
-        // Use the listener-tracked completed count (accurate under parallel
-        // downloads) rather than deriving it from a single snapshot, which
-        // under-counted completed tracks because the foreground notification is
-        // only refreshed occasionally.
         int completed = Math.min(completedDownloadIds.size(), batchTotal);
 
-        // ── Step 1.4: Speed calculation ──────────────────────────────────────
         long nowMs = System.currentTimeMillis();
         if (lastSpeedCheckTimeMs > 0 && nowMs > lastSpeedCheckTimeMs) {
             long bytesDelta = totalBytesDownloaded - lastTotalBytesDownloaded;
@@ -251,8 +234,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         return finalNotification;
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
     /**
      * Build a notification action that broadcasts to {@link DownloadControlReceiver}.
      */
@@ -328,7 +309,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         int completed = batchTotal - activeCount;
         if (completed < 0) completed = 0;
 
-        // Determine track title
         String trackTitle = null;
         if (activeDownload != null) {
             trackTitle = DownloaderManager.getDownloadNotificationMessage(activeDownload.request.id);
@@ -342,7 +322,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             }
         }
 
-        // Build paused notification
         String notifTitle = "Downloads Paused — " + completed + " of " + batchTotal;
 
         NotificationCompat.Action resumeAction = buildActionStatic(
@@ -390,10 +369,6 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         return new NotificationCompat.Action(iconRes, label, pendingIntent);
     }
-
-    // ────────────────────────────────────────────────────────────────────────
-    // TerminalStateNotificationHelper
-    // ────────────────────────────────────────────────────────────────────────
 
     /**
      * Listens for terminal download state changes and updates the Room database.

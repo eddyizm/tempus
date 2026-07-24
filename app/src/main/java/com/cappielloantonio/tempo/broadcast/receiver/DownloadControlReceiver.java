@@ -22,11 +22,7 @@ import java.io.IOException;
 /**
  * BroadcastReceiver that handles Pause / Resume / Cancel actions
  * from the consolidated download notification.
- * still not working perfectly but better than yesterday
- * Using a BroadcastReceiver keeps action handling decoupled from the service
- * internals and avoids fighting Media3's DownloadService.onStartCommand() flow.
- *
-  */
+ */
 @OptIn(markerClass = UnstableApi.class)
 public class DownloadControlReceiver extends BroadcastReceiver {
 

@@ -191,7 +191,6 @@ public class ExternalAudioReader {
                 String base = existing.replaceFirst("\\.[^\\.]+$", "");
                 String key = normalizeForComparison(base);
                 
-                // All files in external directory are now guaranteed to be fully downloaded.
                 newEntries.put(key, file);
             }
         }
