@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.service;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -9,11 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
+import androidx.media3.session.SessionCommand;
+import androidx.media3.session.SessionResult;
 
 import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
@@ -35,6 +39,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -311,9 +316,10 @@ public class MediaManager {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.d(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItems(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItems(media));
+                        int current = browser.getCurrentMediaItemIndex();
+                        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
+                            enqueueDatabase(media, false, current + 1);
+                            insertPlayNext(browser, MappingUtil.mapMediaItems(media));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItems(MappingUtil.mapMediaItems(media));
@@ -333,9 +339,10 @@ public class MediaManager {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.e(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItem(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItem(media));
+                        int current = browser.getCurrentMediaItemIndex();
+                        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
+                            enqueueDatabase(media, false, current + 1);
+                            insertPlayNext(browser, Collections.singletonList(MappingUtil.mapMediaItem(media)));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItem(MappingUtil.mapMediaItem(media));
@@ -346,6 +353,45 @@ public class MediaManager {
                 }
             }, MoreExecutors.directExecutor());
         }
+    }
+
+    // "Play next": insert the items right after the current item on the timeline, then —
+    // once the insert has actually applied — ask the service to move them next in the
+    // ExoPlayer shuffle order too. The timeline insert keeps URI/large-list handling on the
+    // normal onAddMediaItems path; the shuffle-order fixup must run on the service (only it
+    // can setShuffleOrder). addMediaItems and a custom command are NOT ordered relative to
+    // each other, so we send the fixup from a one-shot timeline listener once the insert is
+    // visible (same pattern startQueue uses), otherwise the fixup would be clobbered by
+    // addMediaItems' own internal shuffle insert. The fixup is a no-op when shuffle is off.
+    private static void insertPlayNext(MediaBrowser browser, List<MediaItem> items) {
+        if (items.isEmpty()) return;
+        int insertPos = browser.getCurrentMediaItemIndex() + 1;
+        int targetCount = browser.getMediaItemCount() + items.size();
+        // Send the fixup request and do the timeline insert. These two are NOT ordered
+        // relative to each other (and addMediaItems updates the controller optimistically
+        // before the session's async onAddMediaItems even runs), so the service stashes the
+        // request and applies it from its own onTimelineChanged once the insert is visible.
+        Bundle args = new Bundle();
+        args.putInt(Constants.PLAY_NEXT_INSERT_POS, insertPos);
+        args.putInt(Constants.PLAY_NEXT_COUNT, items.size());
+        args.putInt(Constants.PLAY_NEXT_TARGET_COUNT, targetCount);
+        ListenableFuture<SessionResult> fixup =
+                browser.sendCustomCommand(
+                        new SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY), args);
+        Futures.addCallback(fixup, new FutureCallback<SessionResult>() {
+            @Override
+            public void onSuccess(SessionResult result) {
+                if (result.resultCode != SessionResult.RESULT_SUCCESS) {
+                    Log.e(TAG, "insertPlayNext: play-next fixup rejected with code " + result.resultCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(TAG, "insertPlayNext: play-next fixup command failed", t);
+            }
+        }, MoreExecutors.directExecutor());
+        browser.addMediaItems(insertPos, items);
     }
 
     public static void shuffle(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex, int endIndex) {
