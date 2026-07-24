@@ -31,8 +31,12 @@ open class Playlist(
     var isUniversal: Boolean? = null
     @ColumnInfo(name = "songCount", defaultValue = "0")
     var songCount: Int = 0
+    @ColumnInfo(name = "created")
     var created: Date? = null
+    @ColumnInfo(name = "changed")
     var changed: Date? = null
+    @ColumnInfo(name = "lastPlayed", defaultValue = "0")
+    var lastPlayed: Long = 0
     @ColumnInfo(name = "allowedUsers")
     var allowedUsers: List<String>? = null
     @Ignore
@@ -55,6 +59,7 @@ open class Playlist(
         this.songCount = songCount
         this.created = created
         this.changed = changed
+        this.lastPlayed = 0
         this.allowedUsers = allowedUsers
     }
 }
