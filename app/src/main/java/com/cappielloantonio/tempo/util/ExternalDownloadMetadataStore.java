@@ -23,6 +23,8 @@ import java.util.Set;
 public final class ExternalDownloadMetadataStore {
 
     private static final String PREF_KEY = "external_download_metadata_v2";
+    
+    private static final Set<String> purgingDownloads = Collections.synchronizedSet(new HashSet<>());
 
     private ExternalDownloadMetadataStore() {
     }
@@ -82,5 +84,17 @@ public final class ExternalDownloadMetadataStore {
             return null;
         }
         return object.optString(mediaId, null);
+    }
+
+    public static void addPurging(String mediaId) {
+        if (mediaId != null) purgingDownloads.add(mediaId);
+    }
+
+    public static void removePurging(String mediaId) {
+        if (mediaId != null) purgingDownloads.remove(mediaId);
+    }
+
+    public static boolean isPurging(String mediaId) {
+        return mediaId != null && purgingDownloads.contains(mediaId);
     }
 }

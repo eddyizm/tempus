@@ -80,6 +80,13 @@ public class DownloaderManager {
     }
 
     public boolean isDownloaded(String mediaId) {
+        // If it's an external download, we don't care if the Media3 .exo file is present.
+        // We purge it after export to save space. Just rely on the authoritative DB row.
+        if (Preferences.getDownloadDirectoryUri() != null) {
+            com.cappielloantonio.tempo.model.Download dbRow = getDownloadRepository().getDownloadById(mediaId);
+            return dbRow != null;
+        }
+
         @Nullable Download download = downloads.get(mediaId);
         boolean inIndexNotFailed = download != null && download.state != Download.STATE_FAILED;
 
@@ -282,7 +289,11 @@ if (externalUri != null) {
     }
 
     public static void removeRequestDownload(Download download) {
-        deleteDatabase(download.request.id);
+        if (!com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore.isPurging(download.request.id)) {
+            deleteDatabase(download.request.id);
+        } else {
+            com.cappielloantonio.tempo.util.ExternalDownloadMetadataStore.removePurging(download.request.id);
+        }
         downloads.remove(download.request.id);
         metadataCache.remove(download.request.id);
     }

@@ -175,6 +175,11 @@ public class ExternalAudioWriter {
                 // This allows "Delete all downloads" to find and delete the external files
                 new DownloadRepository().updateDownloadUri(mediaId, targetFile.getUri().toString());
 
+                // Auto-purge the internal Media3 .exo cache now that it's successfully exported to save space
+                ExternalDownloadMetadataStore.addPurging(mediaId);
+                androidx.media3.exoplayer.offline.DownloadService.sendRemoveDownload(
+                    context, com.cappielloantonio.tempo.service.DownloaderService.class, mediaId, false);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     // Remove the partial file so streaming/early failures cannot
