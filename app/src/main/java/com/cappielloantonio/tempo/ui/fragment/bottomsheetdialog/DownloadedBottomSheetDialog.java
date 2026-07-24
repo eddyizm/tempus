@@ -24,7 +24,6 @@ import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.util.MappingUtil;
-import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -124,7 +123,12 @@ public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment imple
                 List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
                 DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
             } else {
-                songs.forEach(ExternalAudioReader::delete);
+                List<MediaItem> mediaItems = MappingUtil.mapDownloads(songs);
+                List<Download> downloads = songs.stream().map(Download::new).collect(Collectors.toList());
+                for (Child song : songs) {
+                    ExternalAudioReader.delete(song);
+                }
+                DownloadUtil.getDownloadTracker(requireContext()).remove(mediaItems, downloads);
             }
 
             dismissBottomSheet();

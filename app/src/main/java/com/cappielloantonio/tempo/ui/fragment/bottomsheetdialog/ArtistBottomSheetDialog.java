@@ -32,7 +32,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 @UnstableApi
 public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
-    private static final String TAG = "AlbumBottomSheetDialog";
+    private static final String TAG = "ArtistBottomSheetDialog";
 
     private ArtistBottomSheetViewModel artistBottomSheetViewModel;
     private ArtistID3 artist;
@@ -72,7 +72,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         super.onStop();
     }
 
-    // TODO Use the viewmodel as a conduit and avoid direct calls
+
     private void init(View view) {
         ImageView coverArtist = view.findViewById(R.id.artist_cover_image_view);
         CustomGlideRequest.Builder
