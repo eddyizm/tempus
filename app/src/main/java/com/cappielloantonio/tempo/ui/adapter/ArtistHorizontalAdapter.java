@@ -141,14 +141,14 @@ public class ArtistHorizontalAdapter extends RecyclerView.Adapter<ArtistHorizont
 
         private void onClick() {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()));
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()).strippedForNav());
 
             click.onArtistClick(bundle);
         }
 
         public boolean onLongClick() {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()));
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()).strippedForNav());
 
             click.onArtistLongClick(bundle);
 

@@ -138,18 +138,18 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         bind = null;
     }
 
-    /** @noinspection deprecation*/
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_rate_album) {
-            Bundle bundle = new Bundle();
-            AlbumID3 album = albumPageViewModel.getAlbum().getValue();
-            bundle.putParcelable(Constants.ALBUM_OBJECT, album);
-            RatingDialog dialog = new RatingDialog();
-            dialog.setArguments(bundle);
-            dialog.show(requireActivity().getSupportFragmentManager(), null);
-            return true;
-        }
+        /** @noinspection deprecation*/
+        @Override
+        public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+            if (item.getItemId() == R.id.action_rate_album) {
+                Bundle bundle = new Bundle();
+                AlbumID3 album = albumPageViewModel.getAlbum().getValue();
+                bundle.putParcelable(Constants.ALBUM_OBJECT, album.strippedForNav());
+                RatingDialog dialog = new RatingDialog();
+                dialog.setArguments(bundle);
+                dialog.show(requireActivity().getSupportFragmentManager(), null);
+                return true;
+            }
 
         if (item.getItemId() == R.id.action_download_album) {
             albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
@@ -291,7 +291,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         bind.albumArtistLabel.setOnClickListener(v -> albumPageViewModel.getArtist().observe(getViewLifecycleOwner(), artist -> {
             if (artist != null) {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.ARTIST_OBJECT, artist);
+                bundle.putParcelable(Constants.ARTIST_OBJECT, artist.strippedForNav());
                 activity.navController.navigate(R.id.action_albumPageFragment_to_artistPageFragment, bundle);
             } else
                 Toast.makeText(requireContext(), getString(R.string.album_error_retrieving_artist), Toast.LENGTH_SHORT).show();

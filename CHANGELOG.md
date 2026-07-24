@@ -1,5 +1,10 @@
 # Changelog
 
+## [4.22.2](https://github.com/eddyizm/tempus/releases/tag/v4.22.) (2026-07-19)
+## What's Changed
+* chore: fdroid reproducible build
+
+
 ## [4.22.1](https://github.com/eddyizm/tempus/releases/tag/v4.22.1) (2026-07-19)
 ## What's Changed
 * fix: quit on backpress (#901)

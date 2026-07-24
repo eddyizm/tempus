@@ -224,6 +224,10 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
                 );
             } else {
                 ExternalAudioReader.delete(song);
+                DownloadUtil.getDownloadTracker(requireContext()).remove(
+                        MappingUtil.mapDownload(song),
+                        new Download(song)
+                );
             }
             dismissBottomSheet();
         });
