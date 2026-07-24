@@ -172,6 +172,13 @@ if (externalUri != null) {
         metadataCache.remove(mediaItem.mediaId);
     }
 
+    public void removeById(String mediaId) {
+        DownloadService.sendRemoveDownload(context, DownloaderService.class, mediaId, false);
+        deleteDatabase(mediaId);
+        downloads.remove(mediaId);
+        metadataCache.remove(mediaId);
+    }
+
     public void remove(List<MediaItem> mediaItems, List<com.cappielloantonio.tempo.model.Download> downloads) {
         for (int counter = 0; counter < mediaItems.size(); counter++) {
             remove(mediaItems.get(counter), downloads.get(counter));
