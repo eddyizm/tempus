@@ -104,8 +104,18 @@
             android:name=".provider.AlbumArtContentProvider"
             android:authorities="${applicationId}.albumart.provider"
             android:enabled="true"
-            android:exported="true"
-        />
+            android:exported="true" />
+
+        <!-- Handles Pause / Resume / Cancel taps from the download notification -->
+        <receiver
+            android:name=".broadcast.receiver.DownloadControlReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.cappielloantonio.tempo.action.PAUSE_DOWNLOADS" />
+                <action android:name="com.cappielloantonio.tempo.action.RESUME_DOWNLOADS" />
+                <action android:name="com.cappielloantonio.tempo.action.CANCEL_DOWNLOADS" />
+            </intent-filter>
+        </receiver>
 
     </application>
 </manifest>

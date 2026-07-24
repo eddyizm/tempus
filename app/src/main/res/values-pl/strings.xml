@@ -262,6 +262,14 @@
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
+	<string name="playback_speed_decrease_button_content_description">Zmniejsz prędkość odtwarzania</string>
+    <string name="playback_speed_increase_button_content_description">Zwiększ prędkość odtwarzania</string>
+    <string name="playback_speed_pitch_switch_title">Preserve pitch Utrzymaj wysokość dźwięku</string>
+    <string name="playback_speed_manual_pitch_switch_title">Ręczna wysokość dźwięku</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Zmniejsz wysokość dźwięku</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Zwiększ wysokość dźwięku</string>
+    <string name="playback_speed_dialog_reset_button">Reset</string>
     <string name="playback_speed_dialog_negative_button">Anuluj</string>
     <string name="player_queue_clean_all_button">Wyczyść kolejkę odtwarzania</string>
     <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
@@ -402,6 +410,8 @@
     <string name="settings_continuous_play_title">Odtwarzanie bez przerwy</string>
     <string name="settings_number_tracks_keep_in_queue">Liczba utworów do utrzymania w kolejce</string>
     <string name="settings_number_tracks_keep_in_queue_summary">Dostosuj liczbę utworów utrzymywanych w kolejce zanim zostaną dodane utwory z odtwarzania bez przerwy</string>
+    <string name="settings_fallback_to_random_tracks_summary">Odtwarzaj zastępczo losowe piosenki jeśli podobne utwory nie są dostępne</string>
+    <string name="settings_fallback_to_random_tracks_title">Zastąpienie losowymi utworami</string>
     <string name="settings_covers_cache">Rozmiar cache dla okładek</string>
     <string name="settings_data_saving_mode_summary">Aby zmniejszyć zużycie danych, unikaj pobierania okładek.</string>
     <string name="settings_data_saving_mode_title">Ogranicz zużycie danych komórkowych</string>
@@ -413,6 +423,10 @@
     <string name="settings_set_download_folder">Ustaw folder pobierania</string>
 	<string name="settings_song_preload_buffer">Bufor wstępnego ładowania piosenek</string>
     <string name="settings_song_preload_buffer_summary">Aktualna wartość: %1$s\nAby zmiany przyniosły efekt musisz zrestartować aplikację ręcznie.</string>
+	<string name="settings_precache_tracks">Ładuj wcześniej następne utwory [Eksperymentalne]</string>
+    <string name="settings_precache_tracks_summary">W pełni ładuj następne utwory z kolejki do pamięci cache w tle, aby pomijanie było natychmiastowe i odtwarzanie mogło przetrwać krótkie utraty sygnału</string>
+    <string name="settings_precache_wifi_only">Wczytuj wcześniej tylko na Wi-Fi</string>
+    <string name="settings_precache_wifi_only_summary">Wstrzymaj wcześniejsze wczytywanie na ograniczonym połączeniu</string>
     <string name="settings_system_equalizer_summary">Zmień ustawienia audio</string>
     <string name="settings_system_equalizer_title">Korektor systemowy</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -453,6 +467,7 @@
 	<string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
 	<string name="settings_androidauto_shuffle_starred_tracks">Odtwarzaj losowo utwory oznaczone gwiazdką</string>
 	<string name="settings_androidauto_shuffle_playlists">Odtarzaj losowo z playlisty</string>
+	<string name="settings_androidauto_shuffle_downloaded_tracks">Odtwarzaj losowo pobrane utwory</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
 	<string name="settings_androidauto_artists_view">Wykonawcy są wyświetlani według albumu</string>
 	<string name="settings_androidauto_starred_for_made_for_you">Oznaczone gwiazdką do mixu stworzonego dla ciebie</string>
@@ -462,6 +477,8 @@
     <string name="settings_song_rating_summary">Jeżeli włączone, pokazuje ocenę w 5 gwiazdkach dla utworu na stronie piosenki\n\n*Wymaga ponownego uruchomienia aplikacji</string>
 	<string name="settings_track_number">Pokaż numer utworu</string>
     <string name="settings_track_number_summary">Jeżeli włączone, pokazuje numer utworu piosenki która jest odtwarzana.</string>
+	<string name="settings_album_year">Pokazuj rok wydania albumu</string>
+    <string name="settings_album_year_summary">Jeżeli włączone, pokazuje rok każdego albumu na stronie wykonawcy.</string>
     <string name="settings_item_rating">Pokaż oceny elementów</string>
     <string name="settings_item_rating_summary">Jeżeli włączone, ocena elementów oraz czy jest oznaczony jako ulubiony będą pokazywane.</string>
     <string name="settings_queue_syncing_countdown">Timer synchronizacji</string>

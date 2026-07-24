@@ -250,6 +250,22 @@
         <item>180</item>
         <item>600</item>
     </string-array>
+
+
+    <string-array name="precache_tracks_titles">
+        <item>Wyłączone</item>
+        <item>Następny utwór</item>
+        <item>Następne 2 utwory</item>
+        <item>Następne 3 utwory</item>
+        <item>Następnych 5 utworów</item>
+    </string-array>
+    <string-array name="precache_tracks_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
 	
    <string-array name="playlist_sort_option_titles">
         <item>Po nazwie</item>

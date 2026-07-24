@@ -12,7 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DownloadRepository {
-    private final DownloadDao downloadDao = AppDatabase.getInstance().downloadDao();
+    private final DownloadDao downloadDao;
+
+    public DownloadRepository() {
+        this(AppDatabase.getInstance().downloadDao());
+    }
+
+    /**
+     * Test-only constructor that injects a DAO, bypassing the Room singleton
+     * (which needs an Android Context and cannot be built on the JVM).
+     */
+    DownloadRepository(DownloadDao downloadDao) {
+        this.downloadDao = downloadDao;
+    }
 
     public LiveData<List<Download>> getLiveDownload() {
         return downloadDao.getAll();
@@ -47,6 +59,15 @@ public class DownloadRepository {
         }
 
         return download;
+    }
+
+    /**
+     * Returns the download row for the given id by delegating to getDownload.
+     * Used by the notification path where we need the title even while the
+     * track is actively transferring.
+     */
+    public Download getDownloadById(String id) {
+        return getDownload(id);
     }
 
     private static class GetAllDownloadsThreadSafe implements Runnable {
@@ -179,6 +200,29 @@ public class DownloadRepository {
         DeleteMultipleThreadSafe delete = new DeleteMultipleThreadSafe(downloadDao, ids);
         Thread thread = new Thread(delete);
         thread.start();
+    }
+
+    public void updateDownloadUri(String id, String uri) {
+        UpdateDownloadUriThreadSafe update = new UpdateDownloadUriThreadSafe(downloadDao, id, uri);
+        Thread thread = new Thread(update);
+        thread.start();
+    }
+
+    private static class UpdateDownloadUriThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private final String id;
+        private final String uri;
+
+        public UpdateDownloadUriThreadSafe(DownloadDao downloadDao, String id, String uri) {
+            this.downloadDao = downloadDao;
+            this.id = id;
+            this.uri = uri;
+        }
+
+        @Override
+        public void run() {
+            downloadDao.updateDownloadUri(id, uri);
+        }
     }
 
     private static class DeleteThreadSafe implements Runnable {
