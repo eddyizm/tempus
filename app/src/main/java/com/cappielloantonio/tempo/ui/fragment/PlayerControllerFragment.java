@@ -26,9 +26,11 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.Format;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
+import androidx.media3.common.Tracks;
 import androidx.media3.common.util.RepeatModeUtil;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -260,6 +262,18 @@ public class PlayerControllerFragment extends Fragment {
             }
 
             @Override
+            public void onTracksChanged(@NonNull Tracks tracks) {
+                setMediaFormatFromFileReturnedByServer();
+            }
+
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                if (playbackState == Player.STATE_READY) {
+                    setMediaFormatFromFileReturnedByServer();
+                }
+            }
+
+            @Override
             public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
                 Preferences.setShuffleModeEnabled(shuffleModeEnabled);
             }
@@ -345,22 +359,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
-        boolean isLocal = false;
-
-        if (mediaBrowserListenableFuture != null && mediaBrowserListenableFuture.isDone()) {
-            try {
-                MediaBrowser browser = mediaBrowserListenableFuture.get();
-                if (browser != null && browser.getCurrentMediaItem() != null) {
-                    android.net.Uri currentUri = browser.getCurrentMediaItem().requestMetadata.mediaUri;
-                    if (currentUri != null) {
-                        String scheme = currentUri.getScheme();
-                        isLocal = "content".equals(scheme) || "file".equals(scheme);
-                    }
-                }
-            } catch (Exception e) {
-                Log.e("DEBUG_PLAYER", "Error getting browser for UI update", e);
-            }
-        }
+        boolean isLocal = MusicUtil.isCurrentTrackLocal(getBrowser());
 
         if (mediaMetadata.extras != null) {
             String extension = mediaMetadata.extras.getString("suffix", getString(R.string.player_unknown_format));
@@ -394,16 +393,7 @@ public class PlayerControllerFragment extends Fragment {
         }
 
         if (!isLocal) {
-            boolean isTranscodingExtension = !MusicUtil.getTranscodingFormatPreference().equals("raw");
-            boolean isTranscodingBitrate = !MusicUtil.getBitratePreference().equals("0");
-            if (isTranscodingExtension || isTranscodingBitrate) {
-                playerMediaExtension.setText(MusicUtil.getTranscodingFormatPreference() + " ("
-                        + getString(R.string.player_transcoding) + ")");
-                playerMediaBitrate.setText(
-                        !MusicUtil.getBitratePreference().equals("0") ? MusicUtil.getBitratePreference() + "kbps"
-                                : getString(R.string.player_transcoding_requested));
-            }
-
+            setMediaFormatFromFileReturnedByServer();
         }
 
         playerTrackInfo.setOnClickListener(view -> {
@@ -416,6 +406,42 @@ public class PlayerControllerFragment extends Fragment {
 
         playerMediaBitrate.setOnClickListener(v -> toggleBitrateVisibility());
         playerMediaBitrate.setOnLongClickListener(v -> toggleQuickActionVisiblity());
+    }
+
+    private MediaBrowser getBrowser() {
+        if (mediaBrowserListenableFuture == null || !mediaBrowserListenableFuture.isDone()) return null;
+        try {
+            return mediaBrowserListenableFuture.get();
+        } catch (Exception e) {
+            Log.e(TAG, "Unable to resolve media browser", e);
+            return null;
+        }
+    }
+
+    private void setMediaFormatFromFileReturnedByServer() {
+        if (playerMediaExtension == null) return;
+
+        MediaBrowser browser = getBrowser();
+        // Guard against local files here too: onTracksChanged also calls this, and a local
+        // file's format comes from its metadata in setMediaInfo, not the decoder label.
+        if (MusicUtil.isCurrentTrackLocal(browser)) return;
+
+        Format format = MusicUtil.getCurrentAudioFormat(browser);
+        if (format == null) return;
+
+        String actual = MusicUtil.audioFormatLabel(format.sampleMimeType);
+        if (actual != null && !actual.isEmpty()) {
+            String original = MusicUtil.getCurrentOriginalSuffix(browser);
+            boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
+            playerMediaExtension.setText(transcoded
+                    ? actual + " (" + getString(R.string.player_transcoding) + ")"
+                    : actual);
+        }
+
+        if (format.bitrate != Format.NO_VALUE && format.bitrate > 0) {
+            playerMediaBitrate.setText((format.bitrate / 1000) + "kbps");
+            playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void toggleBitrateVisibility() {
