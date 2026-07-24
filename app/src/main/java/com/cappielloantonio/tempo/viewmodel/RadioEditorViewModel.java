@@ -85,7 +85,7 @@ public class RadioEditorViewModel extends AndroidViewModel {
                         }
                         if (response.isSuccessful() && response.body() != null) {
                             ApiResponse apiResponse = response.body();
-                            String status = apiResponse.subsonicResponse.getStatus();
+                            String status = apiResponse.getSubsonicResponse().getStatus();
                             if ("ok".equals(status)) {
                                 isSuccess.setValue(true);
                             } else if ("failed".equals(status)) {
@@ -127,8 +127,8 @@ public class RadioEditorViewModel extends AndroidViewModel {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             ApiResponse apiResponse = response.body();
-                            if (apiResponse.subsonicResponse != null) {
-                                String status = apiResponse.subsonicResponse.getStatus();
+                            if (apiResponse.getSubsonicResponse() != null) {
+                                String status = apiResponse.getSubsonicResponse().getStatus();
                                 if ("ok".equals(status)) {
                                     isSuccess.setValue(true);
                                 } else if ("failed".equals(status)) {
@@ -171,7 +171,7 @@ public class RadioEditorViewModel extends AndroidViewModel {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
                             ApiResponse apiResponse = response.body();
-                            String status = apiResponse.subsonicResponse.getStatus();
+                            String status = apiResponse.getSubsonicResponse().getStatus();
                             if ("ok".equals(status)) {
                                 isSuccess.setValue(true);
                             } else if ("failed".equals(status)) {
@@ -196,8 +196,8 @@ public class RadioEditorViewModel extends AndroidViewModel {
     private void handleFailedResponse(ApiResponse apiResponse) {
         String errorMsg = "Unknown server error";
 
-        if (apiResponse.subsonicResponse.getError() != null) {
-            errorMsg = apiResponse.subsonicResponse.getError().getMessage();
+        if (apiResponse.getSubsonicResponse().getError() != null) {
+            errorMsg = apiResponse.getSubsonicResponse().getError().getMessage();
             if ("Not implemented".equals(errorMsg)) {
                 errorMsg = getApplication().getString(R.string.radio_dialog_not_supported_snackbar);
             }
