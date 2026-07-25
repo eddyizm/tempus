@@ -53,6 +53,7 @@ public class ExternalAudioReader {
                 cache.clear();
                 cachedDirUri = null;
             }
+            ExternalDownloadMetadataStore.clear();
             return;
         }
 
@@ -129,6 +130,7 @@ public class ExternalAudioReader {
 
         String key = buildKey(media.getArtist(), media.getTitle(), media.getAlbum());
         cache.remove(key);
+        ExternalDownloadMetadataStore.remove(key);
     }
 
     public static boolean delete(Child media) {
@@ -143,6 +145,7 @@ public class ExternalAudioReader {
         }
         if (deleted) {
             cache.remove(key);
+            ExternalDownloadMetadataStore.remove(key);
         }
         return deleted;
     }
@@ -176,10 +179,13 @@ public class ExternalAudioReader {
                 cache.clear();
                 cachedDirUri = null;
             }
+            ExternalDownloadMetadataStore.clear();
             return;
         }
 
         DocumentFile directory = DocumentFile.fromTreeUri(App.getContext(), Uri.parse(uriString));
+        Map<String, Long> expectedSizes = ExternalDownloadMetadataStore.snapshot();
+        Set<String> verifiedKeys = new HashSet<>();
         Map<String, DocumentFile> newEntries = new HashMap<>();
 
         if (directory != null && directory.canRead()) {
@@ -190,8 +196,27 @@ public class ExternalAudioReader {
 
                 String base = existing.replaceFirst("\\.[^\\.]+$", "");
                 String key = normalizeForComparison(base);
-                
-                newEntries.put(key, file);
+                Long expected = expectedSizes.get(key);
+                long actualLength = file.length();
+
+                if (expected != null && expected > 0 && actualLength == expected) {
+                    newEntries.put(key, file);
+                    verifiedKeys.add(key);
+                } else {
+                    ExternalDownloadMetadataStore.remove(key);
+                }
+            }
+        }
+
+        if (!expectedSizes.isEmpty()) {
+            if (verifiedKeys.isEmpty()) {
+                ExternalDownloadMetadataStore.clear();
+            } else {
+                for (String key : expectedSizes.keySet()) {
+                    if (!verifiedKeys.contains(key)) {
+                        ExternalDownloadMetadataStore.remove(key);
+                    }
+                }
             }
         }
 

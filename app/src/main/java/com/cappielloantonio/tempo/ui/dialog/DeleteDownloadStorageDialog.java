@@ -76,10 +76,8 @@ public class DeleteDownloadStorageDialog extends DialogFragment {
                             for (DocumentFile file : directory.listFiles()) {
                                 String fileUri = file.getUri().toString();
                                 if (trackedFilesMap.containsKey(fileUri)) {
-                                    Download tracked = trackedFilesMap.get(fileUri);
                                     file.delete();
-                                    new DownloadRepository().delete(tracked.getId());
-                                    DownloadUtil.getDownloadTracker(context).removeById(tracked.getId());
+                                    new DownloadRepository().delete(trackedFilesMap.get(fileUri).getId());
                                 }
                             }
                         }
