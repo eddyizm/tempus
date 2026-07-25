@@ -38,7 +38,4 @@ public interface DownloadDao {
 
     @Query("DELETE FROM download")
     void deleteAll();
-
-    @Query("UPDATE download SET download_uri = :uri WHERE id = :id")
-    void updateDownloadUri(String id, String uri);
 }
