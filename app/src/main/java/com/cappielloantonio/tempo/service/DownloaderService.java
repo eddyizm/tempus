@@ -1,15 +1,16 @@
 package com.cappielloantonio.tempo.service;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.media3.common.util.NotificationUtil;
+import androidx.core.app.NotificationCompat;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.offline.Download;
 import androidx.media3.exoplayer.offline.DownloadManager;
-import androidx.media3.exoplayer.offline.DownloadNotificationHelper;
 import androidx.media3.exoplayer.scheduler.PlatformScheduler;
 import androidx.media3.exoplayer.scheduler.Requirements;
 import androidx.media3.exoplayer.scheduler.Scheduler;
@@ -18,23 +19,34 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @UnstableApi
 public class DownloaderService extends androidx.media3.exoplayer.offline.DownloadService {
 
     private static final int JOB_ID = 1;
+
+    // Foreground service notification — managed by Media3, must stay ID 1
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
+    // Persistent completion/failure notification — fixed ID so updates replace the same one
+    static final int TERMINAL_NOTIFICATION_ID = 2;
+
     public DownloaderService() {
-        super(FOREGROUND_NOTIFICATION_ID, DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID, R.string.exo_download_notification_channel_name, 0);
+        super(
+                FOREGROUND_NOTIFICATION_ID,
+                DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
+                DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID,
+                R.string.exo_download_notification_channel_name,
+                0
+        );
     }
 
     @NonNull
     @Override
     protected DownloadManager getDownloadManager() {
         DownloadManager downloadManager = DownloadUtil.getDownloadManager(this);
-        DownloadNotificationHelper downloadNotificationHelper = DownloadUtil.getDownloadNotificationHelper(this);
-        downloadManager.addListener(new TerminalStateNotificationHelper(this, downloadNotificationHelper, FOREGROUND_NOTIFICATION_ID + 1));
+        downloadManager.addListener(new TerminalStateNotificationHelper(this));
         return downloadManager;
     }
 
@@ -44,72 +56,190 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         return new PlatformScheduler(this, JOB_ID);
     }
 
+    /**
+     * Overrides the foreground (progress) notification to show "Downloading X of N".
+     *
+     * <p>Called by Media3 on the service thread each time the download queue changes.
+     * {@code downloads} contains every currently queued/downloading/completed entry
+     * that is still active in this session.
+     */
     @NonNull
     @Override
-    protected Notification getForegroundNotification(@NonNull List<Download> downloads, @Requirements.RequirementFlags int notMetRequirements) {
-        return DownloadUtil.getDownloadNotificationHelper(this).buildProgressNotification(this, R.drawable.ic_download, null, null, downloads, notMetRequirements);
+    protected Notification getForegroundNotification(
+            @NonNull List<Download> downloads,
+            @Requirements.RequirementFlags int notMetRequirements) {
+
+        int total = downloads.size();
+        int completed = 0;
+        long totalBytes = 0;
+
+        for (Download d : downloads) {
+            if (d.state == Download.STATE_COMPLETED) completed++;
+            totalBytes += d.getBytesDownloaded();
+        }
+
+        int inProgress = total - completed;
+
+        // Build the content text: "Downloading 3 of 10" or speed variant
+        String contentText;
+        if (total <= 1) {
+            // Single item — show generic label
+            contentText = "Downloading…";
+        } else {
+            contentText = "Downloading " + (completed + 1) + " of " + total;
+        }
+
+        return new NotificationCompat.Builder(this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+                .setContentTitle("Downloading")
+                .setContentText(contentText)
+                .setSmallIcon(R.drawable.ic_download)
+                .setProgress(total, completed, /* indeterminate= */ false)
+                .setOngoing(true)
+                .setSilent(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOnlyAlertOnce(true)
+                .build();
     }
 
+    // -------------------------------------------------------------------------
+    // Terminal-state listener — consolidates completed/failed into ONE notification
+    // -------------------------------------------------------------------------
+
     private static final class TerminalStateNotificationHelper implements DownloadManager.Listener {
+
         private final Context context;
-        private final DownloadNotificationHelper notificationHelper;
 
-        private final Notification successfulDownloadGroupNotification;
-        private final Notification failedDownloadGroupNotification;
+        // Counters reset at start of each "batch" (when queue goes from empty → non-empty)
+        private final AtomicInteger completedCount = new AtomicInteger(0);
+        private final AtomicInteger failedCount = new AtomicInteger(0);
 
-        private final int successfulDownloadGroupNotificationId;
-        private final int failedDownloadGroupNotificationId;
+        // Speed tracking
+        private long lastBytesTotal = 0;
+        private long lastSampleMs = 0;
+        private float speedBytesPerSec = 0f;
 
-        private int nextNotificationId;
-
-        public TerminalStateNotificationHelper(Context context, DownloadNotificationHelper notificationHelper, int firstNotificationId) {
+        TerminalStateNotificationHelper(Context context) {
             this.context = context.getApplicationContext();
-            this.notificationHelper = notificationHelper;
-            nextNotificationId = firstNotificationId;
-
-            successfulDownloadGroupNotification = DownloadUtil.buildGroupSummaryNotification(
-                    this.context,
-                    DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID,
-                    DownloadUtil.DOWNLOAD_NOTIFICATION_SUCCESSFUL_GROUP,
-                    R.drawable.ic_check_circle,
-                    "Downloads completed"
-            );
-
-            failedDownloadGroupNotification = DownloadUtil.buildGroupSummaryNotification(
-                    this.context,
-                    DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID,
-                    DownloadUtil.DOWNLOAD_NOTIFICATION_FAILED_GROUP,
-                    R.drawable.ic_error,
-                    "Downloads failed"
-            );
-
-            successfulDownloadGroupNotificationId = nextNotificationId++;
-            failedDownloadGroupNotificationId = nextNotificationId++;
         }
 
         @Override
-        public void onDownloadChanged(@NonNull DownloadManager downloadManager, Download download, @Nullable Exception finalException) {
-            Notification notification;
+        public void onDownloadChanged(
+                @NonNull DownloadManager downloadManager,
+                @NonNull Download download,
+                @Nullable Exception finalException) {
 
-            if (download.state == Download.STATE_COMPLETED) {
-                notification = notificationHelper.buildDownloadCompletedNotification(context, R.drawable.ic_check_circle, null, DownloaderManager.getDownloadNotificationMessage(download.request.id));
-                notification = Notification.Builder.recoverBuilder(context, notification).setGroup(DownloadUtil.DOWNLOAD_NOTIFICATION_SUCCESSFUL_GROUP).build();
-                NotificationUtil.setNotification(this.context, successfulDownloadGroupNotificationId, successfulDownloadGroupNotification);
-                DownloaderManager.updateRequestDownload(download);
-            } else if (download.state == Download.STATE_FAILED) {
-                notification = notificationHelper.buildDownloadFailedNotification(context, R.drawable.ic_error, null, DownloaderManager.getDownloadNotificationMessage(download.request.id));
-                notification = Notification.Builder.recoverBuilder(context, notification).setGroup(DownloadUtil.DOWNLOAD_NOTIFICATION_FAILED_GROUP).build();
-                NotificationUtil.setNotification(this.context, failedDownloadGroupNotificationId, failedDownloadGroupNotification);
-            } else {
-                return;
+            switch (download.state) {
+                case Download.STATE_DOWNLOADING:
+                    updateSpeed(downloadManager);
+                    return;
+
+                case Download.STATE_QUEUED:
+                case Download.STATE_RESTARTING:
+                case Download.STATE_STOPPED:
+                    // Not terminal — nothing to do
+                    return;
+
+                case Download.STATE_COMPLETED:
+                    completedCount.incrementAndGet();
+                    DownloaderManager.updateRequestDownload(download);
+                    break;
+
+                case Download.STATE_FAILED:
+                    failedCount.incrementAndGet();
+                    break;
+
+                case Download.STATE_REMOVING:
+                    // Handled in onDownloadRemoved
+                    return;
+
+                default:
+                    return;
             }
 
-            NotificationUtil.setNotification(context, nextNotificationId++, notification);
+            // After a terminal state, check if the entire queue is done
+            List<Download> currentDownloads = downloadManager.getCurrentDownloads();
+            boolean queueEmpty = currentDownloads.stream().noneMatch(
+                    d -> d.state == Download.STATE_QUEUED
+                            || d.state == Download.STATE_DOWNLOADING
+                            || d.state == Download.STATE_RESTARTING
+            );
+
+            if (queueEmpty) {
+                postFinalNotification();
+                completedCount.set(0);
+                failedCount.set(0);
+                speedBytesPerSec = 0f;
+                lastBytesTotal = 0;
+                lastSampleMs = 0;
+            }
+            // If queue not empty, Media3 will keep calling getForegroundNotification() —
+            // no need to post an intermediate notification here.
         }
 
         @Override
-        public void onDownloadRemoved(@NonNull DownloadManager downloadManager, Download download) {
+        public void onDownloadRemoved(
+                @NonNull DownloadManager downloadManager,
+                @NonNull Download download) {
             DownloaderManager.removeRequestDownload(download);
+        }
+
+        private void updateSpeed(@NonNull DownloadManager downloadManager) {
+            long nowMs = SystemClock.elapsedRealtime();
+            long totalBytes = 0;
+            for (Download d : downloadManager.getCurrentDownloads()) {
+                totalBytes += d.getBytesDownloaded();
+            }
+            if (lastSampleMs > 0) {
+                long elapsed = nowMs - lastSampleMs;
+                if (elapsed > 500) {
+                    speedBytesPerSec = (totalBytes - lastBytesTotal) * 1000f / elapsed;
+                    lastBytesTotal = totalBytes;
+                    lastSampleMs = nowMs;
+                }
+            } else {
+                lastBytesTotal = totalBytes;
+                lastSampleMs = nowMs;
+            }
+        }
+
+        private void postFinalNotification() {
+            int done = completedCount.get();
+            int failed = failedCount.get();
+
+            Notification notification;
+
+            if (done > 0 && failed == 0) {
+                String msg = done == 1
+                        ? "1 track downloaded"
+                        : done + " tracks downloaded";
+                notification = buildSummaryNotification(
+                        "Downloads complete", msg, R.drawable.ic_check_circle);
+            } else if (done > 0) {
+                String msg = done + " downloaded, " + failed + " failed";
+                notification = buildSummaryNotification(
+                        "Downloads complete", msg, R.drawable.ic_check_circle);
+            } else {
+                String msg = failed == 1 ? "1 track failed" : failed + " tracks failed";
+                notification = buildSummaryNotification(
+                        "Download failed", msg, R.drawable.ic_error);
+            }
+
+            NotificationManager nm = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+            nm.notify(TERMINAL_NOTIFICATION_ID, notification);
+        }
+
+        private Notification buildSummaryNotification(String title, String text, int iconRes) {
+            return new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSmallIcon(iconRes)
+                    .setOngoing(false)
+                    .setAutoCancel(false)   // stays until user swipes it
+                    .setSilent(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setOnlyAlertOnce(true)
+                    .build();
         }
     }
 }
