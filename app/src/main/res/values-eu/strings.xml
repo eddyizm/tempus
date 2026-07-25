@@ -223,7 +223,7 @@
     <string name="menu_add_button">Gehitu</string>
     <string name="menu_add_to_playlist_button">Zerrendara gehitu</string>
     <string name="playlist_added_to_queue">Zerrenda ilarara gehitu da</string>
-    <string name="menu_go_to_playlist_button">Erreproduzitu</string>
+    <string name="menu_go_to_playlist_button">Zerrendara joan</string>
     <string name="menu_play_shuffle_button">Nahastuta erreproduzitu</string>
     <string name="menu_add_to_queue_button">Ilarara gehitu</string>
     <string name="menu_edit_playlist_button">Zerrenda editatu</string>
@@ -256,9 +256,9 @@
     <string name="menu_sort_most_played">Gehien entzunak</string>
     <string name="menu_sort_most_recently_starred">Gogoko azkenak</string>
     <string name="menu_sort_least_recently_starred">Gogoko zaharrenak</string>
-    <string name="menu_pin_button">Gogokoetara gehitu</string>
-    <string name="menu_unpin_button">Gogokoetatik kendu</string>
-    <string name="playlist_sort_pinned">Gogokoak</string>
+    <string name="menu_pin_button">Ainguratu</string>
+    <string name="menu_unpin_button">Ainguraketa kendu</string>
+    <string name="playlist_sort_pinned">Ainguratutakoak</string>
     <string name="menu_sort_year">Urtea</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Erreprodukzio-abiadura</string>
@@ -543,7 +543,7 @@
     <string name="settings_replay_gain_prevent_clipping_title">Moztea saihestu</string>
     <string name="settings_replay_gain_prevent_clipping_summary">Murriztu irabazia abestiaren edo diskoaren gailurraren etiketak seinaleak ReplayGain aplikatu ondoren moztuko lukeela adierazten badu.</string>
     <string name="settings_title_scrobble">Scrobble</string>
-    <string name="settings_title_skip_min_star_rating">Baloraziorik ez duten abestiak baztertu</string>
+    <string name="settings_title_skip_min_star_rating">Gutxieneko izar-balorazioaren azpitik dauden abestiak baztertu</string>
     <string name="settings_title_skip_min_star_rating_dialog">Balorazio hau duten abestiak:</string>
     <string name="settings_title_share">Partekatu</string>
     <string name="settings_title_sound">Soinua</string>
@@ -551,7 +551,7 @@
     <string name="settings_title_transcoding">Transkodetzea</string>
     <string name="settings_title_transcoding_download">Deskargen transkodetzea</string>
     <string name="settings_title_ui">Interfazea</string>
-    <string name="settings_title_ui_landscape_items_per_row">Errenkada bakoitzeko elementuak, bertikalean</string>
+    <string name="settings_title_ui_landscape_items_per_row">Errenkada bakoitzeko elementuak, horizontalean</string>
     <string name="settings_title_ui_landscape_items_per_row_dialog">Errenkada bakoitzeko elementu kopurua</string>
     <string name="settings_transcoded_download">Transkodetutako deskarga</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
@@ -609,7 +609,7 @@
     <string name="song_list_page_recently_added">Gehitutako azken abestiak</string>
     <string name="song_list_page_recently_played">Entzundako azken abestiak</string>
     <string name="song_list_page_starred">Gogoko abestiak</string>
-    <string name="song_list_page_top">%1$s(r)en abesti onenak</string>
+    <string name="song_list_page_top">Abesti onenak: %1$s</string>
     <string name="song_list_page_year">%1$d urtea</string>
     <string name="song_subtitle_formatter">%1$s  •  %2$s  %3$s</string>
     <string name="starred_sync_dialog_negative_button">Utzi</string>
@@ -701,7 +701,7 @@
     <string name="search_sort_title">Azken bilaketak kronologikoki ordenatu</string>
     <string name="search_sort_summary">Gaituta badago, bilaketak kronologikoki ordenatzen dira. Desgaituta badago, izenaren arabera ordenatzen dira.</string>
     <string name="search_all_songs_loading">Abesti guztiak eskuratzen ...</string>
-    <string name="search_all_songs">%1$s(r)en abesti guztiak</string>
+    <string name="search_all_songs">%1$s: abesti guztiak</string>
     <string name="search_all_songs_play">%1$s erreproduzitu</string>
 
     <string name="nav_drawer_index">Indizea</string>
