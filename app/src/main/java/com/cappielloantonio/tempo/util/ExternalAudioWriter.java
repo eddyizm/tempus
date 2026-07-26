@@ -40,6 +40,10 @@ public class ExternalAudioWriter {
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 60_000;
 
+    // One-off error notification IDs — distinct from Path A (1, 2) and Path B (1012, 1013)
+    private static final int NO_FOLDER_NOTIFICATION_ID = 1010;
+    private static final int FOLDER_ERROR_NOTIFICATION_ID = 1009;
+
     private ExternalAudioWriter() {
     }
 
@@ -313,7 +317,7 @@ public class ExternalAudioWriter {
                 .setContentIntent(openSettings)
                 .setAutoCancel(true);
 
-        manager.notify(DownloadProgressState.EXTERNAL_PROGRESS_NOTIFICATION_ID - 1, builder.build());
+        manager.notify(NO_FOLDER_NOTIFICATION_ID, builder.build());
     }
 
     /**
@@ -329,7 +333,7 @@ public class ExternalAudioWriter {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setSilent(true)
                 .setAutoCancel(true);
-        manager.notify(DownloadProgressState.EXTERNAL_PROGRESS_NOTIFICATION_ID - 1, builder.build());
+        manager.notify(FOLDER_ERROR_NOTIFICATION_ID, builder.build());
     }
 
     private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName) {

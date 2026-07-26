@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @UnstableApi
 public final class DownloadProgressState {
 
-    // Fixed notification IDs — never conflict with Path A IDs (1, 2) or unavailable (1011)
+    // Fixed notification IDs — Path A uses (1, 2), ExternalAudioWriter errors use (1009, 1010)
     public static final int EXTERNAL_PROGRESS_NOTIFICATION_ID = 1012;
     public static final int EXTERNAL_COMPLETE_NOTIFICATION_ID = 1013;
 
