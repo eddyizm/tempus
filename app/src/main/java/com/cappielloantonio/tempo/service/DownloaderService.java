@@ -19,6 +19,7 @@ import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @UnstableApi
@@ -31,6 +32,9 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
     // Persistent completion/failure notification — fixed ID so updates replace the same one
     static final int TERMINAL_NOTIFICATION_ID = 2;
+
+    // Shared speed tracking — updated by TerminalStateNotificationHelper, read by getForegroundNotification
+    static volatile float currentSpeedBytesPerSec = 0f;
 
     public DownloaderService() {
         super(
@@ -89,6 +93,10 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             contentText = "Downloading " + (completed + 1) + " of " + total;
         }
 
+        if (currentSpeedBytesPerSec > 0f) {
+            contentText += " • " + formatSpeed(currentSpeedBytesPerSec);
+        }
+
         return new NotificationCompat.Builder(this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
                 .setContentTitle("Downloading")
                 .setContentText(contentText)
@@ -99,6 +107,16 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOnlyAlertOnce(true)
                 .build();
+    }
+
+    private static String formatSpeed(float bytesPerSec) {
+        if (bytesPerSec >= 1_000_000f) {
+            return String.format(Locale.US, "%.1f MB/s", bytesPerSec / 1_000_000f);
+        } else if (bytesPerSec >= 1_000f) {
+            return String.format(Locale.US, "%.0f KB/s", bytesPerSec / 1_000f);
+        } else {
+            return String.format(Locale.US, "%.0f B/s", bytesPerSec);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -169,11 +187,11 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                 completedCount.set(0);
                 failedCount.set(0);
                 speedBytesPerSec = 0f;
+                DownloaderService.currentSpeedBytesPerSec = 0f;
                 lastBytesTotal = 0;
                 lastSampleMs = 0;
             }
-            // If queue not empty, Media3 will keep calling getForegroundNotification() —
-            // no need to post an intermediate notification here.
+
         }
 
         @Override
@@ -200,6 +218,8 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                 lastBytesTotal = totalBytes;
                 lastSampleMs = nowMs;
             }
+
+            DownloaderService.currentSpeedBytesPerSec = speedBytesPerSec;
         }
 
         private void postFinalNotification() {

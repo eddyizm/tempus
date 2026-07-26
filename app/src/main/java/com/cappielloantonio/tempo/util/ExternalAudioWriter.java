@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.webkit.MimeTypeMap;
 
@@ -242,9 +243,15 @@ public class ExternalAudioWriter {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 int len;
                 long total = 0;
+                long lastProgressMs = 0;
                 while ((len = in.read(buffer)) != -1) {
                     out.write(buffer, 0, len);
                     total += len;
+                    long now = SystemClock.elapsedRealtime();
+                    if (now - lastProgressMs > 500) {
+                        DownloadProgressState.getInstance().reportBytesProgress(context, total);
+                        lastProgressMs = now;
+                    }
                 }
                 out.flush();
 

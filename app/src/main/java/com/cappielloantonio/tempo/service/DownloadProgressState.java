@@ -3,6 +3,7 @@ package com.cappielloantonio.tempo.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.os.SystemClock;
 
 import androidx.annotation.GuardedBy;
 import androidx.core.app.NotificationCompat;
@@ -11,6 +12,7 @@ import androidx.media3.common.util.UnstableApi;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -35,6 +37,11 @@ public final class DownloadProgressState {
     @GuardedBy("lock") private int failedCount = 0;
     @GuardedBy("lock") private int skippedCount = 0;
 
+    @GuardedBy("lock") private long batchStartTimeMs = 0;
+    @GuardedBy("lock") private long lastBytesTotal = 0;
+    @GuardedBy("lock") private long lastSampleMs = 0;
+    @GuardedBy("lock") private float currentSpeedBytesPerSec = 0f;
+
     private DownloadProgressState() {}
 
     public static DownloadProgressState getInstance() {
@@ -55,6 +62,9 @@ public final class DownloadProgressState {
     public void onEnqueue(Context context) {
         synchronized (lock) {
             enqueuedCount++;
+            if (batchStartTimeMs == 0) {
+                batchStartTimeMs = SystemClock.elapsedRealtime();
+            }
             postProgressNotification(context.getApplicationContext());
         }
     }
@@ -89,6 +99,23 @@ public final class DownloadProgressState {
         }
     }
 
+    /**
+     * Called periodically during an active download to report byte progress.
+     * Updates speed and refreshes the progress notification (throttled internally).
+     */
+    public void reportBytesProgress(Context context, long bytesDownloadedSoFar) {
+        synchronized (lock) {
+            long now = SystemClock.elapsedRealtime();
+            long elapsed = now - lastSampleMs;
+            if (elapsed > 500 && lastSampleMs > 0) {
+                currentSpeedBytesPerSec = (bytesDownloadedSoFar - lastBytesTotal) * 1000f / elapsed;
+            }
+            lastBytesTotal = bytesDownloadedSoFar;
+            lastSampleMs = now;
+            postProgressNotification(context.getApplicationContext());
+        }
+    }
+
     @GuardedBy("lock")
     private void checkBatchDone(Context context) {
         int doneCount = completedCount + failedCount + skippedCount;
@@ -109,6 +136,9 @@ public final class DownloadProgressState {
         String contentText;
         if (inFlight > 0) {
             contentText = "Downloading " + doneCount + " of " + total;
+            if (currentSpeedBytesPerSec > 0f) {
+                contentText += " • " + formatSpeed(currentSpeedBytesPerSec);
+            }
         } else {
             contentText = "Processing…";
         }
@@ -175,5 +205,19 @@ public final class DownloadProgressState {
         completedCount = 0;
         failedCount = 0;
         skippedCount = 0;
+        batchStartTimeMs = 0;
+        lastBytesTotal = 0;
+        lastSampleMs = 0;
+        currentSpeedBytesPerSec = 0f;
+    }
+
+    private static String formatSpeed(float bytesPerSec) {
+        if (bytesPerSec >= 1_000_000f) {
+            return String.format(Locale.US, "%.1f MB/s", bytesPerSec / 1_000_000f);
+        } else if (bytesPerSec >= 1_000f) {
+            return String.format(Locale.US, "%.0f KB/s", bytesPerSec / 1_000f);
+        } else {
+            return String.format(Locale.US, "%.0f B/s", bytesPerSec);
+        }
     }
 }
