@@ -26,9 +26,11 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.Format;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
+import androidx.media3.common.Tracks;
 import androidx.media3.common.util.RepeatModeUtil;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -44,7 +46,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.InnerFragmentPlayerControllerBinding;
-import com.cappielloantonio.tempo.equalizer.EqualizerManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.PlaybackSpeedDialog;
@@ -68,8 +69,6 @@ import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -95,7 +94,6 @@ public class PlayerControllerFragment extends Fragment {
     private ImageButton playerOpenLyricsButton;
     private ImageButton playerTrackInfo;
     private LinearLayout ratingContainer;
-    private ImageButton equalizerButton;
     private LinearLayout sleepTimerContainer;
     private ImageButton sleepTimerButton;
     private android.widget.TextView sleepTimerLabel;
@@ -128,7 +126,6 @@ public class PlayerControllerFragment extends Fragment {
         initMediaListenable();
         initMediaLabelButton();
         initArtistLabelButton();
-        initEqualizerButton();
 
         // Sync UI immediately in case a timer survived a rotation.
         updateSleepTimerUI();
@@ -171,7 +168,6 @@ public class PlayerControllerFragment extends Fragment {
         playerTrackInfo = bind.getRoot().findViewById(R.id.player_info_track);
         songRatingBar = bind.getRoot().findViewById(R.id.song_rating_bar);
         ratingContainer = bind.getRoot().findViewById(R.id.rating_container);
-        equalizerButton = bind.getRoot().findViewById(R.id.player_open_equalizer_button);
         assetLinkChipGroup = bind.getRoot().findViewById(R.id.asset_link_chip_group);
         playerSongLinkChip = bind.getRoot().findViewById(R.id.asset_link_song_chip);
         playerAlbumLinkChip = bind.getRoot().findViewById(R.id.asset_link_album_chip);
@@ -266,6 +262,18 @@ public class PlayerControllerFragment extends Fragment {
             }
 
             @Override
+            public void onTracksChanged(@NonNull Tracks tracks) {
+                setMediaFormatFromFileReturnedByServer();
+            }
+
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                if (playbackState == Player.STATE_READY) {
+                    setMediaFormatFromFileReturnedByServer();
+                }
+            }
+
+            @Override
             public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
                 Preferences.setShuffleModeEnabled(shuffleModeEnabled);
             }
@@ -351,22 +359,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
-        boolean isLocal = false;
-
-        if (mediaBrowserListenableFuture != null && mediaBrowserListenableFuture.isDone()) {
-            try {
-                MediaBrowser browser = mediaBrowserListenableFuture.get();
-                if (browser != null && browser.getCurrentMediaItem() != null) {
-                    android.net.Uri currentUri = browser.getCurrentMediaItem().requestMetadata.mediaUri;
-                    if (currentUri != null) {
-                        String scheme = currentUri.getScheme();
-                        isLocal = "content".equals(scheme) || "file".equals(scheme);
-                    }
-                }
-            } catch (Exception e) {
-                Log.e("DEBUG_PLAYER", "Error getting browser for UI update", e);
-            }
-        }
+        boolean isLocal = MusicUtil.isCurrentTrackLocal(getBrowser());
 
         if (mediaMetadata.extras != null) {
             String extension = mediaMetadata.extras.getString("suffix", getString(R.string.player_unknown_format));
@@ -400,16 +393,7 @@ public class PlayerControllerFragment extends Fragment {
         }
 
         if (!isLocal) {
-            boolean isTranscodingExtension = !MusicUtil.getTranscodingFormatPreference().equals("raw");
-            boolean isTranscodingBitrate = !MusicUtil.getBitratePreference().equals("0");
-            if (isTranscodingExtension || isTranscodingBitrate) {
-                playerMediaExtension.setText(MusicUtil.getTranscodingFormatPreference() + " ("
-                        + getString(R.string.player_transcoding) + ")");
-                playerMediaBitrate.setText(
-                        !MusicUtil.getBitratePreference().equals("0") ? MusicUtil.getBitratePreference() + "kbps"
-                                : getString(R.string.player_transcoding_requested));
-            }
-
+            setMediaFormatFromFileReturnedByServer();
         }
 
         playerTrackInfo.setOnClickListener(view -> {
@@ -422,6 +406,42 @@ public class PlayerControllerFragment extends Fragment {
 
         playerMediaBitrate.setOnClickListener(v -> toggleBitrateVisibility());
         playerMediaBitrate.setOnLongClickListener(v -> toggleQuickActionVisiblity());
+    }
+
+    private MediaBrowser getBrowser() {
+        if (mediaBrowserListenableFuture == null || !mediaBrowserListenableFuture.isDone()) return null;
+        try {
+            return mediaBrowserListenableFuture.get();
+        } catch (Exception e) {
+            Log.e(TAG, "Unable to resolve media browser", e);
+            return null;
+        }
+    }
+
+    private void setMediaFormatFromFileReturnedByServer() {
+        if (playerMediaExtension == null) return;
+
+        MediaBrowser browser = getBrowser();
+        // Guard against local files here too: onTracksChanged also calls this, and a local
+        // file's format comes from its metadata in setMediaInfo, not the decoder label.
+        if (MusicUtil.isCurrentTrackLocal(browser)) return;
+
+        Format format = MusicUtil.getCurrentAudioFormat(browser);
+        if (format == null) return;
+
+        String actual = MusicUtil.audioFormatLabel(format.sampleMimeType);
+        if (actual != null && !actual.isEmpty()) {
+            String original = MusicUtil.getCurrentOriginalSuffix(browser);
+            boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
+            playerMediaExtension.setText(transcoded
+                    ? actual + " (" + getString(R.string.player_transcoding) + ")"
+                    : actual);
+        }
+
+        if (format.bitrate != Format.NO_VALUE && format.bitrate > 0) {
+            playerMediaBitrate.setText((format.bitrate / 1000) + "kbps");
+            playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void toggleBitrateVisibility() {
@@ -805,10 +825,6 @@ public class PlayerControllerFragment extends Fragment {
         });
     }
 
-    private void initEqualizerButton() {
-        equalizerButton.setOnClickListener(v -> navigateToEqualizerFragment());
-    }
-
     private void navigateToEqualizerFragment() {
         NavController navController = NavHostFragment.findNavController(this);
         NavOptions navOptions = new NavOptions.Builder()
@@ -891,7 +907,6 @@ public class PlayerControllerFragment extends Fragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mediaServiceBinder = (MediaService.LocalBinder) service;
             isServiceBound = true;
-            checkEqualizerBands();
         }
 
         @Override
@@ -906,31 +921,6 @@ public class PlayerControllerFragment extends Fragment {
         intent.setAction(MediaService.ACTION_BIND_EQUALIZER);
         requireActivity().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         isServiceBound = true;
-    }
-
-    private void checkEqualizerBands() {
-        if (mediaServiceBinder != null) {
-            EqualizerManager eqManager = mediaServiceBinder.getEqualizerManager();
-            short numBands = eqManager.getNumberOfBands();
-
-            if (equalizerButton != null && sleepTimerContainer != null) {
-                ConstraintLayout.LayoutParams sleepParams = (ConstraintLayout.LayoutParams) sleepTimerContainer
-                        .getLayoutParams();
-                if (numBands == 0) {
-                    equalizerButton.setVisibility(View.GONE);
-                    // Equalizer gone: anchor sleep timer to parent start so the
-                    // two remaining buttons (sleep timer + queue) stay centred.
-                    sleepParams.startToEnd = ConstraintLayout.LayoutParams.UNSET;
-                    sleepParams.startToStart = ConstraintLayout.LayoutParams.PARENT_ID;
-                } else {
-                    equalizerButton.setVisibility(View.VISIBLE);
-                    // Equalizer visible: restore the three-button spread chain.
-                    sleepParams.startToStart = ConstraintLayout.LayoutParams.UNSET;
-                    sleepParams.startToEnd = R.id.player_open_equalizer_button;
-                }
-                sleepTimerContainer.setLayoutParams(sleepParams);
-            }
-        }
     }
 
     @Override

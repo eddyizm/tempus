@@ -8,6 +8,12 @@ import android.net.Uri;
 import android.text.Html;
 import android.util.Log;
 
+import androidx.media3.common.C;
+import androidx.media3.common.Format;
+import androidx.media3.common.Tracks;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.session.MediaBrowser;
+
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.model.Download;
@@ -335,6 +341,88 @@ public class MusicUtil {
 
     public static String getTranscodingFormatPreferenceForDownload() {
         return Preferences.getAudioTranscodeFormatTranscodedDownload();
+    }
+
+    // Maps a Media3 sample MIME type (e.g. "audio/flac") to a short, user-facing format
+    // label (e.g. "flac"). Returns null when the mime is null. Used to show the format the
+    // player is actually decoding rather than the requested transcode preference. See #579.
+    public static String audioFormatLabel(String sampleMimeType) {
+        if (sampleMimeType == null) return null;
+        String mime = sampleMimeType.toLowerCase();
+        if (mime.contains("flac")) return "flac";
+        if (mime.contains("opus")) return "opus";
+        if (mime.contains("vorbis")) return "vorbis";
+        if (mime.contains("mp4a") || mime.contains("aac")) return "aac";
+        if (mime.contains("mpeg") || mime.contains("mp3")) return "mp3";
+        if (mime.contains("alac")) return "alac";
+        if (mime.contains("eac3")) return "eac3";
+        if (mime.contains("ac3")) return "ac3";
+        if (mime.contains("pcm") || mime.contains("raw") || mime.contains("wav")) return "wav";
+        if (mime.contains("ogg")) return "ogg";
+        int slash = mime.indexOf('/');
+        return slash >= 0 && slash < mime.length() - 1 ? mime.substring(slash + 1) : mime;
+    }
+
+    // The player reports the decoded codec (aac, vorbis, opus), but the source "suffix" is often a
+    // container name (m4a, ogg, oga) that legitimately holds that codec. Treating a container/codec
+    // pair as a mismatch would tag direct-played files as "(transcoding)". Only report a transcode
+    // when the decoded codec is not one the source container can carry. See issue 579 and 669.
+    public static boolean isTranscodedFormat(String decodedLabel, String sourceSuffix) {
+        if (decodedLabel == null || decodedLabel.isEmpty()) return false;
+        if (sourceSuffix == null || sourceSuffix.isEmpty()) return false;
+        if (decodedLabel.equalsIgnoreCase(sourceSuffix)) return false;
+        switch (sourceSuffix.toLowerCase()) {
+            case "m4a":
+            case "m4b":
+            case "mp4":
+                return !decodedLabel.equals("aac") && !decodedLabel.equals("alac");
+            case "ogg":
+            case "oga":
+                return !decodedLabel.equals("vorbis") && !decodedLabel.equals("opus")
+                        && !decodedLabel.equals("flac");
+            default:
+                return true;
+        }
+    }
+
+    // True when the current item is played from the device (a content or file uri scheme)
+    // rather than streamed and transcoded by the server. Returns false when the browser is
+    // null or the current item has no resolvable uri. See issue 579.
+    @UnstableApi
+    public static boolean isCurrentTrackLocal(MediaBrowser browser) {
+        if (browser == null || browser.getCurrentMediaItem() == null) return false;
+        Uri currentUri = browser.getCurrentMediaItem().requestMetadata.mediaUri;
+        if (currentUri == null) return false;
+        String scheme = currentUri.getScheme();
+        return "content".equals(scheme) || "file".equals(scheme);
+    }
+
+    // The audio Format the player is currently decoding, so callers can show what is really
+    // playing instead of the requested transcode preference. Prefers the selected audio track;
+    // on the first load the controller can report tracks before one is marked selected, so it
+    // falls back to the first audio track and returns null only when no audio track is
+    // available yet. See issue 579.
+    @UnstableApi
+    public static Format getCurrentAudioFormat(MediaBrowser browser) {
+        if (browser == null) return null;
+        Format firstAudio = null;
+        for (Tracks.Group group : browser.getCurrentTracks().getGroups()) {
+            if (group.getType() != C.TRACK_TYPE_AUDIO) continue;
+            for (int i = 0; i < group.length; i++) {
+                if (group.isTrackSelected(i)) return group.getTrackFormat(i);
+                if (firstAudio == null) firstAudio = group.getTrackFormat(i);
+            }
+        }
+        return firstAudio;
+    }
+
+    // The original source suffix (for example "flac" or "m4a") stored on the current item's
+    // metadata, used to decide whether the decoded format differs from the source. Returns
+    // null when the browser is null or no suffix is present. See issue 579.
+    @UnstableApi
+    public static String getCurrentOriginalSuffix(MediaBrowser browser) {
+        if (browser == null || browser.getMediaMetadata().extras == null) return null;
+        return browser.getMediaMetadata().extras.getString("suffix", null);
     }
 
     public static List<Child> limitPlayableMedia(List<Child> toLimit, int position) {

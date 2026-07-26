@@ -12,7 +12,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -93,6 +95,33 @@ public class MainActivity extends BaseActivity {
 
     public ActivityMainBinding getBinding() {
         return bind;
+    }
+
+    // #688: Deep navigation accumulates fragment + back-stack state in the saved
+    // instance Bundle. When the activity is stopped (app sent to background) the
+    // platform persists it over a Binder transaction that throws
+    // TransactionTooLargeException once it passes the buffer limit (~1MB), crashing
+    // the app on background. Cap it: if the saved state is dangerously large, drop the
+    // restorable fragment state so backgrounding can never crash — worst case the app
+    // reopens at the start destination instead of dying.
+    private static final int MAX_SAVED_STATE_BYTES = 400 * 1024;
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Parcel parcel = Parcel.obtain();
+        try {
+            parcel.writeBundle(outState);
+            int size = parcel.dataSize();
+            if (size > MAX_SAVED_STATE_BYTES) {
+                Log.w(TAG, "Saved instance state is " + size + " bytes (limit "
+                        + MAX_SAVED_STATE_BYTES + "); clearing it to avoid TransactionTooLargeException on background (#688)");
+                outState.clear();
+            }
+        } finally {
+            parcel.recycle();
+        }
     }
 
     @Override

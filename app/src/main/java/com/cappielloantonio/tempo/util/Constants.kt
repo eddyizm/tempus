@@ -57,6 +57,9 @@ object Constants {
     const val PLAYLIST_ORDER_BY_DATE = "ORDER_BY_DATE"
     const val PLAYLIST_ORDER_BY_SONGS = "ORDER_BY_SONGS"
     const val PLAYLIST_ORDER_BY_PINNED = "ORDER_BY_PINNED"
+    const val PLAYLIST_ORDER_BY_LAST_PLAYED = "ORDER_BY_LAST_PLAYED"
+    const val PLAYLIST_ORDER_BY_LAST_UPDATED = "ORDER_BY_LAST_UPDATED"
+    const val PLAYLIST_ORDER_BY_BOTH = "ORDER_BY_BOTH"
 
     const val PODCAST_FILTER_BY_DOWNLOAD = "PODCAST_FILTER_BY_DOWNLOAD"
     const val PODCAST_FILTER_BY_ALL = "PODCAST_FILTER_BY_ALL"
@@ -135,6 +138,14 @@ object Constants {
     const val CUSTOM_COMMAND_TOGGLE_REPEAT_MODE_ALL = "android.media3.session.demo.REPEAT_ALL"
     const val CUSTOM_COMMAND_INSTANT_MIX_ON = "android.media3.session.demo.INSTANT_MIX_ON"
     const val CUSTOM_COMMAND_INSTANT_MIX_OFF = "android.media3.session.demo.INSTANT_MIX_OFF"
+
+    // "Play next" shuffle-order fixup: the UI inserts the items on the timeline, then
+    // asks the service (which owns the ExoPlayer) to move them next in the shuffle order.
+    const val CUSTOM_COMMAND_PLAY_NEXT = "com.cappielloantonio.tempo.PLAY_NEXT_FIXUP"
+    const val PLAY_NEXT_INSERT_POS = "play_next_insert_pos"
+    const val PLAY_NEXT_COUNT = "play_next_count"
+    const val PLAY_NEXT_TARGET_COUNT = "play_next_target_count"
+
     enum class SeedType {
         ARTIST, ALBUM, TRACK
     }
