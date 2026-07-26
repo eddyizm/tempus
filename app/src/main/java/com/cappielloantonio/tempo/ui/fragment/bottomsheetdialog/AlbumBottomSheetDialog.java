@@ -217,8 +217,6 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
                     DownloadUtil.getDownloadTracker(requireContext()).remove(currentAlbumMediaItems, downloads);
                 } else {
                     currentAlbumTracks.forEach(ExternalAudioReader::delete);
-                    List<Download> downloads = currentAlbumTracks.stream().map(Download::new).collect(Collectors.toList());
-                    DownloadUtil.getDownloadTracker(requireContext()).remove(currentAlbumMediaItems, downloads);
                 }
                 dismissBottomSheet();
             });

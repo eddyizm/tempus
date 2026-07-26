@@ -2,59 +2,47 @@ package com.cappielloantonio.tempo.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
+import android.os.SystemClock;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.offline.Download;
-import androidx.media3.exoplayer.offline.DownloadCursor;
-import androidx.media3.exoplayer.offline.DownloadIndex;
 import androidx.media3.exoplayer.offline.DownloadManager;
-import androidx.media3.exoplayer.offline.DownloadNotificationHelper;
 import androidx.media3.exoplayer.scheduler.PlatformScheduler;
 import androidx.media3.exoplayer.scheduler.Requirements;
 import androidx.media3.exoplayer.scheduler.Scheduler;
 
 import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.broadcast.receiver.DownloadControlReceiver;
-import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.DownloadUtil;
-import com.cappielloantonio.tempo.util.ExternalAudioWriter;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @UnstableApi
 public class DownloaderService extends androidx.media3.exoplayer.offline.DownloadService {
 
     private static final int JOB_ID = 1;
+
+    // Foreground service notification — managed by Media3, must stay ID 1
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
-    public static final int PAUSED_NOTIFICATION_ID = 2;
-    private static final int COMPLETE_NOTIFICATION_ID = 3;
 
-    private static volatile int batchTotal = 0;
+    // Persistent completion/failure notification — fixed ID so updates replace the same one
+    static final int TERMINAL_NOTIFICATION_ID = 2;
 
-    private static final java.util.Set<String> completedDownloadIds =
-            java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<>());
+    // Shared speed tracking — updated by TerminalStateNotificationHelper, read by getForegroundNotification
+    static volatile float currentSpeedBytesPerSec = 0f;
 
-    private static volatile boolean listenerRegistered = false;
+    // Stable batch counters — updated by TerminalStateNotificationHelper, read by getForegroundNotification
+    static volatile int batchMaxTotal = 0;
+    static volatile int batchCompletedCount = 0;
 
-    private static long lastTotalBytesDownloaded = 0L;
-    private static long lastSpeedCheckTimeMs = 0L;
-    private static String lastSpeedLabel = "";
-
-    private static volatile boolean isPaused = false;
-    public static volatile boolean isCancelling = false;
-
-    private static final int RC_PAUSE   = 10;
-    private static final int RC_RESUME  = 11;
-    private static final int RC_CANCEL  = 12;
+    // Cache: mediaId → track title, populated lazily in TerminalStateNotificationHelper
+    private static final ConcurrentHashMap<String, String> trackTitlesCache = new ConcurrentHashMap<>();
 
     public DownloaderService() {
         super(
@@ -62,20 +50,15 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                 DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
                 DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID,
                 R.string.exo_download_notification_channel_name,
-                0);
+                0
+        );
     }
 
     @NonNull
     @Override
     protected DownloadManager getDownloadManager() {
         DownloadManager downloadManager = DownloadUtil.getDownloadManager(this);
-        if (!listenerRegistered) {
-            DownloadNotificationHelper notificationHelper =
-                    DownloadUtil.getDownloadNotificationHelper(this);
-            downloadManager.addListener(
-                    new TerminalStateNotificationHelper(this, notificationHelper));
-            listenerRegistered = true;
-        }
+        downloadManager.addListener(new TerminalStateNotificationHelper(this));
         return downloadManager;
     }
 
@@ -85,319 +68,271 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         return new PlatformScheduler(this, JOB_ID);
     }
 
-
+    /**
+     * Overrides the foreground (progress) notification to show "Downloading TrackName" with
+     * "X of N • speed" and stable batch counters that don't shrink as Media3 removes completed
+     * downloads from its active list (see bug #11).
+     *
+     * <p>Called by Media3 on the service thread each time the download queue changes.
+     * {@code downloads} is the current Media3 snapshot; we prefer static batch counters
+     * ({@link #batchMaxTotal}, {@link #batchCompletedCount}) maintained by
+     * {@link TerminalStateNotificationHelper} for accurate "X of N" across removal events.
+     */
     @NonNull
     @Override
     protected Notification getForegroundNotification(
             @NonNull List<Download> downloads,
             @Requirements.RequirementFlags int notMetRequirements) {
 
-        int activeCount = 0;
-        long totalBytesDownloaded = 0L;
-        Download activeDownload = null;
+        int total = Math.max(batchMaxTotal, downloads.size());
+        int completed = batchCompletedCount;
 
-        for (Download download : downloads) {
-            switch (download.state) {
-                case Download.STATE_QUEUED:
-                case Download.STATE_RESTARTING:
-                case Download.STATE_STOPPED:
-                    activeCount++;
-                    totalBytesDownloaded += download.getBytesDownloaded();
-                    break;
-                case Download.STATE_DOWNLOADING:
-                    activeCount++;
-                    totalBytesDownloaded += download.getBytesDownloaded();
-                    if (activeDownload == null) {
-                        activeDownload = download;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (activeCount > batchTotal) {
-            batchTotal = activeCount;
-        }
-
-        int completed = Math.min(completedDownloadIds.size(), batchTotal);
-
-        long nowMs = System.currentTimeMillis();
-        if (lastSpeedCheckTimeMs > 0 && nowMs > lastSpeedCheckTimeMs) {
-            long bytesDelta = totalBytesDownloaded - lastTotalBytesDownloaded;
-            long timeDeltaMs = nowMs - lastSpeedCheckTimeMs;
-            if (bytesDelta >= 0 && timeDeltaMs > 0) {
-                double bytesPerSec = bytesDelta * 1000.0 / timeDeltaMs;
-                lastSpeedLabel = formatSpeed(bytesPerSec);
-            }
-        }
-        lastTotalBytesDownloaded = totalBytesDownloaded;
-        lastSpeedCheckTimeMs = nowMs;
-
-        String trackTitle = null;
-        if (activeDownload != null) {
-            trackTitle = DownloaderManager.getDownloadNotificationMessage(activeDownload.request.id);
-        }
-        if (trackTitle == null) {
-            for (Download d : downloads) {
-                if (d.state == Download.STATE_QUEUED || d.state == Download.STATE_RESTARTING) {
-                    trackTitle = DownloaderManager.getDownloadNotificationMessage(d.request.id);
-                    if (trackTitle != null) break;
-                }
-            }
-        }
-
-        boolean allStopped = activeCount > 0;
-        for (Download download : downloads) {
-            if (download.state == Download.STATE_QUEUED
-                    || download.state == Download.STATE_DOWNLOADING
-                    || download.state == Download.STATE_RESTARTING) {
-                allStopped = false;
+        // Find the currently downloading (or next queued) track title from cache
+        String currentTrack = null;
+        for (Download d : downloads) {
+            if (d.state == Download.STATE_DOWNLOADING) {
+                currentTrack = trackTitlesCache.get(d.request.id);
                 break;
             }
         }
-        isPaused = allStopped;
-
-        if (activeCount == 0 && batchTotal > 0) {
-            if (!isCancelling) {
-                NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                NotificationCompat.Builder doneBuilder = new NotificationCompat.Builder(
-                        this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                        .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                        .setContentTitle("Download Complete")
-                        .setContentText(batchTotal + " tracks downloaded successfully")
-                        .setAutoCancel(true);
-                manager.notify(COMPLETE_NOTIFICATION_ID, doneBuilder.build());
-            }
-
-            batchTotal = 0;
-            lastTotalBytesDownloaded = 0L;
-            lastSpeedCheckTimeMs = 0L;
-            lastSpeedLabel = "";
-            isCancelling = false;
-            completedDownloadIds.clear();
-            
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.cancel(PAUSED_NOTIFICATION_ID);
-        }
-
-        String notifTitle;
-        String speedSuffix = (!lastSpeedLabel.isEmpty() && !isPaused)
-                ? "  •  " + lastSpeedLabel : "";
-
-        if (batchTotal > 0) {
-            if (isPaused) {
-                notifTitle = "Downloads Paused — " + completed + " of " + batchTotal;
-            } else {
-                int current = Math.min(completed + 1, batchTotal);
-                notifTitle = "Downloading " + current + " of " + batchTotal + speedSuffix;
-            }
-        } else {
-            notifTitle = "Downloading" + speedSuffix;
-        }
-
-        String contentText = trackTitle;
-
-        NotificationCompat.Action pauseOrResumeAction = isPaused
-                ? buildAction(R.drawable.ic_play,
-                        getString(R.string.notification_action_resume),
-                        Constants.ACTION_RESUME_DOWNLOADS, RC_RESUME)
-                : buildAction(R.drawable.ic_pause,
-                        getString(R.string.notification_action_pause),
-                        Constants.ACTION_PAUSE_DOWNLOADS, RC_PAUSE);
-
-        NotificationCompat.Action cancelAction = buildAction(
-                R.drawable.ic_close,
-                getString(R.string.notification_action_cancel),
-                Constants.ACTION_CANCEL_DOWNLOADS, RC_CANCEL);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_download)
-                .setContentTitle(notifTitle)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setShowWhen(false)
-                .addAction(pauseOrResumeAction)
-                .addAction(cancelAction);
-
-        if (contentText != null && !contentText.isEmpty()) {
-            builder.setContentText(contentText);
-        }
-
-        if (activeCount > 0 && !isPaused) {
-            builder.setProgress(0, 0, true);
-        }
-
-        Notification finalNotification = builder.build();
-
-        return finalNotification;
-    }
-
-    /**
-     * Build a notification action that broadcasts to {@link DownloadControlReceiver}.
-     */
-    private NotificationCompat.Action buildAction(int iconRes, String label, String action, int requestCode) {
-        Intent intent = new Intent(action);
-        intent.setClass(this, DownloadControlReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        return new NotificationCompat.Action(iconRes, label, pendingIntent);
-    }
-
-    /**
-     * Format bytes/sec as "X.X MB/s" or "X KB/s".
-     */
-    private static String formatSpeed(double bytesPerSec) {
-        if (bytesPerSec >= 1_000_000) {
-            return String.format(Locale.US, "%.1f MB/s", bytesPerSec / 1_000_000);
-        } else if (bytesPerSec >= 1_000) {
-            return String.format(Locale.US, "%d KB/s", (int) (bytesPerSec / 1_000));
-        } else {
-            return String.format(Locale.US, "%d B/s", (int) bytesPerSec);
-        }
-    }
-
-    /**
-     * Build and post a durable paused notification that persists even when the
-     * service stops being a foreground service. Called from DownloadControlReceiver
-     * when the user taps "Pause".
-     */
-    public static void postPausedNotification(Context context) {
-        DownloadManager downloadManager = DownloadUtil.getDownloadManager(context);
-        DownloadIndex downloadIndex = downloadManager.getDownloadIndex();
-        List<Download> downloads = new ArrayList<>();
-        try (DownloadCursor cursor = downloadIndex.getDownloads()) {
-            while (cursor.moveToNext()) {
-                downloads.add(cursor.getDownload());
-            }
-        } catch (IOException e) {
-            return;
-        }
-
-        // Calculate the same state as getForegroundNotification
-        int activeCount = 0;
-        long totalBytesDownloaded = 0L;
-        Download activeDownload = null;
-        for (Download download : downloads) {
-            switch (download.state) {
-                case Download.STATE_QUEUED:
-                case Download.STATE_RESTARTING:
-                case Download.STATE_STOPPED:
-                    activeCount++;
-                    totalBytesDownloaded += download.getBytesDownloaded();
-                    break;
-                case Download.STATE_DOWNLOADING:
-                    activeCount++;
-                    totalBytesDownloaded += download.getBytesDownloaded();
-                    if (activeDownload == null) {
-                        activeDownload = download;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if (activeCount == 0) {
-            return;
-        }
-
-        int completed = batchTotal - activeCount;
-        if (completed < 0) completed = 0;
-
-        String trackTitle = null;
-        if (activeDownload != null) {
-            trackTitle = DownloaderManager.getDownloadNotificationMessage(activeDownload.request.id);
-        }
-        if (trackTitle == null) {
+        if (currentTrack == null) {
             for (Download d : downloads) {
-                if (d.state == Download.STATE_QUEUED || d.state == Download.STATE_RESTARTING) {
-                    trackTitle = DownloaderManager.getDownloadNotificationMessage(d.request.id);
-                    if (trackTitle != null) break;
+                if (d.state != Download.STATE_COMPLETED) {
+                    currentTrack = trackTitlesCache.get(d.request.id);
+                    if (currentTrack != null) break;
                 }
             }
         }
 
-        String notifTitle = "Downloads Paused — " + completed + " of " + batchTotal;
+        String contentTitle = currentTrack != null
+                ? getString(R.string.notification_downloading_title, currentTrack)
+                : getString(R.string.notification_downloading);
 
-        NotificationCompat.Action resumeAction = buildActionStatic(
-                context, R.drawable.ic_play,
-                context.getString(R.string.notification_action_resume),
-                Constants.ACTION_RESUME_DOWNLOADS, RC_RESUME);
-
-        NotificationCompat.Action cancelAction = buildActionStatic(
-                context, R.drawable.ic_close,
-                context.getString(R.string.notification_action_cancel),
-                Constants.ACTION_CANCEL_DOWNLOADS, RC_CANCEL);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_download)
-                .setContentTitle(notifTitle)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setShowWhen(false)
-                .addAction(resumeAction)
-                .addAction(cancelAction);
-
-        if (trackTitle != null && !trackTitle.isEmpty()) {
-            builder.setContentText(trackTitle);
+        String contentText;
+        if (total > 0) {
+            int currentIndex = Math.min(completed + 1, total);
+            contentText = getString(R.string.notification_download_progress_format, currentIndex, total);
+            contentText += currentSpeedBytesPerSec > 0f
+                    ? " • " + formatSpeed(currentSpeedBytesPerSec)
+                    : " • ? KB/s";
+        } else {
+            contentText = getString(R.string.notification_downloading_progress);
         }
 
-        Notification finalNotification = builder.build();
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(PAUSED_NOTIFICATION_ID);
-        notificationManager.notify(PAUSED_NOTIFICATION_ID, finalNotification);
-
-        notificationManager.cancel(FOREGROUND_NOTIFICATION_ID);
+        return new NotificationCompat.Builder(this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+                .setContentTitle(contentTitle)
+                .setContentText(contentText)
+                .setSmallIcon(R.drawable.ic_download)
+                .setProgress(total, completed, /* indeterminate= */ false)
+                .setOngoing(true)
+                .setSilent(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOnlyAlertOnce(true)
+                .build();
     }
 
-    /**
-     * Static version of buildAction for use in static context.
-     */
-    private static NotificationCompat.Action buildActionStatic(Context context, int iconRes, String label, String action, int requestCode) {
-        Intent intent = new Intent(action);
-        intent.setClass(context, DownloadControlReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                context,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        return new NotificationCompat.Action(iconRes, label, pendingIntent);
+    private static String formatSpeed(float bytesPerSec) {
+        if (bytesPerSec >= 1_000_000f) {
+            return String.format(Locale.US, "%.1f MB/s", bytesPerSec / 1_000_000f);
+        } else if (bytesPerSec >= 1_000f) {
+            return String.format(Locale.US, "%.0f KB/s", bytesPerSec / 1_000f);
+        } else {
+            return String.format(Locale.US, "%.0f B/s", bytesPerSec);
+        }
     }
 
-    /**
-     * Listens for terminal download state changes and updates the Room database.
-     */
+    // -------------------------------------------------------------------------
+    // Terminal-state listener — consolidates completed/failed into ONE notification
+    // -------------------------------------------------------------------------
+
     private static final class TerminalStateNotificationHelper implements DownloadManager.Listener {
-        private final Context context;
-        @SuppressWarnings("FieldCanBeLocal")
-        private final DownloadNotificationHelper notificationHelper;
 
-        public TerminalStateNotificationHelper(Context context,
-                DownloadNotificationHelper notificationHelper) {
+        private final Context context;
+
+        // Counters reset at start of each "batch" (when queue goes from empty → non-empty)
+        private final AtomicInteger completedCount = new AtomicInteger(0);
+        private final AtomicInteger failedCount = new AtomicInteger(0);
+
+        // Speed tracking
+        private long lastBytesTotal = 0;
+        private long lastSampleMs = 0;
+        private float speedBytesPerSec = 0f;
+
+        TerminalStateNotificationHelper(Context context) {
             this.context = context.getApplicationContext();
-            this.notificationHelper = notificationHelper;
         }
 
         @Override
-        public void onDownloadChanged(@NonNull DownloadManager downloadManager,
-                Download download, @Nullable Exception finalException) {
-            if (download.state == Download.STATE_COMPLETED) {
-                completedDownloadIds.add(download.request.id);
-                DownloaderManager.updateRequestDownload(download);
-                ExternalAudioWriter.exportDownloadById(context, download.request.id);
+        public void onDownloadChanged(
+                @NonNull DownloadManager downloadManager,
+                @NonNull Download download,
+                @Nullable Exception finalException) {
+
+            switch (download.state) {
+                case Download.STATE_DOWNLOADING:
+                    updateMaxTotal(downloadManager);
+                    updateSpeed(downloadManager);
+                    primeTrackTitle(download);
+                    return;
+
+                case Download.STATE_QUEUED:
+                    updateMaxTotal(downloadManager);
+                    updateSpeed(downloadManager);
+                    primeTrackTitle(download);
+                    return;
+
+                case Download.STATE_RESTARTING:
+                case Download.STATE_STOPPED:
+                    // Not terminal — nothing to do
+                    return;
+
+                case Download.STATE_COMPLETED:
+                    completedCount.incrementAndGet();
+                    DownloaderService.batchCompletedCount = completedCount.get();
+                    DownloaderManager.updateRequestDownload(download);
+                    break;
+
+                case Download.STATE_FAILED:
+                    failedCount.incrementAndGet();
+                    DownloaderService.batchCompletedCount = completedCount.get() + failedCount.get();
+                    break;
+
+                case Download.STATE_REMOVING:
+                    // Handled in onDownloadRemoved
+                    return;
+
+                default:
+                    return;
+            }
+
+            // After a terminal state, check if the entire queue is done
+            List<Download> currentDownloads = downloadManager.getCurrentDownloads();
+            boolean queueEmpty = currentDownloads.stream().noneMatch(
+                    d -> d.state == Download.STATE_QUEUED
+                            || d.state == Download.STATE_DOWNLOADING
+                            || d.state == Download.STATE_RESTARTING
+            );
+
+            if (queueEmpty) {
+                postFinalNotification();
+                completedCount.set(0);
+                failedCount.set(0);
+                speedBytesPerSec = 0f;
+                DownloaderService.currentSpeedBytesPerSec = 0f;
+                DownloaderService.batchMaxTotal = 0;
+                DownloaderService.batchCompletedCount = 0;
+                DownloaderService.trackTitlesCache.clear();
+                lastBytesTotal = 0;
+                lastSampleMs = 0;
+            }
+
+        }
+
+        @Override
+        public void onDownloadRemoved(
+                @NonNull DownloadManager downloadManager,
+                @NonNull Download download) {
+            DownloaderManager.removeRequestDownload(download);
+        }
+
+        private void updateSpeed(@NonNull DownloadManager downloadManager) {
+            long nowMs = SystemClock.elapsedRealtime();
+            long totalBytes = 0;
+            for (Download d : downloadManager.getCurrentDownloads()) {
+                totalBytes += d.getBytesDownloaded();
+            }
+            if (lastSampleMs > 0) {
+                long elapsed = nowMs - lastSampleMs;
+                if (elapsed > 500) {
+                    speedBytesPerSec = (totalBytes - lastBytesTotal) * 1000f / elapsed;
+                    lastBytesTotal = totalBytes;
+                    lastSampleMs = nowMs;
+                }
+            } else {
+                lastBytesTotal = totalBytes;
+                lastSampleMs = nowMs;
+            }
+
+            DownloaderService.currentSpeedBytesPerSec = speedBytesPerSec;
+        }
+
+        /**
+         * Updates the stable {@link DownloaderService#batchMaxTotal} so that
+         * {@link #getForegroundNotification(List, int)} shows the correct total
+         * even after Media3 removes completed items from its active list.
+         */
+        private void updateMaxTotal(@NonNull DownloadManager downloadManager) {
+            int currentSize = downloadManager.getCurrentDownloads().size();
+            if (currentSize > DownloaderService.batchMaxTotal) {
+                DownloaderService.batchMaxTotal = currentSize;
+            } else if (DownloaderService.batchMaxTotal > 0
+                    && DownloaderService.batchCompletedCount >= DownloaderService.batchMaxTotal
+                    && currentSize == 1) {
+                // New batch detected: previous batch's items all resolved but reset didn't fire
+                DownloaderService.batchMaxTotal = 0;
+                DownloaderService.batchCompletedCount = 0;
+                completedCount.set(0);
+                failedCount.set(0);
+                DownloaderService.trackTitlesCache.clear();
             }
         }
 
-        @Override
-        public void onDownloadRemoved(@NonNull DownloadManager downloadManager, Download download) {
-            completedDownloadIds.remove(download.request.id);
-            DownloaderManager.removeRequestDownload(download);
+        /**
+         * Resolves a Media3 download ID to a human-readable track title and caches
+         * it in {@link DownloaderService#trackTitlesCache} so the progress notification
+         * can display which track is currently being downloaded
+         *
+         * <p>Called on the Media3 listener thread (background), so blocking DB lookups
+         * via {@link DownloaderManager#getDownloadNotificationMessage} are acceptable.
+         */
+        private void primeTrackTitle(Download download) {
+            String id = download.request.id;
+            if (!DownloaderService.trackTitlesCache.containsKey(id)) {
+                String title = DownloaderManager.getDownloadNotificationMessage(id);
+                if (title != null) {
+                    DownloaderService.trackTitlesCache.put(id, title);
+                }
+            }
+        }
+
+        private void postFinalNotification() {
+            int done = completedCount.get();
+            int failed = failedCount.get();
+
+            Notification notification;
+
+            if (done > 0 && failed == 0) {
+                String msg = context.getResources().getQuantityString(
+                        R.plurals.notification_tracks_downloaded, done, done);
+                notification = buildSummaryNotification(
+                        context.getString(R.string.notification_downloads_complete), msg, R.drawable.ic_check_circle);
+            } else if (done > 0) {
+                String msg = context.getString(R.string.notification_download_mixed_result, done, failed);
+                notification = buildSummaryNotification(
+                        context.getString(R.string.notification_downloads_complete), msg, R.drawable.ic_check_circle);
+            } else {
+                String msg = context.getResources().getQuantityString(
+                        R.plurals.notification_tracks_failed, failed, failed);
+                notification = buildSummaryNotification(
+                        context.getString(R.string.notification_download_failed), msg, R.drawable.ic_error);
+            }
+
+            NotificationManager nm = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
+            nm.notify(TERMINAL_NOTIFICATION_ID, notification);
+        }
+
+        private Notification buildSummaryNotification(String title, String text, int iconRes) {
+            return new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setSmallIcon(iconRes)
+                    .setOngoing(false)
+                    .setAutoCancel(false)   // stays until user swipes it
+                    .setSilent(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setOnlyAlertOnce(true)
+                    .build();
         }
     }
 }

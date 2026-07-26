@@ -134,10 +134,28 @@
     <string name="error_required">Required</string>
     <string name="error_server_prefix">http or https prefix required</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
-    <string name="notification_action_pause">Pause</string>
-    <string name="notification_action_resume">Resume</string>
-    <string name="notification_action_cancel">Cancel</string>
-
+    <string name="notification_downloading">Downloading</string>
+    <string name="notification_downloading_title">Downloading %1$s</string>
+    <string name="notification_download_progress_format">%1$d of %2$d</string>
+    <string name="notification_downloading_progress">Downloading…</string>
+    <string name="notification_finalizing">Finalizing…</string>
+    <string name="notification_processing">Processing…</string>
+    <string name="notification_downloads_complete">Downloads complete</string>
+    <string name="notification_download_failed">Download failed</string>
+    <string name="notification_download_mixed_result">%1$d downloaded, %2$d failed</string>
+    <string name="notification_download_mixed_saved">%1$d saved, %2$d failed</string>
+    <plurals name="notification_tracks_downloaded">
+        <item quantity="one">1 track downloaded</item>
+        <item quantity="other">%d tracks downloaded</item>
+    </plurals>
+    <plurals name="notification_tracks_failed">
+        <item quantity="one">1 track failed</item>
+        <item quantity="other">%d tracks failed</item>
+    </plurals>
+    <plurals name="notification_tracks_saved">
+        <item quantity="one">1 track saved</item>
+        <item quantity="other">%d tracks saved</item>
+    </plurals>
     <string name="exo_controls_heart_off_description">Toggle Heart off</string>
     <string name="exo_controls_heart_on_description">Toggle Heart on</string>
     <string name="cast_expanded_controller_loading">Loading…</string>
