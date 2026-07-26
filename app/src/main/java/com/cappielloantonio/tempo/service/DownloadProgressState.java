@@ -75,7 +75,7 @@ public final class DownloadProgressState {
         this.currentTrackTitle = title;
         synchronized (lock) {
             lastBytesTotal = 0;
-            lastSampleMs = 0;
+            lastSampleMs = SystemClock.elapsedRealtime();
             currentSpeedBytesPerSec = 0f;
         }
     }
@@ -118,7 +118,7 @@ public final class DownloadProgressState {
         synchronized (lock) {
             long now = SystemClock.elapsedRealtime();
             long elapsed = now - lastSampleMs;
-            if (elapsed > 500 && lastSampleMs > 0) {
+            if (elapsed >= 500) {
                 currentSpeedBytesPerSec = (bytesDownloadedSoFar - lastBytesTotal) * 1000f / elapsed;
             }
             lastBytesTotal = bytesDownloadedSoFar;
@@ -145,17 +145,17 @@ public final class DownloadProgressState {
         int inFlight = total - doneCount;
 
         String contentTitle = currentTrackTitle != null
-                ? "Downloading " + currentTrackTitle
-                : "Downloading";
+                ? context.getString(R.string.notification_downloading_title, currentTrackTitle)
+                : context.getString(R.string.notification_downloading);
 
         String contentText;
-        if (inFlight > 0) {
-            contentText = doneCount + " of " + total;
-            if (currentSpeedBytesPerSec > 0f) {
-                contentText += " • " + formatSpeed(currentSpeedBytesPerSec);
-            }
+        if (total > 0) {
+            contentText = context.getString(R.string.notification_download_progress_format, doneCount, total);
+            contentText += currentSpeedBytesPerSec > 0f
+                    ? " • " + formatSpeed(currentSpeedBytesPerSec)
+                    : " • ? KB/s";
         } else {
-            contentText = "Processing…";
+            contentText = context.getString(R.string.notification_processing);
         }
 
         Notification notification = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
@@ -185,14 +185,16 @@ public final class DownloadProgressState {
         StringBuilder detail = new StringBuilder();
 
         if (completedCount > 0 && failedCount == 0) {
-            title.append("Downloads complete");
-            detail.append(completedCount).append(completedCount == 1 ? " track saved" : " tracks saved");
+            title.append(context.getString(R.string.notification_downloads_complete));
+            detail.append(context.getResources().getQuantityString(
+                    R.plurals.notification_tracks_saved, completedCount, completedCount));
         } else if (completedCount > 0) {
-            title.append("Downloads complete");
-            detail.append(completedCount).append(" saved, ").append(failedCount).append(" failed");
+            title.append(context.getString(R.string.notification_downloads_complete));
+            detail.append(context.getString(R.string.notification_download_mixed_saved, completedCount, failedCount));
         } else if (failedCount > 0) {
-            title.append("Downloads failed");
-            detail.append(failedCount).append(failedCount == 1 ? " track failed" : " tracks failed");
+            title.append(context.getString(R.string.notification_download_failed));
+            detail.append(context.getResources().getQuantityString(
+                    R.plurals.notification_tracks_failed, failedCount, failedCount));
         } else {
             // Only skipped — silently dismiss the progress notification, no final notification needed
             return;
@@ -222,7 +224,7 @@ public final class DownloadProgressState {
         skippedCount = 0;
         batchStartTimeMs = 0;
         lastBytesTotal = 0;
-        lastSampleMs = 0;
+        lastSampleMs = SystemClock.elapsedRealtime();
         currentSpeedBytesPerSec = 0f;
         currentTrackTitle = null;
     }

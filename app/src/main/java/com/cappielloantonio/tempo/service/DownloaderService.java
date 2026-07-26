@@ -105,23 +105,18 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
         }
 
         String contentTitle = currentTrack != null
-                ? "Downloading " + currentTrack
-                : "Downloading";
-
-        int inProgress = total - completed;
+                ? getString(R.string.notification_downloading_title, currentTrack)
+                : getString(R.string.notification_downloading);
 
         String contentText;
-        if (total <= 1) {
-            contentText = currentSpeedBytesPerSec > 0f
-                    ? formatSpeed(currentSpeedBytesPerSec)
-                    : "Downloading…";
-        } else if (inProgress > 0) {
-            contentText = (completed + 1) + " of " + total;
-            if (currentSpeedBytesPerSec > 0f) {
-                contentText += " • " + formatSpeed(currentSpeedBytesPerSec);
-            }
+        if (total > 0) {
+            int currentIndex = Math.min(completed + 1, total);
+            contentText = getString(R.string.notification_download_progress_format, currentIndex, total);
+            contentText += currentSpeedBytesPerSec > 0f
+                    ? " • " + formatSpeed(currentSpeedBytesPerSec)
+                    : " • ? KB/s";
         } else {
-            contentText = "Finalizing…";
+            contentText = getString(R.string.notification_downloading_progress);
         }
 
         return new NotificationCompat.Builder(this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
@@ -182,6 +177,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
                 case Download.STATE_QUEUED:
                     updateMaxTotal(downloadManager);
+                    updateSpeed(downloadManager);
                     primeTrackTitle(download);
                     return;
 
@@ -269,6 +265,15 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             int currentSize = downloadManager.getCurrentDownloads().size();
             if (currentSize > DownloaderService.batchMaxTotal) {
                 DownloaderService.batchMaxTotal = currentSize;
+            } else if (DownloaderService.batchMaxTotal > 0
+                    && DownloaderService.batchCompletedCount >= DownloaderService.batchMaxTotal
+                    && currentSize == 1) {
+                // New batch detected: previous batch's items all resolved but reset didn't fire
+                DownloaderService.batchMaxTotal = 0;
+                DownloaderService.batchCompletedCount = 0;
+                completedCount.set(0);
+                failedCount.set(0);
+                DownloaderService.trackTitlesCache.clear();
             }
         }
 
@@ -297,19 +302,19 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             Notification notification;
 
             if (done > 0 && failed == 0) {
-                String msg = done == 1
-                        ? "1 track downloaded"
-                        : done + " tracks downloaded";
+                String msg = context.getResources().getQuantityString(
+                        R.plurals.notification_tracks_downloaded, done, done);
                 notification = buildSummaryNotification(
-                        "Downloads complete", msg, R.drawable.ic_check_circle);
+                        context.getString(R.string.notification_downloads_complete), msg, R.drawable.ic_check_circle);
             } else if (done > 0) {
-                String msg = done + " downloaded, " + failed + " failed";
+                String msg = context.getString(R.string.notification_download_mixed_result, done, failed);
                 notification = buildSummaryNotification(
-                        "Downloads complete", msg, R.drawable.ic_check_circle);
+                        context.getString(R.string.notification_downloads_complete), msg, R.drawable.ic_check_circle);
             } else {
-                String msg = failed == 1 ? "1 track failed" : failed + " tracks failed";
+                String msg = context.getResources().getQuantityString(
+                        R.plurals.notification_tracks_failed, failed, failed);
                 notification = buildSummaryNotification(
-                        "Download failed", msg, R.drawable.ic_error);
+                        context.getString(R.string.notification_download_failed), msg, R.drawable.ic_error);
             }
 
             NotificationManager nm = (NotificationManager)
