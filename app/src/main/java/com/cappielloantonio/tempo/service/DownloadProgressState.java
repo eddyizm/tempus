@@ -73,6 +73,11 @@ public final class DownloadProgressState {
 
     public void setCurrentTrackTitle(String title) {
         this.currentTrackTitle = title;
+        synchronized (lock) {
+            lastBytesTotal = 0;
+            lastSampleMs = 0;
+            currentSpeedBytesPerSec = 0f;
+        }
     }
 
     /**

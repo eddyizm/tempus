@@ -230,6 +230,7 @@ public class ExternalAudioWriter {
 
             targetFile = directory.createFile(mimeType, fileName);
             if (targetFile == null) {
+                ExternalDownloadMetadataStore.remove(metadataKey);
                 DownloadProgressState.getInstance().onFailed(context);
                 return;
             }
@@ -239,6 +240,7 @@ public class ExternalAudioWriter {
                  OutputStream out = context.getContentResolver().openOutputStream(targetUri)) {
                 if (out == null) {
                     targetFile.delete();
+                    ExternalDownloadMetadataStore.remove(metadataKey);
                     DownloadProgressState.getInstance().onFailed(context);
                     return;
                 }
