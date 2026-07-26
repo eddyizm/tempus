@@ -340,6 +340,7 @@ public class ExternalAudioWriter {
         if (child == null) return;
 
         Download download = new Download(child);
+        MusicUtil.applyTranscodedDownloadMetadata(download);
         download.setDownloadState(1);
         download.setPlaylistId(playlistId);
         download.setPlaylistName(playlistName);
