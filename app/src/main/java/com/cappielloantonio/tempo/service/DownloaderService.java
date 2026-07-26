@@ -20,6 +20,7 @@ import com.cappielloantonio.tempo.util.DownloadUtil;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @UnstableApi
@@ -35,6 +36,13 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
     // Shared speed tracking — updated by TerminalStateNotificationHelper, read by getForegroundNotification
     static volatile float currentSpeedBytesPerSec = 0f;
+
+    // Stable batch counters — updated by TerminalStateNotificationHelper, read by getForegroundNotification
+    static volatile int batchMaxTotal = 0;
+    static volatile int batchCompletedCount = 0;
+
+    // Cache: mediaId → track title, populated lazily in TerminalStateNotificationHelper
+    private static final ConcurrentHashMap<String, String> trackTitlesCache = new ConcurrentHashMap<>();
 
     public DownloaderService() {
         super(
@@ -61,11 +69,14 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
     }
 
     /**
-     * Overrides the foreground (progress) notification to show "Downloading X of N".
+     * Overrides the foreground (progress) notification to show "Downloading TrackName" with
+     * "X of N • speed" and stable batch counters that don't shrink as Media3 removes completed
+     * downloads from its active list (see bug #11).
      *
      * <p>Called by Media3 on the service thread each time the download queue changes.
-     * {@code downloads} contains every currently queued/downloading/completed entry
-     * that is still active in this session.
+     * {@code downloads} is the current Media3 snapshot; we prefer static batch counters
+     * ({@link #batchMaxTotal}, {@link #batchCompletedCount}) maintained by
+     * {@link TerminalStateNotificationHelper} for accurate "X of N" across removal events.
      */
     @NonNull
     @Override
@@ -73,32 +84,48 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             @NonNull List<Download> downloads,
             @Requirements.RequirementFlags int notMetRequirements) {
 
-        int total = downloads.size();
-        int completed = 0;
-        long totalBytes = 0;
+        int total = Math.max(batchMaxTotal, downloads.size());
+        int completed = batchCompletedCount;
 
+        // Find the currently downloading (or next queued) track title from cache
+        String currentTrack = null;
         for (Download d : downloads) {
-            if (d.state == Download.STATE_COMPLETED) completed++;
-            totalBytes += d.getBytesDownloaded();
+            if (d.state == Download.STATE_DOWNLOADING) {
+                currentTrack = trackTitlesCache.get(d.request.id);
+                break;
+            }
         }
+        if (currentTrack == null) {
+            for (Download d : downloads) {
+                if (d.state != Download.STATE_COMPLETED) {
+                    currentTrack = trackTitlesCache.get(d.request.id);
+                    if (currentTrack != null) break;
+                }
+            }
+        }
+
+        String contentTitle = currentTrack != null
+                ? "Downloading " + currentTrack
+                : "Downloading";
 
         int inProgress = total - completed;
 
-        // Build the content text: "Downloading 3 of 10" or speed variant
         String contentText;
         if (total <= 1) {
-            // Single item — show generic label
-            contentText = "Downloading…";
+            contentText = currentSpeedBytesPerSec > 0f
+                    ? formatSpeed(currentSpeedBytesPerSec)
+                    : "Downloading…";
+        } else if (inProgress > 0) {
+            contentText = (completed + 1) + " of " + total;
+            if (currentSpeedBytesPerSec > 0f) {
+                contentText += " • " + formatSpeed(currentSpeedBytesPerSec);
+            }
         } else {
-            contentText = "Downloading " + (completed + 1) + " of " + total;
-        }
-
-        if (currentSpeedBytesPerSec > 0f) {
-            contentText += " • " + formatSpeed(currentSpeedBytesPerSec);
+            contentText = "Finalizing…";
         }
 
         return new NotificationCompat.Builder(this, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Downloading")
+                .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_download)
                 .setProgress(total, completed, /* indeterminate= */ false)
@@ -148,10 +175,16 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
             switch (download.state) {
                 case Download.STATE_DOWNLOADING:
+                    updateMaxTotal(downloadManager);
                     updateSpeed(downloadManager);
+                    primeTrackTitle(download);
                     return;
 
                 case Download.STATE_QUEUED:
+                    updateMaxTotal(downloadManager);
+                    primeTrackTitle(download);
+                    return;
+
                 case Download.STATE_RESTARTING:
                 case Download.STATE_STOPPED:
                     // Not terminal — nothing to do
@@ -159,6 +192,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
 
                 case Download.STATE_COMPLETED:
                     completedCount.incrementAndGet();
+                    DownloaderService.batchCompletedCount = completedCount.get();
                     DownloaderManager.updateRequestDownload(download);
                     break;
 
@@ -188,6 +222,9 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                 failedCount.set(0);
                 speedBytesPerSec = 0f;
                 DownloaderService.currentSpeedBytesPerSec = 0f;
+                DownloaderService.batchMaxTotal = 0;
+                DownloaderService.batchCompletedCount = 0;
+                DownloaderService.trackTitlesCache.clear();
                 lastBytesTotal = 0;
                 lastSampleMs = 0;
             }
@@ -220,6 +257,36 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
             }
 
             DownloaderService.currentSpeedBytesPerSec = speedBytesPerSec;
+        }
+
+        /**
+         * Updates the stable {@link DownloaderService#batchMaxTotal} so that
+         * {@link #getForegroundNotification(List, int)} shows the correct total
+         * even after Media3 removes completed items from its active list.
+         */
+        private void updateMaxTotal(@NonNull DownloadManager downloadManager) {
+            int currentSize = downloadManager.getCurrentDownloads().size();
+            if (currentSize > DownloaderService.batchMaxTotal) {
+                DownloaderService.batchMaxTotal = currentSize;
+            }
+        }
+
+        /**
+         * Resolves a Media3 download ID to a human-readable track title and caches
+         * it in {@link DownloaderService#trackTitlesCache} so the progress notification
+         * can display which track is currently being downloaded
+         *
+         * <p>Called on the Media3 listener thread (background), so blocking DB lookups
+         * via {@link DownloaderManager#getDownloadNotificationMessage} are acceptable.
+         */
+        private void primeTrackTitle(Download download) {
+            String id = download.request.id;
+            if (!DownloaderService.trackTitlesCache.containsKey(id)) {
+                String title = DownloaderManager.getDownloadNotificationMessage(id);
+                if (title != null) {
+                    DownloaderService.trackTitlesCache.put(id, title);
+                }
+            }
         }
 
         private void postFinalNotification() {

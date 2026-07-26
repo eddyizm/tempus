@@ -42,6 +42,8 @@ public final class DownloadProgressState {
     @GuardedBy("lock") private long lastSampleMs = 0;
     @GuardedBy("lock") private float currentSpeedBytesPerSec = 0f;
 
+    private volatile String currentTrackTitle = null;
+
     private DownloadProgressState() {}
 
     public static DownloadProgressState getInstance() {
@@ -67,6 +69,10 @@ public final class DownloadProgressState {
             }
             postProgressNotification(context.getApplicationContext());
         }
+    }
+
+    public void setCurrentTrackTitle(String title) {
+        this.currentTrackTitle = title;
     }
 
     /**
@@ -133,9 +139,13 @@ public final class DownloadProgressState {
         int total = enqueuedCount;
         int inFlight = total - doneCount;
 
+        String contentTitle = currentTrackTitle != null
+                ? "Downloading " + currentTrackTitle
+                : "Downloading";
+
         String contentText;
         if (inFlight > 0) {
-            contentText = "Downloading " + doneCount + " of " + total;
+            contentText = doneCount + " of " + total;
             if (currentSpeedBytesPerSec > 0f) {
                 contentText += " • " + formatSpeed(currentSpeedBytesPerSec);
             }
@@ -144,7 +154,7 @@ public final class DownloadProgressState {
         }
 
         Notification notification = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Downloading")
+                .setContentTitle(contentTitle)
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_download)
                 .setProgress(total, doneCount, false)
@@ -209,6 +219,7 @@ public final class DownloadProgressState {
         lastBytesTotal = 0;
         lastSampleMs = 0;
         currentSpeedBytesPerSec = 0f;
+        currentTrackTitle = null;
     }
 
     private static String formatSpeed(float bytesPerSec) {

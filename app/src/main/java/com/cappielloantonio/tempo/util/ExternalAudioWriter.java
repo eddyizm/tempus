@@ -86,6 +86,9 @@ public class ExternalAudioWriter {
     }
 
     private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
+        DownloadProgressState.getInstance().setCurrentTrackTitle(
+                child.getTitle() != null ? child.getTitle() : fallbackName);
+
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
             notifyUnavailable(context);
