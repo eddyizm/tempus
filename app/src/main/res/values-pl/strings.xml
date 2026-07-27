@@ -132,6 +132,34 @@
     <string name="error_required">Wymagane</string>
     <string name="error_server_prefix">wymagany jest prefiks http lub https</string>
     <string name="exo_download_notification_channel_name">Pobieranie</string>
+    <string name="notification_downloading">Pobieram</string>
+    <string name="notification_downloading_title">Trwa pobieranie %1$s</string>
+    <string name="notification_download_progress_format">%1$d z %2$d</string>
+    <string name="notification_downloading_progress">Pobieranie…</string>
+    <string name="notification_finalizing">Kończenie…</string>
+    <string name="notification_processing">Przetwarzanie…</string>
+    <string name="notification_downloads_complete">Pobierania ukończone</string>
+    <string name="notification_download_failed">Pobranie nieudane</string>
+    <string name="notification_download_mixed_result">pobrano %1$d, nieudało się %2$d</string>
+    <string name="notification_download_mixed_saved">zapisano %1$d, nieudało się %2$d</string>
+    <plurals name="notification_tracks_downloaded">
+        <item quantity="one">Pobrano 1  utwór</item>
+		<item quantity="few">Pobrano %d utwory</item>
+        <item quantity="many">Pobrano %d utworów</item>
+        <item quantity="other">Pobrano %d utwory</item>
+    </plurals>
+    <plurals name="notification_tracks_failed">
+        <item quantity="one">1 utwór nieudany</item>
+		<item quantity="few">%d utwory nieudane</item>
+        <item quantity="many">%d utworów nieudanych</item>
+        <item quantity="other">%d utwory nieudane</item>
+    </plurals>
+    <plurals name="notification_tracks_saved">
+        <item quantity="one">1 track saved</item>
+		<item quantity="few">Usunięto %d brakujące pobrania</item>
+        <item quantity="many">Usunięto %d brakujących pobrań.</item>
+        <item quantity="other">%d tracks saved</item>
+    </plurals>
     <string name="exo_controls_heart_off_description">Wyłącz serce</string>
     <string name="exo_controls_heart_on_description">Włącz serce</string>
     <string name="cast_expanded_controller_loading">Ładowanie…</string>
@@ -259,6 +287,9 @@
     <string name="menu_pin_button">Dodaj do ulubionych</string>
     <string name="menu_unpin_button">Usuń z ulubionych</string>
     <string name="playlist_sort_pinned">Ulubione</string>
+	<string name="playlist_sort_last_played">Ostatnio odtwarzane</string>
+    <string name="playlist_sort_last_updated">Ostatnio zaktualizowane</string>
+    <string name="playlist_sort_both">Ostatnio aktywne</string>
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
@@ -755,4 +786,5 @@
     <string name="playlist_error_not_found_title">Playlista nie odnaleziona</string>
     <string name="playlist_error_not_found_message">Tej playlisty nie udało się odnaleźć na serwerze. Zostanie ona usunięta z twojej lokalnej pamięci podręcznej.</string>
     <string name="playlist_error_not_found_toast">Playlista usunięta z pamięci podręcznej</string>
+	<string name="player_overflow_menu_add_to_playlist">Dodaj do playlisty</string>
 </resources>
