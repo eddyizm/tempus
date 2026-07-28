@@ -201,20 +201,28 @@ public class MusicUtil {
     }
 
     public static String getReadableAudioQualityString(Child child) {
-        if (!Preferences.showAudioQuality() || child.getBitrate() == null) return "";
+        if (!Preferences.showAudioQuality()) return "";
+
+        // A transcode with no bitrate ceiling has a null bitrate, which used to blank the badge.
+        boolean hasBitrate = child.getBitrate() != null;
+        boolean hasSuffix = child.getSuffix() != null && !child.getSuffix().isEmpty();
+        if (!hasBitrate && !hasSuffix) return "";
+
+        String detail = child.getBitDepth() != null && child.getBitDepth() != 0
+                ? child.getBitDepth() + "/" + (child.getSamplingRate() != null ? child.getSamplingRate() / 1000 : "")
+                : (child.getSamplingRate() != null
+                ? new DecimalFormat("0.#").format(child.getSamplingRate() / 1000.0) + "kHz"
+                : "");
+
+        if (hasSuffix) {
+            detail = detail.isEmpty() ? child.getSuffix() : detail + " " + child.getSuffix();
+        }
 
         return "•" +
                 " " +
-                child.getBitrate() +
-                "kbps" +
-                " • " +
-                (child.getBitDepth() != null && child.getBitDepth() != 0
-                        ? child.getBitDepth() + "/" + (child.getSamplingRate() != null ? child.getSamplingRate() / 1000 : "")
-                        : (child.getSamplingRate() != null
-                        ? new DecimalFormat("0.#").format(child.getSamplingRate() / 1000.0) + "kHz"
-                        : "")) +
-                " " +
-                child.getSuffix();
+                (hasBitrate ? child.getBitrate() + "kbps" : "") +
+                (hasBitrate && !detail.isEmpty() ? " • " : "") +
+                detail;
     }
 
     public static String getReadablePodcastDurationString(long duration) {
@@ -341,6 +349,45 @@ public class MusicUtil {
 
     public static String getTranscodingFormatPreferenceForDownload() {
         return Preferences.getAudioTranscodeFormatTranscodedDownload();
+    }
+
+    // A client transcode leaves the row's inherited Child metadata describing the source rather
+    // than the file on disk. Call on any Download row before it is inserted. See issue 502.
+    public static void applyTranscodedDownloadMetadata(Download download) {
+        if (download == null) return;
+        if (!Preferences.preferTranscodedDownload() || Preferences.isServerPrioritizedInTranscodedDownload())
+            return;
+
+        String format = getTranscodingFormatPreferenceForDownload();
+        if (format == null || format.equals("raw")) return;
+
+        download.setSuffix(format);
+        // Moves with the suffix, since the track info dialog reads it.
+        String mime = audioMimeTypeForFormat(format);
+        if (mime != null) download.setContentType(mime);
+        download.setSamplingRate(null);
+        download.setBitDepth(null);
+
+        // maxBitRate is the configured ceiling; "0" means no limit, so the real bitrate is unknown.
+        Integer bitrate = null;
+        try {
+            int parsed = Integer.parseInt(getBitratePreferenceForDownload());
+            if (parsed > 0) bitrate = parsed;
+        } catch (NumberFormatException ignored) {
+        }
+        download.setBitrate(bitrate);
+    }
+
+    // Inverse of audioFormatLabel. Null for an unrecognized format, so callers keep what they have.
+    public static String audioMimeTypeForFormat(String format) {
+        if (format == null) return null;
+        switch (format.toLowerCase()) {
+            case "opus": return "audio/opus";
+            case "aac": return "audio/aac";
+            case "mp3": return "audio/mpeg";
+            case "flac": return "audio/flac";
+            default: return null;
+        }
     }
 
     // Maps a Media3 sample MIME type (e.g. "audio/flac") to a short, user-facing format

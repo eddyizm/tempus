@@ -20,6 +20,7 @@ import androidx.media3.exoplayer.offline.DownloadService;
 
 import com.cappielloantonio.tempo.repository.DownloadRepository;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.util.MusicUtil;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -70,6 +71,8 @@ public class DownloaderManager {
     }
 
     public void download(MediaItem mediaItem, com.cappielloantonio.tempo.model.Download download) {
+        MusicUtil.applyTranscodedDownloadMetadata(download);
+
         download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
 
         DownloadService.sendAddDownload(context, DownloaderService.class, buildDownloadRequest(mediaItem), false);
