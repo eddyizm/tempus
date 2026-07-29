@@ -1,15 +1,13 @@
 package com.cappielloantonio.tempo.ui.fragment;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +17,7 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.ui.activity.CrashActivity;
+import com.cappielloantonio.tempo.util.BugReportUtil;
 
 import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import cat.ereza.customactivityoncrash.config.CaocConfig;
@@ -30,6 +29,7 @@ public class CrashInfoFragment extends Fragment {
     CaocConfig configFromIntent;
     private Button buttonCloseApp;
     private Button buttonRestartApp;
+    private TextView textViewDeviceData;
 
     @Nullable
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -39,6 +39,7 @@ public class CrashInfoFragment extends Fragment {
 
         buttonCloseApp = view.findViewById(R.id.crashInfoButtonClose);
         buttonRestartApp = view.findViewById(R.id.crashInfoButtonRestart);
+        textViewDeviceData = view.findViewById(R.id.crashInfoDeviceData);
 
         return view;
     }
@@ -53,7 +54,10 @@ public class CrashInfoFragment extends Fragment {
 
         buttonCloseApp.setOnClickListener(v -> CustomActivityOnCrash.closeApplication(getActivity(), configFromIntent));
         buttonRestartApp.setOnClickListener(v -> CustomActivityOnCrash.restartApplication(getActivity(), configFromIntent));
-    }
 
+        textViewDeviceData.setText(BugReportUtil.getDeviceInformation(requireContext()));
+        textViewDeviceData.setTypeface(Typeface.MONOSPACE);
+        textViewDeviceData.setMovementMethod(new ScrollingMovementMethod());
+    }
 
 }
