@@ -760,8 +760,9 @@
 
     <string name="ca_info_label">Informacja</string>
     <string name="ca_info_title">Tempus przestał działać</string>
+	
     <string name="ca_info_description">
-        Otwórz problem na GitHubie i załącz kopię logów, aby pomóć z tym problemem.
+        Otwórz problem na GitHubie i załącz kopię raportu, aby pomóć rozwiązać ten problem.
     </string>
     <string name="ca_info_button_close">Zamknij aplikację</string>
     <string name="ca_info_button_restart">Uruchom aplikację ponownie</string>
@@ -773,14 +774,13 @@
     </string>
     <string name="ca_export_button_copy">Skopiuj log</string>
     <string name="ca_export_button_share">Udostępnij log</string>
-    <string name="ca_export_toast_log_copied_to_clipboard">Log copied do schowka</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Skopiowano raport do schowka</string>
 
     <string name="ca_export_label">Eksportuj</string>
-    <string name="ca_export_title">Przechwycenie logów</string>
+    <string name="ca_export_title">Przechwycenie raportu</string>
     <string name="ca_export_description">
-        Apk debug (wersje testowe) podają bardziej dokładne logi i pomaga nam
-        zrozumieć co poszło nie tak w aplikacji.\n\n
-
+		Informacje o  urządzeniu są dodawane przed wyeksportowanym raportem.\n\n
+		
         Te dane nie są nigdzie wysyłane bez twojej zgody.
     </string>
     <string name="playlist_error_not_found_title">Playlista nie odnaleziona</string>
