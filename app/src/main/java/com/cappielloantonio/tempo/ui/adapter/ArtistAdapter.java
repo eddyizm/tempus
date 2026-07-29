@@ -98,7 +98,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
         public void onClick() {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()));
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()).strippedForNav());
             bundle.putBoolean(Constants.MEDIA_MIX, mix);
             bundle.putBoolean(Constants.MEDIA_BEST_OF, bestOf);
 
@@ -107,7 +107,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
         public boolean onLongClick() {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()));
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artists.get(getBindingAdapterPosition()).strippedForNav());
 
             click.onArtistLongClick(bundle);
 

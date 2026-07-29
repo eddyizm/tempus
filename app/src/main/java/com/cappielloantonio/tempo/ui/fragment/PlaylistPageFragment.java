@@ -228,6 +228,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
     private void init(Playlist playlist) {
         playlistPageViewModel.setPlaylist(playlist);
+        playlistPageViewModel.updateLastPlayed(playlist.getId());
     }
 
     private void initMenuOption(Menu menu) {

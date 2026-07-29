@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +19,7 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.ui.activity.CrashActivity;
+import com.cappielloantonio.tempo.util.BugReportUtil;
 
 public class CrashExportFragment extends Fragment {
 
@@ -48,9 +48,12 @@ public class CrashExportFragment extends Fragment {
 
         CrashActivity activity = (CrashActivity) getActivity();
         String stackTrace = activity.getStackTrace();
+        String deviceInfo = BugReportUtil.getDeviceInformation(requireContext());
 
-        buttonCopy.setOnClickListener(v -> copyToClipboard(stackTrace));
-        buttonShare.setOnClickListener(v -> shareText(stackTrace));
+        String report = deviceInfo + "\n\n" + stackTrace;
+
+        buttonCopy.setOnClickListener(v -> copyToClipboard(report));
+        buttonShare.setOnClickListener(v -> shareText(report));
     }
 
     private void copyToClipboard(String text) {

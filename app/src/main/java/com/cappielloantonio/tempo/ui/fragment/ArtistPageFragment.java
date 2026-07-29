@@ -138,7 +138,8 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         bind.mostStreamedSongTextViewClickable.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString(Constants.MEDIA_BY_ARTIST, Constants.MEDIA_BY_ARTIST);
-            bundle.putParcelable(Constants.ARTIST_OBJECT, artistPageViewModel.getArtist());
+            ArtistID3 artistForNav = artistPageViewModel.getArtist();
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artistForNav != null ? artistForNav.strippedForNav() : null); // #688: drop heavy album lists from the nav arg
             activity.navController.navigate(R.id.action_artistPageFragment_to_songListPageFragment, bundle);
         });
 
@@ -376,7 +377,13 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private void navigateToAlbumList(String title, List<com.cappielloantonio.tempo.subsonic.models.AlbumID3> albums) {
         Bundle bundle = new Bundle();
         bundle.putString(Constants.ALBUM_LIST_TITLE, title);
-        bundle.putParcelableArrayList(Constants.ALBUMS_OBJECT, new ArrayList<>(albums));
+        // #688: strip each album's heavy nested lists so this whole list (the single
+        // biggest nav argument, ~34KB) stays small in the saved-state Bundle.
+        ArrayList<com.cappielloantonio.tempo.subsonic.models.AlbumID3> albumsForNav = new ArrayList<>(albums.size());
+        for (com.cappielloantonio.tempo.subsonic.models.AlbumID3 albumForNav : albums) {
+            albumsForNav.add(albumForNav.strippedForNav());
+        }
+        bundle.putParcelableArrayList(Constants.ALBUMS_OBJECT, albumsForNav);
         Navigation.findNavController(requireView()).navigate(R.id.albumListPageFragment, bundle);
     }
 
