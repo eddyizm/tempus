@@ -759,8 +759,9 @@
 
     <string name="ca_info_label">Info</string>
     <string name="ca_info_title">Tempus Crashed</string>
+    <string name="ca_info_device_info" translatable="false">Device Information</string>
     <string name="ca_info_description">
-        Please open an issue on GitHub and include a copy of the logs to address this crash.
+        Please open an issue on GitHub and include a copy of the crash report to address it.
     </string>
     <string name="ca_info_button_close">Close app</string>
     <string name="ca_info_button_restart">Restart app</string>
@@ -772,13 +773,12 @@
     </string>
     <string name="ca_export_button_copy">Copy log</string>
     <string name="ca_export_button_share">Share log</string>
-    <string name="ca_export_toast_log_copied_to_clipboard">Log copied to clipboard</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Report copied to clipboard</string>
 
     <string name="ca_export_label">Export</string>
-    <string name="ca_export_title">Logs retrival</string>
+    <string name="ca_export_title">Report retrival</string>
     <string name="ca_export_description">
-        A debug apk (pre-release) provides a more extensive log and helps us
-        understand what went wrong inside the app.\n\n
+        Device information is prepended to the exported report.\n\n
 
         The data is not sent anywhere without your consent.
     </string>

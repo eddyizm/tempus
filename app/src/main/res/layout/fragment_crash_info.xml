@@ -59,6 +59,22 @@
                 android:layout_marginStart="8dp"
                 tools:ignore="ButtonStyle"/>
         </LinearLayout>
+        <TextView
+            style="@style/LabelMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="12dp"
+            android:text="@string/ca_info_device_info" />
+        <TextView
+            android:id="@+id/crashInfoDeviceData"
+            style="@style/LabelSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:paddingStart="70dp"
+            android:paddingEnd="70dp"
+            android:text=""
+            android:paddingBottom="20dp"/>
     </LinearLayout>
 
 </LinearLayout>
