@@ -9,9 +9,9 @@ import androidx.media3.common.util.UnstableApi
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.util.Preferences
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -21,14 +21,29 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CastArtworkConverterTest {
 
-    // createUrl() (used by the fix) builds a cover-art URL from the active Subsonic session; with no
-    // session its auth is null and it NPEs. Casting only ever happens while signed in, so seed a fake
-    // login to make this converter test hermetic on a clean device / CI (issue #115).
+    private var savedServer: String? = null
+    private var savedUser: String? = null
+    private var savedPassword: String? = null
+
+    // createUrl() NPEs with no active session (its auth is null), and casting only happens while
+    // signed in, so seed a fake login to keep this hermetic on a clean device / CI (issue #115).
     @Before
     fun seedFakeSession() {
+        savedServer = Preferences.getServer()
+        savedUser = Preferences.getUser()
+        savedPassword = Preferences.getPassword()
         Preferences.setServer("https://example.org")
         Preferences.setUser("tester")
         Preferences.setPassword("pw")
+        App.getSubsonicClientInstance(true)
+    }
+
+    // The seeded login is global state; without this every later test in the run inherits it.
+    @After
+    fun restoreSession() {
+        Preferences.setServer(savedServer)
+        Preferences.setUser(savedUser)
+        Preferences.setPassword(savedPassword)
         App.getSubsonicClientInstance(true)
     }
 
@@ -51,13 +66,7 @@ class CastArtworkConverterTest {
             .build()
     }
 
-    /**
-     * Issue #115: the default converter hands the in-process content:// artwork URI straight to
-     * the Cast receiver. A Chromecast is a separate device and cannot fetch a content:// URI, so
-     * no album art shows while casting. This test documents that broken state; the fix swaps in a
-     * converter that rewrites artwork to an http(s) cover-art URL, after which the asserted scheme
-     * becomes "https".
-     */
+    /** Documents the broken state from issue #115; see CastMediaItemConverter for why it breaks. */
     @Test
     fun defaultConverter_emitsContentUri_thatCastCannotLoad() {
         val queueItem = DefaultMediaItemConverter().toMediaQueueItem(albumItem())
@@ -66,12 +75,13 @@ class CastArtworkConverterTest {
         assertEquals("content", images[0].url.scheme)
     }
 
-    /** The fix: our converter rewrites the content:// artwork to the server cover-art URL. */
     @Test
     fun castConverter_rewritesArtworkToCoverArtUrl() {
         val queueItem = CastMediaItemConverter().toMediaQueueItem(albumItem())
-        val url = queueItem.media!!.metadata!!.images[0].url.toString()
-        assertNotEquals("content", queueItem.media!!.metadata!!.images[0].url.scheme)
+        val artwork = queueItem.media!!.metadata!!.images[0].url
+        val url = artwork.toString()
+        // Either scheme: the URL comes from the in-use server address, which is the local one when set.
+        assertTrue("expected a scheme the receiver can fetch, was: $url", artwork.scheme == "http" || artwork.scheme == "https")
         assertTrue("expected a getCoverArt url, was: $url", url.contains("getCoverArt"))
         assertTrue("expected the cover-art id to be carried over, was: $url", url.contains("al-123"))
     }
