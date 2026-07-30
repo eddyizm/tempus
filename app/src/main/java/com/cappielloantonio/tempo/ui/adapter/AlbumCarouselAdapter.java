@@ -13,6 +13,7 @@ import com.cappielloantonio.tempo.glide.CustomGlideRequest;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
 import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.TileSizeManager;
 
 import java.util.Collections;
@@ -49,7 +50,13 @@ public class AlbumCarouselAdapter extends RecyclerView.Adapter<AlbumCarouselAdap
 
         AlbumID3 album = albums.get(position);
 
-        holder.item.albumNameLabel.setText(album.getName());
+        if (Preferences.getAlbumYearVisible()) {
+            String albumName = album.getName() + " (" + album.getYear() + ")";
+            holder.item.albumNameLabel.setText(albumName);
+        } else {
+            holder.item.albumNameLabel.setText(album.getName());
+        }
+
         holder.item.artistNameLabel.setText(album.getArtist());
         holder.item.artistNameLabel.setVisibility(showArtist ? View.VISIBLE : View.GONE);
 
@@ -78,13 +85,13 @@ public class AlbumCarouselAdapter extends RecyclerView.Adapter<AlbumCarouselAdap
 
             itemView.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.ALBUM_OBJECT, albums.get(getBindingAdapterPosition()));
+                bundle.putParcelable(Constants.ALBUM_OBJECT, albums.get(getBindingAdapterPosition()).strippedForNav());
                 click.onAlbumClick(bundle);
             });
 
             itemView.setOnLongClickListener(v -> {
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(Constants.ALBUM_OBJECT, albums.get(getBindingAdapterPosition()));
+                bundle.putParcelable(Constants.ALBUM_OBJECT, albums.get(getBindingAdapterPosition()).strippedForNav());
                 click.onAlbumLongClick(bundle);
                 return true;
             });

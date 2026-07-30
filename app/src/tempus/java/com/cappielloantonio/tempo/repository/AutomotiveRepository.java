@@ -21,6 +21,7 @@ import com.cappielloantonio.tempo.database.AppDatabase;
 import com.cappielloantonio.tempo.database.dao.ChronologyDao;
 import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
 import com.cappielloantonio.tempo.model.Chronology;
+import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.model.InternetRadioStationCache;
 import com.cappielloantonio.tempo.model.SessionMediaItem;
 import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
@@ -36,6 +37,7 @@ import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
 import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
 import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
 import com.cappielloantonio.tempo.subsonic.models.Genre;
 import com.cappielloantonio.tempo.util.ConstantsAA;
 import com.cappielloantonio.tempo.util.MappingUtil;
@@ -133,6 +135,15 @@ public class AutomotiveRepository {
                 .setMediaMetadata(mediaMetadata)
                 .setUri("")
                 .build();
+    }
+
+    private static SubsonicResponse getSubsonicResponseOrNull(Response<ApiResponse> response) {
+        try {
+            return response.body() != null ? response.body().getSubsonicResponse() : null;
+        } catch (RuntimeException e) {
+            // subsonicResponse is a lateinit property: a body without "subsonic-response" throws on access instead of returning null
+            return null;
+        }
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getAlbums(String prefix, String type, int size, Boolean isRootCall) {
@@ -368,6 +379,42 @@ public class AutomotiveRepository {
         return listenableFuture;
     }
 
+    public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getDownloadedSongs() {
+        final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
+
+        new Thread(() -> {
+            // Any throw here must resolve the future, otherwise the Android Auto
+            // browse request hangs forever with no error feedback.
+            try {
+                List<Download> downloads = AppDatabase.getInstance().downloadDao().getAllSync();
+
+                if (downloads != null && !downloads.isEmpty()) {
+                    if( !Preferences.isAndroidAutoShuffleDownloadedTracksEnabled() ) {
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_ITEMS, downloads.size()));
+                    }
+                    else {
+                        Collections.shuffle(downloads);
+                        downloads = downloads.subList(0, Math.min(ConstantsAA.MAX_SHUFFLE_ITEMS, downloads.size()));
+                    }
+
+                    List<Child> songs = new ArrayList<>(downloads);
+
+                    setChildrenMetadata(songs);
+
+                    List<MediaItem> mediaItems = MappingUtil.mapMediaItems(songs, ConstantsAA.QUEUE_CACHED_SOURCE);
+
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null));
+                } else {
+                    listenableFuture.set(LibraryResult.ofItemList(ImmutableList.of(), null));
+                }
+            } catch (Exception e) {
+                listenableFuture.setException(e);
+            }
+        }).start();
+
+        return listenableFuture;
+    }
+
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getStarredAlbums(String prefix, Boolean isRootCall) {
 
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
@@ -538,7 +585,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getIndexes() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getIndexes() != null) {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             if (response.body().getSubsonicResponse().getIndexes().getIndices() != null) {
@@ -597,6 +645,8 @@ public class AutomotiveRepository {
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -618,7 +668,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getDirectory() != null && response.body().getSubsonicResponse().getDirectory().getChildren() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getDirectory() != null && subsonicResponse.getDirectory().getChildren() != null) {
                             Directory directory = response.body().getSubsonicResponse().getDirectory();
 
                             List<MediaItem> mediaItems = new ArrayList<>();
@@ -648,6 +699,8 @@ public class AutomotiveRepository {
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -870,7 +923,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getArtist() != null && response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getArtist() != null && subsonicResponse.getArtist().getAlbums() != null) {
 
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
 
@@ -913,6 +967,8 @@ public class AutomotiveRepository {
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -1010,7 +1066,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylist() != null && response.body().getSubsonicResponse().getPlaylist().getEntries() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getPlaylist() != null && subsonicResponse.getPlaylist().getEntries() != null) {
                             List<Child> tracks = response.body().getSubsonicResponse().getPlaylist().getEntries();
 
                             if( !Preferences.isAndroidAutoShufflePlaylistsEnabled() ) {
@@ -1028,6 +1085,8 @@ public class AutomotiveRepository {
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 
@@ -1167,7 +1226,8 @@ public class AutomotiveRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSearchResult3() != null) {
+                        SubsonicResponse subsonicResponse = getSubsonicResponseOrNull(response);
+                        if (response.isSuccessful() && subsonicResponse != null && subsonicResponse.getSearchResult3() != null) {
                             List<MediaItem> mediaItems = new ArrayList<>();
 
                             if (response.body().getSubsonicResponse().getSearchResult3().getArtists() != null) {
@@ -1206,6 +1266,8 @@ public class AutomotiveRepository {
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
                             listenableFuture.set(libraryResult);
+                        } else {
+                            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
                         }
                     }
 

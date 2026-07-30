@@ -1,6 +1,7 @@
 package com.cappielloantonio.tempo.navigation;
 
 import android.content.res.Configuration;
+import android.os.Build;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -179,13 +180,11 @@ public class NavigationHelper {
         insetsController = new WindowInsetsControllerCompat(window, decorView);
 
         if (visibility) {
-            WindowCompat.setDecorFitsSystemWindows(window, true);
             insetsController.show(WindowInsetsCompat.Type.navigationBars());
             insetsController.show(WindowInsetsCompat.Type.statusBars());
             insetsController.setSystemBarsBehavior(
                     WindowInsetsControllerCompat.BEHAVIOR_DEFAULT);
         } else {
-            WindowCompat.setDecorFitsSystemWindows(window, false);
             insetsController.hide(WindowInsetsCompat.Type.navigationBars());
             insetsController.hide(WindowInsetsCompat.Type.statusBars());
             insetsController.setSystemBarsBehavior(

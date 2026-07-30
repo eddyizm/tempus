@@ -90,6 +90,7 @@ public class BottomSheetHelper {
 
     public void setPeekHeight(int peekHeight, float displayDensity) {
         int newPeekPx = (int) (peekHeight * displayDensity);
+        bottomSheetBehavior.setGestureInsetBottomIgnored(false);
         bottomSheetBehavior.setPeekHeight(newPeekPx);
     }
 }

@@ -111,6 +111,7 @@ public final class DownloadUtil {
     public static synchronized DataSource.Factory getCacheDataSourceFactory(Context context) {
         CacheDataSource.Factory streamCacheFactory = new CacheDataSource.Factory()
                 .setCache(getStreamingCache(context))
+                .setCacheKeyFactory(new StreamingCacheKeyFactory())
                 .setUpstreamDataSourceFactory(getUpstreamDataSourceFactory(context));
 
         ResolvingDataSource.Factory resolvingFactory = new ResolvingDataSource.Factory(
@@ -123,6 +124,23 @@ public final class DownloadUtil {
         );
         dataSourceFactory = buildReadOnlyCacheDataSource(resolvingFactory, getDownloadCache(context));
         return dataSourceFactory;
+    }
+
+    /**
+     * Writes into the same streaming cache (and with the same keys) the player reads
+     * from, but bypasses the download-cache/resolving wrappers of
+     * {@link #getCacheDataSourceFactory(Context)}: CacheWriter needs a plain
+     * CacheDataSource.
+     */
+    public static synchronized CacheDataSource.Factory getStreamingCacheWriterFactory(Context context) {
+        return new CacheDataSource.Factory()
+                .setCache(getStreamingCache(context))
+                .setCacheKeyFactory(new StreamingCacheKeyFactory())
+                .setUpstreamDataSourceFactory(new DefaultDataSource.Factory(context, getHttpDataSourceFactory()));
+    }
+
+    public static synchronized Cache getStreamingCacheForPreload(Context context) {
+        return getStreamingCache(context);
     }
 
     public static synchronized DownloadNotificationHelper getDownloadNotificationHelper(Context context) {

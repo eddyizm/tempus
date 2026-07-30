@@ -134,6 +134,28 @@
     <string name="error_required">Required</string>
     <string name="error_server_prefix">http or https prefix required</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
+    <string name="notification_downloading">Downloading</string>
+    <string name="notification_downloading_title">Downloading %1$s</string>
+    <string name="notification_download_progress_format">%1$d of %2$d</string>
+    <string name="notification_downloading_progress">Downloading…</string>
+    <string name="notification_finalizing">Finalizing…</string>
+    <string name="notification_processing">Processing…</string>
+    <string name="notification_downloads_complete">Downloads complete</string>
+    <string name="notification_download_failed">Download failed</string>
+    <string name="notification_download_mixed_result">%1$d downloaded, %2$d failed</string>
+    <string name="notification_download_mixed_saved">%1$d saved, %2$d failed</string>
+    <plurals name="notification_tracks_downloaded">
+        <item quantity="one">1 track downloaded</item>
+        <item quantity="other">%d tracks downloaded</item>
+    </plurals>
+    <plurals name="notification_tracks_failed">
+        <item quantity="one">1 track failed</item>
+        <item quantity="other">%d tracks failed</item>
+    </plurals>
+    <plurals name="notification_tracks_saved">
+        <item quantity="one">1 track saved</item>
+        <item quantity="other">%d tracks saved</item>
+    </plurals>
     <string name="exo_controls_heart_off_description">Toggle Heart off</string>
     <string name="exo_controls_heart_on_description">Toggle Heart on</string>
     <string name="cast_expanded_controller_loading">Loading…</string>
@@ -259,9 +281,20 @@
     <string name="menu_pin_button">Add to faves</string>
     <string name="menu_unpin_button">Remove from faves</string>
     <string name="playlist_sort_pinned">Faves</string>
+    <string name="playlist_sort_last_played">Last played</string>
+    <string name="playlist_sort_last_updated">Last updated</string>
+    <string name="playlist_sort_both">Recently active</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
+    <string name="playback_speed_decrease_button_content_description">Decrease playback speed</string>
+    <string name="playback_speed_increase_button_content_description">Increase playback speed</string>
+    <string name="playback_speed_pitch_switch_title">Preserve pitch</string>
+    <string name="playback_speed_manual_pitch_switch_title">Manual pitch</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Decrease manual pitch</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Increase manual pitch</string>
+    <string name="playback_speed_dialog_reset_button">Reset</string>
     <string name="playback_speed_dialog_negative_button">Cancel</string>
     <string name="player_queue_clean_all_button">Clean play queue</string>
     <string name="player_queue_save_queue_success">Saved play queue</string>
@@ -415,6 +448,10 @@
     <string name="settings_set_download_folder">Set download folder</string>
     <string name="settings_song_preload_buffer">Song preload buffer</string>
     <string name="settings_song_preload_buffer_summary">Current value: %1$s\nFor the change to take effect you must manually restart the app.</string>
+    <string name="settings_precache_tracks">Pre-cache upcoming tracks [Experimental]</string>
+    <string name="settings_precache_tracks_summary">Fully cache the next tracks of the queue in the background, so skips start instantly and playback survives short signal drops</string>
+    <string name="settings_precache_wifi_only">Pre-cache on Wi-Fi only</string>
+    <string name="settings_precache_wifi_only_summary">Pause pre-caching while on a metered connection</string>
     <string name="settings_system_equalizer_summary">Adjust audio settings</string>
     <string name="settings_system_equalizer_title">System equalizer</string>
     <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
@@ -455,6 +492,7 @@
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
+    <string name="settings_androidauto_shuffle_downloaded_tracks">Shuffle downloaded tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
@@ -464,6 +502,8 @@
     <string name="settings_song_rating_summary">If enabled, shows 5 star rating for track on song page\n\n*Requires App restart</string>
     <string name="settings_track_number">Show track number</string>
     <string name="settings_track_number_summary">If enabled, shows the track number of the song being played.</string>
+    <string name="settings_album_year">Show album year</string>
+    <string name="settings_album_year_summary">If enabled, shows the year of each album on the artist page.</string>
     <string name="settings_item_rating">Show item rating</string>
     <string name="settings_item_rating_summary">If enabled, the item\'s rating and whether it is marked as a favorite will be displayed.</string>
     <string name="settings_queue_syncing_countdown">Sync timer</string>
@@ -640,7 +680,7 @@
     <string name="track_info_year">Year</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
-    <string name="undraw_url" translatable="false">https://undraw.co/</string>
+	<string name="undraw_url" translatable="false">https://undraw.co/</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Not playing</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>
@@ -719,8 +759,9 @@
 
     <string name="ca_info_label">Info</string>
     <string name="ca_info_title">Tempus Crashed</string>
+    <string name="ca_info_device_info" translatable="false">Device Information</string>
     <string name="ca_info_description">
-        Please open an issue on GitHub and include a copy of the logs to address this crash.
+        Please open an issue on GitHub and include a copy of the crash report to address it.
     </string>
     <string name="ca_info_button_close">Close app</string>
     <string name="ca_info_button_restart">Restart app</string>
@@ -732,17 +773,17 @@
     </string>
     <string name="ca_export_button_copy">Copy log</string>
     <string name="ca_export_button_share">Share log</string>
-    <string name="ca_export_toast_log_copied_to_clipboard">Log copied to clipboard</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Report copied to clipboard</string>
 
     <string name="ca_export_label">Export</string>
-    <string name="ca_export_title">Logs retrival</string>
+    <string name="ca_export_title">Report retrival</string>
     <string name="ca_export_description">
-        A debug apk (pre-release) provides a more extensive log and helps us
-        understand what went wrong inside the app.\n\n
+        Device information is prepended to the exported report.\n\n
 
         The data is not sent anywhere without your consent.
     </string>
     <string name="playlist_error_not_found_title">Playlist not found</string>
     <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
     <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
+    <string name="player_overflow_menu_add_to_playlist">Add to playlist</string>
 </resources>
