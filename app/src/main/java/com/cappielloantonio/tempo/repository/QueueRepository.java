@@ -120,7 +120,9 @@ public class QueueRepository {
                 insertionIndex = 0;
             }
 
-            if (insertionIndex > mediaList.size()) {
+            if (insertionIndex < 0) {
+                insertionIndex = 0;
+            } else if (insertionIndex > mediaList.size()) {
                 insertionIndex = mediaList.size();
             }
 
@@ -154,6 +156,12 @@ public class QueueRepository {
                 insertionIndex = 0;
             }
 
+            if (insertionIndex < 0) {
+                insertionIndex = 0;
+            } else if (insertionIndex > media.size()) {
+                insertionIndex = media.size();
+            }
+
             final List<Queue> finalMedia = media;
             List<Child> toAddCopy = new ArrayList<>(toAdd);
             List<Child> filteredToAdd = toAddCopy.stream()
@@ -162,9 +170,6 @@ public class QueueRepository {
 
             for (int i = 0; i < filteredToAdd.size(); i++) {
                 int idx = insertionIndex + i;
-                if (idx > finalMedia.size()) {
-                    idx = finalMedia.size();
-                }
                 Queue queueItem = new Queue(filteredToAdd.get(i));
                 finalMedia.add(idx, queueItem);
             }
