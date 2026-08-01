@@ -209,9 +209,6 @@ class LoginActivity : AppCompatActivity() {
             } else if (binding.serverPublicUrlField.text.toString().isEmpty()) {
                 binding.serverPublicUrlField.error = errMsg
                 return@setOnClickListener
-            } else if (binding.serverLocalUrlField.text.toString().isEmpty()) {
-                binding.serverLocalUrlField.error = errMsg
-                return@setOnClickListener
             }
 
             var serverId: String
