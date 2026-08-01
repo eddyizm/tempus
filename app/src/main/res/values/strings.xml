@@ -790,7 +790,7 @@
     <!-- Login Activity  -->
 
     <string name="la_title">Server Setup</string>
-    <string name="la_description">This is an experimental feature, you will be interacting directly with the server database (useful for crash loops).</string>
+    <string name="la_description">Experimental feature, you will be interacting directly with the database (useful for crash loops).</string>
 
     <string name="la_field_server_name">Server name</string>
     <string name="la_field_server_user">User name</string>
