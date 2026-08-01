@@ -6,11 +6,15 @@ import static com.cappielloantonio.tempo.navigation.ManualEdgeToEdgeKt.setUpEdge
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -64,6 +68,7 @@ import com.google.android.material.internal.EdgeToEdgeUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -121,6 +126,33 @@ public class MainActivity extends BaseActivity {
         checkTempoUpdate();
 
         maybeSchedulePlaybackIntent(getIntent());
+
+        String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
+        if ("open_legacy_login_fragment".equals(triggerArg)) { // Null safe, will drop to false
+            goToLogin();
+        }
+
+        // Check if the device supports dynamic shortcuts (API 25+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+
+            // Create an Intent to open TargetActivity
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setAction(Intent.ACTION_VIEW);
+
+            // Build the shortcut
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "login_activity_shortcut")
+                    .setShortLabel("Open login editor (beta)")
+                    .setLongLabel("Open login editor (beta)")
+                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher)) // Use your app icon
+                    .setIntents(new Intent[]{intent})
+                    .build();
+
+            // Publish the dynamic shortcut
+            if (shortcutManager != null) {
+                shortcutManager.setDynamicShortcuts(Collections.singletonList(shortcut));
+            }
+        }
     }
 
     @Override

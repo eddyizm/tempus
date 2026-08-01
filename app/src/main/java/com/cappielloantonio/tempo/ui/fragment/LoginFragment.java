@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,7 +12,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -19,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.R;
+import com.cappielloantonio.tempo.ui.activity.LoginActivity;
 import com.cappielloantonio.tempo.ui.adapter.ServerAdapter;
 import com.cappielloantonio.tempo.databinding.FragmentLoginBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
@@ -63,6 +67,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
 
         initAppBar();
         initServerListView();
+        initNewLoginButton();
 
         return view;
     }
@@ -100,6 +105,27 @@ public class LoginFragment extends Fragment implements ClickCallback {
                 if (bind != null) bind.noServerAddedTextView.setVisibility(View.VISIBLE);
                 if (bind != null) bind.serverListRecyclerView.setVisibility(View.GONE);
             }
+        });
+    }
+
+    public void initNewLoginButton() {
+
+        /* Edge-to-edge fixup */
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bind.newLoginButton.getLayoutParams();
+        final int baseBottomMargin = params.bottomMargin;
+        ViewCompat.setOnApplyWindowInsetsListener(bind.newLoginButton, (v, windowInsets) -> {
+            Insets systemInsets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+            params.bottomMargin = baseBottomMargin + systemInsets.bottom;
+            v.setLayoutParams(params);
+            return windowInsets;
+        });
+
+        /* Setup button */
+        bind.newLoginButton.setOnClickListener(v -> {
+            activity.finish();
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("MAIN_ACTIVITY_INTENT", "open_new_login_activity");
+            startActivity(tempus);
         });
     }
 

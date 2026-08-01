@@ -1,6 +1,6 @@
 [versions]
 agp = "9.2.1"
-kotlin = "2.2.10"
+kotlin = "2.2.20"
 
 # AndroidX / Material
 activity = "1.13.0"
@@ -23,6 +23,10 @@ okhttpLogging = "5.0.0-alpha.14"
 sdp = "1.1.1"
 customactivityoncrash = "2.4.0"
 shimmer = "0.5.0"
+annotation = "1.10.0"
+activityKtx = "1.13.0"
+lifecycleLivedataKtx = "2.11.0"
+lifecycleViewmodelKtx = "2.11.0"
 
 [libraries]
 androidx-activity = { group = "androidx.activity", name="activity", version.ref = "activity" }
@@ -60,6 +64,10 @@ customactivityoncrash = { group = "cat.ereza", name = "customactivityoncrash", v
 shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
 
 kotlin-metadata = { group = "org.jetbrains.kotlin", name = "kotlin-metadata-jvm", version.ref = "kotlin" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

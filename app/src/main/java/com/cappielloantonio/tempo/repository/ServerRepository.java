@@ -23,6 +23,12 @@ public class ServerRepository {
         thread.start();
     }
 
+    public void update(Server server) {
+        UpdateThreadSafe update = new UpdateThreadSafe(serverDao, server);
+        Thread thread = new Thread(update);
+        thread.start();
+    }
+
     public void delete(Server server) {
         DeleteThreadSafe delete = new DeleteThreadSafe(serverDao, server);
         Thread thread = new Thread(delete);
@@ -41,6 +47,21 @@ public class ServerRepository {
         @Override
         public void run() {
             serverDao.insert(server);
+        }
+    }
+
+    public static class UpdateThreadSafe implements Runnable {
+        private final ServerDao serverDao;
+        private final Server server;
+
+        public UpdateThreadSafe(ServerDao serverDao, Server server) {
+            this.serverDao = serverDao;
+            this.server = server;
+        }
+
+        @Override
+        public void run() {
+            serverDao.update(server);
         }
     }
 

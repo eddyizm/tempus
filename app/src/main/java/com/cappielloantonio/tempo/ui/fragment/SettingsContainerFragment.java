@@ -52,6 +52,7 @@ import com.cappielloantonio.tempo.interfaces.ScanCallback;
 import com.cappielloantonio.tempo.equalizer.EqualizerManager;
 import com.cappielloantonio.tempo.service.DownloaderService;
 import com.cappielloantonio.tempo.service.MediaService;
+import com.cappielloantonio.tempo.ui.activity.LoginActivity;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
 import com.cappielloantonio.tempo.ui.dialog.DeleteDownloadStorageDialog;
 import com.cappielloantonio.tempo.ui.dialog.DownloadStorageDialog;

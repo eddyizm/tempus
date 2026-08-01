@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <application
-        android:name="App"
+        android:name=".App"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -53,6 +53,12 @@
                     android:scheme="tempo" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:theme="@style/AppTheme"
+            android:exported="true"/>
+
         <activity
             android:name=".ui.activity.CrashActivity"
             android:label="@string/ca_info_title"
@@ -64,8 +70,8 @@
             android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />
-                <action android:name="android.media.browse.MediaBrowserService"/>
-                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH"/>
+                <action android:name="android.media.browse.MediaBrowserService" />
+                <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
             </intent-filter>
         </service>
 
@@ -93,11 +99,11 @@
             android:exported="false"
             android:label="@string/widget_label">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info"/>
+                android:resource="@xml/widget_info" />
         </receiver>
 
         <provider
@@ -105,7 +111,7 @@
             android:authorities="${applicationId}.albumart.provider"
             android:enabled="true"
             android:exported="true"
-        />
+            />
 
     </application>
 </manifest>
