@@ -1,3 +1,4 @@
+graphify-out/
 *.iml
 .gradle
 /local.properties
@@ -12,6 +13,8 @@
 /captures
 .externalNativeBuild
 .cxx
+.opencode/
+graphify-out/
 /.idea/
 .env
 .vscode/settings.json

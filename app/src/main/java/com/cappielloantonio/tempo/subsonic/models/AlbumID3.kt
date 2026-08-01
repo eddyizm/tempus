@@ -36,4 +36,38 @@ open class AlbumID3(
     var releaseDate: ItemDate? = null,
     var isCompilation: Boolean? = null,
     var discTitles: List<DiscTitle>? = null,
-) : Parcelable
+) : Parcelable {
+
+    /**
+     * #688: a copy carrying only the lightweight fields, dropping the heavy nested
+     * lists (recordLabels/genres/artists/releaseTypes/moods). Pass this into navigation
+     * arguments so deep browsing doesn't bloat the saved-state Bundle past the Binder
+     * limit (TransactionTooLargeException on background). Detail pages re-fetch the full
+     * album, so nothing visible is lost -- except discTitles, which is kept here: it is
+     * small and the album song list reads it to render per-disc headers, which a multi-disc
+     * album would otherwise lose for good if that re-fetch fails (offline / server error).
+     */
+    fun strippedForNav(): AlbumID3 = AlbumID3(
+        id = id,
+        name = name,
+        artist = artist,
+        artistId = artistId,
+        coverArtId = coverArtId,
+        songCount = songCount,
+        duration = duration,
+        playCount = playCount,
+        created = created,
+        starred = starred,
+        year = year,
+        genre = genre,
+        played = played,
+        userRating = userRating,
+        musicBrainzId = musicBrainzId,
+        displayArtist = displayArtist,
+        sortName = sortName,
+        originalReleaseDate = originalReleaseDate,
+        releaseDate = releaseDate,
+        isCompilation = isCompilation,
+        discTitles = discTitles,
+    )
+}

@@ -11,6 +11,14 @@ ANDROID_API=24
 ENABLED_DECODERS=(alac)
 MEDIA3_VERSION="1.9.2"
 
+# ------------------------------------------------------------------
+# Deterministic build flags – must match F-Droid
+export CFLAGS="-fno-ident -ffile-prefix-map=${PWD}=. -fdebug-prefix-map=${PWD}=."
+export LDFLAGS="-Wl,--build-id=none"
+export SOURCE_DATE_EPOCH=0
+export ARFLAGS="rcsD"
+# ------------------------------------------------------------------
+
 # Helper
 step() {
   echo "============================================================"
@@ -54,17 +62,32 @@ echo "✅ FFmpeg build completed"
 # ---------- 5. Assemble AAR ----------
 step "📦 Assembling .aar with Gradle (bundleReleaseAar)"
 cd media
-# Use the correct module name as discovered:
 ./gradlew :lib-decoder-ffmpeg:bundleReleaseAar --no-daemon
 cd /build
 echo "✅ Gradle build finished"
 
-# ---------- 6. Copy result ----------
-step "📁 Copying .aar to /build/output"
+# ---------- 6. Strip build ID from .so files inside the AAR ----------
+step "🗑️ Stripping build ID from libraries inside AAR"
+
+AAR_PATH="media/libraries/decoder_ffmpeg/buildout/outputs/aar/lib-decoder-ffmpeg-release.aar"
+TEMP_DIR="/tmp/aar_strip"
 mkdir -p /build/output
-# Use the actual output path (verified)
-cp media/libraries/decoder_ffmpeg/buildout/outputs/aar/lib-decoder-ffmpeg-release.aar /build/output/
-echo "✅ AAR copied successfully"
+
+# Unpack the AAR
+mkdir -p "$TEMP_DIR"
+cp "$AAR_PATH" "$TEMP_DIR/"
+cd "$TEMP_DIR"
+unzip -q lib-decoder-ffmpeg-release.aar
+rm lib-decoder-ffmpeg-release.aar
+
+# Explicitly use the NDK's llvm-strip to guarantee clean removal of the .note.gnu.build-id section
+find . -name "*.so" -exec "${NDK_PATH}/toolchains/llvm/prebuilt/${HOST_PLATFORM}/bin/llvm-strip" --remove-section=.note.gnu.build-id {} \;
+
+# Repack the stripped assets directly into your target output location
+zip -q -X -r /build/output/lib-decoder-ffmpeg-release.aar *
+cd /build
+rm -rf "$TEMP_DIR"
+echo "✅ AAR safely repacked with stripped native libraries"
 
 # ---------- 7. Verify 16KB alignment ----------
 step "🔒 Verifying 16KB page alignment of 64-bit ELF libraries"

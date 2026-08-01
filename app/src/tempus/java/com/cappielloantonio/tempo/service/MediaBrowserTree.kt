@@ -443,6 +443,19 @@ object MediaBrowserTree {
                 )
             )
 
+        treeNodes[ConstantsAA.DOWNLOADED_ID] =
+            MediaItemNode(
+                buildMediaItem(
+                    gridView = false,
+                    title = appContext.getString(R.string.download_title_section),
+                    mediaId = ConstantsAA.DOWNLOADED_ID,
+                    isPlayable = false,
+                    isBrowsable = true,
+                    imageUri = iconUri(R.drawable.ic_aa_downloaded),
+                    mediaType = MediaMetadata.MEDIA_TYPE_FOLDER_MIXED
+                )
+            )
+
         treeNodes[ConstantsAA.QUICKMIX_ID] =
             MediaItemNode(
                 buildMediaItem(
@@ -512,6 +525,9 @@ object MediaBrowserTree {
         }
 
         // Second level for HOME_ID even there is no HOME_ID displayed
+        // Downloads first: it is the only section that works with no connectivity
+        treeNodes[ConstantsAA.HOME_ID]?.addChild(ConstantsAA.DOWNLOADED_ID)
+
 		// add all functions not previously added
         allFunctions
             .filter { it !in selectedIds }
@@ -603,6 +619,7 @@ object MediaBrowserTree {
                 "newest",
                 ConstantsAA.NUMBER_OF_DISPLAYED_ALBUMS,
                 false)
+            ConstantsAA.DOWNLOADED_ID -> automotiveRepository.getDownloadedSongs()
             ConstantsAA.STARRED_TRACKS_ID -> automotiveRepository.getStarredSongs()
             ConstantsAA.STARRED_ALBUMS_ID -> automotiveRepository.getStarredAlbums(
                 ConstantsAA.ALBUM_ID,

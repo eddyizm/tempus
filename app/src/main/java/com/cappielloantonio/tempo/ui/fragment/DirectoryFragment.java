@@ -86,6 +86,12 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         directoryViewModel = new ViewModelProvider(requireActivity()).get(DirectoryViewModel.class);
         directoryRepository = new DirectoryRepository();
 
+        Bundle args = getArguments();
+        if (args == null) {
+            if (activity != null && activity.navController != null) activity.navController.navigateUp();
+            return view;
+        }
+
         initAppBar();
         initDirectoryListView();
 

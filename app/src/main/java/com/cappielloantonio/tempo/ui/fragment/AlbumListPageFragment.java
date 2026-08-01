@@ -23,6 +23,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.databinding.FragmentAlbumListPageBinding;
@@ -137,6 +138,10 @@ public class AlbumListPageFragment extends Fragment implements ClickCallback {
                 this,
                 (albumListPageViewModel.title.equals(Constants.ALBUM_DOWNLOADED) || albumListPageViewModel.title.equals(Constants.ALBUM_FROM_ARTIST))
         );
+        // Defer scroll position restoration until the async album list has loaded; otherwise
+        // RecyclerView restores against the empty adapter and drops the position (scrolls to top
+        // on back). Matches ArtistCatalogueFragment, which is why Artists already behaves.
+        albumHorizontalAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
 
         bind.albumListRecyclerView.setAdapter(albumHorizontalAdapter);
         albumListPageViewModel.getAlbumList(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), albums -> {

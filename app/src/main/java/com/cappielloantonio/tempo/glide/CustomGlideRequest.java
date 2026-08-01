@@ -115,11 +115,14 @@ public class CustomGlideRequest {
                                           int size,
                                           CustomTarget<Bitmap> target) {
         String url = createUrl(coverId, size);
-        Glide.with(context)
+        var builder = Glide.with(context)
                 .asBitmap()
                 .load(url)
-                .apply(createRequestOptions(context, coverId, ResourceType.Album))
-                .into(target);
+                .apply(createRequestOptions(context, coverId, ResourceType.Album));
+        if (Preferences.isDataSavingMode()) {
+            builder = builder.onlyRetrieveFromCache(true);
+        }
+        builder.into(target);
     }
 
     public static class Builder {
@@ -129,7 +132,7 @@ public class CustomGlideRequest {
         private Builder(Context context, String item, ResourceType type) {
             this.requestManager = Glide.with(context);
 
-            if (item != null && !Preferences.isDataSavingMode()) {
+            if (item != null) {
                 this.item = createUrl(item, Preferences.getImageSize());
             }
 
@@ -141,9 +144,13 @@ public class CustomGlideRequest {
         }
 
         public RequestBuilder<Drawable> build() {
-            return requestManager
+            RequestBuilder<Drawable> builder = requestManager
                     .load(item)
                     .transition(DrawableTransitionOptions.withCrossFade());
+            if (Preferences.isDataSavingMode()) {
+                builder = builder.onlyRetrieveFromCache(true);
+            }
+            return builder;
         }
     }
 }
