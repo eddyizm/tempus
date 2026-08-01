@@ -8,106 +8,181 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.LoginActivity">
 
-    <Spinner
-        android:id="@+id/serversList"
+    <TextView
+        style="@style/TextAppearance.AppCompat.Title"
+        android:id="@+id/loginActivityTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="32dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="24dp"
+        android:text="@string/la_title"
+        android:gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/serversListContainer"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:id="@+id/serversListContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/loginActivityTitle">
+
+        <AutoCompleteTextView
+            android:id="@+id/serversList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:focusable="true"
+            android:clickable="true"
+            tools:ignore="LabelFor" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/betaDisclaimer"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginStart="32dp"
-        android:text="This is currently in Beta stage, you will be writing raw into the database"
-        app:layout_constraintTop_toBottomOf="@+id/serversList"
-        />
+        android:layout_marginEnd="32dp"
+        android:text="@string/la_description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serversListContainer"
+        app:layout_constraintBottom_toTopOf="@+id/server_name_field"/>
 
     <EditText
         android:id="@+id/server_name_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:hint="Server name"
-        android:inputType="textEmailAddress"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="32dp"
+        android:hint="@string/la_field_server_name"
         android:selectAllOnFocus="true"
+        app:layout_constraintTop_toBottomOf="@+id/betaDisclaimer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/betaDisclaimer" />
+        tools:ignore="Autofill,MissingConstraints,TextFields" />
 
     <EditText
         android:id="@+id/server_user_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="User name"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/la_field_server_user"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_name_field" />
+        app:layout_constraintTop_toBottomOf="@+id/server_name_field"
+        tools:ignore="Autofill,MissingConstraints,TextFields" />
 
     <EditText
         android:id="@+id/server_password_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="@string/prompt_password"
-        android:imeActionLabel="@string/action_sign_in_short"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/la_field_server_pass"
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_user_field" />
+        app:layout_constraintTop_toBottomOf="@+id/server_user_field"
+        tools:ignore="Autofill,MissingConstraints,TextFields" />
 
     <EditText
         android:id="@+id/server_public_url_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Public URL"
-        android:imeActionLabel="@string/action_sign_in_short"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/la_field_server_public_url"
         android:imeOptions="actionDone"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_password_field" />
+        app:layout_constraintTop_toBottomOf="@+id/server_password_field"
+        tools:ignore="Autofill,MissingConstraints,TextFields" />
 
     <EditText
         android:id="@+id/server_local_url_field"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:hint="Local URL (optional)"
-        android:imeActionLabel="@string/action_sign_in_short"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/la_field_server_local_url"
         android:imeOptions="actionDone"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_public_url_field" />
+        app:layout_constraintTop_toBottomOf="@+id/server_public_url_field"
+        tools:ignore="Autofill,MissingConstraints,TextFields" />
+
+    <EditText
+        android:id="@+id/server_cert_field"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/la_field_server_cert"
+        android:imeOptions="actionDone"
+        android:selectAllOnFocus="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/server_local_url_field"
+        tools:ignore="Autofill,MissingConstraints,TextFields" />
 
     <CheckBox android:id="@+id/serverPlaintextPassowrd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Plaintext password"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:text="@string/la_field_plaintext_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_local_url_field" />
+        app:layout_constraintTop_toBottomOf="@+id/server_cert_field" />
+
+    <TextView
+        android:id="@+id/serverPlaintextPassowrdSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:gravity="center_horizontal"
+        android:text="@string/la_field_plaintext_password_summary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/serverPlaintextPassowrd"/>
 
     <LinearLayout
         android:id="@+id/buttoner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
         android:orientation="horizontal"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="64dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serverPlaintextPassowrd"
+        app:layout_constraintTop_toBottomOf="@+id/serverPlaintextPassowrdSummary"
         app:layout_constraintVertical_bias="0.2">
 
         <com.google.android.material.button.MaterialButton
@@ -119,7 +194,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:enabled="true"
-            android:text="Update" />
+            android:text="@string/la_button_update" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button3"
@@ -128,7 +203,7 @@
             android:layout_weight="1"
             android:layout_gravity="start"
             android:enabled="true"
-            android:text="Delete" />
+            android:text="@string/la_button_delete" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button4"
@@ -139,7 +214,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:enabled="true"
-            android:text="Login" />
+            android:text="@string/la_button_login" />
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
@@ -148,27 +223,15 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="start"
-        android:text="Return to Login"
-        android:layout_marginTop="128dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginEnd="128dp"
+        android:text="@string/la_button_return"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        android:layout_marginStart="90dp"
+        android:layout_marginEnd="90dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttoner"
-        />
-
-    <ProgressBar
-        android:id="@+id/loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="64dp"
-        android:layout_marginBottom="64dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/serverPlaintextPassowrd"
-        app:layout_constraintStart_toStartOf="@+id/serverPlaintextPassowrd"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

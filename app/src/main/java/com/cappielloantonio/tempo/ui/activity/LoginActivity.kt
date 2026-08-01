@@ -1,12 +1,10 @@
 package com.cappielloantonio.tempo.ui.activity
 
-import android.R
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
@@ -22,14 +20,16 @@ import com.cappielloantonio.tempo.viewmodel.ServerViewModel
 import kotlin.jvm.java
 import androidx.core.content.edit
 
+import com.cappielloantonio.tempo.R
+
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var serverViewModel: ServerViewModel
     private lateinit var serverList: List<Server>
-    private lateinit var spinnerServers: Spinner
     private var selectedServerId: String = "Unselected"
     private var selectedServerPosition: Int = 0
+    private var isInitialSyncDone = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +57,6 @@ class LoginActivity : AppCompatActivity() {
 
     @OptIn(UnstableApi::class)
     fun setupServerDropdownSelector() {
-        spinnerServers = binding.serversList // Not sure why this would be null
         serverViewModel = ViewModelProvider(this)[ServerViewModel::class.java]
         syncServerList()
         onServerSelected()
@@ -96,11 +95,16 @@ class LoginActivity : AppCompatActivity() {
             } ?: emptyList())
             val adapter = ArrayAdapter(
                 this,
-                R.layout.simple_spinner_item,
+                R.layout.item_login_server2,
                 serverList.map { it.serverName }.toTypedArray()
             )
-            adapter.setDropDownViewResource(R.layout.simple_spinner_dropdown_item)
-            spinnerServers.adapter = adapter
+            adapter.setDropDownViewResource(R.layout.item_login_server2)
+            binding.serversList.setAdapter(adapter)
+            // Don't start dropdown with blank item, use the first dummy item
+            if (!isInitialSyncDone && serverList.isNotEmpty()) {
+                binding.serversList.setText(serverList[0].serverName, false)
+                isInitialSyncDone = true
+            }
         }
     }
 
@@ -108,41 +112,39 @@ class LoginActivity : AppCompatActivity() {
      * React to server selection and trigger a custom action
      */
     fun onServerSelected() {
-        spinnerServers.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                // Dummy implementation triggers a toast with the selection
-                selectedServerId = serverList[position].serverId
-                selectedServerPosition = position
-                if (position == 0) {
-                    binding.button2.text = "Create"
-                    binding.button3.isEnabled = false
-                    binding.serverNameField.setText("")
-                    binding.serverUserField.setText("")
-                    binding.serverPasswordField.setText("")
-                    binding.serverPublicUrlField.setText("")
-                    binding.serverLocalUrlField.setText("")
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Creating new server",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    binding.button2.text = "Update"
-                    binding.button3.isEnabled = true
-                    val selectedServerName = parent.getItemAtPosition(position).toString()
-                    binding.serverNameField.setText(serverList[position].serverName)
-                    binding.serverUserField.setText(serverList[position].username)
-                    binding.serverPasswordField.setText(serverList[position].password)
-                    binding.serverPublicUrlField.setText(serverList[position].address)
-                    binding.serverLocalUrlField.setText(serverList[position].localAddress)
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Selected: $selectedServerName",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {
+        binding.serversList.setOnItemClickListener { parent, _, position, _ ->
+            selectedServerId = serverList[position].serverId
+            selectedServerPosition = position
+
+            if (position == 0) {
+                binding.button2.text = getString(R.string.la_button_create)
+                binding.button3.isEnabled = false
+                binding.serverNameField.setText("")
+                binding.serverUserField.setText("")
+                binding.serverPasswordField.setText("")
+                binding.serverPublicUrlField.setText("")
+                binding.serverLocalUrlField.setText("")
+                binding.serverCertField.setText("")
+                Toast.makeText(
+                    this@LoginActivity,
+                    getString(R.string.la_toast_creating),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                binding.button2.text = getString(R.string.la_button_update)
+                binding.button3.isEnabled = true
+                val selectedServerName = parent.getItemAtPosition(position).toString()
+                binding.serverNameField.setText(serverList[position].serverName)
+                binding.serverUserField.setText(serverList[position].username)
+                binding.serverPasswordField.setText("")
+                binding.serverPublicUrlField.setText(serverList[position].address)
+                binding.serverLocalUrlField.setText(serverList[position].localAddress)
+                binding.serverCertField.setText(serverList[position].clientCert)
+                Toast.makeText(
+                    this@LoginActivity,
+                    getString(R.string.la_toast_selected) + " " + selectedServerName,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -183,12 +185,14 @@ class LoginActivity : AppCompatActivity() {
         val password: String = s.password
         val address: String = s.address
         val localAddress: String = s.localAddress ?: s.address
+        val clientCert: String = s.clientCert ?: ""
 
         App.getInstance().preferences.edit { putString("server", server) }
         App.getInstance().preferences.edit { putString("user", user) }
         App.getInstance().preferences.edit { putString("password", password) }
         App.getInstance().preferences.edit { putString("in_use_server_address", address) }
         App.getInstance().preferences.edit { putString("local_address", localAddress) }
+        App.getInstance().preferences.edit { putString("client_cert", clientCert) }
 
     }
 

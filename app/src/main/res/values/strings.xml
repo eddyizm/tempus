@@ -754,6 +754,10 @@
         <item>Custom\u2026</item>
     </string-array>
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
+    <string name="playlist_error_not_found_title">Playlist not found</string>
+    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
+    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
+    <string name="player_overflow_menu_add_to_playlist">Add to playlist</string>
 
     <!-- Crash Activity -->
 
@@ -782,17 +786,30 @@
 
         The data is not sent anywhere without your consent.
     </string>
-    <string name="playlist_error_not_found_title">Playlist not found</string>
-    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
-    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="player_overflow_menu_add_to_playlist">Add to playlist</string>
+
+    <!-- Login Activity  -->
+
+    <string name="la_title">Server Setup</string>
+    <string name="la_description">This is an experimental feature, you will be interacting directly with the server database (useful for crash loops).</string>
+
+    <string name="la_field_server_name">Server name</string>
+    <string name="la_field_server_user">User name</string>
+    <string name="la_field_server_pass">Password</string>
+    <string name="la_field_server_public_url">Public URL</string>
+    <string name="la_field_server_local_url">Local URL (optional)</string>
+    <string name="la_field_server_cert">Client certificate (optional)</string>
+    <string name="la_field_plaintext_password">Plaintext password</string>
+    <string name="la_field_plaintext_password_summary">Check to send password as plaintext\n(either through HTTP or HTTPS).</string>
+
+    <string name="la_button_create">Create</string>
+    <string name="la_button_update">Update</string>
+    <string name="la_button_delete">Delete</string>
+    <string name="la_button_login">Login</string>
+    <string name="la_button_return">Return to Login</string>
+    <string name="la_button_advanced_editor">Advanced editor (beta)</string>
+
+    <string name="la_toast_creating">Creating new server</string>
+    <string name="la_toast_selected">Selected: </string>
+
+    <string name="la_dropdown_add_new">Add new server</string>
 </resources>

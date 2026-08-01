@@ -76,7 +76,7 @@
             android:layout_margin="16dp"
             android:layout_gravity="bottom"
             android:layout_marginBottom="48dp"
-            android:text="New Editor (Beta)" />
+            android:text="@string/la_button_advanced_editor" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>
