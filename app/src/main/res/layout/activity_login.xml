@@ -186,7 +186,7 @@
         app:layout_constraintVertical_bias="0.2">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button2"
+            android:id="@+id/createOrUpdateButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -194,10 +194,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:enabled="true"
-            android:text="@string/la_button_update" />
+            android:text="@string/la_button_create" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button3"
+            android:id="@+id/deleteButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -206,7 +206,7 @@
             android:text="@string/la_button_delete" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button4"
+            android:id="@+id/loginButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

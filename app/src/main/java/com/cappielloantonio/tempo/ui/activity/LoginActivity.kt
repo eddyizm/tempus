@@ -103,6 +103,9 @@ class LoginActivity : AppCompatActivity() {
             // Don't start dropdown with blank item, use the first dummy item
             if (!isInitialSyncDone && serverList.isNotEmpty()) {
                 binding.serversList.setText(serverList[0].serverName, false)
+                binding.createOrUpdateButton.text = getString(R.string.la_button_create)
+                binding.deleteButton.isEnabled = false
+                binding.loginButton.isEnabled = false
                 isInitialSyncDone = true
             }
         }
@@ -117,8 +120,9 @@ class LoginActivity : AppCompatActivity() {
             selectedServerPosition = position
 
             if (position == 0) {
-                binding.button2.text = getString(R.string.la_button_create)
-                binding.button3.isEnabled = false
+                binding.createOrUpdateButton.text = getString(R.string.la_button_create)
+                binding.deleteButton.isEnabled = false
+                binding.loginButton.isEnabled = false
                 binding.serverNameField.setText("")
                 binding.serverUserField.setText("")
                 binding.serverPasswordField.setText("")
@@ -131,8 +135,9 @@ class LoginActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                binding.button2.text = getString(R.string.la_button_update)
-                binding.button3.isEnabled = true
+                binding.createOrUpdateButton.text = getString(R.string.la_button_update)
+                binding.deleteButton.isEnabled = true
+                binding.loginButton.isEnabled = true
                 val selectedServerName = parent.getItemAtPosition(position).toString()
                 binding.serverNameField.setText(serverList[position].serverName)
                 binding.serverUserField.setText(serverList[position].username)
@@ -151,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
 
     @OptIn(UnstableApi::class)
     fun setupLoginButton() {
-        binding.button4.setOnClickListener {
+        binding.loginButton.setOnClickListener {
             updateLegacySharedPreferences()
             finish()
             val tempus = Intent(this@LoginActivity, MainActivity::class.java)
@@ -160,7 +165,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun setupDeleteButton() {
-        binding.button3.setOnClickListener {
+        binding.deleteButton.setOnClickListener {
             serverViewModel.deleteServer(serverList[selectedServerPosition])
         }
     }
@@ -194,11 +199,13 @@ class LoginActivity : AppCompatActivity() {
         App.getInstance().preferences.edit { putString("local_address", localAddress) }
         App.getInstance().preferences.edit { putString("client_cert", clientCert) }
 
+        App.getSubsonicClientInstance(true)
+
     }
 
     fun setupUpdateButton() {
 
-        binding.button2.setOnClickListener {
+        binding.createOrUpdateButton.setOnClickListener {
 
             val errMsg: String = "Mandatory Field"
             if (binding.serverNameField.text.toString().isEmpty()) {
@@ -217,7 +224,7 @@ class LoginActivity : AppCompatActivity() {
 
             var serverId: String
             if (selectedServerPosition == 0) { // New server, we use db_row_total+1 as primary key
-                serverId = (serverList.count()+1).toString()
+                serverId = (serverList.count() + 1).toString()
             } else { // Known server, we use its original primary key (whatever it is set to)
                 serverId = serverList[selectedServerPosition].serverId
             }
@@ -230,7 +237,7 @@ class LoginActivity : AppCompatActivity() {
                 address = binding.serverPublicUrlField.text.toString(),
                 localAddress = binding.serverLocalUrlField.text.toString(),
                 timestamp = System.currentTimeMillis(),
-                isLowSecurity = binding.serverPlaintextPassowrd.isChecked == true,
+                isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
                 clientCert = ""
             )
 
