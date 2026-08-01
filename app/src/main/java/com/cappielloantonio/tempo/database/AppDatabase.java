@@ -37,7 +37,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 20,
+        version = 21,
         entities = {
             Queue.class,
             Server.class,
