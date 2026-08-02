@@ -4,6 +4,7 @@ import androidx.core.content.ContextCompat
 import androidx.media3.cast.CastPlayer
 import androidx.media3.cast.SessionAvailabilityListener
 import androidx.media3.common.util.UnstableApi
+import com.cappielloantonio.tempo.cast.CastMediaItemConverter
 import com.cappielloantonio.tempo.repository.AutomotiveRepository
 import com.google.android.gms.cast.framework.CastContext
 import com.google.android.gms.common.ConnectionResult
@@ -21,7 +22,7 @@ class MediaService : BaseMediaService(), SessionAvailabilityListener {
         ) {
             CastContext.getSharedInstance(this, ContextCompat.getMainExecutor(this))
                 .addOnSuccessListener { castContext ->
-                    castPlayer = CastPlayer(castContext)
+                    castPlayer = CastPlayer(castContext, CastMediaItemConverter())
                     castPlayer.setSessionAvailabilityListener(this@MediaService)
                     initializePlayerListener(castPlayer)
                     if (castPlayer.isCastSessionAvailable)

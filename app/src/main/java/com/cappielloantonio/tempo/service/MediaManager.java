@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.service;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -9,11 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
+import androidx.media3.session.SessionCommand;
+import androidx.media3.session.SessionResult;
 
 import com.cappielloantonio.tempo.database.dao.QueueDao;
 import com.cappielloantonio.tempo.interfaces.MediaIndexCallback;
@@ -35,6 +39,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -173,10 +178,23 @@ public class MediaManager {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        mediaBrowserListenableFuture.get().clearMediaItems();
-                        mediaBrowserListenableFuture.get().setMediaItems(MappingUtil.mapMediaItems(media));
-                        mediaBrowserListenableFuture.get().seekTo(getQueueRepository().getLastPlayedMediaIndex(), getQueueRepository().getLastPlayedMediaTimestamp());
-                        mediaBrowserListenableFuture.get().prepare();
+                        final MediaBrowser browser = mediaBrowserListenableFuture.get();
+
+                        backgroundExecutor.execute(() -> {
+                            final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+                            final int index = getQueueRepository().getLastPlayedMediaIndex();
+                            final long position = getQueueRepository().getLastPlayedMediaTimestamp();
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                // The user can start something while we map, and check() only
+                                // tested this before the mapping began. Do not stomp their pick.
+                                if (browser.getMediaItemCount() > 0) return;
+                                browser.clearMediaItems();
+                                browser.setMediaItems(items);
+                                browser.seekTo(index, position);
+                                browser.prepare();
+                            });
+                        });
                     }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
@@ -193,33 +211,36 @@ public class MediaManager {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         final MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        final List<MediaItem> items = MappingUtil.mapMediaItems(media);
-                        
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            justStarted.set(true);
-                            browser.setMediaItems(items, startIndex, 0);
-                            browser.prepare();
 
-                            Player.Listener timelineListener = new Player.Listener() {
-                                @Override
-                                public void onTimelineChanged(Timeline timeline, int reason) {
-                                    
-                                    int itemCount = browser.getMediaItemCount();
-                                    if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                        browser.seekTo(startIndex, 0);
-                                        browser.play();
-                                        browser.removeListener(this);
-                                    } else {
-                                        Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
-                                    }
-                                }
-                            };
-                            
-                            browser.addListener(timelineListener);
-                        });
-
+                        // Map off the caller thread. getUri does a blocking DB lookup per song
+                        // (each one spawns a Thread and joins it), and this listener runs via
+                        // directExecutor on the click thread, so a large list froze the UI.
+                        // Only the player calls go back to main.
                         backgroundExecutor.execute(() -> {
-                            Log.d(TAG, "Background: enqueuing to database");
+                            final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                justStarted.set(true);
+                                browser.setMediaItems(items, startIndex, 0);
+                                browser.prepare();
+
+                                Player.Listener timelineListener = new Player.Listener() {
+                                    @Override
+                                    public void onTimelineChanged(Timeline timeline, int reason) {
+                                        int itemCount = browser.getMediaItemCount();
+                                        if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
+                                            browser.seekTo(startIndex, 0);
+                                            browser.play();
+                                            browser.removeListener(this);
+                                        } else {
+                                            Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
+                                        }
+                                    }
+                                };
+
+                                browser.addListener(timelineListener);
+                            });
+
                             enqueueDatabase(media, true, 0);
                         });
                     }
@@ -311,9 +332,10 @@ public class MediaManager {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.d(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItems(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItems(media));
+                        int current = browser.getCurrentMediaItemIndex();
+                        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
+                            enqueueDatabase(media, false, current + 1);
+                            insertPlayNext(browser, MappingUtil.mapMediaItems(media));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItems(MappingUtil.mapMediaItems(media));
@@ -333,9 +355,10 @@ public class MediaManager {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.e(TAG, "enqueue");
                         MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        if (playImmediatelyAfter && browser.getNextMediaItemIndex() != -1) {
-                            enqueueDatabase(media, false, browser.getNextMediaItemIndex());
-                            browser.addMediaItem(browser.getNextMediaItemIndex(), MappingUtil.mapMediaItem(media));
+                        int current = browser.getCurrentMediaItemIndex();
+                        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
+                            enqueueDatabase(media, false, current + 1);
+                            insertPlayNext(browser, Collections.singletonList(MappingUtil.mapMediaItem(media)));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItem(MappingUtil.mapMediaItem(media));
@@ -348,16 +371,63 @@ public class MediaManager {
         }
     }
 
+    // "Play next": insert the items right after the current item on the timeline, then —
+    // once the insert has actually applied — ask the service to move them next in the
+    // ExoPlayer shuffle order too. The timeline insert keeps URI/large-list handling on the
+    // normal onAddMediaItems path; the shuffle-order fixup must run on the service (only it
+    // can setShuffleOrder). addMediaItems and a custom command are NOT ordered relative to
+    // each other, so we send the fixup from a one-shot timeline listener once the insert is
+    // visible (same pattern startQueue uses), otherwise the fixup would be clobbered by
+    // addMediaItems' own internal shuffle insert. The fixup is a no-op when shuffle is off.
+    private static void insertPlayNext(MediaBrowser browser, List<MediaItem> items) {
+        if (items.isEmpty()) return;
+        int insertPos = browser.getCurrentMediaItemIndex() + 1;
+        int targetCount = browser.getMediaItemCount() + items.size();
+        // Send the fixup request and do the timeline insert. These two are NOT ordered
+        // relative to each other (and addMediaItems updates the controller optimistically
+        // before the session's async onAddMediaItems even runs), so the service stashes the
+        // request and applies it from its own onTimelineChanged once the insert is visible.
+        Bundle args = new Bundle();
+        args.putInt(Constants.PLAY_NEXT_INSERT_POS, insertPos);
+        args.putInt(Constants.PLAY_NEXT_COUNT, items.size());
+        args.putInt(Constants.PLAY_NEXT_TARGET_COUNT, targetCount);
+        ListenableFuture<SessionResult> fixup =
+                browser.sendCustomCommand(
+                        new SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY), args);
+        Futures.addCallback(fixup, new FutureCallback<SessionResult>() {
+            @Override
+            public void onSuccess(SessionResult result) {
+                if (result.resultCode != SessionResult.RESULT_SUCCESS) {
+                    Log.e(TAG, "insertPlayNext: play-next fixup rejected with code " + result.resultCode);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.e(TAG, "insertPlayNext: play-next fixup command failed", t);
+            }
+        }, MoreExecutors.directExecutor());
+        browser.addMediaItems(insertPos, items);
+    }
+
     public static void shuffle(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex, int endIndex) {
         if (mediaBrowserListenableFuture != null) {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.e(TAG, "shuffle");
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        browser.removeMediaItems(startIndex, endIndex + 1);
-                        browser.addMediaItems(MappingUtil.mapMediaItems(media).subList(startIndex, endIndex + 1));
-                        swapDatabase(media);
+                        final MediaBrowser browser = mediaBrowserListenableFuture.get();
+
+                        backgroundExecutor.execute(() -> {
+                            final List<MediaItem> mapped = MappingUtil.mapMediaItems(media);
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                browser.removeMediaItems(startIndex, endIndex + 1);
+                                browser.addMediaItems(mapped.subList(startIndex, endIndex + 1));
+                            });
+
+                            swapDatabase(media);
+                        });
                     }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
@@ -460,6 +530,12 @@ public class MediaManager {
         if (mediaItem != null && mediaItem.mediaMetadata.extras != null && Preferences.isScrobblingEnabled()) {
             getSongRepository().scrobble(mediaItem.mediaMetadata.extras.getString("id"), submission);
         }
+    }
+
+    // Last.fm rule: a play counts once it has passed half the track or 4 minutes, whichever comes first; never under 30 seconds.
+    public static boolean meetsScrobbleThreshold(long positionMs, long durationMs) {
+        if (durationMs <= 30_000L) return false;
+        return positionMs >= Math.min(durationMs / 2, 240_000L);
     }
 
     @OptIn(markerClass = UnstableApi.class)

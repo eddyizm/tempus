@@ -112,13 +112,22 @@ public class QueueRepository {
     public void insert(Child media, boolean reset, int afterIndex) {
         dbExecutor.execute(() -> {
             List<Queue> mediaList = new ArrayList<>();
+            int insertionIndex = afterIndex;
 
             if (!reset) {
                 mediaList = queueDao.getAllSimple();
+            } else {
+                insertionIndex = 0;
+            }
+
+            if (insertionIndex < 0) {
+                insertionIndex = 0;
+            } else if (insertionIndex > mediaList.size()) {
+                insertionIndex = mediaList.size();
             }
 
             Queue queueItem = new Queue(media);
-            mediaList.add(afterIndex, queueItem);
+            mediaList.add(insertionIndex, queueItem);
 
             for (int i = 0; i < mediaList.size(); i++) {
                 mediaList.get(i).setTrackOrder(i);
@@ -139,9 +148,18 @@ public class QueueRepository {
     public void insertAll(List<Child> toAdd, boolean reset, int afterIndex) {
         dbExecutor.execute(() -> {
             List<Queue> media = new ArrayList<>();
+            int insertionIndex = afterIndex;
 
             if (!reset) {
                 media = queueDao.getAllSimple();
+            } else {
+                insertionIndex = 0;
+            }
+
+            if (insertionIndex < 0) {
+                insertionIndex = 0;
+            } else if (insertionIndex > media.size()) {
+                insertionIndex = media.size();
             }
 
             final List<Queue> finalMedia = media;
@@ -151,15 +169,16 @@ public class QueueRepository {
                     .collect(Collectors.toList());
 
             for (int i = 0; i < filteredToAdd.size(); i++) {
+                int idx = insertionIndex + i;
                 Queue queueItem = new Queue(filteredToAdd.get(i));
-                media.add(afterIndex + i, queueItem);
+                finalMedia.add(idx, queueItem);
             }
 
-            for (int i = 0; i < media.size(); i++) {
-                media.get(i).setTrackOrder(i);
+            for (int i = 0; i < finalMedia.size(); i++) {
+                finalMedia.get(i).setTrackOrder(i);
             }
 
-            queueDao.replaceQueue(media);
+            queueDao.replaceQueue(finalMedia);
         });
     }
 

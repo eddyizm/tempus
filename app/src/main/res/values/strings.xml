@@ -134,6 +134,28 @@
     <string name="error_required">Required</string>
     <string name="error_server_prefix">http or https prefix required</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
+    <string name="notification_downloading">Downloading</string>
+    <string name="notification_downloading_title">Downloading %1$s</string>
+    <string name="notification_download_progress_format">%1$d of %2$d</string>
+    <string name="notification_downloading_progress">Downloading…</string>
+    <string name="notification_finalizing">Finalizing…</string>
+    <string name="notification_processing">Processing…</string>
+    <string name="notification_downloads_complete">Downloads complete</string>
+    <string name="notification_download_failed">Download failed</string>
+    <string name="notification_download_mixed_result">%1$d downloaded, %2$d failed</string>
+    <string name="notification_download_mixed_saved">%1$d saved, %2$d failed</string>
+    <plurals name="notification_tracks_downloaded">
+        <item quantity="one">1 track downloaded</item>
+        <item quantity="other">%d tracks downloaded</item>
+    </plurals>
+    <plurals name="notification_tracks_failed">
+        <item quantity="one">1 track failed</item>
+        <item quantity="other">%d tracks failed</item>
+    </plurals>
+    <plurals name="notification_tracks_saved">
+        <item quantity="one">1 track saved</item>
+        <item quantity="other">%d tracks saved</item>
+    </plurals>
     <string name="exo_controls_heart_off_description">Toggle Heart off</string>
     <string name="exo_controls_heart_on_description">Toggle Heart on</string>
     <string name="cast_expanded_controller_loading">Loading…</string>
@@ -261,6 +283,9 @@
     <string name="menu_pin_button">Add to faves</string>
     <string name="menu_unpin_button">Remove from faves</string>
     <string name="playlist_sort_pinned">Faves</string>
+    <string name="playlist_sort_last_played">Last played</string>
+    <string name="playlist_sort_last_updated">Last updated</string>
+    <string name="playlist_sort_both">Recently active</string>
     <string name="menu_sort_year">Year</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Playback Speed</string>
@@ -736,8 +761,9 @@
 
     <string name="ca_info_label">Info</string>
     <string name="ca_info_title">Tempus Crashed</string>
+    <string name="ca_info_device_info" translatable="false">Device Information</string>
     <string name="ca_info_description">
-        Please open an issue on GitHub and include a copy of the logs to address this crash.
+        Please open an issue on GitHub and include a copy of the crash report to address it.
     </string>
     <string name="ca_info_button_close">Close app</string>
     <string name="ca_info_button_restart">Restart app</string>
@@ -749,17 +775,17 @@
     </string>
     <string name="ca_export_button_copy">Copy log</string>
     <string name="ca_export_button_share">Share log</string>
-    <string name="ca_export_toast_log_copied_to_clipboard">Log copied to clipboard</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Report copied to clipboard</string>
 
     <string name="ca_export_label">Export</string>
-    <string name="ca_export_title">Logs retrival</string>
+    <string name="ca_export_title">Report retrival</string>
     <string name="ca_export_description">
-        A debug apk (pre-release) provides a more extensive log and helps us
-        understand what went wrong inside the app.\n\n
+        Device information is prepended to the exported report.\n\n
 
         The data is not sent anywhere without your consent.
     </string>
     <string name="playlist_error_not_found_title">Playlist not found</string>
     <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
     <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
+    <string name="player_overflow_menu_add_to_playlist">Add to playlist</string>
 </resources>

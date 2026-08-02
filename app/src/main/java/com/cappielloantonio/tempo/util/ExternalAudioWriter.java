@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.webkit.MimeTypeMap;
 
@@ -14,8 +15,8 @@ import androidx.media3.common.MediaItem;
 
 import com.cappielloantonio.tempo.model.Download;
 import com.cappielloantonio.tempo.repository.DownloadRepository;
+import com.cappielloantonio.tempo.service.DownloadProgressState;
 import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,12 +30,19 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import androidx.media3.common.util.UnstableApi;
+
+@UnstableApi
 public class ExternalAudioWriter {
 
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final int BUFFER_SIZE = 8192;
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 60_000;
+
+    // One-off error notification IDs — distinct from Path A (1, 2) and Path B (1012, 1013)
+    private static final int NO_FOLDER_NOTIFICATION_ID = 1010;
+    private static final int FOLDER_ERROR_NOTIFICATION_ID = 1009;
 
     private ExternalAudioWriter() {
     }
@@ -73,20 +81,29 @@ public class ExternalAudioWriter {
         Context appContext = context.getApplicationContext();
         MediaItem mediaItem = MappingUtil.mapDownload(child);
         String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
-        
+
+        // Register with the progress tracker BEFORE submitting to the executor so the
+        // total count is accurate even when many tracks are enqueued in rapid succession.
+        DownloadProgressState.getInstance().onEnqueue(appContext);
+
         EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName));
     }
 
     private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
+        DownloadProgressState.getInstance().setCurrentTrackTitle(
+                child.getTitle() != null ? child.getTitle() : fallbackName);
+
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
             notifyUnavailable(context);
+            DownloadProgressState.getInstance().onFailed(context);
             return;
         }
 
         DocumentFile directory = DocumentFile.fromTreeUri(context, Uri.parse(uriString));
         if (directory == null || !directory.canWrite()) {
-            notifyFailure(context, "Cannot write to folder.");
+            DownloadProgressState.getInstance().onFailed(context);
+            notifyFolderError(context);
             return;
         }
 
@@ -104,8 +121,8 @@ public class ExternalAudioWriter {
                 ? mediaItem.requestMetadata.mediaUri
                 : null;
         if (mediaUri == null) {
-            notifyFailure(context, "Invalid media URI.");
             ExternalDownloadMetadataStore.remove(metadataKey);
+            DownloadProgressState.getInstance().onFailed(context);
             return;
         }
 
@@ -128,8 +145,8 @@ public class ExternalAudioWriter {
 
                 int responseCode = connection.getResponseCode();
                 if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
-                    notifyFailure(context, "Server returned " + responseCode);
                     ExternalDownloadMetadataStore.remove(metadataKey);
+                    DownloadProgressState.getInstance().onFailed(context);
                     return;
                 }
 
@@ -154,8 +171,8 @@ public class ExternalAudioWriter {
                     mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext);
                 }
             } else {
-                notifyFailure(context, "Unsupported media URI.");
                 ExternalDownloadMetadataStore.remove(metadataKey);
+                DownloadProgressState.getInstance().onFailed(context);
                 return;
             }
 
@@ -206,7 +223,8 @@ public class ExternalAudioWriter {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
                     recordDownload(child, existingFile.getUri(), playlistId, playlistName);
                     ExternalAudioReader.refreshCacheAsync();
-                    notifyExists(context, fileName);
+                    // Already exists — count as a quiet skip so progress resolves correctly
+                    DownloadProgressState.getInstance().onSkipped(context);
                     return;
                 } else {
                     existingFile.delete();
@@ -216,7 +234,8 @@ public class ExternalAudioWriter {
 
             targetFile = directory.createFile(mimeType, fileName);
             if (targetFile == null) {
-                notifyFailure(context, "Failed to create file.");
+                ExternalDownloadMetadataStore.remove(metadataKey);
+                DownloadProgressState.getInstance().onFailed(context);
                 return;
             }
 
@@ -224,37 +243,44 @@ public class ExternalAudioWriter {
             try (InputStream in = openInputStream(context, mediaUri, scheme, connection, sourceFile);
                  OutputStream out = context.getContentResolver().openOutputStream(targetUri)) {
                 if (out == null) {
-                    notifyFailure(context, "Cannot open output stream.");
                     targetFile.delete();
+                    ExternalDownloadMetadataStore.remove(metadataKey);
+                    DownloadProgressState.getInstance().onFailed(context);
                     return;
                 }
 
                 byte[] buffer = new byte[BUFFER_SIZE];
                 int len;
                 long total = 0;
+                long lastProgressMs = 0;
                 while ((len = in.read(buffer)) != -1) {
                     out.write(buffer, 0, len);
                     total += len;
+                    long now = SystemClock.elapsedRealtime();
+                    if (now - lastProgressMs > 500) {
+                        DownloadProgressState.getInstance().reportBytesProgress(context, total);
+                        lastProgressMs = now;
+                    }
                 }
                 out.flush();
 
                 if (total <= 0) {
                     targetFile.delete();
                     ExternalDownloadMetadataStore.remove(metadataKey);
-                    notifyFailure(context, "Empty download.");
+                    DownloadProgressState.getInstance().onFailed(context);
                     return;
                 }
 
                 if (remoteLength > 0 && total != remoteLength) {
                     targetFile.delete();
                     ExternalDownloadMetadataStore.remove(metadataKey);
-                    notifyFailure(context, "Incomplete download.");
+                    DownloadProgressState.getInstance().onFailed(context);
                     return;
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
                 recordDownload(child, targetUri, playlistId, playlistName);
-                notifySuccess(context, fileName, child, targetUri);
+                DownloadProgressState.getInstance().onSuccess(context);
                 ExternalAudioReader.refreshCacheAsync();
             }
         } catch (Exception e) {
@@ -262,7 +288,7 @@ public class ExternalAudioWriter {
                 targetFile.delete();
             }
             ExternalDownloadMetadataStore.remove(metadataKey);
-            notifyFailure(context, e.getMessage() != null ? e.getMessage() : "Download failed");
+            DownloadProgressState.getInstance().onFailed(context);
         } finally {
             if (connection != null) {
                 connection.disconnect();
@@ -270,6 +296,11 @@ public class ExternalAudioWriter {
         }
     }
 
+    /**
+     * Shown only when the user hasn't set a download folder at all — this is a one-off
+     * actionable notification that remains separate from the progress flow because the
+     * user needs to take action in Settings before anything else can proceed.
+     */
     private static void notifyUnavailable(Context context) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -286,39 +317,30 @@ public class ExternalAudioWriter {
                 .setContentIntent(openSettings)
                 .setAutoCancel(true);
 
-        manager.notify(1011, builder.build());
+        manager.notify(NO_FOLDER_NOTIFICATION_ID, builder.build());
     }
 
-    private static void notifyFailure(Context context, String message) {
+    /**
+     * Shown only when the download folder exists but is not writable — separate from the
+     * progress flow since it indicates a setup problem the user must resolve.
+     */
+    private static void notifyFolderError(Context context) {
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Download failed")
-                .setContentText(message)
+                .setContentTitle("Download folder error")
+                .setContentText("Cannot write to the selected folder")
                 .setSmallIcon(android.R.drawable.stat_notify_error)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setSilent(true)
                 .setAutoCancel(true);
-        manager.notify((int) System.currentTimeMillis(), builder.build());
-    }
-
-    private static void notifySuccess(Context context, String name, Child child, Uri fileUri) {
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Download complete")
-                .setContentText(name)
-                .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                .setAutoCancel(true);
-
-        PendingIntent playIntent = buildPlayIntent(context, child, fileUri);
-        if (playIntent != null) {
-            builder.setContentIntent(playIntent);
-        }
-
-        manager.notify((int) System.currentTimeMillis(), builder.build());
+        manager.notify(FOLDER_ERROR_NOTIFICATION_ID, builder.build());
     }
 
     private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName) {
         if (child == null) return;
 
         Download download = new Download(child);
+        MusicUtil.applyTranscodedDownloadMetadata(download);
         download.setDownloadState(1);
         download.setPlaylistId(playlistId);
         download.setPlaylistName(playlistName);
@@ -329,43 +351,6 @@ public class ExternalAudioWriter {
 
         new DownloadRepository().insert(download);
     }   
-
-    private static void notifyExists(Context context, String name) {
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, DownloadUtil.DOWNLOAD_NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("Already downloaded")
-                .setContentText(name)
-                .setSmallIcon(android.R.drawable.stat_sys_warning)
-                .setAutoCancel(true);
-        manager.notify((int) System.currentTimeMillis(), builder.build());
-    }
-
-    private static PendingIntent buildPlayIntent(Context context, Child child, Uri fileUri) {
-        if (fileUri == null) return null;
-        Intent intent = new Intent(context, MainActivity.class)
-                .setAction(Constants.ACTION_PLAY_EXTERNAL_DOWNLOAD)
-                .putExtra(Constants.EXTRA_DOWNLOAD_URI, fileUri.toString())
-                .putExtra(Constants.EXTRA_DOWNLOAD_MEDIA_ID, child.getId())
-                .putExtra(Constants.EXTRA_DOWNLOAD_TITLE, child.getTitle())
-                .putExtra(Constants.EXTRA_DOWNLOAD_ARTIST, child.getArtist())
-                .putExtra(Constants.EXTRA_DOWNLOAD_ALBUM, child.getAlbum())
-                .putExtra(Constants.EXTRA_DOWNLOAD_DURATION, child.getDuration() != null ? child.getDuration() : 0)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        int requestCode;
-        if (child.getId() != null) {
-            requestCode = Math.abs(child.getId().hashCode());
-        } else {
-            requestCode = Math.abs(fileUri.toString().hashCode());
-        }
-
-        return PendingIntent.getActivity(
-                context,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-    }
 
     private static InputStream openInputStream(Context context,
                                                Uri mediaUri,
