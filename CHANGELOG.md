@@ -1,5 +1,10 @@
 # Changelog
 
+## [4.23.1](https://github.com/eddyizm/tempus/releases/tag/v4.23.1) (2026-08-02)
+* fix: crashing on start up on update from 4.22.2 (NullPointerException in Subsonic.java) (#953) \ (#954)
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.22.2...v4.23.1
+
 ## [4.23.0](https://github.com/eddyizm/tempus/releases/tag/v4.23.0) (2026-08-02)
 ## What's Changed
 * fix: Prevent TransactionTooLargeException crash when backgrounding after deep navigation by @herrerad85 in https://github.com/eddyizm/tempus/pull/863
