@@ -123,7 +123,8 @@
                     android:id="@+id/server_password_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_pass" />
+                    android:hint="@string/la_field_server_pass"
+                    android:inputType="textPassword"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
