@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> LoginGreeterFragment()
-                1 -> LoginEditorFragment()
+                1 -> LoginServerFragment()
                 2 -> LoginViewerFragment()
                 else -> LoginGreeterFragment()
             }
