@@ -171,7 +171,7 @@
                     android:id="@+id/server_cert_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_local_url" />
+                    android:hint="@string/la_field_server_cert" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
