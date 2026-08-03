@@ -7,27 +7,12 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface">
 
-    <!-- Header -->
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/loginActivityTitle"
-        style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:padding="16dp"
-        android:text="@string/la_title"
-        android:textAppearance="?attr/textAppearanceTitleMedium"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tabLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <!-- Tabs -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/loginActivityTitle"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/viewPager"/>
 
     <!-- Fragment -->
