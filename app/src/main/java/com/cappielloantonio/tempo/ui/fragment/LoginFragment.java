@@ -151,7 +151,9 @@ public class LoginFragment extends Fragment implements ClickCallback {
             public void onError(Exception exception) {
                 Preferences.switchInUseServerAddress();
                 resetServerPreference();
-                Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+                if (requireContext() != null) { // Swapping activities does not ensure non-null
+                    Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
