@@ -111,7 +111,7 @@
             android:authorities="${applicationId}.albumart.provider"
             android:enabled="true"
             android:exported="true"
-            />
+        />
 
     </application>
 </manifest>
