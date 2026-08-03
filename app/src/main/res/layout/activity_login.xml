@@ -17,7 +17,6 @@
         android:padding="16dp"
         android:text="@string/la_title"
         android:textAppearance="?attr/textAppearanceTitleMedium"
-        android:background="?attr/colorSurfaceVariant"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
