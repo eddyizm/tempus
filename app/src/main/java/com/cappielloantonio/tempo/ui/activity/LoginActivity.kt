@@ -1,26 +1,26 @@
 package com.cappielloantonio.tempo.ui.activity
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.App
-import com.cappielloantonio.tempo.databinding.ActivityLoginBinding
-import com.cappielloantonio.tempo.model.Server
-import com.cappielloantonio.tempo.viewmodel.ServerViewModel
-import kotlin.jvm.java
-import androidx.core.content.edit
-
 import com.cappielloantonio.tempo.R
+import com.cappielloantonio.tempo.databinding.ActivityLoginBinding
+import com.cappielloantonio.tempo.helper.ThemeHelper
+import com.cappielloantonio.tempo.model.Server
+import com.cappielloantonio.tempo.util.Preferences
+import com.cappielloantonio.tempo.viewmodel.ServerViewModel
+import com.google.android.material.color.DynamicColors
 
 
 class LoginActivity : AppCompatActivity() {
@@ -32,27 +32,61 @@ class LoginActivity : AppCompatActivity() {
     private var isInitialSyncDone = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableTheme()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
         init()
     }
 
     fun init() {
+        initEdgeToEdge()
         setupServerDropdownSelector()
         setupLoginButton()
         setupUpdateButton()
         setupDeleteButton()
         setupOldLoginButton()
+    }
+
+    private fun enableTheme() {
+        val theme: String = Preferences.getTheme()
+        val darkStyle: String = Preferences.getDarkThemeStyle()
+        val isAmoled = ThemeHelper.AMOLED_MODE == darkStyle
+        var applyAmoled = false
+
+        if (ThemeHelper.DARK_MODE == theme || ThemeHelper.AMOLED_MODE == theme) {
+            if (isAmoled) {
+                setTheme(R.style.AppTheme_Amoled)
+                applyAmoled = true
+            }
+        } else if (ThemeHelper.DEFAULT_MODE == theme) {
+            val nightModeFlags =
+                getResources().configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && isAmoled) {
+                setTheme(R.style.AppTheme_Amoled)
+                applyAmoled = true
+            }
+        }
+
+        DynamicColors.applyToActivityIfAvailable(this)
+        if (applyAmoled) {
+            getTheme().applyStyle(R.style.ThemeOverlay_App_Amoled, true)
+        }
+    }
+
+    private fun initEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+    }
+
+    private fun initTheme() {
+
     }
 
     @OptIn(UnstableApi::class)
