@@ -812,4 +812,5 @@
     <string name="la_toast_selected">Selected: </string>
 
     <string name="la_dropdown_add_new">Add new server</string>
+    <string name="la_shortcut_label">Open login editor (beta)</string>
 </resources>

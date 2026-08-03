@@ -155,33 +155,7 @@ public class MainActivity extends BaseActivity {
         checkTempoUpdate();
 
         maybeSchedulePlaybackIntent(getIntent());
-
-        String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
-        if ("open_legacy_login_fragment".equals(triggerArg)) { // Null safe, will drop to false
-            goToLogin();
-        }
-
-        // Check if the device supports dynamic shortcuts (API 25+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-
-            // Create an Intent to open TargetActivity
-            Intent intent = new Intent(this, LoginActivity.class);
-            intent.setAction(Intent.ACTION_VIEW);
-
-            // Build the shortcut
-            ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "login_activity_shortcut")
-                    .setShortLabel("Open login editor (beta)")
-                    .setLongLabel("Open login editor (beta)")
-                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher)) // Use your app icon
-                    .setIntents(new Intent[]{intent})
-                    .build();
-
-            // Publish the dynamic shortcut
-            if (shortcutManager != null) {
-                shortcutManager.setDynamicShortcuts(Collections.singletonList(shortcut));
-            }
-        }
+        setupLoginActivity();
     }
 
     @Override
@@ -753,5 +727,30 @@ public class MainActivity extends BaseActivity {
             );
             return insets;
         });
+    }
+
+    private void setupLoginActivity() {
+        String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
+        if ("open_legacy_login_fragment".equals(triggerArg)) {
+            goToLogin();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setAction(Intent.ACTION_VIEW);
+
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "login_activity_shortcut")
+                    .setShortLabel(getString(R.string.la_shortcut_label))
+                    .setLongLabel(getString(R.string.la_shortcut_label))
+                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher))
+                    .setIntents(new Intent[]{intent})
+                    .build();
+
+            if (shortcutManager != null) {
+                shortcutManager.setDynamicShortcuts(Collections.singletonList(shortcut));
+            }
+        }
     }
 }
