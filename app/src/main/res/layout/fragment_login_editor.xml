@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/betaDisclaimer"
@@ -52,6 +53,7 @@
         android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@id/serversListContainer"
         app:layout_constraintBottom_toTopOf="@id/footer"
+        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
