@@ -813,6 +813,9 @@
 
     <string name="la_dropdown_add_new">Add new server</string>
     <string name="la_shortcut_label">Open login editor (beta)</string>
+
+    <string name="la_greeting_description">Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
