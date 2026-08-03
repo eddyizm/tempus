@@ -10,8 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.util.UnstableApi
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.databinding.ActivityLoginBinding
@@ -22,6 +24,7 @@ import com.cappielloantonio.tempo.ui.fragment.LoginViewerFragment
 import com.cappielloantonio.tempo.util.ActivityUtil
 import com.cappielloantonio.tempo.viewmodel.ServerViewModel
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 
 class LoginActivity : AppCompatActivity() {
@@ -36,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initEdgeToEdge()
-        initTabLayout(savedInstanceState)
+        initTabLayout()
     }
 
     private fun initEdgeToEdge() {
@@ -47,36 +50,30 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun initTabLayout(bundle: Bundle?) {
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Greetings"))
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Editor"))
-        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Viewer"))
+    private fun initTabLayout() {
+        binding.viewPager.adapter = ViewPagerAdapter(this)
 
-        if (bundle == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, LoginGreeterFragment())
-                .commit()
-        }
-
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                val selectedFragment = when (tab.position) {
-                    0 -> LoginGreeterFragment()
-                    1 -> LoginEditorFragment()
-                    2-> LoginViewerFragment()
-                    else -> LoginGreeterFragment()
-                }
-                supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(
-                        android.R.anim.fade_in,
-                        android.R.anim.fade_out
-                    )
-                    .replace(R.id.fragmentContainer, selectedFragment)
-                    .commit()
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Greetings"
+                1 -> "Editor"
+                2 -> "Viewer"
+                else -> ""
             }
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
+        }.attach()
+    }
+
+    private inner class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
+        override fun getItemCount(): Int = 3
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> LoginGreeterFragment()
+                1 -> LoginEditorFragment()
+                2 -> LoginViewerFragment()
+                else -> LoginGreeterFragment()
+            }
+        }
     }
 
 
