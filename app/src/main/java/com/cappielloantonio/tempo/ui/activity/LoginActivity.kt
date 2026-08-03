@@ -141,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
                 val selectedServerName = parent.getItemAtPosition(position).toString()
                 binding.serverNameField.setText(serverList[position].serverName)
                 binding.serverUserField.setText(serverList[position].username)
-                binding.serverPasswordField.setText("")
+                binding.serverPasswordField.setText(serverList[position].password)
                 binding.serverPublicUrlField.setText(serverList[position].address)
                 binding.serverLocalUrlField.setText(serverList[position].localAddress)
                 binding.serverCertField.setText(serverList[position].clientCert)
