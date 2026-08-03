@@ -2,37 +2,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.activity.LoginActivity">
+    android:background="?attr/colorSurface">
 
-    <TextView
-        style="@style/TextAppearance.AppCompat.Title"
+    <!-- Header -->
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/loginActivityTitle"
-        android:layout_width="match_parent"
+        style="@style/TextAppearance.AppCompat.Title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="24dp"
-        android:text="@string/la_title"
         android:gravity="center_horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
+        android:padding="16dp"
+        android:text="@string/la_title"
+        android:textAppearance="?attr/textAppearanceTitleMedium"
+        android:background="?attr/colorSurfaceVariant"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/serversListContainer"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Server dropdown menu -->
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:id="@+id/serversListContainer"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/betaDisclaimer"
         app:layout_constraintTop_toBottomOf="@id/loginActivityTitle">
 
         <AutoCompleteTextView
@@ -41,11 +41,11 @@
             android:layout_height="wrap_content"
             android:inputType="none"
             android:focusable="true"
-            android:clickable="true"
-            tools:ignore="LabelFor" />
+            android:clickable="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Text over scrollable content -->
     <TextView
         android:id="@+id/betaDisclaimer"
         android:layout_width="match_parent"
@@ -57,249 +57,193 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serversListContainer"
-        app:layout_constraintBottom_toTopOf="@+id/server_name_field_container"/>
+        app:layout_constraintBottom_toTopOf="@+id/scrollable"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/server_name_field_container"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+    <!-- Fields  -->
+    <ScrollView
+        android:id="@+id/scrollable"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColorHint="?android:textColorHint"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/serversListContainer"
+        app:layout_constraintBottom_toTopOf="@id/footer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/betaDisclaimer"
-        app:layout_constraintBottom_toTopOf="@+id/server_user_field_container"
-        app:errorEnabled="true">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/server_name_field"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/la_field_server_name"
-            android:selectAllOnFocus="true"
-            android:textCursorDrawable="@null"
-            tools:ignore="Autofill,MissingConstraints,TextFields" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <!-- Server name field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/server_name_field_container"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" >
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/server_user_field_container"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColorHint="?android:textColorHint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_name_field_container"
-        app:layout_constraintBottom_toTopOf="@+id/server_password_field_container"
-        app:errorEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/server_name_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/la_field_server_name" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/server_user_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/la_field_server_user"
-            android:selectAllOnFocus="true"
-            android:textCursorDrawable="@null"
-            tools:ignore="Autofill,MissingConstraints,TextFields" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <!-- Server user field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/server_user_field_container"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" >
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/server_password_field_container"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColorHint="?android:textColorHint"
-        app:endIconMode="password_toggle"
-        app:endIconTint="?android:textColorSecondary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_user_field_container"
-        app:layout_constraintBottom_toTopOf="@+id/server_public_url_field"
-        app:errorEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/server_user_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/la_field_server_user" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/server_password_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/la_field_server_pass"
-            android:inputType="textPassword"
-            android:selectAllOnFocus="true"
-            android:textCursorDrawable="@null"
-            tools:ignore="Autofill,MissingConstraints,TextFields" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <!-- Server password field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/server_password_field_container"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textColorHint="?android:textColorHint"
+                app:endIconMode="password_toggle"
+                app:endIconTint="?android:textColorSecondary" >
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/server_public_url_field_container"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColorHint="?android:textColorHint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_password_field_container"
-        app:layout_constraintBottom_toTopOf="@+id/server_local_url_field_container"
-        app:errorEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/server_password_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/la_field_server_pass" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/server_public_url_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/la_field_server_public_url"
-            android:selectAllOnFocus="true"
-            android:textCursorDrawable="@null"
-            tools:ignore="Autofill,MissingConstraints,TextFields" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <!-- Server public url field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/server_public_url_field_container"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" >
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/server_local_url_field_container"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColorHint="?android:textColorHint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_public_url_field_container"
-        app:layout_constraintBottom_toTopOf="@+id/server_cert_field"
-        app:errorEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/server_public_url_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/la_field_server_public_url" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/server_local_url_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/la_field_server_local_url"
-            android:selectAllOnFocus="true"
-            android:textCursorDrawable="@null"
-            tools:ignore="Autofill,MissingConstraints,TextFields" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <!-- Server local url field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/server_local_url_field_container"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" >
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/server_cert_field_container"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:textColorHint="?android:textColorHint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_local_url_field_container"
-        app:errorEnabled="true">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/server_local_url_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/la_field_server_local_url" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/server_cert_field"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/la_field_server_cert"
-            android:selectAllOnFocus="true"
-            android:textCursorDrawable="@null"
-            tools:ignore="Autofill,MissingConstraints,TextFields" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <!-- Server cert field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/server_cert_field_container"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" >
 
-    <CheckBox android:id="@+id/serverPlaintextPassowrd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/la_field_plaintext_password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/server_cert_field_container" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/server_cert_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/la_field_server_local_url" />
 
-    <TextView
-        android:id="@+id/serverPlaintextPassowrdSummary"
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <CheckBox android:id="@+id/serverPlaintextPassowrd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/la_field_plaintext_password" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Footer -->
+    <LinearLayout
+        android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
+        android:orientation="vertical"
         android:gravity="center_horizontal"
-        android:text="@string/la_field_plaintext_password_summary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serverPlaintextPassowrd"/>
-
-    <LinearLayout
-        android:id="@+id/buttoner"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serverPlaintextPassowrdSummary"
-        app:layout_constraintVertical_bias="0.2">
+        app:layout_constraintTop_toBottomOf="@id/scrollable">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/createOrUpdateButton"
-            android:layout_width="0dp"
+        <!-- Buttoner -->
+        <LinearLayout
+            android:id="@+id/buttoner"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:enabled="true"
-            android:text="@string/la_button_create" />
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/deleteButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="start"
-            android:enabled="true"
-            android:text="@string/la_button_delete" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/createOrUpdateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="@string/la_button_create" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/loginButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:enabled="true"
-            android:text="@string/la_button_login" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="@string/la_button_delete" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/loginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="@string/la_button_login" />
+        </LinearLayout>
+
     </LinearLayout>
 
+    <!-- Return to login -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button5"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="start"
         android:text="@string/la_button_return"
-        android:layout_marginStart="90dp"
-        android:layout_marginEnd="90dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttoner"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/footer" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
