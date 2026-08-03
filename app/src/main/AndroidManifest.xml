@@ -55,7 +55,7 @@
         </activity>
 
         <activity
-            android:name=".ui.activity.LoginActivity"
+            android:name=".ui.login.LoginActivity"
             android:theme="@style/AppTheme"
             android:exported="true"/>
 

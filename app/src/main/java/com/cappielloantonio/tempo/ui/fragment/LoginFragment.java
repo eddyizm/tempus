@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.ui.activity.LoginActivity;
+import com.cappielloantonio.tempo.ui.login.LoginActivity;
 import com.cappielloantonio.tempo.ui.adapter.ServerAdapter;
 import com.cappielloantonio.tempo.databinding.FragmentLoginBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;

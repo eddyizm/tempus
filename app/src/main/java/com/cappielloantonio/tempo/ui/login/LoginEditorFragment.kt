@@ -1,14 +1,15 @@
-package com.cappielloantonio.tempo.ui.fragment
+package com.cappielloantonio.tempo.ui.login
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.OptIn
 import androidx.core.content.edit
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.App
@@ -17,7 +18,6 @@ import com.cappielloantonio.tempo.databinding.FragmentLoginEditorBinding
 import com.cappielloantonio.tempo.model.Server
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.viewmodel.ServerViewModel
-import kotlin.jvm.java
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,7 +25,7 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 /**
- * A simple [Fragment] subclass.
+ * A simple [androidx.fragment.app.Fragment] subclass.
  * Use the [LoginEditorFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
@@ -75,7 +75,7 @@ class LoginEditorFragment : Fragment() {
         setupOldLoginButton()
     }
 
-    @androidx.annotation.OptIn(UnstableApi::class)
+    @OptIn(UnstableApi::class)
     fun setupServerDropdownSelector() {
         serverViewModel = ViewModelProvider(this)[ServerViewModel::class.java]
         syncServerList()
@@ -174,7 +174,7 @@ class LoginEditorFragment : Fragment() {
         }
     }
 
-    @androidx.annotation.OptIn(UnstableApi::class)
+    @OptIn(UnstableApi::class)
     fun setupLoginButton() {
         binding.loginButton.setOnClickListener {
             updateLegacySharedPreferences()
@@ -190,7 +190,7 @@ class LoginEditorFragment : Fragment() {
         }
     }
 
-    @androidx.annotation.OptIn(UnstableApi::class)
+    @OptIn(UnstableApi::class)
     fun setupOldLoginButton() {
         binding.button5.setOnClickListener {
             requireActivity().finish()
