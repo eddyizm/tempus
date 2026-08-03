@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.databinding.FragmentLoginEditorBinding
+import com.cappielloantonio.tempo.databinding.FragmentLoginServerBinding
 import com.cappielloantonio.tempo.model.Server
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.viewmodel.ServerViewModel
@@ -34,7 +34,7 @@ class LoginServerFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private var _binding: FragmentLoginEditorBinding? = null // memory-leak safe
+    private var _binding: FragmentLoginServerBinding? = null // memory-leak safe
     private val binding // only valid between onCreateView and onDestroyView.
         get() = _binding!!
     private lateinit var serverViewModel: ServerViewModel
@@ -55,7 +55,7 @@ class LoginServerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLoginEditorBinding.inflate(inflater, container, false)
+        _binding = FragmentLoginServerBinding.inflate(inflater, container, false)
 
         init()
 
@@ -73,6 +73,8 @@ class LoginServerFragment : Fragment() {
         setupUpdateButton()
         setupDeleteButton()
         setupOldLoginButton()
+        setupLocalUrlSwitch()
+        setupClientCertSwitch()
     }
 
     @OptIn(UnstableApi::class)
@@ -99,7 +101,7 @@ class LoginServerFragment : Fragment() {
             clientCert = ""
         )
 
-        serverViewModel.allServers.observe(this) { servers ->
+        serverViewModel.allServers.observe(viewLifecycleOwner) { servers ->
             serverList = listOf(defaultServer) + (servers?.map { server ->
                 Server(
                     serverId = server.serverId,
@@ -123,7 +125,7 @@ class LoginServerFragment : Fragment() {
             // Don't start dropdown with blank item, use the first dummy item
             if (!isInitialSyncDone && serverList.isNotEmpty()) {
                 binding.serversList.setText(serverList[0].serverName, false)
-                binding.createOrUpdateButton.text = getString(R.string.la_button_create)
+                binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
                 binding.deleteButton.isEnabled = false
                 binding.loginButton.isEnabled = false
                 isInitialSyncDone = true
@@ -140,7 +142,7 @@ class LoginServerFragment : Fragment() {
             selectedServerPosition = position
 
             if (position == 0) {
-                binding.createOrUpdateButton.text = getString(R.string.la_button_create)
+                binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
                 binding.deleteButton.isEnabled = false
                 binding.loginButton.isEnabled = false
                 binding.serverNameField.setText("")
@@ -151,11 +153,11 @@ class LoginServerFragment : Fragment() {
                 binding.serverCertField.setText("")
                 Toast.makeText(
                     context,
-                    getString(R.string.la_toast_creating),
+                    getString(R.string.la_server_toast_creating),
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
-                binding.createOrUpdateButton.text = getString(R.string.la_button_update)
+                binding.createOrUpdateButton.text = getString(R.string.la_server_button_update)
                 binding.deleteButton.isEnabled = true
                 binding.loginButton.isEnabled = true
                 val selectedServerName = parent.getItemAtPosition(position).toString()
@@ -167,7 +169,7 @@ class LoginServerFragment : Fragment() {
                 binding.serverCertField.setText(serverList[position].clientCert)
                 Toast.makeText(
                     context,
-                    getString(R.string.la_toast_selected) + " " + selectedServerName,
+                    getString(R.string.la_server_toast_selected) + " " + selectedServerName,
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -198,6 +200,27 @@ class LoginServerFragment : Fragment() {
                 putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_login_fragment")
             }
             startActivity(tempus)
+        }
+    }
+
+    fun setupLocalUrlSwitch() {
+        binding.serverLocalUrlSwitch.setOnClickListener {
+            if (binding.serverLocalUrlSwitch.isChecked) {
+                binding.serverLocalUrlFieldContainer.visibility = View.VISIBLE
+            } else {
+                binding.serverLocalUrlFieldContainer.visibility = View.GONE
+            }
+
+        }
+    }
+
+    fun setupClientCertSwitch() {
+        binding.serverCertSwitch.setOnClickListener {
+            if (binding.serverCertSwitch.isChecked) {
+                binding.serverCertFieldContainer.visibility = View.VISIBLE
+            } else {
+                binding.serverCertFieldContainer.visibility = View.GONE
+            }
         }
     }
 

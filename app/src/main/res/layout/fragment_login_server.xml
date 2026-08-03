@@ -13,9 +13,9 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/betaDisclaimer"
@@ -39,7 +39,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:text="@string/la_description"
+        android:text="@string/la_server_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serversListContainer"
@@ -75,7 +75,7 @@
                     android:id="@+id/server_name_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_name" />
+                    android:hint="@string/la_server_field_server_name" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -91,7 +91,7 @@
                     android:id="@+id/server_user_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_user" />
+                    android:hint="@string/la_server_field_server_user" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,7 +101,7 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="6dp"
                 android:textColorHint="?android:textColorHint"
                 app:endIconMode="password_toggle"
                 app:endIconTint="?android:textColorSecondary" >
@@ -110,7 +110,7 @@
                     android:id="@+id/server_password_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_pass"
+                    android:hint="@string/la_server_field_server_pass"
                     android:inputType="textPassword"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -121,15 +121,33 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" >
+                android:layout_marginBottom="6dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/server_public_url_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_public_url" />
+                    android:hint="@string/la_server_field_server_public_url" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Server password plaintext switch -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/serverPlaintextPassowrd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:checked="false"
+                android:text="@string/la_server_field_plaintext_password_checkbox"/>
+
+            <!-- Server local url switch -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/server_local_url_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:checked="false"
+                android:text="@string/la_server_field_server_local_url"/>
 
             <!-- Server local url field -->
             <com.google.android.material.textfield.TextInputLayout
@@ -137,15 +155,25 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" >
+                android:layout_marginBottom="6dp"
+                android:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/server_local_url_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_local_url" />
+                    android:hint="@string/la_server_field_server_local_url" />
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Server cert switch -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/server_cert_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:checked="false"
+                android:text="@string/la_server_switch_cert"/>
 
             <!-- Server cert field -->
             <com.google.android.material.textfield.TextInputLayout
@@ -153,23 +181,16 @@
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp" >
+                android:layout_marginBottom="16dp"
+                android:visibility="gone">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/server_cert_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/la_field_server_cert" />
+                    android:hint="@string/la_server_field_server_cert" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
-            <CheckBox android:id="@+id/serverPlaintextPassowrd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
-                android:layout_marginEnd="32dp"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/la_field_plaintext_password" />
 
         </LinearLayout>
     </ScrollView>
@@ -201,7 +222,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/la_button_create" />
+                android:text="@string/la_server_button_create" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteButton"
@@ -209,7 +230,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/la_button_delete" />
+                android:text="@string/la_server_button_delete" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/loginButton"
@@ -217,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/la_button_login" />
+                android:text="@string/la_server_button_login" />
         </LinearLayout>
 
     </LinearLayout>
@@ -227,7 +248,7 @@
         android:id="@+id/button5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/la_button_return"
+        android:text="@string/la_server_button_return"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"

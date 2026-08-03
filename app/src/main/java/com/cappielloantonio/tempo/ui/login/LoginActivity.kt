@@ -39,22 +39,24 @@ class LoginActivity : AppCompatActivity() {
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
-                0 -> "Greetings"
-                1 -> "Editor"
-                2 -> "Viewer"
+                0 -> "Welcome"
+                1 -> "Permissions"
+                2 -> "Themes"
+                3 -> "Servers"
                 else -> ""
             }
         }.attach()
     }
 
     private inner class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
-        override fun getItemCount(): Int = 3
+        override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> LoginGreeterFragment()
-                1 -> LoginServerFragment()
-                2 -> LoginViewerFragment()
+                1 -> LoginPermissionFragment()
+                2 -> LoginThemeFragment()
+                3 -> LoginServerFragment()
                 else -> LoginGreeterFragment()
             }
         }
