@@ -63,6 +63,7 @@ import com.cappielloantonio.tempo.subsonic.models.Playlist;
                 @AutoMigration(from = 17, to = 18),
                 @AutoMigration(from = 18, to = 19),
                 @AutoMigration(from = 19, to = 20),
+                @AutoMigration(from = 20, to = 21),
         }
 )
 @TypeConverters({DateConverters.class, StringListConverter.class})

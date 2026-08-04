@@ -366,7 +366,14 @@ public class MusicUtil {
         if (!Preferences.preferTranscodedDownload() || Preferences.isServerPrioritizedInTranscodedDownload())
             return;
 
-        String format = getTranscodingFormatPreferenceForDownload();
+        applyTranscodeMetadata(download, getTranscodingFormatPreferenceForDownload(),
+                getBitratePreferenceForDownload());
+    }
+
+    // The same rewrite, for a caller that knows the format and ceiling a file was actually fetched
+    // with rather than the ones configured now.
+    public static void applyTranscodeMetadata(Download download, String format, String maxBitRate) {
+        if (download == null) return;
         if (format == null || format.equals("raw")) return;
 
         download.setSuffix(format);
@@ -379,7 +386,7 @@ public class MusicUtil {
         // maxBitRate is the configured ceiling; "0" means no limit, so the real bitrate is unknown.
         Integer bitrate = null;
         try {
-            int parsed = Integer.parseInt(getBitratePreferenceForDownload());
+            int parsed = Integer.parseInt(maxBitRate);
             if (parsed > 0) bitrate = parsed;
         } catch (NumberFormatException ignored) {
         }
