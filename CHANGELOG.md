@@ -1,5 +1,8 @@
 # Changelog
 
+## [4.23.2](https://github.com/eddyizm/tempus/releases/tag/v4.23.2) (2026-08-04)
+* fix: stop the 4.23 upgrade wiping downloads, and restore them for users already hit (#961)
+
 ## [4.23.1](https://github.com/eddyizm/tempus/releases/tag/v4.23.1) (2026-08-02)
 * fix: crashing on start up on update from 4.22.2 (NullPointerException in Subsonic.java) (#953) \ (#954)
 
