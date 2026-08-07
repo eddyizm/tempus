@@ -436,12 +436,13 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         });
 
         // Synchronize scrolling between the list and the header in landscape mode
-        if (bind.playlistInfoScrollView != null) {
+        androidx.core.widget.NestedScrollView playlistInfoScrollView = bind.playlistInfoScrollView;
+        if (playlistInfoScrollView != null) {
             bind.songRecyclerView.addOnScrollListener(new androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    bind.playlistInfoScrollView.scrollBy(0, dy);
+                    playlistInfoScrollView.scrollBy(0, dy);
                 }
             });
         }
