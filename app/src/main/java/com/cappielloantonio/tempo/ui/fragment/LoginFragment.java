@@ -124,7 +124,8 @@ public class LoginFragment extends Fragment implements ClickCallback {
         bind.newLoginButton.setOnClickListener(v -> {
             activity.finish();
             Intent tempus = new Intent(requireActivity(), LoginActivity.class);
-            tempus.putExtra("MAIN_ACTIVITY_INTENT", "open_new_login_activity");
+            tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("SELECT_FRAGMENT", 3);
             startActivity(tempus);
         });
     }
