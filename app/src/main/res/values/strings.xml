@@ -804,10 +804,11 @@
     <string name="la_server_button_update">Update</string>
     <string name="la_server_button_delete">Delete</string>
     <string name="la_server_button_login">Login</string>
-    <string name="la_server_button_return">Return to Login</string>
+    <string name="la_server_button_return">Return to server list</string>
     <string name="la_server_dropdown_add_new">Add new server</string>
-    <string name="la_server_toast_creating">Creating new server</string>
-    <string name="la_server_toast_selected">Selected: </string>
+    <string name="la_server_toast_created">Server created</string>
+    <string name="la_server_toast_updated">Server updated</string>
+    <string name="la_server_toast_deleted">Server deleted</string>
     <string name="la_server_switch_plaintext_password">Plaintext passowrd (legacy servers)</string>
     <string name="la_server_switch_local_url">Set a local URL</string>
     <string name="la_server_switch_cert">Client certificate (mTLS)</string>

@@ -39,7 +39,6 @@ class LoginServerFragment : Fragment() {
         get() = _binding!!
     private lateinit var serverViewModel: ServerViewModel
     private lateinit var serverList: List<Server>
-    private var selectedServerId: String = "Unselected"
     private var selectedServerPosition: Int = 0
     private var isInitialSyncDone = false
 
@@ -69,25 +68,25 @@ class LoginServerFragment : Fragment() {
 
     fun init() {
         setupServerDropdownSelector()
-        setupLoginButton()
-        setupUpdateButton()
-        setupDeleteButton()
-        setupOldLoginButton()
-        setupLocalUrlSwitch()
-        setupClientCertSwitch()
+        initLoginButton()
+        initCreateOrUpdateButton()
+        initDeleteButton()
+        initOldLoginButton()
+        initLocalUrlSwitch()
+        initClientCertSwitch()
     }
 
     @OptIn(UnstableApi::class)
     fun setupServerDropdownSelector() {
         serverViewModel = ViewModelProvider(this)[ServerViewModel::class.java]
-        syncServerList()
-        onServerSelected()
+        initServerListSync()
+        initServerListSelector()
     }
 
     /**
      * Keeps the dropdown list up-to-date with changes on the database
      */
-    fun syncServerList() {
+    fun initServerListSync() {
 
         val defaultServer = Server(
             serverId = "Unselected",
@@ -136,48 +135,54 @@ class LoginServerFragment : Fragment() {
     /**
      * React to server selection and trigger a custom action
      */
-    fun onServerSelected() {
-        binding.serversList.setOnItemClickListener { parent, _, position, _ ->
-            selectedServerId = serverList[position].serverId
+    fun initServerListSelector() {
+        binding.serversList.setOnItemClickListener { _, _, position, _ ->
             selectedServerPosition = position
-
             if (position == 0) {
-                binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
-                binding.deleteButton.isEnabled = false
-                binding.loginButton.isEnabled = false
-                binding.serverNameField.setText("")
-                binding.serverUserField.setText("")
-                binding.serverPasswordField.setText("")
-                binding.serverPublicUrlField.setText("")
-                binding.serverLocalUrlField.setText("")
-                binding.serverCertField.setText("")
-                Toast.makeText(
-                    context,
-                    getString(R.string.la_server_toast_creating),
-                    Toast.LENGTH_SHORT
-                ).show()
+                onFirstServerSelected()
             } else {
-                binding.createOrUpdateButton.text = getString(R.string.la_server_button_update)
-                binding.deleteButton.isEnabled = true
-                binding.loginButton.isEnabled = true
-                val selectedServerName = parent.getItemAtPosition(position).toString()
-                binding.serverNameField.setText(serverList[position].serverName)
-                binding.serverUserField.setText(serverList[position].username)
-                binding.serverPasswordField.setText(serverList[position].password)
-                binding.serverPublicUrlField.setText(serverList[position].address)
-                binding.serverLocalUrlField.setText(serverList[position].localAddress)
-                binding.serverCertField.setText(serverList[position].clientCert)
-                Toast.makeText(
-                    context,
-                    getString(R.string.la_server_toast_selected) + " " + selectedServerName,
-                    Toast.LENGTH_SHORT
-                ).show()
+                onNonFirstServerSelected(position)
             }
         }
     }
 
+    private fun onFirstServerSelected() {
+        binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
+        binding.deleteButton.isEnabled = false
+        binding.loginButton.isEnabled = false
+        binding.serverNameField.setText("")
+        binding.serverUserField.setText("")
+        binding.serverPasswordField.setText("")
+        binding.serverPublicUrlField.setText("")
+        binding.serverLocalUrlField.setText("")
+        binding.serverCertField.setText("")
+    }
+
+    private fun onNonFirstServerSelected(position: Int) {
+        binding.createOrUpdateButton.text = getString(R.string.la_server_button_update)
+        binding.deleteButton.isEnabled = true
+        binding.loginButton.isEnabled = true
+        binding.serverNameField.setText(serverList[position].serverName)
+        binding.serverUserField.setText(serverList[position].username)
+        binding.serverPasswordField.setText(serverList[position].password)
+        binding.serverPublicUrlField.setText(serverList[position].address)
+        binding.serverLocalUrlField.setText(serverList[position].localAddress)
+        binding.serverCertField.setText(serverList[position].clientCert)
+    }
+
+    private fun updateSelectedServer(position: Int) {
+        if (position == 0) {
+            onFirstServerSelected()
+            selectedServerPosition = 0 // particularly for the delete button
+        } else {
+            onNonFirstServerSelected(position)
+        }
+        binding.serversList.setText(serverList[position].serverName, false)
+        binding.serversList.performCompletion()
+    }
+
     @OptIn(UnstableApi::class)
-    fun setupLoginButton() {
+    fun initLoginButton() {
         binding.loginButton.setOnClickListener {
             updateLegacySharedPreferences()
             requireActivity().finish()
@@ -186,14 +191,20 @@ class LoginServerFragment : Fragment() {
         }
     }
 
-    fun setupDeleteButton() {
+    fun initDeleteButton() {
         binding.deleteButton.setOnClickListener {
             serverViewModel.deleteServer(serverList[selectedServerPosition])
+            updateSelectedServer(0)
+            Toast.makeText(
+                context,
+                getString(R.string.la_server_toast_deleted),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     @OptIn(UnstableApi::class)
-    fun setupOldLoginButton() {
+    fun initOldLoginButton() {
         binding.button5.setOnClickListener {
             requireActivity().finish()
             val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
@@ -203,7 +214,7 @@ class LoginServerFragment : Fragment() {
         }
     }
 
-    fun setupLocalUrlSwitch() {
+    fun initLocalUrlSwitch() {
         binding.serverLocalUrlSwitch.setOnClickListener {
             if (binding.serverLocalUrlSwitch.isChecked) {
                 binding.serverLocalUrlFieldContainer.visibility = View.VISIBLE
@@ -214,7 +225,7 @@ class LoginServerFragment : Fragment() {
         }
     }
 
-    fun setupClientCertSwitch() {
+    fun initClientCertSwitch() {
         binding.serverCertSwitch.setOnClickListener {
             if (binding.serverCertSwitch.isChecked) {
                 binding.serverCertFieldContainer.visibility = View.VISIBLE
@@ -246,7 +257,7 @@ class LoginServerFragment : Fragment() {
 
     }
 
-    fun setupUpdateButton() {
+    fun initCreateOrUpdateButton() {
 
         binding.createOrUpdateButton.setOnClickListener {
 
@@ -286,8 +297,20 @@ class LoginServerFragment : Fragment() {
 
             if (selectedServerPosition == 0) {
                 serverViewModel.insertServer(newServer)
+                Toast.makeText(
+                    context,
+                    getString(R.string.la_server_toast_created),
+                    Toast.LENGTH_SHORT
+                ).show()
+                updateSelectedServer(0)
             } else {
                 serverViewModel.updateServer(newServer)
+                Toast.makeText(
+                    context,
+                    getString(R.string.la_server_toast_updated),
+                    Toast.LENGTH_SHORT
+                ).show()
+                updateSelectedServer(selectedServerPosition)
             }
         }
     }
