@@ -345,7 +345,7 @@ class LoginServerFragment : Fragment() {
         } else if (binding.serverPublicUrlField.text.toString().isEmpty()) {
             binding.serverPublicUrlField.error = errMsgEmpty
             return false
-        } else if (binding.serverPublicUrlField.text.toString().toHttpUrlOrNull() == null) {
+        } else if (!urlSanitization(binding.serverPublicUrlField.text.toString())) {
             binding.serverPublicUrlField.error = errMsgUrl
             return false
         } else if (binding.serverLocalUrlSwitch.isChecked
@@ -353,9 +353,18 @@ class LoginServerFragment : Fragment() {
             binding.serverLocalUrlField.error = errMsgEmpty
             return false
         } else if (binding.serverLocalUrlSwitch.isChecked
-            && binding.serverLocalUrlField.text.toString().toHttpUrlOrNull() == null
+            && !urlSanitization(binding.serverLocalUrlField.text.toString())
         ) {
             binding.serverLocalUrlField.error = errMsgUrl
+            return false
+        }
+        return true
+    }
+
+    private fun urlSanitization(url: String): Boolean {
+        if (!URLUtil.isValidUrl(url)) {
+            return false
+        } else if (url.toHttpUrlOrNull() == null) {
             return false
         }
         return true
