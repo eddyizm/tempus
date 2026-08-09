@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.URLUtil
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.OptIn
@@ -18,6 +19,8 @@ import com.cappielloantonio.tempo.databinding.FragmentLoginServerBinding
 import com.cappielloantonio.tempo.model.Server
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.viewmodel.ServerViewModel
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -166,8 +169,26 @@ class LoginServerFragment : Fragment() {
         binding.serverUserField.setText(serverList[position].username)
         binding.serverPasswordField.setText(serverList[position].password)
         binding.serverPublicUrlField.setText(serverList[position].address)
-        binding.serverLocalUrlField.setText(serverList[position].localAddress)
-        binding.serverCertField.setText(serverList[position].clientCert)
+
+        /* Optional field */
+        val localAddress: String? = serverList[position].localAddress
+        if (!localAddress.isNullOrEmpty()) {
+            binding.serverLocalUrlSwitch.isChecked = true
+            binding.serverLocalUrlFieldContainer.visibility = View.VISIBLE
+            binding.serverLocalUrlField.setText(localAddress)
+        } else {
+            binding.serverLocalUrlField.setText("") // migrate old null to string
+        }
+
+        /* Optional field */
+        val clientCert: String? = serverList[position].clientCert
+        if (!clientCert.isNullOrEmpty()) {
+            binding.serverCertSwitch.isChecked = true
+            binding.serverCertFieldContainer.visibility = View.VISIBLE
+            binding.serverCertField.setText(clientCert)
+        } else {
+            binding.serverCertField.setText("") // migrate old null to string
+        }
     }
 
     private fun updateSelectedServer(position: Int) {
@@ -218,8 +239,11 @@ class LoginServerFragment : Fragment() {
         binding.serverLocalUrlSwitch.setOnClickListener {
             if (binding.serverLocalUrlSwitch.isChecked) {
                 binding.serverLocalUrlFieldContainer.visibility = View.VISIBLE
+                // elvis operator because old configs save null
+                binding.serverLocalUrlField.setText(serverList[selectedServerPosition].localAddress ?: "")
             } else {
                 binding.serverLocalUrlFieldContainer.visibility = View.GONE
+                binding.serverLocalUrlField.setText("")
             }
 
         }
@@ -229,8 +253,11 @@ class LoginServerFragment : Fragment() {
         binding.serverCertSwitch.setOnClickListener {
             if (binding.serverCertSwitch.isChecked) {
                 binding.serverCertFieldContainer.visibility = View.VISIBLE
+                // elvis operator because old configs save null
+                binding.serverCertField.setText(serverList[selectedServerPosition].clientCert ?: "")
             } else {
                 binding.serverCertFieldContainer.visibility = View.GONE
+                binding.serverCertField.setText("")
             }
         }
     }
@@ -261,20 +288,7 @@ class LoginServerFragment : Fragment() {
 
         binding.createOrUpdateButton.setOnClickListener {
 
-            val errMsg: String = "Mandatory Field"
-            if (binding.serverNameField.text.toString().isEmpty()) {
-                binding.serverNameField.error = errMsg
-                return@setOnClickListener
-            } else if (binding.serverUserField.text.toString().isEmpty()) {
-                binding.serverUserField.error = errMsg
-                return@setOnClickListener
-            } else if (binding.serverPasswordField.text.toString().isEmpty()) {
-                binding.serverUserField.error = errMsg
-                return@setOnClickListener
-            } else if (binding.serverPublicUrlField.text.toString().isEmpty()) {
-                binding.serverPublicUrlField.error = errMsg
-                return@setOnClickListener
-            }
+            if (!inputSanitization()) return@setOnClickListener
 
             var serverId: String
             if (selectedServerPosition == 0) { // New server, we use db_row_total+1 as primary key
@@ -292,7 +306,7 @@ class LoginServerFragment : Fragment() {
                 localAddress = binding.serverLocalUrlField.text.toString(),
                 timestamp = System.currentTimeMillis(),
                 isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
-                clientCert = ""
+                clientCert = binding.serverCertField.text.toString()
             )
 
             if (selectedServerPosition == 0) {
@@ -310,9 +324,41 @@ class LoginServerFragment : Fragment() {
                     getString(R.string.la_server_toast_updated),
                     Toast.LENGTH_SHORT
                 ).show()
-                updateSelectedServer(selectedServerPosition)
+                updateSelectedServer(0)
             }
         }
+    }
+
+    private fun inputSanitization(): Boolean {
+
+        val errMsgEmpty: String = getString(R.string.la_server_field_server_empty_error)
+        val errMsgUrl: String = getString(R.string.la_server_field_server_url_error)
+        if (binding.serverNameField.text.toString().isEmpty()) {
+            binding.serverNameField.error = errMsgEmpty
+            return false
+        } else if (binding.serverUserField.text.toString().isEmpty()) {
+            binding.serverUserField.error = errMsgEmpty
+            return false
+        } else if (binding.serverPasswordField.text.toString().isEmpty()) {
+            binding.serverPasswordField.error = errMsgEmpty
+            return false
+        } else if (binding.serverPublicUrlField.text.toString().isEmpty()) {
+            binding.serverPublicUrlField.error = errMsgEmpty
+            return false
+        } else if (binding.serverPublicUrlField.text.toString().toHttpUrlOrNull() == null) {
+            binding.serverPublicUrlField.error = errMsgUrl
+            return false
+        } else if (binding.serverLocalUrlSwitch.isChecked
+            && binding.serverLocalUrlField.text.toString().isEmpty()) {
+            binding.serverLocalUrlField.error = errMsgEmpty
+            return false
+        } else if (binding.serverLocalUrlSwitch.isChecked
+            && binding.serverLocalUrlField.text.toString().toHttpUrlOrNull() == null
+        ) {
+            binding.serverLocalUrlField.error = errMsgUrl
+            return false
+        }
+        return true
     }
 
     companion object {

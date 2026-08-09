@@ -147,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:checked="false"
-                android:text="@string/la_server_field_server_local_url"/>
+                android:text="@string/la_server_switch_local_url"/>
 
             <!-- Server local url field -->
             <com.google.android.material.textfield.TextInputLayout
