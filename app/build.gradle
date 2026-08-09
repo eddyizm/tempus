@@ -14,8 +14,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 36
 
-        versionCode 38
-        versionName '4.22.3-dev'
+        versionCode 41
+        versionName '4.23.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -142,6 +142,8 @@ dependencies {
     testImplementation 'org.mockito.kotlin:mockito-kotlin:5.4.0'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
 
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.androidx.test.runner
 }
 
 java {

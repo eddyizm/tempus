@@ -47,6 +47,8 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_MOBILE = "audio_transcode_format_mobile"
     private const val WIFI_ONLY = "wifi_only"
     private const val DOWNLOAD_WIFI_ONLY = "download_wifi_only"
+    private const val DOWNLOAD_DATABASE_REPAIRED = "download_database_repaired_version"
+    private const val DOWNLOAD_REPAIR_ATTEMPTS = "download_repair_attempts"
     private const val DATA_SAVING_MODE = "data_saving_mode"
     private const val SERVER_UNREACHABLE = "server_unreachable"
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
@@ -477,6 +479,26 @@ object Preferences {
     @JvmStatic
     fun setDownloadWifiOnly(enabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(DOWNLOAD_WIFI_ONLY, enabled).apply()
+    }
+
+    @JvmStatic
+    fun getRepairedDownloadDatabaseVersion(): Int {
+        return App.getInstance().preferences.getInt(DOWNLOAD_DATABASE_REPAIRED, 0)
+    }
+
+    @JvmStatic
+    fun setDownloadDatabaseRepaired(version: Int) {
+        App.getInstance().preferences.edit().putInt(DOWNLOAD_DATABASE_REPAIRED, version).apply()
+    }
+
+    @JvmStatic
+    fun getDownloadRepairAttempts(): Int {
+        return App.getInstance().preferences.getInt(DOWNLOAD_REPAIR_ATTEMPTS, 0)
+    }
+
+    @JvmStatic
+    fun setDownloadRepairAttempts(attempts: Int) {
+        App.getInstance().preferences.edit().putInt(DOWNLOAD_REPAIR_ATTEMPTS, attempts).apply()
     }
 
     @JvmStatic

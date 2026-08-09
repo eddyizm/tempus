@@ -1,0 +1,11 @@
+feat: 
+Add Basque (eu) translation
+download notifications updated
+display playlist cover art from server if available
+add playlist sorting by last played, last updated, and recently active
+fixes: 
+Make "Play Next" actually play next under shuffle
+Show the actual decoded format in the player instead of the requested transcode
+Show the transcoded format for downloaded songs in the quality badge
+
+full log: https://github.com/eddyizm/tempus/compare/v4.22.2...v4.23.1
