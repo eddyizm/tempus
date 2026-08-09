@@ -17,10 +17,18 @@ import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.databinding.FragmentLoginServerBinding
 import com.cappielloantonio.tempo.model.Server
+import com.cappielloantonio.tempo.subsonic.utils.StringUtil
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.viewmodel.ServerViewModel
-import okhttp3.HttpUrl
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
+import java.util.UUID
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -129,7 +137,7 @@ class LoginServerFragment : Fragment() {
                 binding.serversList.setText(serverList[0].serverName, false)
                 binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
                 binding.deleteButton.isEnabled = false
-                binding.loginButton.isEnabled = false
+                binding.testButton.isEnabled = false
                 isInitialSyncDone = true
             }
         }
@@ -152,7 +160,7 @@ class LoginServerFragment : Fragment() {
     private fun onFirstServerSelected() {
         binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
         binding.deleteButton.isEnabled = false
-        binding.loginButton.isEnabled = false
+        binding.testButton.isEnabled = false
         binding.serverNameField.setText("")
         binding.serverUserField.setText("")
         binding.serverPasswordField.setText("")
@@ -164,7 +172,7 @@ class LoginServerFragment : Fragment() {
     private fun onNonFirstServerSelected(position: Int) {
         binding.createOrUpdateButton.text = getString(R.string.la_server_button_update)
         binding.deleteButton.isEnabled = true
-        binding.loginButton.isEnabled = true
+        binding.testButton.isEnabled = true
         binding.serverNameField.setText(serverList[position].serverName)
         binding.serverUserField.setText(serverList[position].username)
         binding.serverPasswordField.setText(serverList[position].password)
@@ -204,11 +212,15 @@ class LoginServerFragment : Fragment() {
 
     @OptIn(UnstableApi::class)
     fun initLoginButton() {
-        binding.loginButton.setOnClickListener {
+        binding.testButton.setOnLongClickListener {
             updateLegacySharedPreferences()
             requireActivity().finish()
             val tempus = Intent(context, MainActivity::class.java)
             startActivity(tempus)
+            return@setOnLongClickListener true
+        }
+        binding.testButton.setOnClickListener {
+            testConnection()
         }
     }
 
@@ -368,6 +380,86 @@ class LoginServerFragment : Fragment() {
             return false
         }
         return true
+    }
+
+    private fun testConnection() {
+        binding.testButton.isEnabled = false
+        Toast.makeText(
+            context,
+            getString(R.string.la_server_toast_connection_testing),
+            Toast.LENGTH_SHORT
+        ).show()
+
+        val serverUrl = serverList[selectedServerPosition].address
+        val username = serverList[selectedServerPosition].username
+        val password = serverList[selectedServerPosition].password
+        val clientName = "Tempus"
+        val apiVersion = "1.16.0"
+        val url: String
+
+        if (serverList[selectedServerPosition].isLowSecurity) {
+            url = "$serverUrl/rest/ping.view?u=$username&p=$password&v=$apiVersion&c=$clientName&f=json"
+        } else {
+            val salt = UUID.randomUUID().toString().substring(0, 6)
+            val token = StringUtil.tokenize(password + salt)
+            url = "$serverUrl/rest/ping.view?u=$username&t=$token&s=$salt&v=$apiVersion&c=$clientName&f=json"
+        }
+
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                binding.testButton.post {
+                    binding.testButton.isEnabled = true
+                    Toast.makeText(
+                        context,
+                        getString(R.string.la_server_toast_connection_error) + e.localizedMessage,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.use {
+                    var isSubsonicOk = false
+
+                    if (response.isSuccessful) {
+                        val responseBody = response.body?.string()
+                        if (responseBody != null) {
+                            try {
+                                val jsonRoot = JSONObject(responseBody)
+                                val subsonicResponse =
+                                    jsonRoot.getJSONObject("subsonic-response")
+                                if (subsonicResponse.getString("status") == "ok") {
+                                    isSubsonicOk = true
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+
+                    // Switch back to Main Thread to update UI
+                    binding.testButton.post {
+                        binding.testButton.isEnabled = true
+                        if (isSubsonicOk) {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.la_server_toast_connection_success),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                context,
+                                getString(R.string.la_server_toast_connection_failure),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                }
+            }
+        })
     }
 
     companion object {

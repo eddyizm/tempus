@@ -233,12 +233,12 @@
                 android:text="@string/la_server_button_delete" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/loginButton"
+                android:id="@+id/testButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/la_server_button_login" />
+                android:text="@string/la_server_button_test" />
         </LinearLayout>
 
     </LinearLayout>
