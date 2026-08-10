@@ -5,6 +5,7 @@ import android.util.Log;
 import com.cappielloantonio.tempo.subsonic.RetrofitClient;
 import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
+import com.cappielloantonio.tempo.util.Preferences;
 
 import retrofit2.Call;
 
@@ -41,7 +42,7 @@ public class BrowsingClient {
 
     public Call<ApiResponse> getArtists() {
         Log.d(TAG, "getArtists()");
-        return browsingService.getArtists(subsonic.getParams());
+        return browsingService.getArtists(subsonic.getParams(), Preferences.getActiveMusicFolderId());
     }
 
     public Call<ApiResponse> getArtist(String id) {

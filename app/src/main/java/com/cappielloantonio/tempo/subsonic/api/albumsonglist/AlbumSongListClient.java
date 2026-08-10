@@ -5,6 +5,7 @@ import android.util.Log;
 import com.cappielloantonio.tempo.subsonic.RetrofitClient;
 import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
+import com.cappielloantonio.tempo.util.Preferences;
 
 import retrofit2.Call;
 
@@ -26,22 +27,22 @@ public class AlbumSongListClient {
 
     public Call<ApiResponse> getAlbumList2(String type, int size, int offset, Integer fromYear, Integer toYear) {
         Log.d(TAG, "getAlbumList2()");
-        return albumSongListService.getAlbumList2(subsonic.getParams(), type, size, offset, fromYear, toYear);
+        return albumSongListService.getAlbumList2(subsonic.getParams(), type, size, offset, fromYear, toYear, Preferences.getActiveMusicFolderId());
     }
 
     public Call<ApiResponse> getRandomSongs(int size, Integer fromYear, Integer toYear) {
         Log.d(TAG, "getRandomSongs()");
-        return albumSongListService.getRandomSongs(subsonic.getParams(), size, fromYear, toYear);
+        return albumSongListService.getRandomSongs(subsonic.getParams(), size, fromYear, toYear, Preferences.getActiveMusicFolderId());
     }
 
     public Call<ApiResponse> getRandomSongs(int size, Integer fromYear, Integer toYear, String genre) {
         Log.d(TAG, "getRandomSongs()");
-        return albumSongListService.getRandomSongs(subsonic.getParams(), size, fromYear, toYear, genre);
+        return albumSongListService.getRandomSongs(subsonic.getParams(), size, fromYear, toYear, genre, Preferences.getActiveMusicFolderId());
     }
 
     public Call<ApiResponse> getSongsByGenre(String genre, int count, int offset) {
         Log.d(TAG, "getSongsByGenre()");
-        return albumSongListService.getSongsByGenre(subsonic.getParams(), genre, count, offset);
+        return albumSongListService.getSongsByGenre(subsonic.getParams(), genre, count, offset, Preferences.getActiveMusicFolderId());
     }
 
     public Call<ApiResponse> getNowPlaying() {

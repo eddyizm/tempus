@@ -84,6 +84,8 @@ public class LibraryFragment extends Fragment implements ClickCallback {
         View view = bind.getRoot();
         libraryViewModel = new ViewModelProvider(requireActivity()).get(LibraryViewModel.class);
 
+        libraryViewModel.clearCacheIfMusicFolderChanged();
+
         init();
 
         return view;

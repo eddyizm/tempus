@@ -23,7 +23,7 @@ public interface BrowsingService {
     Call<ApiResponse> getGenres(@QueryMap Map<String, String> params);
 
     @GET("getArtists")
-    Call<ApiResponse> getArtists(@QueryMap Map<String, String> params);
+    Call<ApiResponse> getArtists(@QueryMap Map<String, String> params, @Query("musicFolderId") String musicFolderId);
 
     @GET("getArtist")
     Call<ApiResponse> getArtist(@QueryMap Map<String, String> params, @Query("id") String id);
