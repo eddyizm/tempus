@@ -1,6 +1,42 @@
 # Changelog
 
-## [4.22.2](https://github.com/eddyizm/tempus/releases/tag/v4.22.) (2026-07-19)
+## [4.23.2](https://github.com/eddyizm/tempus/releases/tag/v4.23.2) (2026-08-04)
+* fix: stop the 4.23 upgrade wiping downloads, and restore them for users already hit (#961)
+
+## [4.23.1](https://github.com/eddyizm/tempus/releases/tag/v4.23.1) (2026-08-02)
+* fix: crashing on start up on update from 4.22.2 (NullPointerException in Subsonic.java) (#953) \ (#954)
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.22.2...v4.23.1
+
+## [4.23.0](https://github.com/eddyizm/tempus/releases/tag/v4.23.0) (2026-08-02)
+## What's Changed
+* fix: Prevent TransactionTooLargeException crash when backgrounding after deep navigation by @herrerad85 in https://github.com/eddyizm/tempus/pull/863
+* Additional stripped for nav by @eddyizm in https://github.com/eddyizm/tempus/pull/921
+* Feat/download notifications (#62 #902 #345) by @eddyizm in https://github.com/eddyizm/tempus/pull/913
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/909
+* feat: deprecate equalizer from quick actions button by @tvillega in https://github.com/eddyizm/tempus/pull/925
+* fix: Make "Play Next" actually play next under shuffle (#329) by @eddyizm in https://github.com/eddyizm/tempus/pull/910
+* feat: add playlist sorting by last played, last updated, and recently active by @shkarlsson in https://github.com/eddyizm/tempus/pull/908
+* fix: Android Auto browse/search could hang forever on error responses by @sinful1992 in https://github.com/eddyizm/tempus/pull/867
+* Scrobble a track you skip once it passes the play threshold by @herrerad85 in https://github.com/eddyizm/tempus/pull/916
+* Show the actual decoded format in the player instead of the requested transcode by @herrerad85 in https://github.com/eddyizm/tempus/pull/923
+* chore(i18n): Add Basque (eu) translation by @planetryan in https://github.com/eddyizm/tempus/pull/928
+* feat: add to playlist button on overflow menu by @tvillega in https://github.com/eddyizm/tempus/pull/926
+* Show the transcoded format for downloaded songs in the quality badge by @herrerad85 in https://github.com/eddyizm/tempus/pull/929
+* feat: add device info to crash landing by @tvillega in https://github.com/eddyizm/tempus/pull/936
+* fix: show album art on Chromecast by sending a fetchable cover-art URL by @herrerad85 in https://github.com/eddyizm/tempus/pull/852
+* feat: display playlist cover art from server if available by @eangele1 in https://github.com/eddyizm/tempus/pull/941
+* fix: map playback queues off the UI thread so large playlists stop hanging by @herrerad85 in https://github.com/eddyizm/tempus/pull/948
+* fix: handle insert and insertAll methods crashing with IOBE when afte… by @eddyizm in https://github.com/eddyizm/tempus/pull/944
+
+## New Contributors
+* @shkarlsson made their first contribution in https://github.com/eddyizm/tempus/pull/908
+* @planetryan made their first contribution in https://github.com/eddyizm/tempus/pull/928
+* @eangele1 made their first contribution in https://github.com/eddyizm/tempus/pull/941
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.22.2...v4.23.0
+
+## [4.22.2](https://github.com/eddyizm/tempus/releases/tag/v4.22.2) (2026-07-19)
 ## What's Changed
 * chore: fdroid reproducible build
 

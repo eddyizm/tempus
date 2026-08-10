@@ -58,6 +58,7 @@ import com.cappielloantonio.tempo.ui.fragment.PlayerBottomSheetFragment;
 import com.cappielloantonio.tempo.util.AssetLinkNavigator;
 import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
+import com.cappielloantonio.tempo.util.DownloadRepair;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -148,6 +149,8 @@ public class MainActivity extends BaseActivity {
         checkConnectionType();
         getOpenSubsonicExtensions();
         checkTempoUpdate();
+
+        DownloadRepair.repairIfNeeded(this);
 
         maybeSchedulePlaybackIntent(getIntent());
     }
