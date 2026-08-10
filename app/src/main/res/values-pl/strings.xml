@@ -533,6 +533,8 @@
     <string name="settings_rounded_corner_size_summary">Ustawia wielkość krzywizny kąta.</string>
     <string name="settings_rounded_corner_summary">Jeżeli włączone, ustawia  kąt krzywizny dla wszystkich renderowanych okładek. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_scan_title">Skanuj bibliotekę</string>
+	<string name="settings_music_library">Biblioteka muzyki</string>
+    <string name="settings_music_library_all">Wszystkie biblioteki</string>
     <string name="settings_scrobble_title">Włącz scrobbling muzyki</string>
     <string name="settings_system_language">Język systemowy</string>
     <string name="settings_share_title">Włącz udostępnianie muzyki</string>
