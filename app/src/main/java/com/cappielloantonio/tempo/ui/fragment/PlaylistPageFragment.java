@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -300,40 +301,118 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         // heap climbed with every playlist opened until OOM. getViewLifecycleOwner()
         // removes the observer at onDestroyView so the view tree can be collected.
         // See issue #696.
-        playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
-            if (bind != null && songs != null && !songs.isEmpty()) {
-                java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> randomSongs = new java.util.ArrayList<>(songs);
-                java.util.Collections.shuffle(randomSongs);
+        Playlist playlist = playlistPageViewModel.getPlaylist();
 
-                // Pic top-left
-                CustomGlideRequest.Builder
-                        .from(requireContext(), !randomSongs.isEmpty() ? randomSongs.get(0).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
-                        .build()
-                        .transform(new GranularRoundedCorners(CustomGlideRequest.CORNER_RADIUS, 0, 0, 0))
-                        .into(bind.playlistCoverImageViewTopLeft);
+        if (playlist == null || bind == null) return;
 
-                // Pic top-right
-                CustomGlideRequest.Builder
-                        .from(requireContext(), randomSongs.size() > 1 ? randomSongs.get(1).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
-                        .build()
-                        .transform(new GranularRoundedCorners(0, CustomGlideRequest.CORNER_RADIUS, 0, 0))
-                        .into(bind.playlistCoverImageViewTopRight);
+        String playlistCoverId = playlist.getCoverArtId();
 
-                // Pic bottom-left
-                CustomGlideRequest.Builder
-                        .from(requireContext(), randomSongs.size() > 2 ? randomSongs.get(2).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
-                        .build()
-                        .transform(new GranularRoundedCorners(0, 0, 0, CustomGlideRequest.CORNER_RADIUS))
-                        .into(bind.playlistCoverImageViewBottomLeft);
+        // Retrieve the parent container holding the cover views
+        ViewGroup coverContainer = (ViewGroup) bind.playlistCoverImageViewTopLeft.getParent();
 
-                // Pic bottom-right
-                CustomGlideRequest.Builder
-                        .from(requireContext(), randomSongs.size() > 3 ? randomSongs.get(3).getCoverArtId() : playlistPageViewModel.getPlaylist().getCoverArtId(), CustomGlideRequest.ResourceType.Song)
-                        .build()
-                        .transform(new GranularRoundedCorners(0, 0, CustomGlideRequest.CORNER_RADIUS, 0))
-                        .into(bind.playlistCoverImageViewBottomRight);
+        // Look for an existing single cover view dynamically added previously
+        ImageView singleCoverView = coverContainer.findViewWithTag("SINGLE_PLAYLIST_COVER");
+
+        // Loads the playlist's own explicit custom cover image
+        if (playlistCoverId != null && !playlistCoverId.trim().isEmpty()) {
+
+            // Dynamically instantiate and attach the single ImageView if it doesn't exist yet
+            if (singleCoverView == null) {
+                singleCoverView = new ImageView(requireContext());
+                singleCoverView.setTag("SINGLE_PLAYLIST_COVER");
+                singleCoverView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                // Generate appropriate LayoutParams based on the parent view container type
+                ViewGroup.MarginLayoutParams params = getMarginLayoutParams(coverContainer);
+
+                // Convert 62dp to pixels for horizontal margin alignment
+                int sideMarginPx = (int) (62 * requireContext().getResources().getDisplayMetrics().density);
+                params.setMargins(sideMarginPx, 0, sideMarginPx, 0);
+
+                coverContainer.addView(singleCoverView, params);
             }
-        });
+
+            singleCoverView.setVisibility(View.VISIBLE);
+
+            // Loads the custom cover image with rounded corners on all four sides using Glide
+            CustomGlideRequest.Builder
+                    .from(requireContext(), playlistCoverId, CustomGlideRequest.ResourceType.Playlist)
+                    .build()
+                    .transform(new GranularRoundedCorners(
+                            CustomGlideRequest.CORNER_RADIUS,
+                            CustomGlideRequest.CORNER_RADIUS,
+                            CustomGlideRequest.CORNER_RADIUS,
+                            CustomGlideRequest.CORNER_RADIUS
+                    ))
+                    .into(singleCoverView);
+
+        } else {
+            // Fallback: Hide the single cover view if it exists and render the 2x2 song collage
+            if (singleCoverView != null) {
+                singleCoverView.setVisibility(View.GONE);
+            }
+
+            playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
+                if (bind != null && songs != null && !songs.isEmpty()) {
+
+                    List<Child> randomSongs = new ArrayList<>(songs);
+                    Collections.shuffle(randomSongs);
+
+                    // Load Top-Left image (round top-left corner only)
+                    CustomGlideRequest.Builder
+                            .from(requireContext(), !randomSongs.isEmpty() ? randomSongs.get(0).getCoverArtId() : null, CustomGlideRequest.ResourceType.Song)
+                            .build()
+                            .transform(new GranularRoundedCorners(CustomGlideRequest.CORNER_RADIUS, 0, 0, 0))
+                            .into(bind.playlistCoverImageViewTopLeft);
+
+                    // Load Top-Right image (round top-right corner only)
+                    CustomGlideRequest.Builder
+                            .from(requireContext(), randomSongs.size() > 1 ? randomSongs.get(1).getCoverArtId() : null, CustomGlideRequest.ResourceType.Song)
+                            .build()
+                            .transform(new GranularRoundedCorners(0, CustomGlideRequest.CORNER_RADIUS, 0, 0))
+                            .into(bind.playlistCoverImageViewTopRight);
+
+                    // Load Bottom-Left image (round bottom-left corner only)
+                    CustomGlideRequest.Builder
+                            .from(requireContext(), randomSongs.size() > 2 ? randomSongs.get(2).getCoverArtId() : null, CustomGlideRequest.ResourceType.Song)
+                            .build()
+                            .transform(new GranularRoundedCorners(0, 0, 0, CustomGlideRequest.CORNER_RADIUS))
+                            .into(bind.playlistCoverImageViewBottomLeft);
+
+                    // Load Bottom-Right image (round bottom-right corner only)
+                    CustomGlideRequest.Builder
+                            .from(requireContext(), randomSongs.size() > 3 ? randomSongs.get(3).getCoverArtId() : null, CustomGlideRequest.ResourceType.Song)
+                            .build()
+                            .transform(new GranularRoundedCorners(0, 0, CustomGlideRequest.CORNER_RADIUS, 0))
+                            .into(bind.playlistCoverImageViewBottomRight);
+                }
+            });
+        }
+    }
+
+    // Creates full-match layout parameters compatible with the type of container group passed.
+    @NonNull
+    private static ViewGroup.MarginLayoutParams getMarginLayoutParams(ViewGroup coverContainer) {
+        ViewGroup.MarginLayoutParams params;
+
+        if (coverContainer instanceof android.widget.FrameLayout) {
+            params = new android.widget.FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            );
+        } else if (coverContainer instanceof androidx.constraintlayout.widget.ConstraintLayout) {
+            params = new androidx.constraintlayout.widget.ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            );
+        } else {
+            params = new ViewGroup.MarginLayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+            );
+        }
+
+        return params;
     }
 
     private void initSongsView() {
@@ -357,12 +436,13 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         });
 
         // Synchronize scrolling between the list and the header in landscape mode
-        if (bind.playlistInfoScrollView != null) {
+        androidx.core.widget.NestedScrollView playlistInfoScrollView = bind.playlistInfoScrollView;
+        if (playlistInfoScrollView != null) {
             bind.songRecyclerView.addOnScrollListener(new androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
                 @Override
                 public void onScrolled(@NonNull androidx.recyclerview.widget.RecyclerView recyclerView, int dx, int dy) {
                     super.onScrolled(recyclerView, dx, dy);
-                    bind.playlistInfoScrollView.scrollBy(0, dy);
+                    playlistInfoScrollView.scrollBy(0, dy);
                 }
             });
         }

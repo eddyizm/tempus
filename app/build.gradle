@@ -15,8 +15,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 36
 
-        versionCode 38
-        versionName '4.22.3-dev'
+        versionCode 41
+        versionName '4.23.2'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {

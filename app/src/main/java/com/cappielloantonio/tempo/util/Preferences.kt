@@ -47,6 +47,8 @@ object Preferences {
     private const val AUDIO_TRANSCODE_FORMAT_MOBILE = "audio_transcode_format_mobile"
     private const val WIFI_ONLY = "wifi_only"
     private const val DOWNLOAD_WIFI_ONLY = "download_wifi_only"
+    private const val DOWNLOAD_DATABASE_REPAIRED = "download_database_repaired_version"
+    private const val DOWNLOAD_REPAIR_ATTEMPTS = "download_repair_attempts"
     private const val DATA_SAVING_MODE = "data_saving_mode"
     private const val SERVER_UNREACHABLE = "server_unreachable"
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
@@ -123,6 +125,9 @@ object Preferences {
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
     private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
     private const val AA_SHUFFLE_DOWNLOADED_TRACKS = "androidauto_shuffle_downloaded_tracks"
+    private const val ACTIVE_MUSIC_FOLDER_ID = "active_music_folder_id"
+
+    const val MUSIC_FOLDER_ALL = "default"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -132,6 +137,36 @@ object Preferences {
     @JvmStatic
     fun setServer(server: String?) {
         App.getInstance().preferences.edit().putString(SERVER, server).apply()
+    }
+
+    /**
+     * A folder id means nothing on a server that did not issue it, so each server keeps its own.
+     *
+     * [ACTIVE_MUSIC_FOLDER_ID] stays the ListPreference's key and holds only what that widget is
+     * displaying. It is a separate store, and the two agree only because the settings screen
+     * copies this value into the widget on every resume.
+     */
+    private fun activeMusicFolderKey(): String? {
+        val serverId = getServerId() ?: return null
+        return ACTIVE_MUSIC_FOLDER_ID + "_" + serverId
+    }
+
+    /**
+     * Null means every library, the default and the behaviour before this setting existed. The
+     * ListPreference stores the sentinel "default" for it, same as the language preference.
+     */
+    @JvmStatic
+    fun getActiveMusicFolderId(): String? {
+        val key = activeMusicFolderKey() ?: return null
+        val stored = App.getInstance().preferences.getString(key, MUSIC_FOLDER_ALL)
+        return if (stored == null || stored == MUSIC_FOLDER_ALL) null else stored
+    }
+
+    @JvmStatic
+    fun setActiveMusicFolderId(musicFolderId: String?) {
+        val key = activeMusicFolderKey() ?: return
+        App.getInstance().preferences.edit()
+            .putString(key, musicFolderId ?: MUSIC_FOLDER_ALL).apply()
     }
 
     @JvmStatic
@@ -477,6 +512,26 @@ object Preferences {
     @JvmStatic
     fun setDownloadWifiOnly(enabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(DOWNLOAD_WIFI_ONLY, enabled).apply()
+    }
+
+    @JvmStatic
+    fun getRepairedDownloadDatabaseVersion(): Int {
+        return App.getInstance().preferences.getInt(DOWNLOAD_DATABASE_REPAIRED, 0)
+    }
+
+    @JvmStatic
+    fun setDownloadDatabaseRepaired(version: Int) {
+        App.getInstance().preferences.edit().putInt(DOWNLOAD_DATABASE_REPAIRED, version).apply()
+    }
+
+    @JvmStatic
+    fun getDownloadRepairAttempts(): Int {
+        return App.getInstance().preferences.getInt(DOWNLOAD_REPAIR_ATTEMPTS, 0)
+    }
+
+    @JvmStatic
+    fun setDownloadRepairAttempts(attempts: Int) {
+        App.getInstance().preferences.edit().putInt(DOWNLOAD_REPAIR_ATTEMPTS, attempts).apply()
     }
 
     @JvmStatic

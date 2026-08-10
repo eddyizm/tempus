@@ -178,10 +178,23 @@ public class MediaManager {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        mediaBrowserListenableFuture.get().clearMediaItems();
-                        mediaBrowserListenableFuture.get().setMediaItems(MappingUtil.mapMediaItems(media));
-                        mediaBrowserListenableFuture.get().seekTo(getQueueRepository().getLastPlayedMediaIndex(), getQueueRepository().getLastPlayedMediaTimestamp());
-                        mediaBrowserListenableFuture.get().prepare();
+                        final MediaBrowser browser = mediaBrowserListenableFuture.get();
+
+                        backgroundExecutor.execute(() -> {
+                            final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+                            final int index = getQueueRepository().getLastPlayedMediaIndex();
+                            final long position = getQueueRepository().getLastPlayedMediaTimestamp();
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                // The user can start something while we map, and check() only
+                                // tested this before the mapping began. Do not stomp their pick.
+                                if (browser.getMediaItemCount() > 0) return;
+                                browser.clearMediaItems();
+                                browser.setMediaItems(items);
+                                browser.seekTo(index, position);
+                                browser.prepare();
+                            });
+                        });
                     }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
@@ -198,33 +211,36 @@ public class MediaManager {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         final MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        final List<MediaItem> items = MappingUtil.mapMediaItems(media);
-                        
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            justStarted.set(true);
-                            browser.setMediaItems(items, startIndex, 0);
-                            browser.prepare();
 
-                            Player.Listener timelineListener = new Player.Listener() {
-                                @Override
-                                public void onTimelineChanged(Timeline timeline, int reason) {
-                                    
-                                    int itemCount = browser.getMediaItemCount();
-                                    if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                        browser.seekTo(startIndex, 0);
-                                        browser.play();
-                                        browser.removeListener(this);
-                                    } else {
-                                        Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
-                                    }
-                                }
-                            };
-                            
-                            browser.addListener(timelineListener);
-                        });
-
+                        // Map off the caller thread. getUri does a blocking DB lookup per song
+                        // (each one spawns a Thread and joins it), and this listener runs via
+                        // directExecutor on the click thread, so a large list froze the UI.
+                        // Only the player calls go back to main.
                         backgroundExecutor.execute(() -> {
-                            Log.d(TAG, "Background: enqueuing to database");
+                            final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                justStarted.set(true);
+                                browser.setMediaItems(items, startIndex, 0);
+                                browser.prepare();
+
+                                Player.Listener timelineListener = new Player.Listener() {
+                                    @Override
+                                    public void onTimelineChanged(Timeline timeline, int reason) {
+                                        int itemCount = browser.getMediaItemCount();
+                                        if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
+                                            browser.seekTo(startIndex, 0);
+                                            browser.play();
+                                            browser.removeListener(this);
+                                        } else {
+                                            Log.d(TAG, "Cannot start playback: itemCount=" + itemCount + ", startIndex=" + startIndex);
+                                        }
+                                    }
+                                };
+
+                                browser.addListener(timelineListener);
+                            });
+
                             enqueueDatabase(media, true, 0);
                         });
                     }
@@ -400,10 +416,18 @@ public class MediaManager {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         Log.e(TAG, "shuffle");
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        browser.removeMediaItems(startIndex, endIndex + 1);
-                        browser.addMediaItems(MappingUtil.mapMediaItems(media).subList(startIndex, endIndex + 1));
-                        swapDatabase(media);
+                        final MediaBrowser browser = mediaBrowserListenableFuture.get();
+
+                        backgroundExecutor.execute(() -> {
+                            final List<MediaItem> mapped = MappingUtil.mapMediaItems(media);
+
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                browser.removeMediaItems(startIndex, endIndex + 1);
+                                browser.addMediaItems(mapped.subList(startIndex, endIndex + 1));
+                            });
+
+                            swapDatabase(media);
+                        });
                     }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
