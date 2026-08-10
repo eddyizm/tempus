@@ -154,10 +154,8 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
             activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        if (bind != null) {
-            bind.toolbar.setNavigationOnClickListener(v -> activity.navController.navigateUp());
-            bind.directoryBackImageView.setOnClickListener(v -> activity.navController.navigateUp());
-        }
+        bind.toolbar.setNavigationOnClickListener(v -> activity.navController.navigateUp());
+        bind.directoryBackImageView.setOnClickListener(v -> activity.navController.navigateUp());
     }
 
     private void initDirectoryListView() {
@@ -168,6 +166,8 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         bind.directoryRecyclerView.setAdapter(musicDirectoryAdapter);
         directoryViewModel.loadMusicDirectory(getArguments().getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
             bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+                if (bind == null) return;
+
                 if ((bind.directoryInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
                     bind.toolbar.setTitle(directory.getName());
                 } else {
