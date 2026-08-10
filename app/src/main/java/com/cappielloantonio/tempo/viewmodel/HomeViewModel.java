@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeViewModel extends AndroidViewModel {
     private static final String TAG = "HomeViewModel";
@@ -72,6 +73,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Share>> shares = new MutableLiveData<>(null);
 
     private List<HomeSector> sectors;
+
+    private String cachedMusicFolderId = Preferences.getActiveMusicFolderId();
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -303,6 +306,28 @@ public class HomeViewModel extends AndroidViewModel {
         }
 
         chronologyRepository.getChronology(server, start, end).observe(owner, thisGridTopSong::postValue);
+    }
+
+    /**
+     * The cached samples were fetched under whichever library was active then, so they go stale
+     * when it changes. Clearing them lets the getters' null guards refetch on the next view creation.
+     *
+     * Starred data stays by choice, not because it cannot be filtered: getStarred2 does take
+     * musicFolderId. getPlaylists does not, and scoping one hand built collection but not the other
+     * would behave differently for no reason a user can see.
+     */
+    public void clearCacheIfMusicFolderChanged() {
+        String activeMusicFolderId = Preferences.getActiveMusicFolderId();
+        if (Objects.equals(activeMusicFolderId, cachedMusicFolderId)) return;
+
+        cachedMusicFolderId = activeMusicFolderId;
+
+        dicoverSongSample.setValue(null);
+        newReleasedAlbum.setValue(null);
+        mostPlayedAlbumSample.setValue(null);
+        recentlyPlayedAlbumSample.setValue(null);
+        recentlyAddedAlbumSample.setValue(null);
+        years.setValue(null);
     }
 
     public void refreshDiscoverySongSample(LifecycleOwner owner) {
