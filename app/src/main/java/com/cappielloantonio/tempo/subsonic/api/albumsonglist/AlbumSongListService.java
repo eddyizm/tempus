@@ -14,16 +14,16 @@ public interface AlbumSongListService {
     Call<ApiResponse> getAlbumList(@QueryMap Map<String, String> params, @Query("type") String type, @Query("size") int size, @Query("offset") int offset);
 
     @GET("getAlbumList2")
-    Call<ApiResponse> getAlbumList2(@QueryMap Map<String, String> params, @Query("type") String type, @Query("size") int size, @Query("offset") int offset, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear);
+    Call<ApiResponse> getAlbumList2(@QueryMap Map<String, String> params, @Query("type") String type, @Query("size") int size, @Query("offset") int offset, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear, @Query("musicFolderId") String musicFolderId);
 
     @GET("getRandomSongs")
-    Call<ApiResponse> getRandomSongs(@QueryMap Map<String, String> params, @Query("size") int size, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear);
+    Call<ApiResponse> getRandomSongs(@QueryMap Map<String, String> params, @Query("size") int size, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear, @Query("musicFolderId") String musicFolderId);
 
     @GET("getRandomSongs")
-    Call<ApiResponse> getRandomSongs(@QueryMap Map<String, String> params, @Query("size") int size, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear, @Query("genre") String genre);
+    Call<ApiResponse> getRandomSongs(@QueryMap Map<String, String> params, @Query("size") int size, @Query("fromYear") Integer fromYear, @Query("toYear") Integer toYear, @Query("genre") String genre, @Query("musicFolderId") String musicFolderId);
 
     @GET("getSongsByGenre")
-    Call<ApiResponse> getSongsByGenre(@QueryMap Map<String, String> params, @Query("genre") String genre, @Query("count") int count, @Query("offset") int offset);
+    Call<ApiResponse> getSongsByGenre(@QueryMap Map<String, String> params, @Query("genre") String genre, @Query("count") int count, @Query("offset") int offset, @Query("musicFolderId") String musicFolderId);
 
     @GET("getNowPlaying")
     Call<ApiResponse> getNowPlaying(@QueryMap Map<String, String> params);

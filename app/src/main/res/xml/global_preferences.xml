@@ -9,6 +9,13 @@
             android:key="scan_library"
             android:title="@string/settings_scan_title" />
 
+        <ListPreference
+            android:layout_height="wrap_content"
+            app:defaultValue="default"
+            app:dialogTitle="@string/settings_music_library"
+            app:key="active_music_folder_id"
+            app:title="@string/settings_music_library" />
+
         <EditTextPreference
             android:key="network_ping_timeout_base"
             android:title="@string/settings_ping_timeout_title"

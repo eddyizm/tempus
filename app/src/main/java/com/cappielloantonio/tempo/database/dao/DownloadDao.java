@@ -27,6 +27,9 @@ public interface DownloadDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<Download> downloads);
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAllKeepingExisting(List<Download> downloads);
+
     @Query("UPDATE download SET download_state = 1 WHERE id = :id")
     void update(String id);
 
