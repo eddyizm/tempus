@@ -2,8 +2,13 @@ package com.cappielloantonio.tempo.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import android.net.NetworkCapabilities;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,5 +82,32 @@ public class MusicUtilTest {
     public void isTranscodedFormat_missingSuffixIsNotTranscoded() {
         assertFalse(MusicUtil.isTranscodedFormat("flac", null));
         assertFalse(MusicUtil.isTranscodedFormat("flac", ""));
+    }
+
+    @Test
+    public void transportOf_readsWifiAndCellular() {
+        NetworkCapabilities wifi = mock(NetworkCapabilities.class);
+        when(wifi.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)).thenReturn(true);
+        assertEquals(NetworkCapabilities.TRANSPORT_WIFI, MusicUtil.transportOf(wifi));
+
+        NetworkCapabilities cellular = mock(NetworkCapabilities.class);
+        when(cellular.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)).thenReturn(true);
+        assertEquals(NetworkCapabilities.TRANSPORT_CELLULAR, MusicUtil.transportOf(cellular));
+    }
+
+    // Issue 198: a VPN reports neither transport while the default network hands over.
+    @Test
+    public void transportOf_doesNotTreatAnUnknownTransportAsWifi() {
+        NetworkCapabilities neither = mock(NetworkCapabilities.class);
+        int transport = MusicUtil.transportOf(neither);
+        assertNotEquals(NetworkCapabilities.TRANSPORT_WIFI, transport);
+        assertNotEquals(NetworkCapabilities.TRANSPORT_CELLULAR, transport);
+    }
+
+    @Test
+    public void transportOf_treatsNoCapabilitiesAsNoTransport() {
+        int transport = MusicUtil.transportOf(null);
+        assertNotEquals(NetworkCapabilities.TRANSPORT_WIFI, transport);
+        assertNotEquals(NetworkCapabilities.TRANSPORT_CELLULAR, transport);
     }
 }
