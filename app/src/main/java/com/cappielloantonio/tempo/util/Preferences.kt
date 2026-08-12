@@ -125,6 +125,9 @@ object Preferences {
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
     private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
     private const val AA_SHUFFLE_DOWNLOADED_TRACKS = "androidauto_shuffle_downloaded_tracks"
+    private const val ACTIVE_MUSIC_FOLDER_ID = "active_music_folder_id"
+
+    const val MUSIC_FOLDER_ALL = "default"
 
 	@JvmStatic
     fun getServer(): String? {
@@ -134,6 +137,36 @@ object Preferences {
     @JvmStatic
     fun setServer(server: String?) {
         App.getInstance().preferences.edit().putString(SERVER, server).apply()
+    }
+
+    /**
+     * A folder id means nothing on a server that did not issue it, so each server keeps its own.
+     *
+     * [ACTIVE_MUSIC_FOLDER_ID] stays the ListPreference's key and holds only what that widget is
+     * displaying. It is a separate store, and the two agree only because the settings screen
+     * copies this value into the widget on every resume.
+     */
+    private fun activeMusicFolderKey(): String? {
+        val serverId = getServerId() ?: return null
+        return ACTIVE_MUSIC_FOLDER_ID + "_" + serverId
+    }
+
+    /**
+     * Null means every library, the default and the behaviour before this setting existed. The
+     * ListPreference stores the sentinel "default" for it, same as the language preference.
+     */
+    @JvmStatic
+    fun getActiveMusicFolderId(): String? {
+        val key = activeMusicFolderKey() ?: return null
+        val stored = App.getInstance().preferences.getString(key, MUSIC_FOLDER_ALL)
+        return if (stored == null || stored == MUSIC_FOLDER_ALL) null else stored
+    }
+
+    @JvmStatic
+    fun setActiveMusicFolderId(musicFolderId: String?) {
+        val key = activeMusicFolderKey() ?: return
+        App.getInstance().preferences.edit()
+            .putString(key, musicFolderId ?: MUSIC_FOLDER_ALL).apply()
     }
 
     @JvmStatic

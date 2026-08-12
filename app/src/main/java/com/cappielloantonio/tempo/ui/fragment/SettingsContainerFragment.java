@@ -27,6 +27,7 @@ import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.offline.DownloadService;
@@ -61,13 +62,16 @@ import com.cappielloantonio.tempo.ui.dialog.StarredSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
 import com.cappielloantonio.tempo.util.ClickablePreferenceCategory;
 import com.cappielloantonio.tempo.util.DownloadUtil;
+import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.util.ExternalAudioReader;
 import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.util.UIUtil;
 import com.cappielloantonio.tempo.viewmodel.SettingViewModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -87,6 +91,11 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private ActivityResultLauncher<Intent> equalizerResultLauncher;
 
     private final Set<String> expandedCategories = new HashSet<>();
+
+    private boolean musicFoldersObserved = false;
+
+    // Null until the server answers with its folder list.
+    private Integer musicFolderCount = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -149,6 +158,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         setStreamingCacheSize();
         setAppLanguage();
+        setMusicLibrary();
         setVersion();
         setNetorkPingTimeoutBase();
 
@@ -172,6 +182,15 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionReplayGainPreamp();
 
         applyAccordionState();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // The flag means "this view already has the observer", and a child fragment can outlive
+        // its parent's view, so it has to be cleared with the view rather than the instance.
+        musicFoldersObserved = false;
     }
 
     @Override
@@ -303,6 +322,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         checkDownloadDirectory();
         checkEqualizerBands();
         checkDarkThemeStyle();
+        checkMusicLibrary();
 
         for (int i = 0; i < screen.getPreferenceCount(); i++) {
             Preference pref = screen.getPreference(i);
@@ -478,6 +498,117 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             }
             return true;
         });
+    }
+
+    private void setMusicLibrary() {
+        ListPreference libraryPref = (ListPreference) findPreference("active_music_folder_id");
+        if (libraryPref == null) return;
+
+        // Opening a ListPreference whose entries are still null throws, and the server folders are
+        // asynchronous and may never arrive, so seed the one entry that needs no server.
+        if (libraryPref.getEntries() == null) {
+            libraryPref.setEntries(new CharSequence[]{getString(R.string.settings_music_library_all)});
+            libraryPref.setEntryValues(new CharSequence[]{Preferences.MUSIC_FOLDER_ALL});
+        }
+
+        // The widget's own key is shared by every server, so left alone it would show whichever
+        // library was picked last, anywhere. Load this server's choice in so the screen cannot
+        // claim a filter that is not being applied.
+        String activeMusicFolderId = Preferences.getActiveMusicFolderId();
+        libraryPref.setValue(activeMusicFolderId != null ? activeMusicFolderId : Preferences.MUSIC_FOLDER_ALL);
+
+        setMusicLibrarySummary(libraryPref);
+
+        libraryPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            libraryPref.setValue((String) newValue);
+            Preferences.setActiveMusicFolderId((String) newValue);
+            setMusicLibrarySummary(libraryPref);
+            return true;
+        });
+
+        // onResume runs this on every return, and the call below is what fires the request, so ask
+        // once per view. A failed load is then not retried until the screen is left and reopened,
+        // which beats enqueueing another request and observer on every resume while a server is down.
+        if (musicFoldersObserved) return;
+        musicFoldersObserved = true;
+
+        settingViewModel.getMusicFolders(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), musicFolderObserver);
+    }
+
+    private final Observer<List<MusicFolder>> musicFolderObserver = new Observer<List<MusicFolder>>() {
+        @Override
+        public void onChanged(List<MusicFolder> folders) {
+            ListPreference libraryPref = (ListPreference) findPreference("active_music_folder_id");
+            if (libraryPref == null || folders == null) return;
+
+            List<CharSequence> entries = new ArrayList<>();
+            List<CharSequence> entryValues = new ArrayList<>();
+
+            entries.add(getString(R.string.settings_music_library_all));
+            entryValues.add(Preferences.MUSIC_FOLDER_ALL);
+
+            List<String> ids = new ArrayList<>();
+            for (MusicFolder folder : folders) {
+                if (folder.getId() == null) continue;
+                ids.add(folder.getId());
+                entries.add(folder.getName() != null ? folder.getName() : folder.getId());
+                entryValues.add(folder.getId());
+            }
+
+            libraryPref.setEntries(entries.toArray(new CharSequence[0]));
+            libraryPref.setEntryValues(entryValues.toArray(new CharSequence[0]));
+
+            // A library removed, or one this account can no longer see, leaves a stale id that
+            // would filter everything away. Discarding the choice is permanent though, so it takes
+            // positive evidence: other libraries came back and this one was not among them. An
+            // empty response is not that, and a server offering none shows nothing either way.
+            String storedMusicFolderId = Preferences.getActiveMusicFolderId();
+            if (storedMusicFolderId != null && !ids.isEmpty() && !ids.contains(storedMusicFolderId)) {
+                libraryPref.setValue(Preferences.MUSIC_FOLDER_ALL);
+                Preferences.setActiveMusicFolderId(null);
+            }
+
+            musicFolderCount = ids.size();
+            applyAccordionState();
+
+            setMusicLibrarySummary(libraryPref);
+        }
+    };
+
+    /**
+     * Below two libraries there is nothing to choose between, so the setting is noise.
+     *
+     * Call applyAccordionState rather than this, including from the folder response. That method
+     * resets every category child to visible, runs these checks, and only then re-hides the
+     * children of collapsed categories. Calling this alone performs only the middle step, so a row
+     * it reveals would stay showing under a category the user has collapsed.
+     */
+    private void checkMusicLibrary() {
+        Preference libraryPref = findPreference("active_music_folder_id");
+        if (libraryPref == null) return;
+
+        // Visible while a filter is in force, since hiding it would remove the only way to clear
+        // one. Also visible on a null count, which means the server has not answered yet or at all:
+        // showing a control with nothing to choose between beats hiding one that was needed.
+        libraryPref.setVisible(musicFolderCount == null
+                || musicFolderCount > 1
+                || Preferences.getActiveMusicFolderId() != null);
+    }
+
+    private void setMusicLibrarySummary(ListPreference libraryPref) {
+        CharSequence entry = libraryPref.getEntry();
+        if (entry != null) {
+            libraryPref.setSummary(entry);
+            return;
+        }
+
+        // getEntry() is null while the value is not among the entries: the folder list has not
+        // arrived, or it arrived without enough evidence to clear a stale id. Saying "all
+        // libraries" would contradict what is still being sent, so name the id, poorly as it reads.
+        String activeMusicFolderId = Preferences.getActiveMusicFolderId();
+        libraryPref.setSummary(activeMusicFolderId != null
+                ? activeMusicFolderId
+                : getString(R.string.settings_music_library_all));
     }
 
     private void setVersion() {

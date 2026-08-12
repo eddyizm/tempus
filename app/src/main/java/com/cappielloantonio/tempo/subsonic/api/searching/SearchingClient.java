@@ -5,6 +5,7 @@ import android.util.Log;
 import com.cappielloantonio.tempo.subsonic.RetrofitClient;
 import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
+import com.cappielloantonio.tempo.util.Preferences;
 
 import retrofit2.Call;
 
@@ -26,6 +27,6 @@ public class SearchingClient {
 
     public Call<ApiResponse> search3(String query, int songCount, int songOffset, int albumCount, int albumOffset, int artistCount, int artistOffset) {
         Log.d(TAG, "search3()");
-        return searchingService.search3(subsonic.getParams(), query, songCount, songOffset, albumCount, albumOffset, artistCount, artistOffset);
+        return searchingService.search3(subsonic.getParams(), query, songCount, songOffset, albumCount, albumOffset, artistCount, artistOffset, Preferences.getActiveMusicFolderId());
     }
 }

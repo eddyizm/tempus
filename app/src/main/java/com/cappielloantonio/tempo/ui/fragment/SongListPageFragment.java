@@ -174,20 +174,20 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
             activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        if (bind != null)
-            bind.toolbar.setNavigationOnClickListener(v -> {
-                hideKeyboard(v);
-                activity.navController.navigateUp();
-            });
+        bind.toolbar.setNavigationOnClickListener(v -> {
+            hideKeyboard(v);
+            activity.navController.navigateUp();
+        });
 
-        if (bind != null)
-            bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-                if ((bind.albumInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
-                    bind.toolbar.setTitle(songListPageViewModel.toolbarTitle);
-                } else {
-                    bind.toolbar.setTitle(R.string.empty_string);
-                }
-            });
+        bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (bind == null) return;
+
+            if ((bind.albumInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
+                bind.toolbar.setTitle(songListPageViewModel.toolbarTitle);
+            } else {
+                bind.toolbar.setTitle(R.string.empty_string);
+            }
+        });
     }
 
     private void initButtons() {
