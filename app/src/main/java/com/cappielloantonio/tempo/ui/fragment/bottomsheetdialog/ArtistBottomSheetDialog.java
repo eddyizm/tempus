@@ -23,6 +23,8 @@ import com.cappielloantonio.tempo.service.MediaManager;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
 import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.cappielloantonio.tempo.ui.dialog.PlaylistChooserDialog;
+import java.util.ArrayList;
 import com.cappielloantonio.tempo.util.Constants;
 import com.cappielloantonio.tempo.util.MusicUtil;
 import com.cappielloantonio.tempo.viewmodel.ArtistBottomSheetViewModel;
@@ -129,6 +131,46 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
                 }
+                dismissBottomSheet();
+            });
+        });
+
+        TextView playNext = view.findViewById(R.id.play_next_text_view);
+        playNext.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
+            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), songs -> {
+                if (songs == null || songs.isEmpty()) return;
+                MusicUtil.ratingFilter(songs);
+                MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
+                ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                dismissBottomSheet();
+            });
+        });
+
+        TextView addToQueue = view.findViewById(R.id.add_to_queue_text_view);
+        addToQueue.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
+            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), songs -> {
+                if (songs == null || songs.isEmpty()) return;
+                MusicUtil.ratingFilter(songs);
+                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                dismissBottomSheet();
+            });
+        });
+
+        TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
+        addToPlaylist.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
+            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), songs -> {
+                if (songs == null || songs.isEmpty()) return;
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
+
+                PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+                dialog.setArguments(bundle);
+                dialog.show(requireActivity().getSupportFragmentManager(), null);
+
                 dismissBottomSheet();
             });
         });

@@ -58,6 +58,10 @@
     <string name="artist_adapter_radio_station_starting">Searching…</string>
     <string name="artist_bottom_sheet_instant_mix">Instant mix</string>
     <string name="artist_bottom_sheet_shuffle">Shuffle</string>
+    <string name="artist_bottom_sheet_play_next">Play next</string>
+    <string name="artist_bottom_sheet_add_to_queue">Add to queue</string>
+    <string name="artist_bottom_sheet_add_to_playlist">Add to playlist</string>
+    <string name="artist_bottom_sheet_loading_tracks">Loading tracks\u2026</string>
     <string name="artist_catalogue_title">Artists</string>
     <string name="artist_catalogue_title_expanded">Browse Artists</string>
     <string name="artist_error_retrieving_radio">Error retrieving artist\'s radio</string>

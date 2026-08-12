@@ -105,6 +105,17 @@ public class ArtistRepository {
         void onSongsCollected(List<Child> songs);
     }
 
+    /**
+     * Returns a LiveData that emits all tracks for the given artist once collected.
+     * Internally reuses {@link #getArtistAllSongs(String, ArtistSongsCallback)} for its
+     * batched album-track fetching. Uses postValue because the callback fires off-main-thread.
+     */
+    public androidx.lifecycle.LiveData<List<Child>> getArtistAllTracksLive(String artistId) {
+        androidx.lifecycle.MutableLiveData<List<Child>> result = new androidx.lifecycle.MutableLiveData<>();
+        getArtistAllSongs(artistId, result::postValue);
+        return result;
+    }
+
     public MutableLiveData<List<ArtistID3>> getStarredArtists(boolean random, int size) {
         MutableLiveData<List<ArtistID3>> starredArtists = new MutableLiveData<>(new ArrayList<>());
 
