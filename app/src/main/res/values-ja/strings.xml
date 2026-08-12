@@ -521,6 +521,8 @@
     <string name="settings_rounded_corner_size_summary">角の丸みの大きさを設定します。</string>
     <string name="settings_rounded_corner_summary">有効にすると、表示されるすべてのカバー画像の角が丸くなります。変更は再起動後に反映されます。</string>
     <string name="settings_scan_title">ライブラリのスキャン</string>
+    <string name="settings_music_library">ライブラリ</string>
+    <string name="settings_music_library_all">すべてのライブラリ</string>
     <string name="settings_scrobble_title">スクロブリングの有効化</string>
     <string name="settings_system_language">システム言語</string>
     <string name="settings_share_title">音楽の共有を有効にする</string>
