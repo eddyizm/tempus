@@ -284,7 +284,7 @@
         <item>4</item>
     </string-array>
     <string-array name="landscape_items_per_row">
-        <item>3"</item>
+        <item>3</item>
         <item>4</item>
         <item>5</item>
         <item>6</item>
@@ -354,9 +354,6 @@
         <item>11</item>
         <item>12</item>
         <item>13</item>
-        <item>14</item>
-        <item>15</item>
-        <item>16</item>
     </string-array>
     <string-array name="aa_starred_for_made_for_you_titles">
         <item>アーティストにお気に入り登録</item>
