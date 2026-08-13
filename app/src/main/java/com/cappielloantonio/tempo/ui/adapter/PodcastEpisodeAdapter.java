@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.ui.adapter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,12 +47,27 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
         PodcastEpisode podcastEpisode = podcastEpisodes.get(position);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM d");
 
-        Date publishedDate = podcastEpisode.getPublishDate() != null ? podcastEpisode.getPublishDate() : new Date(0L);
-        int duration = podcastEpisode.getDuration() != null ? podcastEpisode.getDuration() : 0;
+        Context context = holder.itemView.getContext();
+
+        Date publishedDate = podcastEpisode.getPublishDate();
+        String dateStr = (publishedDate != null)
+                ? simpleDateFormat.format(publishedDate)
+                : context.getString(R.string.podcast_release_no_date);
+
+        Integer duration = podcastEpisode.getDuration();
+        String durationStr = (duration != null)
+                ? MusicUtil.getReadablePodcastDurationString(duration)
+                : context.getString(R.string.podcast_release_unknown_duration);
+
+        String releasesAndDurationLabel = context.getString(
+                R.string.podcast_release_date_duration_formatter,
+                dateStr,
+                durationStr
+        );
 
         holder.item.podcastTitleLabel.setText(podcastEpisode.getTitle());
         holder.item.podcastSubtitleLabel.setText(podcastEpisode.getArtist());
-        holder.item.podcastReleasesAndDurationLabel.setText(holder.itemView.getContext().getString(R.string.podcast_release_date_duration_formatter, simpleDateFormat.format(publishedDate), MusicUtil.getReadablePodcastDurationString(duration)));
+        holder.item.podcastReleasesAndDurationLabel.setText(releasesAndDurationLabel);
         holder.item.podcastDescriptionText.setText(MusicUtil.getReadableString(podcastEpisode.getDescription()));
 
         CustomGlideRequest.Builder
