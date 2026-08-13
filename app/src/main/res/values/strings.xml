@@ -528,6 +528,8 @@
     <string name="settings_rounded_corner_size_summary">Sets the magnitude of the curvature angle.</string>
     <string name="settings_rounded_corner_summary">If enabled, sets a curvature angle for all rendered covers. The changes will take effect on restart.</string>
     <string name="settings_scan_title">Scan library</string>
+    <string name="settings_music_library">Music library</string>
+    <string name="settings_music_library_all">All libraries</string>
     <string name="settings_scrobble_title">Enable music scrobbling</string>
     <string name="settings_system_language">System language</string>
     <string name="settings_share_title">Enable music sharing</string>

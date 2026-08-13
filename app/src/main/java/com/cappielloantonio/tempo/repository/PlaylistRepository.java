@@ -81,6 +81,9 @@ public class PlaylistRepository {
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylists() != null) {
                             List<Playlist> playlists = response.body().getSubsonicResponse().getPlaylists().getPlaylists();
+                            if (playlists == null) {
+                                playlists = new ArrayList<>();
+                            }
                             allPlaylistsLiveData.postValue(playlists);
                             // cache all playlists
                             cacheAllPlaylists(playlists);
@@ -487,7 +490,7 @@ public class PlaylistRepository {
                         .enqueue(new Callback<ApiResponse>() {
                             @Override
                             public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylists() != null) {
+                                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getPlaylists() != null && response.body().getSubsonicResponse().getPlaylists().getPlaylists() != null) {
                                     List<Playlist> remotes = response.body().getSubsonicResponse().getPlaylists().getPlaylists();
                                     new Thread(() -> {
                                         for (Playlist p : pinned) {

@@ -101,6 +101,8 @@ public class ArtistListPageFragment extends Fragment implements ClickCallback {
         });
 
         bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (bind == null) return;
+
             if ((bind.artistInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
                 bind.toolbar.setTitle(R.string.artist_list_page_title);
             } else {
