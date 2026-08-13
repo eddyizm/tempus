@@ -18,6 +18,7 @@ import com.cappielloantonio.tempo.util.MusicUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,9 +46,12 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
         PodcastEpisode podcastEpisode = podcastEpisodes.get(position);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM d");
 
+        Date publishedDate = podcastEpisode.getPublishDate() != null ? podcastEpisode.getPublishDate() : new Date(0L);
+        int duration = podcastEpisode.getDuration() != null ? podcastEpisode.getDuration() : 0;
+
         holder.item.podcastTitleLabel.setText(podcastEpisode.getTitle());
         holder.item.podcastSubtitleLabel.setText(podcastEpisode.getArtist());
-        holder.item.podcastReleasesAndDurationLabel.setText(holder.itemView.getContext().getString(R.string.podcast_release_date_duration_formatter, simpleDateFormat.format(podcastEpisode.getPublishDate()), MusicUtil.getReadablePodcastDurationString(podcastEpisode.getDuration())));
+        holder.item.podcastReleasesAndDurationLabel.setText(holder.itemView.getContext().getString(R.string.podcast_release_date_duration_formatter, simpleDateFormat.format(publishedDate), MusicUtil.getReadablePodcastDurationString(duration)));
         holder.item.podcastDescriptionText.setText(MusicUtil.getReadableString(podcastEpisode.getDescription()));
 
         CustomGlideRequest.Builder
