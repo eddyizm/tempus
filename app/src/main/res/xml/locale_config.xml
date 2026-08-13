@@ -16,4 +16,5 @@
     <locale android:name="ca"/>            <!-- Catalan -->
     <locale android:name="ro"/>            <!-- Romanian -->
     <locale android:name="eu"/>            <!-- Basque (Euskara) -->
+    <locale android:name="ja-JP"/>         <!-- Japanese -->
 </locale-config>
