@@ -1,0 +1,380 @@
+<resources>
+    <string-array name="theme_list_titles">
+        <item>ライト</item>
+        <item>ダーク</item>
+        <item>システム既定</item>
+    </string-array>
+    <string-array name="theme_list_values">
+        <item>light</item>
+        <item>dark</item>
+        <item>default</item>
+    </string-array>
+    <string-array name="dark_theme_style_titles">
+        <item>標準</item>
+        <item>AMOLED（純粋な黒）</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+    <string-array name="pref_cache_size_titles">
+        <item>大</item>
+        <item>中</item>
+        <item>小</item>
+    </string-array>
+    <string-array name="pref_cache_size_values">
+        <item>500</item>
+        <item>250</item>
+        <item>125</item>
+    </string-array>
+    <string-array name="pref_image_size_titles">
+        <item>高</item>
+        <item>中</item>
+        <item>低</item>
+    </string-array>
+    <string-array name="pref_image_size_values">
+        <item>-1</item>
+        <item>500</item>
+        <item>300</item>
+    </string-array>
+    <string-array name="streaming_cache_size_titles">
+        <item>無効</item>
+        <item>128 MiB</item>
+        <item>256 MiB</item>
+        <item>512 MiB</item>
+        <item>1024 MiB</item>
+    </string-array>
+    <string-array name="streaming_cache_size_values">
+        <item>0</item>
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+    </string-array>
+    <string-array name="max_bitrate_wifi_list_titles">
+        <item>オリジナル</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_wifi_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+    <string-array name="max_bitrate_mobile_list_titles">
+        <item>オリジナル</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_mobile_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+    <string-array name="max_bitrate_download_list_titles">
+        <item>オリジナル</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_download_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+    <string-array name="audio_transcode_format_wifi_list_titles">
+        <item>ダイレクト再生</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>MP3</item>
+        <item>FLAC</item>
+    </string-array>
+    <string-array name="audio_transcode_format_wifi_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_mobile_list_titles">
+        <item>ダイレクト再生</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>MP3</item>
+        <item>FLAC</item>
+    </string-array>
+    <string-array name="audio_transcode_format_mobile_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_download_list_titles">
+        <item>ダイレクトダウンロード</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>MP3</item>
+        <item>FLAC</item>
+    </string-array>
+    <string-array name="audio_transcode_format_download_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+    <string-array name="queue_syncing_countdown_titles">
+        <item>10秒</item>
+        <item>5秒</item>
+        <item>2秒</item>
+    </string-array>
+    <string-array name="queue_syncing_countdown_values">
+        <item>10</item>
+        <item>5</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="rounded_corner_size_titles">
+        <item>大</item>
+        <item>中</item>
+        <item>小</item>
+    </string-array>
+    <string-array name="rounded_corner_size_values">
+        <item>18</item>
+        <item>12</item>
+        <item>6</item>
+    </string-array>
+    <string-array name="replay_gain_titles">
+        <item>無効</item>
+        <item>トラック</item>
+        <item>アルバム</item>
+        <item>自動</item>
+    </string-array>
+    <string-array name="replay_gain_values">
+        <item>disabled</item>
+        <item>track</item>
+        <item>album</item>
+        <item>auto</item>
+    </string-array>
+    <string-array name="transcoded_download_option_list_titles">
+        <item>トランスコードしない</item>
+        <item>サーバー設定</item>
+        <item>Wi-Fi向けトランスコード</item>
+        <item>モバイル向けトランスコード</item>
+    </string-array>
+    <string-array name="transcoded_download_option_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="song_preload_buffer_titles">
+        <item>5秒</item>
+        <item>30秒</item>
+        <item>1分</item>
+        <item>3分</item>
+        <item>5分</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+    <string-array name="precache_tracks_titles">
+        <item>無効</item>
+        <item>次の1トラック</item>
+        <item>次の2トラック</item>
+        <item>次の3トラック</item>
+        <item>次の5トラック</item>
+    </string-array>
+    <string-array name="precache_tracks_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="playlist_sort_option_titles">
+        <item>@string/menu_sort_name</item>
+        <item>@string/menu_sort_random</item>
+        <item>@string/menu_sort_date_created</item>
+        <item>@string/menu_sort_song_count</item>
+        <item>@string/playlist_sort_pinned</item>
+        <item>@string/playlist_sort_last_played</item>
+        <item>@string/playlist_sort_last_updated</item>
+        <item>@string/playlist_sort_both</item>
+    </string-array>
+    <string-array name="playlist_sort_option_values">
+        <item>ORDER_BY_NAME</item>
+        <item>ORDER_BY_RANDOM</item>
+        <item>ORDER_BY_DATE</item>
+        <item>ORDER_BY_SONGS</item>
+        <item>ORDER_BY_PINNED</item>
+        <item>ORDER_BY_LAST_PLAYED</item>
+        <item>ORDER_BY_LAST_UPDATED</item>
+        <item>ORDER_BY_BOTH</item>
+    </string-array>
+    <string-array name="skip_min_star_rating_titles">
+        <item>★0以上</item>
+        <item>★1以上</item>
+        <item>★2以上</item>
+        <item>★3以上</item>
+        <item>★4以上</item>
+    </string-array>
+    <string-array name="skip_min_star_rating_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="tile_size_titles">
+        <item>極小</item>
+        <item>小</item>
+        <item>中</item>
+        <item>大</item>
+        <item>デフォルト</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="selected_equalizer_entries">
+        <item>デフォルト</item>
+        <item>内蔵</item>
+        <item>外部</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="aa_tab_titles">
+        <item>表示しない</item>
+        <item>ホーム</item>
+        <item>最近の項目</item>
+        <item>アルバム</item>
+        <item>アーティスト</item>
+        <item>プレイリスト</item>
+        <item>ポッドキャスト</item>
+        <item>ラジオ</item>
+        <item>フォルダー</item>
+        <item>よく再生するアルバム</item>
+        <item>追加されたアルバム</item>
+        <item>あなたへ</item>
+        <item>お気に入り</item>
+        <item>トラック</item>
+        <item>ジャンル</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+    </string-array>
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>アーティストにお気に入り登録</item>
+        <item>アルバムにお気に入り登録</item>
+        <item>トラックにお気に入り登録</item>
+    </string-array>
+    <string-array name="aa_starred_for_made_for_you_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="custom_commands_titles">
+        <item>ハート</item>
+        <item>リピート</item>
+        <item>シャッフル</item>
+        <item>インスタントミックス</item>
+    </string-array>
+    <string-array name="custom_commands_values" translatable="false">
+        <item>[heartID]</item>
+        <item>[repeatID]</item>
+        <item>[shuffleID]</item>
+        <item>[instantMixID]</item>
+    </string-array>
+</resources>

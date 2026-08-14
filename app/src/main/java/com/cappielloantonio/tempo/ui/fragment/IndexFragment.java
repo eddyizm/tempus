@@ -99,17 +99,17 @@ public class IndexFragment extends Fragment implements ClickCallback {
             activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        if (bind != null)
-            bind.toolbar.setNavigationOnClickListener(v -> activity.navController.navigateUp());
+        bind.toolbar.setNavigationOnClickListener(v -> activity.navController.navigateUp());
 
-        if (bind != null)
-            bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-                if ((bind.indexInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
-                    bind.toolbar.setTitle(indexViewModel.getMusicFolderName());
-                } else {
-                    bind.toolbar.setTitle(R.string.empty_string);
-                }
-            });
+        bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (bind == null) return;
+
+            if ((bind.indexInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
+                bind.toolbar.setTitle(indexViewModel.getMusicFolderName());
+            } else {
+                bind.toolbar.setTitle(R.string.empty_string);
+            }
+        });
     }
 
     private void initDirectoryListView() {

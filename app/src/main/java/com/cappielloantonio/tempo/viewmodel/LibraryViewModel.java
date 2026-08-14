@@ -19,8 +19,10 @@ import com.cappielloantonio.tempo.subsonic.models.Genre;
 import com.cappielloantonio.tempo.subsonic.models.Indexes;
 import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
 import com.cappielloantonio.tempo.subsonic.models.Playlist;
+import com.cappielloantonio.tempo.util.Preferences;
 
 import java.util.List;
+import java.util.Objects;
 
 public class LibraryViewModel extends AndroidViewModel {
     private static final String TAG = "LibraryViewModel";
@@ -38,6 +40,8 @@ public class LibraryViewModel extends AndroidViewModel {
     private final MutableLiveData<List<ArtistID3>> sampleArtist = new MutableLiveData<>(null);
     private final MutableLiveData<List<Genre>> sampleGenres = new MutableLiveData<>(null);
 
+    private String cachedMusicFolderId = Preferences.getActiveMusicFolderId();
+
     public LibraryViewModel(@NonNull Application application) {
         super(application);
 
@@ -46,6 +50,20 @@ public class LibraryViewModel extends AndroidViewModel {
         artistRepository = new ArtistRepository();
         genreRepository = new GenreRepository();
         playlistRepository = new PlaylistRepository();
+    }
+
+    /**
+     * Same reasoning as HomeViewModel. Genres, playlists and the folder list take no folder id, so
+     * they stay.
+     */
+    public void clearCacheIfMusicFolderChanged() {
+        String activeMusicFolderId = Preferences.getActiveMusicFolderId();
+        if (Objects.equals(activeMusicFolderId, cachedMusicFolderId)) return;
+
+        cachedMusicFolderId = activeMusicFolderId;
+
+        sampleAlbum.setValue(null);
+        sampleArtist.setValue(null);
     }
 
     public LiveData<List<MusicFolder>> getMusicFolders(LifecycleOwner owner) {
