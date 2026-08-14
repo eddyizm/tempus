@@ -195,3 +195,4 @@ public class IndexFragment extends Fragment implements ClickCallback {
         });
     }
 }
+
