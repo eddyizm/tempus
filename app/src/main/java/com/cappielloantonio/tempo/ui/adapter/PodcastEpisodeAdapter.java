@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.ui.adapter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.cappielloantonio.tempo.util.MusicUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,9 +47,27 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
         PodcastEpisode podcastEpisode = podcastEpisodes.get(position);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMM d");
 
+        Context context = holder.itemView.getContext();
+
+        Date publishedDate = podcastEpisode.getPublishDate();
+        String dateStr = (publishedDate != null)
+                ? simpleDateFormat.format(publishedDate)
+                : context.getString(R.string.podcast_release_no_date);
+
+        Integer duration = podcastEpisode.getDuration();
+        String durationStr = (duration != null)
+                ? MusicUtil.getReadablePodcastDurationString(duration)
+                : context.getString(R.string.podcast_release_unknown_duration);
+
+        String releasesAndDurationLabel = context.getString(
+                R.string.podcast_release_date_duration_formatter,
+                dateStr,
+                durationStr
+        );
+
         holder.item.podcastTitleLabel.setText(podcastEpisode.getTitle());
         holder.item.podcastSubtitleLabel.setText(podcastEpisode.getArtist());
-        holder.item.podcastReleasesAndDurationLabel.setText(holder.itemView.getContext().getString(R.string.podcast_release_date_duration_formatter, simpleDateFormat.format(podcastEpisode.getPublishDate()), MusicUtil.getReadablePodcastDurationString(podcastEpisode.getDuration())));
+        holder.item.podcastReleasesAndDurationLabel.setText(releasesAndDurationLabel);
         holder.item.podcastDescriptionText.setText(MusicUtil.getReadableString(podcastEpisode.getDescription()));
 
         CustomGlideRequest.Builder

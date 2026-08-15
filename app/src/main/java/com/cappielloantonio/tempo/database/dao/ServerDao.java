@@ -6,6 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.cappielloantonio.tempo.model.Server;
 
@@ -18,6 +19,9 @@ public interface ServerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Server server);
+
+    @Update
+    void update(Server server);
 
     @Delete
     void delete(Server server);

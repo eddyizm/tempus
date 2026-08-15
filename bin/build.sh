@@ -10,6 +10,8 @@ HOST_PLATFORM="linux-x86_64"
 ANDROID_API=24
 ENABLED_DECODERS=(alac)
 MEDIA3_VERSION="1.9.2"
+# Full commit hash, and must match the FFmpeg srclib pin in the F-Droid recipe
+FFMPEG_COMMIT="bda1c6f1f9041910ec5b2c279a08861203a1c95c"
 
 # ------------------------------------------------------------------
 # Deterministic build flags – must match F-Droid
@@ -32,12 +34,15 @@ step "🚀 Starting FFmpeg + AAR build"
 rm -rf ffmpeg media
 
 # ---------- 1. Clone ffmpeg ----------
-step "📦 Cloning ffmpeg (release/6.0) via HTTPS"
-git clone --depth 1 --branch release/6.0 https://github.com/FFmpeg/FFmpeg.git ffmpeg
+step "📦 Fetching ffmpeg (pinned commit $FFMPEG_COMMIT) via HTTPS"
+git init -q ffmpeg
 cd ffmpeg
+git remote add origin https://github.com/FFmpeg/FFmpeg.git
+git fetch --depth 1 origin "$FFMPEG_COMMIT"
+git checkout "$FFMPEG_COMMIT"
 FFMPEG_PATH="$(pwd)"
 cd ..
-echo "✅ ffmpeg cloned to $FFMPEG_PATH"
+echo "✅ ffmpeg fetched to $FFMPEG_PATH"
 
 # ---------- 2. Clone androidx/media ----------
 step "📦 Cloning androidx/media (shallow, version: $MEDIA3_VERSION) via HTTPS"

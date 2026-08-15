@@ -1,5 +1,19 @@
 # Changelog
 
+## [4.24.0](https://github.com/eddyizm/tempus/releases/tag/v4.24.0) (2026-08-15 )
+## What's Changed
+* fix: add Basque (eu) to locale_config.xml by @planetryan in https://github.com/eddyizm/tempus/pull/960
+* feat: add a music library switcher so browsing and search can be scoped to one library by @herrerad85 in https://github.com/eddyizm/tempus/pull/951
+* Fix a crash when the server reports no playlists by @herrerad85 in https://github.com/eddyizm/tempus/pull/965
+* fix: guard app bar offset listeners against a null view binding by @herrerad85 in https://github.com/eddyizm/tempus/pull/968
+* Add Japanese language support by @kou029w in https://github.com/eddyizm/tempus/pull/973
+* build: pin the FFmpeg source to a commit in bin/build.sh by @herrerad85 in https://github.com/eddyizm/tempus/pull/978
+
+## New Contributors
+* @kou029w made their first contribution in https://github.com/eddyizm/tempus/pull/973
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.23.2...v4.24.0
+
 ## [4.23.2](https://github.com/eddyizm/tempus/releases/tag/v4.23.2) (2026-08-04)
 * fix: stop the 4.23 upgrade wiping downloads, and restore them for users already hit (#961)
 
