@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager;
 
 import com.cappielloantonio.tempo.github.Github;
 import com.cappielloantonio.tempo.helper.ThemeHelper;
+import com.cappielloantonio.tempo.repository.ServerRepository;
 import com.cappielloantonio.tempo.subsonic.Subsonic;
 import com.cappielloantonio.tempo.subsonic.SubsonicPreferences;
 import com.cappielloantonio.tempo.ui.activity.CrashActivity;
@@ -54,6 +55,9 @@ public class App extends Application {
         instance = new App();
         context = getApplicationContext();
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        Preferences.migrateCredentialsToEncrypted();
+        new ServerRepository().encryptStoredPasswords();
 
         ClientCertManager.setupSslSocketFactory(context);
     }
