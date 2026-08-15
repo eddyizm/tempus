@@ -115,7 +115,7 @@
 
 To deobfuscate crash logs:
 ```bash
-$ANDROID_HOME/cmdline-tools/latest/bin/retrace app/build/outputs/mapping/tempusRelease/mapping.txt stack_error_transcript.txt
+$ANDROID_HOME/cmdline-tools/tools/bin/retrace app/build/outputs/mapping/tempusRelease/mapping.txt stack_error_transcript.txt
 ```
 
 ### Development Guidelines
