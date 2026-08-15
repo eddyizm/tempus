@@ -1,7 +1,6 @@
 Tempus is an open-source, privacy focused and lightweight music client for Subsonic, designed and built natively for Android. It provides a seamless and intuitive music streaming experience, allowing you to access and play your Subsonic music library directly from your Android device.<br>
 <br>
 Features<br>
-<br>
 <ul>
 <li>Subsonic Integration: Tempus seamlessly integrates with your Subsonic server, providing you with easy access to your entire music collection on the go.</li>
 <li>Sleek and Intuitive UI: Enjoy a clean and user-friendly interface designed to enhance your music listening experience, tailored to your preferences and listening history.</li>
@@ -18,7 +17,7 @@ Features<br>
 <li>Multiple Libraries: Tempus handles multi-library setups gracefully. They are displayed as Library folders.</li>
 <li>Equalizer: Option to use built-in or third-party equalizer.</li>
 <li>Widget: New widget to keeping the basic controls on your screen at all times.</li>
-<li>Available in 12 languages: Currently in Catalan, Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish</li>
+<li>Available in 14 languages: Currently in Basque, Catalan, Chinese, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish</li>
 </ul>
 <br>
 <i>Chromecast/Android Auto Not Supported: These features require google libraries and are only available in the github apk.</i>

@@ -66,5 +66,17 @@
             android:paddingBottom="@dimen/global_padding_bottom"
             android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/new_login_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="48dp"
+            android:text="@string/la_button_advanced_editor" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </LinearLayout>

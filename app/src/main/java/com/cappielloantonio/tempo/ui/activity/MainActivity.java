@@ -1,16 +1,18 @@
 package com.cappielloantonio.tempo.ui.activity;
 
-import static androidx.core.view.WindowCompat.enableEdgeToEdge;
 import static com.cappielloantonio.tempo.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
-import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.text.TextUtils;
@@ -18,15 +20,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.SystemBarStyle;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
@@ -55,6 +53,7 @@ import com.cappielloantonio.tempo.ui.dialog.ConnectionAlertDialog;
 import com.cappielloantonio.tempo.ui.dialog.GithubTempoUpdateDialog;
 import com.cappielloantonio.tempo.ui.dialog.ServerUnreachableDialog;
 import com.cappielloantonio.tempo.ui.fragment.PlayerBottomSheetFragment;
+import com.cappielloantonio.tempo.ui.login.LoginActivity;
 import com.cappielloantonio.tempo.util.AssetLinkNavigator;
 import com.cappielloantonio.tempo.util.AssetLinkUtil;
 import com.cappielloantonio.tempo.util.Constants;
@@ -63,10 +62,10 @@ import com.cappielloantonio.tempo.util.Preferences;
 import com.cappielloantonio.tempo.viewmodel.MainViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.internal.EdgeToEdgeUtils;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.MoreExecutors;
 
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -153,6 +152,7 @@ public class MainActivity extends BaseActivity {
         DownloadRepair.repairIfNeeded(this);
 
         maybeSchedulePlaybackIntent(getIntent());
+        setupLoginActivity();
     }
 
     @Override
@@ -724,5 +724,30 @@ public class MainActivity extends BaseActivity {
             );
             return insets;
         });
+    }
+
+    private void setupLoginActivity() {
+        String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
+        if ("open_legacy_login_fragment".equals(triggerArg)) {
+            goToLogin();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setAction(Intent.ACTION_VIEW);
+
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "login_activity_shortcut")
+                    .setShortLabel(getString(R.string.la_shortcut_label))
+                    .setLongLabel(getString(R.string.la_shortcut_label))
+                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher))
+                    .setIntents(new Intent[]{intent})
+                    .build();
+
+            if (shortcutManager != null) {
+                shortcutManager.setDynamicShortcuts(Collections.singletonList(shortcut));
+            }
+        }
     }
 }
