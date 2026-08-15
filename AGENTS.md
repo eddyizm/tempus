@@ -85,7 +85,7 @@
 ## Contributing Notes (from CONTRIBUTING.md)
 - PRs against `development` branch
 - Include before/after screenshots for UI changes
-- No tests currently, but unit tests encouraged
+- Tests exist, but CI does not execute them; run the flavor-specific unit-test tasks locally.
 - Update docs (`USAGE.md`) with changes
 - Crash logs are obfuscated in release; deobfuscate with mapping.txt:
   ```bash
