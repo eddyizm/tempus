@@ -80,7 +80,7 @@ Please note the two variants in the release assets include release/debug and 32/
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
 - **Equalizer**: Option to use built-in or third-party equalizer.
 - **Widget**: New widget to keeping the basic controls on your screen at all times.
-- **Available in 12 languages**: Currently in Catalan, Chinese, French, German, Italian, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish
+- **Available in 14 languages**: Currently in Basque, Catalan, Chinese, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish
 
 ### 🟥GitHub version only
 - **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.
@@ -141,7 +141,7 @@ Please fork and open PR's against the development branch. Make sure your PR buil
 
 If there is an UI change, please include a before/after screenshot and a short video/gif if that helps elaborating the fix/feature in the PR. 
 
-Currently there are no tests but I would love to start on some unit tests. 
+Please add simple unit tests when applicable.
 
 Not a hard requirement but any new feature/change should ideally include an update to the nacent documention. 
 
