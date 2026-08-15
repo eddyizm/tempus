@@ -272,7 +272,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Публичный</string>
     <string name="playlist_chooser_dialog_visibility_private">Приватный</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Сделать плейлист публичным</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Сервер обновляет видимость при каждом запросе. По умолчанию плейлист приватный.</string>
     <string name="playlist_counted_tracks">%1$d треков • %2$s</string>
     <string name="playlist_duration">Длительность • %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Удерживайте для удаления</string>

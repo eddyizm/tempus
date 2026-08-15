@@ -36,7 +36,7 @@ public class PlaylistClient {
         return playlistService.createPlaylist(subsonic.getParams(), playlistId, name, songsId);
     }
 
-    public Call<ApiResponse> updatePlaylist(String playlistId, String name, boolean isPublic, ArrayList<String> songIdToAdd, ArrayList<Integer> songIndexToRemove) {
+    public Call<ApiResponse> updatePlaylist(String playlistId, String name, Boolean isPublic, ArrayList<String> songIdToAdd, ArrayList<Integer> songIndexToRemove) {
         Log.d(TAG, "updatePlaylist()");
         return playlistService.updatePlaylist(subsonic.getParams(), playlistId, name, isPublic, songIdToAdd, songIndexToRemove);
     }
