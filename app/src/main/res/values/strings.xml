@@ -58,6 +58,10 @@
     <string name="artist_adapter_radio_station_starting">Searching…</string>
     <string name="artist_bottom_sheet_instant_mix">Instant mix</string>
     <string name="artist_bottom_sheet_shuffle">Shuffle</string>
+    <string name="artist_bottom_sheet_play_next">Play next</string>
+    <string name="artist_bottom_sheet_add_to_queue">Add to queue</string>
+    <string name="artist_bottom_sheet_add_to_playlist">Add to playlist</string>
+    <string name="artist_bottom_sheet_loading_tracks">Loading tracks\u2026</string>
     <string name="artist_catalogue_title">Artists</string>
     <string name="artist_catalogue_title_expanded">Browse Artists</string>
     <string name="artist_error_retrieving_radio">Error retrieving artist\'s radio</string>
@@ -94,6 +98,7 @@
     <string name="connection_alert_dialog_summary">Access to the Subsonic server on connections other than Wi-Fi has been restricted. To prevent this alert dialog from reappearing, disable the connection check in the app settings.</string>
     <string name="connection_alert_dialog_title">Wi-Fi not connected</string>
     <string name="content_description_shuffle_button">Shuffle</string>
+    <string name="content_description_more_options">More options</string>
     <string name="delete_download_storage_dialog_negative_button">Cancel</string>
     <string name="delete_download_storage_dialog_positive_button">Continue</string>
     <string name="delete_download_storage_dialog_summary">Please be aware that continuing with this action will result in the permanent deletion of all saved items downloaded from all servers.</string>
@@ -357,6 +362,8 @@
     <string name="podcast_info_empty_subtitle">Once you add a channel, you\'ll find it here</string>
     <string name="podcast_info_empty_title">No podcasts found!</string>
     <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">No date</string>
+    <string name="podcast_release_unknown_duration">Unknown duration</string>
     <string name="radio_editor_dialog_hint_homepage_url">Radio Homepage URL</string>
     <string name="radio_editor_dialog_hint_name">Radio Name</string>
     <string name="radio_editor_dialog_hint_stream_url">Radio Stream URL</string>
