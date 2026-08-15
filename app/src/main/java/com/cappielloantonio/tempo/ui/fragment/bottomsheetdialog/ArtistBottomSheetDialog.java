@@ -42,6 +42,8 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     private boolean isFirstBatch = true;
+    // Guard to prevent concurrent taps that register multiple observers on the cached LiveData
+    private boolean isLoadingTracks = false;
 
     @Nullable
     @Override
@@ -136,43 +138,104 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         });
 
         TextView playNext = view.findViewById(R.id.play_next_text_view);
-        playNext.setOnClickListener(v -> {
-            Toast.makeText(requireContext(), R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
-            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), songs -> {
-                if (songs == null || songs.isEmpty()) return;
-                MusicUtil.ratingFilter(songs);
-                MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
-                ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
-                dismissBottomSheet();
-            });
-        });
-
         TextView addToQueue = view.findViewById(R.id.add_to_queue_text_view);
-        addToQueue.setOnClickListener(v -> {
+        TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
+
+        // Helper to restore UI state after loading completes or fails
+        Runnable restoreButtons = () -> {
+            isLoadingTracks = false;
+            if (playNext != null) playNext.setEnabled(true);
+            if (addToQueue != null) addToQueue.setEnabled(true);
+            if (addToPlaylist != null) addToPlaylist.setEnabled(true);
+        };
+
+        playNext.setOnClickListener(v -> {
+            if (isLoadingTracks) return;
+            isLoadingTracks = true;
+            if (playNext != null) playNext.setEnabled(false);
+            if (addToQueue != null) addToQueue.setEnabled(false);
+            if (addToPlaylist != null) addToPlaylist.setEnabled(false);
+
             Toast.makeText(requireContext(), R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
-            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), songs -> {
-                if (songs == null || songs.isEmpty()) return;
-                MusicUtil.ratingFilter(songs);
-                MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
-                dismissBottomSheet();
-            });
+
+            androidx.lifecycle.Observer<java.util.List<com.cappielloantonio.tempo.subsonic.models.Child>> observer = new androidx.lifecycle.Observer<java.util.List<com.cappielloantonio.tempo.subsonic.models.Child>>() {
+                @Override
+                public void onChanged(java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> songs) {
+                    // Remove observer immediately to avoid duplicate handling
+                    artistBottomSheetViewModel.getArtistAllTracks().removeObserver(this);
+                    try {
+                        if (songs == null || songs.isEmpty()) return;
+                        MusicUtil.ratingFilter(songs);
+                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, true);
+                        ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                        dismissBottomSheet();
+                    } finally {
+                        restoreButtons.run();
+                    }
+                }
+            };
+
+            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), observer);
         });
 
-        TextView addToPlaylist = view.findViewById(R.id.add_to_playlist_text_view);
-        addToPlaylist.setOnClickListener(v -> {
+        addToQueue.setOnClickListener(v -> {
+            if (isLoadingTracks) return;
+            isLoadingTracks = true;
+            if (playNext != null) playNext.setEnabled(false);
+            if (addToQueue != null) addToQueue.setEnabled(false);
+            if (addToPlaylist != null) addToPlaylist.setEnabled(false);
+
             Toast.makeText(requireContext(), R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
-            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), songs -> {
-                if (songs == null || songs.isEmpty()) return;
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
 
-                PlaylistChooserDialog dialog = new PlaylistChooserDialog();
-                dialog.setArguments(bundle);
-                dialog.show(requireActivity().getSupportFragmentManager(), null);
+            androidx.lifecycle.Observer<java.util.List<com.cappielloantonio.tempo.subsonic.models.Child>> observer = new androidx.lifecycle.Observer<java.util.List<com.cappielloantonio.tempo.subsonic.models.Child>>() {
+                @Override
+                public void onChanged(java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> songs) {
+                    artistBottomSheetViewModel.getArtistAllTracks().removeObserver(this);
+                    try {
+                        if (songs == null || songs.isEmpty()) return;
+                        MusicUtil.ratingFilter(songs);
+                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
+                        ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+                        dismissBottomSheet();
+                    } finally {
+                        restoreButtons.run();
+                    }
+                }
+            };
 
-                dismissBottomSheet();
-            });
+            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), observer);
+        });
+
+        addToPlaylist.setOnClickListener(v -> {
+            if (isLoadingTracks) return;
+            isLoadingTracks = true;
+            if (playNext != null) playNext.setEnabled(false);
+            if (addToQueue != null) addToQueue.setEnabled(false);
+            if (addToPlaylist != null) addToPlaylist.setEnabled(false);
+
+            Toast.makeText(requireContext(), R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
+
+            androidx.lifecycle.Observer<java.util.List<com.cappielloantonio.tempo.subsonic.models.Child>> observer = new androidx.lifecycle.Observer<java.util.List<com.cappielloantonio.tempo.subsonic.models.Child>>() {
+                @Override
+                public void onChanged(java.util.List<com.cappielloantonio.tempo.subsonic.models.Child> songs) {
+                    artistBottomSheetViewModel.getArtistAllTracks().removeObserver(this);
+                    try {
+                        if (songs == null || songs.isEmpty()) return;
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
+
+                        PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+                        dialog.setArguments(bundle);
+                        dialog.show(requireActivity().getSupportFragmentManager(), null);
+
+                        dismissBottomSheet();
+                    } finally {
+                        restoreButtons.run();
+                    }
+                }
+            };
+
+            artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), observer);
         });
     }
 

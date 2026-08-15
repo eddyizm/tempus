@@ -93,6 +93,7 @@
   ```
 
 ## Common Tasks
+
 | Task | Command |
 |------|---------|
 | Build debug APK (tempus) | `./gradlew assembleTempusDebug` |
