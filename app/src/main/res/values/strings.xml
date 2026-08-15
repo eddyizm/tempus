@@ -357,6 +357,8 @@
     <string name="podcast_info_empty_subtitle">Once you add a channel, you\'ll find it here</string>
     <string name="podcast_info_empty_title">No podcasts found!</string>
     <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">No date</string>
+    <string name="podcast_release_unknown_duration">Unknown duration</string>
     <string name="radio_editor_dialog_hint_homepage_url">Radio Homepage URL</string>
     <string name="radio_editor_dialog_hint_name">Radio Name</string>
     <string name="radio_editor_dialog_hint_stream_url">Radio Stream URL</string>
