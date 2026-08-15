@@ -1,15 +1,15 @@
 <resources>
     <string name="aa_albums">Albums</string>
     <string name="aa_album_most_played">Albums most played</string>
-	<string name="aa_album_recently_added">Albums added</string>
+    <string name="aa_album_recently_added">Albums added</string>
     <string name="aa_artists">Artists</string>
     <string name="aa_home">Home</string>
-	<string name="aa_made_for_you">For you</string>
+    <string name="aa_made_for_you">For you</string>
     <string name="aa_more">More</string>
     <string name="aa_music_folder">Folder</string>
     <string name="aa_playlists">Playlists</string>
-	<string name="aa_podcast">Podcast</string>
-	<string name="aa_radio">Radio</string>
+    <string name="aa_podcast">Podcast</string>
+    <string name="aa_radio">Radio</string>
     <string name="aa_random">Random</string>
     <string name="aa_genres">Genres</string>
     <string name="aa_recent_albums">Recent</string>
@@ -479,16 +479,16 @@
     <string name="settings_podcast">Show podcast</string>
     <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
     <string name="settings_playlist_sort">Playlist sorting</string>
-	<string name="settings_androidauto">Android Auto</string>
-	<string name="settings_androidauto_album_view">Grid view for albums and artists</string>
-	<string name="settings_androidauto_home_view">Grid view for home</string>
+    <string name="settings_androidauto">Android Auto</string>
+    <string name="settings_androidauto_album_view">Grid view for albums and artists</string>
+    <string name="settings_androidauto_home_view">Grid view for home</string>
     <string name="settings_androidauto_playlist_view">Grid view for playlists</string>
     <string name="settings_androidauto_podcast_view">Grid view for podcast</string>
     <string name="settings_androidauto_radio_view">Grid view for radio</string>
-	<string name="settings_androidauto_first_tab">First tab display</string>
-	<string name="settings_androidauto_second_tab">Second tab display</string>
-	<string name="settings_androidauto_third_tab">Third tab display</string>
-	<string name="settings_androidauto_fourth_tab">Fourth tab display</string>
+    <string name="settings_androidauto_first_tab">First tab display</string>
+    <string name="settings_androidauto_second_tab">Second tab display</string>
+    <string name="settings_androidauto_third_tab">Third tab display</string>
+    <string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
@@ -555,7 +555,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_dark_theme_style">Dark theme style</string>
-	<string name="settings_tile_size">Tiles size</string>
+    <string name="settings_tile_size">Tiles size</string>
     <string name="settings_title_data">Data</string>
     <string name="settings_title_general">General</string>
     <string name="settings_title_misc">Miscellaneous</string>
@@ -682,7 +682,7 @@
     <string name="track_info_year">Year</string>
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
-	<string name="undraw_url" translatable="false">https://undraw.co/</string>
+    <string name="undraw_url" translatable="false">https://undraw.co/</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Not playing</string>
     <string name="widget_placeholder_subtitle">Open Tempus</string>
@@ -756,6 +756,10 @@
         <item>Custom\u2026</item>
     </string-array>
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
+    <string name="playlist_error_not_found_title">Playlist not found</string>
+    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
+    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
+    <string name="player_overflow_menu_add_to_playlist">Add to playlist</string>
 
     <!-- Crash Activity -->
 
@@ -784,8 +788,42 @@
 
         The data is not sent anywhere without your consent.
     </string>
-    <string name="playlist_error_not_found_title">Playlist not found</string>
-    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
-    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
-    <string name="player_overflow_menu_add_to_playlist">Add to playlist</string>
+
+    <!-- Login Activity  -->
+
+    <string name="la_greeting_description">Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.</string>
+
+    <string name="la_server_title">Server Setup</string>
+    <string name="la_server_description">Experimental feature, you will be interacting directly with the database (useful for crash loops).</string>
+    <string name="la_server_field_server_empty_error">Mandatory field</string>
+    <string name="la_server_field_server_url_error">URL not valid</string>
+    <string name="la_server_field_server_name">Server name</string>
+    <string name="la_server_field_server_user">User name</string>
+    <string name="la_server_field_server_pass">Password</string>
+    <string name="la_server_field_server_public_url">Public URL</string>
+    <string name="la_server_field_server_local_url">Local URL</string>
+    <string name="la_server_field_server_cert">Client certificate (optional)</string>
+    <string name="la_server_field_plaintext_password_checkbox">Plaintext password</string>
+    <string name="la_server_button_create">Create</string>
+    <string name="la_server_button_update">Update</string>
+    <string name="la_server_button_delete">Delete</string>
+    <string name="la_server_button_test">Test</string>
+    <string name="la_server_button_return">Return to server list</string>
+    <string name="la_server_dropdown_add_new">Add new server</string>
+    <string name="la_server_toast_created">Server created</string>
+    <string name="la_server_toast_updated">Server updated</string>
+    <string name="la_server_toast_deleted">Server deleted</string>
+    <string name="la_server_toast_connection_testing">Testing connection</string>
+    <string name="la_server_toast_connection_success">Connected Successfully!</string>
+    <string name="la_server_toast_connection_failure">Failed: Invalid server, URL, or credentials</string>
+    <string name="la_server_toast_connection_error">Network error:</string>
+    <string name="la_server_switch_plaintext_password">Plaintext passowrd (legacy servers)</string>
+    <string name="la_server_switch_local_url">Set a local URL</string>
+    <string name="la_server_switch_cert">Client certificate (mTLS)</string>
+
+    <string name="la_shortcut_label">Introduction</string>
+    <string name="la_button_advanced_editor">Advanced editor (beta)</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
