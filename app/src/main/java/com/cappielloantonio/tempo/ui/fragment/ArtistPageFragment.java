@@ -154,7 +154,8 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         Button moreOptions = view.findViewById(R.id.button_more_options);
         moreOptions.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putParcelable(Constants.ARTIST_OBJECT, artistPageViewModel.getArtist());
+            ArtistID3 artistForNav = artistPageViewModel.getArtist();
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artistForNav != null ? artistForNav.strippedForNav() : null);
             Navigation.findNavController(requireView()).navigate(R.id.artistBottomSheetDialog, bundle);
         });
     }

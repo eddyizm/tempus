@@ -146,7 +146,8 @@
                     android:background="@drawable/ic_more_vert"
                     android:foreground="?android:attr/selectableItemBackgroundBorderless"
                     android:gravity="center"
-                    android:text="" />
+                    android:text=""
+                    android:contentDescription="@string/content_description_more_options" />
 
             </LinearLayout>
 
