@@ -6,13 +6,13 @@ plugins {
 android {
     namespace = 'com.cappielloantonio.tempo'
     //noinspection GradleDependency
-    compileSdk = 36
-    buildToolsVersion = '36.0.0'
+    compileSdk = 37
+    buildToolsVersion = '36.1.0'
 
     defaultConfig {
         minSdkVersion 24
         //noinspection OldTargetApi
-        targetSdk = 36
+        targetSdk = 37
 
         versionCode 42
         versionName '4.24.0'
