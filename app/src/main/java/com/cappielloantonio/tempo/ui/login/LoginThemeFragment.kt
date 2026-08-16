@@ -99,7 +99,7 @@ class LoginThemeFragment : Fragment() {
             themeOptions
         )
 
-        binding.dropdownThemeMode.apply {
+        binding.themesList.apply {
             setAdapter(adapter)
             threshold = 0
 
@@ -136,34 +136,37 @@ class LoginThemeFragment : Fragment() {
     }
 
     private fun setupDefaultAccentColorButtons() {
+        binding.cardDefault.setOnClickListener {
+            applyAccentColor("DYNAMIC")
+        }
         binding.cardCoral.setOnClickListener {
-            applyAccentColor("#FF5722")
+            applyAccentColor("HEX:#FF5722")
         }
         binding.cardEmerald.setOnClickListener {
-            applyAccentColor("#2E7D32")
+            applyAccentColor("HEX:#2E7D32")
         }
         binding.cardEmerald.setOnClickListener {
-            applyAccentColor("#2E7D32")
+            applyAccentColor("HEX:#2E7D32")
         }
         binding.cardBlue.setOnClickListener {
-            applyAccentColor("#1976D2")
+            applyAccentColor("HEX:#1976D2")
         }
         binding.cardPurple.setOnClickListener {
-            applyAccentColor("#7B1FA2")
+            applyAccentColor("HEX:#7B1FA2")
         }
         binding.cardAmber.setOnClickListener {
-            applyAccentColor("#FFA000")
+            applyAccentColor("HEX:#FFA000")
         }
         binding.cardTeal.setOnClickListener {
-            applyAccentColor("#00796B")
+            applyAccentColor("HEX:#00796B")
         }
         binding.cardSlate.setOnClickListener {
-            applyAccentColor("#455A64")
+            applyAccentColor("HEX:#455A64")
         }
     }
 
-    private fun applyAccentColor(hexString: String) {
-        Preferences.setColorAccent("HEX:$hexString")
+    private fun applyAccentColor(accent: String) {
+        Preferences.setColorAccent(accent)
         ThemeHelper.enableThemeSwitch(activity as AppCompatActivity)
         activity?.recreate()
     }
