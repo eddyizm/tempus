@@ -87,15 +87,14 @@ class LoginThemeFragment : Fragment() {
         if (!singlePageMode) {
             binding.buttonReturn.visibility = View.GONE
             return
-        } else {
-            binding.buttonReturn.visibility = View.VISIBLE
-            binding.buttonReturn.setOnClickListener {
-                requireActivity().finish()
-                val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
-                    putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_settings_fragment")
-                }
-                startActivity(tempus)
+        }
+
+        binding.buttonReturn.setOnClickListener {
+            requireActivity().finish()
+            val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
+                putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_settings_fragment")
             }
+            startActivity(tempus)
         }
     }
 
