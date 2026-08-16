@@ -93,13 +93,12 @@ object ThemeHelper {
         val isSystemDark = (theme == DEFAULT_MODE && nightMode == UI_MODE_NIGHT_YES)
         val isAmoled     = isDarkThemeBlack() && (theme == DARK_MODE || isSystemDark)
 
-        val colorAccent: String = if (isDynamicColorAccent()) {
-            "DYNAMIC" // Override to not lose user HEX preference
-        } else {
-            getColorAccent()
-        }
+        val colorAccent = getColorAccent()
 
         when {
+            isDynamicColorAccent() -> {
+                    applyToActivityIfAvailable(activity)
+            }
             colorAccent.startsWith("HEX:") -> {
                 val hexString = colorAccent.removePrefix("HEX:")
                 try {
@@ -109,9 +108,7 @@ object ThemeHelper {
                     applyToActivityIfAvailable(activity)
                 }
             }
-            else -> {
-                applyToActivityIfAvailable(activity)
-            }
+            else -> Unit
         }
 
         if (isAmoled) {
