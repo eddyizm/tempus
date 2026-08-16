@@ -31,6 +31,7 @@ import com.eddyizm.tempus.util.ExternalAudioReader;
 import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -207,11 +208,10 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         }
 
         if (Preferences.showItemRating()) {
-            if (song.getStarred() == null && song.getUserRating() == null) {
-                holder.item.ratingIndicatorImageView.setVisibility(View.GONE);
-            }
+            boolean isStarred = FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, song.getId(), song.getStarred() != null);
+            holder.item.ratingIndicatorImageView.setVisibility(isStarred || song.getUserRating() != null ? View.VISIBLE : View.GONE);
 
-            holder.item.preferredIcon.setVisibility(song.getStarred() != null ? View.VISIBLE : View.GONE);
+            holder.item.preferredIcon.setVisibility(isStarred ? View.VISIBLE : View.GONE);
             holder.item.ratingBarLayout.setVisibility(song.getUserRating() != null ? View.VISIBLE : View.GONE);
 
             if (song.getUserRating() != null) {

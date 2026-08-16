@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.viewmodel.ArtistBottomSheetViewModel;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -89,7 +90,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
         nameArtist.setSelected(true);
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
-        favoriteToggle.setChecked(artistBottomSheetViewModel.getArtist().getStarred() != null);
+        favoriteToggle.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.ARTIST, artistBottomSheetViewModel.getArtist().getId(), artistBottomSheetViewModel.getArtist().getStarred() != null));
         favoriteToggle.setOnClickListener(v -> {
             artistBottomSheetViewModel.setFavorite(requireContext());
         });

@@ -36,6 +36,7 @@ import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.NetworkUtil;
 import com.eddyizm.tempus.util.OpenSubsonicExtensionsUtil;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.gson.Gson;
 
 import java.util.Collections;
@@ -87,7 +88,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
 
     public void setFavorite(Context context, Child media) {
         if (media != null) {
-            if (media.getStarred() != null) {
+            if (FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, media.getId(), media.getStarred() != null)) {
                 if (NetworkUtil.isOffline()) {
                     removeFavoriteOffline(media);
                 } else {
@@ -112,7 +113,6 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         favoriteRepository.unstar(media.getId(), null, null, new StarCallback() {
             @Override
             public void onError() {
-                // media.setStarred(new Date());
                 favoriteRepository.starLater(media.getId(), null, null, false);
             }
         });
@@ -128,7 +128,6 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         favoriteRepository.star(media.getId(), null, null, new StarCallback() {
             @Override
             public void onError() {
-                // media.setStarred(null);
                 favoriteRepository.starLater(media.getId(), null, null, true);
             }
         });

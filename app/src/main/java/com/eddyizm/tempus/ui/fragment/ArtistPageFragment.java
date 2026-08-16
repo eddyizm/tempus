@@ -48,6 +48,7 @@ import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.util.TileSizeManager;
 import com.eddyizm.tempus.viewmodel.ArtistPageViewModel;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -144,7 +145,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         });
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
-        favoriteToggle.setChecked(artistPageViewModel.getArtist().getStarred() != null);
+        favoriteToggle.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.ARTIST, artistPageViewModel.getArtist().getId(), artistPageViewModel.getArtist().getStarred() != null));
         favoriteToggle.setOnClickListener(v -> artistPageViewModel.setFavorite(requireContext()));
 
         Button bioToggle = view.findViewById(R.id.button_toggle_bio);

@@ -6,4 +6,6 @@ import androidx.annotation.Keep;
 public interface StarCallback {
     default void onError() {}
     default void onSuccess() {}
+
+    default void onRefused() {}
 }
