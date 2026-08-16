@@ -57,6 +57,10 @@
     <string name="artist_adapter_radio_station_starting">Szukanie…</string>
     <string name="artist_bottom_sheet_instant_mix">Natychmiastowy mix mix</string>
     <string name="artist_bottom_sheet_shuffle">Odtwórz losowo</string>
+	<string name="artist_bottom_sheet_play_next">Odtwórz następne</string>
+    <string name="artist_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
+    <string name="artist_bottom_sheet_add_to_playlist">Dodaj do playlisty</string>
+    <string name="artist_bottom_sheet_loading_tracks">Ładowanie utworów\u2026</string>
     <string name="artist_catalogue_title">Wykonawcy</string>
     <string name="artist_catalogue_title_expanded">Przeglądaj wykonawców</string>
     <string name="artist_error_retrieving_radio">Błąd podczas pobierania radia wykonawcy</string>
@@ -93,6 +97,7 @@
     <string name="connection_alert_dialog_summary">Dostęp do serwera Subsonic na połaczeniach innych niż Wi-Fi został ograniczony. Aby zapobiec ponownemu pojawieniu się tej informacji, wyłącz sprawdzanie połączenia w ustawieniach aplikacji.</string>
     <string name="connection_alert_dialog_title">Nie połączono z Wi-Fi</string>
     <string name="content_description_shuffle_button">Odtwarzanie losowe</string>
+	<string name="content_description_more_options">Więcej opcji</string>
     <string name="delete_download_storage_dialog_negative_button">Anuluj</string>
     <string name="delete_download_storage_dialog_positive_button">Kontynuuj</string>
     <string name="delete_download_storage_dialog_summary">Miej na uwadze to że kontynuowanie tej operacji spowoduje usunięcie wszystkich pobranych plików z wszystkich serwerów.</string>
