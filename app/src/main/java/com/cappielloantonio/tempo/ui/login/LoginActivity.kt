@@ -9,9 +9,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.cappielloantonio.tempo.databinding.ActivityLoginBinding
-import com.cappielloantonio.tempo.util.ActivityUtil
+import com.cappielloantonio.tempo.helper.ThemeHelper
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.serialization.SerialName
 
 private const val GREETER_FRAGMENT: Int = 0
 private const val PERMISSIONS_FRAGMENT: Int = 1
@@ -26,7 +25,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        ActivityUtil.enableThemeSwitch(this)
+        ThemeHelper.enableThemeSwitch(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -79,7 +78,9 @@ class LoginActivity : AppCompatActivity() {
             return when (position) {
                 GREETER_FRAGMENT -> LoginGreeterFragment()
                 PERMISSIONS_FRAGMENT -> LoginPermissionFragment()
-                THEMES_FRAGMENT -> LoginThemeFragment()
+                THEMES_FRAGMENT -> LoginThemeFragment.newInstance(
+                    singlePageMode = hideTabLayout
+                )
                 SERVERS_FRAGMENT -> LoginServerFragment()
                 else -> LoginGreeterFragment()
             }

@@ -74,11 +74,11 @@
     <color name="md_theme_amoled_onBackground">#E6E1E5</color>
     <color name="md_theme_amoled_surface">#000000</color>
     <color name="md_theme_amoled_onSurface">#E6E1E5</color>
-    <color name="md_theme_amoled_surfaceVariant">#252525</color>
+    <color name="md_theme_amoled_surfaceVariant">#1A1A1A</color>
     <color name="md_theme_amoled_onSurfaceVariant">#CAC4D0</color>
-    <color name="md_theme_amoled_outline">#938F99</color>
-    <color name="md_theme_amoled_inverseOnSurface">#000000</color>
+    <color name="md_theme_amoled_outline">#49454F</color>
     <color name="md_theme_amoled_inverseSurface">#E6E1E5</color>
+    <color name="md_theme_amoled_inverseOnSurface">#313033</color>
     <color name="md_theme_amoled_primaryInverse">#6750A4</color>
 
     <color name="gradientTitleColor">#FFFFFF</color>

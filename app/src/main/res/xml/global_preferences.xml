@@ -34,25 +34,9 @@
             app:key="language"
             app:title="@string/settings_language" />
 
-        <ListPreference
-            android:layout_height="wrap_content"
-            app:defaultValue="default"
-            app:dialogTitle="@string/settings_theme"
-            app:entries="@array/theme_list_titles"
-            app:entryValues="@array/theme_list_values"
-            app:key="theme"
-            app:title="@string/settings_theme"
-            app:useSimpleSummaryProvider="true" />
-
-        <ListPreference
-            android:layout_height="wrap_content"
-            app:defaultValue="standard"
-            app:dialogTitle="@string/settings_dark_theme_style"
-            app:entries="@array/dark_theme_style_titles"
-            app:entryValues="@array/dark_theme_style_values"
-            app:title="@string/settings_dark_theme_style"
-            app:key="dark_theme_style"
-            app:useSimpleSummaryProvider="true" />
+        <Preference
+            android:key="theme"
+            android:title="@string/settings_theme"/>
 
         <SwitchPreference
             android:title="@string/settings_always_on_display"

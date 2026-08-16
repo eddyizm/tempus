@@ -156,6 +156,9 @@ open class BaseMediaService : MediaLibraryService() {
         Futures.addCallback(future, object : FutureCallback<List<Pair<Int, MediaItem>>> {
             override fun onSuccess(updates: List<Pair<Int, MediaItem>>) {
                 widgetUpdateHandler.post {
+                    // Same hazard as restorePlayerFromQueue: the mapping runs on a background
+                    // thread, so this post can land after onDestroy released the player.
+                    if (serviceDestroyed) return@post
                     updates.forEach { (i, mapped) ->
                         if (i > player.currentMediaItemIndex
                             && i < player.mediaItemCount
@@ -1032,30 +1035,30 @@ open class BaseMediaService : MediaLibraryService() {
     private fun getMediaSourceFactory(): MediaSource.Factory = DynamicMediaSourceFactory(this)
 
     private inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
-        var wasWifi = false
-
-        init {
-            val manager = getSystemService(ConnectivityManager::class.java)
-            val network = manager.activeNetwork
-            val capabilities = manager.getNetworkCapabilities(network)
-            if (capabilities != null)
-                wasWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-        }
+        // The transport the queue's stream URLs were last resolved for. Tracked as the transport
+        // rather than as a wifi flag, which cannot separate a handover gap from cellular. Issue 198.
+        private var lastTransport = MusicUtil.getActiveTransport()
 
         override fun onCapabilitiesChanged(
             network: Network,
             networkCapabilities: NetworkCapabilities
         ) {
-            val isWifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-            if (isWifi != wasWifi) {
-                wasWifi = isWifi
-                widgetUpdateHandler.post {
-                    updateMediaItems(mediaLibrarySession.player)
-                    // preload() re-evaluates the network itself: it cancels any
-                    // in-flight precache when the new network is not allowed and
-                    // restarts it when it is.
-                    QueuePreloader.preload(this@BaseMediaService, mediaLibrarySession.player)
-                }
+            val transport = MusicUtil.transportOf(networkCapabilities)
+            if (transport == lastTransport) return
+            lastTransport = transport
+
+            // Only wifi and cellular have bitrate and format settings of their own. Anything else
+            // is left alone, so a handover cannot resolve the queue against the network it leaves.
+            val resolvable = transport == NetworkCapabilities.TRANSPORT_WIFI ||
+                    transport == NetworkCapabilities.TRANSPORT_CELLULAR
+            if (resolvable) MusicUtil.primeActiveTransport(transport)
+
+            widgetUpdateHandler.post {
+                if (serviceDestroyed) return@post
+                if (resolvable) updateMediaItems(mediaLibrarySession.player)
+                // preload() evaluates the network itself, and runs on every transport change,
+                // including one the queue is not resolved against, since it gates on metered.
+                QueuePreloader.preload(this@BaseMediaService, mediaLibrarySession.player)
             }
         }
     }

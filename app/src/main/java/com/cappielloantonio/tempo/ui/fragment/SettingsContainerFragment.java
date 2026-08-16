@@ -60,6 +60,7 @@ import com.cappielloantonio.tempo.ui.dialog.StarredAlbumSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredArtistSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StarredSyncDialog;
 import com.cappielloantonio.tempo.ui.dialog.StreamingCacheStorageDialog;
+import com.cappielloantonio.tempo.ui.login.LoginActivity;
 import com.cappielloantonio.tempo.util.ClickablePreferenceCategory;
 import com.cappielloantonio.tempo.util.DownloadUtil;
 import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
@@ -162,6 +163,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         setVersion();
         setNetorkPingTimeoutBase();
 
+        actionTheme();
         actionLogout();
         actionScan();
         actionSyncStarredAlbums();
@@ -233,37 +235,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             }
         }
 
-        ListPreference themePreference = findPreference(Preferences.THEME);
-        ListPreference darkThemeStylePreference = findPreference("dark_theme_style");
-
-        if (themePreference != null) {
-            if (darkThemeStylePreference != null) {
-                updateDarkThemeStyleVisibility(themePreference.getValue(), darkThemeStylePreference);
-            }
-            themePreference.setOnPreferenceChangeListener(
-                    (preference, newValue) -> {
-                        String themeOption = (String) newValue;
-                        ThemeHelper.applyTheme(themeOption);
-                        if (darkThemeStylePreference != null) {
-                            updateDarkThemeStyleVisibility(themeOption, darkThemeStylePreference);
-                        }
-                        if (getActivity() != null) {
-                            getActivity().recreate();
-                        }
-                        return true;
-                    });
-        }
-
-        if (darkThemeStylePreference != null) {
-            darkThemeStylePreference.setOnPreferenceChangeListener(
-                    (preference, newValue) -> {
-                        if (getActivity() != null) {
-                            getActivity().recreate();
-                        }
-                        return true;
-                    });
-        }
-
         SwitchPreference downloadWifiOnlyPreference = findPreference("download_wifi_only");
         if (downloadWifiOnlyPreference != null) {
             downloadWifiOnlyPreference.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -277,28 +248,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 }
                 return true;
             });
-        }
-    }
-
-    private void updateDarkThemeStyleVisibility(String themeOption, Preference darkThemeStylePreference) {
-        if (darkThemeStylePreference == null) return;
-
-        boolean isDark;
-        if (ThemeHelper.DARK_MODE.equals(themeOption) || ThemeHelper.AMOLED_MODE.equals(themeOption)) {
-            isDark = true;
-        } else if (ThemeHelper.DEFAULT_MODE.equals(themeOption)) {
-            int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            isDark = currentNightMode == Configuration.UI_MODE_NIGHT_YES;
-        } else {
-            isDark = false;
-        }
-        darkThemeStylePreference.setVisible(isDark);
-    }
-
-    private void checkDarkThemeStyle() {
-        Preference darkThemeStylePreference = findPreference("dark_theme_style");
-        if (darkThemeStylePreference != null) {
-            updateDarkThemeStyleVisibility(Preferences.getTheme(), darkThemeStylePreference);
         }
     }
 
@@ -321,7 +270,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         checkStorage();
         checkDownloadDirectory();
         checkEqualizerBands();
-        checkDarkThemeStyle();
         checkMusicLibrary();
 
         for (int i = 0; i < screen.getPreferenceCount(); i++) {
@@ -615,6 +563,16 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         findPreference("version").setSummary(BuildConfig.VERSION_NAME);
     }
 
+    private void actionTheme() {
+        findPreference("theme").setOnPreferenceClickListener( preference -> {
+            activity.quit();
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("SELECT_FRAGMENT", 2);
+            startActivity(tempus);
+            return true;
+        });
+    }
     private void actionLogout() {
         findPreference("logout").setOnPreferenceClickListener(preference -> {
             activity.quit();
