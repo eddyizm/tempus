@@ -48,11 +48,7 @@ object ThemeHelper {
             }
 
             else -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
-                } else {
-                    setDefaultNightMode(MODE_NIGHT_AUTO_BATTERY)
-                }
+                setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
             }
         }
     }
