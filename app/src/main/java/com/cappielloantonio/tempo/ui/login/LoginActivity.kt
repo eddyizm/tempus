@@ -78,7 +78,9 @@ class LoginActivity : AppCompatActivity() {
             return when (position) {
                 GREETER_FRAGMENT -> LoginGreeterFragment()
                 PERMISSIONS_FRAGMENT -> LoginPermissionFragment()
-                THEMES_FRAGMENT -> LoginThemeFragment()
+                THEMES_FRAGMENT -> LoginThemeFragment.newInstance(
+                    singlePageMode = hideTabLayout
+                )
                 SERVERS_FRAGMENT -> LoginServerFragment()
                 else -> LoginGreeterFragment()
             }
