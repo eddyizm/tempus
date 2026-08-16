@@ -53,6 +53,12 @@
                     android:scheme="tempo" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.login.LoginActivity"
+            android:theme="@style/AppTheme"
+            android:exported="true"/>
+
         <activity
             android:name=".ui.activity.CrashActivity"
             android:label="@string/ca_info_title"

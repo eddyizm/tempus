@@ -150,6 +150,14 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
         Button bioToggle = view.findViewById(R.id.button_toggle_bio);
         bioToggle.setOnClickListener(v ->
                 Toast.makeText(getActivity(), R.string.artist_no_artist_info_toast, Toast.LENGTH_SHORT).show());
+
+        Button moreOptions = view.findViewById(R.id.button_more_options);
+        moreOptions.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            ArtistID3 artistForNav = artistPageViewModel.getArtist();
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artistForNav != null ? artistForNav.strippedForNav() : null);
+            Navigation.findNavController(requireView()).navigate(R.id.artistBottomSheetDialog, bundle);
+        });
     }
 
     private void initAppBar() {

@@ -50,7 +50,10 @@ public class ArtistRepository {
                             Log.d("ArtistSync", "Got albums directly: " + albums.size());
                             
                             if (!albums.isEmpty()) {
-                                fetchAllAlbumSongsWithCallback(albums, callback);
+                                // Pass target artist id and name so we can filter compilation tracks
+                                ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
+                                String targetName = artist != null ? artist.getName() : null;
+                                fetchAllAlbumSongsWithCallback(albums, artistId, targetName, callback);
                             } else {
                                 Log.d("ArtistSync", "No albums found in artist response");
                                 callback.onSongsCollected(new ArrayList<>());
@@ -69,7 +72,7 @@ public class ArtistRepository {
                 });
     }
 
-    private void fetchAllAlbumSongsWithCallback(List<AlbumID3> albums, ArtistSongsCallback callback) {
+    private void fetchAllAlbumSongsWithCallback(List<AlbumID3> albums, String targetArtistId, String targetArtistName, ArtistSongsCallback callback) {
         if (albums == null || albums.isEmpty()) {
             Log.d("ArtistSync", "No albums to process");
             callback.onSongsCollected(new ArrayList<>());
@@ -86,7 +89,18 @@ public class ArtistRepository {
             albumTracks.observeForever(songs -> {
                 Log.d("ArtistSync", "Got " + (songs != null ? songs.size() : 0) + " songs from album");
                 if (songs != null) {
-                    allSongs.addAll(songs);
+                    List<Child> filtered = new ArrayList<>();
+                    for (Child song : songs) {
+                        boolean keep = false;
+                        if (song.getArtistId() != null && targetArtistId != null) {
+                            keep = song.getArtistId().equals(targetArtistId);
+                        }
+                        if (!keep && song.getArtist() != null && targetArtistName != null) {
+                            keep = song.getArtist().equalsIgnoreCase(targetArtistName);
+                        }
+                        if (keep) filtered.add(song);
+                    }
+                    allSongs.addAll(filtered);
                 }
                 albumTracks.removeObservers(null);
                 
@@ -103,6 +117,17 @@ public class ArtistRepository {
 
     public interface ArtistSongsCallback {
         void onSongsCollected(List<Child> songs);
+    }
+
+    /**
+     * Returns a LiveData that emits all tracks for the given artist once collected.
+     * Internally reuses {@link #getArtistAllSongs(String, ArtistSongsCallback)} for its
+     * batched album-track fetching. Uses postValue because the callback fires off-main-thread.
+     */
+    public androidx.lifecycle.LiveData<List<Child>> getArtistAllTracksLive(String artistId) {
+        androidx.lifecycle.MutableLiveData<List<Child>> result = new androidx.lifecycle.MutableLiveData<>();
+        getArtistAllSongs(artistId, result::postValue);
+        return result;
     }
 
     public MutableLiveData<List<ArtistID3>> getStarredArtists(boolean random, int size) {
@@ -322,7 +347,7 @@ public class ArtistRepository {
                                 albumLimit++;
                             Log.d("ArtistRepository", String.format("Retaining %d/%d albums", albumLimit, albums.size()));
 
-                            fetchAllAlbumSongsWithCallback(albums.stream().limit(albumLimit).collect(Collectors.toList()), songs -> {
+                            fetchAllAlbumSongsWithCallback(albums.stream().limit(albumLimit).collect(Collectors.toList()), artist.getId(), artist.getName(), songs -> {
                                 Collections.shuffle(songs);
                                 randomSongs.setValue(songs.stream().limit(count).collect(Collectors.toList()));
                             });

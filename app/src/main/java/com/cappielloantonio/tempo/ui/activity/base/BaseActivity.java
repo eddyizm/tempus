@@ -18,14 +18,13 @@ import androidx.media3.exoplayer.offline.DownloadService;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 
-import com.cappielloantonio.tempo.R;
 import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.service.DownloaderService;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.dialog.BatteryOptimizationDialog;
+import com.cappielloantonio.tempo.util.ActivityUtil;
 import com.cappielloantonio.tempo.util.Flavors;
 import com.cappielloantonio.tempo.util.Preferences;
-import com.google.android.material.color.DynamicColors;
 import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -37,29 +36,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        String theme = Preferences.getTheme();
-        String darkStyle = Preferences.getDarkThemeStyle();
-        boolean isAmoled = ThemeHelper.AMOLED_MODE.equals(darkStyle);
-        boolean applyAmoled = false;
-
-        if (ThemeHelper.DARK_MODE.equals(theme) || ThemeHelper.AMOLED_MODE.equals(theme)) {
-            if (isAmoled) {
-                setTheme(R.style.AppTheme_Amoled);
-                applyAmoled = true;
-            }
-        } else if (ThemeHelper.DEFAULT_MODE.equals(theme)) {
-            int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            if (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && isAmoled) {
-                setTheme(R.style.AppTheme_Amoled);
-                applyAmoled = true;
-            }
-        }
-
-        DynamicColors.applyToActivityIfAvailable(this);
-        if (applyAmoled) {
-            getTheme().applyStyle(R.style.ThemeOverlay_App_Amoled, true);
-        }
-
+        ActivityUtil.enableThemeSwitch(this);
         super.onCreate(savedInstanceState);
         Flavors.initializeCastContext(this);
         initializeDownloader();
@@ -90,7 +67,20 @@ public class BaseActivity extends AppCompatActivity {
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        101);
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_LOCAL_NETWORK) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.ACCESS_LOCAL_NETWORK},
+                        102
+                );
             }
         }
     }
