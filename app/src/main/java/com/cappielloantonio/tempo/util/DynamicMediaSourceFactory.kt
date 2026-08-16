@@ -62,7 +62,7 @@ class DynamicMediaSourceFactory(
                 if (isTranscoding && OpenSubsonicExtensionsUtil.isTranscodeOffsetExtensionAvailable()) {
                      TranscodingMediaSource(mediaItem, dataSourceFactory, progressiveFactory)
                 } else {
-                     progressiveFactory.createMediaSource(mediaItem)
+                     MetadataDurationMediaSource(progressiveFactory.createMediaSource(mediaItem))
                 }
             }
         }
