@@ -798,6 +798,11 @@
 
     <!-- Login Activity  -->
 
+    <string name="la_tab_greeter">Welcome</string>
+    <string name="la_tab_permission">Permissions</string>
+    <string name="la_tab_themes">Themes</string>
+    <string name="la_tab_server">Servers</string>
+
     <string name="la_greeting_description">Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.</string>
 
     <string name="la_server_title">Server Setup</string>

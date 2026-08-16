@@ -19,7 +19,7 @@ import com.cappielloantonio.tempo.helper.ThemeHelper
 import com.cappielloantonio.tempo.ui.activity.MainActivity
 import com.cappielloantonio.tempo.util.Preferences
 
-private const val ARG_SINGLE_PAGE_MODE = "standalone_page_view"
+private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
 
 class LoginThemeFragment : Fragment() {
     private var singlePageMode: Boolean = false
@@ -183,7 +183,7 @@ class LoginThemeFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(singlePageMode: Boolean = false) =
+        fun newInstance(singlePageMode: Boolean = false): LoginThemeFragment =
             LoginThemeFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean(ARG_SINGLE_PAGE_MODE, singlePageMode)
