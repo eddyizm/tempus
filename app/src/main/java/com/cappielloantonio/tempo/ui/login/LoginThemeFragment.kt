@@ -95,52 +95,48 @@ class LoginThemeFragment : Fragment() {
     }
 
     private fun setupThemeSelector() {
-        val themeOptions = resources.getStringArray(R.array.theme_list_values).toList()
+        val themeOptions = resources.getStringArray(R.array.theme_list_titles).toList()
+        val themeValues  = resources.getStringArray(R.array.theme_list_values)
 
-        val adapter = object : ArrayAdapter<String>(
+        val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
             themeOptions
-        ) {
-            override fun getFilter(): android.widget.Filter {
-                return object : android.widget.Filter() {
-                    override fun performFiltering(constraint: CharSequence?): FilterResults {
-                        val results = FilterResults()
-                        results.values = themeOptions
-                        results.count = themeOptions.size
-                        return results
-                    }
-                    override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                        notifyDataSetChanged()
-                    }
-                }
-            }
-        }
+        )
 
-        binding.dropdownThemeMode.setAdapter(adapter)
-        binding.dropdownThemeMode.setText(Preferences.getTheme(),false)
+        binding.dropdownThemeMode.apply {
+            setAdapter(adapter)
+            threshold = 0
 
-        binding.dropdownThemeMode.setOnItemClickListener { _, _, position, _ ->
-
-            when (themeOptions[position]) {
-                ThemeHelper.DEFAULT_MODE -> {
-                    Preferences.setTheme(ThemeHelper.DEFAULT_MODE)
-                    ThemeHelper.applyTheme(ThemeHelper.DEFAULT_MODE)
-                }
-
-                ThemeHelper.LIGHT_MODE -> {
-                    Preferences.setTheme(ThemeHelper.LIGHT_MODE)
-                    ThemeHelper.applyTheme(ThemeHelper.LIGHT_MODE)
-                }
-
-                ThemeHelper.DARK_MODE -> {
-                    Preferences.setTheme(ThemeHelper.DARK_MODE)
-                    ThemeHelper.applyTheme(ThemeHelper.DARK_MODE)
+            val showAllDropdown = {
+                if (adapter.count > 0) {
+                    adapter.getFilter().filter(null)
+                    showDropDown()
                 }
             }
 
-            ThemeHelper.enableThemeSwitch(activity as AppCompatActivity)
-            activity?.recreate()
+            setOnClickListener {
+                showAllDropdown()
+            }
+            setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) showAllDropdown()
+            }
+
+            val currentIndex = themeValues.indexOf(Preferences.getTheme())
+            val initialText = if (currentIndex != -1 && currentIndex < themeOptions.size) {
+                themeOptions[currentIndex]
+            } else {
+                Preferences.getTheme()
+            }
+            setText(initialText, false)
+
+            setOnItemClickListener { _, _, position, _ ->
+                val selectedValue = themeValues[position]
+                ThemeHelper.applyTheme(selectedValue)
+                Preferences.setTheme(selectedValue)
+                ThemeHelper.enableThemeSwitch(activity as AppCompatActivity)
+                activity?.recreate()
+            }
         }
     }
 

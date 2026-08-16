@@ -61,7 +61,7 @@ object ThemeHelper {
      */
     @JvmStatic
     fun setNavigationBarColor(activity: AppCompatActivity) {
-        val theme = getTheme()
+        val theme       = getTheme()
         var applyAmoled = false
 
         if (DARK_MODE == theme) {
@@ -117,6 +117,7 @@ object ThemeHelper {
 
             activity.obtainStyledAttributes(amoledOverlayAttrs)
             activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
+
         }
     }
 
