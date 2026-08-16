@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
 import androidx.media3.common.util.UnstableApi
 import com.cappielloantonio.tempo.App
 import com.cappielloantonio.tempo.R
@@ -52,6 +53,7 @@ class LoginThemeFragment : Fragment() {
 
     private fun init() {
         initTrueBlackSwitch()
+        initDynamicColorsSwitch()
         initButtonReturn()
         setupThemeSelector()
         setupDefaultAccentColorButtons()
@@ -69,6 +71,13 @@ class LoginThemeFragment : Fragment() {
             }
             ThemeHelper.enableThemeSwitch(activity as AppCompatActivity)
             activity?.recreate()
+        }
+    }
+
+    private fun initDynamicColorsSwitch() {
+        binding.defaultDynamicSwitch.setOnClickListener {
+            Preferences.setDynamicColorAccent(binding.defaultDynamicSwitch.isChecked)
+            applyAccentColor(Preferences.getColorAccent())
         }
     }
 
@@ -136,8 +145,8 @@ class LoginThemeFragment : Fragment() {
     }
 
     private fun setupDefaultAccentColorButtons() {
-        binding.cardDefault.setOnClickListener {
-            applyAccentColor("DYNAMIC")
+        binding.cardFlirt.setOnClickListener {
+            applyAccentColor("HEX:#B5076B")
         }
         binding.cardCoral.setOnClickListener {
             applyAccentColor("HEX:#FF5722")

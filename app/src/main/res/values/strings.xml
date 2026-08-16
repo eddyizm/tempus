@@ -834,8 +834,9 @@
     <string name="la_theme_button_return">Return to home</string>
 
     <string name="la_theme_switch_true_black">True black background for dark mode</string>
+    <string name="la_theme_switch_default_dynamic">Dynamic color accent from wallpaper</string>
 
-    <string name="la_theme_card_dynamic">Dynamic</string>
+    <string name="la_theme_card_default">Default</string>
 
     <string name="la_shortcut_label">Introduction</string>
     <string name="la_button_advanced_editor">Advanced editor (beta)</string>

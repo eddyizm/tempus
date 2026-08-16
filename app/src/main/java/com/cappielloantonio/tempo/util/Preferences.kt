@@ -12,6 +12,7 @@ object Preferences {
     const val THEME = "theme"
     private const val DARK_THEME_BLACK = "dark_theme_black"
     private const val COLOR_ACCENT = "color_accent"
+    private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
     private const val SERVER = "server"
     private const val USER = "user"
     private const val PASSWORD = "password"
@@ -1084,6 +1085,16 @@ object Preferences {
     @JvmStatic
     fun setTheme(theme: String) {
         App.getInstance().preferences.edit().putString(THEME, theme).apply()
+    }
+
+    @JvmStatic
+    fun isDynamicColorAccent(): Boolean {
+        return App.getInstance().preferences.getBoolean(DYNAMIC_COLOR_ACCENT, true)
+    }
+
+    @JvmStatic
+    fun setDynamicColorAccent(enabled: Boolean) {
+        return App.getInstance().preferences.edit().putBoolean(DYNAMIC_COLOR_ACCENT, enabled).apply()
     }
 
     @JvmStatic

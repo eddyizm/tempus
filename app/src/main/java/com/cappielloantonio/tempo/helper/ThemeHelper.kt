@@ -19,6 +19,7 @@ import androidx.core.graphics.toColorInt
 import com.cappielloantonio.tempo.R
 import com.cappielloantonio.tempo.util.Preferences.getColorAccent
 import com.cappielloantonio.tempo.util.Preferences.isDarkThemeBlack
+import com.cappielloantonio.tempo.util.Preferences.isDynamicColorAccent
 import com.cappielloantonio.tempo.util.Preferences.getTheme
 
 import com.google.android.material.color.DynamicColors.applyToActivityIfAvailable
@@ -92,7 +93,12 @@ object ThemeHelper {
         val isSystemDark = (theme == DEFAULT_MODE && nightMode == UI_MODE_NIGHT_YES)
         val isAmoled     = isDarkThemeBlack() && (theme == DARK_MODE || isSystemDark)
 
-        val colorAccent = getColorAccent()
+        val colorAccent: String = if (isDynamicColorAccent()) {
+            "DYNAMIC" // Override to not lose user HEX preference
+        } else {
+            getColorAccent()
+        }
+
         when {
             colorAccent.startsWith("HEX:") -> {
                 val hexString = colorAccent.removePrefix("HEX:")

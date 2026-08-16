@@ -15,10 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/trueBlackContainer"
+        app:layout_constraintBottom_toTopOf="@id/mainSwitchesContainer"
         app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
@@ -32,7 +32,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
-        android:id="@+id/trueBlackContainer"
+        android:id="@+id/mainSwitchesContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -51,16 +51,23 @@
             android:checked="false"
             android:text="@string/la_theme_switch_true_black"/>
 
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/defaultDynamicSwitch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="@string/la_theme_switch_default_dynamic"/>
+
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/themeContentContainer"
+        android:id="@+id/chooseAccentColorContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/trueBlackContainer"
+        app:layout_constraintTop_toBottomOf="@id/mainSwitchesContainer"
         app:layout_constraintBottom_toTopOf="@id/buttonReturn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,6 +79,7 @@
             android:layout_marginBottom="20dp" />
 
         <TextView
+            android:id="@+id/chooseAccentColorTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/la_theme_title"
@@ -96,29 +104,14 @@
             android:rowCount="2"
             android:useDefaultMargins="true">
 
-            <!-- Option 1: System Dynamic (Material You) -->
+            <!-- Option 1: Flirt (#B5076B) -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_default"
+                android:id="@+id/card_flirt"
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
-                app:cardBackgroundColor="?attr/colorPrimaryContainer"
-                app:strokeColor="?attr/colorOutline"
-                app:strokeWidth="1dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/la_theme_card_dynamic"
-                        android:textAppearance="?attr/textAppearanceTitleMedium"
-                        />
-
-                </LinearLayout>
+                app:cardBackgroundColor="#B5076B"
+                app:cardCornerRadius="16dp" >
 
             </com.google.android.material.card.MaterialCardView>
 
