@@ -10,6 +10,9 @@ import com.google.gson.Gson
 
 object Preferences {
     const val THEME = "theme"
+    private const val DARK_THEME_BLACK = "dark_theme_black"
+    private const val COLOR_ACCENT = "color_accent"
+    private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
     private const val SERVER = "server"
     private const val USER = "user"
     private const val PASSWORD = "password"
@@ -1085,12 +1088,32 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getDarkThemeStyle(): String {
-        return App.getInstance().preferences.getString(DARK_THEME_STYLE, "standard") ?: "standard"
+    fun isDynamicColorAccent(): Boolean {
+        return App.getInstance().preferences.getBoolean(DYNAMIC_COLOR_ACCENT, true)
     }
 
     @JvmStatic
-    fun setDarkThemeStyle(style: String) {
-        App.getInstance().preferences.edit().putString(DARK_THEME_STYLE, style).apply()
+    fun setDynamicColorAccent(enabled: Boolean) {
+        return App.getInstance().preferences.edit().putBoolean(DYNAMIC_COLOR_ACCENT, enabled).apply()
+    }
+
+    @JvmStatic
+    fun isDarkThemeBlack(): Boolean {
+        return App.getInstance().preferences.getBoolean(DARK_THEME_BLACK, false)
+    }
+
+    @JvmStatic
+    fun setDarkThemeBlack(enabled: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(DARK_THEME_BLACK, enabled).apply()
+    }
+
+    @JvmStatic
+    fun getColorAccent(): String {
+        return App.getInstance().preferences.getString(COLOR_ACCENT, "DYNAMIC") ?: "DYNAMIC"
+    }
+
+    @JvmStatic
+    fun setColorAccent(colorAccent: String) {
+        App.getInstance().preferences.edit().putString(COLOR_ACCENT, colorAccent).apply()
     }
 }
