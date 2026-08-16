@@ -53,6 +53,7 @@ import com.cappielloantonio.tempo.ui.dialog.ConnectionAlertDialog;
 import com.cappielloantonio.tempo.ui.dialog.GithubTempoUpdateDialog;
 import com.cappielloantonio.tempo.ui.dialog.ServerUnreachableDialog;
 import com.cappielloantonio.tempo.ui.fragment.PlayerBottomSheetFragment;
+import com.cappielloantonio.tempo.ui.fragment.SettingsFragment;
 import com.cappielloantonio.tempo.ui.login.LoginActivity;
 import com.cappielloantonio.tempo.util.AssetLinkNavigator;
 import com.cappielloantonio.tempo.util.AssetLinkUtil;
@@ -730,6 +731,8 @@ public class MainActivity extends BaseActivity {
         String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
         if ("open_legacy_login_fragment".equals(triggerArg)) {
             goToLogin();
+        } else if ("open_legacy_settings_fragment".equals(triggerArg)) {
+            goToHome();
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
