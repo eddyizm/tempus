@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.cast
+package com.eddyizm.tempus.cast
 
 import android.net.Uri
 import androidx.media3.cast.DefaultMediaItemConverter
@@ -7,8 +7,8 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.cappielloantonio.tempo.App
-import com.cappielloantonio.tempo.util.Preferences
+import com.eddyizm.tempus.App
+import com.eddyizm.tempus.util.Preferences
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

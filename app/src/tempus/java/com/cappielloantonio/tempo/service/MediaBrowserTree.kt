@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.service
+package com.eddyizm.tempus.service
 
 import android.content.Context
 import android.net.Uri
@@ -10,18 +10,18 @@ import androidx.media3.common.MediaMetadata
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaConstants
-import com.cappielloantonio.tempo.BuildConfig
-import com.cappielloantonio.tempo.repository.AutomotiveRepository
+import com.eddyizm.tempus.BuildConfig
+import com.eddyizm.tempus.repository.AutomotiveRepository
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
-import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.util.ConstantsAA
-import com.cappielloantonio.tempo.util.Preferences
+import com.eddyizm.tempus.R
+import com.eddyizm.tempus.util.ConstantsAA
+import com.eddyizm.tempus.util.Preferences
 import androidx.core.net.toUri
 import androidx.media3.session.SessionError
-import com.cappielloantonio.tempo.util.Preferences.getServerId
+import com.eddyizm.tempus.util.Preferences.getServerId
 
 @UnstableApi
 object MediaBrowserTree {

@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.util;
+package com.eddyizm.tempus.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

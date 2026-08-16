@@ -1,8 +1,8 @@
-package com.cappielloantonio.tempo.repository;
+package com.eddyizm.tempus.repository;
 
 import static org.junit.Assert.assertEquals;
 
-import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
+import com.eddyizm.tempus.subsonic.models.InternetRadioStation;
 
 import org.junit.Test;
 

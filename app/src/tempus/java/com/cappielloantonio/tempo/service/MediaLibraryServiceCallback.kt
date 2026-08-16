@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.service
+package com.eddyizm.tempus.service
 
 import android.content.Context
 import android.os.Bundle
@@ -8,11 +8,11 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
-import com.cappielloantonio.tempo.repository.AutomotiveRepository
-import com.cappielloantonio.tempo.repository.QueueRepository
-import com.cappielloantonio.tempo.util.Constants
-import com.cappielloantonio.tempo.util.ConstantsAA
-import com.cappielloantonio.tempo.util.MappingUtil
+import com.eddyizm.tempus.repository.AutomotiveRepository
+import com.eddyizm.tempus.repository.QueueRepository
+import com.eddyizm.tempus.util.Constants
+import com.eddyizm.tempus.util.ConstantsAA
+import com.eddyizm.tempus.util.MappingUtil
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture

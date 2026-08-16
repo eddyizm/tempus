@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.service
+package com.eddyizm.tempus.service
 
 import android.util.Log
 import androidx.annotation.OptIn
@@ -6,9 +6,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaBrowser
-import com.cappielloantonio.tempo.repository.AutomotiveRepository
-import com.cappielloantonio.tempo.util.ConstantsAA
-import com.cappielloantonio.tempo.util.Preferences
+import com.eddyizm.tempus.repository.AutomotiveRepository
+import com.eddyizm.tempus.util.ConstantsAA
+import com.eddyizm.tempus.util.Preferences
 import com.google.common.util.concurrent.ListenableFuture
 import kotlin.text.removePrefix
 

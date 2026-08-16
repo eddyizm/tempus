@@ -1,0 +1,756 @@
+package com.eddyizm.tempus.ui.activity;
+
+import static com.eddyizm.tempus.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.content.res.Configuration;
+import android.graphics.drawable.Icon;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.MimeTypes;
+import androidx.media3.common.Player;
+import androidx.media3.common.util.UnstableApi;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.BuildConfig;
+import com.eddyizm.tempus.R;
+import com.eddyizm.tempus.broadcast.receiver.ConnectivityStatusBroadcastReceiver;
+import com.eddyizm.tempus.databinding.ActivityMainBinding;
+import com.eddyizm.tempus.github.utils.UpdateUtil;
+import com.eddyizm.tempus.navigation.NavigationController;
+import com.eddyizm.tempus.navigation.NavigationHelper;
+import com.eddyizm.tempus.service.MediaManager;
+import com.eddyizm.tempus.ui.activity.base.BaseActivity;
+import com.eddyizm.tempus.navigation.BottomSheetController;
+import com.eddyizm.tempus.navigation.BottomSheetHelper;
+import com.eddyizm.tempus.ui.dialog.ConnectionAlertDialog;
+import com.eddyizm.tempus.ui.dialog.GithubTempoUpdateDialog;
+import com.eddyizm.tempus.ui.dialog.ServerUnreachableDialog;
+import com.eddyizm.tempus.ui.fragment.PlayerBottomSheetFragment;
+import com.eddyizm.tempus.ui.fragment.SettingsFragment;
+import com.eddyizm.tempus.ui.login.LoginActivity;
+import com.eddyizm.tempus.util.AssetLinkNavigator;
+import com.eddyizm.tempus.util.AssetLinkUtil;
+import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.util.DownloadRepair;
+import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.viewmodel.MainViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.navigation.NavigationView;
+import com.google.common.util.concurrent.MoreExecutors;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+
+@UnstableApi
+public class MainActivity extends BaseActivity {
+    private static final String TAG = "MainActivityLogs";
+
+    public ActivityMainBinding bind;
+    private MainViewModel mainViewModel;
+
+    private FragmentManager fragmentManager;
+    private NavHostFragment navHostFragment;
+    private BottomNavigationView bottomNavigationView;
+    private FrameLayout bottomNavigationViewFrame;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    public NavController navController;
+    private NavigationController navigationController;
+    private BottomSheetController bottomSheetController;
+    public BottomSheetBehavior bottomSheetBehavior;
+    private boolean isLandscape = false;
+    private AssetLinkNavigator assetLinkNavigator;
+    private AssetLinkUtil.AssetLink pendingAssetLink;
+
+    ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
+    private Intent pendingDownloadPlaybackIntent;
+
+    public ActivityMainBinding getBinding() {
+        return bind;
+    }
+
+    // #688: Deep navigation accumulates fragment + back-stack state in the saved
+    // instance Bundle. When the activity is stopped (app sent to background) the
+    // platform persists it over a Binder transaction that throws
+    // TransactionTooLargeException once it passes the buffer limit (~1MB), crashing
+    // the app on background. Cap it: if the saved state is dangerously large, drop the
+    // restorable fragment state so backgrounding can never crash — worst case the app
+    // reopens at the start destination instead of dying.
+    private static final int MAX_SAVED_STATE_BYTES = 400 * 1024;
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Parcel parcel = Parcel.obtain();
+        try {
+            parcel.writeBundle(outState);
+            int size = parcel.dataSize();
+            if (size > MAX_SAVED_STATE_BYTES) {
+                Log.w(TAG, "Saved instance state is " + size + " bytes (limit "
+                        + MAX_SAVED_STATE_BYTES + "); clearing it to avoid TransactionTooLargeException on background (#688)");
+                outState.clear();
+            }
+        } finally {
+            parcel.recycle();
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen.installSplashScreen(this);
+
+        setUpEdgeToEdge(this);
+        fixUpEdgeToEdge();
+        super.onCreate(savedInstanceState);
+
+        bind = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = bind.getRoot();
+        setContentView(view);
+
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        assetLinkNavigator = new AssetLinkNavigator(this);
+
+        connectivityStatusBroadcastReceiver = new ConnectivityStatusBroadcastReceiver(this);
+        connectivityStatusReceiverManager(true);
+
+        isLandscape = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
+
+        init();
+        checkConnectionType();
+        getOpenSubsonicExtensions();
+        checkTempoUpdate();
+
+        DownloadRepair.repairIfNeeded(this);
+
+        maybeSchedulePlaybackIntent(getIntent());
+        setupLoginActivity();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        pingServer();
+        initService();
+        consumePendingPlaybackIntent();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        pingServer();
+        toggleNavigationDrawerLockOnOrientationChange();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        connectivityStatusReceiverManager(false);
+        bind = null;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        maybeSchedulePlaybackIntent(intent);
+        consumePendingPlaybackIntent();
+    }
+
+    public void init() {
+
+        initBottomSheet();
+        initNavigation();
+        initBackPressedDispatcher();
+
+        if (Preferences.getPassword() != null || (Preferences.getToken() != null && Preferences.getSalt() != null)) {
+            goFromLogin();
+        } else {
+            goToLogin();
+        }
+
+        toggleNavigationDrawerLockOnOrientationChange();
+
+    }
+
+    private void initNavigation() {
+        // We link the nav_graph.xml with our navigationController
+        NavHostFragment navHostFragment = (NavHostFragment) this
+                .getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        navController = Objects.requireNonNull(navHostFragment).getNavController();
+        /*
+        navController is currently global since some legacy code still invokes it directly
+        the MainActivity methods that use it must be converted to NavigationHelper methods
+        */
+
+        // Helper
+        NavigationHelper navigationHelper =
+                new NavigationHelper(
+                        findViewById(R.id.bottom_navigation),
+                        findViewById(R.id.bottom_navigation_frame),
+                        findViewById(R.id.drawer_layout),
+                        findViewById(R.id.nav_view),
+                        navHostFragment,
+                        navController
+                );
+
+        // Controller
+        navigationController = new NavigationController(navigationHelper);
+        navigationController.syncWithBottomSheetBehavior(bottomSheetBehavior, navController);
+    }
+
+    public NavigationController getNavigationController() {
+        return navigationController;
+    }
+
+    private void initBottomSheet() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        View bottomSheetView = findViewById(R.id.player_bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetView);
+        /*
+        bottomSheetBehavior is currently global since some legacy code still invokes it directly
+        the MainActivity methods that use it must be converted to BottomSheetHelper methods
+        */
+
+        // Helper
+        BottomSheetHelper bottomSheetHelper =
+                new BottomSheetHelper(
+                        bottomSheetBehavior,
+                        bottomSheetView,
+                        fragmentManager
+                );
+
+        // Controller
+        bottomSheetController = new BottomSheetController(bottomSheetHelper);
+        bottomSheetController.addCallback(bottomSheetCallback);
+        bottomSheetController.replaceFragment(R.id.player_bottom_sheet);
+        bottomSheetController.checkAfterStateChanged(mainViewModel);
+    }
+
+    public void initBackPressedDispatcher() {
+        OnBackPressedCallback callback = new OnBackPressedCallback(bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            @Override
+            public void handleOnBackPressed() {
+                collapseBottomSheetDelayed();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                callback.setEnabled(newState == BottomSheetBehavior.STATE_EXPANDED);
+            }
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) { }
+        });
+    }
+
+    public BottomSheetController getBottomSheetController() {
+        return bottomSheetController;
+    }
+
+    public void setBottomSheetInPeek(Boolean isVisible) {
+        bottomSheetController.setStateInPeek(isVisible);
+    }
+
+    public void setBottomSheetVisibility(boolean visibility) {
+        bottomSheetController.setVisibility(visibility);
+    }
+
+    public void collapseBottomSheetDelayed() {
+        bottomSheetController.collapseDelayed();
+    }
+
+    public void expandBottomSheet() {
+        bottomSheetController.expand();
+    }
+
+    public void setBottomSheetDraggableState(Boolean isDraggable) {
+        bottomSheetController.setDraggable(isDraggable);
+    }
+
+    private final BottomSheetBehavior.BottomSheetCallback bottomSheetCallback =
+            new BottomSheetBehavior.BottomSheetCallback() {
+                int navigationHeight;
+
+                @Override
+                public void onStateChanged(@NonNull View view, int state) {
+                    PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
+
+                    switch (state) {
+                        case BottomSheetBehavior.STATE_HIDDEN:
+                            resetMusicSession(); // I can't put the callback inside BottomSheetHelper because of this line
+                            break;
+                        case BottomSheetBehavior.STATE_COLLAPSED:
+                            if (playerBottomSheetFragment != null)
+                                playerBottomSheetFragment.goBackToFirstPage();
+                            break;
+                        case BottomSheetBehavior.STATE_SETTLING:
+                        case BottomSheetBehavior.STATE_EXPANDED:
+                        case BottomSheetBehavior.STATE_DRAGGING:
+                        case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                            break;
+                    }
+                }
+
+                @Override
+                public void onSlide(@NonNull View view, float slideOffset) {
+                    animateBottomSheet(slideOffset);
+                    if (!isLandscape) {
+                         animateBottomNavigation(slideOffset, navigationHeight);
+                    }
+                }
+            };
+
+    private void animateBottomSheet(float slideOffset) {
+        bottomSheetController.animate(slideOffset);
+    }
+
+    private void animateBottomNavigation(float slideOffset, int navigationHeight) {
+        if (slideOffset < 0) return;
+
+        if (navigationHeight == 0) {
+            navigationHeight = bind.bottomNavigation.getHeight();
+        }
+
+        float slideY = navigationHeight - navigationHeight * (1 - slideOffset);
+
+        bind.bottomNavigation.setTranslationY(slideY);
+    }
+
+    public void setBottomNavigationBarVisibility(boolean visibility) {
+        navigationController.setNavbarVisibility(visibility);
+    }
+
+    public void toggleBottomNavigationBarVisibilityOnOrientationChange() {
+        float displayDensity = getResources().getDisplayMetrics().density;
+        // Ignore orientation change, bottom navbar always hidden
+        if (Preferences.getHideBottomNavbarOnPortrait()) {
+            navigationController.setNavbarVisibility(false);
+            bottomSheetController.setPeekHeight(56, displayDensity);
+            navigationController.setSystemBarsVisibility(this, !isLandscape);
+            return;
+        }
+
+        if (!isLandscape) {
+            // Show app navbar + show system bars
+            bottomSheetController.setPeekHeight(136, displayDensity);
+            navigationController.setNavbarVisibility(true);
+            navigationController.setSystemBarsVisibility(this, true);
+        } else {
+            // Hide app navbar + hide system bars
+            bottomSheetController.setPeekHeight(56, displayDensity);
+            navigationController.setNavbarVisibility(false);
+            navigationController.setSystemBarsVisibility(this, false);
+        }
+    }
+
+    public void setNavigationDrawerLock(boolean locked) {
+        navigationController.setDrawerLock(locked);
+    }
+
+    public boolean isNavigationDrawerLocked() {
+        return navigationController.isNavigationDrawerLocked();
+    }
+
+    public void toggleNavigationDrawerLockOnOrientationChange() {
+        navigationController.toggleDrawerLockOnOrientation(this);
+    }
+
+    public void setSystemBarsVisibility(boolean visibility) {
+        navigationController.setSystemBarsVisibility(this, visibility);
+    }
+
+    /*
+    There are only 4 init functions that must exist up to here
+    1. init()
+    2. initNavigation()
+    3. initBottomSheet()
+    4. bottomSheetCallback = new BottomSheetBehavior.BottomSheetCallback() { ... }
+     */
+
+    private void initService() {
+        MediaManager.check(getMediaBrowserListenableFuture());
+
+        getMediaBrowserListenableFuture().addListener(() -> {
+            try {
+                getMediaBrowserListenableFuture().get().addListener(new Player.Listener() {
+                    @Override
+                    public void onIsPlayingChanged(boolean isPlaying) {
+                        if (isPlaying && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                            setBottomSheetInPeek(true);
+                        }
+                    }
+                });
+                // If a session is already active on (re)connect — e.g. radio still playing after
+                // the app was swiped away — peek the bar. Radio isn't persisted to the queue DB,
+                // so the queue-count check (isQueueLoaded) misses it on reopen. onIsPlayingChanged
+                // also won't fire here since playback didn't change state.
+                if (getMediaBrowserListenableFuture().get().getCurrentMediaItem() != null
+                        && bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_HIDDEN) {
+                    setBottomSheetInPeek(true);
+                }
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
+    private void goToLogin() {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        setBottomNavigationBarVisibility(false);
+        setBottomSheetVisibility(false);
+
+        NavController nc = navigationController.getNavController();
+        int id = nc.getCurrentDestination().getId();
+
+        if (id == R.id.landingFragment) {
+           nc.navigate(R.id.action_landingFragment_to_loginFragment);
+        } else if (id == R.id.settingsFragment) {
+            nc.navigate(R.id.action_settingsFragment_to_loginFragment);
+        } else if (id == R.id.homeFragment) {
+            nc.navigate(R.id.action_homeFragment_to_loginFragment);
+        }
+    }
+
+    private void goToHome() {
+        setBottomNavigationBarVisibility(true);
+
+        NavController nc = navigationController.getNavController();
+        int id = nc.getCurrentDestination().getId();
+
+        if (id == R.id.landingFragment) {
+            nc.navigate(R.id.action_landingFragment_to_homeFragment);
+        } else if (id == R.id.loginFragment) {
+            nc.navigate(R.id.action_loginFragment_to_homeFragment);
+        }
+    }
+
+    public void goFromLogin() {
+        setBottomSheetInPeek(mainViewModel.isQueueLoaded());
+        goToHome();
+        consumePendingAssetLink();
+    }
+
+    public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink) {
+        openAssetLink(assetLink, true);
+    }
+
+    public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink, boolean collapsePlayer) {
+        if (!isUserAuthenticated()) {
+            pendingAssetLink = assetLink;
+            return;
+        }
+        if (collapsePlayer) {
+            setBottomSheetInPeek(true);
+        }
+        if (assetLinkNavigator != null) {
+            assetLinkNavigator.open(assetLink);
+        }
+    }
+
+    public void quit() {
+        resetUserSession();
+        resetMusicSession();
+        resetViewModel();
+        goToLogin();
+    }
+
+    private void resetUserSession() {
+        Preferences.setServerId(null);
+        Preferences.setSalt(null);
+        Preferences.setToken(null);
+        Preferences.setPassword(null);
+        Preferences.setServer(null);
+        Preferences.setLocalAddress(null);
+        Preferences.setUser(null);
+        Preferences.setClientCert(null);
+
+        // TODO Enter all settings to be reset
+        Preferences.setOpenSubsonic(false);
+        Preferences.setPlaybackSpeed(1.0f);
+        Preferences.setSkipSilenceMode(false);
+        Preferences.setDataSavingMode(false);
+        Preferences.setStarredSyncEnabled(false);
+        Preferences.setStarredAlbumsSyncEnabled(false);
+    }
+
+    private void resetMusicSession() {
+        MediaManager.reset(getMediaBrowserListenableFuture());
+    }
+
+    private void hideMusicSession() {
+        MediaManager.hide(getMediaBrowserListenableFuture());
+    }
+
+    private void resetViewModel() {
+        this.getViewModelStore().clear();
+    }
+
+    // CONNECTION
+    private void connectivityStatusReceiverManager(boolean isActive) {
+        if (isActive) {
+            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(connectivityStatusBroadcastReceiver, filter);
+        } else {
+            unregisterReceiver(connectivityStatusBroadcastReceiver);
+        }
+    }
+
+    private void pingServer() {
+        if (Preferences.getToken() == null && Preferences.getPassword() == null) return;
+
+        if (Preferences.isInUseServerAddressLocal()) {
+            mainViewModel.ping().observe(this, subsonicResponse -> {
+                if (subsonicResponse == null) {
+                    // Switching only helps when remote and local are different addresses. When
+                    // they're equal (issue #242) switchInUseServerAddress() is a no-op, so we'd
+                    // re-enter this branch forever (ping/refresh/resetView loop). Treat that case
+                    // like an unreachable server instead of looping.
+                    String server = Preferences.getServer();
+                    if (server != null && !server.equals(Preferences.getLocalAddress())) {
+                        Preferences.setServerSwitchableTimer();
+                        Preferences.switchInUseServerAddress();
+                        App.refreshSubsonicClient();
+                        pingServer();
+                        resetView();
+                    } else if (Preferences.showServerUnreachableDialog()) {
+                        ServerUnreachableDialog dialog = new ServerUnreachableDialog();
+                        dialog.show(getSupportFragmentManager(), null);
+                    }
+                } else {
+                    Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
+                }
+            });
+        } else {
+            if (Preferences.isServerSwitchable()) {
+                Preferences.setServerSwitchableTimer();
+                Preferences.switchInUseServerAddress();
+                App.refreshSubsonicClient();
+                pingServer();
+                resetView();
+            } else {
+                mainViewModel.ping().observe(this, subsonicResponse -> {
+                    if (subsonicResponse == null) {
+                        if (Preferences.showServerUnreachableDialog()) {
+                            ServerUnreachableDialog dialog = new ServerUnreachableDialog();
+                            dialog.show(getSupportFragmentManager(), null);
+                        }
+                    } else {
+                        Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
+                    }
+                });
+            }
+        }
+    }
+
+    private void resetView() {
+        resetViewModel();
+
+        NavController nc = navigationController.getNavController();
+        int id = nc.getCurrentDestination().getId();
+        
+        nc.popBackStack(id, true);
+        nc.navigate(id);
+    }
+
+    private void getOpenSubsonicExtensions() {
+        if (Preferences.getToken() != null || Preferences.getPassword() != null) {
+            mainViewModel.getOpenSubsonicExtensions().observe(this, openSubsonicExtensions -> {
+                if (openSubsonicExtensions != null) {
+                    Preferences.setOpenSubsonicExtensions(openSubsonicExtensions);
+                }
+            });
+        }
+    }
+
+    private void checkTempoUpdate() {
+        if (BuildConfig.FLAVOR.equals("tempus") && Preferences.isGithubUpdateEnabled() && Preferences.showTempusUpdateDialog()) {
+            mainViewModel.checkTempoUpdate().observe(this, latestRelease -> {
+                if (latestRelease != null && UpdateUtil.showUpdateDialog(latestRelease)) {
+                    GithubTempoUpdateDialog dialog = new GithubTempoUpdateDialog(latestRelease);
+                    dialog.show(getSupportFragmentManager(), null);
+                }
+            });
+        }
+    }
+
+    private void checkConnectionType() {
+        if (Preferences.isWifiOnly()) {
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+            if (networkInfo != null && networkInfo.getType() != ConnectivityManager.TYPE_WIFI) {
+                ConnectionAlertDialog dialog = new ConnectionAlertDialog();
+                dialog.show(getSupportFragmentManager(), null);
+            }
+        }
+    }
+
+    private void maybeSchedulePlaybackIntent(Intent intent) {
+        if (intent == null) return;
+        if (Constants.ACTION_PLAY_EXTERNAL_DOWNLOAD.equals(intent.getAction())
+                || intent.hasExtra(Constants.EXTRA_DOWNLOAD_URI)) {
+            pendingDownloadPlaybackIntent = new Intent(intent);
+        }
+        handleAssetLinkIntent(intent);
+    }
+
+    private void consumePendingPlaybackIntent() {
+        if (pendingDownloadPlaybackIntent == null) return;
+        Intent intent = pendingDownloadPlaybackIntent;
+        pendingDownloadPlaybackIntent = null;
+        playDownloadedMedia(intent);
+    }
+
+    private void handleAssetLinkIntent(Intent intent) {
+        AssetLinkUtil.AssetLink assetLink = AssetLinkUtil.parse(intent);
+        if (assetLink == null) {
+            return;
+        }
+        if (!isUserAuthenticated()) {
+            pendingAssetLink = assetLink;
+            intent.setData(null);
+            return;
+        }
+        if (assetLinkNavigator != null) {
+            assetLinkNavigator.open(assetLink);
+        }
+        intent.setData(null);
+    }
+
+    private boolean isUserAuthenticated() {
+        return Preferences.getPassword() != null
+                || (Preferences.getToken() != null && Preferences.getSalt() != null);
+    }
+
+    private void consumePendingAssetLink() {
+        if (pendingAssetLink == null || assetLinkNavigator == null) {
+            return;
+        }
+        assetLinkNavigator.open(pendingAssetLink);
+        pendingAssetLink = null;
+    }
+
+    private void playDownloadedMedia(Intent intent) {
+        String uriString = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_URI);
+        if (TextUtils.isEmpty(uriString)) {
+            return;
+        }
+
+        Uri uri = Uri.parse(uriString);
+        String mediaId = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_MEDIA_ID);
+        if (TextUtils.isEmpty(mediaId)) {
+            mediaId = uri.toString();
+        }
+
+        String title = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_TITLE);
+        String artist = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_ARTIST);
+        String album = intent.getStringExtra(Constants.EXTRA_DOWNLOAD_ALBUM);
+        int duration = intent.getIntExtra(Constants.EXTRA_DOWNLOAD_DURATION, 0);
+
+        Bundle extras = new Bundle();
+        extras.putString("id", mediaId);
+        extras.putString("title", title);
+        extras.putString("artist", artist);
+        extras.putString("album", album);
+        extras.putString("uri", uri.toString());
+        extras.putString("type", Constants.MEDIA_TYPE_MUSIC);
+        extras.putInt("duration", duration);
+
+        MediaMetadata.Builder metadataBuilder = new MediaMetadata.Builder()
+                .setExtras(extras)
+                .setIsBrowsable(false)
+                .setIsPlayable(true);
+
+        if (!TextUtils.isEmpty(title)) metadataBuilder.setTitle(title);
+        if (!TextUtils.isEmpty(artist)) metadataBuilder.setArtist(artist);
+        if (!TextUtils.isEmpty(album)) metadataBuilder.setAlbumTitle(album);
+
+        MediaItem mediaItem = new MediaItem.Builder()
+                .setMediaId(mediaId)
+                .setMediaMetadata(metadataBuilder.build())
+                .setUri(uri)
+                .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
+                .setRequestMetadata(new MediaItem.RequestMetadata.Builder()
+                        .setMediaUri(uri)
+                        .setExtras(extras)
+                        .build())
+                .build();
+
+        MediaManager.playDownloadedMediaItem(getMediaBrowserListenableFuture(), mediaItem);
+    }
+
+    private void fixUpEdgeToEdge() {
+        View rootView = findViewById(android.R.id.content);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
+            Insets innerPadding = insets.getInsets(
+                    WindowInsetsCompat.Type.statusBars()
+            );
+            rootView.setPadding(
+                    innerPadding.left,
+                    innerPadding.top,
+                    innerPadding.right,
+                    innerPadding.bottom
+            );
+            return insets;
+        });
+    }
+
+    private void setupLoginActivity() {
+        String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
+        if ("open_legacy_login_fragment".equals(triggerArg)) {
+            goToLogin();
+        } else if ("open_legacy_settings_fragment".equals(triggerArg)) {
+            goToHome();
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
+
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setAction(Intent.ACTION_VIEW);
+
+            ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "login_activity_shortcut")
+                    .setShortLabel(getString(R.string.la_shortcut_label))
+                    .setLongLabel(getString(R.string.la_shortcut_label))
+                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher))
+                    .setIntents(new Intent[]{intent})
+                    .build();
+
+            if (shortcutManager != null) {
+                shortcutManager.setDynamicShortcuts(Collections.singletonList(shortcut));
+            }
+        }
+    }
+}

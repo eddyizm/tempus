@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.util;
+package com.eddyizm.tempus.util;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,8 +7,8 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleRegistry;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cappielloantonio.tempo.repository.PlaylistRepository;
-import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.eddyizm.tempus.repository.PlaylistRepository;
+import com.eddyizm.tempus.subsonic.models.Child;
 
 import org.junit.Rule;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.service
+package com.eddyizm.tempus.service
 
 import android.content.Context
 import android.os.Bundle

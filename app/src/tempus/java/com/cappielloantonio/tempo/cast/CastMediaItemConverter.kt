@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.cast
+package com.eddyizm.tempus.cast
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -6,8 +6,8 @@ import androidx.media3.cast.DefaultMediaItemConverter
 import androidx.media3.cast.MediaItemConverter
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
-import com.cappielloantonio.tempo.glide.CustomGlideRequest
-import com.cappielloantonio.tempo.util.Preferences
+import com.eddyizm.tempus.glide.CustomGlideRequest
+import com.eddyizm.tempus.util.Preferences
 import com.google.android.gms.cast.MediaQueueItem
 
 /**
