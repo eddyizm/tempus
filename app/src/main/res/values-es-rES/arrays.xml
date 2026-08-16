@@ -333,4 +333,10 @@
         <item>Pistas favoritas</item>
     </string-array>
 
+    <string-array name="custom_commands_titles">
+        <item>Favorito</item>
+        <item>Repetir</item>
+        <item>Aleatorio</item>
+        <item>Mix instantáneo</item>
+    </string-array>
 </resources>
