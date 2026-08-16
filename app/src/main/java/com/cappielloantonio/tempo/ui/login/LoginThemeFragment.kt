@@ -75,6 +75,7 @@ class LoginThemeFragment : Fragment() {
     }
 
     private fun initDynamicColorsSwitch() {
+        binding.defaultDynamicSwitch.isChecked = Preferences.isDynamicColorAccent()
         binding.defaultDynamicSwitch.setOnClickListener {
             Preferences.setDynamicColorAccent(binding.defaultDynamicSwitch.isChecked)
             applyAccentColor(Preferences.getColorAccent())
