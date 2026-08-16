@@ -796,4 +796,39 @@
     <string name="playlist_error_not_found_message">Tej playlisty nie udało się odnaleźć na serwerze. Zostanie ona usunięta z twojej lokalnej pamięci podręcznej.</string>
     <string name="playlist_error_not_found_toast">Playlista usunięta z pamięci podręcznej</string>
 	<string name="player_overflow_menu_add_to_playlist">Dodaj do playlisty</string>
+
+    <string name="la_greeting_description">Witaj w Tempus, otwarto-źródłowym kliencie muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
+
+    <string name="la_server_title">Konfiguracja serwera</string>
+    <string name="la_server_description">Funkcja eksperymentalna, będziesz mieć do czynienia prosto z bazą danych (przydatne przy pętlach awarii).</string>
+    <string name="la_server_field_server_empty_error">Wymagane pole</string>
+    <string name="la_server_field_server_url_error">Nieprawidłowy adres URL</string>
+    <string name="la_server_field_server_name">Nazwa serwera</string>
+    <string name="la_server_field_server_user">Nazwa użytkownika</string>
+    <string name="la_server_field_server_pass">Hasło</string>
+    <string name="la_server_field_server_public_url">Publiczny adres URL</string>
+    <string name="la_server_field_server_local_url">Lokalny adres URL</string>
+    <string name="la_server_field_server_cert">Certyfikat klienta (opcjonalny)</string>
+    <string name="la_server_field_plaintext_password_checkbox">Hasło jako zwykłý tekst</string>
+    <string name="la_server_button_create">Utwórz</string>
+    <string name="la_server_button_update">Uaktualnij</string>
+    <string name="la_server_button_delete">Usuń</string>
+    <string name="la_server_button_test">Testuj</string>
+    <string name="la_server_button_return">Wróć do listy serwerów</string>
+    <string name="la_server_dropdown_add_new">Dodaj nowy serwer</string>
+    <string name="la_server_toast_created">Serwer utworzony</string>
+    <string name="la_server_toast_updated">Serwer uaktualniony</string>
+    <string name="la_server_toast_deleted">Serwer usunięty</string>
+    <string name="la_server_toast_connection_testing">Testowanie połączenia</string>
+    <string name="la_server_toast_connection_success">Połączono pomyślnie!</string>
+    <string name="la_server_toast_connection_failure">Niepowodzenie: Nieprawidłowy serwer, adres URL, lub dane logowania</string>
+    <string name="la_server_toast_connection_error">Błąd sieci:</string>
+    <string name="la_server_switch_plaintext_password">Hasło jako zwykły tekst (stare serwery)</string>
+    <string name="la_server_switch_local_url">Ustaw lokalny adres URL</string>
+    <string name="la_server_switch_cert">Certyfikat klienta (mTLS)</string>
+
+    <string name="la_shortcut_label">Wprowadzenie</string>
+    <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
+	
+    <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
 </resources>
