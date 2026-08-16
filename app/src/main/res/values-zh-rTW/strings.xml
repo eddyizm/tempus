@@ -244,6 +244,9 @@
     <string name="menu_sort_recently_played">最近播放</string>
     <string name="menu_sort_year">年份</string>
     <string name="menu_unpin_button">從首頁移除</string>
+    <string name="menu_add_to_queue_button">新增到序列</string>
+    <string name="menu_play_next_button">下一首播放</string>
+    <string name="menu_instant_mix_button">即時混聽</string>
     <string name="player_lyrics_download_content_description">下載離線歌詞</string>
     <string name="player_lyrics_download_failure">暫無歌詞可供下載。</string>
     <string name="player_lyrics_download_success">離線歌詞已儲存。</string>

@@ -226,6 +226,8 @@
     <string name="menu_go_to_playlist_button">Reproducir</string>
     <string name="menu_play_shuffle_button">Reproducir en aleatorio</string>
     <string name="menu_add_to_queue_button">Añadir a la cola de reproducción</string>
+    <string name="menu_play_next_button">Reproducir siguiente</string>
+    <string name="menu_instant_mix_button">Mix instántaneo</string>
     <string name="menu_edit_playlist_button">Editar</string>
     <string name="menu_download_all_button">Descargar todo</string>
     <string name="menu_rate_album">Valorar Álbum</string>

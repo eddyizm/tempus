@@ -243,6 +243,9 @@
     <string name="menu_sort_year">Год</string>
     <string name="menu_pin_button">Добавить на главный экран</string>
     <string name="menu_unpin_button">Убрать с главного экрана</string>
+    <string name="menu_add_to_queue_button">Добавить в очередь</string>
+    <string name="menu_play_next_button">Играть следующим</string>
+    <string name="menu_instant_mix_button">Мгновенный микс</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Скорость воспроизведения</string>
     <string name="playback_speed_dialog_negative_button">Отмена</string>

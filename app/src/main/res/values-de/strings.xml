@@ -625,4 +625,7 @@
     <string name="search_all_songs_loading">Hole alle Titel…</string>
     <string name="search_all_songs">alle %1$s Titel</string>
     <string name="search_all_songs_play">Spiele %1$s</string>
+    <string name="menu_add_to_queue_button">Zu Warteschlange hinzufügen</string>
+    <string name="menu_play_next_button">Als nächstes spielen</string>
+    <string name="menu_instant_mix_button">Sofort-Mix</string>
 </resources>

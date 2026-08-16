@@ -2,6 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_instant_mix"
+        android:icon="@drawable/ic_instantmix_on"
+        android:title="@string/menu_instant_mix_button"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_play_next"
+        android:icon="@drawable/media3_icon_queue_next"
+        android:title="@string/menu_play_next_button"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_add_to_queue"
+        android:icon="@drawable/media3_icon_queue_add"
+        android:title="@string/menu_add_to_queue_button"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_download_album"
         android:icon="@drawable/ic_file_download"
         android:title="@string/menu_download_all_button"

@@ -195,6 +195,9 @@
     <string name="menu_filter_download">Descargado</string>
     <string name="menu_group_by_album">Álbum</string>
     <string name="menu_group_by_artist">Artista</string>
+    <string name="menu_play_next_button">Reproducir siguiente</string>
+    <string name="menu_instant_mix_button">Mix instantáneo</string>
+    <string name="menu_add_to_queue_button">Añadir a la cola</string>
     <string name="settings_github_update_title">Comprobar actualizaciones en GitHub</string>
     <string name="settings_scan_result">Escaneo: hay %1$d pistas</string>
     <string name="settings_support_title">Soporte al usuario</string>
@@ -651,4 +654,5 @@
         <item>@string/sleep_timer_end_of_track_label</item>
         <item>Personalizado\u2026</item>
     </string-array>
+
 </resources>

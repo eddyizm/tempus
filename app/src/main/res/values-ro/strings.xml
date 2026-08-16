@@ -217,6 +217,9 @@
     <string name="menu_pin_button">Adăugați pe ecranul de start</string>
     <string name="menu_unpin_button">Eliminați din ecranul de start</string>
     <string name="menu_sort_year">Anul</string>
+    <string name="menu_add_to_queue_button">Adăugați la coadă</string>
+    <string name="menu_play_next_button">Redați următoarea</string>
+    <string name="menu_instant_mix_button">Mix instant</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_clean_all_button">Curățați coada de redare</string>
     <string name="player_queue_save_queue_success">Coadă de redare salvată</string>

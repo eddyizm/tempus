@@ -227,6 +227,8 @@
     <string name="menu_go_to_playlist_button">Reprodueix</string>
     <string name="menu_play_shuffle_button">Reprodueix aleatòriament</string>
     <string name="menu_add_to_queue_button">Afegeix a la cua</string>
+    <string name="menu_play_next_button">Reprodueix a continuació</string>
+    <string name="menu_instant_mix_button">Mescla instantània</string>
     <string name="menu_edit_playlist_button">Edició de la llista de reproducció</string>
     <string name="menu_download_all_button">Baixa-ho tot</string>
     <string name="menu_rate_album">Valora l\'àlbum</string>

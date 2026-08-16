@@ -33,7 +33,7 @@
     <string name="album_bottom_sheet_download_all">Pobierz wszystkie</string>
     <string name="album_bottom_sheet_go_to_artist">Przejdź do wykonawcy</string>
     <string name="album_bottom_sheet_instant_mix">Natychmiastowy mix</string>
-    <string name="album_bottom_sheet_play_next">Odtwórz jako następne</string>
+    <string name="album_bottom_sheet_play_next">Odtwarzaj jako następne</string>
     <string name="album_bottom_sheet_remove_all">Usuń wszystkie</string>
     <string name="album_bottom_sheet_share">Udostępnij</string>
     <string name="album_bottom_sheet_shuffle">Odtwórz losowo</string>
@@ -226,6 +226,8 @@
     <string name="menu_go_to_playlist_button">Odtwarzaj</string>
     <string name="menu_play_shuffle_button">Odtwarzaj losowo</string>
     <string name="menu_add_to_queue_button">Dodaj do kolejki</string>
+    <string name="menu_play_next_button">Odtwarzaj jako następne</string>
+    <string name="menu_instant_mix_button">Natychmiastowy mix</string>
     <string name="menu_edit_playlist_button">Edytuj playlistę</string>
     <string name="menu_download_all_button">Pobierz wszystko</string>
     <string name="menu_rate_album">Oceń album</string>
@@ -317,7 +319,7 @@
     <string name="podcast_bottom_sheet_delete">Usuń</string>
     <string name="podcast_bottom_sheet_download">Pobierz</string>
     <string name="podcast_bottom_sheet_go_to_channel">Przejdź do kanału</string>
-    <string name="podcast_bottom_sheet_play_next">Odtwórz jako następny</string>
+    <string name="podcast_bottom_sheet_play_next">Odtwarzaj jako następne</string>
     <string name="podcast_bottom_sheet_remove">Usuń</string>
     <string name="podcast_channel_catalogue_title">Kanały</string>
     <string name="podcast_channel_catalogue_title_expanded">Przeglądaj Kanały</string>
