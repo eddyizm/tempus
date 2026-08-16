@@ -1,22 +1,13 @@
 <resources>
     <string-array name="theme_list_titles">
+        <item>System default</item>
         <item>Light</item>
         <item>Dark</item>
-        <item>System default</item>
     </string-array>
     <string-array name="theme_list_values">
+        <item>default</item>
         <item>light</item>
         <item>dark</item>
-        <item>default</item>
-    </string-array>
-
-    <string-array name="dark_theme_style_titles">
-        <item>Standard</item>
-        <item>AMOLED (Pure black)</item>
-    </string-array>
-    <string-array name="dark_theme_style_values">
-        <item>standard</item>
-        <item>amoled</item>
     </string-array>
 
     <string-array name="pref_cache_size_titles">

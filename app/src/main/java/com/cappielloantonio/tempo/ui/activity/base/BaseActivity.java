@@ -3,7 +3,6 @@ package com.cappielloantonio.tempo.ui.activity.base;
 import android.Manifest;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -22,10 +21,8 @@ import com.cappielloantonio.tempo.helper.ThemeHelper;
 import com.cappielloantonio.tempo.service.DownloaderService;
 import com.cappielloantonio.tempo.service.MediaService;
 import com.cappielloantonio.tempo.ui.dialog.BatteryOptimizationDialog;
-import com.cappielloantonio.tempo.util.ActivityUtil;
 import com.cappielloantonio.tempo.util.Flavors;
 import com.cappielloantonio.tempo.util.Preferences;
-import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 
 @UnstableApi
@@ -36,7 +33,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        ActivityUtil.enableThemeSwitch(this);
+        ThemeHelper.enableThemeSwitch(this);
         super.onCreate(savedInstanceState);
         Flavors.initializeCastContext(this);
         initializeDownloader();
@@ -48,7 +45,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        setNavigationBarColor();
+        ThemeHelper.setNavigationBarColor(this);
         initializeBrowser();
     }
 
@@ -106,28 +103,6 @@ public class BaseActivity extends AppCompatActivity {
             DownloadService.start(this, DownloaderService.class);
         } catch (IllegalStateException e) {
             DownloadService.startForeground(this, DownloaderService.class);
-        }
-    }
-
-    private void setNavigationBarColor() {
-        String theme = Preferences.getTheme();
-        String darkStyle = Preferences.getDarkThemeStyle();
-        boolean isAmoled = ThemeHelper.AMOLED_MODE.equals(darkStyle);
-        boolean applyAmoled = false;
-
-        if (ThemeHelper.DARK_MODE.equals(theme) || ThemeHelper.AMOLED_MODE.equals(theme)) {
-            applyAmoled = isAmoled;
-        } else if (ThemeHelper.DEFAULT_MODE.equals(theme)) {
-            int nightModeFlags = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
-            applyAmoled = (nightModeFlags == Configuration.UI_MODE_NIGHT_YES && isAmoled);
-        }
-
-        if (applyAmoled) {
-            getWindow().setNavigationBarColor(ContextCompat.getColor(this, android.R.color.black));
-            getWindow().setStatusBarColor(ContextCompat.getColor(this, android.R.color.black));
-        } else {
-            getWindow().setNavigationBarColor(SurfaceColors.getColorForElevation(this, 8));
-            getWindow().setStatusBarColor(SurfaceColors.getColorForElevation(this, 0));
         }
     }
 }

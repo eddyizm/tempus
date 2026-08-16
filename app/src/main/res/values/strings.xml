@@ -828,6 +828,13 @@
     <string name="la_server_switch_local_url">Set a local URL</string>
     <string name="la_server_switch_cert">Client certificate (mTLS)</string>
 
+    <string name="la_theme_title">Choose Accent Color</string>
+    <string name="la_theme_description">Select a style to generate your app\'s dynamic palette.</string>
+
+    <string name="la_theme_button_return">Return to home</string>
+
+    <string name="la_theme_switch_true_black">True black background for dark mode</string>
+
     <string name="la_shortcut_label">Introduction</string>
     <string name="la_button_advanced_editor">Advanced editor (beta)</string>
 
