@@ -57,6 +57,10 @@
     <string name="artist_adapter_radio_station_starting">Szukanie…</string>
     <string name="artist_bottom_sheet_instant_mix">Natychmiastowy mix mix</string>
     <string name="artist_bottom_sheet_shuffle">Odtwórz losowo</string>
+	<string name="artist_bottom_sheet_play_next">Odtwórz następne</string>
+    <string name="artist_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
+    <string name="artist_bottom_sheet_add_to_playlist">Dodaj do playlisty</string>
+    <string name="artist_bottom_sheet_loading_tracks">Ładowanie utworów\u2026</string>
     <string name="artist_catalogue_title">Wykonawcy</string>
     <string name="artist_catalogue_title_expanded">Przeglądaj wykonawców</string>
     <string name="artist_error_retrieving_radio">Błąd podczas pobierania radia wykonawcy</string>
@@ -93,6 +97,7 @@
     <string name="connection_alert_dialog_summary">Dostęp do serwera Subsonic na połaczeniach innych niż Wi-Fi został ograniczony. Aby zapobiec ponownemu pojawieniu się tej informacji, wyłącz sprawdzanie połączenia w ustawieniach aplikacji.</string>
     <string name="connection_alert_dialog_title">Nie połączono z Wi-Fi</string>
     <string name="content_description_shuffle_button">Odtwarzanie losowe</string>
+	<string name="content_description_more_options">Więcej opcji</string>
     <string name="delete_download_storage_dialog_negative_button">Anuluj</string>
     <string name="delete_download_storage_dialog_positive_button">Kontynuuj</string>
     <string name="delete_download_storage_dialog_summary">Miej na uwadze to że kontynuowanie tej operacji spowoduje usunięcie wszystkich pobranych plików z wszystkich serwerów.</string>
@@ -132,6 +137,34 @@
     <string name="error_required">Wymagane</string>
     <string name="error_server_prefix">wymagany jest prefiks http lub https</string>
     <string name="exo_download_notification_channel_name">Pobieranie</string>
+    <string name="notification_downloading">Pobieram</string>
+    <string name="notification_downloading_title">Trwa pobieranie %1$s</string>
+    <string name="notification_download_progress_format">%1$d z %2$d</string>
+    <string name="notification_downloading_progress">Pobieranie…</string>
+    <string name="notification_finalizing">Kończenie…</string>
+    <string name="notification_processing">Przetwarzanie…</string>
+    <string name="notification_downloads_complete">Pobierania ukończone</string>
+    <string name="notification_download_failed">Pobranie nieudane</string>
+    <string name="notification_download_mixed_result">pobrano %1$d, nieudało się %2$d</string>
+    <string name="notification_download_mixed_saved">zapisano %1$d, nieudało się %2$d</string>
+    <plurals name="notification_tracks_downloaded">
+        <item quantity="one">Pobrano 1  utwór</item>
+		<item quantity="few">Pobrano %d utwory</item>
+        <item quantity="many">Pobrano %d utworów</item>
+        <item quantity="other">Pobrano %d utwory</item>
+    </plurals>
+    <plurals name="notification_tracks_failed">
+        <item quantity="one">1 utwór nieudany</item>
+		<item quantity="few">%d utwory nieudane</item>
+        <item quantity="many">%d utworów nieudanych</item>
+        <item quantity="other">%d utwory nieudane</item>
+    </plurals>
+    <plurals name="notification_tracks_saved">
+        <item quantity="one">1 track saved</item>
+		<item quantity="few">Usunięto %d brakujące pobrania</item>
+        <item quantity="many">Usunięto %d brakujących pobrań.</item>
+        <item quantity="other">%d tracks saved</item>
+    </plurals>
     <string name="exo_controls_heart_off_description">Wyłącz serce</string>
     <string name="exo_controls_heart_on_description">Włącz serce</string>
     <string name="cast_expanded_controller_loading">Ładowanie…</string>
@@ -259,6 +292,9 @@
     <string name="menu_pin_button">Dodaj do ulubionych</string>
     <string name="menu_unpin_button">Usuń z ulubionych</string>
     <string name="playlist_sort_pinned">Ulubione</string>
+	<string name="playlist_sort_last_played">Ostatnio odtwarzane</string>
+    <string name="playlist_sort_last_updated">Ostatnio zaktualizowane</string>
+    <string name="playlist_sort_both">Ostatnio aktywne</string>
     <string name="menu_sort_year">Rok</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
@@ -332,6 +368,8 @@
     <string name="podcast_info_empty_subtitle">Gdy dodasz kanał, znajdziesz go tutaj</string>
     <string name="podcast_info_empty_title">Nie znaleziono podcastów!</string>
     <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+	<string name="podcast_release_no_date">Brak daty</string>
+    <string name="podcast_release_unknown_duration">Nieznana długość</string>
     <string name="radio_editor_dialog_hint_homepage_url">Adres URL strony stacji</string>
     <string name="radio_editor_dialog_hint_name">Nazwa stacji radiowej</string>
     <string name="radio_editor_dialog_hint_stream_url">Adres URL z strumieniem stacji</string>
@@ -502,6 +540,8 @@
     <string name="settings_rounded_corner_size_summary">Ustawia wielkość krzywizny kąta.</string>
     <string name="settings_rounded_corner_summary">Jeżeli włączone, ustawia  kąt krzywizny dla wszystkich renderowanych okładek. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_scan_title">Skanuj bibliotekę</string>
+	<string name="settings_music_library">Biblioteka muzyki</string>
+    <string name="settings_music_library_all">Wszystkie biblioteki</string>
     <string name="settings_scrobble_title">Włącz scrobbling muzyki</string>
     <string name="settings_system_language">Język systemowy</string>
     <string name="settings_share_title">Włącz udostępnianie muzyki</string>
@@ -729,8 +769,9 @@
 
     <string name="ca_info_label">Informacja</string>
     <string name="ca_info_title">Tempus przestał działać</string>
+	
     <string name="ca_info_description">
-        Otwórz problem na GitHubie i załącz kopię logów, aby pomóć z tym problemem.
+        Otwórz problem na GitHubie i załącz kopię raportu, aby pomóć rozwiązać ten problem.
     </string>
     <string name="ca_info_button_close">Zamknij aplikację</string>
     <string name="ca_info_button_restart">Uruchom aplikację ponownie</string>
@@ -742,17 +783,52 @@
     </string>
     <string name="ca_export_button_copy">Skopiuj log</string>
     <string name="ca_export_button_share">Udostępnij log</string>
-    <string name="ca_export_toast_log_copied_to_clipboard">Log copied do schowka</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Skopiowano raport do schowka</string>
 
     <string name="ca_export_label">Eksportuj</string>
-    <string name="ca_export_title">Przechwycenie logów</string>
+    <string name="ca_export_title">Przechwycenie raportu</string>
     <string name="ca_export_description">
-        Apk debug (wersje testowe) podają bardziej dokładne logi i pomaga nam
-        zrozumieć co poszło nie tak w aplikacji.\n\n
-
+		Informacje o  urządzeniu są dodawane przed wyeksportowanym raportem.\n\n
+		
         Te dane nie są nigdzie wysyłane bez twojej zgody.
     </string>
     <string name="playlist_error_not_found_title">Playlista nie odnaleziona</string>
     <string name="playlist_error_not_found_message">Tej playlisty nie udało się odnaleźć na serwerze. Zostanie ona usunięta z twojej lokalnej pamięci podręcznej.</string>
     <string name="playlist_error_not_found_toast">Playlista usunięta z pamięci podręcznej</string>
+	<string name="player_overflow_menu_add_to_playlist">Dodaj do playlisty</string>
+
+    <string name="la_greeting_description">Witaj w Tempus, otwarto-źródłowym kliencie muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
+
+    <string name="la_server_title">Konfiguracja serwera</string>
+    <string name="la_server_description">Funkcja eksperymentalna, będziesz mieć do czynienia prosto z bazą danych (przydatne przy pętlach awarii).</string>
+    <string name="la_server_field_server_empty_error">Wymagane pole</string>
+    <string name="la_server_field_server_url_error">Nieprawidłowy adres URL</string>
+    <string name="la_server_field_server_name">Nazwa serwera</string>
+    <string name="la_server_field_server_user">Nazwa użytkownika</string>
+    <string name="la_server_field_server_pass">Hasło</string>
+    <string name="la_server_field_server_public_url">Publiczny adres URL</string>
+    <string name="la_server_field_server_local_url">Lokalny adres URL</string>
+    <string name="la_server_field_server_cert">Certyfikat klienta (opcjonalny)</string>
+    <string name="la_server_field_plaintext_password_checkbox">Hasło jako zwykłý tekst</string>
+    <string name="la_server_button_create">Utwórz</string>
+    <string name="la_server_button_update">Uaktualnij</string>
+    <string name="la_server_button_delete">Usuń</string>
+    <string name="la_server_button_test">Testuj</string>
+    <string name="la_server_button_return">Wróć do listy serwerów</string>
+    <string name="la_server_dropdown_add_new">Dodaj nowy serwer</string>
+    <string name="la_server_toast_created">Serwer utworzony</string>
+    <string name="la_server_toast_updated">Serwer uaktualniony</string>
+    <string name="la_server_toast_deleted">Serwer usunięty</string>
+    <string name="la_server_toast_connection_testing">Testowanie połączenia</string>
+    <string name="la_server_toast_connection_success">Połączono pomyślnie!</string>
+    <string name="la_server_toast_connection_failure">Niepowodzenie: Nieprawidłowy serwer, adres URL, lub dane logowania</string>
+    <string name="la_server_toast_connection_error">Błąd sieci:</string>
+    <string name="la_server_switch_plaintext_password">Hasło jako zwykły tekst (stare serwery)</string>
+    <string name="la_server_switch_local_url">Ustaw lokalny adres URL</string>
+    <string name="la_server_switch_cert">Certyfikat klienta (mTLS)</string>
+
+    <string name="la_shortcut_label">Wprowadzenie</string>
+    <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
+	
+    <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
 </resources>
