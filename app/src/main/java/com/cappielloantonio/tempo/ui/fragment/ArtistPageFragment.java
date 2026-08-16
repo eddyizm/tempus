@@ -158,6 +158,23 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             bundle.putParcelable(Constants.ARTIST_OBJECT, artistForNav != null ? artistForNav.strippedForNav() : null);
             Navigation.findNavController(requireView()).navigate(R.id.artistBottomSheetDialog, bundle);
         });
+
+        // Prevent top-left buttons from growing in height: remove text if it doesn't fit
+        Button shuffleBtn = view.findViewById(R.id.artist_page_shuffle_button);
+        Button radioBtn = view.findViewById(R.id.artist_page_radio_button);
+        if (shuffleBtn != null && radioBtn != null) {
+            view.getViewTreeObserver().addOnGlobalLayoutListener(new android.view.ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    try {
+                        adjustButtonToFit(shuffleBtn, R.string.artist_page_shuffle_button);
+                        adjustButtonToFit(radioBtn, R.string.artist_page_radio_button);
+                    } finally {
+                        view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                }
+            });
+        }
     }
 
     private void initAppBar() {
@@ -489,4 +506,29 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     private void setMediaBrowserListenableFuture() {
         songHorizontalAdapter.setMediaBrowserListenableFuture(mediaBrowserListenableFuture);
     }
+
+    private void adjustButtonToFit(android.widget.Button btn, int textResId) {
+        if (btn == null) return;
+        String text = btn.getText() != null ? btn.getText().toString() : null;
+        if (text == null || text.isEmpty()) return;
+
+        float textWidth = btn.getPaint().measureText(text);
+        int available = btn.getWidth() - btn.getPaddingLeft() - btn.getPaddingRight() - dpToPx(48); // reserve ~48px for icon+padding
+
+        if (available <= 0 || textWidth > available) {
+            btn.setText("");
+            try {
+                btn.setContentDescription(getString(textResId));
+            } catch (Exception ignored) {}
+        } else {
+            if (btn.getContentDescription() == null || btn.getContentDescription().length() == 0) {
+                try { btn.setContentDescription(getString(textResId)); } catch (Exception ignored) {}
+            }
+        }
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * requireContext().getResources().getDisplayMetrics().density + 0.5f);
+    }
 }
+
