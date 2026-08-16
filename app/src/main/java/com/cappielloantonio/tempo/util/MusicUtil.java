@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -59,14 +60,15 @@ public class MusicUtil {
         if (params.containsKey("c") && params.get("c") != null)
             uri.append("&c=").append(params.get("c"));
 
-        String selectedBitrate = getBitratePreference();
-        String selectedFormat = getTranscodingFormatPreference();
+        int transport = getActiveTransport();
+        String selectedFormat = transcodingFormatFor(transport);
+        String selectedBitrate = bitrateFor(transport, selectedFormat);
         Log.i(TAG, "DEBUG: Requesting Format: " + selectedFormat + " at Bitrate: " + selectedBitrate);
-        
+
         if (!Preferences.isServerPrioritized())
-            uri.append("&maxBitRate=").append(getBitratePreference());
+            uri.append("&maxBitRate=").append(selectedBitrate);
         if (!Preferences.isServerPrioritized())
-            uri.append("&format=").append(getTranscodingFormatPreference());
+            uri.append("&format=").append(selectedFormat);
         if (timeOffset > 0)
             uri.append("&timeOffset=").append(timeOffset);
 
@@ -98,10 +100,13 @@ public class MusicUtil {
         Matcher m2 = FORMAT_PATTERN.matcher(s);
         s = m2.replaceAll("");
 
+        int transport = getActiveTransport();
+        String format = transcodingFormatFor(transport);
+
         if (!Preferences.isServerPrioritized())
-            s += "&maxBitRate=" + getBitratePreference();
+            s += "&maxBitRate=" + bitrateFor(transport, format);
         if (!Preferences.isServerPrioritized())
-            s += "&format=" + getTranscodingFormatPreference();
+            s += "&format=" + format;
 
         return Uri.parse(s);
     }
@@ -308,42 +313,77 @@ public class MusicUtil {
     private static final int TRANSPORT_NONE = -1;
     private static final int TRANSPORT_OTHER = -2;
     private static final long NETWORK_CACHE_TTL_MS = 1000;
-    private static volatile int cachedTransport = TRANSPORT_NONE;
-    private static volatile long cachedTransportAt = -1;
 
-    private static int getActiveTransport() {
+    // Held as one immutable value rather than a transport field and a timestamp field, so a
+    // reader cannot pick up a transport paired with someone else's timestamp.
+    private static final class TransportMemo {
+        final int transport;
+        final long at;
+
+        TransportMemo(int transport, long at) {
+            this.transport = transport;
+            this.at = at;
+        }
+    }
+
+    private static final AtomicReference<TransportMemo> transportMemo = new AtomicReference<>();
+
+    // Ethernet, bluetooth and USB tethering land in TRANSPORT_OTHER and stay there. A VPN lands
+    // there only in passing, while the network underneath it hands over.
+    public static int transportOf(NetworkCapabilities caps) {
+        if (caps == null) return TRANSPORT_NONE;
+        if (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return NetworkCapabilities.TRANSPORT_WIFI;
+        if (caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return NetworkCapabilities.TRANSPORT_CELLULAR;
+        return TRANSPORT_OTHER;
+    }
+
+    // The transport came from the framework with the change, so it replaces whatever is stored:
+    // a lookup that began before the callback and finished after it would write back a stale one.
+    public static void primeActiveTransport(int transport) {
+        transportMemo.set(new TransportMemo(transport, SystemClock.elapsedRealtime()));
+    }
+
+    public static int getActiveTransport() {
         long now = SystemClock.elapsedRealtime();
-        if (cachedTransportAt >= 0 && now - cachedTransportAt < NETWORK_CACHE_TTL_MS) return cachedTransport;
+        TransportMemo memo = transportMemo.get();
+        if (memo != null && now - memo.at < NETWORK_CACHE_TTL_MS) return memo.transport;
 
         Network network = getConnectivityManager().getActiveNetwork();
-        NetworkCapabilities caps = network == null ? null : getConnectivityManager().getNetworkCapabilities(network);
+        int transport = transportOf(network == null ? null : getConnectivityManager().getNetworkCapabilities(network));
 
-        int transport;
-        if (network == null || caps == null) transport = TRANSPORT_NONE;
-        else if (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) transport = NetworkCapabilities.TRANSPORT_WIFI;
-        else if (caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) transport = NetworkCapabilities.TRANSPORT_CELLULAR;
-        else transport = TRANSPORT_OTHER;
-
-        cachedTransport = transport;
-        cachedTransportAt = now;
+        // A value stored while the lookup was running came either from a network callback or from
+        // a lookup of its own. Keep it and answer with it rather than overwriting it.
+        if (!transportMemo.compareAndSet(memo, new TransportMemo(transport, now))) {
+            return transportMemo.get().transport;
+        }
         return transport;
     }
 
-    public static String getBitratePreference() {
-        int transport = getActiveTransport();
-        if (getTranscodingFormatPreference().equals("raw") || transport == TRANSPORT_NONE)
-            return "0";
+    // The format and the ceiling have to describe the same network, so both resolve from a single
+    // transport read. Two reads let a handover land between them and pair settings never configured.
+    private static String transcodingFormatFor(int transport) {
+        if (transport == TRANSPORT_NONE) return "raw";
+        if (transport == NetworkCapabilities.TRANSPORT_CELLULAR)
+            return Preferences.getAudioTranscodeFormatMobile();
+        return Preferences.getAudioTranscodeFormatWifi();
+    }
+
+    private static String bitrateFor(int transport, String format) {
+        // No ceiling applies to an untranscoded stream. This also covers TRANSPORT_NONE, which
+        // transcodingFormatFor already answers with "raw".
+        if (format.equals("raw")) return "0";
         if (transport == NetworkCapabilities.TRANSPORT_CELLULAR)
             return Preferences.getMaxBitrateMobile();
         return Preferences.getMaxBitrateWifi();
     }
 
-    public static String getTranscodingFormatPreference() {
+    public static String getBitratePreference() {
         int transport = getActiveTransport();
-        if (transport == TRANSPORT_NONE) return "raw";
-        if (transport == NetworkCapabilities.TRANSPORT_CELLULAR)
-            return Preferences.getAudioTranscodeFormatMobile();
-        return Preferences.getAudioTranscodeFormatWifi();
+        return bitrateFor(transport, transcodingFormatFor(transport));
+    }
+
+    public static String getTranscodingFormatPreference() {
+        return transcodingFormatFor(getActiveTransport());
     }
 
     public static String getBitratePreferenceForDownload() {

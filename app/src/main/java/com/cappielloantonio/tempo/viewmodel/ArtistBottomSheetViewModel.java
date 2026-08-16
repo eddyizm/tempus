@@ -31,6 +31,7 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
     private final MutableLiveData<List<Child>> instantMix = new MutableLiveData<>(null);
+    private LiveData<List<Child>> artistAllTracks;
 
     private ArtistID3 artist;
 
@@ -47,6 +48,18 @@ public class ArtistBottomSheetViewModel extends AndroidViewModel {
 
     public void setArtist(ArtistID3 artist) {
         this.artist = artist;
+        this.artistAllTracks = null; // reset cache on new artist
+    }
+
+    /**
+     * Lazily fetches and caches all tracks for the current artist.
+     * Safe to call multiple times — only one network batch is started per artist.
+     */
+    public LiveData<List<Child>> getArtistAllTracks() {
+        if (artistAllTracks == null) {
+            artistAllTracks = artistRepository.getArtistAllTracksLive(artist.getId());
+        }
+        return artistAllTracks;
     }
 
     public void setFavorite(Context context) {

@@ -1,0 +1,4 @@
+feat: add a music library switcher so browsing and search can be scoped to one library
+fix: a crash when the server reports no playlists
+fix: guard app bar offset listeners against a null view binding
+Add Basque/Japanese language support

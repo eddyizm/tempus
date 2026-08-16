@@ -1,22 +1,21 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
     namespace = 'com.cappielloantonio.tempo'
     //noinspection GradleDependency
-    compileSdk = 36
-    buildToolsVersion = '36.0.0'
+    compileSdk = 37
+    buildToolsVersion = '36.1.0'
 
     defaultConfig {
         minSdkVersion 24
         //noinspection OldTargetApi
-        targetSdk = 36
+        targetSdk = 37
 
-        versionCode 41
-        versionName '4.23.2'
+        versionCode 42
+        versionName '4.24.1-dev'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -88,8 +87,12 @@ dependencies {
 
     // AndroidX
     implementation libs.androidx.activity
+    implementation libs.androidx.activity.ktx
+    implementation libs.androidx.annotation
     implementation libs.androidx.constraintlayout
     implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.lifecycle.livedata.ktx
+    implementation libs.androidx.lifecycle.viewmodel.ktx
     implementation libs.androidx.preference.ktx
     implementation libs.androidx.navigation.fragment.ktx
     implementation libs.androidx.navigation.ui.ktx

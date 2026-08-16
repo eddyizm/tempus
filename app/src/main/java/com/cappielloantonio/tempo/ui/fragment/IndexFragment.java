@@ -47,6 +47,7 @@ public class IndexFragment extends Fragment implements ClickCallback {
     private MusicIndexAdapter musicIndexAdapter;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
     private DirectoryRepository directoryRepository;
+    private MusicFolder musicFolder;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,6 +57,7 @@ public class IndexFragment extends Fragment implements ClickCallback {
         View view = bind.getRoot();
         indexViewModel = new ViewModelProvider(requireActivity()).get(IndexViewModel.class);
         directoryRepository = new DirectoryRepository();
+        musicFolder = getArguments() != null ? getArguments().getParcelable(Constants.MUSIC_FOLDER_OBJECT) : null;
 
         initAppBar();
         initDirectoryListView();
@@ -83,8 +85,6 @@ public class IndexFragment extends Fragment implements ClickCallback {
     }
 
     private void init() {
-        MusicFolder musicFolder = getArguments().getParcelable(Constants.MUSIC_FOLDER_OBJECT);
-
         if (musicFolder != null) {
             indexViewModel.setMusicFolder(musicFolder);
             bind.indexTitleLabel.setText(musicFolder.getName());
@@ -99,22 +99,20 @@ public class IndexFragment extends Fragment implements ClickCallback {
             activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        if (bind != null)
-            bind.toolbar.setNavigationOnClickListener(v -> activity.navController.navigateUp());
+        bind.toolbar.setNavigationOnClickListener(v -> activity.navController.navigateUp());
 
-        if (bind != null)
-            bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
-                if ((bind.indexInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
-                    bind.toolbar.setTitle(indexViewModel.getMusicFolderName());
-                } else {
-                    bind.toolbar.setTitle(R.string.empty_string);
-                }
-            });
+        bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (bind == null) return;
+
+            if ((bind.indexInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
+                bind.toolbar.setTitle(indexViewModel.getMusicFolderName());
+            } else {
+                bind.toolbar.setTitle(R.string.empty_string);
+            }
+        });
     }
 
     private void initDirectoryListView() {
-        MusicFolder musicFolder = getArguments().getParcelable(Constants.MUSIC_FOLDER_OBJECT);
-
         bind.indexRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.indexRecyclerView.setHasFixedSize(true);
 
@@ -197,3 +195,4 @@ public class IndexFragment extends Fragment implements ClickCallback {
         });
     }
 }
+

@@ -1,5 +1,6 @@
 package com.cappielloantonio.tempo.ui.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,7 +12,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -19,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.cappielloantonio.tempo.App;
 import com.cappielloantonio.tempo.R;
+import com.cappielloantonio.tempo.ui.login.LoginActivity;
 import com.cappielloantonio.tempo.ui.adapter.ServerAdapter;
 import com.cappielloantonio.tempo.databinding.FragmentLoginBinding;
 import com.cappielloantonio.tempo.interfaces.ClickCallback;
@@ -63,6 +67,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
 
         initAppBar();
         initServerListView();
+        initNewLoginButton();
 
         return view;
     }
@@ -77,6 +82,8 @@ public class LoginFragment extends Fragment implements ClickCallback {
         activity.setSupportActionBar(bind.toolbar);
 
         bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (bind == null) return;
+
             if ((bind.serverInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
                 bind.toolbar.setTitle(R.string.login_title);
             } else {
@@ -103,6 +110,28 @@ public class LoginFragment extends Fragment implements ClickCallback {
         });
     }
 
+    public void initNewLoginButton() {
+
+        /* Edge-to-edge fixup */
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) bind.newLoginButton.getLayoutParams();
+        final int baseBottomMargin = params.bottomMargin;
+        ViewCompat.setOnApplyWindowInsetsListener(bind.newLoginButton, (v, windowInsets) -> {
+            Insets systemInsets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars());
+            params.bottomMargin = baseBottomMargin + systemInsets.bottom;
+            v.setLayoutParams(params);
+            return windowInsets;
+        });
+
+        /* Setup button */
+        bind.newLoginButton.setOnClickListener(v -> {
+            activity.finish();
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("SELECT_FRAGMENT", 3);
+            startActivity(tempus);
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_add) {
@@ -125,7 +154,9 @@ public class LoginFragment extends Fragment implements ClickCallback {
             public void onError(Exception exception) {
                 Preferences.switchInUseServerAddress();
                 resetServerPreference();
-                Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+                if (requireContext() != null) { // Swapping activities does not ensure non-null
+                    Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

@@ -118,6 +118,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
+        homeViewModel.clearCacheIfMusicFolderChanged();
+
         init();
 
         return view;
