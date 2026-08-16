@@ -187,7 +187,10 @@ public class PlayerControllerFragment extends Fragment {
                 PopupMenu popup = new PopupMenu(requireContext(), v);
                 popup.inflate(R.menu.player_overflow_menu);
                 popup.setOnMenuItemClickListener(item -> {
-                    if (item.getItemId() == R.id.action_add_to_playlist) {
+                    if (item.getItemId() == R.id.action_open_equalizer) {
+                        navigateToEqualizerFragment();
+                        return true;
+                    } else if (item.getItemId() == R.id.action_add_to_playlist) {
                         openAddToPlaylistDialog();
                         return true;
                     } else {
