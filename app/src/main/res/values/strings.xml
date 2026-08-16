@@ -806,7 +806,6 @@
     <string name="la_greeting_description">Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.</string>
 
     <string name="la_server_title">Server Setup</string>
-    <string name="la_server_description">Experimental feature, you will be interacting directly with the database (useful for crash loops).</string>
     <string name="la_server_field_server_empty_error">Mandatory field</string>
     <string name="la_server_field_server_url_error">URL not valid</string>
     <string name="la_server_field_server_name">Server name</string>
