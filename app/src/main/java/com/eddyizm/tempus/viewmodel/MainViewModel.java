@@ -38,7 +38,7 @@ public class MainViewModel extends AndroidViewModel {
         return systemRepository.getOpenSubsonicExtensions();
     }
 
-    public LiveData<LatestRelease> checkTempoUpdate() {
-        return systemRepository.checkTempoUpdate();
+    public LiveData<LatestRelease> checkTempusUpdate() {
+        return systemRepository.checkTempusUpdate();
     }
 }

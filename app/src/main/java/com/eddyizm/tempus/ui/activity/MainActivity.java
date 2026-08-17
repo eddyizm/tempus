@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity {
         init();
         checkConnectionType();
         getOpenSubsonicExtensions();
-        checkTempoUpdate();
+        checkTempusUpdate();
 
         DownloadRepair.repairIfNeeded(this);
 
@@ -594,9 +594,9 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    private void checkTempoUpdate() {
+    private void checkTempusUpdate() {
         if (BuildConfig.FLAVOR.equals("tempus") && Preferences.isGithubUpdateEnabled() && Preferences.showTempusUpdateDialog()) {
-            mainViewModel.checkTempoUpdate().observe(this, latestRelease -> {
+            mainViewModel.checkTempusUpdate().observe(this, latestRelease -> {
                 if (latestRelease != null && UpdateUtil.showUpdateDialog(latestRelease)) {
                     GithubTempoUpdateDialog dialog = new GithubTempoUpdateDialog(latestRelease);
                     dialog.show(getSupportFragmentManager(), null);
