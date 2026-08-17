@@ -48,11 +48,7 @@ object ThemeHelper {
             }
 
             else -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
-                } else {
-                    setDefaultNightMode(MODE_NIGHT_AUTO_BATTERY)
-                }
+                setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
             }
         }
     }
@@ -93,13 +89,12 @@ object ThemeHelper {
         val isSystemDark = (theme == DEFAULT_MODE && nightMode == UI_MODE_NIGHT_YES)
         val isAmoled     = isDarkThemeBlack() && (theme == DARK_MODE || isSystemDark)
 
-        val colorAccent: String = if (isDynamicColorAccent()) {
-            "DYNAMIC" // Override to not lose user HEX preference
-        } else {
-            getColorAccent()
-        }
+        val colorAccent = getColorAccent()
 
         when {
+            isDynamicColorAccent() -> {
+                    applyToActivityIfAvailable(activity)
+            }
             colorAccent.startsWith("HEX:") -> {
                 val hexString = colorAccent.removePrefix("HEX:")
                 try {
@@ -109,9 +104,7 @@ object ThemeHelper {
                     applyToActivityIfAvailable(activity)
                 }
             }
-            else -> {
-                applyToActivityIfAvailable(activity)
-            }
+            else -> Unit
         }
 
         if (isAmoled) {

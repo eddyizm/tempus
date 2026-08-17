@@ -798,10 +798,14 @@
 
     <!-- Login Activity  -->
 
+    <string name="la_tab_greeter">Welcome</string>
+    <string name="la_tab_permission">Permissions</string>
+    <string name="la_tab_themes">Themes</string>
+    <string name="la_tab_server">Servers</string>
+
     <string name="la_greeting_description">Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.</string>
 
     <string name="la_server_title">Server Setup</string>
-    <string name="la_server_description">Experimental feature, you will be interacting directly with the database (useful for crash loops).</string>
     <string name="la_server_field_server_empty_error">Mandatory field</string>
     <string name="la_server_field_server_url_error">URL not valid</string>
     <string name="la_server_field_server_name">Server name</string>
@@ -815,7 +819,7 @@
     <string name="la_server_button_update">Update</string>
     <string name="la_server_button_delete">Delete</string>
     <string name="la_server_button_test">Test</string>
-    <string name="la_server_button_return">Return to server list</string>
+    <string name="la_server_button_return">Go to login</string>
     <string name="la_server_dropdown_add_new">Add new server</string>
     <string name="la_server_toast_created">Server created</string>
     <string name="la_server_toast_updated">Server updated</string>
@@ -830,13 +834,17 @@
 
     <string name="la_theme_title">Choose Accent Color</string>
     <string name="la_theme_description">Style for your app\'s dynamic palette.</string>
-
-    <string name="la_theme_button_return">Return to home</string>
-
+    <string name="la_theme_button_return">Go to home</string>
     <string name="la_theme_switch_true_black">True black background for dark mode</string>
     <string name="la_theme_switch_default_dynamic">Dynamic color accent from wallpaper</string>
-
     <string name="la_theme_card_default">Default</string>
+    <string name="la_theme_card_flirt_red_description">Flirt red accent color</string>
+    <string name="la_theme_card_coral_red_description">Coral red accent color</string>
+    <string name="la_theme_card_royal_blue_description">Emerald green accent color</string>
+    <string name="la_theme_card_purple_violet_description">Purple violet accent color</string>
+    <string name="la_theme_card_sunset_amber_description">Sunset amber accent color</string>
+    <string name="la_theme_card_teal_description">Teal amber accent color</string>
+    <string name="la_theme_card_slate_gray_description">Slate gray accent color</string>
 
     <string name="la_shortcut_label">Introduction</string>
     <string name="la_button_advanced_editor">Advanced editor (beta)</string>
