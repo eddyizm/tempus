@@ -32,7 +32,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="top"
                 android:layout_marginTop="10dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/ic_toolbar_tempo" />
 
             <LinearLayout
@@ -44,7 +44,7 @@
 
                 <TextView
                     style="@style/HeadlineMedium"
-                    android:textSize="@dimen/_20sdp"
+                    android:textSize="@dimen/_17sdp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingStart="@dimen/_8sdp"
