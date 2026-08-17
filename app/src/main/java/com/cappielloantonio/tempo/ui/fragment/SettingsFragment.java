@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import androidx.appcompat.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -98,7 +99,14 @@ public class SettingsFragment extends Fragment {
             SearchView searchView = (SearchView) searchItem.getActionView();
             if (searchView != null) {
                 searchView.setMaxWidth(Integer.MAX_VALUE);
+                searchView.setIconifiedByDefault(false);
                 searchView.setQueryHint(getString(R.string.settings_search_hint));
+
+                ImageView searchMagIcon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
+                if (searchMagIcon != null) {
+                    searchMagIcon.setImageDrawable(null);
+                    searchMagIcon.setVisibility(View.GONE);
+                }
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
