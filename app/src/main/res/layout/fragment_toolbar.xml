@@ -57,7 +57,6 @@
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
                     android:duplicateParentState="true"
-                    android:drawableEnd="@drawable/ic_expand_more_small"
                     android:drawablePadding="2dp"
                     android:ellipsize="end"
                     android:paddingStart="@dimen/_8sdp"

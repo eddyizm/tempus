@@ -17,6 +17,8 @@ import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentToolbarBinding;
+import com.eddyizm.tempus.model.Server;
+import com.eddyizm.tempus.repository.ServerRepository;
 import com.eddyizm.tempus.subsonic.models.MusicFolder;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.util.MusicFolderUtil;
@@ -42,6 +44,8 @@ public class ToolbarFragment extends Fragment {
     private MainViewModel mainViewModel;
 
     private final List<MusicFolder> musicFolders = new ArrayList<>();
+
+    private String serverName;
 
     public ToolbarFragment() {
         // Required empty public constructor
@@ -120,6 +124,21 @@ public class ToolbarFragment extends Fragment {
         });
 
         mainViewModel.getActiveMusicFolderId().observe(getViewLifecycleOwner(), musicFolderId -> updateMusicLibraryIndicator());
+
+        // The name lives in the server table, not in Preferences, so it takes a read of every
+        // row and a match on the stored id.
+        new ServerRepository().getLiveServer().observe(getViewLifecycleOwner(), servers -> {
+            String serverId = Preferences.getServerId();
+
+            serverName = null;
+            if (servers != null && serverId != null) {
+                for (Server server : servers) {
+                    if (serverId.equals(server.getServerId())) serverName = server.getServerName();
+                }
+            }
+
+            updateMusicLibraryIndicator();
+        });
     }
 
     /**
@@ -160,8 +179,19 @@ public class ToolbarFragment extends Fragment {
         boolean canChoose = musicFolders.size() > 1 || Preferences.getActiveMusicFolderId() != null;
         boolean visible = canChoose && isLibraryScopedScreen() && isLibraryScopedTab();
 
+        // Podcast and Radio are the tabs the library never reaches, so the line carries the
+        // server instead of nothing. No caret there, since nothing is tappable.
+        boolean showServerName = !visible && serverName != null && isLibraryScopedScreen() && !isLibraryScopedTab();
+
         bind.toolbarTitleContainer.setClickable(visible);
-        bind.toolbarMusicLibraryTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        bind.toolbarMusicLibraryTextView.setVisibility(visible || showServerName ? View.VISIBLE : View.GONE);
+        bind.toolbarMusicLibraryTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0, 0, visible ? R.drawable.ic_expand_more_small : 0, 0);
+
+        if (showServerName) {
+            bind.toolbarMusicLibraryTextView.setText(serverName);
+            return;
+        }
 
         if (!visible) return;
 
