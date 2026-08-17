@@ -271,6 +271,7 @@
     <string name="menu_last_year_name">Last year</string>
     <string name="menu_library_label">Library</string>
     <string name="menu_search_button">Search</string>
+    <string name="settings_search_hint">Search settings</string>
     <string name="menu_settings_button">Settings</string>
     <string name="menu_sort_artist">Artist</string>
     <string name="menu_sort_name">Name</string>
