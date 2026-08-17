@@ -19,7 +19,7 @@ import com.eddyizm.tempus.helper.ThemeHelper
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.Preferences
 
-private const val ARG_SINGLE_PAGE_MODE = "standalone_page_view"
+private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
 
 class LoginThemeFragment : Fragment() {
     private var singlePageMode: Boolean = false
@@ -87,15 +87,14 @@ class LoginThemeFragment : Fragment() {
         if (!singlePageMode) {
             binding.buttonReturn.visibility = View.GONE
             return
-        } else {
-            binding.buttonReturn.visibility = View.VISIBLE
-            binding.buttonReturn.setOnClickListener {
-                requireActivity().finish()
-                val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
-                    putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_settings_fragment")
-                }
-                startActivity(tempus)
+        }
+
+        binding.buttonReturn.setOnClickListener {
+            requireActivity().finish()
+            val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
+                putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_settings_fragment")
             }
+            startActivity(tempus)
         }
     }
 
@@ -183,7 +182,7 @@ class LoginThemeFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(singlePageMode: Boolean = false) =
+        fun newInstance(singlePageMode: Boolean = false): LoginThemeFragment =
             LoginThemeFragment().apply {
                 arguments = Bundle().apply {
                     putBoolean(ARG_SINGLE_PAGE_MODE, singlePageMode)

@@ -9,20 +9,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.eddyizm.tempus.databinding.ActivityLoginBinding
+import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.helper.ThemeHelper
 import com.google.android.material.tabs.TabLayoutMediator
 
-private const val GREETER_FRAGMENT: Int = 0
+private const val GREETER_FRAGMENT: Int     = 0
 private const val PERMISSIONS_FRAGMENT: Int = 1
-private const val THEMES_FRAGMENT: Int = 2
-private const val SERVERS_FRAGMENT: Int = 3
+private const val THEMES_FRAGMENT: Int      = 2
+private const val SERVERS_FRAGMENT: Int     = 3
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private var hideTabLayout: Boolean = false
     private var selectedFragment: Int = GREETER_FRAGMENT
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeHelper.enableThemeSwitch(this)
@@ -62,10 +61,10 @@ class LoginActivity : AppCompatActivity() {
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
-                GREETER_FRAGMENT -> "Welcome"
-                PERMISSIONS_FRAGMENT -> "Permissions"
-                THEMES_FRAGMENT -> "Themes"
-                SERVERS_FRAGMENT -> "Servers"
+                GREETER_FRAGMENT     -> getString(R.string.la_tab_greeter)
+                PERMISSIONS_FRAGMENT -> getString(R.string.la_tab_permission)
+                THEMES_FRAGMENT      -> getString(R.string.la_tab_themes)
+                SERVERS_FRAGMENT     -> getString(R.string.la_tab_server)
                 else -> ""
             }
         }.attach()
@@ -76,13 +75,21 @@ class LoginActivity : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                GREETER_FRAGMENT -> LoginGreeterFragment()
-                PERMISSIONS_FRAGMENT -> LoginPermissionFragment()
+                GREETER_FRAGMENT -> LoginGreeterFragment.newInstance(
+                    singlePageMode = hideTabLayout
+                )
+                PERMISSIONS_FRAGMENT -> LoginPermissionFragment.newInstance(
+                    singlePageMode = hideTabLayout
+                )
                 THEMES_FRAGMENT -> LoginThemeFragment.newInstance(
                     singlePageMode = hideTabLayout
                 )
-                SERVERS_FRAGMENT -> LoginServerFragment()
-                else -> LoginGreeterFragment()
+                SERVERS_FRAGMENT -> LoginServerFragment.newInstance(
+                    singlePageMode = hideTabLayout
+                )
+                else -> LoginGreeterFragment.newInstance(
+                    singlePageMode = hideTabLayout
+                )
             }
         }
     }

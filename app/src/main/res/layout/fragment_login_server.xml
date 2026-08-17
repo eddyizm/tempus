@@ -15,10 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/betaDisclaimer"
+        app:layout_constraintBottom_toTopOf="@id/preScrollDivider"
         app:layout_constraintTop_toTopOf="parent">
 
         <AutoCompleteTextView
@@ -31,19 +30,17 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Text over scrollable content -->
-    <TextView
-        android:id="@+id/betaDisclaimer"
+    <!-- Divider over scrollable content -->
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/preScrollDivider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/la_server_description"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serversListContainer"
-        app:layout_constraintBottom_toTopOf="@+id/scrollable"/>
+        app:layout_constraintBottom_toTopOf="@+id/scrollable" />
 
     <!-- Fields  -->
     <ScrollView
@@ -51,9 +48,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/serversListContainer"
+        app:layout_constraintTop_toBottomOf="@id/preScrollDivider"
         app:layout_constraintBottom_toTopOf="@id/footer"
-        app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -61,7 +57,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
 
             <!-- Server name field -->
             <com.google.android.material.textfield.TextInputLayout
@@ -203,7 +200,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button5"
         app:layout_constraintTop_toBottomOf="@id/scrollable">
 
         <!-- Buttoner -->

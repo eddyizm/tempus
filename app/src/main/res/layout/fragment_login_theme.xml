@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/mainSwitchesContainer"
@@ -58,6 +58,12 @@
             android:checked="false"
             android:text="@string/la_theme_switch_default_dynamic"/>
 
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -72,11 +78,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintVertical_bias="0.0">
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp" />
 
         <TextView
             android:id="@+id/chooseAccentColorTitle"
@@ -104,13 +105,14 @@
             android:rowCount="2"
             android:useDefaultMargins="true">
 
-            <!-- Option 1: Flirt (#B5076B) -->
+            <!-- Option 1: Flirt Red (#B5076B) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_flirt"
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#B5076B"
+                android:contentDescription="@string/la_theme_card_flirt_red_description"
                 app:cardCornerRadius="16dp" >
 
             </com.google.android.material.card.MaterialCardView>
@@ -122,6 +124,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#FF5722"
+                android:contentDescription="@string/la_theme_card_coral_red_description"
                 app:cardCornerRadius="16dp" />
 
             <!-- Option 3: Emerald Green (#2E7D32) -->
@@ -131,6 +134,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#2E7D32"
+                android:contentDescription="@string/la_theme_card_royal_blue_description"
                 app:cardCornerRadius="16dp" />
 
             <!-- Option 4: Royal Blue (#1976D2) -->
@@ -140,6 +144,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#1976D2"
+                android:contentDescription="@string/la_theme_card_royal_blue_description"
                 app:cardCornerRadius="16dp" />
 
             <!-- Option 5: Purple/Violet (#7B1FA2) -->
@@ -149,6 +154,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#7B1FA2"
+                android:contentDescription="@string/la_theme_card_purple_violet_description"
                 app:cardCornerRadius="16dp" />
 
             <!-- Option 6: Sunset Amber (#FFA000) -->
@@ -158,6 +164,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#FFA000"
+                android:contentDescription="@string/la_theme_card_sunset_amber_description"
                 app:cardCornerRadius="16dp" />
 
             <!-- Option 7: Teal (#00796B) -->
@@ -167,6 +174,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#00796B"
+                android:contentDescription="@string/la_theme_card_teal_description"
                 app:cardCornerRadius="16dp" />
 
             <!-- Option 8: Slate Gray (#455A64) -->
@@ -176,6 +184,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#455A64"
+                android:contentDescription="@string/la_theme_card_slate_gray_description"
                 app:cardCornerRadius="16dp" />
 
         </GridLayout>
