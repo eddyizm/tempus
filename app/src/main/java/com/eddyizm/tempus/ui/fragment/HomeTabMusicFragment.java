@@ -71,6 +71,7 @@ import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.util.TileSizeManager;
 import com.eddyizm.tempus.util.UIUtil;
 import com.eddyizm.tempus.viewmodel.HomeViewModel;
+import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -87,6 +88,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private FragmentHomeTabMusicBinding bind;
     private MainActivity activity;
     private HomeViewModel homeViewModel;
+    private MainViewModel mainViewModel;
     private PlaybackViewModel playbackViewModel;
 
     private DiscoverSongAdapter discoverSongAdapter;
@@ -116,6 +118,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         bind = FragmentHomeTabMusicBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         homeViewModel.clearCacheIfMusicFolderChanged();
@@ -148,6 +151,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         initPinnedPlaylistsView();
         initSharesView();
         initHomeReorganizer();
+        initMusicFolderChangeListener();
 
         reorder();
     }
@@ -1107,6 +1111,11 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                         requireContext().getResources().getColor(R.color.titleTextColor, null),
                         requireContext().getResources().getColor(R.color.titleTextColor, null))
         );
+    }
+
+    private void initMusicFolderChangeListener() {
+        mainViewModel.getActiveMusicFolderId().observe(getViewLifecycleOwner(), musicFolderId ->
+                homeViewModel.reloadIfMusicFolderChanged(getViewLifecycleOwner()));
     }
 
     private void initHomeReorganizer() {

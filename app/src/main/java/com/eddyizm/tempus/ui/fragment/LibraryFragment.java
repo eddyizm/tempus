@@ -48,6 +48,7 @@ import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.LiveDataUtils;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.LibraryViewModel;
+import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.eddyizm.tempus.service.MediaService;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -64,6 +65,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     private MainActivity activity;
     private NavigationController navigationController;
     private LibraryViewModel libraryViewModel;
+    private MainViewModel mainViewModel;
 
     private MusicFolderAdapter musicFolderAdapter;
     private AlbumAdapter albumAdapter;
@@ -83,6 +85,7 @@ public class LibraryFragment extends Fragment implements ClickCallback {
         bind = FragmentLibraryBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
         libraryViewModel = new ViewModelProvider(requireActivity()).get(LibraryViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         libraryViewModel.clearCacheIfMusicFolderChanged();
 
@@ -102,6 +105,12 @@ public class LibraryFragment extends Fragment implements ClickCallback {
         initGenreView();
         initPlaylistView();
         initSwipeToRefresh();
+        initMusicFolderChangeListener();
+    }
+
+    private void initMusicFolderChangeListener() {
+        mainViewModel.getActiveMusicFolderId().observe(getViewLifecycleOwner(), musicFolderId ->
+                libraryViewModel.reloadIfMusicFolderChanged(getViewLifecycleOwner()));
     }
 
     @Override

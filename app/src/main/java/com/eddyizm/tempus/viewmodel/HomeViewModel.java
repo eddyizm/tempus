@@ -75,6 +75,7 @@ public class HomeViewModel extends AndroidViewModel {
     private List<HomeSector> sectors;
 
     private String cachedMusicFolderId = Preferences.getActiveMusicFolderId();
+    private int musicFolderGeneration = 0;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -97,7 +98,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<Child>> getDiscoverSongSample(LifecycleOwner owner) {
         if (dicoverSongSample.getValue() == null) {
-            songRepository.getRandomSample(10, null, null).observe(owner, dicoverSongSample::postValue);
+            songRepository.getRandomSample(10, null, null).observe(owner, setIfCurrentGeneration(dicoverSongSample));
         }
 
         return dicoverSongSample;
@@ -123,17 +124,23 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<AlbumID3>> getRecentlyReleasedAlbums(LifecycleOwner owner) {
         if (newReleasedAlbum.getValue() == null) {
-            int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-
-            albumRepository.getAlbums("byYear", 500, currentYear, currentYear).observe(owner, albums -> {
-                if (albums != null) {
-                    albums.sort(Comparator.comparing(AlbumID3::getCreated).reversed());
-                    newReleasedAlbum.postValue(albums.subList(0, Math.min(20, albums.size())));
-                }
-            });
+            fetchRecentlyReleasedAlbums(owner);
         }
 
         return newReleasedAlbum;
+    }
+
+    private void fetchRecentlyReleasedAlbums(LifecycleOwner owner) {
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        // Sorts before posting, so it cannot use setIfCurrentGeneration and checks the same way.
+        int generation = musicFolderGeneration;
+
+        albumRepository.getAlbums("byYear", 500, currentYear, currentYear).observe(owner, albums -> {
+            if (albums != null && generation == musicFolderGeneration) {
+                albums.sort(Comparator.comparing(AlbumID3::getCreated).reversed());
+                newReleasedAlbum.setValue(albums.subList(0, Math.min(20, albums.size())));
+            }
+        });
     }
 
     public LiveData<List<Child>> getStarredTracksSample(LifecycleOwner owner) {
@@ -194,7 +201,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<Integer>> getYearList(LifecycleOwner owner) {
         if (years.getValue() == null) {
-            albumRepository.getDecades().observe(owner, years::postValue);
+            albumRepository.getDecades().observe(owner, setIfCurrentGeneration(years));
         }
 
         return years;
@@ -202,7 +209,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<AlbumID3>> getMostPlayedAlbums(LifecycleOwner owner) {
         if (mostPlayedAlbumSample.getValue() == null) {
-            albumRepository.getAlbums("frequent", 20, null, null).observe(owner, mostPlayedAlbumSample::postValue);
+            albumRepository.getAlbums("frequent", 20, null, null).observe(owner, setIfCurrentGeneration(mostPlayedAlbumSample));
         }
 
         return mostPlayedAlbumSample;
@@ -210,7 +217,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<AlbumID3>> getMostRecentlyAddedAlbums(LifecycleOwner owner) {
         if (recentlyAddedAlbumSample.getValue() == null) {
-            albumRepository.getAlbums("newest", 20, null, null).observe(owner, recentlyAddedAlbumSample::postValue);
+            albumRepository.getAlbums("newest", 20, null, null).observe(owner, setIfCurrentGeneration(recentlyAddedAlbumSample));
         }
 
         return recentlyAddedAlbumSample;
@@ -218,7 +225,7 @@ public class HomeViewModel extends AndroidViewModel {
 
     public LiveData<List<AlbumID3>> getRecentlyPlayedAlbumList(LifecycleOwner owner) {
         if (recentlyPlayedAlbumSample.getValue() == null) {
-            albumRepository.getAlbums("recent", 20, null, null).observe(owner, recentlyPlayedAlbumSample::postValue);
+            albumRepository.getAlbums("recent", 20, null, null).observe(owner, setIfCurrentGeneration(recentlyPlayedAlbumSample));
         }
 
         return recentlyPlayedAlbumSample;
@@ -310,17 +317,22 @@ public class HomeViewModel extends AndroidViewModel {
 
     /**
      * The cached samples were fetched under whichever library was active then, so they go stale
-     * when it changes. Clearing them lets the getters' null guards refetch on the next view creation.
+     * when it changes. Clearing them lets the getters' null guards refetch on the next view
+     * creation, and every observer of these treats null as "hide this section".
+     *
+     * Returns whether the library actually changed, so the caller can decide whether the screen it
+     * is on needs refetching now as well.
      *
      * Starred data stays by choice, not because it cannot be filtered: getStarred2 does take
      * musicFolderId. getPlaylists does not, and scoping one hand built collection but not the other
      * would behave differently for no reason a user can see.
      */
-    public void clearCacheIfMusicFolderChanged() {
+    public boolean clearCacheIfMusicFolderChanged() {
         String activeMusicFolderId = Preferences.getActiveMusicFolderId();
-        if (Objects.equals(activeMusicFolderId, cachedMusicFolderId)) return;
+        if (Objects.equals(activeMusicFolderId, cachedMusicFolderId)) return false;
 
         cachedMusicFolderId = activeMusicFolderId;
+        musicFolderGeneration++;
 
         dicoverSongSample.setValue(null);
         newReleasedAlbum.setValue(null);
@@ -328,10 +340,50 @@ public class HomeViewModel extends AndroidViewModel {
         recentlyPlayedAlbumSample.setValue(null);
         recentlyAddedAlbumSample.setValue(null);
         years.setValue(null);
+
+        return true;
+    }
+
+    /**
+     * The same staleness, for a screen already on display that will not create its views again.
+     * Clearing alone would leave it blank until the user navigated away and back, so this clears
+     * and then refetches into the same LiveData the screen is already observing.
+     */
+    public void reloadIfMusicFolderChanged(LifecycleOwner owner) {
+        if (!clearCacheIfMusicFolderChanged()) return;
+
+        // Guarded the same way the init methods in HomeTabMusicFragment are, so reload asks for a
+        // sector exactly when that sector was set up. The predicate reports the opposite of its
+        // name: true means the id is absent from the saved sector list, which is not the same as
+        // the user hiding it, since hiding keeps the entry and only clears its isVisible flag.
+        if (!checkHomeSectorVisibility(Constants.HOME_SECTOR_DISCOVERY)) refreshDiscoverySongSample(owner);
+        if (!checkHomeSectorVisibility(Constants.HOME_SECTOR_NEW_RELEASES)) refreshRecentlyReleasedAlbums(owner);
+        if (!checkHomeSectorVisibility(Constants.HOME_SECTOR_MOST_PLAYED)) refreshMostPlayedAlbums(owner);
+        if (!checkHomeSectorVisibility(Constants.HOME_SECTOR_LAST_PLAYED)) refreshRecentlyPlayedAlbumList(owner);
+        if (!checkHomeSectorVisibility(Constants.HOME_SECTOR_RECENTLY_ADDED)) refreshMostRecentlyAddedAlbums(owner);
+        if (!checkHomeSectorVisibility(Constants.HOME_SECTOR_FLASHBACK)) refreshYearList(owner);
+    }
+
+    /**
+     * Nothing in the repository layer cancels a request, so a response for the library that was
+     * active when it was sent can land after the library has changed and overwrite the new one.
+     * Switching twice inside one round trip is enough to leave the wrong library's content under
+     * the right library's name, permanently, since the caches then look current.
+     *
+     * A response from a superseded library is dropped instead of stored. setValue and not
+     * postValue: a post would defer the store past the check, and every one of these callbacks
+     * already runs on the main thread.
+     */
+    private <T> Observer<T> setIfCurrentGeneration(MutableLiveData<T> target) {
+        int generation = musicFolderGeneration;
+
+        return value -> {
+            if (generation == musicFolderGeneration) target.setValue(value);
+        };
     }
 
     public void refreshDiscoverySongSample(LifecycleOwner owner) {
-        songRepository.getRandomSample(10, null, null).observe(owner, dicoverSongSample::postValue);
+        songRepository.getRandomSample(10, null, null).observe(owner, setIfCurrentGeneration(dicoverSongSample));
     }
 
     public void refreshSimilarSongSample(LifecycleOwner owner) {
@@ -359,15 +411,23 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public void refreshMostPlayedAlbums(LifecycleOwner owner) {
-        albumRepository.getAlbums("frequent", 20, null, null).observe(owner, mostPlayedAlbumSample::postValue);
+        albumRepository.getAlbums("frequent", 20, null, null).observe(owner, setIfCurrentGeneration(mostPlayedAlbumSample));
     }
 
     public void refreshMostRecentlyAddedAlbums(LifecycleOwner owner) {
-        albumRepository.getAlbums("newest", 20, null, null).observe(owner, recentlyAddedAlbumSample::postValue);
+        albumRepository.getAlbums("newest", 20, null, null).observe(owner, setIfCurrentGeneration(recentlyAddedAlbumSample));
     }
 
     public void refreshRecentlyPlayedAlbumList(LifecycleOwner owner) {
-        albumRepository.getAlbums("recent", 20, null, null).observe(owner, recentlyPlayedAlbumSample::postValue);
+        albumRepository.getAlbums("recent", 20, null, null).observe(owner, setIfCurrentGeneration(recentlyPlayedAlbumSample));
+    }
+
+    public void refreshRecentlyReleasedAlbums(LifecycleOwner owner) {
+        fetchRecentlyReleasedAlbums(owner);
+    }
+
+    public void refreshYearList(LifecycleOwner owner) {
+        albumRepository.getDecades().observe(owner, setIfCurrentGeneration(years));
     }
 
     public void refreshShares(LifecycleOwner owner) {

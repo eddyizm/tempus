@@ -67,6 +67,7 @@ import com.eddyizm.tempus.subsonic.models.MusicFolder;
 import com.eddyizm.tempus.util.ExternalAudioReader;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.util.UIUtil;
+import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.eddyizm.tempus.viewmodel.SettingViewModel;
 
 import java.util.ArrayList;
@@ -84,6 +85,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private MainActivity activity;
 
     private SettingViewModel settingViewModel;
+    private MainViewModel mainViewModel;
 
     private ActivityResultLauncher<Intent> directoryPickerLauncher;
 
@@ -136,6 +138,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         View view = super.onCreateView(inflater, container, savedInstanceState);
         settingViewModel = new ViewModelProvider(requireActivity()).get(SettingViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         if (view != null) {
             getListView().setPadding(0, 0, 0, (int) getResources().getDimension(R.dimen.global_padding_bottom));
@@ -469,7 +472,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         libraryPref.setOnPreferenceChangeListener((preference, newValue) -> {
             libraryPref.setValue((String) newValue);
-            Preferences.setActiveMusicFolderId((String) newValue);
+            mainViewModel.setActiveMusicFolderId((String) newValue);
             setMusicLibrarySummary(libraryPref);
             return true;
         });
@@ -513,7 +516,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             String storedMusicFolderId = Preferences.getActiveMusicFolderId();
             if (storedMusicFolderId != null && !ids.isEmpty() && !ids.contains(storedMusicFolderId)) {
                 libraryPref.setValue(Preferences.MUSIC_FOLDER_ALL);
-                Preferences.setActiveMusicFolderId(null);
+                mainViewModel.setActiveMusicFolderId(null);
             }
 
             musicFolderCount = ids.size();
