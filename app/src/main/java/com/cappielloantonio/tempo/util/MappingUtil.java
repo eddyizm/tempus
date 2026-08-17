@@ -60,8 +60,11 @@ public class MappingUtil {
 
     public static MediaItem mapMediaItem(Child media) {
         try {
+            Download downloaded = getCachedDownloads().get(media.getId());
+            Child effective = downloaded != null ? downloaded : media;
+
             Uri uri = getUri(media);
-            String coverArtId = media.getCoverArtId();
+            String coverArtId = effective.getCoverArtId();
             Uri artworkUri = null;
 
             if (coverArtId != null) {
@@ -69,9 +72,9 @@ public class MappingUtil {
             }
 
             Bundle bundle = new Bundle();
-            bundle.putString("id", media.getId());
-            bundle.putString("parentId", media.getParentId());
-            bundle.putBoolean("isDir", media.isDir());
+            bundle.putString("id", effective.getId());
+            bundle.putString("parentId", effective.getParentId());
+            bundle.putBoolean("isDir", effective.isDir());
             
             bundle.putString("title", media.getTitle());
             bundle.putString("album", media.getAlbum());
@@ -81,17 +84,17 @@ public class MappingUtil {
             bundle.putInt("year", media.getYear() != null ? media.getYear() : 0);
             bundle.putString("genre", media.getGenre());
             bundle.putString("coverArtId", coverArtId);
-            bundle.putLong("size", media.getSize() != null ? media.getSize() : 0);
-            bundle.putString("contentType", media.getContentType());
-            bundle.putString("suffix", media.getSuffix());
-            bundle.putString("transcodedContentType", media.getTranscodedContentType());
-            bundle.putString("transcodedSuffix", media.getTranscodedSuffix());
-            bundle.putInt("duration", media.getDuration() != null ? media.getDuration() : 0);
-            bundle.putInt("bitrate", media.getBitrate() != null ? media.getBitrate() : 0);
-            bundle.putInt("samplingRate", media.getSamplingRate() != null ? media.getSamplingRate() : 0);
-            bundle.putInt("bitDepth", media.getBitDepth() != null ? media.getBitDepth() : 0);
-            bundle.putString("path", media.getPath());
-            bundle.putBoolean("isVideo", media.isVideo());
+            bundle.putLong("size", effective.getSize() != null ? effective.getSize() : 0);
+            bundle.putString("contentType", effective.getContentType());
+            bundle.putString("suffix", effective.getSuffix());
+            bundle.putString("transcodedContentType", effective.getTranscodedContentType());
+            bundle.putString("transcodedSuffix", effective.getTranscodedSuffix());
+            bundle.putInt("duration", effective.getDuration() != null ? effective.getDuration() : 0);
+            bundle.putInt("bitrate", effective.getBitrate() != null ? effective.getBitrate() : 0);
+            bundle.putInt("samplingRate", effective.getSamplingRate() != null ? effective.getSamplingRate() : 0);
+            bundle.putInt("bitDepth", effective.getBitDepth() != null ? effective.getBitDepth() : 0);
+            bundle.putString("path", effective.getPath());
+            bundle.putBoolean("isVideo", effective.isVideo());
             bundle.putInt("userRating", media.getUserRating() != null ? media.getUserRating() : 0);
             bundle.putDouble("averageRating", media.getAverageRating() != null ? media.getAverageRating() : 0);
             bundle.putLong("playCount", media.getPlayCount() != null ? media.getPlayCount() : 0);
@@ -168,9 +171,16 @@ public class MappingUtil {
         if (old.requestMetadata.extras != null)
             mediaId = old.requestMetadata.extras.getString("id");
 
-        if (mediaId != null && DownloadUtil.getDownloadTracker(App.getContext()).isDownloaded(mediaId)) {
-            return old;
+        if (mediaId != null) {
+            Download downloaded = getCachedDownloads().get(mediaId);
+            if (downloaded != null) {
+                // If the track is downloaded, re-map it from its Child representation.
+                // This ensures that the MediaItem picks up the downloaded metadata (bitrate, suffix)
+                // and the local URI.
+                return mapMediaItem(mapToChild(old));
+            }
         }
+
         Uri uri = old.requestMetadata.mediaUri == null ? null : MusicUtil.updateStreamUri(old.requestMetadata.mediaUri);
         return new MediaItem.Builder()
                 .setMediaId(old.mediaId)
@@ -462,23 +472,34 @@ public class MappingUtil {
     // One second memo of the download table so a mapping burst does one query instead of
     // a Thread spawn and join per song. A download finishing inside the window streams for it.
     private static final long DOWNLOAD_CACHE_TTL_MS = 1000;
-    private static volatile Map<String, String> cachedDownloadUris;
+    private static volatile Map<String, Download> cachedDownloads;
     private static volatile long cachedDownloadsAt = -1;
 
-    private static Map<String, String> getDownloadUris() {
-        Map<String, String> cache = cachedDownloadUris;
+    public static Map<String, Download> getCachedDownloads() {
+        Map<String, Download> cache = cachedDownloads;
         long now = SystemClock.elapsedRealtime();
         if (cache != null && cachedDownloadsAt >= 0 && now - cachedDownloadsAt < DOWNLOAD_CACHE_TTL_MS)
             return cache;
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Download> map = new HashMap<>();
         for (Download download : new DownloadRepository().getAllDownloads()) {
-            if (download.getId() != null && download.getDownloadUri() != null && !download.getDownloadUri().isEmpty())
-                map.put(download.getId(), download.getDownloadUri());
+            if (download.getId() != null)
+                map.put(download.getId(), download);
         }
-        cachedDownloadUris = map;
+        cachedDownloads = map;
         cachedDownloadsAt = now;
         return map;
+    }
+
+    private static Map<String, String> getDownloadUris() {
+        Map<String, Download> downloads = getCachedDownloads();
+        Map<String, String> uris = new HashMap<>();
+        for (Map.Entry<String, Download> entry : downloads.entrySet()) {
+            if (entry.getValue().getDownloadUri() != null && !entry.getValue().getDownloadUri().isEmpty()) {
+                uris.put(entry.getKey(), entry.getValue().getDownloadUri());
+            }
+        }
+        return uris;
     }
 
     private static Uri getUri(Child media) {
