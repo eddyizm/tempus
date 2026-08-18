@@ -50,7 +50,7 @@
 
                 <data
                     android:host="asset"
-                    android:scheme="tempo" />
+                    android:scheme="tempus" />
             </intent-filter>
         </activity>
 

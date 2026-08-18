@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.cappielloantonio.tempo.helper.recyclerview.NestedScrollableHost
+    <com.eddyizm.tempus.helper.recyclerview.NestedScrollableHost
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -17,7 +17,7 @@
             android:paddingTop="8dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    </com.cappielloantonio.tempo.helper.recyclerview.NestedScrollableHost>
+    </com.eddyizm.tempus.helper.recyclerview.NestedScrollableHost>
 
     <LinearLayout
         android:id="@+id/fab_menu_container"

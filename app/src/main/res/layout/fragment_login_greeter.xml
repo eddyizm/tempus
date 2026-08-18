@@ -43,7 +43,6 @@
             android:layout_marginTop="8dp"
             android:text="@string/la_greeting_description"
             android:textSize="@dimen/_14sdp"
-            android:textColor="@android:color/darker_gray"
             android:gravity="center" />
 
     </LinearLayout>
