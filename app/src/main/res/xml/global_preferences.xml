@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_general">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_general">
         <Preference
             android:key="logout"
             android:title="@string/settings_logout_title"/>
@@ -24,9 +24,9 @@
             android:inputType="number"
             android:singleLine="true"
             android:defaultValue="2" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
         <ListPreference
             android:layout_height="match_parent"
             app:defaultValue="default"
@@ -150,9 +150,9 @@
             android:defaultValue="false"
             android:summary="@string/search_sort_summary"
             android:key="sort_search_chronologically" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_sound">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_sound">
 
         <PreferenceCategory app:title="@string/settings_title_equalizer">
             <ListPreference
@@ -215,9 +215,9 @@
 
 
         </PreferenceCategory>
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_players">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_players">
         <SwitchPreference
             android:title="@string/settings_continuous_play_title"
             android:defaultValue="true"
@@ -268,9 +268,9 @@
             app:summary="@string/settings_summary_skip_min_star_rating"
             app:title="@string/settings_title_skip_min_star_rating" />
 
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
         <SwitchPreference
             android:title="@string/settings_allow_playlist_duplicates"
             android:defaultValue="false"
@@ -284,9 +284,9 @@
             app:key="home_sort_playlists"
             app:title="@string/settings_playlist_sort"
             app:useSimpleSummaryProvider="true" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_data">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_data">
         <ListPreference
             app:defaultValue="256"
             app:dialogTitle="@string/settings_streaming_cache_size"
@@ -393,9 +393,9 @@
             android:key="delete_download_storage"
             app:title="@string/settings_delete_download_storage_title"
             app:summary="@string/settings_delete_download_storage_summary"/>
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_transcoding">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_summary_transcoding" />
@@ -477,9 +477,9 @@
                 app:title="@string/settings_max_bitrate_download"
                 app:useSimpleSummaryProvider="true" />
         </PreferenceCategory>
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_title_misc">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_misc">
         <PreferenceCategory app:title="@string/settings_title_scrobble">
             <Preference
                 app:selectable="false"
@@ -526,9 +526,9 @@
                 app:title="@string/settings_queue_syncing_countdown"
                 app:useSimpleSummaryProvider="true" />
         </PreferenceCategory>
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory
         android:key="settings_androidauto_category_key"
         app:title="@string/settings_androidauto">
         <Preference
@@ -624,9 +624,9 @@
             app:key="androidauto_starred_for_made_for_you"
             app:title="@string/settings_androidauto_starred_for_made_for_you"
             app:useSimpleSummaryProvider="true" />
-	</com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+	</com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory
         android:key="settings_github_update_category_key"
         app:title="@string/settings_github_update">
         <Preference
@@ -636,9 +636,9 @@
             android:title="@string/settings_github_update_title"
             android:defaultValue="true"
             android:key="github_update_check" />
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
-    <com.cappielloantonio.tempo.util.ClickablePreferenceCategory app:title="@string/settings_about_title">
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_about_title">
         <Preference
             app:selectable="false"
             app:summary="@string/settings_about_summary" />
@@ -671,5 +671,5 @@
                 android:action="android.intent.action.VIEW"
                 android:data="@string/undraw_url" />
         </Preference>
-    </com.cappielloantonio.tempo.util.ClickablePreferenceCategory>
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 </PreferenceScreen>

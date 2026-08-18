@@ -800,7 +800,7 @@
     <string name="la_greeting_description">Witaj w Tempus, otwarto-źródłowym kliencie muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
 
     <string name="la_server_title">Konfiguracja serwera</string>
-    <string name="la_server_description">Funkcja eksperymentalna, będziesz mieć do czynienia prosto z bazą danych (przydatne przy pętlach awarii).</string>
+
     <string name="la_server_field_server_empty_error">Wymagane pole</string>
     <string name="la_server_field_server_url_error">Nieprawidłowy adres URL</string>
     <string name="la_server_field_server_name">Nazwa serwera</string>
