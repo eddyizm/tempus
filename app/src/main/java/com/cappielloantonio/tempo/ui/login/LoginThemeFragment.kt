@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.login
+package com.eddyizm.tempus.ui.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,13 +12,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.graphics.toColorInt
 import androidx.media3.common.util.UnstableApi
-import com.cappielloantonio.tempo.App
-import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.databinding.FragmentLoginThemeBinding
-import com.cappielloantonio.tempo.helper.ThemeHelper
-import com.cappielloantonio.tempo.ui.activity.MainActivity
-import com.cappielloantonio.tempo.util.Preferences
-import com.cappielloantonio.tempo.ui.dialog.ColorPickerDialog
+import com.eddyizm.tempus.App
+import com.eddyizm.tempus.R
+import com.eddyizm.tempus.databinding.FragmentLoginThemeBinding
+import com.eddyizm.tempus.helper.ThemeHelper
+import com.eddyizm.tempus.ui.activity.MainActivity
+import com.eddyizm.tempus.util.Preferences
+import com.eddyizm.tempus.ui.dialog.ColorPickerDialog
 
 private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
 
