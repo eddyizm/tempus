@@ -1,16 +1,16 @@
-package com.cappielloantonio.tempo.repository;
+package com.eddyizm.tempus.repository;
 
-import static com.cappielloantonio.tempo.service.MediaManager.enqueue;
+import static com.eddyizm.tempus.service.MediaManager.enqueue;
 
 import androidx.annotation.NonNull;
 import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 
-import com.cappielloantonio.tempo.App;
-import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
-import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
-import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.subsonic.base.ApiResponse;
+import com.eddyizm.tempus.subsonic.models.AlbumID3;
+import com.eddyizm.tempus.subsonic.models.Child;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;

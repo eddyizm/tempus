@@ -1,0 +1,40 @@
+package com.eddyizm.tempus.ui.login
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.eddyizm.tempus.R
+
+private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
+
+class LoginGreeterFragment : Fragment() {
+
+    private var singlePageMode: Boolean = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            singlePageMode = it.getBoolean(ARG_SINGLE_PAGE_MODE)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_login_greeter, container, false)
+    }
+
+    companion object {
+        @JvmStatic
+        fun newInstance(singlePageMode: Boolean = false): LoginGreeterFragment =
+            LoginGreeterFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(ARG_SINGLE_PAGE_MODE, singlePageMode)
+                }
+            }
+    }
+}

@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.fragment;
+package com.eddyizm.tempus.ui.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,9 +13,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
 
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.databinding.FragmentToolbarBinding;
-import com.cappielloantonio.tempo.ui.activity.MainActivity;
+import com.eddyizm.tempus.R;
+import com.eddyizm.tempus.databinding.FragmentToolbarBinding;
+import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 
 @UnstableApi
