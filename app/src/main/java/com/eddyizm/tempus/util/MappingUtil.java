@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.util;
+package com.eddyizm.tempus.util;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -15,14 +15,14 @@ import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.HeartRating;
 
-import com.cappielloantonio.tempo.App;
-import com.cappielloantonio.tempo.glide.CustomGlideRequest;
-import com.cappielloantonio.tempo.model.Download;
-import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
-import com.cappielloantonio.tempo.repository.DownloadRepository;
-import com.cappielloantonio.tempo.subsonic.models.Child;
-import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
-import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.glide.CustomGlideRequest;
+import com.eddyizm.tempus.model.Download;
+import com.eddyizm.tempus.provider.AlbumArtContentProvider;
+import com.eddyizm.tempus.repository.DownloadRepository;
+import com.eddyizm.tempus.subsonic.models.Child;
+import com.eddyizm.tempus.subsonic.models.InternetRadioStation;
+import com.eddyizm.tempus.subsonic.models.PodcastEpisode;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;

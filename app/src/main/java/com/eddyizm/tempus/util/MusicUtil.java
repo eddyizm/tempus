@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.util;
+package com.eddyizm.tempus.util;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -15,11 +15,11 @@ import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 
-import com.cappielloantonio.tempo.App;
-import com.cappielloantonio.tempo.R;
-import com.cappielloantonio.tempo.model.Download;
-import com.cappielloantonio.tempo.repository.DownloadRepository;
-import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.R;
+import com.eddyizm.tempus.model.Download;
+import com.eddyizm.tempus.repository.DownloadRepository;
+import com.eddyizm.tempus.subsonic.models.Child;
 
 import java.text.CharacterIterator;
 import java.text.DecimalFormat;
