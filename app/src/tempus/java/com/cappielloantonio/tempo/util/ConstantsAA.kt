@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempus.util
+package com.cappielloantonio.tempo.util
 
 object ConstantsAA {
     // Android Auto max items

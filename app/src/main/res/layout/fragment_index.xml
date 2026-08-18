@@ -63,7 +63,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.eddyizm.tempus.helper.recyclerview.FastScrollbar
+            <com.cappielloantonio.tempo.helper.recyclerview.FastScrollbar
                 android:id="@+id/fast_scrollbar"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

@@ -1,4 +1,4 @@
-package com.eddyizm.tempus.repository;
+package com.cappielloantonio.tempo.repository;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,35 +14,35 @@ import androidx.media3.session.LibraryResult;
 import androidx.media3.session.MediaConstants;
 import androidx.media3.session.SessionError;
 
-import com.eddyizm.tempus.App;
-import com.eddyizm.tempus.BuildConfig;
-import com.eddyizm.tempus.R;
-import com.eddyizm.tempus.database.AppDatabase;
-import com.eddyizm.tempus.database.dao.ChronologyDao;
-import com.eddyizm.tempus.database.dao.SessionMediaItemDao;
-import com.eddyizm.tempus.model.Chronology;
-import com.eddyizm.tempus.model.Download;
-import com.eddyizm.tempus.model.InternetRadioStationCache;
-import com.eddyizm.tempus.model.SessionMediaItem;
-import com.eddyizm.tempus.provider.AlbumArtContentProvider;
-import com.eddyizm.tempus.subsonic.base.ApiResponse;
-import com.eddyizm.tempus.subsonic.models.AlbumID3;
-import com.eddyizm.tempus.subsonic.models.Artist;
-import com.eddyizm.tempus.subsonic.models.ArtistID3;
-import com.eddyizm.tempus.subsonic.models.Child;
-import com.eddyizm.tempus.subsonic.models.Directory;
-import com.eddyizm.tempus.subsonic.models.Index;
-import com.eddyizm.tempus.subsonic.models.IndexID3;
-import com.eddyizm.tempus.subsonic.models.InternetRadioStation;
-import com.eddyizm.tempus.subsonic.models.MusicFolder;
-import com.eddyizm.tempus.subsonic.models.Playlist;
-import com.eddyizm.tempus.subsonic.models.PodcastEpisode;
-import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
-import com.eddyizm.tempus.subsonic.models.Genre;
-import com.eddyizm.tempus.util.ConstantsAA;
-import com.eddyizm.tempus.util.MappingUtil;
-import com.eddyizm.tempus.util.MusicUtil;
-import com.eddyizm.tempus.util.Preferences;
+import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.BuildConfig;
+import com.cappielloantonio.tempo.R;
+import com.cappielloantonio.tempo.database.AppDatabase;
+import com.cappielloantonio.tempo.database.dao.ChronologyDao;
+import com.cappielloantonio.tempo.database.dao.SessionMediaItemDao;
+import com.cappielloantonio.tempo.model.Chronology;
+import com.cappielloantonio.tempo.model.Download;
+import com.cappielloantonio.tempo.model.InternetRadioStationCache;
+import com.cappielloantonio.tempo.model.SessionMediaItem;
+import com.cappielloantonio.tempo.provider.AlbumArtContentProvider;
+import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
+import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
+import com.cappielloantonio.tempo.subsonic.models.Artist;
+import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
+import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.Directory;
+import com.cappielloantonio.tempo.subsonic.models.Index;
+import com.cappielloantonio.tempo.subsonic.models.IndexID3;
+import com.cappielloantonio.tempo.subsonic.models.InternetRadioStation;
+import com.cappielloantonio.tempo.subsonic.models.MusicFolder;
+import com.cappielloantonio.tempo.subsonic.models.Playlist;
+import com.cappielloantonio.tempo.subsonic.models.PodcastEpisode;
+import com.cappielloantonio.tempo.subsonic.models.SubsonicResponse;
+import com.cappielloantonio.tempo.subsonic.models.Genre;
+import com.cappielloantonio.tempo.util.ConstantsAA;
+import com.cappielloantonio.tempo.util.MappingUtil;
+import com.cappielloantonio.tempo.util.MusicUtil;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
@@ -1441,7 +1441,7 @@ public class AutomotiveRepository {
             @Override
             public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<com.eddyizm.tempus.subsonic.models.Child> songs;
+                    List<com.cappielloantonio.tempo.subsonic.models.Child> songs;
                     if (shuffle) {
                         songs = response.body().getSubsonicResponse().getRandomSongs() != null
                                 ? response.body().getSubsonicResponse().getRandomSongs().getSongs()

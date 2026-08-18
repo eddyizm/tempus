@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = 'com.eddyizm.tempus'
+    namespace = 'com.cappielloantonio.tempo'
     //noinspection GradleDependency
     compileSdk = 37
     buildToolsVersion = '36.1.0'

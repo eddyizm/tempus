@@ -1,7 +1,7 @@
-package com.eddyizm.tempus.repository;
+package com.cappielloantonio.tempo.repository;
 
-import static com.eddyizm.tempus.service.MediaManager.enqueue;
-import static com.eddyizm.tempus.util.Preferences.getServerId;
+import static com.cappielloantonio.tempo.service.MediaManager.enqueue;
+import static com.cappielloantonio.tempo.util.Preferences.getServerId;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
@@ -9,17 +9,17 @@ import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 
-import com.eddyizm.tempus.App;
-import com.eddyizm.tempus.database.AppDatabase;
-import com.eddyizm.tempus.database.dao.ChronologyDao;
-import com.eddyizm.tempus.model.Chronology;
-import com.eddyizm.tempus.subsonic.base.ApiResponse;
-import com.eddyizm.tempus.subsonic.models.AlbumID3;
-import com.eddyizm.tempus.subsonic.models.ArtistID3;
-import com.eddyizm.tempus.subsonic.models.Child;
-import com.eddyizm.tempus.subsonic.models.Starred2;
-import com.eddyizm.tempus.util.ConstantsAA;
-import com.eddyizm.tempus.util.Preferences;
+import com.cappielloantonio.tempo.App;
+import com.cappielloantonio.tempo.database.AppDatabase;
+import com.cappielloantonio.tempo.database.dao.ChronologyDao;
+import com.cappielloantonio.tempo.model.Chronology;
+import com.cappielloantonio.tempo.subsonic.base.ApiResponse;
+import com.cappielloantonio.tempo.subsonic.models.AlbumID3;
+import com.cappielloantonio.tempo.subsonic.models.ArtistID3;
+import com.cappielloantonio.tempo.subsonic.models.Child;
+import com.cappielloantonio.tempo.subsonic.models.Starred2;
+import com.cappielloantonio.tempo.util.ConstantsAA;
+import com.cappielloantonio.tempo.util.Preferences;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;

@@ -1,4 +1,4 @@
-package com.eddyizm.tempus.util;
+package com.cappielloantonio.tempo.util;
 
 import android.content.Context;
 
