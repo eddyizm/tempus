@@ -23,4 +23,4 @@ dependencyResolutionManagement {
 }
 
 include ':app'
-rootProject.name = "Tempo"
+rootProject.name = "Tempus"
