@@ -214,6 +214,8 @@ public final class DownloadUtil {
         if (streamingCacheDirectory == null) {
             if (Preferences.getStreamingCacheStoragePreference() == 0) {
                 streamingCacheDirectory = context.getExternalFilesDirs(null)[0];
+                // workaround for crdroid degoogled android 16 sometimes unable to write to the
+                // default external files dir, fall back to internal dir if we can't write
                 if (streamingCacheDirectory == null || !streamingCacheDirectory.canWrite()) {
                     streamingCacheDirectory = context.getFilesDir();
                 }
@@ -236,6 +238,8 @@ public final class DownloadUtil {
             int pref = Preferences.getDownloadStoragePreference();
             if (pref == 0) {
                 downloadDirectory = context.getExternalFilesDirs(null)[0];
+                // workaround for crdroid degoogled android 16 sometimes unable to write to the
+                // default external files dir, fall back to internal dir if we can't write
                 if (downloadDirectory == null || !downloadDirectory.canWrite()) {
                     downloadDirectory = context.getFilesDir();
                 }
