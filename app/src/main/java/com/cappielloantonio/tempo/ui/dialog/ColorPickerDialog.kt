@@ -1,4 +1,4 @@
-package com.cappielloantonio.tempo.ui.dialog
+package com.eddyizm.tempus.ui.dialog
 
 import android.app.Dialog
 import android.graphics.Color
@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.core.graphics.drawable.toDrawable
-import com.cappielloantonio.tempo.R
-import com.cappielloantonio.tempo.databinding.DialogColorPickerBinding
+import com.eddyizm.tempus.R
+import com.eddyizm.tempus.databinding.DialogColorPickerBinding
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener
 
 class ColorPickerDialog : DialogFragment() {
