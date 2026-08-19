@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.view.MenuItem;
+import android.widget.ImageView;
+import androidx.appcompat.widget.SearchView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -91,8 +93,45 @@ public class SettingsFragment extends Fragment {
     }
 
     private void initAppBar() {
+        bind.settingsToolbar.inflateMenu(R.menu.settings_menu);
+        MenuItem searchItem = bind.settingsToolbar.getMenu().findItem(R.id.action_search);
+        if (searchItem != null) {
+            SearchView searchView = (SearchView) searchItem.getActionView();
+            if (searchView != null) {
+                searchView.setMaxWidth(Integer.MAX_VALUE);
+                searchView.setIconifiedByDefault(false);
+                searchView.setQueryHint(getString(R.string.settings_search_hint));
+
+                ImageView searchMagIcon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
+                if (searchMagIcon != null) {
+                    searchMagIcon.setImageDrawable(null);
+                    searchMagIcon.setVisibility(View.GONE);
+                }
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        updateSearchQuery(query);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        updateSearchQuery(newText);
+                        return true;
+                    }
+                });
+            }
+        }
         bind.settingsToolbar.setNavigationOnClickListener(v -> {
             activity.navController.navigateUp();
         });
+    }
+
+    private void updateSearchQuery(String query) {
+        SettingsContainerFragment prefFragment = (SettingsContainerFragment) getChildFragmentManager()
+                .findFragmentById(R.id.settings_container);
+        if (prefFragment != null) {
+            prefFragment.setSearchQuery(query);
+        }
     }
 }
