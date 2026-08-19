@@ -218,6 +218,7 @@
     <string name="menu_last_year_name">El año pasado</string>
     <string name="menu_library_label">Biblioteca</string>
     <string name="menu_search_button">Buscar</string>
+    <string name="settings_search_hint">Buscar preferencias</string>
     <string name="menu_settings_button">Ajustes</string>
     <string name="menu_sort_artist">Artista</string>
     <string name="menu_sort_name">Nombre</string>

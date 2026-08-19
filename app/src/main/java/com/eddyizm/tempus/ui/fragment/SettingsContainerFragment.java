@@ -41,6 +41,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.SeekBarPreference;
 import androidx.preference.SwitchPreference;
@@ -99,6 +100,13 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     // Null until the server answers with its folder list.
     private Integer musicFolderCount = null;
+
+    private String searchQuery = "";
+
+    public void setSearchQuery(String query) {
+        this.searchQuery = UIUtil.normalizeForSearch(query).trim();
+        applyAccordionState();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -258,32 +266,28 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         PreferenceScreen screen = getPreferenceScreen();
         if (screen == null) return;
 
-        for (int i = 0; i < screen.getPreferenceCount(); i++) {
-            Preference pref = screen.getPreference(i);
-            if (pref instanceof PreferenceCategory) {
-                PreferenceCategory category = (PreferenceCategory) pref;
-                for (int j = 0; j < category.getPreferenceCount(); j++) {
-                    category.getPreference(j).setVisible(true);
-                }
-            }
-        }
+        resetVisibility(screen);
 
-        checkSystemEqualizer();
-        checkCacheStorage();
-        checkStorage();
-        checkDownloadDirectory();
-        checkEqualizerBands();
-        checkMusicLibrary();
+        if (!searchQuery.isEmpty()) {
+            filterPreferences(screen);
+        } else {
+            checkSystemEqualizer();
+            checkCacheStorage();
+            checkStorage();
+            checkDownloadDirectory();
+            checkEqualizerBands();
+            checkMusicLibrary();
 
-        for (int i = 0; i < screen.getPreferenceCount(); i++) {
-            Preference pref = screen.getPreference(i);
-            if (pref instanceof PreferenceCategory) {
-                PreferenceCategory category = (PreferenceCategory) pref;
-                boolean expanded = expandedCategories.contains(category.getKey());
-                category.setIcon(expanded ? R.drawable.ic_arrow_down : R.drawable.ic_navigate_next);
-                if (!expanded) {
-                    for (int j = 0; j < category.getPreferenceCount(); j++) {
-                        category.getPreference(j).setVisible(false);
+            for (int i = 0; i < screen.getPreferenceCount(); i++) {
+                Preference pref = screen.getPreference(i);
+                if (pref instanceof PreferenceCategory) {
+                    PreferenceCategory category = (PreferenceCategory) pref;
+                    boolean expanded = expandedCategories.contains(category.getKey());
+                    category.setIcon(expanded ? R.drawable.ic_arrow_down : R.drawable.ic_navigate_next);
+                    if (!expanded) {
+                        for (int j = 0; j < category.getPreferenceCount(); j++) {
+                            category.getPreference(j).setVisible(false);
+                        }
                     }
                 }
             }
@@ -292,6 +296,58 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         if (getListView() != null && getListView().getAdapter() != null) {
             getListView().getAdapter().notifyDataSetChanged();
         }
+    }
+
+    private void resetVisibility(PreferenceGroup group) {
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference pref = group.getPreference(i);
+            pref.setVisible(true);
+            if (pref instanceof PreferenceCategory) {
+                pref.setIcon(null);
+            }
+            if (pref instanceof PreferenceGroup) {
+                resetVisibility((PreferenceGroup) pref);
+            }
+        }
+    }
+
+    private boolean filterPreferences(PreferenceGroup group) {
+        return filterPreferences(group, false);
+    }
+
+    private boolean filterPreferences(PreferenceGroup group, boolean forceVisible) {
+        boolean hasVisibleChild = false;
+        boolean isRoot = group == getPreferenceScreen();
+        for (int i = 0; i < group.getPreferenceCount(); i++) {
+            Preference pref = group.getPreference(i);
+            boolean matches = forceVisible;
+
+            if (!matches) {
+                String title = pref.getTitle() != null ? UIUtil.normalizeForSearch(pref.getTitle().toString()) : "";
+                String summary = pref.getSummary() != null ? UIUtil.normalizeForSearch(pref.getSummary().toString()) : "";
+                if (title.contains(searchQuery) || summary.contains(searchQuery)) {
+                    matches = true;
+                }
+            }
+
+            if (pref instanceof PreferenceGroup) {
+                boolean childMatches = filterPreferences((PreferenceGroup) pref, matches);
+                boolean groupVisible = matches || childMatches;
+                pref.setVisible(groupVisible);
+                if (pref instanceof PreferenceCategory && isRoot) {
+                    pref.setIcon(R.drawable.ic_arrow_down);
+                }
+                if (groupVisible) {
+                    hasVisibleChild = true;
+                }
+            } else {
+                pref.setVisible(matches);
+                if (matches) {
+                    hasVisibleChild = true;
+                }
+            }
+        }
+        return hasVisibleChild;
     }
 
     private void checkSystemEqualizer() {
