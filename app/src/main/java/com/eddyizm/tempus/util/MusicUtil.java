@@ -209,24 +209,27 @@ public class MusicUtil {
     public static String getReadableAudioQualityString(Child child) {
         if (!Preferences.showAudioQuality()) return "";
 
+        Download downloaded = MappingUtil.getCachedDownloads().get(child.getId());
+        Child displayChild = downloaded != null ? downloaded : child;
+
         // A transcode with no bitrate ceiling has a null bitrate, which used to blank the badge.
-        boolean hasBitrate = child.getBitrate() != null;
-        boolean hasSuffix = child.getSuffix() != null && !child.getSuffix().isEmpty();
+        boolean hasBitrate = displayChild.getBitrate() != null;
+        boolean hasSuffix = displayChild.getSuffix() != null && !displayChild.getSuffix().isEmpty();
         if (!hasBitrate && !hasSuffix) return "";
 
-        String detail = child.getBitDepth() != null && child.getBitDepth() != 0
-                ? child.getBitDepth() + "/" + (child.getSamplingRate() != null ? child.getSamplingRate() / 1000 : "")
-                : (child.getSamplingRate() != null
-                ? new DecimalFormat("0.#").format(child.getSamplingRate() / 1000.0) + "kHz"
+        String detail = displayChild.getBitDepth() != null && displayChild.getBitDepth() != 0
+                ? displayChild.getBitDepth() + "/" + (displayChild.getSamplingRate() != null ? displayChild.getSamplingRate() / 1000 : "")
+                : (displayChild.getSamplingRate() != null
+                ? new DecimalFormat("0.#").format(displayChild.getSamplingRate() / 1000.0) + "kHz"
                 : "");
 
         if (hasSuffix) {
-            detail = detail.isEmpty() ? child.getSuffix() : detail + " " + child.getSuffix();
+            detail = detail.isEmpty() ? displayChild.getSuffix() : detail + " " + displayChild.getSuffix();
         }
 
         return "•" +
                 " " +
-                (hasBitrate ? child.getBitrate() + "kbps" : "") +
+                (hasBitrate ? displayChild.getBitrate() + "kbps" : "") +
                 (hasBitrate && !detail.isEmpty() ? " • " : "") +
                 detail;
     }

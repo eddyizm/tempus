@@ -434,18 +434,33 @@ public class PlayerControllerFragment extends Fragment {
         if (format == null) return;
 
         String actual = MusicUtil.audioFormatLabel(format.sampleMimeType);
+        String original = MusicUtil.getCurrentOriginalSuffix(browser);
+        boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
+
         if (actual != null && !actual.isEmpty()) {
-            String original = MusicUtil.getCurrentOriginalSuffix(browser);
-            boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
             playerMediaExtension.setText(transcoded
                     ? actual + " (" + getString(R.string.player_transcoding) + ")"
                     : actual);
         }
 
-        if (format.bitrate != Format.NO_VALUE && format.bitrate > 0) {
+        if (Objects.equals(browser.getMediaMetadata().extras.getString("type"), Constants.MEDIA_TYPE_RADIO)) {
             playerMediaBitrate.setText((format.bitrate / 1000) + "kbps");
             playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.VISIBLE : View.GONE);
+        } else if (format.bitrate != Format.NO_VALUE && format.bitrate > 0) {
+            if (transcoded) {
+                playerMediaBitrate.setText((format.bitrate / 1000) + "kbps");
+                playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.VISIBLE : View.GONE);
+            }
+        } else if (transcoded) {
+            String targetBitrate = MusicUtil.getBitratePreference();
+            if (!targetBitrate.equals("0")) {
+                playerMediaBitrate.setText(targetBitrate + "kbps");
+                playerMediaBitrate.setVisibility(Preferences.getBitrateVisible() ? View.VISIBLE : View.GONE);
+            } else {
+                playerMediaBitrate.setVisibility(View.GONE);
+            }
         }
+
     }
 
     private void toggleBitrateVisibility() {
