@@ -111,7 +111,6 @@
                 android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
-                app:cardBackgroundColor="#B5076B"
                 android:contentDescription="@string/la_theme_card_flirt_red_description"
                 app:cardCornerRadius="16dp" >
 

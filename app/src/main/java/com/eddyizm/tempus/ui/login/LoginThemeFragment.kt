@@ -18,6 +18,7 @@ import com.eddyizm.tempus.databinding.FragmentLoginThemeBinding
 import com.eddyizm.tempus.helper.ThemeHelper
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.Preferences
+import com.eddyizm.tempus.ui.dialog.ColorPickerDialog
 
 private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
 
@@ -44,6 +45,11 @@ class LoginThemeFragment : Fragment() {
         init()
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        applySavedAccentColorToCard()
     }
 
     override fun onDestroyView() {
@@ -146,7 +152,30 @@ class LoginThemeFragment : Fragment() {
 
     private fun setupDefaultAccentColorButtons() {
         binding.cardFlirt.setOnClickListener {
-            applyAccentColor("HEX:#B5076B")
+
+            // We register a "listener" that the dialog can trigger when dismissed
+            childFragmentManager.setFragmentResultListener("dialog_result_key", viewLifecycleOwner) { _, bundle ->
+                val selectedColor = bundle.getString("color_key")
+                if (selectedColor != null) {
+                    applyAccentColor(selectedColor)
+                }
+                binding.cardFlirt.setCardBackgroundColor(
+                    selectedColor
+                        ?.removePrefix("HEX:")
+                        ?.toColorInt()
+                    ?: "#B5076B".toColorInt()
+                )
+            }
+
+            /*
+                We don't actually need to pass this argument,
+                I implemented it because we can use it as future reference
+                for much more complex behavior.
+            */
+            val dialog = ColorPickerDialog.newInstance(
+                getString(R.string.la_theme_dialog_color_picker_title)
+            )
+            dialog.show(childFragmentManager, "ColorPickerDialog")
         }
         binding.cardCoral.setOnClickListener {
             applyAccentColor("HEX:#FF5722")
@@ -178,6 +207,30 @@ class LoginThemeFragment : Fragment() {
         Preferences.setColorAccent(accent)
         ThemeHelper.enableThemeSwitch(activity as AppCompatActivity)
         activity?.recreate()
+    }
+
+    private fun applySavedAccentColorToCard() {
+        val savedColor = Preferences.getColorAccent()
+        /*
+            Remember, DYNAMIC is the default value.
+            Actually, we should deprecate it in favor of
+            the method isDynamicColorAccent()
+
+            DYNAMIC is legacy behavior...
+            jeez development moves fast
+
+        */
+        val colorInt = if (savedColor == "DYNAMIC" || savedColor.isEmpty()) {
+            "#B5076B".toColorInt()
+        } else {
+            val rawHex = savedColor.removePrefix("HEX:")
+            if (rawHex.startsWith("#")) {
+                rawHex.toColorInt()
+            } else {
+                "#$rawHex".toColorInt() // May seem redundant but if unchecked the app blows up
+            }
+        }
+        binding.cardFlirt.setCardBackgroundColor(colorInt)
     }
 
     companion object {

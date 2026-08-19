@@ -1,5 +1,6 @@
 [versions]
 agp = "9.2.1"
+colorpickerview = "2.4.0"
 kotlin = "2.2.20"
 
 # AndroidX / Material
@@ -46,6 +47,7 @@ androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", v
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
+colorpickerview = { module = "com.github.skydoves:colorpickerview", version.ref = "colorpickerview" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
