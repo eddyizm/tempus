@@ -846,10 +846,12 @@
     <string name="la_theme_card_sunset_amber_description">Sunset amber accent color</string>
     <string name="la_theme_card_teal_description">Teal amber accent color</string>
     <string name="la_theme_card_slate_gray_description">Slate gray accent color</string>
+    <string name="la_theme_dialog_color_picker_title">Pick and accent color</string>
 
     <string name="la_shortcut_label">Introduction</string>
     <string name="la_button_advanced_editor">Advanced editor (beta)</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
