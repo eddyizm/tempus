@@ -1272,7 +1272,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
         final Runnable runnable = () -> {
             if (getView() != null && bind != null && homeViewModel != null)
-                homeViewModel.getPinnedPlaylists(getViewLifecycleOwner());
+                homeViewModel.refreshPinnedPlaylists();
         };
 
         handler.postDelayed(runnable, 100);
