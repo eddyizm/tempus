@@ -269,7 +269,7 @@ public class HomeViewModel extends AndroidViewModel {
     public LiveData<List<Playlist>> getPinnedPlaylists(LifecycleOwner owner) {
         String sortOrder = Preferences.getHomeSortPlaylists();
         
-        playlistRepository.getSortedPlaylistsPreview(sortOrder, 5).observe(owner, playlists -> {
+        playlistRepository.getSortedPlaylistsPreview(sortOrder, 20).observe(owner, playlists -> {
             if (playlists != null) {
                 pinnedPlaylists.setValue(playlists);
             }

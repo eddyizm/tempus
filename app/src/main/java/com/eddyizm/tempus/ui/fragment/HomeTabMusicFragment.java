@@ -171,6 +171,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     public void onResume() {
         super.onResume();
         refreshSharesView();
+        refreshPlaylistView();
         if (topSongAdapter != null) setTopSongsMediaBrowserListenableFuture();
         if (starredSongAdapter != null) setStarredSongsMediaBrowserListenableFuture();
     }
@@ -1061,7 +1062,6 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private void initPinnedPlaylistsView() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_PINNED_PLAYLISTS)) return;
 
-        bind.pinnedPlaylistsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         bind.pinnedPlaylistsRecyclerView.setHasFixedSize(true);
 
         playlistHorizontalAdapter = new PlaylistHorizontalAdapter(this);
@@ -1072,10 +1072,24 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             } else {
                 if (bind != null)
                     bind.pinnedPlaylistsSector.setVisibility(!playlists.isEmpty() ? View.VISIBLE : View.GONE);
+                if (bind != null)
+                    bind.pinnedPlaylistsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), UIUtil.getSpanCount(playlists.size(), 5), GridLayoutManager.HORIZONTAL, false));
 
                 playlistHorizontalAdapter.setItems(playlists);
             }
         });
+
+        SnapHelper pinnedPlaylistsSnapHelper = new PagerSnapHelper();
+        pinnedPlaylistsSnapHelper.attachToRecyclerView(bind.pinnedPlaylistsRecyclerView);
+
+        bind.pinnedPlaylistsRecyclerView.addItemDecoration(
+                new DotsIndicatorDecoration(
+                        getResources().getDimensionPixelSize(R.dimen.radius),
+                        getResources().getDimensionPixelSize(R.dimen.radius) * 4,
+                        getResources().getDimensionPixelSize(R.dimen.dots_height),
+                        requireContext().getResources().getColor(R.color.titleTextColor, null),
+                        requireContext().getResources().getColor(R.color.titleTextColor, null))
+        );
     }
 
     private void initSharesView() {
