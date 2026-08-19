@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentHomeBinding;
@@ -105,5 +106,29 @@ public class HomeFragment extends Fragment {
         ).attach();
 
         tabLayout.setVisibility(Preferences.isPodcastSectionVisible() || Preferences.isRadioSectionVisible() ? View.VISIBLE : View.GONE);
+
+        bind.homeViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                refreshToolbarLibraryScope();
+            }
+        });
+    }
+
+    /**
+     * The music library line in the toolbar belongs to the Music tab. Podcast and Radio share the
+     * toolbar and are not filtered by library, so the line would name something with nothing to do
+     * with what is on screen. Music is always the first page; the other two are optional.
+     *
+     * The toolbar reads this on every update instead of being pushed the page once, so a page the
+     * pager put back on its own cannot leave the line naming the wrong tab.
+     */
+    public boolean isLibraryScopedTab() {
+        return bind != null && bind.homeViewPager.getCurrentItem() == 0;
+    }
+
+    private void refreshToolbarLibraryScope() {
+        ToolbarFragment toolbarFragment = (ToolbarFragment) getChildFragmentManager().findFragmentById(R.id.toolbar_fragment);
+        if (toolbarFragment != null) toolbarFragment.refreshMusicLibraryIndicator();
     }
 }
