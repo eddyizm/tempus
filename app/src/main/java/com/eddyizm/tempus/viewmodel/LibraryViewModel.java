@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
@@ -41,6 +42,7 @@ public class LibraryViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Genre>> sampleGenres = new MutableLiveData<>(null);
 
     private String cachedMusicFolderId = Preferences.getActiveMusicFolderId();
+    private int musicFolderGeneration = 0;
 
     public LibraryViewModel(@NonNull Application application) {
         super(application);
@@ -56,14 +58,38 @@ public class LibraryViewModel extends AndroidViewModel {
      * Same reasoning as HomeViewModel. Genres, playlists and the folder list take no folder id, so
      * they stay.
      */
-    public void clearCacheIfMusicFolderChanged() {
+    public boolean clearCacheIfMusicFolderChanged() {
         String activeMusicFolderId = Preferences.getActiveMusicFolderId();
-        if (Objects.equals(activeMusicFolderId, cachedMusicFolderId)) return;
+        if (Objects.equals(activeMusicFolderId, cachedMusicFolderId)) return false;
 
         cachedMusicFolderId = activeMusicFolderId;
+        musicFolderGeneration++;
 
         sampleAlbum.setValue(null);
         sampleArtist.setValue(null);
+
+        return true;
+    }
+
+    /**
+     * Same reasoning as HomeViewModel.reloadIfMusicFolderChanged.
+     */
+    public void reloadIfMusicFolderChanged(LifecycleOwner owner) {
+        if (!clearCacheIfMusicFolderChanged()) return;
+
+        refreshAlbumSample(owner);
+        refreshArtistSample(owner);
+    }
+
+    /**
+     * Same reasoning as HomeViewModel.setIfCurrentGeneration.
+     */
+    private <T> Observer<T> setIfCurrentGeneration(MutableLiveData<T> target) {
+        int generation = musicFolderGeneration;
+
+        return value -> {
+            if (generation == musicFolderGeneration) target.setValue(value);
+        };
     }
 
     public LiveData<List<MusicFolder>> getMusicFolders(LifecycleOwner owner) {
@@ -84,7 +110,7 @@ public class LibraryViewModel extends AndroidViewModel {
 
     public LiveData<List<AlbumID3>> getAlbumSample(LifecycleOwner owner) {
         if (sampleAlbum.getValue() == null) {
-            albumRepository.getAlbums("random", 10, null, null).observe(owner, sampleAlbum::postValue);
+            albumRepository.getAlbums("random", 10, null, null).observe(owner, setIfCurrentGeneration(sampleAlbum));
         }
 
         return sampleAlbum;
@@ -92,7 +118,7 @@ public class LibraryViewModel extends AndroidViewModel {
 
     public LiveData<List<ArtistID3>> getArtistSample(LifecycleOwner owner) {
         if (sampleArtist.getValue() == null) {
-            artistRepository.getArtists(true, 10).observe(owner, sampleArtist::postValue);
+            artistRepository.getArtists(true, 10).observe(owner, setIfCurrentGeneration(sampleArtist));
         }
 
         return sampleArtist;
@@ -115,11 +141,11 @@ public class LibraryViewModel extends AndroidViewModel {
     }
 
     public void refreshAlbumSample(LifecycleOwner owner) {
-        albumRepository.getAlbums("random", 10, null, null).observe(owner, sampleAlbum::postValue);
+        albumRepository.getAlbums("random", 10, null, null).observe(owner, setIfCurrentGeneration(sampleAlbum));
     }
 
     public void refreshArtistSample(LifecycleOwner owner) {
-        artistRepository.getArtists(true, 10).observe(owner, sampleArtist::postValue);
+        artistRepository.getArtists(true, 10).observe(owner, setIfCurrentGeneration(sampleArtist));
     }
 
     public void refreshGenreSample(LifecycleOwner owner) {
