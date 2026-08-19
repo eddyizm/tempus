@@ -1,5 +1,4 @@
 package com.eddyizm.tempus.ui.login
-package com.eddyizm.tempus.ui.login
 
 import android.content.Intent
 import android.os.Bundle
