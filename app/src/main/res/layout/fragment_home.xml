@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/toolbar_fragment"
-        android:name="com.cappielloantonio.tempo.ui.fragment.ToolbarFragment"
+        android:name="com.eddyizm.tempus.ui.fragment.ToolbarFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

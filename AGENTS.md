@@ -59,7 +59,7 @@
 - **Architecture**: MVVM-ish with Media3/ExoPlayer for playback
 - **Key libs**: Room (DB), Retrofit/OkHttp (network), Media3/ExoPlayer (media), Glide (images), Material3
 - **Flavors**: `tempus` (Media3 Cast) vs `degoogled` (no Cast)
-- **Main package**: `com.cappielloantonio.tempo` (namespace), app IDs differ by flavor
+- **Main package**: `com.eddyizm.tempus` (namespace), app IDs differ by flavor
 
 ## Testing
 - **Unit tests**: JUnit 4 + Mockito + MockK (run via `test*UnitTest` tasks)

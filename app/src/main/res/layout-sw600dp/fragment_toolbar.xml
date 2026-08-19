@@ -12,25 +12,59 @@
         android:background="?attr/colorSurface"
         app:layout_scrollFlags="scroll|enterAlways|snap">
 
+        <!--
+            A minimum height on this container, not a fixed one. Without a minimum the app name
+            sits lower on a screen where the library line is hidden than on one where it is
+            shown, so it moves as you change tabs. A fixed height would hold it too, at the cost
+            of capping a row that has to fit two lines at any font scale.
+        -->
         <LinearLayout
+            android:id="@+id/toolbar_title_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:layout_gravity="top"
             android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="top"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="6dp"
                 android:background="@drawable/ic_toolbar_tempo" />
 
-            <TextView
-                style="@style/HeadlineMedium"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:text="@string/app_name" />
+                android:layout_gravity="top"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/HeadlineMedium"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/app_name" />
+
+                <TextView
+                    android:id="@+id/toolbar_music_library_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:duplicateParentState="true"
+                    android:drawablePadding="2dp"
+                    android:ellipsize="end"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:singleLine="true"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </LinearLayout>
         </LinearLayout>
     </com.google.android.material.appbar.MaterialToolbar>
 </com.google.android.material.appbar.AppBarLayout>
