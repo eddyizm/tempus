@@ -1,7 +1,9 @@
 package com.eddyizm.tempus.ui.login
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,6 +23,7 @@ private const val SERVERS_FRAGMENT: Int     = 3
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private var hideTabLayout: Boolean = false
+    private var hideTopAppBar: Boolean = true
     private var selectedFragment: Int = GREETER_FRAGMENT
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,11 +36,14 @@ class LoginActivity : AppCompatActivity() {
 
         initIntentHandler()
         initEdgeToEdge()
+        initTopAppBarLayout()
         initTabLayout()
     }
 
     private fun initIntentHandler() {
         hideTabLayout    = intent.getBooleanExtra("HIDE_TAB_LAYOUT", false)
+        hideTopAppBar    = intent.getBooleanExtra("HIDE_TOPAPPBAR_LAYOUT", true)
+
         selectedFragment = intent.getIntExtra("SELECT_FRAGMENT", GREETER_FRAGMENT)
     }
 
@@ -47,6 +53,14 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun initTopAppBarLayout() {
+        if (hideTopAppBar) {
+            binding.topAppBar.visibility = View.GONE
+            return
+        }
+        binding.topAppBar.setOnClickListener { finish() }
     }
 
     private fun initTabLayout() {

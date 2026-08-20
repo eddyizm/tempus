@@ -820,7 +820,7 @@
     <string name="la_server_button_update">Update</string>
     <string name="la_server_button_delete">Delete</string>
     <string name="la_server_button_test">Test</string>
-    <string name="la_server_button_return">Go to login</string>
+    <string name="la_server_button_login">Go to login</string>
     <string name="la_server_dropdown_add_new">Add new server</string>
     <string name="la_server_toast_created">Server created</string>
     <string name="la_server_toast_updated">Server updated</string>
