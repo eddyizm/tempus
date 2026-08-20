@@ -167,7 +167,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        ThemeHelper.enableThemeSwitch(this);
         super.onResume();
         pingServer();
         toggleNavigationDrawerLockOnOrientationChange();
