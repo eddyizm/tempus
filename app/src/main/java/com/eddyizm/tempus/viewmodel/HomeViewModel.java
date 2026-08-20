@@ -8,6 +8,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 
 import com.eddyizm.tempus.interfaces.StarCallback;
 import com.eddyizm.tempus.model.Chronology;
@@ -69,7 +70,8 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Chronology>> thisGridTopSong = new MutableLiveData<>(null);
     private final MutableLiveData<List<Child>> mediaInstantMix = new MutableLiveData<>(null);
     private final MutableLiveData<List<Child>> artistInstantMix = new MutableLiveData<>(null);
-    private final MutableLiveData<List<Playlist>> pinnedPlaylists = new MutableLiveData<>(null);
+    private final MutableLiveData<String> playlistSortOrder = new MutableLiveData<>();
+    private final LiveData<List<Playlist>> pinnedPlaylists;
     private final MutableLiveData<List<Share>> shares = new MutableLiveData<>(null);
 
     private List<HomeSector> sectors;
@@ -94,6 +96,11 @@ public class HomeViewModel extends AndroidViewModel {
         artistSyncViewModel = new StarredArtistsSyncViewModel(application);
 
         setOfflineFavorite();
+
+        playlistSortOrder.setValue(Preferences.getHomeSortPlaylists());
+        pinnedPlaylists = Transformations.switchMap(playlistSortOrder, sortOrder -> 
+            playlistRepository.getSortedPlaylistsPreview(sortOrder, 20)
+        );
     }
 
     public LiveData<List<Child>> getDiscoverSongSample(LifecycleOwner owner) {
@@ -267,15 +274,11 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Playlist>> getPinnedPlaylists(LifecycleOwner owner) {
-        String sortOrder = Preferences.getHomeSortPlaylists();
-        
-        playlistRepository.getSortedPlaylistsPreview(sortOrder, 5).observe(owner, playlists -> {
-            if (playlists != null) {
-                pinnedPlaylists.setValue(playlists);
-            }
-        });
-
         return pinnedPlaylists;
+    }
+
+    public void refreshPinnedPlaylists() {
+        playlistSortOrder.setValue(Preferences.getHomeSortPlaylists());
     }
 
     public LiveData<List<Share>> getShares(LifecycleOwner owner) {
