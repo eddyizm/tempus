@@ -272,8 +272,8 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                         .observe(getViewLifecycleOwner(), songs -> {
                             if (songs != null) {
 
-                                bind.playlistPagePlayButton.setEnabled(true);
-                                bind.playlistPageShuffleButton.setEnabled(true);
+                                bind.playlistPagePlayButton.setEnabled(!songs.isEmpty());
+                                bind.playlistPageShuffleButton.setEnabled(!songs.isEmpty());
 
                                 if (bind.songRecyclerViewPlaceholder != null) {
                                     bind.songRecyclerViewPlaceholder.setVisibility(View.GONE);
@@ -455,6 +455,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
             songHorizontalAdapter.setItems(songs);
             if (songs != null) {
+                bind.emptyPlaylistLabel.setVisibility(songs.isEmpty() ? View.VISIBLE : View.GONE);
                 bind.playlistSongCountLabel.setText(getString(R.string.playlist_song_count, songs.size()));
                 long totalDuration = songs.stream().mapToLong(s -> s.getDuration() != null ? s.getDuration() : 0).sum();
                 bind.playlistDurationLabel.setText(getString(R.string.playlist_duration, MusicUtil.getReadableDurationString(totalDuration, false)));
