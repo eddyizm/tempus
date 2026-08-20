@@ -89,18 +89,30 @@ class LoginActivity : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                GREETER_FRAGMENT -> LoginGreeterFragment.newInstance(
-                    singlePageMode = hideTabLayout
-                )
-                PERMISSIONS_FRAGMENT -> LoginPermissionFragment.newInstance(
-                    singlePageMode = hideTabLayout
-                )
-                THEMES_FRAGMENT -> LoginThemeFragment.newInstance(
-                    singlePageMode = hideTabLayout
-                )
-                SERVERS_FRAGMENT -> LoginServerFragment.newInstance(
-                    singlePageMode = hideTabLayout
-                )
+                GREETER_FRAGMENT -> {
+                    binding.topAppBar.title = getString(R.string.la_appbar_greeter_title)
+                    LoginGreeterFragment.newInstance(
+                        singlePageMode = hideTabLayout
+                    )
+                }
+                PERMISSIONS_FRAGMENT -> {
+                    binding.topAppBar.title = getString(R.string.la_appbar_permission_title)
+                    LoginPermissionFragment.newInstance(
+                        singlePageMode = hideTabLayout
+                    )
+                }
+                THEMES_FRAGMENT -> {
+                    binding.topAppBar.title = getString(R.string.la_appbar_themes_title)
+                    LoginThemeFragment.newInstance(
+                        singlePageMode = hideTabLayout
+                    )
+                }
+                SERVERS_FRAGMENT -> {
+                    binding.topAppBar.title = getString(R.string.la_appbar_server_title)
+                    LoginServerFragment.newInstance(
+                        singlePageMode = hideTabLayout
+                    )
+                }
                 else -> LoginGreeterFragment.newInstance(
                     singlePageMode = hideTabLayout
                 )
