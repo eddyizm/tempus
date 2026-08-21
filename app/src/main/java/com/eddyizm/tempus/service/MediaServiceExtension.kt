@@ -2,14 +2,12 @@ package com.eddyizm.tempus.service
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.session.MediaBrowser
-import com.google.common.util.concurrent.ListenableFuture
 
 interface MediaServiceExtension {
     fun handle(
         player: Player,
         item: MediaItem,
-        browserFuture: ListenableFuture<MediaBrowser>
+        queueTarget: MediaManager.QueueTarget
     ): Boolean
 }
 
