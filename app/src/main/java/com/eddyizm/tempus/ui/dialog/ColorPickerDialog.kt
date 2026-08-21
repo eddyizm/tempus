@@ -50,10 +50,7 @@ class ColorPickerDialog : DialogFragment() {
             binding.tvDialogTitle.text = it
         }
 
-        binding.btnCancel.setOnClickListener {
-            Toast.makeText(requireContext(), "Cancelled", Toast.LENGTH_SHORT).show()
-            dismiss()
-        }
+        binding.btnCancel.setOnClickListener { dismiss() }
 
         var selectedHex = "HEX:#B5076B"
 
@@ -62,12 +59,9 @@ class ColorPickerDialog : DialogFragment() {
         })
 
         binding.btnAccept.setOnClickListener {
-            Toast.makeText(requireContext(), "Accepted", Toast.LENGTH_SHORT).show()
-
             val result = Bundle().apply {
                 putString("color_key", selectedHex) // Uses the dynamic color chosen
             }
-
             parentFragmentManager.setFragmentResult("dialog_result_key", result)
             dismiss()
         }
