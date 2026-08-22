@@ -132,4 +132,10 @@ object ThemeHelper {
 
         applyToActivityIfAvailable(activity, options)
     }
+
+    @JvmStatic
+    fun themeSignature(): String {
+        val accent = if (isDynamicColorAccent()) "DYNAMIC" else getColorAccent()
+        return "${getTheme()}|${isDarkThemeBlack()}|$accent"
+    }
 }

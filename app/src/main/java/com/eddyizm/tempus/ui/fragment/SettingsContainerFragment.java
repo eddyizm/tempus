@@ -624,9 +624,9 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private void actionTheme() {
         findPreference("theme").setOnPreferenceClickListener( preference -> {
-            activity.quit();
             Intent tempus = new Intent(requireActivity(), LoginActivity.class);
             tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
             tempus.putExtra("SELECT_FRAGMENT", 2);
             startActivity(tempus);
             return true;

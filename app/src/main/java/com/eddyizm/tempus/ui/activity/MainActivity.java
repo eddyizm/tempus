@@ -43,6 +43,7 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.broadcast.receiver.ConnectivityStatusBroadcastReceiver;
 import com.eddyizm.tempus.databinding.ActivityMainBinding;
 import com.eddyizm.tempus.github.utils.UpdateUtil;
+import com.eddyizm.tempus.helper.ThemeHelper;
 import com.eddyizm.tempus.navigation.NavigationController;
 import com.eddyizm.tempus.navigation.NavigationHelper;
 import com.eddyizm.tempus.service.MediaManager;
