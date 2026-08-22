@@ -347,6 +347,7 @@
     <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
     <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>
     <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
+    <string name="playlist_page_empty">Brak piosenek w tej playliście</string>
     <string name="playlist_page_play_button">Odtwórz</string>
     <string name="playlist_page_shuffle_button">Odtwarzaj losowo</string>
     <string name="playlist_song_count">Playlista  •  %1$d piosenek</string>
@@ -798,6 +799,16 @@
     <string name="playlist_error_not_found_toast">Playlista usunięta z pamięci podręcznej</string>
 	<string name="player_overflow_menu_add_to_playlist">Dodaj do playlisty</string>
 
+    <string name="la_tab_greeter">Powitanie</string>
+    <string name="la_tab_permission">Uprawnienia</string>
+    <string name="la_tab_themes">Motywy</string>
+    <string name="la_tab_server">Serwery</string>
+	
+    <string name="la_appbar_greeter_title">Informacje</string>
+    <string name="la_appbar_permission_title">Przegląd uprawnień</string>
+    <string name="la_appbar_themes_title">Edytor motywów</string>
+    <string name="la_appbar_server_title">Edytor serwerów</string>
+
     <string name="la_greeting_description">Witaj w Tempus, otwarto-źródłowym kliencie muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
 
     <string name="la_server_title">Konfiguracja serwera</string>
@@ -844,6 +855,7 @@
     <string name="la_theme_card_sunset_amber_description">Pomarańcz zachodu kolor akcentu</string>
     <string name="la_theme_card_teal_description">Turkusowy kolor akcentu</string>
     <string name="la_theme_card_slate_gray_description">Szary kolor akcentu</string>
+	    <string name="la_theme_dialog_color_picker_title">Wybierz kolor akcentu</string>
 
     <string name="la_shortcut_label">Wprowadzenie</string>
     <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
