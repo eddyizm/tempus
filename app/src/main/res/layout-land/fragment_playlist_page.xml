@@ -161,7 +161,8 @@
                             android:textAllCaps="false"
                             app:icon="@drawable/ic_play"
                             app:iconGravity="textStart"
-                            app:iconPadding="18dp" />
+                            app:iconPadding="18dp"
+                            android:enabled="false" />
 
                         <Button
                             android:id="@+id/playlist_page_shuffle_button"
@@ -175,7 +176,8 @@
                             android:textAllCaps="false"
                             app:icon="@drawable/ic_shuffle"
                             app:iconGravity="textStart"
-                            app:iconPadding="18dp" />
+                            app:iconPadding="18dp"
+                            android:enabled="false" />
                     </LinearLayout>
 
                     <TextView
@@ -212,14 +214,28 @@
             </com.google.android.material.appbar.AppBarLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/song_recycler_view"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.2"
-            android:clipToPadding="false"
-            android:paddingTop="8dp"
-            android:paddingBottom="75dp" />
+            android:layout_weight="1.2">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/song_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="75dp" />
+
+            <TextView
+                android:id="@+id/empty_playlist_label"
+                style="@style/LabelSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/playlist_page_empty"
+                android:visibility="gone" />
+        </FrameLayout>
 
     </LinearLayout>
 </LinearLayout>

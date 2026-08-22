@@ -341,6 +341,7 @@
     <string name="playlist_editor_dialog_action_delete_failure">Failed to delete playlist</string>
     <string name="playlist_editor_dialog_action_save_success">Playlist saved</string>
     <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
+    <string name="playlist_page_empty">No songs in this playlist</string>
     <string name="playlist_page_play_button">Play</string>
     <string name="playlist_page_shuffle_button">Shuffle</string>
     <string name="playlist_song_count">Playlist  •  %1$d songs</string>
