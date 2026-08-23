@@ -1,5 +1,15 @@
 # Changelog
 
+## [4.25.5](https://github.com/eddyizm/tempus/releases/tag/v4.25.5) (2026-08-23)
+## What's Changed
+* fix: login activity add header by @tvillega in https://github.com/eddyizm/tempus/pull/1015
+* fix: access local network not declared in manifest by @tvillega in https://github.com/eddyizm/tempus/pull/1024
+* fix: keep a blank release type out of the artist page sections by @herrerad85 in https://github.com/eddyizm/tempus/pull/1023
+* fix: Virtualize the internet-radio list to stop OOM on large station  (#308) by @eddyizm in https://github.com/eddyizm/tempus/pull/1020
+* fix: stop the player holding itself open after the app is closed by @herrerad85 in https://github.com/eddyizm/tempus/pull/1019
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.25.0...v4.25.5
+
 ## [4.25.0](https://github.com/eddyizm/tempus/releases/tag/v4.25.0) (2026-08-22)
 ## What's Changed
 * feat: add login activity by @tvillega in https://github.com/eddyizm/tempus/pull/949
