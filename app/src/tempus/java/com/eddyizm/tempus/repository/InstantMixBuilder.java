@@ -5,13 +5,12 @@ import static com.eddyizm.tempus.service.MediaManager.enqueue;
 import androidx.annotation.NonNull;
 import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.session.MediaBrowser;
 
 import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.Child;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,13 +42,13 @@ public class InstantMixBuilder {
      * @param artistId      The artist ID extracted from parent_id
      * @param usedTrackId   The ID of the first track already playing, to avoid duplicate
      * @param count         Total number of tracks to add (INSTANT_MIX_MAX_TRACKS - 1)
-     * @param browserFuture The MediaBrowser future to enqueue into
+     * @param queueTarget   Where the finished mix is added to the queue
      */
     public void buildAndEnqueue(
             String artistId,
             String usedTrackId,
             int count,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         if (!isRunning.compareAndSet(false, true)) {
             Log.d(TAG, "Build already running, skipping");
@@ -79,7 +78,7 @@ public class InstantMixBuilder {
 
                             Random random = new Random();
 
-                            fetchNextTrack(albums, 0, mixTracks, usedTrackIds, random, count, browserFuture);
+                            fetchNextTrack(albums, 0, mixTracks, usedTrackIds, random, count, queueTarget);
 
                             isRunning.set(false);
                         } else {
@@ -112,7 +111,7 @@ public class InstantMixBuilder {
      * @param usedTrackIds  Set of already used track IDs to avoid duplicates
      * @param random        Shared Random instance for shuffling and track picking
      * @param maxTracks     Target number of tracks
-     * @param browserFuture Future to enqueue into when the mix is complete
+     * @param queueTarget   Where the finished mix is added to the queue
      */
     private void fetchNextTrack(
             List<AlbumID3> albums,
@@ -121,12 +120,12 @@ public class InstantMixBuilder {
             Set<String> usedTrackIds,
             Random random,
             int maxTracks,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         if (mixTracks.size() >= maxTracks) {
             Log.d(TAG, "Mix complete with " + mixTracks.size() + " tracks, enqueuing");
             repository.setChildrenMetadata(mixTracks);
-            enqueue(browserFuture, mixTracks, true);
+            enqueue(queueTarget, mixTracks, true);
             return;
         }
 
@@ -166,14 +165,14 @@ public class InstantMixBuilder {
                         }
 
                         int nextIndex = (albumIndex == 0) ? 1 : 0;
-                        fetchNextTrack(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, browserFuture);
+                        fetchNextTrack(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, queueTarget);
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
                         Log.e(TAG, "Failed to load album " + album.getName() + ": " + t.getMessage());
                         int nextIndex = (albumIndex == 0) ? 1 : 0;
-                        fetchNextTrack(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, browserFuture);
+                        fetchNextTrack(albums, nextIndex, mixTracks, usedTrackIds, random, maxTracks, queueTarget);
                     }
                 });
     }
