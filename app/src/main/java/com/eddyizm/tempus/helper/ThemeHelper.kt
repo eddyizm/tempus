@@ -25,7 +25,6 @@ import com.eddyizm.tempus.util.Preferences.getTheme
 import com.google.android.material.color.DynamicColors.applyToActivityIfAvailable
 import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.elevation.SurfaceColors
-import androidx.core.content.withStyledAttributes
 
 object ThemeHelper {
     private const val TAG = "ThemeHelper"
