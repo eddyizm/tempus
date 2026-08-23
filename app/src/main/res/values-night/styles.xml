@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/md_theme_dark_primary</item>
         <item name="colorOnPrimary">@color/md_theme_dark_onPrimary</item>
@@ -36,15 +36,62 @@
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
     </style>
 
-    <style name="AppTheme.Amoled.SurfacesOnly" parent="">
-        <item name="android:colorBackground">@color/md_theme_amoled_background</item> <!-- #000000 -->
-        <item name="colorOnBackground">@color/md_theme_amoled_onBackground</item>
+    <style name="AppTheme.Amoled.SurfacesOnly" parent="Theme.Material3.DayNight">
+        <item name="colorSurface">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceVariant">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainerLowest">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainerLow">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainer">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_amoled_surface_override</item>
+        <item name="colorOutline">@color/md_theme_amoled_surface_override</item>
+        <item name="colorOutlineVariant">@color/md_theme_amoled_surface_override</item>
 
-        <item name="colorSurface">@color/md_theme_amoled_surface</item> <!-- #000000 -->
-        <item name="colorOnSurface">@color/md_theme_amoled_onSurface</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog.Amoled</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog.Amoled</item>
+        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Amoled</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView.Amoled</item>
 
-        <item name="colorSurfaceVariant">@color/md_theme_amoled_surfaceVariant</item> <!-- #1A1A1A -->
-        <item name="colorOnSurfaceVariant">@color/md_theme_amoled_onSurfaceVariant</item>
+        <item name="android:colorBackground">@color/md_theme_amoled_surface_override</item>
+        <item name="android:statusBarColor">@color/md_theme_amoled_surface_override</item>
+        <item name="android:navigationBarColor">@color/md_theme_amoled_surface_override</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">false</item>
+        <item name="android:navigationBarDividerColor" tools:targetApi="27">@color/md_theme_amoled_surface_override</item>
+        <item name="android:windowBackground">@color/md_theme_amoled_surface_override</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomSheetDialog.Amoled" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="colorSurface">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainer">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainerHigh">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_amoled_surface_override</item>
+        <item name="android:colorBackground">@color/md_theme_amoled_surface_override</item>
+        <item name="android:windowBackground">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+
+    <style name="Widget.App.BottomSheet.Amoled" parent="Widget.Material3.BottomSheet">
+        <item name="backgroundTint">@color/md_theme_amoled_surface_override</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:background">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+
+    <style name="Widget.App.BottomNavigationView.Amoled" parent="Widget.Material3.BottomNavigationView">
+        <item name="backgroundTint">@color/md_theme_amoled_surface_override</item>
+        <item name="elevation">0dp</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:background">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog.Amoled" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/md_theme_amoled_surface_override</item>
+        <item name="colorSurfaceContainer">@color/md_theme_amoled_surface_override</item>
+        <item name="colorOutline">@color/md_theme_amoled_surface_override</item>
     </style>
 
     <style name="Divider">

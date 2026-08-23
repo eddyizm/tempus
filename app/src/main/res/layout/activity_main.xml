@@ -23,7 +23,6 @@
             android:id="@+id/player_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorSurface"
             app:enableEdgeToEdge="true"
             app:paddingBottomSystemWindowInsets="true"
             app:behavior_hideable="true"
@@ -37,6 +36,8 @@
             android:layout_gravity="bottom"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
+            android:elevation="0dp"
+            android:background="?attr/colorSurface"
             app:menu="@menu/bottom_nav_menu" />
 
         <TextView
