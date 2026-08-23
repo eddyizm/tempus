@@ -1,0 +1,6 @@
+## What's Changed
+* fix: login activity add header
+* fix: access local network not declared in manifest
+* fix: keep a blank release type out of the artist page sections
+* fix: Virtualize the internet-radio list to stop OOM on large station
+* fix: stop the player holding itself open after the app is closed
