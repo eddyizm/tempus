@@ -68,7 +68,7 @@ class LoginServerFragment : Fragment() {
 
     fun init() {
         setupServerDropdownSelector()
-        initLoginButton()
+        initTestButton()
         initCreateOrUpdateButton()
         initDeleteButton()
         initOldLoginButton()
@@ -200,7 +200,7 @@ class LoginServerFragment : Fragment() {
     }
 
     @OptIn(UnstableApi::class)
-    fun initLoginButton() {
+    fun initTestButton() {
         binding.testButton.setOnLongClickListener {
             updateLegacySharedPreferences()
             requireActivity().finish()
@@ -225,6 +225,17 @@ class LoginServerFragment : Fragment() {
         }
     }
 
+    /* DEPRECATION WARNING
+    *
+    * This button has been hidden from the UI in favor of the Top AppBar.
+    *
+    * This needs to be refactored to provide a true 'Login' button,
+    * set a propper id name and send the correct intent to MainActivity.
+    *
+    * This will become an entrypoint for the LoginActivity -> MainActivity workflow,
+    * and will become the guard that prevents users from crashing MainActivity with invalid creds.
+    *
+    *  */
     @OptIn(UnstableApi::class)
     fun initOldLoginButton() {
         binding.button5.setOnClickListener {

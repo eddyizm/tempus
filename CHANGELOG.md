@@ -1,6 +1,37 @@
 # Changelog
 
-## [4.24.0](https://github.com/eddyizm/tempus/releases/tag/v4.24.0) (2026-08-15 )
+## [4.25.0](https://github.com/eddyizm/tempus/releases/tag/v4.25.0) (2026-08-22)
+## What's Changed
+* feat: add login activity by @tvillega in https://github.com/eddyizm/tempus/pull/949
+* fix: podcast crash when missing field by @tvillega in https://github.com/eddyizm/tempus/pull/975
+* Fix for #927 [CRASH] - Attempt to invoke getParcelable on null object reference by @terranprog in https://github.com/eddyizm/tempus/pull/976
+* Feat: artist add to playlist (#91) by @eddyizm in https://github.com/eddyizm/tempus/pull/979
+* chore: update sdk and permissions by @tvillega in https://github.com/eddyizm/tempus/pull/986
+* Feat/subsonic tests by @eddyizm in https://github.com/eddyizm/tempus/pull/985
+* fix: keep the play queue resolving after a wifi to cellular handover by @herrerad85 in https://github.com/eddyizm/tempus/pull/987
+* fix: show the real song length when the server performs the transcode by @herrerad85 in https://github.com/eddyizm/tempus/pull/988
+* feat: add more theming options by @tvillega in https://github.com/eddyizm/tempus/pull/990
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/992
+* UI/artist page options by @eddyizm in https://github.com/eddyizm/tempus/pull/994
+* chore(i18n): Update Spanish (es-ES) translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/995
+* fix: restore equalizer action by @eddyizm in https://github.com/eddyizm/tempus/pull/1000
+* refactor: stabilize login activity by @tvillega in https://github.com/eddyizm/tempus/pull/991
+* refactor: moved to new namespace, from cappielloantonio/tempo to eddy… by @eddyizm in https://github.com/eddyizm/tempus/pull/998
+* fix: Resolve bugs when displaying audio codec and quality by @jaime-grj in https://github.com/eddyizm/tempus/pull/1003
+* feat: Add search functionality for Settings by @jaime-grj in https://github.com/eddyizm/tempus/pull/1005
+* Switch music library from the toolbar and see which one you are in by @herrerad85 in https://github.com/eddyizm/tempus/pull/1006
+* Add a canWrite check to external storage before trying to use it by @sam-jeffery in https://github.com/eddyizm/tempus/pull/1004
+* feat: add color picker for accent color by @eddyizm in https://github.com/eddyizm/tempus/pull/1009
+* feat: show 20 playlists in home view (#1010) by @eddyizm in https://github.com/eddyizm/tempus/pull/1011
+* fix: tell the user a playlist is empty instead of a dead Play button by @herrerad85 in https://github.com/eddyizm/tempus/pull/1012
+
+## New Contributors
+* @terranprog made their first contribution in https://github.com/eddyizm/tempus/pull/976
+* @sam-jeffery made their first contribution in https://github.com/eddyizm/tempus/pull/1004
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.24.0...v4.25.0
+
+## [4.24.0](https://github.com/eddyizm/tempus/releases/tag/v4.24.0) (2026-08-15)
 ## What's Changed
 * fix: add Basque (eu) to locale_config.xml by @planetryan in https://github.com/eddyizm/tempus/pull/960
 * feat: add a music library switcher so browsing and search can be scoped to one library by @herrerad85 in https://github.com/eddyizm/tempus/pull/951

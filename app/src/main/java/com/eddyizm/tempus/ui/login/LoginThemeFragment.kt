@@ -60,7 +60,6 @@ class LoginThemeFragment : Fragment() {
     private fun init() {
         initTrueBlackSwitch()
         initDynamicColorsSwitch()
-        initButtonReturn()
         setupThemeSelector()
         setupDefaultAccentColorButtons()
     }
@@ -85,22 +84,6 @@ class LoginThemeFragment : Fragment() {
         binding.defaultDynamicSwitch.setOnClickListener {
             Preferences.setDynamicColorAccent(binding.defaultDynamicSwitch.isChecked)
             applyAccentColor(Preferences.getColorAccent())
-        }
-    }
-
-    @OptIn(UnstableApi::class)
-    private fun initButtonReturn() {
-        if (!singlePageMode) {
-            binding.buttonReturn.visibility = View.GONE
-            return
-        }
-
-        binding.buttonReturn.setOnClickListener {
-            requireActivity().finish()
-            val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
-                putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_settings_fragment")
-            }
-            startActivity(tempus)
         }
     }
 

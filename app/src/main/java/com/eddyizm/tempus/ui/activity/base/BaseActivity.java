@@ -29,11 +29,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
 
+    private String themeSignature = "";
+
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         ThemeHelper.enableThemeSwitch(this);
+        themeSignature = generateThemeSignature();
         super.onCreate(savedInstanceState);
         Flavors.initializeCastContext(this);
         initializeDownloader();
@@ -47,6 +50,14 @@ public class BaseActivity extends AppCompatActivity {
         super.onStart();
         ThemeHelper.setNavigationBarColor(this);
         initializeBrowser();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!ThemeHelper.themeSignature().equals(themeSignature)) {
+            ActivityCompat.recreate(this);
+        }
     }
 
     @Override
@@ -117,5 +128,14 @@ public class BaseActivity extends AppCompatActivity {
         } catch (IllegalStateException e) {
             DownloadService.startForeground(this, DownloaderService.class);
         }
+    }
+
+    private String generateThemeSignature() {
+        String accent = (Preferences.isDynamicColorAccent())
+                ? "DYNAMIC"
+                : Preferences.getColorAccent();
+        String theme = Preferences.getTheme();
+        String black = String.valueOf(Preferences.isDarkThemeBlack());
+        return theme + "|" + black + "|" + accent;
     }
 }
