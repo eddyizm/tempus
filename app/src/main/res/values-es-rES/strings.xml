@@ -780,7 +780,7 @@
     <string name="la_server_button_update">Actualizar</string>
     <string name="la_server_button_delete">Eliminar</string>
     <string name="la_server_button_test">Probar</string>
-    <string name="la_server_button_return">Volver a la lista de servidores</string>
+    <string name="la_server_button_login">Volver a la lista de servidores</string>
     <string name="la_server_dropdown_add_new">Añadir nuevo servidor</string>
     <string name="la_server_toast_created">Servidor creado</string>
     <string name="la_server_toast_updated">Servidor actualizado</string>

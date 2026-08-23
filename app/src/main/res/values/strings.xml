@@ -805,6 +805,11 @@
     <string name="la_tab_themes">Themes</string>
     <string name="la_tab_server">Servers</string>
 
+    <string name="la_appbar_greeter_title">About</string>
+    <string name="la_appbar_permission_title">Permissions overview</string>
+    <string name="la_appbar_themes_title">Theme editor</string>
+    <string name="la_appbar_server_title">Server editor</string>
+
     <string name="la_greeting_description">Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.</string>
 
     <string name="la_server_title">Server Setup</string>
@@ -821,7 +826,7 @@
     <string name="la_server_button_update">Update</string>
     <string name="la_server_button_delete">Delete</string>
     <string name="la_server_button_test">Test</string>
-    <string name="la_server_button_return">Go to login</string>
+    <string name="la_server_button_login">Go to login</string>
     <string name="la_server_dropdown_add_new">Add new server</string>
     <string name="la_server_toast_created">Server created</string>
     <string name="la_server_toast_updated">Server updated</string>
