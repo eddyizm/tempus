@@ -7,12 +7,12 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.session.MediaBrowser;
 
 import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.database.dao.ChronologyDao;
 import com.eddyizm.tempus.model.Chronology;
+import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
@@ -60,13 +60,13 @@ public class MadeForYouBuilder {
      * @param mixType       AA_QUICKMIX_ID, AA_MYMIX_ID or AA_DISCOVERYMIX_ID
      * @param usedTrackId   The ID of the first track already playing, to avoid duplicate
      * @param count         Total number of tracks to add (INSTANT_MIX_MAX_TRACKS - 1)
-     * @param browserFuture The MediaBrowser future to enqueue into
+     * @param queueTarget   Where the finished mix is added to the queue
      */
     public void buildAndEnqueue(
             String mixType,
             String usedTrackId,
             int count,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         if (!isRunning.compareAndSet(false, true)) {
             Log.d(TAG, mixType + " Build already running, skipping");
@@ -102,10 +102,10 @@ public class MadeForYouBuilder {
                                         recentAlbums, Collections.emptyList(), Collections.emptyList(), Collections.emptyList(),
                                         0, 0, 0, 0,
                                         new ArrayList<>(), usedTrackIds,
-                                        count, mixType, Collections.emptySet(), browserFuture);
+                                        count, mixType, Collections.emptySet(), queueTarget);
                             } else {
                                 Log.w(TAG, mixType + " recent albums failed");
-                                fallbackToRandomSongs(count, usedTrackId, browserFuture);
+                                fallbackToRandomSongs(count, usedTrackId, queueTarget);
                             }
                         }
                         @Override
@@ -206,7 +206,7 @@ public class MadeForYouBuilder {
 
             if (recentAlbums.isEmpty() && starredAlbums.isEmpty() && starredArtists.isEmpty()) {
                 Log.w(TAG, mixType + " No context available, falling back to random songs");
-                fallbackToRandomSongs(count, usedTrackId, browserFuture);
+                fallbackToRandomSongs(count, usedTrackId, queueTarget);
                 return null;
             }
 
@@ -223,7 +223,7 @@ public class MadeForYouBuilder {
                     recentAlbums, starredAlbums, starredArtists, starredTracks,
                     0, 0, 0, 0,
                     new ArrayList<>(), usedTrackIds,
-                    count, mixType, recentTracks, browserFuture);
+                    count, mixType, recentTracks, queueTarget);
 
             return null;
         }, MoreExecutors.directExecutor());
@@ -287,7 +287,7 @@ public class MadeForYouBuilder {
 
     /**
      * Recursively builds the MadeForYou mix by cycling through steps based on the selected mode.
-     * When complete, enqueues directly via browserFuture.
+     * When complete, adds the mix to the queue.
 
      * Recursion depth is bounded by count.
      */
@@ -301,16 +301,16 @@ public class MadeForYouBuilder {
             List<Child> mixTracks, Set<String> usedTrackIds,
             int count, String mixType,
             Set<String> recentTrackIds,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         if (mixTracks.size() >= count) {
-            enqueueMix(mixTracks, mixType, browserFuture);
+            enqueueMix(mixTracks, mixType, queueTarget);
             return;
         }
 
         if (cycleIndex > MAX_CYCLES) {
             Log.w(TAG, mixType + " Safety break reached, finalizing with " + mixTracks.size() + " tracks");
-            enqueueMix(mixTracks, mixType, browserFuture);
+            enqueueMix(mixTracks, mixType, queueTarget);
             return;
         }
 
@@ -326,14 +326,14 @@ public class MadeForYouBuilder {
                             recentAlbums, starredAlbums, starredArtists, starredTracks,
                             recentIdx + 1, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                             mixTracks, usedTrackIds, count, mixType,
-                            recentTrackIds, browserFuture);
+                            recentTrackIds, queueTarget);
                 } else {
                     Log.d(TAG, mixType + " Step RECENT: no recent albums, skipping");
                     runMixStep(cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists, starredTracks, starredTracksIdx,
                             recentIdx, starredAlbumIdx, starredArtistIdx,
                             mixTracks, usedTrackIds, count, mixType,
-                            recentTrackIds, browserFuture);
+                            recentTrackIds, queueTarget);
                 }
                 break;
 
@@ -346,14 +346,14 @@ public class MadeForYouBuilder {
                             recentAlbums, starredAlbums, starredArtists, starredTracks,
                             recentIdx, starredAlbumIdx + 1, starredArtistIdx, starredTracksIdx,
                             mixTracks, usedTrackIds, count, mixType,
-                            recentTrackIds, browserFuture);
+                            recentTrackIds, queueTarget);
                 } else {
                     Log.d(TAG, mixType + " Step STARRED_ALBUM: no starred albums, skipping");
                     runMixStep(cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists, starredTracks,
                             recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                             mixTracks, usedTrackIds, count, mixType,
-                            recentTrackIds, browserFuture);
+                            recentTrackIds, queueTarget);
                 }
                 break;
 
@@ -380,14 +380,14 @@ public class MadeForYouBuilder {
                                                 recentAlbums, starredAlbums, starredArtists, starredTracks,
                                                 recentIdx, starredAlbumIdx, starredArtistIdx + 1, starredTracksIdx,
                                                 mixTracks, usedTrackIds, count, mixType,
-                                                recentTrackIds, browserFuture);
+                                                recentTrackIds, queueTarget);
                                     } else {
                                         Log.w(TAG, mixType + " Artist " + artist.getName() + " returned no albums, skipping");
                                         runMixStep(cycleIndex + 1,
                                                 recentAlbums, starredAlbums, starredArtists, starredTracks,
                                                 recentIdx, starredAlbumIdx, starredArtistIdx + 1, starredTracksIdx,
                                                 mixTracks, usedTrackIds, count, mixType,
-                                                recentTrackIds, browserFuture);
+                                                recentTrackIds, queueTarget);
                                     }
                                 }
                                 @Override
@@ -397,7 +397,7 @@ public class MadeForYouBuilder {
                                             recentAlbums, starredAlbums, starredArtists, starredTracks,
                                             recentIdx, starredAlbumIdx, starredArtistIdx + 1, starredTracksIdx,
                                             mixTracks, usedTrackIds, count, mixType,
-                                            recentTrackIds, browserFuture);
+                                            recentTrackIds, queueTarget);
                                 }
                             });
                 } else {
@@ -406,7 +406,7 @@ public class MadeForYouBuilder {
                             recentAlbums, starredAlbums, starredArtists, starredTracks,
                             recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                             mixTracks, usedTrackIds, count, mixType,
-                            recentTrackIds, browserFuture);
+                            recentTrackIds, queueTarget);
                 }
                 break;
 
@@ -419,14 +419,14 @@ public class MadeForYouBuilder {
                             recentAlbums, starredAlbums, starredArtists, starredTracks,
                             recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx + 1,
                             mixTracks, usedTrackIds, count, mixType,
-                            recentTrackIds, browserFuture);
+                            recentTrackIds, queueTarget);
                 } else {
                     Log.d(TAG, mixType + " Step STARRED_TRACKS: no starred tracks, skipping");
                     runMixStep(cycleIndex + 1,
                             recentAlbums, starredAlbums, starredArtists, starredTracks,
                             recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                             mixTracks, usedTrackIds, count, mixType,
-                            recentTrackIds, browserFuture);
+                            recentTrackIds, queueTarget);
                 }
                 break;
         }
@@ -452,7 +452,7 @@ public class MadeForYouBuilder {
             List<Child> mixTracks, Set<String> usedTrackIds,
             int count, String mixType,
             Set<String> recentTrackIds,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
@@ -485,7 +485,7 @@ public class MadeForYouBuilder {
                         }
 
                         if (mixTracks.size() >= count) {
-                            enqueueMix(mixTracks, mixType, browserFuture);
+                            enqueueMix(mixTracks, mixType, queueTarget);
                             return;
                         }
 
@@ -495,7 +495,7 @@ public class MadeForYouBuilder {
                                 recentAlbums, starredAlbums, starredArtists, starredTracks,
                                 recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                                 mixTracks, usedTrackIds, count, mixType,
-                                recentTrackIds, browserFuture);
+                                recentTrackIds, queueTarget);
                     }
 
                     @Override
@@ -505,7 +505,7 @@ public class MadeForYouBuilder {
                                 recentAlbums, starredAlbums, starredArtists, starredTracks,
                                 recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                                 mixTracks, usedTrackIds, count, mixType,
-                                recentTrackIds, browserFuture);
+                                recentTrackIds, queueTarget);
                     }
                 });
     }
@@ -528,7 +528,7 @@ public class MadeForYouBuilder {
             List<Child> mixTracks, Set<String> usedTrackIds,
             int count, String mixType,
             Set<String> recentTrackIds,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         String songIdForSimilar = null;
 
@@ -543,7 +543,7 @@ public class MadeForYouBuilder {
         }
 
         if (mixTracks.size() >= count) {
-            enqueueMix(mixTracks, mixType, browserFuture);
+            enqueueMix(mixTracks, mixType, queueTarget);
             return;
         }
 
@@ -553,7 +553,7 @@ public class MadeForYouBuilder {
                 recentAlbums, starredAlbums, starredArtists, starredTracks,
                 recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                 mixTracks, usedTrackIds, count, mixType,
-                recentTrackIds, browserFuture);
+                recentTrackIds, queueTarget);
     }
 
     /**
@@ -574,14 +574,14 @@ public class MadeForYouBuilder {
             List<Child> mixTracks, Set<String> usedTrackIds,
             int count, String mixType,
             Set<String> recentTrackIds,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         if (!mixType.equals(ConstantsAA.DISCOVERYMIX_ID) || songIdForSimilar == null) {
             runMixStep(cycleIndex,
                     recentAlbums, starredAlbums, starredArtists, starredTracks,
                     recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                     mixTracks, usedTrackIds, count, mixType,
-                    recentTrackIds, browserFuture);
+                    recentTrackIds, queueTarget);
             return;
         }
 
@@ -615,7 +615,7 @@ public class MadeForYouBuilder {
                         }
 
                         if (mixTracks.size() >= count) {
-                            enqueueMix(mixTracks, mixType, browserFuture);
+                            enqueueMix(mixTracks, mixType, queueTarget);
                             return;
                         }
 
@@ -623,7 +623,7 @@ public class MadeForYouBuilder {
                                 recentAlbums, starredAlbums, starredArtists, starredTracks,
                                 recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                                 mixTracks, usedTrackIds, count, mixType,
-                                recentTrackIds, browserFuture);
+                                recentTrackIds, queueTarget);
                     }
 
                     @Override
@@ -633,7 +633,7 @@ public class MadeForYouBuilder {
                                 recentAlbums, starredAlbums, starredArtists, starredTracks,
                                 recentIdx, starredAlbumIdx, starredArtistIdx, starredTracksIdx,
                                 mixTracks, usedTrackIds, count, mixType,
-                                recentTrackIds, browserFuture);
+                                recentTrackIds, queueTarget);
                     }
                 });
     }
@@ -644,7 +644,7 @@ public class MadeForYouBuilder {
     private void fallbackToRandomSongs(
             int count,
             String usedTrackId,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
 
         App.getSubsonicClientInstance(false)
                 .getAlbumSongListClient()
@@ -663,7 +663,7 @@ public class MadeForYouBuilder {
 
                             Log.d(TAG, "Fallback random songs: " + songs.size());
                             repository.setChildrenMetadata(songs);
-                            enqueue(browserFuture, songs, true);
+                            enqueue(queueTarget, songs, true);
                         } else {
                             Log.w(TAG, "Fallback random songs failed");
                         }
@@ -684,14 +684,14 @@ public class MadeForYouBuilder {
     private void enqueueMix(
             List<Child> mixTracks,
             String mixType,
-            ListenableFuture<MediaBrowser> browserFuture) {
+            MediaManager.QueueTarget queueTarget) {
         Log.d(TAG, mixType + " complete with " + mixTracks.size() + " tracks, enqueuing");
 
         if(mixType.equals(ConstantsAA.DISCOVERYMIX_ID))
             Collections.shuffle(mixTracks);
 
         repository.setChildrenMetadata(mixTracks);
-        enqueue(browserFuture, mixTracks, true);
+        enqueue(queueTarget, mixTracks, true);
 
         isRunning.set(false);
     }
