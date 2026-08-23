@@ -1,0 +1,10 @@
+feat add login activity
+fix podcast crash when missing field
+Feat: artist add to playlist/queue
+fix: keep the play queue resolving after a wifi to cellular handover
+fix: show the real song length, audio codec and quality when the server performs the transcode
+feat: add more theming options
+feat: Add search functionality for Settings
+feat: Switch music library from the toolbar
+feat: add color picker for accent color
+feat: show 20 playlists in home view

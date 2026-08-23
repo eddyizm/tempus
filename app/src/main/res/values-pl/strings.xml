@@ -814,7 +814,7 @@
     <string name="la_server_button_update">Uaktualnij</string>
     <string name="la_server_button_delete">Usuń</string>
     <string name="la_server_button_test">Testuj</string>
-    <string name="la_server_button_return">Wróć do listy serwerów</string>
+    <string name="la_server_button_login">Wróć do listy serwerów</string>
     <string name="la_server_dropdown_add_new">Dodaj nowy serwer</string>
     <string name="la_server_toast_created">Serwer utworzony</string>
     <string name="la_server_toast_updated">Serwer uaktualniony</string>
