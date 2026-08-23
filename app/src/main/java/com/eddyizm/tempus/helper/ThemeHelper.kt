@@ -25,6 +25,7 @@ import com.eddyizm.tempus.util.Preferences.getTheme
 import com.google.android.material.color.DynamicColors.applyToActivityIfAvailable
 import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.elevation.SurfaceColors
+import androidx.core.content.withStyledAttributes
 
 object ThemeHelper {
     private const val TAG = "ThemeHelper"
@@ -108,15 +109,29 @@ object ThemeHelper {
         }
 
         if (isAmoled) {
-            val amoledOverlayAttrs = intArrayOf(
+            val amoledOverlayAttrs = mutableListOf(
                 android.R.attr.colorBackground,
+                android.R.attr.statusBarColor,
+                android.R.attr.navigationBarColor,
                 com.google.android.material.R.attr.colorSurface,
-                com.google.android.material.R.attr.colorSurfaceVariant
+                com.google.android.material.R.attr.colorSurfaceVariant,
+                com.google.android.material.R.attr.colorSurfaceContainerLowest,
+                com.google.android.material.R.attr.colorSurfaceContainerLow,
+                com.google.android.material.R.attr.colorSurfaceContainer,
+                com.google.android.material.R.attr.colorSurfaceContainerHigh,
+                com.google.android.material.R.attr.colorSurfaceContainerHighest,
+                com.google.android.material.R.attr.colorOutline,
+                com.google.android.material.R.attr.colorOutlineVariant
             )
 
-            activity.obtainStyledAttributes(amoledOverlayAttrs)
-            activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                amoledOverlayAttrs.add(android.R.attr.navigationBarDividerColor)
+            }
 
+            val typedArray = activity.obtainStyledAttributes(amoledOverlayAttrs.toIntArray())
+            typedArray.recycle()
+
+            activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
         }
     }
 
