@@ -36,7 +36,7 @@
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
     </style>
 
-    <style name="AppTheme.Amoled.SurfacesOnly" parent="Theme.Material3.DayNight">
+    <style name="AppTheme.Amoled.SurfacesOnly" parent="">
         <!-- Regular surface overriding -->
         <item name="colorSurface">@color/md_theme_amoled_surface_override</item>
         <item name="colorSurfaceVariant">@color/md_theme_amoled_surface_override</item>
