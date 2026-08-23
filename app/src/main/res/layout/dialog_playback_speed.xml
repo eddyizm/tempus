@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="?attr/colorSurface"
     android:paddingStart="24dp"
     android:paddingTop="16dp"
     android:paddingEnd="24dp">
@@ -12,7 +11,6 @@
     <TextView
         android:id="@+id/playback_speed_value_text_view"
         style="@style/TitleMedium"
-        android:background="?attr/colorSurface"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
