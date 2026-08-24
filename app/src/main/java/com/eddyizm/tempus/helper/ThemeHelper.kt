@@ -4,6 +4,7 @@ package com.eddyizm.tempus.helper
 import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
 
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
 
 import com.eddyizm.tempus.R
@@ -131,6 +133,7 @@ object ThemeHelper {
             typedArray.recycle()
 
             activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
+            activity.window.setBackgroundDrawable(Color.BLACK.toDrawable())
         }
     }
 
