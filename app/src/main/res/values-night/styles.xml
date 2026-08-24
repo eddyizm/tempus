@@ -73,6 +73,7 @@
     <style name="ThemeOverlay.App.BottomSheetDialog.Amoled" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <!-- This breaks Material3 default elevation -->
         <item name="backgroundTint">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayColor">@color/md_theme_amoled_surface_override</item>
         <item name="elevation">0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="android:background">@color/md_theme_amoled_surface_override</item>
@@ -93,6 +94,7 @@
     <style name="Widget.App.BottomSheet.Amoled" parent="Widget.Material3.BottomSheet">
         <!-- This breaks Material3 default elevation tint -->
         <item name="backgroundTint">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayColor">@color/md_theme_amoled_surface_override</item>
         <item name="elevation">0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="android:background">@color/md_theme_amoled_surface_override</item>
@@ -113,6 +115,7 @@
     <style name="Widget.App.BottomNavigationView.Amoled" parent="Widget.Material3.BottomNavigationView">
         <!-- This breaks Material3 default elevation tint -->
         <item name="backgroundTint">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayColor">@color/md_theme_amoled_surface_override</item>
         <item name="elevation">0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="android:background">@color/md_theme_amoled_surface_override</item>
@@ -133,6 +136,7 @@
     <style name="ThemeOverlay.App.MaterialAlertDialog.Amoled" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <!-- This breaks Material3 default elevation tint -->
         <item name="backgroundTint">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayColor">@color/md_theme_amoled_surface_override</item>
         <item name="elevation">0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="android:background">@color/md_theme_amoled_surface_override</item>
@@ -153,6 +157,7 @@
     <style name="ThemeOverlay.App.Dialog.Amoled" parent="ThemeOverlay.Material3.Dialog">
         <!-- This breaks Material3 default elevation tint -->
         <item name="backgroundTint">@color/md_theme_amoled_surface_override</item>
+        <item name="elevationOverlayColor">@color/md_theme_amoled_surface_override</item>
         <item name="elevation">0dp</item>
         <item name="android:elevation">0dp</item>
         <item name="android:background">@color/md_theme_amoled_surface_override</item>
