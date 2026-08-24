@@ -215,44 +215,18 @@ public class QueueRepository {
         dbExecutor.execute(() -> queueDao.setPlayingChanged(id, ms));
     }
 
-    public int getLastPlayedMediaIndex() {
-        int index = 0;
-
+    public Queue getLastPlayedMedia() {
         GetLastPlayedMediaThreadSafe getLastPlayedMediaThreadSafe = new GetLastPlayedMediaThreadSafe(queueDao);
         Thread thread = new Thread(getLastPlayedMediaThreadSafe);
         thread.start();
 
         try {
             thread.join();
-            Queue lastMediaPlayed = getLastPlayedMediaThreadSafe.getQueueItem();
-            if (lastMediaPlayed != null) {
-                index = lastMediaPlayed.getTrackOrder();
-            }
+            return getLastPlayedMediaThreadSafe.getQueueItem();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            return null;
         }
-
-        return index;
-    }
-
-    public long getLastPlayedMediaTimestamp() {
-        long timestamp = 0;
-
-        GetLastPlayedMediaThreadSafe getLastPlayedMediaThreadSafe = new GetLastPlayedMediaThreadSafe(queueDao);
-        Thread thread = new Thread(getLastPlayedMediaThreadSafe);
-        thread.start();
-
-        try {
-            thread.join();
-            Queue lastMediaPlayed = getLastPlayedMediaThreadSafe.getQueueItem();
-            if (lastMediaPlayed != null) {
-                timestamp = lastMediaPlayed.getPlayingChanged();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return timestamp;
     }
 
     private static class GetMediaThreadSafe implements Runnable {

@@ -246,17 +246,22 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             val mediaItems = MappingUtil.mapMediaItems(storedQueue)
             if (mediaItems.isEmpty()) return@Thread
 
-            val lastIndex = try {
-                queueRepository.lastPlayedMediaIndex
+            val lastPlayed = try {
+                queueRepository.lastPlayedMedia
             } catch (_: Exception) {
-                0
-            }.coerceIn(0, mediaItems.size - 1)
+                null
+            }
 
-            val lastPosition = try {
-                queueRepository.lastPlayedMediaTimestamp
-            } catch (_: Exception) {
-                0L
-            }.let { if (it < 0L) 0L else it }
+            var lastIndex = 0
+            var lastPosition = 0L
+
+            if (lastPlayed != null) {
+                val found = MappingUtil.indexOfMediaId(mediaItems, lastPlayed.id)
+                if (found >= 0) {
+                    lastIndex = found
+                    lastPosition = lastPlayed.playingChanged.coerceAtLeast(0L)
+                }
+            }
 
             widgetUpdateHandler.post {
                 // onDestroy may have released the player while this queue was still mapping, and

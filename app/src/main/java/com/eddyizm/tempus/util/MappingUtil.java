@@ -58,6 +58,19 @@ public class MappingUtil {
 
     private static final String TAG = "MappingUtil";
 
+    /**
+     * Where a stored queue row ended up in a mapped list, or -1 when it is not there.
+     * mapMediaItems drops songs it cannot map, so a row's stored track order is not a
+     * position in the list it returns.
+     */
+    public static int indexOfMediaId(List<MediaItem> items, String mediaId) {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).mediaId.equals(mediaId)) return i;
+        }
+
+        return -1;
+    }
+
     public static MediaItem mapMediaItem(Child media) {
         try {
             Download downloaded = getCachedDownloads().get(media.getId());
