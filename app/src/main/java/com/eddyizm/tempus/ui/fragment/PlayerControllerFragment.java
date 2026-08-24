@@ -746,13 +746,15 @@ public class PlayerControllerFragment extends Fragment {
 
                 if (position == 0) {
                     activity.setBottomSheetDraggableState(true);
+                    playerMediaCoverViewPager.setUserInputEnabled(false);
 
                     if (playerBottomSheetFragment != null) {
                         playerBottomSheetFragment.setPlayerControllerVerticalPagerDraggableState(true);
                     }
                     updateLyricsButtonTint(false);
                 } else if (position == 1) {
-                    activity.setBottomSheetDraggableState(false);
+                    activity.setBottomSheetDraggableState(true);
+                    playerMediaCoverViewPager.setUserInputEnabled(true);
 
                     if (playerBottomSheetFragment != null) {
                         playerBottomSheetFragment.setPlayerControllerVerticalPagerDraggableState(false);
