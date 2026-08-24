@@ -512,7 +512,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex)
                 if (!isPlaying) {
-                    MediaManager.setPlayingPausedTimestamp(
+                    MediaManager.setResumePoint(
                         player.currentMediaItem,
                         player.currentPosition
                     )

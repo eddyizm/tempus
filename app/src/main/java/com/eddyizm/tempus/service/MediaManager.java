@@ -556,9 +556,9 @@ public class MediaManager {
         if (mediaItem != null) getQueueRepository().setLastPlayedTimestamp(mediaItem.mediaId);
     }
 
-    public static void setPlayingPausedTimestamp(MediaItem mediaItem, long ms) {
+    public static void setResumePoint(MediaItem mediaItem, long ms) {
         if (mediaItem != null)
-            getQueueRepository().setPlayingPausedTimestamp(mediaItem.mediaId, ms);
+            getQueueRepository().setResumePoint(mediaItem.mediaId, ms);
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {
