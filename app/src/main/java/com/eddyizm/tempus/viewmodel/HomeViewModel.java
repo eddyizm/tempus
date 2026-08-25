@@ -144,7 +144,8 @@ public class HomeViewModel extends AndroidViewModel {
 
         albumRepository.getAlbums("byYear", 500, currentYear, currentYear).observe(owner, albums -> {
             if (albums != null && generation == musicFolderGeneration) {
-                albums.sort(Comparator.comparing(AlbumID3::getCreated).reversed());
+                albums.sort(Comparator.comparing(AlbumID3::getCreated,
+                        Comparator.nullsFirst(Comparator.naturalOrder())).reversed());
                 newReleasedAlbum.setValue(albums.subList(0, Math.min(20, albums.size())));
             }
         });
