@@ -101,7 +101,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
 
     @OptIn(markerClass = UnstableApi.class)
     public void setPinned(boolean isNowPinned) {
-        playlistRepository.insert(playlist);
+        playlistRepository.insertIfAbsent(playlist);
 
         if (isNowPinned) {
             playlistRepository.pin(playlist.getId());

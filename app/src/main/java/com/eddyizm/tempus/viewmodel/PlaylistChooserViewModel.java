@@ -21,7 +21,9 @@ import java.util.List;
 public class PlaylistChooserViewModel extends AndroidViewModel {
     private final PlaylistRepository playlistRepository;
     private final MutableLiveData<List<Playlist>> playlists = new MutableLiveData<>(null);
-    private final MutableLiveData<Boolean> playlistIsPublic = new MutableLiveData<>(false);
+    // Null until the user touches the switch. A false default went out on the wire and changed
+    // the visibility of a playlist the user only meant to add a song to.
+    private final MutableLiveData<Boolean> playlistIsPublic = new MutableLiveData<>(null);
 
     public Boolean getIsPlaylistPublic() {
         return playlistIsPublic.getValue();
@@ -29,6 +31,15 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
 
     public void setIsPlaylistPublic(boolean isPublic) {
         playlistIsPublic.setValue(isPublic);
+    }
+
+    /**
+     * Clears the visibility the user picked last time. This view model belongs to the activity, so
+     * it outlives the dialog, while the switch is inflated unchecked every time. Without this the
+     * two disagree and a later add sends a visibility the switch is not showing.
+     */
+    public void forgetVisibility() {
+        playlistIsPublic.setValue(null);
     }
 
     private ArrayList<Child> toAdd = new ArrayList<>();
