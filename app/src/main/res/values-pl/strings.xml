@@ -334,7 +334,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
 	<string name="playlist_chooser_dialog_visibility_switch_label">Oznacz playlistę jako publiczną</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Serwer aktualizuje widoczność podczas każdego zapytania. Domyślnie jest ustawiona na prywatną.</string>
     <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
     <string name="playlist_duration">Długość  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>

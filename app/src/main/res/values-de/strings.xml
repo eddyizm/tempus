@@ -265,7 +265,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Öffentlich</string>
     <string name="playlist_chooser_dialog_visibility_private">Privat</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Wiedergabeliste als öffentlich markieren</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Der Server aktualisiert die Sichtbarkeit bei jeder Anfrage. Sichtbarkeit ist standardmäßig privat.</string>
     <string name="playlist_counted_tracks">%1$d Titel •  %2$s</string>
     <string name="playlist_duration">Laufzeit  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Halten um zu löschen</string>

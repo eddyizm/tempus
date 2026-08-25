@@ -14,8 +14,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 37
 
-        versionCode 43
-        versionName '4.25.0'
+        versionCode 44
+        versionName '4.25.5'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -79,6 +79,10 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 }
 

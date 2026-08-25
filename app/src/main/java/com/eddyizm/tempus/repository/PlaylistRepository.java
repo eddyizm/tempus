@@ -212,6 +212,10 @@ public class PlaylistRepository {
             // Insert before the early-return dedup checks so the row is ensured even when
             // the songs are already cached. See issue #729.
             playlistDao.insertIfAbsent(playlist);
+            // insertIfAbsent leaves an existing row alone, so this response's visibility would be
+            // thrown away whenever the row already exists. The write paths read this column, so
+            // the value this response carried is written back on its own.
+            playlistDao.updateVisibility(playlistId, playlist.isUniversal());
             List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
             if (songs == null || songs.isEmpty()) {
                 if (cached != null && !cached.isEmpty()) {
@@ -301,14 +305,26 @@ public class PlaylistRepository {
         void onAllSkipped();
     }
 
+    /**
+     * @param playlistVisibilityIsPublic true when the user marked the playlist public with the
+     *                                   chooser switch. Anything else falls back to the playlist's
+     *                                   cached visibility. The switch marks a playlist public and
+     *                                   never sends false, because false is not a safe value to
+     *                                   send.
+     */
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic, AddToPlaylistCallback callback) {
         android.util.Log.d("PlaylistRepository", "addSongToPlaylist: id=" + playlistId + ", songs=" + songsId);
         if (songsId.isEmpty()) {
             if (callback != null) callback.onAllSkipped();
-        } else{
+            return;
+        }
+        new Thread(() -> {
+            Boolean isPublic = Boolean.TRUE.equals(playlistVisibilityIsPublic)
+                    ? Boolean.TRUE
+                    : visibilityToSend(playlistId);
             App.getSubsonicClientInstance(false)
                     .getPlaylistClient()
-                    .updatePlaylist(playlistId, null, playlistVisibilityIsPublic, songsId, null)
+                    .updatePlaylist(playlistId, null, isPublic, songsId, null)
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
@@ -321,30 +337,51 @@ public class PlaylistRepository {
                             if (callback != null) callback.onFailure();
                         }
                     });
-        }
+        }).start();
+    }
+
+    /**
+     * The visibility to send with a write, or null to send none at all. True only when the server
+     * has said this playlist is public.
+     * <p>
+     * Servers split two ways on an absent public parameter. One group reads the parameter's value,
+     * so leaving it out leaves the visibility alone. The other never acts on what the value says,
+     * making the playlist public whenever the parameter arrives and private when it does not. So
+     * false is never sent, and true is sent whenever the playlist is known to be public, since on
+     * the second group leaving it out would make that playlist private. A literal true published
+     * every private playlist that was edited, which is what this exists to stop.
+     * <p>
+     * The value is the one the server last reported, held in the cached playlist row, which the
+     * full playlist list refreshes on every load. Reading it here keeps the screens out of it and
+     * costs no extra request. It touches the database, so callers have to be off the main thread.
+     */
+    private Boolean visibilityToSend(String playlistId) {
+        return Boolean.TRUE.equals(playlistDao.isPlaylistPublic(playlistId)) ? Boolean.TRUE : null;
     }
 
     public void removeSongFromPlaylist(String playlistId, int index, AddToPlaylistCallback callback) {
         ArrayList<Integer> indexes = new ArrayList<>();
         indexes.add(index);
-        App.getSubsonicClientInstance(false)
-                .getPlaylistClient()
-                .updatePlaylist(playlistId, null, true, null, indexes)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()) notifyPlaylistChanged();
-                        if (callback != null) {
-                            if (response.isSuccessful()) callback.onSuccess();
-                            else callback.onFailure();
+        new Thread(() -> {
+            App.getSubsonicClientInstance(false)
+                    .getPlaylistClient()
+                    .updatePlaylist(playlistId, null, visibilityToSend(playlistId), null, indexes)
+                    .enqueue(new Callback<ApiResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                            if (response.isSuccessful()) notifyPlaylistChanged();
+                            if (callback != null) {
+                                if (response.isSuccessful()) callback.onSuccess();
+                                else callback.onFailure();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        if (callback != null) callback.onFailure();
-                    }
-                });
+                        @Override
+                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                            if (callback != null) callback.onFailure();
+                        }
+                    });
+        }).start();
     }
 
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic) {
@@ -374,26 +411,28 @@ public class PlaylistRepository {
     }
 
     public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
-        App.getSubsonicClientInstance(false)
-                .getPlaylistClient()
-                .updatePlaylist(playlistId, name, true, songsId, null)
-                .enqueue(new Callback<ApiResponse>() {
-                    @Override
-                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()) {
-                            updateLocalPlaylistName(playlistId, name);
-                            notifyPlaylistChanged();
-                            if (callback != null) callback.onSuccess();
-                        } else {
+        new Thread(() -> {
+            App.getSubsonicClientInstance(false)
+                    .getPlaylistClient()
+                    .updatePlaylist(playlistId, name, visibilityToSend(playlistId), songsId, null)
+                    .enqueue(new Callback<ApiResponse>() {
+                        @Override
+                        public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                            if (response.isSuccessful()) {
+                                updateLocalPlaylistName(playlistId, name);
+                                notifyPlaylistChanged();
+                                if (callback != null) callback.onSuccess();
+                            } else {
+                                if (callback != null) callback.onFailure();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
                             if (callback != null) callback.onFailure();
                         }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        if (callback != null) callback.onFailure();
-                    }
-                });
+                    });
+        }).start();
     }
 
     @OptIn(markerClass = UnstableApi.class)
@@ -461,8 +500,8 @@ public class PlaylistRepository {
     }
 
     @androidx.media3.common.util.UnstableApi
-    public void insert(Playlist playlist) {
-        InsertThreadSafe insert = new InsertThreadSafe(playlistDao, playlist);
+    public void insertIfAbsent(Playlist playlist) {
+        InsertIfAbsentThreadSafe insert = new InsertIfAbsentThreadSafe(playlistDao, playlist);
         Thread thread = new Thread(insert);
         thread.start();
     }
@@ -517,18 +556,23 @@ public class PlaylistRepository {
         }).start();
     }
 
-    private static class InsertThreadSafe implements Runnable {
+    /**
+     * Makes sure a playlist has a cached row without touching one that is already there. A replace
+     * would overwrite every column of an existing row, and pinning has no business rewriting a row
+     * it did not fetch.
+     */
+    private static class InsertIfAbsentThreadSafe implements Runnable {
         private final PlaylistDao playlistDao;
         private final Playlist playlist;
 
-        public InsertThreadSafe(PlaylistDao playlistDao, Playlist playlist) {
+        public InsertIfAbsentThreadSafe(PlaylistDao playlistDao, Playlist playlist) {
             this.playlistDao = playlistDao;
             this.playlist = playlist;
         }
 
         @Override
         public void run() {
-            playlistDao.insert(playlist);
+            playlistDao.insertIfAbsent(playlist);
         }
     }
 

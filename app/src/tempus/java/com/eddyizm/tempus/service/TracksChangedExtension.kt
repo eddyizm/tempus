@@ -5,11 +5,9 @@ import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaBrowser
 import com.eddyizm.tempus.repository.AutomotiveRepository
 import com.eddyizm.tempus.util.ConstantsAA
 import com.eddyizm.tempus.util.Preferences
-import com.google.common.util.concurrent.ListenableFuture
 import kotlin.text.removePrefix
 
 private const val TAG = "TracksChangedExtension"
@@ -22,7 +20,7 @@ class TracksChangedExtension(
     override fun handle(
         player: Player,
         item: MediaItem,
-        browserFuture: ListenableFuture<MediaBrowser>
+        queueTarget: MediaManager.QueueTarget
     ): Boolean {
 
         if (player.mediaItemCount > 1) {
@@ -49,7 +47,7 @@ class TracksChangedExtension(
                 artistId,
                 item.mediaId,
                 (count-1),
-                browserFuture
+                queueTarget
             )
             return true
         }
@@ -71,7 +69,7 @@ class TracksChangedExtension(
                 mixType,
                 item.mediaId,
                 (count-1),
-                browserFuture
+                queueTarget
             )
             return true
         }
