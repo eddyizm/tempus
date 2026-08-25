@@ -405,6 +405,8 @@
     <string name="search_title_album">Albums</string>
     <string name="search_title_artist">Artists</string>
     <string name="search_title_song">Songs</string>
+    <string name="search_title_empty_response">No results.</string>
+    <string name="search_description_empty_response">We checked your server response but it was empty.</string>
     <string name="server_signup_dialog_action_low_security">Low security</string>
     <string name="server_signup_dialog_action_delete_toast">Long press to delete</string>
     <string name="server_signup_dialog_hint_local_address">Local URL</string>
