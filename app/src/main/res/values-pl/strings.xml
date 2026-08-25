@@ -334,6 +334,7 @@
     <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
 	<string name="playlist_chooser_dialog_visibility_switch_label">Oznacz playlistę jako publiczną</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Włączenie tego oznacza playlistę jako publiczną. Nie zmienienie tego ustawienia, nie zmienia widoczności playlisty.</string>
     <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
     <string name="playlist_duration">Długość  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
@@ -410,6 +411,8 @@
     <string name="search_title_album">Albumy</string>
     <string name="search_title_artist">Wykonawcy</string>
     <string name="search_title_song">Piosenki</string>
+    <string name="search_title_empty_response">Brak wyników.</string>
+    <string name="search_description_empty_response">Sprawdziliśmy odpowiedź twojego serwera, ale była pusta.</string>
     <string name="server_signup_dialog_action_low_security">Niskie bezpieczeństwo</string>
     <string name="server_signup_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
     <string name="server_signup_dialog_hint_local_address">Lokalny URL</string>
