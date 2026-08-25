@@ -69,13 +69,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
                             .collect(Collectors.toList());
                     mapOfAlbums.setValue(
                             primaryAlbums.stream()
-                                    .collect(groupingBy(a -> {
-                                        List<String> releaseTypes = a.getReleaseTypes();
-                                        if (releaseTypes != null && !releaseTypes.isEmpty() && releaseTypes.get(0) != null) {
-                                            return releaseTypes.get(0).toLowerCase();
-                                        }
-                                        return getAutoType(a);
-                                    })));
+                                    .collect(groupingBy(ArtistPageViewModel::sectionType)));
 
                 } else {
                     mapOfAlbums.setValue(Collections.emptyMap());
@@ -93,7 +87,24 @@ public class ArtistPageViewModel extends AndroidViewModel {
         });
     }
 
-    private String getAutoType(AlbumID3 album) {
+    /**
+     * The section an album is filed under, never blank: AlbumSectionsAdapter titles a
+     * section outside its own list from the first character of this value.
+     */
+    static String sectionType(AlbumID3 album) {
+        List<String> releaseTypes = album.getReleaseTypes();
+
+        if (releaseTypes != null && !releaseTypes.isEmpty() && releaseTypes.get(0) != null) {
+            String releaseType = releaseTypes.get(0).trim().toLowerCase();
+            if (!releaseType.isEmpty()) {
+                return releaseType;
+            }
+        }
+
+        return getAutoType(album);
+    }
+
+    private static String getAutoType(AlbumID3 album) {
         // Fallback to song count if releaseTypes is not available
         int songCount = album.getSongCount() != null ? album.getSongCount() : 0;
         if (songCount >= 8) {

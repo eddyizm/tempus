@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,6 +56,53 @@ public class MediaManager {
     public static AtomicBoolean continuousPlayIsRunning = new AtomicBoolean(false);
 
     private static final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
+
+    /**
+     * Where a queue edit is applied: the service's own player, or a session controller.
+     * The service returns null from livePlayer() once it is destroyed, so an edit that
+     * arrives after that is dropped instead of reaching a released player; the check and the
+     * edit both run on the app's main thread, which is also where the service is destroyed.
+     * A controller always returns itself, which leaves the browser paths exactly as they
+     * were: nothing on them was ever guarded by a release check.
+     */
+    public interface QueueTarget {
+        @Nullable
+        Player livePlayer();
+
+        void requestPlayNextFixup(int insertPos, int count, int targetCount);
+    }
+
+    private static QueueTarget queueTargetFor(MediaBrowser browser) {
+        return new QueueTarget() {
+            @Override
+            public Player livePlayer() {
+                return browser;
+            }
+
+            @Override
+            public void requestPlayNextFixup(int insertPos, int count, int targetCount) {
+                Bundle args = new Bundle();
+                args.putInt(Constants.PLAY_NEXT_INSERT_POS, insertPos);
+                args.putInt(Constants.PLAY_NEXT_COUNT, count);
+                args.putInt(Constants.PLAY_NEXT_TARGET_COUNT, targetCount);
+                ListenableFuture<SessionResult> fixup = browser.sendCustomCommand(
+                        new SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY), args);
+                Futures.addCallback(fixup, new FutureCallback<SessionResult>() {
+                    @Override
+                    public void onSuccess(SessionResult result) {
+                        if (result.resultCode != SessionResult.RESULT_SUCCESS) {
+                            Log.e(TAG, "insertPlayNext: play-next fixup rejected with code " + result.resultCode);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.e(TAG, "insertPlayNext: play-next fixup command failed", t);
+                    }
+                }, MoreExecutors.directExecutor());
+            }
+        };
+    }
 
     public static void registerPlaybackObserver(
             ListenableFuture<MediaBrowser> browserFuture,
@@ -330,21 +376,30 @@ public class MediaManager {
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
-                        Log.d(TAG, "enqueue");
-                        MediaBrowser browser = mediaBrowserListenableFuture.get();
-                        int current = browser.getCurrentMediaItemIndex();
-                        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
-                            enqueueDatabase(media, false, current + 1);
-                            insertPlayNext(browser, MappingUtil.mapMediaItems(media));
-                        } else {
-                            enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
-                            mediaBrowserListenableFuture.get().addMediaItems(MappingUtil.mapMediaItems(media));
-                        }
+                        enqueue(queueTargetFor(mediaBrowserListenableFuture.get()), media, playImmediatelyAfter);
                     }
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }, MoreExecutors.directExecutor());
+        }
+    }
+
+    public static void enqueue(QueueTarget queueTarget, List<Child> media, boolean playImmediatelyAfter) {
+        Player player = queueTarget.livePlayer();
+        if (player == null) {
+            Log.d(TAG, "enqueue: queue target gone, dropping " + media.size() + " items");
+            return;
+        }
+
+        Log.d(TAG, "enqueue");
+        int current = player.getCurrentMediaItemIndex();
+        if (playImmediatelyAfter && current != C.INDEX_UNSET) {
+            enqueueDatabase(media, false, current + 1);
+            insertPlayNext(queueTarget, player, MappingUtil.mapMediaItems(media));
+        } else {
+            enqueueDatabase(media, false, player.getMediaItemCount());
+            player.addMediaItems(MappingUtil.mapMediaItems(media));
         }
     }
 
@@ -358,7 +413,7 @@ public class MediaManager {
                         int current = browser.getCurrentMediaItemIndex();
                         if (playImmediatelyAfter && current != C.INDEX_UNSET) {
                             enqueueDatabase(media, false, current + 1);
-                            insertPlayNext(browser, Collections.singletonList(MappingUtil.mapMediaItem(media)));
+                            insertPlayNext(queueTargetFor(browser), browser, Collections.singletonList(MappingUtil.mapMediaItem(media)));
                         } else {
                             enqueueDatabase(media, false, mediaBrowserListenableFuture.get().getMediaItemCount());
                             mediaBrowserListenableFuture.get().addMediaItem(MappingUtil.mapMediaItem(media));
@@ -373,41 +428,19 @@ public class MediaManager {
 
     // "Play next": insert the items right after the current item on the timeline, then —
     // once the insert has actually applied — ask the service to move them next in the
-    // ExoPlayer shuffle order too. The timeline insert keeps URI/large-list handling on the
-    // normal onAddMediaItems path; the shuffle-order fixup must run on the service (only it
-    // can setShuffleOrder). addMediaItems and a custom command are NOT ordered relative to
-    // each other, so we send the fixup from a one-shot timeline listener once the insert is
-    // visible (same pattern startQueue uses), otherwise the fixup would be clobbered by
-    // addMediaItems' own internal shuffle insert. The fixup is a no-op when shuffle is off.
-    private static void insertPlayNext(MediaBrowser browser, List<MediaItem> items) {
+    // ExoPlayer shuffle order too. The shuffle order fixup must run on the service (only it
+    // can setShuffleOrder), and it cannot run until the insert is visible on the timeline
+    // (from a controller, addMediaItems updates the controller optimistically before the
+    // session's async onAddMediaItems even runs), so the service stashes the request and
+    // applies it from its own onTimelineChanged once the target count is reached, otherwise
+    // the fixup would be clobbered by addMediaItems' own internal shuffle insert. The fixup
+    // is a no-op when shuffle is off.
+    private static void insertPlayNext(QueueTarget queueTarget, Player player, List<MediaItem> items) {
         if (items.isEmpty()) return;
-        int insertPos = browser.getCurrentMediaItemIndex() + 1;
-        int targetCount = browser.getMediaItemCount() + items.size();
-        // Send the fixup request and do the timeline insert. These two are NOT ordered
-        // relative to each other (and addMediaItems updates the controller optimistically
-        // before the session's async onAddMediaItems even runs), so the service stashes the
-        // request and applies it from its own onTimelineChanged once the insert is visible.
-        Bundle args = new Bundle();
-        args.putInt(Constants.PLAY_NEXT_INSERT_POS, insertPos);
-        args.putInt(Constants.PLAY_NEXT_COUNT, items.size());
-        args.putInt(Constants.PLAY_NEXT_TARGET_COUNT, targetCount);
-        ListenableFuture<SessionResult> fixup =
-                browser.sendCustomCommand(
-                        new SessionCommand(Constants.CUSTOM_COMMAND_PLAY_NEXT, Bundle.EMPTY), args);
-        Futures.addCallback(fixup, new FutureCallback<SessionResult>() {
-            @Override
-            public void onSuccess(SessionResult result) {
-                if (result.resultCode != SessionResult.RESULT_SUCCESS) {
-                    Log.e(TAG, "insertPlayNext: play-next fixup rejected with code " + result.resultCode);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e(TAG, "insertPlayNext: play-next fixup command failed", t);
-            }
-        }, MoreExecutors.directExecutor());
-        browser.addMediaItems(insertPos, items);
+        int insertPos = player.getCurrentMediaItemIndex() + 1;
+        int targetCount = player.getMediaItemCount() + items.size();
+        queueTarget.requestPlayNextFixup(insertPos, items.size(), targetCount);
+        player.addMediaItems(insertPos, items);
     }
 
     public static void shuffle(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex, int endIndex) {
@@ -488,19 +521,15 @@ public class MediaManager {
         }
     }
 
-    public static void removeRange(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, int fromItem, int toItem) {
-        if (mediaBrowserListenableFuture != null) {
-            mediaBrowserListenableFuture.addListener(() -> {
-                try {
-                    if (mediaBrowserListenableFuture.isDone()) {
-                        mediaBrowserListenableFuture.get().removeMediaItems(fromItem, toItem);
-                        getQueueRepository().deleteRange(fromItem, toItem);
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }, MoreExecutors.directExecutor());
+    public static void removeRange(QueueTarget queueTarget, int fromItem, int toItem) {
+        Player player = queueTarget.livePlayer();
+        if (player == null) {
+            Log.d(TAG, "removeRange: queue target gone");
+            return;
         }
+
+        player.removeMediaItems(fromItem, toItem);
+        getQueueRepository().deleteRange(fromItem, toItem);
     }
 
     public static void getCurrentIndex(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, MediaIndexCallback callback) {
@@ -540,15 +569,21 @@ public class MediaManager {
 
     @OptIn(markerClass = UnstableApi.class)
     public static void continuousPlay(MediaItem mediaItem,
-                                      ListenableFuture<MediaBrowser> existingBrowserFuture) {
-        continuousPlay(mediaItem, existingBrowserFuture, null);
+                                      QueueTarget queueTarget) {
+        continuousPlay(mediaItem, queueTarget, null);
     }
     @OptIn(markerClass = UnstableApi.class)
     public static void continuousPlay(MediaItem mediaItem,
-                                      ListenableFuture<MediaBrowser> existingBrowserFuture,
+                                      QueueTarget queueTarget,
                                       @Nullable Runnable onComplete) {
         if (continuousPlayIsRunning.get() || !Preferences.isInstantMixUsable()) {
             Log.d(TAG, "Continuous Play: already running");
+            if (onComplete != null) onComplete.run();
+            return;
+        }
+        Player player = queueTarget.livePlayer();
+        if (player == null) {
+            Log.d(TAG, "Continuous Play: queue target gone");
             if (onComplete != null) onComplete.run();
             return;
         }
@@ -559,24 +594,13 @@ public class MediaManager {
 
         // keep only NUMBER_TRACKS_KEEP_IN_QUEUE items in queue before starting continuous play
         int numberOfTracksKeepInQueue = Preferences.getNumberOfTracksKeepInQueue();
-        if (existingBrowserFuture != null) {
-            existingBrowserFuture.addListener(() -> {
-                try {
-                    if (existingBrowserFuture.isDone()) {
-                        MediaBrowser browser = existingBrowserFuture.get();
-                        int currentIndex = browser.getCurrentMediaItem() != null
-                                ? browser.getCurrentMediaItemIndex()
-                                : 0;
-                        int firstToKeep = Math.max(0, currentIndex - numberOfTracksKeepInQueue);
-                        if (firstToKeep > 0) {
-                            Log.d(TAG, "Continuous Play: purging " + firstToKeep + " old items from queue");
-                            removeRange(existingBrowserFuture, 0, firstToKeep);
-                        }
-                    }
-                } catch (ExecutionException | InterruptedException e) {
-                    Log.e(TAG, "Continuous Play: purge failed", e);
-                }
-            }, MoreExecutors.directExecutor());
+        int currentIndex = player.getCurrentMediaItem() != null
+                ? player.getCurrentMediaItemIndex()
+                : 0;
+        int firstToKeep = Math.max(0, currentIndex - numberOfTracksKeepInQueue);
+        if (firstToKeep > 0) {
+            Log.d(TAG, "Continuous Play: purging " + firstToKeep + " old items from queue");
+            removeRange(queueTarget, 0, firstToKeep);
         }
         String trackId = mediaItem.mediaId;
         String artistId = mediaItem.mediaMetadata.extras != null
@@ -595,10 +619,10 @@ public class MediaManager {
                 // getSimilarSongs2 doesn't know what's already queued, so it may
                 // return tracks we already have. Filter first, then decide.
                 if (media != null && !media.isEmpty()) {
-                    List<Child> filtered = dedupAgainstQueue(media, existingBrowserFuture);
+                    List<Child> filtered = dedupAgainstQueue(media, queueTarget);
                     if (!filtered.isEmpty()) {
                         Log.d(TAG, "Continuous Play: adding " + filtered.size() + " similar tracks");
-                        enqueue(existingBrowserFuture, filtered, true);
+                        enqueue(queueTarget, filtered, true);
                         continuousPlayIsRunning.set(false);
                         return;
                     }
@@ -612,10 +636,10 @@ public class MediaManager {
                         public void onChanged(List<Child> random) {
                             randomSongs.removeObserver(this);
                             if (random != null && !random.isEmpty()) {
-                                List<Child> filtered = dedupAgainstQueue(random, existingBrowserFuture);
+                                List<Child> filtered = dedupAgainstQueue(random, queueTarget);
                                 if (!filtered.isEmpty()) {
                                     Log.d(TAG, "Continuous Play: adding " + filtered.size() + " random tracks");
-                                    enqueue(existingBrowserFuture, filtered, true);
+                                    enqueue(queueTarget, filtered, true);
                                 } else {
                                     Log.w(TAG, "Continuous Play: random tracks already in queue");
                                 }
@@ -634,19 +658,13 @@ public class MediaManager {
     }
 
     private static List<Child> dedupAgainstQueue(List<Child> candidates,
-                                                  ListenableFuture<MediaBrowser> existingBrowserFuture) {
-        if (existingBrowserFuture == null) return new ArrayList<>(candidates);
-
-        final MediaBrowser browser;
-        try {
-            browser = existingBrowserFuture.get();
-        } catch (ExecutionException | InterruptedException e) {
-            return new ArrayList<>(candidates);
-        }
+                                                  QueueTarget queueTarget) {
+        Player player = queueTarget.livePlayer();
+        if (player == null) return new ArrayList<>(candidates);
 
         Set<String> currentIds = new HashSet<>();
-        for (int i = 0; i < Objects.requireNonNull(browser).getMediaItemCount(); i++) {
-            currentIds.add(browser.getMediaItemAt(i).mediaId);
+        for (int i = 0; i < player.getMediaItemCount(); i++) {
+            currentIds.add(player.getMediaItemAt(i).mediaId);
         }
 
         return candidates.stream()

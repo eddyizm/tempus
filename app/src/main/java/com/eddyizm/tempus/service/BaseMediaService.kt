@@ -3,7 +3,6 @@ package com.eddyizm.tempus.service
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.TaskStackBuilder
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -55,7 +54,7 @@ import kotlin.random.Random
 private const val TAG = "BaseMediaService"
 
 @UnstableApi
-open class BaseMediaService : MediaLibraryService() {
+open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     companion object {
         const val ACTION_BIND_EQUALIZER = "com.eddyizm.tempus.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.eddyizm.tempus.service.EQUALIZER_UPDATED"
@@ -174,13 +173,17 @@ open class BaseMediaService : MediaLibraryService() {
         }, MoreExecutors.directExecutor())
     }
 
-    // "Play next" under shuffle: the UI inserts items at current+1 on the timeline and asks
-    // the service to splice them into shuffle position current+1. Inserts land asynchronously,
+    // MediaManager.QueueTarget: null once the service is destroyed, so a queue edit that
+    // arrives after that is dropped instead of reaching a released player.
+    override fun livePlayer(): Player? = if (serviceDestroyed) null else mediaLibrarySession.player
+
+    // "Play next" under shuffle: items are inserted at current+1 on the timeline, and the
+    // service splices them into shuffle position current+1. Inserts land asynchronously,
     // so requests are queued and applied from onTimelineChanged once each target count is visible.
     private data class PlayNextRequest(val insertPos: Int, val count: Int, val target: Int)
     private val playNextQueue = ArrayDeque<PlayNextRequest>()
 
-    fun requestPlayNextFixup(insertPos: Int, count: Int, target: Int) {
+    override fun requestPlayNextFixup(insertPos: Int, count: Int, target: Int) {
         if (insertPos < 0 || count <= 0 || target < 0) return
         playNextQueue.addLast(PlayNextRequest(insertPos, count, target))
         tryApplyPlayNextFixup()
@@ -380,18 +383,13 @@ open class BaseMediaService : MediaLibraryService() {
                     if (item.mediaMetadata.extras != null)
                         MediaManager.scrobble(item, false)
 
-                    val browserFuture = MediaBrowser.Builder(
-                        this@BaseMediaService,
-                        SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
-                    ).buildAsync()
-
                     val handled = MediaServiceExtensionRegistry.handler
-                        ?.handle(player, currentMediaItem, browserFuture)
+                        ?.handle(player, currentMediaItem, this@BaseMediaService)
                         ?: false
 
                     if (player.nextMediaItemIndex == C.INDEX_UNSET) {
                         if (!handled && Preferences.isContinuousPlayEnabled()) {
-                            MediaManager.continuousPlay(currentMediaItem, browserFuture)
+                            MediaManager.continuousPlay(currentMediaItem, this@BaseMediaService)
                         }
                     }
                 }
@@ -632,18 +630,14 @@ open class BaseMediaService : MediaLibraryService() {
         val currentMediaItem = player.currentMediaItem
         val currentIndex = player.currentMediaItemIndex
         val lastIndex = player.mediaItemCount - 1
-        val browserFuture = MediaBrowser.Builder(
-            this@BaseMediaService,
-            SessionToken(this@BaseMediaService, ComponentName(this@BaseMediaService, this@BaseMediaService::class.java))
-        ).buildAsync()
 
         if (currentIndex in 0 until lastIndex) {
             Log.d(TAG, "onInstantMix: remove range from $currentIndex to $lastIndex")
-            MediaManager.removeRange(browserFuture, currentIndex + 1, lastIndex + 1)
+            MediaManager.removeRange(this, currentIndex + 1, lastIndex + 1)
         }
 
         Log.d(TAG, "onInstantMix: start Continuous Play with $currentMediaItem")
-        MediaManager.continuousPlay(currentMediaItem, browserFuture) {
+        MediaManager.continuousPlay(currentMediaItem, this) {
             Handler(Looper.getMainLooper()).post { onComplete?.run() }
         }
     }
@@ -696,6 +690,8 @@ open class BaseMediaService : MediaLibraryService() {
     override fun onDestroy() {
         QueuePreloader.cancel()
         serviceDestroyed = true
+        // Process scoped, so it outlives the service unless it is cleared here.
+        MediaServiceExtensionRegistry.handler = null
         releaseNetworkCallback()
         equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
