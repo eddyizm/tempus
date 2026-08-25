@@ -56,7 +56,8 @@ public class AlbumListPageViewModel extends AndroidViewModel {
             case Constants.ALBUM_NEW_RELEASES:
                 int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                 albumRepository.getAlbums("byYear", maxNumber, currentYear, currentYear).observe(owner, albums -> {
-                    albums.sort(Comparator.comparing(AlbumID3::getCreated).reversed());
+                    albums.sort(Comparator.comparing(AlbumID3::getCreated,
+                            Comparator.nullsFirst(Comparator.naturalOrder())).reversed());
                     albumList.postValue(albums.subList(0, Math.min(20, albums.size())));
                 });
                 break;
