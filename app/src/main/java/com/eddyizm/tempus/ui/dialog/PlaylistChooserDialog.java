@@ -32,6 +32,8 @@ public class PlaylistChooserDialog extends DialogFragment implements ClickCallba
 
         playlistChooserViewModel = new ViewModelProvider(requireActivity()).get(PlaylistChooserViewModel.class);
 
+        playlistChooserViewModel.forgetVisibility();
+
         bind.playlistDialogChooserVisibilitySwitch.setOnCheckedChangeListener(
                 (buttonView,
                  isChecked) -> playlistChooserViewModel.setIsPlaylistPublic(isChecked)

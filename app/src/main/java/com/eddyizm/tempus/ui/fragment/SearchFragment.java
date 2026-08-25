@@ -246,10 +246,12 @@ public class SearchFragment extends Fragment implements ClickCallback {
     }
     private void performSearch(String query) {
         searchViewModel.search3(this, query).observe(getViewLifecycleOwner(), result -> {
+            int sectionsThatMatchedTheQuery = 0;
             if (bind != null) {
                 if (result.getArtists() != null) {
                     bind.searchArtistSector.setVisibility(!result.getArtists().isEmpty() ? View.VISIBLE : View.GONE);
                     artistAdapter.setItems(result.getArtists());
+                    sectionsThatMatchedTheQuery+=1;
                 } else {
                     artistAdapter.setItems(Collections.emptyList());
                     bind.searchArtistSector.setVisibility(View.GONE);
@@ -258,6 +260,7 @@ public class SearchFragment extends Fragment implements ClickCallback {
                 if (result.getAlbums() != null) {
                     bind.searchAlbumSector.setVisibility(!result.getAlbums().isEmpty() ? View.VISIBLE : View.GONE);
                     albumAdapter.setItems(result.getAlbums());
+                    sectionsThatMatchedTheQuery+=1;
                 } else {
                     albumAdapter.setItems(Collections.emptyList());
                     bind.searchAlbumSector.setVisibility(View.GONE);
@@ -266,9 +269,14 @@ public class SearchFragment extends Fragment implements ClickCallback {
                 if (result.getSongs() != null) {
                     bind.searchSongSector.setVisibility(!result.getSongs().isEmpty() ? View.VISIBLE : View.GONE);
                     songHorizontalAdapter.setItems(result.getSongs());
+                    sectionsThatMatchedTheQuery+=1;
                 } else {
                     songHorizontalAdapter.setItems(Collections.emptyList());
                     bind.searchSongSector.setVisibility(View.GONE);
+                }
+
+                if (sectionsThatMatchedTheQuery == 0) {
+                    bind.emptyResponseContainer.setVisibility(View.VISIBLE);
                 }
             }
         });
