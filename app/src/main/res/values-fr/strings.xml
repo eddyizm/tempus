@@ -287,7 +287,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Publique</string>
     <string name="playlist_chooser_dialog_visibility_private">Privé</string>
 	<string name="playlist_chooser_dialog_visibility_switch_label">Rendre la playlist publique</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Le serveur met à jour la visibilité à chaque requête. Est défini à privé par défaut.</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>

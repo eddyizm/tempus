@@ -297,7 +297,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Publikoa</string>
     <string name="playlist_chooser_dialog_visibility_private">Pribatua</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Zerrenda publiko gisa markatu</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Zerbitzariak ikusgarritasuna eskaera bakoitzean eguneratzen du. Lehenespenez pribatu gisa ezartzen da.</string>
     <string name="playlist_counted_tracks">%1$d abesti •  %2$s</string>
     <string name="playlist_duration">Iraupena  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Sakatu luze ezabatzeko</string>
