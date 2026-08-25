@@ -316,7 +316,6 @@
     <string name="playlist_chooser_dialog_visibility_public">公開</string>
     <string name="playlist_chooser_dialog_visibility_private">非公開</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">プレイリストを公開にする</string>
-    <string name="playlist_chooser_dialog_visibility_summary">サーバーはリクエストのたびに公開設定を更新します。デフォルトでは非公開に設定されています。</string>
     <string name="playlist_counted_tracks">%1$d トラック • %2$s</string>
     <string name="playlist_duration">再生時間 • %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">長押しで削除</string>
