@@ -7,6 +7,7 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Color
 import android.os.Build
 import android.util.Log
+import android.util.TypedValue
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
@@ -134,6 +135,10 @@ object ThemeHelper {
 
             activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
             activity.window.setBackgroundDrawable(Color.BLACK.toDrawable())
+        } else {
+            val typedValue = TypedValue()
+            activity.theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
+            activity.window.setBackgroundDrawable(typedValue.data.toDrawable())
         }
     }
 
