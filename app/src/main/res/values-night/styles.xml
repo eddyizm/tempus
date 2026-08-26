@@ -49,6 +49,7 @@
         <item name="colorOutlineVariant">@color/md_theme_amoled_surface_override</item>
 
         <!-- Extended surface overriding -->
+        <item name="materialSwitchStyle">@style/Widget.App.MaterialSwitch.Amoled</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog.Amoled</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog.Amoled</item>
         <item name="bottomSheetStyle">@style/Widget.App.BottomSheet.Amoled</item>
@@ -173,6 +174,12 @@
         <item name="colorSurfaceContainerHighest">@color/md_theme_amoled_surface_override</item>
         <item name="colorOutline">@color/md_theme_amoled_surface_override</item>
         <item name="colorOutlineVariant">@color/md_theme_amoled_surface_override</item>
+    </style>
+
+    <style name="Widget.App.MaterialSwitch.Amoled" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+        <item name="trackTint">@color/md_theme_amoled_surface_override</item>
+        <item name="thumbTint">?attr/colorPrimary</item>
+        <item name="colorOutline">@color/md_theme_amoled_surface_override</item>
     </style>
 
     <style name="Divider">
