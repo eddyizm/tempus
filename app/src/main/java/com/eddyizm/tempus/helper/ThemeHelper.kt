@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
+import com.eddyizm.tempus.App
 
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.util.Preferences.getColorAccent
@@ -72,12 +73,24 @@ object ThemeHelper {
             applyAmoled = (nightModeFlags == UI_MODE_NIGHT_YES && isDarkThemeBlack())
         }
 
-        if (applyAmoled) {
-            activity.window.setNavigationBarColor(ContextCompat.getColor(activity, android.R.color.black))
-            activity.window.setStatusBarColor(ContextCompat.getColor(activity, android.R.color.black))
+        setSystemBarColor(activity, applyAmoled)
+    }
+
+    /**
+     * Decide whether to use hardcoded black
+     * or use accent color for its elevation
+     */
+    @Suppress("DEPRECATION") // Up to API 35
+    private fun setSystemBarColor(activity: AppCompatActivity, isAmoled: Boolean) {
+        if (isAmoled) {
+            val color = ContextCompat.getColor(activity, android.R.color.black)
+            activity.window.navigationBarColor = color
+            activity.window.statusBarColor = color
         } else {
-            activity.window.setNavigationBarColor(SurfaceColors.getColorForElevation(activity, 8F))
-            activity.window.setStatusBarColor(SurfaceColors.getColorForElevation(activity, 0F))
+            val color8F = SurfaceColors.getColorForElevation(activity, 8F)
+            val color0F = SurfaceColors.getColorForElevation(activity, 0F)
+            activity.window.navigationBarColor = color8F
+            activity.window.statusBarColor = color0F
         }
     }
 
