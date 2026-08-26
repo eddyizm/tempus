@@ -1,7 +1,6 @@
 package com.eddyizm.tempus.helper
 
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Color
@@ -13,12 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
-import com.eddyizm.tempus.App
 
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.util.Preferences.getColorAccent
@@ -73,7 +70,7 @@ object ThemeHelper {
             applyAmoled = (nightModeFlags == UI_MODE_NIGHT_YES && isDarkThemeBlack())
         }
 
-        setSystemBarColor(activity, applyAmoled)
+        setSystemBarsColorAmoledOrAccent(activity, applyAmoled)
     }
 
     /**
@@ -81,7 +78,7 @@ object ThemeHelper {
      * or use accent color for its elevation
      */
     @Suppress("DEPRECATION") // Up to API 35
-    private fun setSystemBarColor(activity: AppCompatActivity, isAmoled: Boolean) {
+    private fun setSystemBarsColorAmoledOrAccent(activity: AppCompatActivity, isAmoled: Boolean) {
         if (isAmoled) {
             val color = ContextCompat.getColor(activity, android.R.color.black)
             activity.window.navigationBarColor = color
