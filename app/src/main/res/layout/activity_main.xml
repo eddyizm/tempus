@@ -23,6 +23,7 @@
             android:id="@+id/player_bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="?attr/colorSurface"
             app:enableEdgeToEdge="true"
             app:paddingBottomSystemWindowInsets="true"
             app:behavior_hideable="true"
