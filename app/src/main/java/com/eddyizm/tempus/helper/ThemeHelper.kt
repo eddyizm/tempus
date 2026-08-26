@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.helper
 
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.graphics.Color
@@ -95,6 +96,7 @@ object ThemeHelper {
      * Allow activities to switch among themes when first built.
      * This includes light|night mode and dynamic colors.
      */
+    @SuppressLint("UseKtx")
     @JvmStatic
     fun enableThemeSwitch(activity: AppCompatActivity) {
         val theme        = getTheme()
@@ -121,7 +123,7 @@ object ThemeHelper {
         }
 
         if (isAmoled) {
-            val amoledOverlayAttrs = mutableListOf(
+            @Suppress("DEPRECATION") val amoledOverlayAttrs = mutableListOf(
                 android.R.attr.colorBackground,
                 android.R.attr.statusBarColor,
                 android.R.attr.navigationBarColor,
@@ -137,6 +139,7 @@ object ThemeHelper {
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                @Suppress("DEPRECATION") // Up to API 35
                 amoledOverlayAttrs.add(android.R.attr.navigationBarDividerColor)
             }
 
