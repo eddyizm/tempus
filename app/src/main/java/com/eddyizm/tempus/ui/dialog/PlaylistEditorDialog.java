@@ -10,8 +10,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.util.UnstableApi;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -99,6 +101,9 @@ public class PlaylistEditorDialog extends DialogFragment {
                         if (isAdded() && getContext() != null) {
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_success, Toast.LENGTH_SHORT).show();
+                                if (playlistCallback != null && playlistEditorViewModel.getPlaylistToEdit() != null) {
+                                    playlistCallback.onRenamed(playlistName);
+                                }
                                 dialogDismiss();
                             });
                         }
@@ -109,6 +114,16 @@ public class PlaylistEditorDialog extends DialogFragment {
                         if (isAdded() && getContext() != null) {
                             requireActivity().runOnUiThread(() -> {
                                 Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_failure, Toast.LENGTH_SHORT).show();
+                            });
+                        }
+                    }
+
+                    @Override
+                    @OptIn(markerClass = UnstableApi.class)
+                    public void onEmptied() {
+                        if (isAdded() && getContext() != null) {
+                            requireActivity().runOnUiThread(() -> {
+                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_empty, Toast.LENGTH_SHORT).show();
                             });
                         }
                     }

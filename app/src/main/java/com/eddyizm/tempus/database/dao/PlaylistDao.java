@@ -45,11 +45,23 @@ public interface PlaylistDao {
     @Query("SELECT coverArt FROM playlist WHERE id = :playlistId")
     String getPlaylistCoverArtId(String playlistId);
 
+    /**
+     * The visibility the server last reported for this playlist, or null when there is no cached
+     * value for it. The
+     * full playlist list refreshes this row on every load, so it is the newest value the app has
+     * without asking the server again.
+     */
+    @Query("SELECT isUniversal FROM playlist WHERE id = :playlistId")
+    Boolean isPlaylistPublic(String playlistId);
+
     @Query("UPDATE playlist SET name = :newName WHERE id = :playlistId")
     void updateName(String playlistId, String newName);
 
     @Query("UPDATE playlist SET lastPlayed = :timestamp WHERE id = :playlistId")
     void updateLastPlayed(String playlistId, long timestamp);
+
+    @Query("UPDATE playlist SET isUniversal = :isUniversal WHERE id = :playlistId")
+    void updateVisibility(String playlistId, Boolean isUniversal);
 
     /**
      * Full list query used by PlaylistCatalogueFragment.

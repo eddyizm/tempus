@@ -82,8 +82,11 @@ public class PlaylistPageViewModel extends AndroidViewModel {
     }
 
     public void setPlaylist(Playlist playlist) {
-        if (this.playlist == null || !this.playlist.getId().equals(playlist.getId())) {
-            this.playlist = playlist;
+        boolean isDifferentPlaylist = this.playlist == null || !this.playlist.getId().equals(playlist.getId());
+
+        this.playlist = playlist;
+
+        if (isDifferentPlaylist) {
             this.songLiveList.setValue(null); // Clear old data immediately
         }
     }
@@ -101,7 +104,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
 
     @OptIn(markerClass = UnstableApi.class)
     public void setPinned(boolean isNowPinned) {
-        playlistRepository.insert(playlist);
+        playlistRepository.insertIfAbsent(playlist);
 
         if (isNowPinned) {
             playlistRepository.pin(playlist.getId());

@@ -200,7 +200,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Radio
 - Folder : Navigation through music directories
 - Albums most played : The 15 most played albums
-- Tracks played : The 100 last tracks that were completly played
+- Tracks played : The 100 last tracks that were completely played
 - Albums added : The 15 recently added albums
 - For You bundle
 - Starred bundle
