@@ -328,7 +328,7 @@
     <string name="playlist_chooser_dialog_visibility_public">Public</string>
     <string name="playlist_chooser_dialog_visibility_private">Private</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Mark the playlist as public</string>
-    <string name="playlist_chooser_dialog_visibility_summary">The server updates the visibility on each request. By default it is set to private.</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Turning this on marks the playlist public. Leaving it alone does not change the playlist visibility.</string>
     <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
     <string name="playlist_duration">Duration  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Long press to delete</string>
@@ -405,6 +405,8 @@
     <string name="search_title_album">Albums</string>
     <string name="search_title_artist">Artists</string>
     <string name="search_title_song">Songs</string>
+    <string name="search_title_empty_response">No results.</string>
+    <string name="search_description_empty_response">We checked your server response but it was empty.</string>
     <string name="server_signup_dialog_action_low_security">Low security</string>
     <string name="server_signup_dialog_action_delete_toast">Long press to delete</string>
     <string name="server_signup_dialog_hint_local_address">Local URL</string>

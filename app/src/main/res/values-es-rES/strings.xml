@@ -256,7 +256,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Público</string>
     <string name="playlist_chooser_dialog_visibility_private">Privado</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Marcar la lista de reproducción como pública</string>
-    <string name="playlist_chooser_dialog_visibility_summary">El servidor actualiza la visibilidad en cada petición. Por defecto está configurada como privada.</string>
     <string name="playlist_counted_tracks">%1$d pistas •  %2$s</string>
     <string name="playlist_duration">Duración  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Pulsación larga para eliminar</string>
