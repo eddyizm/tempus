@@ -14,11 +14,13 @@
         <item>높음</item>
         <item>중간</item>
         <item>낮음</item>
+        <item>매우 높음 (1 GiB)</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
         <item>250</item>
         <item>125</item>
+        <item>1024</item>
     </string-array>
 
     <string-array name="pref_image_size_titles">
