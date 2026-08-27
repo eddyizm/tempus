@@ -1,4 +1,4 @@
-package com.eddyizm.tempus.ui.fragment;
+package com.eddyizm.tempus.ui.crash;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
-import com.eddyizm.tempus.ui.activity.CrashActivity;
 import com.eddyizm.tempus.util.BugReportUtil;
 
 public class CrashExportFragment extends Fragment {

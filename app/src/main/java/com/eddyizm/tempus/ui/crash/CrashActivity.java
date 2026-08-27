@@ -1,6 +1,4 @@
-package com.eddyizm.tempus.ui.activity;
-
-import static com.eddyizm.tempus.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
+package com.eddyizm.tempus.ui.crash;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -12,20 +10,13 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.ActivityCrashBinding;
-import com.eddyizm.tempus.ui.fragment.CrashExportFragment;
-import com.eddyizm.tempus.ui.fragment.CrashInfoFragment;
-import com.eddyizm.tempus.ui.fragment.CrashLogsFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.navigation.NavigationView;
