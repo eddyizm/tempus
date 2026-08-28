@@ -420,4 +420,8 @@
     <string name="starred_album_sync_dialog_summary">즐겨찾기한 앨범을 다운로드할 시 많은 양의 데이터가 필요할 수 있습니다.</string>
     <string name="starred_album_sync_dialog_title">즐겨찾기 한 앨범 동기화</string>
     <string name="settings_item_rating">평점 표시하기</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">이것을 켜면 재생목록이 공개됩니다. 그대로 두면 재생목록의 공개 상태가 변경되지 않습니다.</string>
+    <string name="playlist_editor_dialog_action_save_empty">재생목록에는 하나 이상의 트랙이 있어야 합니다</string>
+    <string name="search_title_empty_response">결과 없음.</string>
+    <string name="search_description_empty_response">서버 응답을 확인했지만 비어 있었습니다.</string>
 </resources>

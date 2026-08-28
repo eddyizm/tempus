@@ -830,4 +830,8 @@
     <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
 	
     <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Włączenie tej opcji sprawia, że playlista staje się publiczna. Pozostawienie jej bez zmian nie zmienia widoczności playlisty.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Playlista musi zawierać przynajmniej jeden utwór</string>
+    <string name="search_title_empty_response">Brak wyników.</string>
+    <string name="search_description_empty_response">Sprawdziliśmy odpowiedź twojego serwera, ale była pusta.</string>
 </resources>

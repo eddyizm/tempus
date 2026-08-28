@@ -624,4 +624,8 @@
     <string name="search_all_songs_loading">Hole alle Titel…</string>
     <string name="search_all_songs">alle %1$s Titel</string>
     <string name="search_all_songs_play">Spiele %1$s</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Wenn diese Option aktiviert ist, wird die Wiedergabeliste öffentlich. Wenn sie in Ruhe gelassen wird, ändert sich die Sichtbarkeit der Wiedergabeliste nicht.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Eine Wiedergabeliste muss mindestens einen Titel enthalten</string>
+    <string name="search_title_empty_response">Keine Ergebnisse.</string>
+    <string name="search_description_empty_response">Wir haben Ihre Serverantwort überprüft, aber sie war leer.</string>
 </resources>
