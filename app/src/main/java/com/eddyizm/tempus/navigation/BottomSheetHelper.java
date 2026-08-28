@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.navigation;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -16,9 +17,36 @@ public class BottomSheetHelper {
     View bottomSheetView;
     FragmentManager fragmentManager; // Of the entire activity
     PlayerBottomSheetFragment playerBottomSheetFragment;
+    // Tracks whether an expansion is being driven programmatically (e.g. from notification intent),
+    // preventing premature collapse from async initialization timers until user explicitly collapses.
+    private boolean isTargetExpanded = false;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private Runnable pendingStateRunnable;
 
     public void setState(int state) {
+        if (state == BottomSheetBehavior.STATE_EXPANDED) {
+            expand();
+            return;
+        } else if (state == BottomSheetBehavior.STATE_COLLAPSED || state == BottomSheetBehavior.STATE_HIDDEN) {
+            isTargetExpanded = false;
+        }
         bottomSheetBehavior.setState(state);
+    }
+
+    public void expand() {
+        isTargetExpanded = true;
+        if (pendingStateRunnable != null) {
+            handler.removeCallbacks(pendingStateRunnable);
+            pendingStateRunnable = null;
+        }
+        animate(1.0f);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    }
+
+    public boolean isExpanded() {
+        return isTargetExpanded
+                || bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED
+                || bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_SETTLING;
     }
 
     public BottomSheetHelper(@NonNull BottomSheetBehavior<View> bottomSheetBehavior,
@@ -28,6 +56,17 @@ public class BottomSheetHelper {
         this.bottomSheetView = bottomSheetView;
         this.fragmentManager = fragmentManager;
         this.playerBottomSheetFragment = new PlayerBottomSheetFragment();
+        this.bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED || newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    isTargetExpanded = false;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {}
+        });
     }
 
     public void addCallback(BottomSheetBehavior.BottomSheetCallback callback) {
@@ -61,15 +100,26 @@ public class BottomSheetHelper {
     }
 
     public void checkAfterStateChanged(MainViewModel mainViewModel) {
-        final Handler handler = new Handler();
-        final Runnable runnable = () -> setStateInPeek(mainViewModel.isQueueLoaded());
-        handler.postDelayed(runnable, 100);
+        if (isExpanded()) return;
+        if (pendingStateRunnable != null) {
+            handler.removeCallbacks(pendingStateRunnable);
+        }
+        pendingStateRunnable = () -> {
+            pendingStateRunnable = null;
+            setStateInPeek(mainViewModel.isQueueLoaded());
+        };
+        handler.postDelayed(pendingStateRunnable, 100);
     }
 
     public void collapseDelayed() {
-        final Handler handler = new Handler();
-        final Runnable runnable = () -> bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        handler.postDelayed(runnable, 100);
+        if (pendingStateRunnable != null) {
+            handler.removeCallbacks(pendingStateRunnable);
+        }
+        pendingStateRunnable = () -> {
+            pendingStateRunnable = null;
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        };
+        handler.postDelayed(pendingStateRunnable, 100);
     }
 
     public void setDraggable(Boolean isDraggable) {
@@ -82,9 +132,12 @@ public class BottomSheetHelper {
 
     public void animate(float slideOffset) {
         if (playerBottomSheetFragment != null) {
-            float condensedSlideOffset = Math.max(0.0f, Math.min(0.2f, slideOffset - 0.2f)) / 0.2f;
-            playerBottomSheetFragment.getPlayerHeader().setAlpha(1 - condensedSlideOffset);
-            playerBottomSheetFragment.getPlayerHeader().setVisibility(condensedSlideOffset > 0.99 ? View.GONE : View.VISIBLE);
+            View playerHeader = playerBottomSheetFragment.getPlayerHeader();
+            if (playerHeader != null) {
+                float condensedSlideOffset = Math.max(0.0f, Math.min(0.2f, slideOffset - 0.2f)) / 0.2f;
+                playerHeader.setAlpha(1 - condensedSlideOffset);
+                playerHeader.setVisibility(condensedSlideOffset > 0.99 ? View.GONE : View.VISIBLE);
+            }
         }
     }
 

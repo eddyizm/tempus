@@ -1,8 +1,8 @@
 package com.eddyizm.tempus.service
 
+import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
-import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -773,11 +773,17 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     private fun initializeMediaLibrarySession(player: Player) {
         Log.d(TAG, "initializeMediaLibrarySession")
+        val sessionIntent = Intent(this, MainActivity::class.java).apply {
+            action = Constants.ACTION_OPEN_NOW_PLAYING
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
         val sessionActivityPendingIntent =
-            TaskStackBuilder.create(this).run {
-                addNextIntent(Intent(baseContext, MainActivity::class.java))
-                getPendingIntent(0, FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)
-            }
+            PendingIntent.getActivity(
+                this,
+                0,
+                sessionIntent,
+                FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
+            )
 
         bitmapLoader = SyncBitmapLoader(applicationContext)
 
