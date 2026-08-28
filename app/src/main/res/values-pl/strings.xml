@@ -347,6 +347,7 @@
     <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
     <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>
     <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
+	<string name="playlist_editor_dialog_action_save_empty">Playlista musi mieć co najmniej jeden utwór</string>
     <string name="playlist_page_empty">Brak piosenek w tej playliście</string>
     <string name="playlist_page_play_button">Odtwórz</string>
     <string name="playlist_page_shuffle_button">Odtwarzaj losowo</string>
