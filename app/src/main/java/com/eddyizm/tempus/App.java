@@ -13,7 +13,7 @@ import com.eddyizm.tempus.github.Github;
 import com.eddyizm.tempus.helper.ThemeHelper;
 import com.eddyizm.tempus.subsonic.Subsonic;
 import com.eddyizm.tempus.subsonic.SubsonicPreferences;
-import com.eddyizm.tempus.ui.activity.CrashActivity;
+import com.eddyizm.tempus.ui.crash.CrashActivity;
 import com.eddyizm.tempus.util.ClientCertManager;
 import com.eddyizm.tempus.util.Preferences;
 

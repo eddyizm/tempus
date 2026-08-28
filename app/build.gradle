@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -15,7 +16,7 @@ android {
         targetSdk = 37
 
         versionCode 44
-        versionName '4.25.5'
+        versionName '4.25.6-dev'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -79,6 +80,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
 
     lint {
@@ -105,6 +107,15 @@ dependencies {
     implementation libs.androidx.splashscreen
     implementation libs.androidx.appcompat
     implementation libs.androidx.swiperefreshlayout
+
+    // Compose
+    implementation platform(libs.androidx.compose.bom)
+    implementation libs.androidx.compose.runtime
+    implementation libs.androidx.compose.ui
+    implementation libs.androidx.compose.ui.graphics
+    implementation libs.androidx.compose.ui.tooling.preview
+    implementation libs.androidx.compose.foundation
+    debugImplementation libs.androidx.compose.ui.tooling
 
     // Android Material
     implementation libs.material

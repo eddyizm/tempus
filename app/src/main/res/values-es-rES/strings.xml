@@ -794,4 +794,8 @@
     <string name="la_shortcut_label">Introducción</string>
     <string name="la_button_advanced_editor">Editor avanzado (beta)</string>
     <string name="artist_page_title_most_streamed_song_unavailable">No hay canciones principales disponibles\nToca para ocultar</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Al activar esto, la lista de reproducción se hace pública. Si lo dejas como está, no cambia la visibilidad de la lista de reproducción.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Una lista de reproducción debe tener al menos una pista</string>
+    <string name="search_title_empty_response">Sin resultados.</string>
+    <string name="search_description_empty_response">Hemos comprobado la respuesta de su servidor pero estaba vacía.</string>
 </resources>

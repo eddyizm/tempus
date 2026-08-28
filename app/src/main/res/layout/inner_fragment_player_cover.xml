@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:paddingHorizontal="24dp">
 
-    <ImageView
-        android:id="@+id/now_playing_song_cover_image_view"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/now_playing_artwork_pager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,8 +28,8 @@
         app:cornerRadius="64dp"
         android:alpha="0.7"
         app:icon="@drawable/ic_tap"
-        app:layout_constraintEnd_toEndOf="@+id/now_playing_song_cover_image_view"
-        app:layout_constraintBottom_toBottomOf="@+id/now_playing_song_cover_image_view" />
+        app:layout_constraintEnd_toEndOf="@+id/now_playing_artwork_pager"
+        app:layout_constraintBottom_toBottomOf="@+id/now_playing_artwork_pager" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/now_playing_song_cover_button_group"

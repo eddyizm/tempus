@@ -132,7 +132,7 @@ open class BaseSessionCallback(
     // overflow buttons can't take their place on the last track (see #663).
     private val previousButton =
         CommandButton.Builder(CommandButton.ICON_PREVIOUS)
-            .setPlayerCommand(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+            .setPlayerCommand(Player.COMMAND_SEEK_TO_PREVIOUS)
             .setDisplayName("Previous")
             .build()
 

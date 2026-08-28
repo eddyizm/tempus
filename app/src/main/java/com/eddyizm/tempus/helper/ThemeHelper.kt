@@ -4,16 +4,18 @@ package com.eddyizm.tempus.helper
 import android.annotation.SuppressLint
 import android.content.res.Configuration.UI_MODE_NIGHT_MASK
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
+import android.util.TypedValue
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
 
 import com.eddyizm.tempus.R
@@ -69,12 +71,24 @@ object ThemeHelper {
             applyAmoled = (nightModeFlags == UI_MODE_NIGHT_YES && isDarkThemeBlack())
         }
 
-        if (applyAmoled) {
-            activity.window.setNavigationBarColor(ContextCompat.getColor(activity, android.R.color.black))
-            activity.window.setStatusBarColor(ContextCompat.getColor(activity, android.R.color.black))
+        setSystemBarsColorAmoledOrAccent(activity, applyAmoled)
+    }
+
+    /**
+     * Decide whether to use hardcoded black
+     * or use accent color for its elevation
+     */
+    @Suppress("DEPRECATION") // Up to API 35
+    private fun setSystemBarsColorAmoledOrAccent(activity: AppCompatActivity, isAmoled: Boolean) {
+        if (isAmoled) {
+            val color = ContextCompat.getColor(activity, android.R.color.black)
+            activity.window.navigationBarColor = color
+            activity.window.statusBarColor = color
         } else {
-            activity.window.setNavigationBarColor(SurfaceColors.getColorForElevation(activity, 8F))
-            activity.window.setStatusBarColor(SurfaceColors.getColorForElevation(activity, 0F))
+            val color8F = SurfaceColors.getColorForElevation(activity, 8F)
+            val color0F = SurfaceColors.getColorForElevation(activity, 0F)
+            activity.window.navigationBarColor = color8F
+            activity.window.statusBarColor = color0F
         }
     }
 
@@ -82,6 +96,7 @@ object ThemeHelper {
      * Allow activities to switch among themes when first built.
      * This includes light|night mode and dynamic colors.
      */
+    @SuppressLint("UseKtx")
     @JvmStatic
     fun enableThemeSwitch(activity: AppCompatActivity) {
         val theme        = getTheme()
@@ -108,15 +123,35 @@ object ThemeHelper {
         }
 
         if (isAmoled) {
-            val amoledOverlayAttrs = intArrayOf(
+            @Suppress("DEPRECATION") val amoledOverlayAttrs = mutableListOf(
                 android.R.attr.colorBackground,
+                android.R.attr.statusBarColor,
+                android.R.attr.navigationBarColor,
                 com.google.android.material.R.attr.colorSurface,
-                com.google.android.material.R.attr.colorSurfaceVariant
+                com.google.android.material.R.attr.colorSurfaceVariant,
+                com.google.android.material.R.attr.colorSurfaceContainerLowest,
+                com.google.android.material.R.attr.colorSurfaceContainerLow,
+                com.google.android.material.R.attr.colorSurfaceContainer,
+                com.google.android.material.R.attr.colorSurfaceContainerHigh,
+                com.google.android.material.R.attr.colorSurfaceContainerHighest,
+                com.google.android.material.R.attr.colorOutline,
+                com.google.android.material.R.attr.colorOutlineVariant
             )
 
-            activity.obtainStyledAttributes(amoledOverlayAttrs)
-            activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                @Suppress("DEPRECATION") // Up to API 35
+                amoledOverlayAttrs.add(android.R.attr.navigationBarDividerColor)
+            }
 
+            val typedArray = activity.obtainStyledAttributes(amoledOverlayAttrs.toIntArray())
+            typedArray.recycle()
+
+            activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
+            activity.window.setBackgroundDrawable(Color.BLACK.toDrawable())
+        } else {
+            val typedValue = TypedValue()
+            activity.theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
+            activity.window.setBackgroundDrawable(typedValue.data.toDrawable())
         }
     }
 
