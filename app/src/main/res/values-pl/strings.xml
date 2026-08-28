@@ -858,7 +858,7 @@
     <string name="la_theme_card_sunset_amber_description">Pomarańcz zachodu kolor akcentu</string>
     <string name="la_theme_card_teal_description">Turkusowy kolor akcentu</string>
     <string name="la_theme_card_slate_gray_description">Szary kolor akcentu</string>
-	    <string name="la_theme_dialog_color_picker_title">Wybierz kolor akcentu</string>
+	<string name="la_theme_dialog_color_picker_title">Wybierz kolor akcentu</string>
 
     <string name="la_shortcut_label">Wprowadzenie</string>
     <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
