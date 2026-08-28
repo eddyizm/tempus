@@ -21,6 +21,20 @@ public interface DownloadDao {
     @Query("SELECT * FROM download WHERE id = :id")
     Download getOne(String id);
 
+    @Query("SELECT COUNT(*) FROM download WHERE download_state = 1")
+    int countDownloaded();
+
+    @Query("SELECT DISTINCT album_id FROM download WHERE NULLIF(album_artist, '') IS NULL AND NULLIF(album_id, '') IS NOT NULL AND download_state = 1")
+    List<String> getAlbumIdsWithoutAlbumArtist();
+
+    @Query("SELECT COUNT(*) FROM download WHERE album_id = :albumId AND NULLIF(album_artist, '') IS NULL AND NULLIF(album, '') <> :albumTitle AND download_state = 1")
+    int countUnfilledUnderAnotherTitle(String albumId, String albumTitle);
+
+    // No download_state here on purpose. A song still downloading has no album artist yet, and
+    // skipping it would leave it to finish later and sort away from its own album.
+    @Query("UPDATE download SET album_artist = :albumArtist WHERE album_id = :albumId AND album = :albumTitle AND NULLIF(album_artist, '') IS NULL")
+    int setAlbumArtist(String albumId, String albumTitle, String albumArtist);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Download download);
 
