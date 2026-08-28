@@ -622,4 +622,8 @@
     <string name="artist_page_title_live_section">Лайв-альбомы</string>
     <string name="artist_page_title_remix_section">Ремиксы</string>
     <string name="menu_sort_song_count">Количество песен</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Включение этой опции делает плейлист публичным. Оставление её без изменений не влияет на видимость плейлиста.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Плейлист должен содержать хотя бы один трек</string>
+    <string name="search_title_empty_response">Нет результатов.</string>
+    <string name="search_description_empty_response">Мы проверили ответ вашего сервера, но он оказался пустым.</string>
 </resources>
