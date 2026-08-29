@@ -38,6 +38,7 @@ jobs:
           sed -ri '/org.gradle.toolchains.foojay-resolver-convention/d' settings.gradle
           bash ./gradlew assembleTempusRelease
           bash ./gradlew assembleDegoogledRelease
+          bash ./gradlew bundlePlayRelease
 
       - name: Sign Tempus Release APKs
         id: sign_tempus_release
@@ -63,6 +64,18 @@ jobs:
         env:
           BUILD_TOOLS_VERSION: "34.0.0"
 
+      - name: Sign Play Release AAB
+        id: sign_play_release
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/playRelease
+          signingKeyBase64: ${{ secrets.KEYSTORE_BASE64 }}
+          alias: ${{ secrets.KEY_ALIAS_GITHUB }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD_GITHUB }}
+        env:
+          BUILD_TOOLS_VERSION: "36.0.0"
+
       - name: Rename Signed APKs to match local pattern
         run: |
           # Rename Tempus signed APKs
@@ -77,15 +90,23 @@ jobs:
             mv "$file" "$new_name"
           done
 
+          # Rename Play signed AAB
+          for file in app/build/outputs/bundle/playRelease/*-signed.aab; do
+            new_name=$(echo "$file" | sed 's/-signed\.aab$/.aab/')
+            mv "$file" "$new_name"
+          done
+
       - name: Rename Mapping Files
         run: |
           mv -v app/build/outputs/mapping/tempusRelease/mapping.txt app/build/outputs/mapping/tempusRelease/mapping_Tempus.txt
           mv -v app/build/outputs/mapping/degoogledRelease/mapping.txt app/build/outputs/mapping/degoogledRelease/mapping_Degoogled.txt
+          mv -v app/build/outputs/mapping/playRelease/mapping.txt app/build/outputs/mapping/playRelease/mapping_Play.txt
 
       - name: Compress Mapping Files
         run: |
           gzip -v app/build/outputs/mapping/tempusRelease/mapping_Tempus.txt
           gzip -v app/build/outputs/mapping/degoogledRelease/mapping_Degoogled.txt
+          gzip -v app/build/outputs/mapping/playRelease/mapping_Play.txt
 
       - name: Create Release
         id: create_release
@@ -101,3 +122,5 @@ jobs:
             app/build/outputs/apk/degoogled/release/*-release.apk
             app/build/outputs/mapping/tempusRelease/mapping_Tempus.txt.gz
             app/build/outputs/mapping/degoogledRelease/mapping_Degoogled.txt.gz
+            app/build/outputs/bundle/playRelease/*-release.aab
+            app/build/outputs/mapping/playRelease/mapping_Play.txt.gz
