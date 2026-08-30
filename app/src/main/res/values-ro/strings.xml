@@ -550,4 +550,8 @@
 
     <string name="search_sort_title">Sortaţi căutările recente cronologic</string>
     <string name="search_sort_summary">Dacă este activat, sortează căutările cronologic. Sortează după nume dacă este dezactivat.</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Activarea acestei opțiuni face lista de redare publică. Dacă este lăsată așa cum este, vizibilitatea listei de redare nu se va schimba.</string>
+    <string name="playlist_editor_dialog_action_save_empty">O listă de redare trebuie să conțină cel puțin o piesă</string>
+    <string name="search_title_empty_response">Niciun rezultat.</string>
+    <string name="search_description_empty_response">Am verificat răspunsul serverului, dar era gol.</string>
 </resources>

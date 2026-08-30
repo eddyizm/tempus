@@ -37,6 +37,8 @@
             android:layout_gravity="bottom"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
+            android:elevation="0dp"
+            android:background="?attr/colorSurface"
             app:menu="@menu/bottom_nav_menu" />
 
         <TextView

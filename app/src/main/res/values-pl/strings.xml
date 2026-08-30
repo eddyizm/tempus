@@ -277,6 +277,7 @@
     <string name="menu_last_year_name">Ostatni rok</string>
     <string name="menu_library_label">Biblioteka</string>
     <string name="menu_search_button">Szukaj</string>
+	<string name="settings_search_hint">Szukaj w ustawieniach</string>
     <string name="menu_settings_button">Ustawienia</string>
     <string name="menu_sort_artist">Wykonawca</string>
     <string name="menu_sort_name">Nazwa</string>
@@ -333,6 +334,7 @@
     <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
 	<string name="playlist_chooser_dialog_visibility_switch_label">Oznacz playlistę jako publiczną</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Włączenie tego oznacza playlistę jako publiczną. Nie zmienienie tego ustawienia, nie zmienia widoczności playlisty.</string>
     <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
     <string name="playlist_duration">Długość  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
@@ -345,6 +347,8 @@
     <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
     <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>
     <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
+	<string name="playlist_editor_dialog_action_save_empty">Playlista musi mieć co najmniej jeden utwór</string>
+    <string name="playlist_page_empty">Brak piosenek w tej playliście</string>
     <string name="playlist_page_play_button">Odtwórz</string>
     <string name="playlist_page_shuffle_button">Odtwarzaj losowo</string>
     <string name="playlist_song_count">Playlista  •  %1$d piosenek</string>
@@ -408,6 +412,8 @@
     <string name="search_title_album">Albumy</string>
     <string name="search_title_artist">Wykonawcy</string>
     <string name="search_title_song">Piosenki</string>
+    <string name="search_title_empty_response">Brak wyników.</string>
+    <string name="search_description_empty_response">Sprawdziliśmy odpowiedź twojego serwera, ale była pusta.</string>
     <string name="server_signup_dialog_action_low_security">Niskie bezpieczeństwo</string>
     <string name="server_signup_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
     <string name="server_signup_dialog_hint_local_address">Lokalny URL</string>
@@ -796,6 +802,16 @@
     <string name="playlist_error_not_found_toast">Playlista usunięta z pamięci podręcznej</string>
 	<string name="player_overflow_menu_add_to_playlist">Dodaj do playlisty</string>
 
+    <string name="la_tab_greeter">Powitanie</string>
+    <string name="la_tab_permission">Uprawnienia</string>
+    <string name="la_tab_themes">Motywy</string>
+    <string name="la_tab_server">Serwery</string>
+	
+    <string name="la_appbar_greeter_title">Informacje</string>
+    <string name="la_appbar_permission_title">Przegląd uprawnień</string>
+    <string name="la_appbar_themes_title">Edytor motywów</string>
+    <string name="la_appbar_server_title">Edytor serwerów</string>
+
     <string name="la_greeting_description">Witaj w Tempus, otwarto-źródłowym kliencie muzycznym dla Subsonic, stworzonym i zbudowanym natywnie dla Androida.</string>
 
     <string name="la_server_title">Konfiguracja serwera</string>
@@ -813,7 +829,7 @@
     <string name="la_server_button_update">Uaktualnij</string>
     <string name="la_server_button_delete">Usuń</string>
     <string name="la_server_button_test">Testuj</string>
-    <string name="la_server_button_login">Wróć do listy serwerów</string>
+    <string name="la_server_button_login">Przejdź do logowania</string>
     <string name="la_server_dropdown_add_new">Dodaj nowy serwer</string>
     <string name="la_server_toast_created">Serwer utworzony</string>
     <string name="la_server_toast_updated">Serwer uaktualniony</string>
@@ -826,8 +842,30 @@
     <string name="la_server_switch_local_url">Ustaw lokalny adres URL</string>
     <string name="la_server_switch_cert">Certyfikat klienta (mTLS)</string>
 
+	<string name="la_theme_title">Wybierz kolor akcentu</string>
+    <string name="la_theme_description">Styl dla palety dynamicznej twojej aplikacji.</string>
+
+    <string name="la_theme_button_return">Wróć</string>
+
+    <string name="la_theme_switch_true_black">Prawdziwie czarne tło dla ciemnego trybu</string>
+    <string name="la_theme_switch_default_dynamic">Dynamiczny kolor akcentu z tapety</string>
+
+    <string name="la_theme_card_default">Domyślny</string>
+    <string name="la_theme_card_flirt_red_description">Czerwony kolor akcentu</string>
+    <string name="la_theme_card_coral_red_description">Koralowa czerwień kolor akcentu</string>
+    <string name="la_theme_card_royal_blue_description">Szmaragdowa zieleń kolor akcentu</string>
+    <string name="la_theme_card_purple_violet_description">Fioletowy kolor akcentu</string>
+    <string name="la_theme_card_sunset_amber_description">Pomarańcz zachodu kolor akcentu</string>
+    <string name="la_theme_card_teal_description">Turkusowy kolor akcentu</string>
+    <string name="la_theme_card_slate_gray_description">Szary kolor akcentu</string>
+	<string name="la_theme_dialog_color_picker_title">Wybierz kolor akcentu</string>
+
     <string name="la_shortcut_label">Wprowadzenie</string>
     <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
 	
     <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Włączenie tej opcji sprawia, że playlista staje się publiczna. Pozostawienie jej bez zmian nie zmienia widoczności playlisty.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Playlista musi zawierać przynajmniej jeden utwór</string>
+    <string name="search_title_empty_response">Brak wyników.</string>
+    <string name="search_description_empty_response">Sprawdziliśmy odpowiedź twojego serwera, ale była pusta.</string>
 </resources>

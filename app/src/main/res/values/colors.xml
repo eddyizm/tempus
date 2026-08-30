@@ -54,6 +54,9 @@
     <color name="md_theme_dark_inverseSurface">#E6E1E5</color>
     <color name="md_theme_dark_primaryInverse">#6750A4</color>
 
+    <!-- #000000 is all we need -->
+    <color name="md_theme_amoled_surface_override">#000000</color>
+
     <color name="md_theme_amoled_primary">#D0BCFF</color>
     <color name="md_theme_amoled_onPrimary">#381E72</color>
     <color name="md_theme_amoled_primaryContainer">#4F378B</color>

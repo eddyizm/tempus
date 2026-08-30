@@ -61,7 +61,7 @@
             android:exported="true"/>
 
         <activity
-            android:name=".ui.activity.CrashActivity"
+            android:name=".ui.crash.CrashActivity"
             android:label="@string/ca_info_title"
             android:process=":error_activity" />
 

@@ -1,4 +1,4 @@
-package com.eddyizm.tempus.ui.fragment;
+package com.eddyizm.tempus.ui.crash;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment;
 import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
-import com.eddyizm.tempus.ui.activity.CrashActivity;
 import com.eddyizm.tempus.util.BugReportUtil;
 
 import cat.ereza.customactivityoncrash.CustomActivityOnCrash;

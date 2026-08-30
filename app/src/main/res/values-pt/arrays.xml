@@ -14,11 +14,13 @@
         <item>Alta</item>
         <item>Média</item>
         <item>Baixa</item>
+        <item>Extra alta (1 GiB)</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
         <item>250</item>
         <item>125</item>
+        <item>1024</item>
     </string-array>
 
     <string-array name="pref_image_size_titles">

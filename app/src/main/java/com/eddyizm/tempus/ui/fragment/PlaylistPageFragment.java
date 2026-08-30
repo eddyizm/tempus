@@ -215,8 +215,13 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
             bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlistPageViewModel.getPlaylist());
             PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
                 @Override
-                public void onDismiss() {
-                    // Refresh?
+                public void onRenamed(String name) {
+                    playlistPageViewModel.getPlaylist().setName(name);
+
+                    if (bind != null) {
+                        bind.animToolbar.setTitle(name);
+                        bind.playlistNameLabel.setText(name);
+                    }
                 }
             });
             dialog.setArguments(bundle);
@@ -481,6 +486,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     @Override
     public void onMediaLongClick(Bundle bundle) {
         bundle.putString(Constants.PLAYLIST_ID, playlistPageViewModel.getPlaylist().getId());
+        bundle.putString(Constants.PLAYLIST_NAME, playlistPageViewModel.getPlaylist().getName());
         Navigation.findNavController(requireView()).navigate(R.id.songBottomSheetDialog, bundle);
     }
 
