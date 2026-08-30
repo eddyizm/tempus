@@ -22,11 +22,11 @@
             android:layout_width="@dimen/_80sdp"
             android:layout_height="@dimen/_48sdp"
             android:textSize="@dimen/_12sdp"
+            android:textColor="?attr/colorPrimary"
             app:cornerRadius="30dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tint="?attr/colorOnPrimaryContainer" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageButton
             android:id="@+id/player_info_track"
@@ -40,7 +40,7 @@
             app:layout_constraintTop_toTopOf="@id/player_media_quality_sector_center"
             app:layout_constraintBottom_toBottomOf="@id/player_media_quality_sector_center"
             app:srcCompat="@drawable/ic_info_stream"
-            app:tint="?attr/colorOnPrimaryContainer" />
+            app:tint="?attr/colorPrimary" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/player_media_quality_sector_center"
@@ -138,6 +138,7 @@
         android:ellipsize="marquee"
         android:singleLine="true"
         android:textSize="@dimen/_14sdp"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/label_placeholder"
         app:layout_constraintEnd_toStartOf="@+id/button_favorite"
         app:layout_constraintStart_toStartOf="parent"
@@ -176,7 +177,7 @@
             android:text=""/>
     </LinearLayout>
 
-    <ToggleButton
+    <androidx.appcompat.widget.AppCompatToggleButton
         android:id="@+id/button_favorite"
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
@@ -188,7 +189,8 @@
         android:textOn=""
         app:layout_constraintBottom_toBottomOf="@+id/player_media_title_label"
         app:layout_constraintEnd_toStartOf="@id/player_overflow_button"
-        app:layout_constraintTop_toTopOf="@+id/player_media_title_label" />
+        app:layout_constraintTop_toTopOf="@+id/player_media_title_label"
+        app:tint="?attr/colorPrimary"/>
 
     <ImageButton
         android:id="@+id/player_overflow_button"
@@ -200,7 +202,8 @@
         android:src="@drawable/ic_more_vert"
         app:layout_constraintBottom_toBottomOf="@+id/player_media_title_label"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/player_media_title_label" />
+        app:layout_constraintTop_toTopOf="@+id/player_media_title_label"
+        app:tint="?attr/colorPrimary"/>
 
     <TextView
         android:id="@+id/exo_position"
@@ -304,7 +307,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/placeholder_view_middle_left"
         app:srcCompat="@drawable/ic_shuffle"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <ImageButton
         android:id="@+id/exo_rew"
@@ -317,7 +320,7 @@
         app:layout_constraintEnd_toStartOf="@+id/player_play_pause_placeholder_view"
         app:layout_constraintStart_toEndOf="@id/placeholder_view_left"
         app:layout_constraintTop_toTopOf="@+id/player_play_pause_placeholder_view"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <ImageButton
         android:id="@+id/exo_prev"
@@ -330,7 +333,7 @@
         app:layout_constraintStart_toEndOf="@id/placeholder_view_left"
         app:layout_constraintTop_toTopOf="@+id/player_play_pause_placeholder_view"
         app:srcCompat="@drawable/ic_skip_previous"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <ImageButton
         android:id="@id/exo_play_pause"
@@ -343,7 +346,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/exo_progress"
         app:layout_constraintVertical_bias=".45"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <ImageButton
         android:id="@+id/exo_next"
@@ -356,7 +359,7 @@
         app:layout_constraintStart_toEndOf="@+id/player_play_pause_placeholder_view"
         app:layout_constraintTop_toTopOf="@+id/player_play_pause_placeholder_view"
         app:srcCompat="@drawable/ic_skip_next"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <ImageButton
         android:id="@+id/exo_ffwd"
@@ -369,7 +372,7 @@
         app:layout_constraintStart_toEndOf="@+id/player_play_pause_placeholder_view"
         app:layout_constraintTop_toTopOf="@+id/player_play_pause_placeholder_view"
         app:srcCompat="@drawable/ic_forward"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <ImageButton
         android:id="@+id/exo_repeat_toggle"
@@ -383,7 +386,7 @@
         app:layout_constraintStart_toEndOf="@+id/placeholder_view_middle_right"
         app:layout_constraintTop_toTopOf="@+id/placeholder_view_middle_right"
         app:srcCompat="@drawable/ic_repeat"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <ToggleButton
         android:id="@+id/player_skip_silence_toggle_button"
@@ -398,7 +401,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/placeholder_view_middle_right"
         app:layout_constraintTop_toTopOf="@+id/placeholder_view_middle_right"
-        app:tint="?attr/colorOnPrimaryContainer" />
+        app:tint="?attr/colorPrimary" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/player_quick_action_view"
@@ -427,7 +430,8 @@
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                app:srcCompat="@drawable/ic_timer" />
+                app:srcCompat="@drawable/ic_timer"
+                app:tint="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/player_sleep_timer_label"
@@ -450,7 +454,8 @@
             app:layout_constraintEnd_toStartOf="@+id/player_open_queue_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:srcCompat="@drawable/ic_lyrics" />
+            app:srcCompat="@drawable/ic_lyrics"
+            app:tint="?attr/colorPrimary" />
 
 
         <!-- Queue: last element of the horizontal spread chain -->
@@ -464,7 +469,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:srcCompat="@drawable/ic_queue" />
+            app:srcCompat="@drawable/ic_queue"
+            app:tint="?attr/colorPrimary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
