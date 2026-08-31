@@ -264,6 +264,10 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         return differ.getCurrentList().size();
     }
 
+    public List<Child> getItems() {
+        return this.songsFull;
+    }
+
     @Override
     public void onViewRecycled(@NonNull ViewHolder holder) {
         super.onViewRecycled(holder);

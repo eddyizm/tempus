@@ -27,7 +27,9 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
 import com.eddyizm.tempus.R;
@@ -48,6 +50,7 @@ import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.ExternalAudioWriter;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
+import com.eddyizm.tempus.viewmodel.PlaylistEditorViewModel;
 import com.eddyizm.tempus.viewmodel.PlaylistPageViewModel;
 import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
 import com.eddyizm.tempus.interfaces.PlaylistCallback;
@@ -67,6 +70,8 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     private MainActivity activity;
     private PlaylistPageViewModel playlistPageViewModel;
     private PlaybackViewModel playbackViewModel;
+
+    private PlaylistEditorViewModel playlistEditorViewModel;
 
     private SongHorizontalAdapter songHorizontalAdapter;
 
@@ -113,6 +118,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         View view = bind.getRoot();
         playlistPageViewModel = new ViewModelProvider(requireActivity()).get(PlaylistPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
+        playlistEditorViewModel = new ViewModelProvider(requireActivity()).get(PlaylistEditorViewModel.class);
 
         Bundle args = getArguments();
         Playlist playlistArg = args != null ? args.getParcelable(Constants.PLAYLIST_OBJECT) : null;
@@ -467,6 +473,48 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
             }
             reapplyPlayback();
         });
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
+            int originalPosition = -1;
+            int fromPosition = -1;
+            int toPosition = -1;
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                if (originalPosition == -1)
+                    originalPosition = viewHolder.getBindingAdapterPosition();
+
+                fromPosition = viewHolder.getBindingAdapterPosition();
+                toPosition = target.getBindingAdapterPosition();
+
+                Collections.swap(songHorizontalAdapter.getItems(), fromPosition, toPosition);
+                Objects.requireNonNull(recyclerView.getAdapter()).notifyItemMoved(fromPosition, toPosition);
+
+                return false;
+            }
+
+            @Override
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+
+                /*
+                 * Qui vado a riscivere tutta la table Queue, quando teoricamente potrei solo swappare l'ordine degli elementi interessati
+                 * Nel caso la coda contenesse parecchi brani, potrebbero verificarsi rallentamenti pesanti
+                 */
+                playlistEditorViewModel.orderPlaylistSongLiveListAfterSwap(songHorizontalAdapter.getItems());
+
+                originalPosition = -1;
+                fromPosition = -1;
+                toPosition = -1;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                playlistEditorViewModel.removeFromPlaylistSongLiveList(viewHolder.getBindingAdapterPosition());
+                Objects.requireNonNull(bind.songRecyclerView.getAdapter()).notifyItemRemoved(viewHolder.getBindingAdapterPosition());
+            }
+        }
+        ).attachToRecyclerView(bind.songRecyclerView);
     }
 
     private void initializeMediaBrowser() {
@@ -515,5 +563,19 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
     private void setMediaBrowserListenableFuture() {
         songHorizontalAdapter.setMediaBrowserListenableFuture(mediaBrowserListenableFuture);
+    }
+
+    private void setParameterInfo() {
+        if (requireArguments().getParcelableArrayList(Constants.TRACKS_OBJECT) != null) {
+            playlistEditorViewModel.setSongsToAdd(requireArguments().getParcelableArrayList(Constants.TRACKS_OBJECT));
+            playlistEditorViewModel.setPlaylistToEdit(null);
+        } else if (requireArguments().getParcelable(Constants.PLAYLIST_OBJECT) != null) {
+            playlistEditorViewModel.setSongsToAdd(null);
+            playlistEditorViewModel.setPlaylistToEdit(requireArguments().getParcelable(Constants.PLAYLIST_OBJECT));
+
+//            if (playlistEditorViewModel.getPlaylistToEdit() != null) {
+//                bind.playlistNameTextView.setText(playlistEditorViewModel.getPlaylistToEdit().getName());
+//            }
+        }
     }
 }
