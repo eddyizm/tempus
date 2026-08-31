@@ -59,11 +59,6 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
     }
 
     @OptIn(markerClass = UnstableApi.class)
-    public LiveData<List<Playlist>> getPlaylistList(LifecycleOwner owner) {
-        return getPlaylistList();
-    }
-
-    @OptIn(markerClass = UnstableApi.class)
     public void addSongsToPlaylist(LifecycleOwner owner, Dialog dialog, String playlistId) {
         List<String> songIds = Lists.transform(toAdd, Child::getId);
         if (Preferences.allowPlaylistDuplicates()) {
