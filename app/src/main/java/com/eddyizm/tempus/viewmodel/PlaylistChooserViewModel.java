@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
 
-@UnstableApi
 public class PlaylistChooserViewModel extends AndroidViewModel {
     private final PlaylistRepository playlistRepository;
     // Null until the user touches the switch. A false default went out on the wire and changed
