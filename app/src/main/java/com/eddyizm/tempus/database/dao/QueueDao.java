@@ -37,8 +37,8 @@ public interface QueueDao {
     @Query("UPDATE queue SET last_play=:timestamp WHERE id=:id")
     void setLastPlay(String id, long timestamp);
 
-    @Query("UPDATE queue SET playing_changed=:timestamp WHERE id=:id")
-    void setPlayingChanged(String id, long timestamp);
+    @Query("UPDATE queue SET last_play=:timestamp, playing_changed=:positionMs WHERE id=:id")
+    void setResumePoint(String id, long timestamp, long positionMs);
 
     @Query("SELECT * FROM queue ORDER BY last_play DESC LIMIT 1")
     Queue getLastPlayed();
