@@ -66,9 +66,21 @@ This app works with any service that implements the Subsonic API, including:
 
 Tempus handles multi-library setups gracefully. They are displayed as Library folders. 
 
-However, if you want to limit or change libraries you could use a workaround, if your server supports it.
+If your server reports more than one music folder, Tempus can limit browsing and search to a single one of them.
 
-You can create multiple users , one for each library, and save each of them in Tempus app.
+Tap the app name in the toolbar on the Music tab of Home, or on Library. A second line under it names the library in use, and tapping opens a checked list of the server's libraries. The same setting lives in Settings under General as "Music library". Either one takes effect on the screen you are looking at, with no restart and no navigating away.
+
+<p align="left">
+    <img src="mockup/usage/library_switcher.jpg" width=317>
+</p>
+
+"All libraries" is the default and keeps the old merged view. The filter reaches browsing and search only, so it never touches your starred items, your playlists or your downloads. On the Podcast and Radio tabs that second line names your server instead of a library, and it is not tappable there. On Downloads there is no second line at all.
+
+<p align="left">
+    <img src="mockup/usage/toolbar_server_name.jpg" width=317>
+</p>
+
+The setting is hidden when there is only one library to choose from.
 
 ### Folder or index playback
 
@@ -102,6 +114,12 @@ On the main player control screen, tapping on the artwork will reveal a small co
       Which tracks to be mixed depends on the server implementation. For example, Navidrome gets 15 similar artists from LastFM, then 20 top songs from each.
 4. Saves play queue (if the feature is enabled in the settings) 
     * if the setting is not enabled, it toggles a view of the lyrics if available (slides to the right) 
+
+**Format and bitrate**
+
+The player's format and bitrate label gives what was actually decoded, not the transcode Tempus asked for. If your server ignored the request, or had no rule matching the track, the label shows what it really sent. A track the server did transcode reads as the new format followed by "(Transcoding)".
+
+Downloaded tracks show the format on disk. When Tempus transcodes a download, the row and the track info dialog carry the transcoded format and bitrate instead of the source values.
 
 ### Podcasts  
 If your server supports it - add a podcast rss feed
@@ -148,6 +166,14 @@ If your server supports it - add a internet radio station feed
 
 
 ## Playlist Management
+
+### Editing a playlist
+
+Open a playlist and pick Edit playlist from its menu to rename it, drag tracks into a new order, or remove tracks. Saving writes the list exactly as it stands on screen, so a removal or a reorder takes effect on the server instead of being added on top of the tracks already there.
+
+Two things to know:
+- A playlist has to keep at least one track. A save that would leave it empty is refused and the editor says so, use Delete if you want the playlist gone.
+- Saving needs the server. The editor will not save from the offline cache, because writing that older copy back would drop anything added to the playlist since it was cached.
 
 ### Server Playlists
 **TODO**
@@ -197,7 +223,7 @@ The Android Auto interface can be configured by user to best suit their preferen
 - Artists : Albums sorted by artist or Artists, selected by preference
 - Playlists
 - Podcast : The 100 podcasts recently added
-- Radio
+- Radio : Your server's stations together with any you added locally in the app. The local ones show even when the server reports no stations of its own
 - Folder : Navigation through music directories
 - Albums most played : The 15 most played albums
 - Tracks played : The 100 last tracks that were completely played
