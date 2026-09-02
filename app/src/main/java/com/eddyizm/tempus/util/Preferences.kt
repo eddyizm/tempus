@@ -128,6 +128,7 @@ object Preferences {
     private const val AA_SHUFFLE_STARRED_TRACKS = "androidauto_shuffle_starred_tracks"
     private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
     private const val AA_SHUFFLE_DOWNLOADED_TRACKS = "androidauto_shuffle_downloaded_tracks"
+    private const val AA_TRACK_NUMBERS = "androidauto_track_numbers"
     private const val ACTIVE_MUSIC_FOLDER_ID = "active_music_folder_id"
 
     const val MUSIC_FOLDER_ALL = "default"
@@ -1075,6 +1076,11 @@ object Preferences {
     @JvmStatic
     fun getAndroidAutoStarredForMadeForYou(): Int {
         return App.getInstance().preferences.getString(AA_STARRED_FOR_MADE_FOR_YOU, "0")!!.toInt()
+    }
+
+    @JvmStatic
+    fun isAndroidAutoTrackNumbersEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(AA_TRACK_NUMBERS, false)
     }
 
     @JvmStatic

@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.repository;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -27,10 +28,12 @@ import com.eddyizm.tempus.model.SessionMediaItem;
 import com.eddyizm.tempus.provider.AlbumArtContentProvider;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
+import com.eddyizm.tempus.subsonic.models.AlbumWithSongsID3;
 import com.eddyizm.tempus.subsonic.models.Artist;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Directory;
+import com.eddyizm.tempus.subsonic.models.DiscTitle;
 import com.eddyizm.tempus.subsonic.models.Index;
 import com.eddyizm.tempus.subsonic.models.IndexID3;
 import com.eddyizm.tempus.subsonic.models.InternetRadioStation;
@@ -50,6 +53,7 @@ import com.google.common.util.concurrent.SettableFuture;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -891,11 +895,12 @@ public class AutomotiveRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
-                            List<Child> tracks = response.body().getSubsonicResponse().getAlbum().getSongs();
+                            AlbumWithSongsID3 album = response.body().getSubsonicResponse().getAlbum();
+                            List<Child> tracks = album.getSongs();
 
                             setChildrenMetadata(tracks);
 
-                            List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ConstantsAA.QUEUE_CACHED_SOURCE);
+                            List<MediaItem> mediaItems = buildAlbumTrackMediaItems(album, tracks, Preferences.isAndroidAutoTrackNumbersEnabled());
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -912,6 +917,97 @@ public class AutomotiveRepository {
                 });
 
         return listenableFuture;
+    }
+
+    private static List<MediaItem> buildAlbumTrackMediaItems(AlbumWithSongsID3 album, List<Child> tracks, boolean showTrackNumbers) {
+        List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ConstantsAA.QUEUE_CACHED_SOURCE);
+
+        boolean showDiscHeaders = hasMultipleDiscs(tracks);
+
+        if (!showDiscHeaders && !showTrackNumbers) {
+            return mediaItems;
+        }
+
+        List<MediaItem> result = new ArrayList<>(mediaItems.size());
+
+        for (int i = 0; i < mediaItems.size(); i++) {
+            Child track = tracks.get(i);
+            MediaItem mediaItem = mediaItems.get(i);
+
+            MediaMetadata.Builder metadataBuilder = mediaItem.mediaMetadata.buildUpon();
+
+            if (showDiscHeaders) {
+                applyDiscHeader(album, track, mediaItem, metadataBuilder);
+            }
+
+            String displayTitle = getTrackDisplayTitle(track, showTrackNumbers);
+
+            if (displayTitle != null) {
+                metadataBuilder.setDisplayTitle(displayTitle);
+            }
+
+            result.add(mediaItem.buildUpon().setMediaMetadata(metadataBuilder.build()).build());
+        }
+
+        return result;
+    }
+
+    static boolean hasMultipleDiscs(List<Child> tracks) {
+        return tracks.stream()
+                .map(Child::getDiscNumber)
+                .filter(Objects::nonNull)
+                .distinct()
+                .limit(2)
+                .count() > 1;
+    }
+
+    private static void applyDiscHeader(AlbumWithSongsID3 album, Child track, MediaItem mediaItem, MediaMetadata.Builder metadataBuilder) {
+        String title = getDiscHeaderTitle(App.getContext(), album, track);
+
+        if (title == null) {
+            return;
+        }
+
+        Bundle extras = mediaItem.mediaMetadata.extras == null ? new Bundle() : new Bundle(mediaItem.mediaMetadata.extras);
+
+        extras.putString(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_GROUP_TITLE, title);
+
+        metadataBuilder.setExtras(extras);
+    }
+
+    static String getDiscHeaderTitle(Context context, AlbumWithSongsID3 album, Child track) {
+        Integer discNumber = track.getDiscNumber();
+        if (discNumber == null) {
+            return null;
+        }
+
+        String discSubtitle = getDiscSubtitle(album, discNumber);
+
+        return discSubtitle == null
+                ? context.getString(R.string.disc_titleless, discNumber.toString())
+                : context.getString(R.string.disc_titlefull, discNumber.toString(), discSubtitle);
+    }
+
+    static String getDiscSubtitle(AlbumWithSongsID3 album, Integer discNumber) {
+        List<DiscTitle> titles = album.getDiscTitles();
+        if (titles == null) {
+            return null;
+        }
+
+        return titles.stream()
+                .filter(discTitle -> discNumber.equals(discTitle.getDisc()))
+                .map(DiscTitle::getTitle)
+                .filter(title -> title != null && !title.isEmpty())
+                .findFirst()
+                .orElse(null);
+    }
+
+    static String getTrackDisplayTitle(Child track, Boolean showTrackNumbers) {
+        if (!showTrackNumbers || track.getTrack() == null || track.getTitle() == null) {
+            return null;
+        }
+
+        return track.getTrack() + ". " + track.getTitle();
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getArtistAlbum(String prefix, String id) {
