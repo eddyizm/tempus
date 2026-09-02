@@ -290,7 +290,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Pública</string>
     <string name="playlist_chooser_dialog_visibility_private">Privada</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Lista de reproducción pública</string>
-    <string name="playlist_chooser_dialog_visibility_summary">El servidor actualiza la visibilidad en cada modificación. Por defecto es privado</string>
     <string name="playlist_counted_tracks">%1$d canciones •  %2$s</string>
     <string name="playlist_duration">Duración • %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Mantén presionado para eliminar</string>
@@ -744,4 +743,8 @@
     <string name="playlist_error_not_found_message">No se pudo encontrar la lista en el servidor. Será elminará del caché local</string>
     <string name="playlist_error_not_found_toast">Lista de reproducción eliminada del caché</string>
 
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Al activar esto, la lista de reproducción se hace pública. Si lo dejas como está, no cambia la visibilidad de la lista de reproducción.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Una lista de reproducción debe tener al menos una pista</string>
+    <string name="search_title_empty_response">Sin resultados.</string>
+    <string name="search_description_empty_response">Hemos comprobado la respuesta de su servidor pero estaba vacía.</string>
 </resources>

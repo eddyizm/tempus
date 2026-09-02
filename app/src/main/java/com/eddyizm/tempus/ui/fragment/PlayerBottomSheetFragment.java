@@ -64,7 +64,6 @@ public class PlayerBottomSheetFragment extends Fragment {
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
 
-        customizeBottomSheetBackground();
         customizeBottomSheetAction();
         initViewPager();
         setHeaderBookmarksButton();

@@ -297,7 +297,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Publikoa</string>
     <string name="playlist_chooser_dialog_visibility_private">Pribatua</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Zerrenda publiko gisa markatu</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Zerbitzariak ikusgarritasuna eskaera bakoitzean eguneratzen du. Lehenespenez pribatu gisa ezartzen da.</string>
     <string name="playlist_counted_tracks">%1$d abesti •  %2$s</string>
     <string name="playlist_duration">Iraupena  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Sakatu luze ezabatzeko</string>
@@ -760,4 +759,8 @@
     <string name="playlist_error_not_found_title">Zerrenda ez da aurkitu</string>
     <string name="playlist_error_not_found_message">Zerrenda hau ezin izan da zerbitzarian aurkitu. Zure lokaleko cachetik kenduko da.</string>
     <string name="playlist_error_not_found_toast">Zerrenda cachetik kendu da</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Hau aktibatuz gero, erreprodukzio-zerrenda publikoa izango da. Bere horretan utziz gero, ez da erreprodukzio-zerrendaren ikusgarritasuna aldatzen.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Erreprodukzio-zerrenda batek gutxienez pista bat izan behar du</string>
+    <string name="search_title_empty_response">Emaitzarik ez.</string>
+    <string name="search_description_empty_response">Zure zerbitzariaren erantzuna egiaztatu dugu, baina hutsik zegoen.</string>
 </resources>

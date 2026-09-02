@@ -287,7 +287,6 @@
     <string name="playlist_chooser_dialog_visibility_public">Publique</string>
     <string name="playlist_chooser_dialog_visibility_private">Privé</string>
 	<string name="playlist_chooser_dialog_visibility_switch_label">Rendre la playlist publique</string>
-    <string name="playlist_chooser_dialog_visibility_summary">Le serveur met à jour la visibilité à chaque requête. Est défini à privé par défaut.</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>
@@ -739,4 +738,8 @@
     <string name="playlist_error_not_found_title">Playlist introuvable</string>
     <string name="playlist_error_not_found_message">Cette playlist n\'a pas été trouvée sur le serveur. Elle sera supprimée de votre cache local.</string>
     <string name="playlist_error_not_found_toast">Playlist supprimée du cache</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">L\'activation de cette option rend la liste de lecture publique. Si vous la laissez telle quelle, la visibilité de la liste de lecture ne sera pas modifiée.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Une liste de lecture doit contenir au moins un titre</string>
+    <string name="search_title_empty_response">Aucun résultat.</string>
+    <string name="search_description_empty_response">Nous avons vérifié la réponse de votre serveur, mais elle était vide.</string>
 </resources>

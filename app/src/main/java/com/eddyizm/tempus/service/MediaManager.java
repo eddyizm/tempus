@@ -22,6 +22,7 @@ import androidx.media3.session.SessionResult;
 import com.eddyizm.tempus.database.dao.QueueDao;
 import com.eddyizm.tempus.interfaces.MediaIndexCallback;
 import com.eddyizm.tempus.model.Chronology;
+import com.eddyizm.tempus.model.Queue;
 import com.eddyizm.tempus.repository.ChronologyRepository;
 import com.eddyizm.tempus.repository.QueueRepository;
 import com.eddyizm.tempus.repository.SongRepository;
@@ -228,8 +229,13 @@ public class MediaManager {
 
                         backgroundExecutor.execute(() -> {
                             final List<MediaItem> items = MappingUtil.mapMediaItems(media);
-                            final int index = getQueueRepository().getLastPlayedMediaIndex();
-                            final long position = getQueueRepository().getLastPlayedMediaTimestamp();
+                            final Queue lastPlayed = getQueueRepository().getLastPlayedMedia();
+                            final int found = lastPlayed != null
+                                    ? MappingUtil.indexOfMediaId(items, lastPlayed.getId())
+                                    : -1;
+
+                            final int index = found >= 0 ? found : 0;
+                            final long position = found >= 0 ? lastPlayed.getPlayingChanged() : 0;
 
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 // The user can start something while we map, and check() only
@@ -550,9 +556,9 @@ public class MediaManager {
         if (mediaItem != null) getQueueRepository().setLastPlayedTimestamp(mediaItem.mediaId);
     }
 
-    public static void setPlayingPausedTimestamp(MediaItem mediaItem, long ms) {
+    public static void setResumePoint(MediaItem mediaItem, long ms) {
         if (mediaItem != null)
-            getQueueRepository().setPlayingPausedTimestamp(mediaItem.mediaId, ms);
+            getQueueRepository().setResumePoint(mediaItem.mediaId, ms);
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {
