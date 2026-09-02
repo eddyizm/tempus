@@ -1,6 +1,6 @@
 # Changelog
 
-## [4.26.0](https://github.com/eddyizm/tempus/releases/tag/v4.26.0) (2026-09-01)
+## [4.26.1](https://github.com/eddyizm/tempus/releases/tag/v4.26.1) (2026-09-02)
 ## What's Changed
 * fix: stop a playlist edit forcing the playlist public by @herrerad85 in https://github.com/eddyizm/tempus/pull/1029
 * feat: add no search result placeholder by @tvillega in https://github.com/eddyizm/tempus/pull/1035
@@ -26,7 +26,7 @@
 * @vaibhav8a made their first contribution in https://github.com/eddyizm/tempus/pull/1042
 * @sungoldsv made their first contribution in https://github.com/eddyizm/tempus/pull/1026
 
-**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.25.5...v4.26.0
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.25.5...v4.26.1
 
 ## [4.25.5](https://github.com/eddyizm/tempus/releases/tag/v4.25.5) (2026-08-23)
 ## What's Changed
