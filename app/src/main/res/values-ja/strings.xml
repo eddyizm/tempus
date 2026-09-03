@@ -489,6 +489,7 @@
     <string name="settings_androidauto_shuffle_genre_songs_summary">ジャンル選択時にランダムな曲を再生します</string>
     <string name="settings_androidauto_artists_view">アーティストをアルバム別に表示</string>
     <string name="settings_androidauto_starred_for_made_for_you">「あなたへのおすすめ」ミックス用のお気に入り</string>
+    <string name="settings_androidauto_track_numbers">アルバム表示でトラック番号を表示</string>
     <string name="settings_audio_quality">音質情報を表示</string>
     <string name="settings_audio_quality_summary">各トラックのビットレートと音声形式が表示されます。</string>
     <string name="settings_song_rating">曲の星評価を表示</string>

@@ -24,7 +24,6 @@
     <string name="aa_quick_mix">Nahasketa azkarra</string>
     <string name="aa_my_mix">Nire nahasketa</string>
     <string name="aa_discovery_mix">Aurkikuntza-nahasketa</string>
-
     <string name="activity_battery_optimizations_conclusion">Arazorik izanez gero, bisitatu https://dontkillmyapp.com. Aplikazioaren errendimenduari eragin diezaioketen energia-aurrezteko eginbideak desgaitzeko argibide zehatzak eskaintzen ditu.</string>
     <string name="activity_battery_optimizations_summary">Mesedez, desgaitu bateria-optimizazioak pantaila itzalita dagoenean multimedia erreproduzitzeko.</string>
     <string name="activity_battery_optimizations_title">Bateria-optimizazioak</string>
@@ -470,6 +469,7 @@
     <string name="settings_androidauto_shuffle_genre_songs_summary">Erreproduzitu ausazko abestiak genero bat hautatzean</string>
     <string name="settings_androidauto_artists_view">Artistak diskaka bistaratzen dira</string>
     <string name="settings_androidauto_starred_for_made_for_you">Gogokoak "Zuretzat egina" nahasketarako</string>
+    <string name="settings_androidauto_track_numbers">Erakutsi pista-zenbakiak albumaren ikuspegian</string>
     <string name="settings_audio_quality">Audio-kalitatea erakutsi</string>
     <string name="settings_audio_quality_summary">Bit-emaria eta audio-formatua erakutsiko dira abesti bakoitzean.</string>
     <string name="settings_song_rating">Abestien izar-balorazioa erakutsi</string>

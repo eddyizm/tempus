@@ -358,6 +358,7 @@
     <string name="settings_music_directory_summary">Dacă este activat, afișează secțiunea directorului de muzică. Vă rugăm să rețineți că pentru ca navigarea folderului să funcționeze corect, serverul trebuie să suporte această funcție.</string>
     <string name="settings_podcast">Arătați podcast</string>
     <string name="settings_podcast_summary">Dacă este activat, afișează secțiunea podcast. Reporniți aplicația pentru ca aceasta să aibă efect complet.</string>
+    <string name="settings_androidauto_track_numbers">Afișează numerele pieselor în vizualizarea albumului</string>
     <string name="settings_audio_quality">Arătați calitate audio</string>
     <string name="settings_audio_quality_summary">Bitrate-ul și formatul audio vor fi afișate pentru fiecare pistă audio.</string>
     <string name="settings_song_rating">Arătați evaluarea cu stele a cântecului</string>

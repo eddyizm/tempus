@@ -24,7 +24,6 @@
     <string name="aa_quick_mix">Mix rapide</string>
     <string name="aa_my_mix">Mon mix</string>
     <string name="aa_discovery_mix">Mix découverte</string>
-
     <string name="activity_battery_optimizations_conclusion">Si vous rencontrez un problème, visitez https://dontkillmyapp.com. Des instructions pour désactiver les fonctions de sauvegarde d\'énergie qui pourrait affecter les performance de l\'app y sont disponibles.</string>
     <string name="activity_battery_optimizations_summary">Veuillez désactiver les optimisations de la batterie pour permettre la lecture des médias lorsque l\'écran est éteint.</string>
     <string name="activity_battery_optimizations_title">Optimisations de la batterie</string>
@@ -454,6 +453,7 @@
     <string name="settings_androidauto_shuffle_genre_songs_summary">Lire les titres aléatoirement à la sélection d\'un genre</string>
     <string name="settings_androidauto_artists_view">Les artistes sont affichés par album</string>
     <string name="settings_androidauto_starred_for_made_for_you">Sélectionnés pour le mix Pour vous</string>
+    <string name="settings_androidauto_track_numbers">Afficher les numéros de piste dans la vue album</string>
 	<string name="settings_audio_quality">Afficher la qualité audio</string>
     <string name="settings_audio_quality_summary">Le débit binaire et le format audio seront affichés pour chaque piste.</string>
     <string name="settings_song_rating">Afficher la note de la piste</string>

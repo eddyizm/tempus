@@ -309,6 +309,7 @@
     <string name="settings_music_directory_summary">Etkinleştirildiğinde müzik dizini bölümü görüntülenir. Klasörlerde gezinmenin doğru çalışması için sunucunun bu özelliği desteklemesi gerekir.</string>
     <string name="settings_podcast">Podcast’i göster</string>
     <string name="settings_podcast_summary">Etkinleştirildiğinde podcast bölümü görüntülenir. Tam etkili olması için uygulamayı yeniden başlatın.</string>
+    <string name="settings_androidauto_track_numbers">Albüm görünümünde parça numaralarını göster</string>
     <string name="settings_audio_quality">Ses kalitesini göster</string>
     <string name="settings_audio_quality_summary">Her ses parçası için bit hızı ve ses formatı gösterilecektir.</string>
     <string name="settings_song_rating_summary">" "</string>

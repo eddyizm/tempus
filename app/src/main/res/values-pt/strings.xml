@@ -262,6 +262,7 @@
     <string name="settings_music_directory_summary">Se ativado, mostrará a seção do diretório de música. Observe que, para que a navegação na pasta funcione corretamente, o servidor deve oferecer suporte a esse recurso.</string>
     <string name="settings_podcast">Mostrar podcast</string>
     <string name="settings_podcast_summary">Se ativado, mostrará a seção de podcasts. Reinicie o aplicativo para que as mudanças tenham efeito.</string>
+    <string name="settings_androidauto_track_numbers">Mostrar números das faixas na vista de álbum</string>
     <string name="settings_queue_syncing_countdown">Temporizador de sincronização</string>
     <string name="settings_queue_syncing_summary">Se ativado, o usuário poderá salvar sua fila de reprodução e carregar o estado ao abrir o aplicativo.</string>
     <string name="settings_queue_syncing_title">Sincronizar a fila de reprodução para este usuário</string>

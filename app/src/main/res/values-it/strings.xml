@@ -348,6 +348,7 @@
     <string name="settings_music_directory_summary">Se abilitato, mostra la sezione delle directory musicali. Nota che per la navigazione nelle cartelle è necessario che il server supporti questa funzionalità.</string>
     <string name="settings_podcast">Mostra podcast</string>
     <string name="settings_podcast_summary">Se abilitato, mostra la sezione podcast. Riavvia l\'app per rendere effettive le modifiche.</string>
+    <string name="settings_androidauto_track_numbers">Mostra i numeri delle tracce nella vista album</string>
     <string name="settings_audio_quality">Mostra qualità audio</string>
     <string name="settings_audio_quality_summary">Il bitrate e il formato audio saranno mostrati per ogni traccia.</string>
     <string name="settings_song_rating">Mostra valutazione della canzone</string>

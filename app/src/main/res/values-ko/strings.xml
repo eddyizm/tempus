@@ -394,6 +394,7 @@
     <string name="menu_sort_least_recently_starred">즐겨찾기 오래된순</string>
     <string name="menu_pin_button">홈화면에 추가</string>
     <string name="album_page_release_date_label">%1$s에 발매됨</string>
+    <string name="settings_androidauto_track_numbers">앨범 보기에서 트랙 번호 표시</string>
     <string name="settings_audio_quality">오디오 품질 표시하기</string>
     <string name="settings_audio_quality_summary">오디오 트랙에 비트레이트와 포맷이 표시됩니다.</string>
     <string name="settings_song_rating">음악 별점 표시하기</string>

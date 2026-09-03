@@ -392,6 +392,7 @@
     <string name="settings_music_directory_summary">啟用後則顯示音樂目錄部分。 請注意，要使資料夾導航正常工作，伺服器必須支援此功能。</string>
     <string name="settings_podcast">顯示播客</string>
     <string name="settings_podcast_summary">啟用後則顯示播客部分。</string>
+    <string name="settings_androidauto_track_numbers">在專輯檢視中顯示曲目編號</string>
     <string name="settings_queue_syncing_countdown">同步定時器</string>
     <string name="settings_queue_syncing_summary">啟用後將允許當前使用者儲存其播放序列，並能夠在開啟應用程式時載入儲存狀態。</string>
     <string name="settings_queue_syncing_title">同步當前使用者的播放序列</string>

@@ -346,6 +346,7 @@
     <string name="settings_app_equalizer_summary">打开内置均衡器</string>
     <string name="settings_artist_sort_by_album_count">按专辑数量排序艺术家</string>
     <string name="settings_artist_sort_by_album_count_summary">启用后按专辑数量排序；关闭则按名称排序。</string>
+    <string name="settings_androidauto_track_numbers">在专辑视图中显示曲目编号</string>
     <string name="settings_audio_quality">显示音频质量</string>
     <string name="settings_audio_quality_summary">显示歌曲的码率和音频格式。</string>
     <string name="settings_audio_transcode_download_format">转码格式</string>
@@ -392,6 +393,7 @@
     <string name="settings_music_directory_summary">启用后则显示音乐目录部分。 请注意，要使文件夹导航正常工作，服务器必须支持此功能。</string>
     <string name="settings_podcast">显示播客</string>
     <string name="settings_podcast_summary">启用后则显示播客部分。</string>
+
     <string name="settings_queue_syncing_countdown">同步定时器</string>
     <string name="settings_queue_syncing_summary">启用后将允许当前用户保存其播放队列，并能够在打开应用程序时加载保存状态。</string>
     <string name="settings_queue_syncing_title">同步当前用户的播放队列</string>

@@ -456,6 +456,7 @@
     <string name="settings_androidauto_shuffle_genre_songs_summary">Reproduce canciones aleatorias cuando seleccionas un género</string>
     <string name="settings_androidauto_artists_view">Los artistas se muestran por álbum</string>
     <string name="settings_androidauto_starred_for_made_for_you">Mix de tus canciones favoritas hecho para ti</string>
+    <string name="settings_androidauto_track_numbers">Mostrar números de pista en la vista de álbum</string>
     <string name="settings_audio_quality">Mostrar calidad de audio</string>
     <string name="settings_audio_quality_summary">La tasa de bits y el formato de audio se mostrará en cada canción que reproduzcas</string>
     <string name="settings_song_rating">Mostrar valoración</string>
