@@ -1,5 +1,33 @@
 # Changelog
 
+## [4.26.1](https://github.com/eddyizm/tempus/releases/tag/v4.26.1) (2026-09-02)
+## What's Changed
+* fix: stop a playlist edit forcing the playlist public by @herrerad85 in https://github.com/eddyizm/tempus/pull/1029
+* feat: add no search result placeholder by @tvillega in https://github.com/eddyizm/tempus/pull/1035
+* fix: guard against a null created date when sorting new releases by @Pulut in https://github.com/eddyizm/tempus/pull/1037
+* docs: fix typos documention -> documentation, completly -> completely by @vaibhav8a in https://github.com/eddyizm/tempus/pull/1042
+* fix: make the notification previous button restart the song like the app does by @herrerad85 in https://github.com/eddyizm/tempus/pull/1038
+* fix: make saving a playlist edit replace its contents instead of appending by @herrerad85 in https://github.com/eddyizm/tempus/pull/1041
+* feat: Increase song/image cache size by @eddyizm in https://github.com/eddyizm/tempus/pull/1039
+* feat: Add Cover Flow/Carousel to player by @sungoldsv in https://github.com/eddyizm/tempus/pull/1026
+* feat: darker than darkness theme by @tvillega in https://github.com/eddyizm/tempus/pull/1031
+* refactor: move crash landing to its own package by @tvillega in https://github.com/eddyizm/tempus/pull/1050
+* chore: bumped version, added new translations to address lint errors by @eddyizm in https://github.com/eddyizm/tempus/pull/1052
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/1053
+* fix: keep the playlist when you download one song from it by @herrerad85 in https://github.com/eddyizm/tempus/pull/1054
+* fix: come back to the song you paused, at the position you paused it by @herrerad85 in https://github.com/eddyizm/tempus/pull/1055
+* feat: explicit accent color on player view by @tvillega in https://github.com/eddyizm/tempus/pull/1057
+* fix: flashback card not following theme directive by @tvillega in https://github.com/eddyizm/tempus/pull/1060
+* fix: search bar not following theme directive by @tvillega in https://github.com/eddyizm/tempus/pull/1058
+* docs: update the usage guide for four user visible changes by @herrerad85 in https://github.com/eddyizm/tempus/pull/1059
+
+## New Contributors
+* @Pulut made their first contribution in https://github.com/eddyizm/tempus/pull/1037
+* @vaibhav8a made their first contribution in https://github.com/eddyizm/tempus/pull/1042
+* @sungoldsv made their first contribution in https://github.com/eddyizm/tempus/pull/1026
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.25.5...v4.26.1
+
 ## [4.25.5](https://github.com/eddyizm/tempus/releases/tag/v4.25.5) (2026-08-23)
 ## What's Changed
 * fix: login activity add header by @tvillega in https://github.com/eddyizm/tempus/pull/1015
