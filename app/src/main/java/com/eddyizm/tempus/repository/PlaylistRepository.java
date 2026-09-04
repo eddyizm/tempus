@@ -124,7 +124,10 @@ public class PlaylistRepository {
     }
 
     public MutableLiveData<List<Playlist>> getPlaylists(boolean random, int size) {
-        MutableLiveData<List<Playlist>> listLivePlaylists = new MutableLiveData<>(new ArrayList<>());
+        // No initial value. An empty list delivered before the request answers makes a caller that
+        // hides a section on an empty list blank it on every refresh, and leaves it blank for good
+        // when the request fails, because neither failure path below posts anything.
+        MutableLiveData<List<Playlist>> listLivePlaylists = new MutableLiveData<>();
 
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
