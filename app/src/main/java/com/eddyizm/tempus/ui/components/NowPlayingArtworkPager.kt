@@ -107,7 +107,7 @@ fun NowPlayingArtworkPager(
         pageSpacing = 16.dp,
         userScrollEnabled = !isRadio && count > 1,
         key = { page ->
-            if (isRadio) "radio" else queue.getOrNull(page)?.id ?: page
+            if (isRadio) "radio" else "${queue.getOrNull(page)?.id ?: "track"}_$page"
         }
     ) { page ->
         val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
