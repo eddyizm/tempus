@@ -56,5 +56,6 @@ class Queue(
         originalWidth = child.originalWidth
         originalHeight = child.originalHeight
         replayGain = child.replayGain
+        albumArtist = child.albumArtist
     }
 }

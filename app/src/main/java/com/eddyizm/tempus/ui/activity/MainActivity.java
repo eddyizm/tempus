@@ -59,6 +59,7 @@ import com.eddyizm.tempus.ui.login.LoginActivity;
 import com.eddyizm.tempus.util.AssetLinkNavigator;
 import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.util.AlbumArtistBackfill;
 import com.eddyizm.tempus.util.DownloadRepair;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
@@ -152,6 +153,7 @@ public class MainActivity extends BaseActivity {
         checkTempusUpdate();
 
         DownloadRepair.repairIfNeeded(this);
+        AlbumArtistBackfill.backfillIfNeeded();
 
         maybeSchedulePlaybackIntent(getIntent());
         setupLoginActivity();
