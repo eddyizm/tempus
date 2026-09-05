@@ -279,6 +279,11 @@
         android:label="PlaylistPageFragment"
         tools:layout="@layout/fragment_playlist_page" />
     <fragment
+        android:id="@+id/playlistEditorFragment"
+        android:name="com.eddyizm.tempus.ui.fragment.PlaylistEditorFragment"
+        android:label="PlaylistEditorFragment"
+        tools:layout="@layout/fragment_playlist_editor" />
+    <fragment
         android:id="@+id/podcastChannelCatalogueFragment"
         android:name="com.eddyizm.tempus.ui.fragment.PodcastChannelCatalogueFragment"
         android:label="PodcastChannelCatalogueFragment"
@@ -334,6 +339,11 @@
         android:name="com.eddyizm.tempus.ui.fragment.bottomsheetdialog.PlaylistBottomSheetDialog"
         android:label="PlaylistBottomSheetDialog"
         tools:layout="@layout/bottom_sheet_playlist_dialog" />
+    <dialog
+        android:id="@+id/playlistRowBottomSheetDialog"
+        android:name="com.eddyizm.tempus.ui.fragment.bottomsheetdialog.PlaylistRowBottomSheetDialog"
+        android:label="PlaylistRowBottomSheetDialog"
+        tools:layout="@layout/bottom_sheet_playlist_row_dialog" />
     <dialog
         android:id="@+id/artistBottomSheetDialog"
         android:name="com.eddyizm.tempus.ui.fragment.bottomsheetdialog.ArtistBottomSheetDialog"

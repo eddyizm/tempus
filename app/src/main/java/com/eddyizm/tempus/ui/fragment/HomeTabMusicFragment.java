@@ -35,7 +35,6 @@ import com.eddyizm.tempus.databinding.FragmentHomeTabMusicBinding;
 import com.eddyizm.tempus.helper.recyclerview.CustomLinearSnapHelper;
 import com.eddyizm.tempus.helper.recyclerview.DotsIndicatorDecoration;
 import com.eddyizm.tempus.interfaces.ClickCallback;
-import com.eddyizm.tempus.interfaces.PlaylistCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.HomeSector;
 import com.eddyizm.tempus.repository.PlaylistRepository;
@@ -45,7 +44,6 @@ import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
 import com.eddyizm.tempus.subsonic.models.Child;
-import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.subsonic.models.Share;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.adapter.AlbumAdapter;
@@ -59,12 +57,10 @@ import com.eddyizm.tempus.ui.adapter.SimilarTrackAdapter;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.YearAdapter;
 import com.eddyizm.tempus.ui.dialog.HomeRearrangementDialog;
-import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.ExternalAudioReader;
 import com.eddyizm.tempus.util.ExternalAudioWriter;
-import com.eddyizm.tempus.util.LiveDataUtils;
 import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Preferences;
@@ -77,7 +73,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -1390,54 +1385,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     }
 
     @Override
-    public void onPlaylistLongClick(View view, Bundle bundle) {
-        PopupMenu popup = new PopupMenu(requireContext(), view);
-        popup.getMenuInflater().inflate(R.menu.playlist_popup_menu, popup.getMenu());
-        
-        popup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() == R.id.action_go_to_playlist) {
-                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-                if (playlist != null) {
-                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
-                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                        activity.setBottomSheetInPeek(true);
-                    });
-                }
-                return true;
-            } else if (menuItem.getItemId() == R.id.action_play_shuffle) {
-                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-                if (playlist != null) {
-                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
-                        Collections.shuffle(songs);
-                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                        activity.setBottomSheetInPeek(true);
-                    });
-                }
-                return true;
-            } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
-                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-                if (playlist != null) {
-                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
-                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                        Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
-                    });
-                }
-                return true;
-            } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
-                PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
-                    @Override
-                    public void onDismiss() {
-                        refreshPlaylistView();
-                    }
-                });
-
-                dialog.setArguments(bundle);
-                dialog.show(activity.getSupportFragmentManager(), null);
-                return true;
-            }
-            return false;
-        });
-        popup.show();
+    public void onPlaylistLongClick(Bundle bundle) {
+        Navigation.findNavController(requireView()).navigate(R.id.playlistRowBottomSheetDialog, bundle);
     }
 
 

@@ -2,7 +2,6 @@ package com.eddyizm.tempus.interfaces;
 
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.Keep;
 
@@ -17,9 +16,6 @@ public interface ClickCallback {
     default void onGenreClick(Bundle bundle) {}
     default void onPlaylistClick(Bundle bundle) {}
     default void onPlaylistLongClick(Bundle bundle) {}
-    default void onPlaylistLongClick(View view, Bundle bundle) {
-        onPlaylistLongClick(bundle);
-    }
     default void onYearClick(Bundle bundle) {}
     default void onServerClick(Bundle bundle) {}
     default void onServerLongClick(Bundle bundle) {}

@@ -124,7 +124,10 @@ public class PlaylistRepository {
     }
 
     public MutableLiveData<List<Playlist>> getPlaylists(boolean random, int size) {
-        MutableLiveData<List<Playlist>> listLivePlaylists = new MutableLiveData<>(new ArrayList<>());
+        // No initial value. An empty list delivered before the request answers makes a caller that
+        // hides a section on an empty list blank it on every refresh, and leaves it blank for good
+        // when the request fails, because neither failure path below posts anything.
+        MutableLiveData<List<Playlist>> listLivePlaylists = new MutableLiveData<>();
 
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
@@ -175,6 +178,17 @@ public class PlaylistRepository {
      *                   written.
      */
     public MutableLiveData<List<Child>> getPlaylistSongs(String id, boolean allowCache) {
+        return getPlaylistSongs(id, allowCache, null);
+    }
+
+    /**
+     * @param onMissing run on the main thread when the server says the playlist does not exist,
+     *                  after its local rows are gone; that case publishes null as well, before
+     *                  the runnable runs. Every other failure publishes null, except a transport
+     *                  failure with allowCache, which publishes the cached list, or nothing when
+     *                  there is none.
+     */
+    public MutableLiveData<List<Child>> getPlaylistSongs(String id, boolean allowCache, Runnable onMissing) {
         MutableLiveData<List<Child>> listLivePlaylistSongs = new MutableLiveData<>();
 
         App.getSubsonicClientInstance(false)
@@ -191,10 +205,12 @@ public class PlaylistRepository {
                                     songs = new ArrayList<>();
                                 }
                                 listLivePlaylistSongs.setValue(songs);
-                                cachePlaylistSongs(sr.getPlaylist(), songs);
+                                // The cache thread iterates its list while the editor may be
+                                // removing from the one just published, so it gets a copy.
+                                cachePlaylistSongs(sr.getPlaylist(), new ArrayList<>(songs));
                             } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
                                 // Subsonic Standard Error Code 70: The requested data was not found.
-                                handleMissingPlaylist(id, null);
+                                handleMissingPlaylist(id, onMissing);
                                 listLivePlaylistSongs.setValue(null);
                             } else {
                                 listLivePlaylistSongs.setValue(null);

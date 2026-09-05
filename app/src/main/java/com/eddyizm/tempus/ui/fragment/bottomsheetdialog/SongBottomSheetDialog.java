@@ -25,6 +25,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.model.Download;
+import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.subsonic.models.Child;
@@ -39,10 +40,12 @@ import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.HomeViewModel;
+import com.eddyizm.tempus.viewmodel.PlaylistPageViewModel;
 import com.eddyizm.tempus.viewmodel.SongBottomSheetViewModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import com.eddyizm.tempus.util.ExternalAudioWriter;
@@ -242,22 +245,48 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         if (playlistId != null && itemPosition != -1) {
             removeFromPlaylist.setVisibility(View.VISIBLE);
             removeFromPlaylist.setOnClickListener(v -> {
-                songBottomSheetViewModel.removeFromPlaylist(playlistId, itemPosition, new com.eddyizm.tempus.repository.PlaylistRepository.AddToPlaylistCallback() {
+                // Locals, so the callbacks below hold the song and the activity and not this
+                // dismissed sheet until the answers come.
+                Child song = this.song;
+                MainActivity activity = (MainActivity) requireActivity();
+                // Dismissed now, not on the response, so a rotation while the request is out
+                // cannot bring the sheet back holding an index the server has already moved
+                // past. Every callback below shows on the activity, whose binding is nulled
+                // once it is destroyed. The page's view model owns the remove and the undo,
+                // because the page's list has to drop the row at once and one write runs at a
+                // time.
+                dismissBottomSheet();
+                PlaylistPageViewModel pageViewModel = new ViewModelProvider(activity).get(PlaylistPageViewModel.class);
+                pageViewModel.removeSong(playlistId, itemPosition, new PlaylistRepository.AddToPlaylistCallback() {
                     @Override
                     public void onSuccess() {
-                        Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_remove_success, Toast.LENGTH_SHORT).show();
-                        dismissBottomSheet();
+                        if (activity.bind == null) return;
+                        // The page refetches on the repository trigger after the undo lands, as
+                        // it does after the remove.
+                        Snackbar.make(activity.bind.playerBottomSheet, R.string.playlist_chooser_dialog_toast_remove_success, Snackbar.LENGTH_LONG)
+                                .setAnchorView(activity.bind.playerBottomSheet)
+                                .setAction(R.string.song_bottom_sheet_undo, a -> pageViewModel.restoreSong(playlistId, song, itemPosition, new PlaylistRepository.PlaylistActionCallback() {
+                                    @Override
+                                    public void onSuccess() {
+                                    }
+
+                                    @Override
+                                    public void onFailure() {
+                                        if (activity.bind == null) return;
+                                        Toast.makeText(activity, R.string.song_bottom_sheet_undo_failure, Toast.LENGTH_SHORT).show();
+                                    }
+                                }))
+                                .show();
                     }
 
                     @Override
                     public void onFailure() {
-                        Toast.makeText(requireContext(), R.string.playlist_chooser_dialog_toast_remove_failure, Toast.LENGTH_SHORT).show();
-                        dismissBottomSheet();
+                        if (activity.bind == null) return;
+                        Toast.makeText(activity, R.string.playlist_chooser_dialog_toast_remove_failure, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onAllSkipped() {
-                        dismissBottomSheet();
                     }
                 });
             });

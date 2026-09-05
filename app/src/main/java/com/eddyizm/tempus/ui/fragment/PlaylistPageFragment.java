@@ -69,6 +69,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     private PlaybackViewModel playbackViewModel;
 
     private SongHorizontalAdapter songHorizontalAdapter;
+    private androidx.appcompat.app.AlertDialog playlistMissingDialog;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -128,8 +129,10 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         initSongsView();
         
         playlistPageViewModel.getPlaylistMissingEvent().observe(getViewLifecycleOwner(), isMissing -> {
-            if (isMissing && getContext() != null) {
-                new androidx.appcompat.app.AlertDialog.Builder(getContext())
+            // One dialog at a time. The event is raised again by a fetch landing after a
+            // rotation rebuilt this view, and a second dialog's OK would navigate up twice.
+            if (isMissing && getContext() != null && (playlistMissingDialog == null || !playlistMissingDialog.isShowing())) {
+                playlistMissingDialog = new androidx.appcompat.app.AlertDialog.Builder(getContext())
                     .setTitle(R.string.playlist_error_not_found_title)
                     .setMessage(R.string.playlist_error_not_found_message)
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
@@ -172,6 +175,8 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (playlistMissingDialog != null && playlistMissingDialog.isShowing()) playlistMissingDialog.dismiss();
+        playlistMissingDialog = null;
         bind = null;
     }
 
@@ -211,6 +216,11 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
             }
             return true;
         } else if (item.getItemId() == R.id.action_edit_playlist) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlistPageViewModel.getPlaylist());
+            Navigation.findNavController(requireView()).navigate(R.id.playlistEditorFragment, bundle);
+            return true;
+        } else if (item.getItemId() == R.id.action_edit_playlist_details) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlistPageViewModel.getPlaylist());
             PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
@@ -485,6 +495,25 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
     @Override
     public void onMediaLongClick(Bundle bundle) {
+        // The search filter narrows the adapter, so its position is not the index the server
+        // removes by. The pressed row's own object is looked for first, because a playlist can
+        // hold a song twice and Child compares by value. No index while a remove or an undo is
+        // out, which hides the option in the sheet.
+        List<Child> songs = playlistPageViewModel.getPlaylistSongLiveList().getValue();
+        Child track = bundle.getParcelable(Constants.TRACK_OBJECT);
+        if (songs != null) {
+            int index = -1;
+            for (int i = 0; i < songs.size(); i++) {
+                if (songs.get(i) == track) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1) index = songs.indexOf(track);
+            bundle.putInt(Constants.ITEM_POSITION, playlistPageViewModel.isWriting() ? -1 : index);
+        } else {
+            bundle.putInt(Constants.ITEM_POSITION, -1);
+        }
         bundle.putString(Constants.PLAYLIST_ID, playlistPageViewModel.getPlaylist().getId());
         bundle.putString(Constants.PLAYLIST_NAME, playlistPageViewModel.getPlaylist().getName());
         Navigation.findNavController(requireView()).navigate(R.id.songBottomSheetDialog, bundle);

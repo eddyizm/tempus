@@ -342,6 +342,13 @@
     <string name="playlist_editor_dialog_action_save_success">Playlist saved</string>
     <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
     <string name="playlist_editor_dialog_action_save_empty">A playlist has to keep at least one track</string>
+    <string name="playlist_editor_hint">Drag the handle to reorder, tap the trash to remove. Nothing is sent until Save.</string>
+    <string name="playlist_editor_remove_track">Remove track</string>
+    <string name="playlist_editor_drag_track">Drag to reorder</string>
+    <string name="menu_edit_playlist_details_button">Edit details</string>
+    <string name="playlist_details_dialog_title">Playlist details</string>
+    <string name="playlist_editor_load_failure">Could not load the playlist</string>
+    <string name="playlist_editor_removed_track">Removed from the list</string>
     <string name="playlist_page_empty">No songs in this playlist</string>
     <string name="playlist_page_play_button">Play</string>
     <string name="playlist_page_shuffle_button">Shuffle</string>
@@ -642,6 +649,8 @@
     <string name="song_bottom_sheet_rate">Rate</string>
     <string name="song_bottom_sheet_remove">Remove from device</string>
     <string name="song_bottom_sheet_remove_from_playlist">Remove from playlist</string>
+    <string name="song_bottom_sheet_undo">Undo</string>
+    <string name="song_bottom_sheet_undo_failure">Failed to put the song back</string>
     <string name="song_bottom_sheet_share">Share</string>
     <string name="song_list_page_downloaded">Downloaded</string>
     <string name="song_list_page_most_played">Most played tracks</string>

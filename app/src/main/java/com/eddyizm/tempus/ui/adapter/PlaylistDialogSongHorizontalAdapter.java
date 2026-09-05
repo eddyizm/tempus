@@ -1,6 +1,8 @@
 package com.eddyizm.tempus.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -15,9 +17,17 @@ import java.util.Collections;
 import java.util.List;
 
 public class PlaylistDialogSongHorizontalAdapter extends RecyclerView.Adapter<PlaylistDialogSongHorizontalAdapter.ViewHolder> {
+    public interface Listener {
+        void onRemove(int position);
+
+        void onStartDrag(@NonNull RecyclerView.ViewHolder viewHolder);
+    }
+
+    private final Listener listener;
     private List<Child> songs;
 
-    public PlaylistDialogSongHorizontalAdapter() {
+    public PlaylistDialogSongHorizontalAdapter(Listener listener) {
+        this.listener = listener;
         this.songs = Collections.emptyList();
     }
 
@@ -60,15 +70,26 @@ public class PlaylistDialogSongHorizontalAdapter extends RecyclerView.Adapter<Pl
         return songs.get(id);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         ItemHorizontalPlaylistDialogTrackBinding item;
 
+        @SuppressLint("ClickableViewAccessibility")
         ViewHolder(ItemHorizontalPlaylistDialogTrackBinding item) {
             super(item.getRoot());
 
             this.item = item;
 
             item.playlistDialogSongTitleTextView.setSelected(true);
+
+            item.playlistDialogSongRemoveButton.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) listener.onRemove(position);
+            });
+
+            item.playlistDialogSongHandleButton.setOnTouchListener((v, event) -> {
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN) listener.onStartDrag(this);
+                return false;
+            });
         }
     }
 }

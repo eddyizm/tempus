@@ -15,12 +15,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.session.MediaBrowser;
-import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
 
-import android.content.ComponentName;
-import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -31,29 +27,21 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentLibraryBinding;
 import com.eddyizm.tempus.helper.recyclerview.CustomLinearSnapHelper;
 import com.eddyizm.tempus.interfaces.ClickCallback;
-import com.eddyizm.tempus.interfaces.PlaylistCallback;
 import com.eddyizm.tempus.navigation.NavigationController;
 import com.eddyizm.tempus.repository.PlaylistRepository;
-import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.subsonic.models.Child;
-import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.adapter.AlbumAdapter;
 import com.eddyizm.tempus.ui.adapter.ArtistAdapter;
 import com.eddyizm.tempus.ui.adapter.GenreAdapter;
 import com.eddyizm.tempus.ui.adapter.MusicFolderAdapter;
 import com.eddyizm.tempus.ui.adapter.PlaylistHorizontalAdapter;
-import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
 import com.eddyizm.tempus.util.Constants;
-import com.eddyizm.tempus.util.LiveDataUtils;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.LibraryViewModel;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.eddyizm.tempus.service.MediaService;
-import com.google.common.util.concurrent.ListenableFuture;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -74,7 +62,6 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     private PlaylistHorizontalAdapter playlistHorizontalAdapter;
 
     private MaterialToolbar materialToolbar;
-    private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     @Nullable
     @Override
@@ -116,7 +103,6 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     @Override
     public void onStart() {
         super.onStart();
-        initializeMediaBrowser();
         activity.toggleBottomNavigationBarVisibilityOnOrientationChange();
     }
 
@@ -335,63 +321,13 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     }
 
     @Override
-    public void onPlaylistLongClick(View view, Bundle bundle) {
-        PopupMenu popup = new PopupMenu(requireContext(), view);
-        popup.getMenuInflater().inflate(R.menu.playlist_popup_menu, popup.getMenu());
-        
-        popup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() == R.id.action_go_to_playlist) {
-                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-                if (playlist != null) {
-                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
-                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                        activity.setBottomSheetInPeek(true);
-                    });
-                }
-                return true;
-            } else if (menuItem.getItemId() == R.id.action_play_shuffle) {
-                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-                if (playlist != null) {
-                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
-                        Collections.shuffle(songs);
-                        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                        activity.setBottomSheetInPeek(true);
-                    });
-                }
-                return true;
-            } else if (menuItem.getItemId() == R.id.action_add_to_queue) {
-                Playlist playlist = bundle.getParcelable(Constants.PLAYLIST_OBJECT);
-                if (playlist != null) {
-                    LiveDataUtils.observePlaylistSongsOnce(getViewLifecycleOwner(), playlist.getId(), songs -> {
-                        MediaManager.enqueue(mediaBrowserListenableFuture, songs, false);
-                        Toast.makeText(requireContext(), R.string.playlist_added_to_queue, Toast.LENGTH_SHORT).show();
-                    });
-                }
-                return true;
-            } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
-                PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
-                    @Override
-                    public void onDismiss() {
-                        refreshPlaylistView();
-                    }
-                });
-
-                dialog.setArguments(bundle);
-                dialog.show(activity.getSupportFragmentManager(), null);
-                return true;
-            }
-            return false;
-        });
-        popup.show();
+    public void onPlaylistLongClick(Bundle bundle) {
+        Navigation.findNavController(requireView()).navigate(R.id.playlistRowBottomSheetDialog, bundle);
     }
 
     @Override
     public void onMusicFolderClick(Bundle bundle) {
         Navigation.findNavController(requireView()).navigate(R.id.indexFragment, bundle);
-    }
-
-    private void initializeMediaBrowser() {
-        mediaBrowserListenableFuture = new MediaBrowser.Builder(requireContext(), new SessionToken(requireContext(), new ComponentName(requireContext(), MediaService.class))).buildAsync();
     }
 
     public void initSwipeToRefresh() {
