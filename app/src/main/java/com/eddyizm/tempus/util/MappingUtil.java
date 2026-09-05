@@ -115,6 +115,7 @@ public class MappingUtil {
             bundle.putLong("created", media.getCreated() != null ? media.getCreated().getTime() : 0);
             bundle.putLong("starred", media.getStarred() != null ? media.getStarred().getTime() : 0);
             bundle.putString("albumId", media.getAlbumId());
+            bundle.putString("albumArtist", media.getAlbumArtist());
             bundle.putString("artistId", media.getArtistId());
             bundle.putString("type", Constants.MEDIA_TYPE_MUSIC);
             bundle.putLong("bookmarkPosition", media.getBookmarkPosition() != null ? media.getBookmarkPosition() : 0);
@@ -431,6 +432,7 @@ public class MappingUtil {
             child.setPath(extras.getString("path"));
             child.setVideo(extras.getBoolean("isVideo"));
             child.setAlbumId(extras.getString("albumId"));
+            child.setAlbumArtist(extras.getString("albumArtist"));
             child.setArtistId(extras.getString("artistId"));
             child.setType(extras.getString("type"));
 

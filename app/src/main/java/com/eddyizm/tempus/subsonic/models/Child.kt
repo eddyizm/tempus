@@ -94,7 +94,10 @@ open class Child @JvmOverloads constructor(
      */
     @Embedded(prefix = "rg_")
     @SerializedName("replayGain")
-    var replayGain: ReplayGainInfo? = null
+    var replayGain: ReplayGainInfo? = null,
+    @ColumnInfo(name = "album_artist")
+    @SerializedName(value = "displayAlbumArtist", alternate = ["albumArtist"])
+    var albumArtist: String? = null
 ) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -134,6 +137,7 @@ open class Child @JvmOverloads constructor(
         if (originalWidth != other.originalWidth) return false
         if (originalHeight != other.originalHeight) return false
         if (replayGain != other.replayGain) return false
+        if (albumArtist != other.albumArtist) return false
 
         return true
     }
@@ -173,6 +177,7 @@ open class Child @JvmOverloads constructor(
         result = 31 * result + (originalWidth ?: 0)
         result = 31 * result + (originalHeight ?: 0)
         result = 31 * result + (replayGain?.hashCode() ?: 0)
+        result = 31 * result + (albumArtist?.hashCode() ?: 0)
         return result
     }
 }
