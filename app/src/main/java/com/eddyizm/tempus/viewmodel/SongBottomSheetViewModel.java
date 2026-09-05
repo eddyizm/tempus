@@ -16,7 +16,6 @@ import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
 import com.eddyizm.tempus.repository.FavoriteRepository;
-import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.repository.SharingRepository;
 import com.eddyizm.tempus.repository.SongRepository;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
@@ -40,7 +39,6 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
     private final SharingRepository sharingRepository;
-    private final PlaylistRepository playlistRepository;
 
     private Child song;
 
@@ -54,7 +52,6 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         artistRepository = new ArtistRepository();
         favoriteRepository = new FavoriteRepository();
         sharingRepository = new SharingRepository();
-        playlistRepository = new PlaylistRepository();
     }
 
     public Child getSong() {
@@ -63,10 +60,6 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
 
     public void setSong(Child song) {
         this.song = song;
-    }
-
-    public void removeFromPlaylist(String playlistId, int index, PlaylistRepository.AddToPlaylistCallback callback) {
-        playlistRepository.removeSongFromPlaylist(playlistId, index, callback);
     }
 
     public void setFavorite(Context context) {

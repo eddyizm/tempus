@@ -41,6 +41,9 @@
         <item name="android:scrollbars">none</item>
 
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.App.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.Snackbar.Button</item>
     </style>
 
     <style name="Divider">
@@ -71,5 +74,25 @@
 
     <style name="CircleShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Material3 puts a snackbar on the inverse surface, which lands it a light bar in the dark
+         theme and a black bar in the light one. These put it on the normal surface, so it follows
+         the theme it sits on, true black included. -->
+    <style name="Widget.App.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
+    </style>
+
+    <style name="Widget.App.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Snackbar.Button" parent="ThemeOverlay.Material3.Button.TextButton.Snackbar">
+        <item name="colorOnContainer">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Widget.App.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Snackbar.Button</item>
     </style>
 </resources>

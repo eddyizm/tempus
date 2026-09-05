@@ -279,6 +279,11 @@
         android:label="PlaylistPageFragment"
         tools:layout="@layout/fragment_playlist_page" />
     <fragment
+        android:id="@+id/playlistEditorFragment"
+        android:name="com.eddyizm.tempus.ui.fragment.PlaylistEditorFragment"
+        android:label="PlaylistEditorFragment"
+        tools:layout="@layout/fragment_playlist_editor" />
+    <fragment
         android:id="@+id/podcastChannelCatalogueFragment"
         android:name="com.eddyizm.tempus.ui.fragment.PodcastChannelCatalogueFragment"
         android:label="PodcastChannelCatalogueFragment"

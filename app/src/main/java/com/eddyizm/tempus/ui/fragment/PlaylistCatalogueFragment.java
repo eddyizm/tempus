@@ -30,14 +30,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentPlaylistCatalogueBinding;
 import com.eddyizm.tempus.interfaces.ClickCallback;
-import com.eddyizm.tempus.interfaces.PlaylistCallback;
 import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.adapter.PlaylistHorizontalAdapter;
-import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.LiveDataUtils;
 import com.eddyizm.tempus.viewmodel.PlaylistCatalogueViewModel;
@@ -257,23 +255,11 @@ public class PlaylistCatalogueFragment extends Fragment implements ClickCallback
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
-                PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
-                    @Override
-                    public void onDismiss() {
-                        refreshPlaylistView();
-                    }
-                });
-
-                dialog.setArguments(bundle);
-                dialog.show(activity.getSupportFragmentManager(), null);
+                Navigation.findNavController(requireView()).navigate(R.id.playlistEditorFragment, bundle);
                 return true;
             }
             return false;
         });
         popup.show();
-    }
-
-    private void refreshPlaylistView() {
-        playlistCatalogueViewModel.getPlaylistList(getViewLifecycleOwner());
     }
 }

@@ -35,7 +35,6 @@ import com.eddyizm.tempus.databinding.FragmentHomeTabMusicBinding;
 import com.eddyizm.tempus.helper.recyclerview.CustomLinearSnapHelper;
 import com.eddyizm.tempus.helper.recyclerview.DotsIndicatorDecoration;
 import com.eddyizm.tempus.interfaces.ClickCallback;
-import com.eddyizm.tempus.interfaces.PlaylistCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.HomeSector;
 import com.eddyizm.tempus.repository.PlaylistRepository;
@@ -59,7 +58,6 @@ import com.eddyizm.tempus.ui.adapter.SimilarTrackAdapter;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.YearAdapter;
 import com.eddyizm.tempus.ui.dialog.HomeRearrangementDialog;
-import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.ExternalAudioReader;
@@ -1424,15 +1422,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                 }
                 return true;
             } else if (menuItem.getItemId() == R.id.action_edit_playlist) {
-                PlaylistEditorDialog dialog = new PlaylistEditorDialog(new PlaylistCallback() {
-                    @Override
-                    public void onDismiss() {
-                        refreshPlaylistView();
-                    }
-                });
-
-                dialog.setArguments(bundle);
-                dialog.show(activity.getSupportFragmentManager(), null);
+                Navigation.findNavController(requireView()).navigate(R.id.playlistEditorFragment, bundle);
                 return true;
             }
             return false;
