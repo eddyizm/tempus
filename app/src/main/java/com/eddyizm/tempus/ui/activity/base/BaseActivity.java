@@ -47,9 +47,10 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        // Fragments start inside super.onStart(), and an observer that reaches the browser can run there, so the browser has to exist first.
+        initializeBrowser();
         super.onStart();
         ThemeHelper.setNavigationBarColor(this);
-        initializeBrowser();
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -65,5 +66,29 @@ public class LiveDataUtilsTest {
         // Second publish: observer should have been removed, so count stays 1
         live.setValue(Arrays.asList(new Child("2")));
         assertEquals(1, called.get());
+    }
+
+    @Test
+    public void observePlaylistSongsOnce_emptyFirstPublishSkipsActionAndRemovesObserver() {
+        MutableLiveData<List<Child>> live = new MutableLiveData<>();
+
+        PlaylistRepository fakeRepo = new PlaylistRepository() {
+            @Override
+            public MutableLiveData<List<Child>> getPlaylistSongs(String id) {
+                return live;
+            }
+        };
+
+        AtomicInteger called = new AtomicInteger(0);
+
+        TestLifecycleOwner owner = new TestLifecycleOwner();
+
+        LiveDataUtils.observePlaylistSongsOnce(fakeRepo, owner, "pl1", songs -> called.incrementAndGet());
+
+        live.setValue(Collections.emptyList());
+        assertEquals(0, called.get());
+
+        live.setValue(Arrays.asList(new Child("1")));
+        assertEquals(0, called.get());
     }
 }

@@ -134,7 +134,7 @@ public class PlaylistHorizontalAdapter extends RecyclerView.Adapter<PlaylistHori
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlists.get(getBindingAdapterPosition()));
 
-            click.onPlaylistLongClick(v, bundle);
+            click.onPlaylistLongClick(bundle);
 
             return true;
         }

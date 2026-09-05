@@ -281,6 +281,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
 
         if (isDifferentPlaylist) {
             this.songLiveList.setValue(null); // Clear old data immediately
+            playlistMissingEvent.setValue(false);
         }
     }
 
