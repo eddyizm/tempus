@@ -94,6 +94,7 @@ public class MainActivity extends BaseActivity {
 
     ConnectivityStatusBroadcastReceiver connectivityStatusBroadcastReceiver;
     private Intent pendingDownloadPlaybackIntent;
+    private boolean pendingOpenNowPlaying = false;
 
     public ActivityMainBinding getBinding() {
         return bind;
@@ -163,6 +164,7 @@ public class MainActivity extends BaseActivity {
         pingServer();
         initService();
         consumePendingPlaybackIntent();
+        consumePendingNowPlayingIntent();
     }
 
     @Override
@@ -185,6 +187,7 @@ public class MainActivity extends BaseActivity {
         setIntent(intent);
         maybeSchedulePlaybackIntent(intent);
         consumePendingPlaybackIntent();
+        consumePendingNowPlayingIntent();
     }
 
     public void init() {
@@ -293,7 +296,14 @@ public class MainActivity extends BaseActivity {
     }
 
     public void expandBottomSheet() {
-        bottomSheetController.expand();
+        if (isFinishing() || isDestroyed()) return;
+        if (bottomSheetController != null) {
+            bottomSheetController.expand();
+        }
+    }
+
+    public boolean isBottomSheetExpanded() {
+        return bottomSheetController != null && bottomSheetController.isExpanded();
     }
 
     public void setBottomSheetDraggableState(Boolean isDraggable) {
@@ -313,11 +323,20 @@ public class MainActivity extends BaseActivity {
                             resetMusicSession(); // I can't put the callback inside BottomSheetHelper because of this line
                             break;
                         case BottomSheetBehavior.STATE_COLLAPSED:
+                            animateBottomSheet(0.0f);
+                            if (!isLandscape) {
+                                animateBottomNavigation(0.0f, navigationHeight);
+                            }
                             if (playerBottomSheetFragment != null)
                                 playerBottomSheetFragment.goBackToFirstPage();
                             break;
-                        case BottomSheetBehavior.STATE_SETTLING:
                         case BottomSheetBehavior.STATE_EXPANDED:
+                            animateBottomSheet(1.0f);
+                            if (!isLandscape) {
+                                animateBottomNavigation(1.0f, navigationHeight);
+                            }
+                            break;
+                        case BottomSheetBehavior.STATE_SETTLING:
                         case BottomSheetBehavior.STATE_DRAGGING:
                         case BottomSheetBehavior.STATE_HALF_EXPANDED:
                             break;
@@ -461,6 +480,7 @@ public class MainActivity extends BaseActivity {
         setBottomSheetInPeek(mainViewModel.isQueueLoaded());
         goToHome();
         consumePendingAssetLink();
+        consumePendingNowPlayingIntent();
     }
 
     public void openAssetLink(@NonNull AssetLinkUtil.AssetLink assetLink) {
@@ -620,6 +640,10 @@ public class MainActivity extends BaseActivity {
 
     private void maybeSchedulePlaybackIntent(Intent intent) {
         if (intent == null) return;
+        if (Constants.ACTION_OPEN_NOW_PLAYING.equals(intent.getAction())) {
+            pendingOpenNowPlaying = true;
+            intent.setAction(null);
+        }
         if (Constants.ACTION_PLAY_EXTERNAL_DOWNLOAD.equals(intent.getAction())
                 || intent.hasExtra(Constants.EXTRA_DOWNLOAD_URI)) {
             pendingDownloadPlaybackIntent = new Intent(intent);
@@ -632,6 +656,27 @@ public class MainActivity extends BaseActivity {
         Intent intent = pendingDownloadPlaybackIntent;
         pendingDownloadPlaybackIntent = null;
         playDownloadedMedia(intent);
+    }
+
+    private void consumePendingNowPlayingIntent() {
+        if (!pendingOpenNowPlaying) return;
+        if (!isUserAuthenticated()) return;
+        pendingOpenNowPlaying = false;
+        if (navController != null && navController.getCurrentDestination() != null
+                && navController.getCurrentDestination().getId() == R.id.settingsFragment) {
+            navController.popBackStack(R.id.settingsFragment, true);
+        }
+        expandNowPlaying();
+    }
+
+    private void expandNowPlaying() {
+        View bottomSheetView = findViewById(R.id.player_bottom_sheet);
+        if (bottomSheetView != null && !bottomSheetView.isLaidOut()) {
+            // On cold start, wait for CoordinatorLayout to complete its initial layout pass
+            bottomSheetView.post(this::expandBottomSheet);
+        } else {
+            expandBottomSheet();
+        }
     }
 
     private void handleAssetLinkIntent(Intent intent) {

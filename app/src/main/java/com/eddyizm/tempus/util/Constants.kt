@@ -90,6 +90,7 @@ object Constants {
 
     const val DOWNLOAD_URI = "rest/download"
     const val ACTION_PLAY_EXTERNAL_DOWNLOAD = "com.eddyizm.tempus.action.PLAY_EXTERNAL_DOWNLOAD"
+    const val ACTION_OPEN_NOW_PLAYING = "com.eddyizm.tempus.action.OPEN_NOW_PLAYING"
     const val EXTRA_DOWNLOAD_URI = "EXTRA_DOWNLOAD_URI"
     const val EXTRA_DOWNLOAD_MEDIA_ID = "EXTRA_DOWNLOAD_MEDIA_ID"
     const val EXTRA_DOWNLOAD_TITLE = "EXTRA_DOWNLOAD_TITLE"
