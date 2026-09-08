@@ -811,7 +811,8 @@
     <string name="la_theme_card_default">デフォルト</string>
     <string name="la_theme_card_flirt_red_description">フラートレッドのアクセントカラー</string>
     <string name="la_theme_card_coral_red_description">コーラルレッドのアクセントカラー</string>
-    <string name="la_theme_card_royal_blue_description">エメラルドグリーンのアクセントカラー</string>
+    <string name="la_theme_card_emerald_green_description">エメラルドグリーンのアクセントカラー</string>
+    <string name="la_theme_card_royal_blue_description">ロイヤルブルーのアクセントカラー</string>
     <string name="la_theme_card_purple_violet_description">パープルバイオレットのアクセントカラー</string>
     <string name="la_theme_card_sunset_amber_description">サンセットアンバーのアクセントカラー</string>
     <string name="la_theme_card_teal_description">ティールアンバーのアクセントカラー</string>

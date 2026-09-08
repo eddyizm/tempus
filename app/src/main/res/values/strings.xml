@@ -859,7 +859,8 @@
     <string name="la_theme_card_default">Default</string>
     <string name="la_theme_card_flirt_red_description">Flirt red accent color</string>
     <string name="la_theme_card_coral_red_description">Coral red accent color</string>
-    <string name="la_theme_card_royal_blue_description">Emerald green accent color</string>
+    <string name="la_theme_card_emerald_green_description">Emerald green accent color</string>
+    <string name="la_theme_card_royal_blue_description">Royal blue accent color</string>
     <string name="la_theme_card_purple_violet_description">Purple violet accent color</string>
     <string name="la_theme_card_sunset_amber_description">Sunset amber accent color</string>
     <string name="la_theme_card_teal_description">Teal amber accent color</string>

@@ -133,7 +133,7 @@
                 android:layout_height="64dp"
                 android:layout_columnWeight="1"
                 app:cardBackgroundColor="#2E7D32"
-                android:contentDescription="@string/la_theme_card_royal_blue_description"
+                android:contentDescription="@string/la_theme_card_emerald_green_description"
                 app:cardCornerRadius="16dp" />
 
             <!-- Option 4: Royal Blue (#1976D2) -->
