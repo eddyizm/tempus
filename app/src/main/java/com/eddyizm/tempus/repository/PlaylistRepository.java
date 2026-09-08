@@ -343,8 +343,11 @@ public class PlaylistRepository {
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                            if (response.isSuccessful()) notifyPlaylistChanged();
-                            if (callback != null) callback.onSuccess();
+                            if (isAccepted(response)) notifyPlaylistChanged();
+                            if (callback != null) {
+                                if (isAccepted(response)) callback.onSuccess();
+                                else callback.onFailure();
+                            }
                         }
 
                         @Override
@@ -384,9 +387,9 @@ public class PlaylistRepository {
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                            if (response.isSuccessful()) notifyPlaylistChanged();
+                            if (isAccepted(response)) notifyPlaylistChanged();
                             if (callback != null) {
-                                if (response.isSuccessful()) callback.onSuccess();
+                                if (isAccepted(response)) callback.onSuccess();
                                 else callback.onFailure();
                             }
                         }
@@ -532,7 +535,7 @@ public class PlaylistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful()) {
+                        if (isAccepted(response)) {
                             new Thread(() -> {
                                 playlistSongDao.deleteForPlaylist(playlistId);
                                 playlistDao.deleteById(playlistId);

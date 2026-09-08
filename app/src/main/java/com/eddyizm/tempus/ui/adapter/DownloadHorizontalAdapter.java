@@ -21,6 +21,7 @@ import com.eddyizm.tempus.util.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -114,7 +115,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
             case Constants.DOWNLOAD_TYPE_ALBUM:
                 return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getAlbumId())).filter(Util.distinctByKey(Child::getAlbumId)).collect(Collectors.toList()));
             case Constants.DOWNLOAD_TYPE_ARTIST:
-                return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getArtistId())).filter(Util.distinctByKey(Child::getArtistId)).collect(Collectors.toList()));
+                return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getArtistId())).filter(Util.distinctByKey(Child::getArtistId)).sorted(Comparator.comparing(Child::getArtist, Comparator.nullsLast(Comparator.naturalOrder()))).collect(Collectors.toList()));
             case Constants.DOWNLOAD_TYPE_GENRE:
                 return filterSong(filterKey, filterValue, songs.stream().filter(song -> Objects.nonNull(song.getGenre())).filter(Util.distinctByKey(Child::getGenre)).collect(Collectors.toList()));
             case Constants.DOWNLOAD_TYPE_YEAR:
@@ -218,11 +219,42 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
         holder.item.divider.setVisibility(View.VISIBLE);
 
-        if (position > 0 && grouped.get(position - 1) != null && !Objects.equals(grouped.get(position - 1).getAlbum(), grouped.get(position).getAlbum())) {
+        if (position > 0 && grouped.get(position - 1) != null && !sameAlbum(grouped.get(position - 1), grouped.get(position))) {
             holder.item.divider.setPadding(0, (int) holder.itemView.getContext().getResources().getDimension(R.dimen.downloaded_item_padding), 0, 0);
         } else {
             if (position > 0) holder.item.divider.setVisibility(View.GONE);
         }
+    }
+
+    private static String albumArtistOrNull(Child song) {
+        String albumArtist = song.getAlbumArtist();
+        return albumArtist != null && !albumArtist.isEmpty() ? albumArtist : null;
+    }
+
+    private static String albumArtistOrArtist(Child song) {
+        String albumArtist = albumArtistOrNull(song);
+        return albumArtist != null ? albumArtist : song.getArtist();
+    }
+
+
+    // Album ids are missing on some servers, and two nulls are not the same album.
+    // Follows the sort in DownloadDao, which leads on the album artist and falls back to the album.
+    private static boolean sameAlbumGroup(Child one, Child other) {
+        String oneArtist = albumArtistOrNull(one);
+        String otherArtist = albumArtistOrNull(other);
+
+        if (oneArtist != null || otherArtist != null) {
+            return Objects.equals(oneArtist, otherArtist);
+        }
+
+        return sameAlbum(one, other);
+    }
+
+    private static boolean sameAlbum(Child one, Child other) {
+        if (one.getAlbumId() != null && other.getAlbumId() != null) {
+            return Objects.equals(one.getAlbumId(), other.getAlbumId());
+        }
+        return Objects.equals(one.getAlbum(), other.getAlbum());
     }
 
     private void initAlbumLayout(ViewHolder holder, int position) {
@@ -230,7 +262,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
 
         holder.item.downloadedItemTitleTextView.setText(song.getAlbum());
         holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_ALBUM, song.getAlbumId(), songs)));
-        holder.item.downloadedItemPreTextView.setText(song.getArtist());
+        holder.item.downloadedItemPreTextView.setText(albumArtistOrArtist(song));
 
         CustomGlideRequest.Builder
                 .from(holder.itemView.getContext(), song.getCoverArtId(), CustomGlideRequest.ResourceType.Song)
@@ -241,7 +273,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
         holder.item.divider.setVisibility(View.VISIBLE);
 
-        if (position > 0 && grouped.get(position - 1) != null && !Objects.equals(grouped.get(position - 1).getArtist(), grouped.get(position).getArtist())) {
+        if (position > 0 && grouped.get(position - 1) != null && !sameAlbumGroup(grouped.get(position - 1), grouped.get(position))) {
             holder.item.divider.setPadding(0, (int) holder.itemView.getContext().getResources().getDimension(R.dimen.downloaded_item_padding), 0, 0);
         } else {
             if (position > 0) holder.item.divider.setVisibility(View.GONE);

@@ -277,6 +277,8 @@ public class SearchFragment extends Fragment implements ClickCallback {
 
                 if (sectionsThatMatchedTheQuery == 0) {
                     bind.emptyResponseContainer.setVisibility(View.VISIBLE);
+                } else {
+                    bind.emptyResponseContainer.setVisibility(View.GONE);
                 }
             }
         });
