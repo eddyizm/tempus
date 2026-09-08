@@ -322,6 +322,7 @@
     <string name="playlist_chooser_dialog_visibility_public">公開</string>
     <string name="playlist_chooser_dialog_visibility_private">非公開</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">プレイリストを公開にする</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">これをオンにすると、プレイリストが公開されます。そのままにしておくと、プレイリストの公開範囲は変更されません。</string>
     <string name="playlist_counted_tracks">%1$d トラック • %2$s</string>
     <string name="playlist_duration">再生時間 • %1$s</string>
     <string name="playlist_editor_dialog_action_delete_toast">長押しで削除</string>
@@ -334,6 +335,7 @@
     <string name="playlist_editor_dialog_action_delete_failure">プレイリストを削除できませんでした</string>
     <string name="playlist_editor_dialog_action_save_success">プレイリストを保存しました</string>
     <string name="playlist_editor_dialog_action_save_failure">プレイリストを保存できませんでした</string>
+    <string name="playlist_editor_dialog_action_save_empty">プレイリストには少なくとも1つのトラックが必要です</string>
     <string name="playlist_page_empty">このプレイリストに曲がありません</string>
     <string name="playlist_page_play_button">再生</string>
     <string name="playlist_page_shuffle_button">シャッフル</string>
@@ -398,6 +400,8 @@
     <string name="search_title_album">アルバム</string>
     <string name="search_title_artist">アーティスト</string>
     <string name="search_title_song">曲</string>
+    <string name="search_title_empty_response">結果がありません。</string>
+    <string name="search_description_empty_response">サーバーの応答を確認しましたが、空でした。</string>
     <string name="server_signup_dialog_action_low_security">セキュリティが低い</string>
     <string name="server_signup_dialog_action_delete_toast">長押しで削除</string>
     <string name="server_signup_dialog_hint_local_address">ローカルURL</string>
@@ -764,10 +768,6 @@
     <string name="playlist_error_not_found_message">このプレイリストはサーバー上に見つかりませんでした。ローカルキャッシュから削除されます。</string>
     <string name="playlist_error_not_found_toast">プレイリストをキャッシュから削除しました</string>
     <string name="player_overflow_menu_add_to_playlist">プレイリストに追加</string>
-    <string name="playlist_chooser_dialog_visibility_summary_v2">これをオンにすると、プレイリストが公開されます。そのままにしておくと、プレイリストの公開範囲は変更されません。</string>
-    <string name="playlist_editor_dialog_action_save_empty">プレイリストには少なくとも1つのトラックが必要です</string>
-    <string name="search_title_empty_response">結果がありません。</string>
-    <string name="search_description_empty_response">サーバーの応答を確認しましたが、空でした。</string>
     <string name="la_tab_greeter">ようこそ</string>
     <string name="la_tab_permission">権限</string>
     <string name="la_tab_themes">テーマ</string>
