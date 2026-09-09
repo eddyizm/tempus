@@ -1,0 +1,404 @@
+<resources>
+    <string-array name="theme_list_titles">
+        <item>Açıq</item>
+        <item>Tünd</item>
+        <item>Sistem standartı</item>
+    </string-array>
+    <string-array name="theme_list_values">
+        <item>light</item>
+        <item>dark</item>
+        <item>default</item>
+    </string-array>
+
+    <string-array name="dark_theme_style_titles">
+        <item>Standart</item>
+        <item>AMOLED (Tam qara)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+
+
+    <string-array name="pref_cache_size_titles">
+        <item>Yüksək</item>
+        <item>Orta</item>
+        <item>Aşağı</item>
+        <item>Çox yüksək (1 GiB)</item>
+    </string-array>
+    <string-array name="pref_cache_size_values">
+        <item>500</item>
+        <item>250</item>
+        <item>125</item>
+        <item>1024</item>
+    </string-array>
+
+    <string-array name="pref_image_size_titles">
+        <item>Yüksək</item>
+        <item>Orta</item>
+        <item>Aşağı</item>
+    </string-array>
+    <string-array name="pref_image_size_values">
+        <item>-1</item>
+        <item>500</item>
+        <item>300</item>
+    </string-array>
+
+    <string-array name="streaming_cache_size_titles">
+        <item>Deaktiv</item>
+        <item>128 MiB</item>
+        <item>256 MiB</item>
+        <item>512 MiB</item>
+        <item>1024 MiB</item>
+        <item>2048 MiB</item>
+        <item>4096 MiB</item>
+    </string-array>
+    <string-array name="streaming_cache_size_values">
+        <item>0</item>
+        <item>128</item>
+        <item>256</item>
+        <item>512</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+    </string-array>
+
+    <string-array name="max_bitrate_wifi_list_titles">
+        <item>Orijinal</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_wifi_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+
+    <string-array name="max_bitrate_mobile_list_titles">
+        <item>Orijinal</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_mobile_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+
+    <string-array name="max_bitrate_download_list_titles">
+        <item>Orijinal</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_download_list_values">
+        <item>0</item>
+        <item>32</item>
+        <item>48</item>
+        <item>64</item>
+        <item>80</item>
+        <item>96</item>
+        <item>112</item>
+        <item>128</item>
+        <item>160</item>
+        <item>192</item>
+        <item>256</item>
+        <item>320</item>
+    </string-array>
+
+    <string-array name="audio_transcode_format_wifi_list_titles">
+        <item>Birbaşa səsləndir</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_wifi_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+
+    <string-array name="audio_transcode_format_mobile_list_titles">
+        <item>Birbaşa səsləndir</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_mobile_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+
+    <string-array name="audio_transcode_format_download_list_titles">
+        <item>Birbaşa yüklə</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_download_list_values">
+        <item>raw</item>
+        <item>opus</item>
+        <item>aac</item>
+        <item>mp3</item>
+        <item>flac</item>
+    </string-array>
+
+    <string-array name="queue_syncing_countdown_titles">
+        <item>On saniyə</item>
+        <item>Beş saniyə</item>
+        <item>İki saniyə</item>
+    </string-array>
+    <string-array name="queue_syncing_countdown_values">
+        <item>10</item>
+        <item>5</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="rounded_corner_size_titles">
+        <item>Yüksək</item>
+        <item>Orta</item>
+        <item>Aşağı</item>
+    </string-array>
+    <string-array name="rounded_corner_size_values">
+        <item>18</item>
+        <item>12</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="replay_gain_titles">
+        <item>Deaktiv</item>
+        <item>Mahnı</item>
+        <item>Albom</item>
+        <item>Avtomatik</item>
+    </string-array>
+    <string-array name="replay_gain_values">
+        <item>disabled</item>
+        <item>track</item>
+        <item>album</item>
+        <item>auto</item>
+    </string-array>
+
+    <string-array name="transcoded_download_option_list_titles">
+        <item>Transkodlaşdırma</item>
+        <item>Server parametrləri</item>
+        <item>Wi-Fi şəbəkəsində transkodlaşdırma formatı</item>
+        <item>Mobil şəbəkədə transkodlaşdırma formatı</item>
+    </string-array>
+    <string-array name="transcoded_download_option_list_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="song_preload_buffer_titles">
+        <item>5 saniyə</item>
+        <item>30 saniyə</item>
+        <item>1 dəqiqə</item>
+        <item>3 dəqiqə</item>
+        <item>5 dəqiqə</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="precache_tracks_titles">
+        <item>Deaktiv</item>
+        <item>Növbəti mahnı</item>
+        <item>Növbəti 2 mahnı</item>
+        <item>Növbəti 3 mahnı</item>
+        <item>Növbəti 5 mahnı</item>
+    </string-array>
+    <string-array name="precache_tracks_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="playlist_sort_option_titles">
+        <item>@string/menu_sort_name</item>
+        <item>@string/menu_sort_random</item>
+        <item>@string/menu_sort_date_created</item>
+        <item>@string/menu_sort_song_count</item>
+        <item>@string/playlist_sort_pinned</item>
+        <item>@string/playlist_sort_last_played</item>
+        <item>@string/playlist_sort_last_updated</item>
+        <item>@string/playlist_sort_both</item>
+    </string-array>
+    <string-array name="playlist_sort_option_values">
+        <item>ORDER_BY_NAME</item>
+        <item>ORDER_BY_RANDOM</item>
+        <item>ORDER_BY_DATE</item>
+        <item>ORDER_BY_SONGS</item>
+        <item>ORDER_BY_PINNED</item>
+        <item>ORDER_BY_LAST_PLAYED</item>
+        <item>ORDER_BY_LAST_UPDATED</item>
+        <item>ORDER_BY_BOTH</item>
+    </string-array>
+
+
+    <string-array name="skip_min_star_rating_titles">
+        <item>Ən azı 0 ulduz</item>
+        <item>Ən azı 1 ulduz</item>
+        <item>Ən azı 2 ulduz</item>
+        <item>Ən azı 3 ulduz</item>
+        <item>Ən azı 4 ulduz</item>
+    </string-array>
+    <string-array name="skip_min_star_rating_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3"</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+		
+    <string-array name="tile_size_titles">
+        <item>Çox kiçik</item>
+        <item>Kiçik</item>
+        <item>Orta</item>
+        <item>Böyük</item>
+        <item>Standart</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="selected_equalizer_entries">
+        <item>Standart</item>
+        <item>Daxili</item>
+        <item>Xarici</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="aa_tab_titles">
+        <item>Göstərmə</item>
+        <item>Ana səhifə</item>
+        <item>Son</item>
+        <item>Albomlar</item>
+        <item>İfaçılar</item>
+        <item>Pleylistlər</item>
+        <item>Podkast</item>
+        <item>Radio</item>
+        <item>Qovluq</item>
+        <item>Ən çox dinlənilən albomlar</item>
+        <item>Əlavə edilmiş albomlar</item>
+        <item>Sizin üçün</item>
+        <item>Ulduzlu</item>
+        <item>Mahnılar</item>
+        <item>Janrlar</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Ulduzlu ifaçılar</item>
+        <item>Ulduzlu albomlar</item>
+        <item>Ulduzlu mahnılar</item>
+    </string-array>
+
+    <string-array name="custom_commands_titles">
+        <item>Ürək</item>
+        <item>Təkrarla</item>
+        <item>Qarışdır</item>
+        <item>Ani qarışıq</item>
+    </string-array>
+
+</resources>
