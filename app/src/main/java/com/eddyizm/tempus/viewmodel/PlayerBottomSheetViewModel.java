@@ -292,9 +292,9 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         List<String> ids = queue.stream().map(Child::getId).collect(Collectors.toList());
 
         if (media != null) {
-            // TODO: We need to get the actual playback position here
-            Log.d(TAG, "Saving play queue - Current: " + media.getId() + ", Items: " + ids.size());
-            queueRepository.savePlayQueue(ids, media.getId(), 0); // Still hardcoded to 0 for now
+            long position = Preferences.getResumePoint(media.getId());
+            Log.d(TAG, "Saving play queue - Current: " + media.getId() + ", Items: " + ids.size() + ", Position: " + position);
+            queueRepository.savePlayQueue(ids, media.getId(), position);
             return true;
         }
         return false;

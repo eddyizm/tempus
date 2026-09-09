@@ -97,6 +97,8 @@
     <string name="home_sync_starred_title">Parece que existem algumas faixas favoritas para sincronizar</string>
     <string name="home_title_best_of">Melhor de</string>
     <string name="home_title_discovery">Descobrir</string>
+    <string name="home_title_continue_listening">Continuar a ouvir</string>
+    <string name="home_continue_listening_resume_at">Continuar em %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Aleatório</string>
     <string name="home_title_flashback">Flashback</string>
     <string name="home_title_internet_radio_station">Estações de rádio via internet</string>

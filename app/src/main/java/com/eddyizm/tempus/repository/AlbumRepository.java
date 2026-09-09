@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -106,7 +107,12 @@ public class AlbumRepository {
 
     public MutableLiveData<List<Child>> getAlbumTracks(String id) {
         MutableLiveData<List<Child>> albumTracks = new MutableLiveData<>();
+        getAlbumTracks(id, albumTracks::setValue);
+        return albumTracks;
+    }
 
+    /** Callback-based album fetch that always reports (empty list on failure). */
+    public void getAlbumTracks(String id, Consumer<List<Child>> onResult) {
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
                 .getAlbum(id)
@@ -114,23 +120,19 @@ public class AlbumRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         List<Child> tracks = new ArrayList<>();
-
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null) {
                             if (response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
                                 tracks.addAll(response.body().getSubsonicResponse().getAlbum().getSongs());
                             }
                         }
-
-                        albumTracks.setValue(tracks);
+                        onResult.accept(tracks);
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        onResult.accept(Collections.emptyList());
                     }
                 });
-
-        return albumTracks;
     }
 
     public MutableLiveData<List<AlbumID3>> getArtistAlbums(String id) {

@@ -171,6 +171,8 @@
     <string name="home_sync_starred_title">似乎有一些收藏的歌曲需要同步</string>
     <string name="home_title_best_of">最佳</string>
     <string name="home_title_discovery">发现</string>
+    <string name="home_title_continue_listening">继续收听</string>
+    <string name="home_continue_listening_resume_at">从 %1$s 继续</string>
     <string name="home_title_discovery_shuffle_all_button">随机播放全部</string>
     <string name="home_title_flashback">重温旧曲</string>
     <string name="home_title_internet_radio_station">网络广播电台</string>

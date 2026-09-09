@@ -58,6 +58,7 @@ public class HomeRearrangementViewModel extends AndroidViewModel {
         List<HomeSector> sectors = new ArrayList<>();
 
         sectors.add(new HomeSector(Constants.HOME_SECTOR_DISCOVERY, getApplication().getString(R.string.home_title_discovery), true, 1));
+        sectors.add(new HomeSector(Constants.HOME_SECTOR_CONTINUE_LISTENING, getApplication().getString(R.string.home_title_continue_listening), true, 2));
         sectors.add(new HomeSector(Constants.HOME_SECTOR_MADE_FOR_YOU, getApplication().getString(R.string.home_title_made_for_you), true, 2));
         sectors.add(new HomeSector(Constants.HOME_SECTOR_BEST_OF, getApplication().getString(R.string.home_title_best_of), true, 3));
         sectors.add(new HomeSector(Constants.HOME_SECTOR_RADIO_STATION, getApplication().getString(R.string.home_title_radio_station), true, 4));

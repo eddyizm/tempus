@@ -161,6 +161,8 @@
     </plurals>
     <string name="home_title_best_of">Das Beste von</string>
     <string name="home_title_discovery">Entdecken</string>
+    <string name="home_title_continue_listening">Weiterhören</string>
+    <string name="home_continue_listening_resume_at">Weiter bei %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Alles zufällig spielen</string>
     <string name="home_title_flashback">Rückblende</string>
     <string name="home_title_internet_radio_station">Internet-Radiosender</string>

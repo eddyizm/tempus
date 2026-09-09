@@ -339,6 +339,33 @@
                 android:paddingBottom="8dp" />
         </LinearLayout>
 
+        <!--  Continue listening -->
+        <LinearLayout
+            android:id="@+id/home_continue_listening_sector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/TitleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingTop="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:text="@string/home_title_continue_listening" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/continue_listening_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
+        </LinearLayout>
+
         <!--  Similar tracks -->
         <LinearLayout
             android:id="@+id/home_similar_tracks_sector"

@@ -209,6 +209,8 @@
     </plurals>
     <string name="home_title_best_of">Najlepsze</string>
     <string name="home_title_discovery">Odkrywanie</string>
+    <string name="home_title_continue_listening">Kontynuuj słuchanie</string>
+    <string name="home_continue_listening_resume_at">Wznów o %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Odtwórz wszystkie losowo</string>
     <string name="home_title_flashback">Podróż w czasie</string>
     <string name="home_title_internet_radio_station">Internetowe stacje radiowe</string>
