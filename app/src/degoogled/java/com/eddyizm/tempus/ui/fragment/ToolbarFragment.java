@@ -21,6 +21,10 @@ import com.eddyizm.tempus.model.Server;
 import com.eddyizm.tempus.repository.ServerRepository;
 import com.eddyizm.tempus.subsonic.models.MusicFolder;
 import com.eddyizm.tempus.ui.activity.MainActivity;
+import androidx.core.content.ContextCompat;
+import androidx.mediarouter.app.MediaRouteButton;
+
+import com.eddyizm.tempus.upnp.UpnpRouteSetup;
 import com.eddyizm.tempus.util.MusicFolderUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.LibraryViewModel;
@@ -60,6 +64,14 @@ public class ToolbarFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_page_menu, menu);
+        UpnpRouteSetup.pointAtUpnpRenderers(menu);
+
+        // The stock glyph is Google Cast's, which this build cannot reach.
+        View routeView = menu.findItem(R.id.media_route_menu_item).getActionView();
+        if (routeView instanceof MediaRouteButton) {
+            ((MediaRouteButton) routeView).setRemoteIndicatorDrawable(
+                    ContextCompat.getDrawable(requireContext(), R.drawable.ic_cast_audio));
+        }
     }
 
     @Override

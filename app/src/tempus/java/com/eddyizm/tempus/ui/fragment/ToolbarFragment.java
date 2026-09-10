@@ -25,6 +25,7 @@ import com.eddyizm.tempus.util.MusicFolderUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.LibraryViewModel;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
+import com.eddyizm.tempus.upnp.UpnpRouteSetup;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class ToolbarFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_page_menu, menu);
         CastButtonFactory.setUpMediaRouteButton(requireContext(), menu, R.id.media_route_menu_item);
+        UpnpRouteSetup.pointAtUpnpRenderers(menu);
     }
 
     @Override

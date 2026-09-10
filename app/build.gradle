@@ -133,6 +133,10 @@ dependencies {
     implementation libs.media3.exoplayer.hls
     tempusImplementation libs.media3.cast
 
+    // Route picker. Pulled in transitively by the Cast SDK for the tempus flavor
+    // already; declared here at the same version so the degoogled flavor has it too.
+    implementation libs.mediarouter
+
     // Room Compiler
     annotationProcessor libs.androidx.room.compiler
 
