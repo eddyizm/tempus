@@ -1,8 +1,8 @@
 <resources>
     <string-array name="theme_list_titles">
         <item>Светлая</item>
-        <item>Темная</item>
-        <item>Системная по умолчанию</item>
+        <item>Тёмная</item>
+        <item>Системная</item>
     </string-array>
     <string-array name="theme_list_values">
         <item>light</item>
@@ -10,11 +10,21 @@
         <item>default</item>
     </string-array>
 
+    <string-array name="dark_theme_style_titles">
+        <item>Стандартная</item>
+        <item>AMOLED (Абсолютный чёрный)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+
+
     <string-array name="pref_cache_size_titles">
         <item>Большой</item>
         <item>Средний</item>
         <item>Маленький</item>
-        <item>Очень большой (1 GiB)</item>
+        <item>Максимальный (1 GiB)</item>
     </string-array>
     <string-array name="pref_cache_size_values">
         <item>500</item>
@@ -55,17 +65,17 @@
 
     <string-array name="max_bitrate_wifi_list_titles">
         <item>Оригинал</item>
-        <item>32 kbps</item>
-        <item>48 kbps</item>
-        <item>64 kbps</item>
-        <item>80 kbps</item>
-        <item>96 kbps</item>
-        <item>112 kbps</item>
-        <item>128 kbps</item>
-        <item>160 kbps</item>
-        <item>192 kbps</item>
-        <item>256 kbps</item>
-        <item>320 kbps</item>
+        <item>32 кбит/с</item>
+        <item>48 кбит/с</item>
+        <item>64 кбит/с</item>
+        <item>80 кбит/с</item>
+        <item>96 кбит/с</item>
+        <item>112 кбит/с</item>
+        <item>128 кбит/с</item>
+        <item>160 кбит/с</item>
+        <item>192 кбит/с</item>
+        <item>256 кбит/с</item>
+        <item>320 кбит/с</item>
     </string-array>
     <string-array name="max_bitrate_wifi_list_values">
         <item>0</item>
@@ -84,17 +94,17 @@
 
     <string-array name="max_bitrate_mobile_list_titles">
         <item>Оригинал</item>
-        <item>32 kbps</item>
-        <item>48 kbps</item>
-        <item>64 kbps</item>
-        <item>80 kbps</item>
-        <item>96 kbps</item>
-        <item>112 kbps</item>
-        <item>128 kbps</item>
-        <item>160 kbps</item>
-        <item>192 kbps</item>
-        <item>256 kbps</item>
-        <item>320 kbps</item>
+        <item>32 кбит/с</item>
+        <item>48 кбит/с</item>
+        <item>64 кбит/с</item>
+        <item>80 кбит/с</item>
+        <item>96 кбит/с</item>
+        <item>112 кбит/с</item>
+        <item>128 кбит/с</item>
+        <item>160 кбит/с</item>
+        <item>192 кбит/с</item>
+        <item>256 кбит/с</item>
+        <item>320 кбит/с</item>
     </string-array>
     <string-array name="max_bitrate_mobile_list_values">
         <item>0</item>
@@ -113,17 +123,17 @@
 
     <string-array name="max_bitrate_download_list_titles">
         <item>Оригинал</item>
-        <item>32 kbps</item>
-        <item>48 kbps</item>
-        <item>64 kbps</item>
-        <item>80 kbps</item>
-        <item>96 kbps</item>
-        <item>112 kbps</item>
-        <item>128 kbps</item>
-        <item>160 kbps</item>
-        <item>192 kbps</item>
-        <item>256 kbps</item>
-        <item>320 kbps</item>
+        <item>32 кбит/с</item>
+        <item>48 кбит/с</item>
+        <item>64 кбит/с</item>
+        <item>80 кбит/с</item>
+        <item>96 кбит/с</item>
+        <item>112 кбит/с</item>
+        <item>128 кбит/с</item>
+        <item>160 кбит/с</item>
+        <item>192 кбит/с</item>
+        <item>256 кбит/с</item>
+        <item>320 кбит/с</item>
     </string-array>
     <string-array name="max_bitrate_download_list_values">
         <item>0</item>
@@ -141,11 +151,11 @@
     </string-array>
 
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>Прямое воспроизведение</item>
+        <item>Без изменений</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_wifi_list_values">
         <item>raw</item>
@@ -156,11 +166,11 @@
     </string-array>
 
     <string-array name="audio_transcode_format_mobile_list_titles">
-        <item>Прямое воспроизведение</item>
+        <item>Без изменений</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_mobile_list_values">
         <item>raw</item>
@@ -174,8 +184,8 @@
         <item>Оригинал</item>
         <item>Opus</item>
         <item>AAC</item>
-        <item>Mp3</item>
-        <item>Flac</item>
+        <item>MP3</item>
+        <item>FLAC</item>
     </string-array>
     <string-array name="audio_transcode_format_download_list_values">
         <item>raw</item>
@@ -186,9 +196,9 @@
     </string-array>
 
     <string-array name="queue_syncing_countdown_titles">
-        <item>Десять секунд</item>
-        <item>Пять секунд</item>
-        <item>Две секунды</item>
+        <item>10 секунд</item>
+        <item>5 секунд</item>
+        <item>2 секунды</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
         <item>10</item>
@@ -197,9 +207,9 @@
     </string-array>
 
     <string-array name="rounded_corner_size_titles">
-        <item>Сильное скругление</item>
-        <item>Среднее скругление</item>
-        <item>Небольшое скругление</item>
+        <item>Большой</item>
+        <item>Средний</item>
+        <item>Малый</item>
     </string-array>
     <string-array name="rounded_corner_size_values">
         <item>18</item>
@@ -208,9 +218,9 @@
     </string-array>
 
     <string-array name="replay_gain_titles">
-        <item>Выключено</item>
-        <item>Трек</item>
-        <item>Альбом</item>
+        <item>Отключено</item>
+        <item>По трекам</item>
+        <item>По альбомам</item>
         <item>Авто</item>
     </string-array>
     <string-array name="replay_gain_values">
@@ -221,10 +231,10 @@
     </string-array>
 
     <string-array name="transcoded_download_option_list_titles">
-        <item>Не транскодировать</item>
+        <item>Не преобразовывать</item>
         <item>Настройки сервера</item>
-        <item>Формат транскодирования Wi-Fi</item>
-        <item>Формат транскодирования моб. сети</item>
+        <item>Формат для Wi-Fi</item>
+        <item>Формат для мобильной сети</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
         <item>0</item>
@@ -233,21 +243,63 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="song_preload_buffer_titles">
+        <item>5 секунд</item>
+        <item>30 секунд</item>
+        <item>1 минута</item>
+        <item>3 минуты</item>
+        <item>5 минут</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="precache_tracks_titles">
+        <item>Отключено</item>
+        <item>Следующий трек</item>
+        <item>Следующие 2 трека</item>
+        <item>Следующие 3 трека</item>
+        <item>Следующие 5 треков</item>
+    </string-array>
+    <string-array name="precache_tracks_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
     <string-array name="playlist_sort_option_titles">
-        <item>По названию</item>
-        <item>Случайно</item>
+        <item>@string/menu_sort_name</item>
+        <item>@string/menu_sort_random</item>
+        <item>@string/menu_sort_date_created</item>
+        <item>@string/menu_sort_song_count</item>
+        <item>@string/playlist_sort_pinned</item>
+        <item>@string/playlist_sort_last_played</item>
+        <item>@string/playlist_sort_last_updated</item>
+        <item>@string/playlist_sort_both</item>
     </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>
         <item>ORDER_BY_RANDOM</item>
+        <item>ORDER_BY_DATE</item>
+        <item>ORDER_BY_SONGS</item>
+        <item>ORDER_BY_PINNED</item>
+        <item>ORDER_BY_LAST_PLAYED</item>
+        <item>ORDER_BY_LAST_UPDATED</item>
+        <item>ORDER_BY_BOTH</item>
     </string-array>
 
     <string-array name="skip_min_star_rating_titles">
-        <item>0 звезд минимум</item>
-        <item>1 звезда минимум</item>
-        <item>2 звезды минимум</item>
-        <item>3 звезды минимум</item>
-        <item>4 звезды минимум</item>
+        <item>От 0 звёзд</item>
+        <item>От 1 звезды</item>
+        <item>От 2 звёзд</item>
+        <item>От 3 звёзд</item>
+        <item>От 4 звёзд</item>
     </string-array>
     <string-array name="skip_min_star_rating_values">
         <item>0</item>
@@ -256,8 +308,9 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+    
     <string-array name="landscape_items_per_row">
-        <item>3"</item>
+        <item>3</item>
         <item>4</item>
         <item>5</item>
         <item>6</item>
@@ -270,22 +323,48 @@
         <item>6</item>
         <item>7</item>
     </string-array>
+		
+    <string-array name="tile_size_titles">
+        <item>Очень маленькие</item>
+        <item>Маленькие</item>
+        <item>Средние</item>
+        <item>Большие</item>
+        <item>По умолчанию</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="selected_equalizer_entries">
+        <item>По умолчанию</item>
+        <item>Встроенный</item>
+        <item>Внешний</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
     <string-array name="aa_tab_titles">
-        <item>Не показывать</item>
+        <item>Не отображать</item>
         <item>Главная</item>
-        <item>Недавние</item>
+        <item>Недавнее</item>
         <item>Альбомы</item>
-        <item>Артисты</item>
+        <item>Исполнители</item>
         <item>Плейлисты</item>
         <item>Подкасты</item>
         <item>Радио</item>
         <item>Папки</item>
-        <item>Популярные альбомы</item>
+        <item>Часто слушаемые альбомы</item>
         <item>Недавно добавленные альбомы</item>
-        <item>For you</item>
-        <item>Starred</item>
-        <item>Tracks</item>
+        <item>Для вас</item>
+        <item>Избранное</item>
+        <item>Треки</item>
         <item>Жанры</item>
     </string-array>
     <string-array name="aa_tab_values">
@@ -307,6 +386,30 @@
         <item>14</item>
         <item>15</item>
         <item>16</item>
+    </string-array>
+
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Избранные исполнители</item>
+        <item>Избранные альбомы</item>
+        <item>Избранные треки</item>
+    </string-array>
+    <string-array name="aa_starred_for_made_for_you_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="custom_commands_titles">
+        <item>Нравится</item>
+        <item>Повтор</item>
+        <item>Перемешать</item>
+        <item>Мгновенный микс</item>
+    </string-array>
+    <string-array name="custom_commands_values" translatable="false">
+        <item>[heartID]</item>
+        <item>[repeatID]</item>
+        <item>[shuffleID]</item>
+        <item>[instantMixID]</item>
     </string-array>
 
 </resources>
