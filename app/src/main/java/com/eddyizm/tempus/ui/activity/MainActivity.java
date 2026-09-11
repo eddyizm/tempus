@@ -22,6 +22,7 @@ import android.widget.FrameLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
@@ -288,6 +289,18 @@ public class MainActivity extends BaseActivity {
 
     public void setBottomSheetVisibility(boolean visibility) {
         bottomSheetController.setVisibility(visibility);
+    }
+
+    @Nullable
+    public View getSnackbarAnchor() {
+        int state = bottomSheetBehavior.getState();
+        if (bind.playerBottomSheet.getVisibility() == View.VISIBLE && state == BottomSheetBehavior.STATE_COLLAPSED) {
+            return bind.playerBottomSheet;
+        }
+        if (state != BottomSheetBehavior.STATE_EXPANDED && !isLandscape && bind.bottomNavigation.getVisibility() == View.VISIBLE) {
+            return bind.bottomNavigation;
+        }
+        return null;
     }
 
     public void collapseBottomSheetDelayed() {

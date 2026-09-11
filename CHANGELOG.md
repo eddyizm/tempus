@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.26.8](https://github.com/eddyizm/tempus/releases/tag/v4.26.8) (2026-09-10)
+## What's Changed
+* fix: treat a refused playlist add, remove or delete as a failure by @herrerad85 in https://github.com/eddyizm/tempus/pull/1066
+* fix: no search result placeholder never goes away after triggered by @tvillega in https://github.com/eddyizm/tempus/pull/1078
+* fix: Sort downloads by album artist so compilations stay together by @herrerad85 in https://github.com/eddyizm/tempus/pull/1063
+* fix: dark theme not applying when app in polish lang by @tvillega in https://github.com/eddyizm/tempus/pull/1079
+* fix: crash when login fails by @tvillega in https://github.com/eddyizm/tempus/pull/1080
+* fix: view swaps from callbacks crash the app when activity is suspended by @tvillega in https://github.com/eddyizm/tempus/pull/1081
+* feat: apply playlist sort preference to playlist chooser dialog by @shkarlsson in https://github.com/eddyizm/tempus/pull/1062
+
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.26.1...v4.27.8
+
 ## [4.26.1](https://github.com/eddyizm/tempus/releases/tag/v4.26.1) (2026-09-02)
 ## What's Changed
 * fix: stop a playlist edit forcing the playlist public by @herrerad85 in https://github.com/eddyizm/tempus/pull/1029

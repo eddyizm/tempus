@@ -23,6 +23,10 @@
         android:title="@string/menu_edit_playlist_button"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_edit_playlist_details"
+        android:title="@string/menu_edit_playlist_details_button"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_pin_playlist"
         android:icon="@drawable/ic_add"
         android:title="@string/menu_pin_button"

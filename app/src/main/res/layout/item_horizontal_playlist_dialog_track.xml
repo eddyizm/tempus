@@ -2,12 +2,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
     android:clipChildren="false"
     android:orientation="horizontal"
-    android:paddingStart="16dp"
+    android:paddingStart="4dp"
     android:paddingTop="3dp"
     android:paddingBottom="3dp">
+
+    <ImageView
+        android:id="@+id/playlist_dialog_song_remove_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/playlist_editor_remove_track"
+        android:padding="12dp"
+        android:src="@drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/deleteIconColor" />
 
     <ImageView
         android:id="@+id/playlist_dialog_song_cover_image_view"
@@ -16,7 +28,7 @@
         android:layout_gravity="center"
         android:layout_margin="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/playlist_dialog_song_remove_button"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -77,12 +89,11 @@
 
     <ImageView
         android:id="@+id/playlist_dialog_song_handle_button"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:background="@drawable/ic_drag_handle"
-        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/playlist_editor_drag_track"
+        android:padding="12dp"
+        android:src="@drawable/ic_drag_handle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -34,6 +34,9 @@
         <item name="android:scrollbars">none</item>
 
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.App.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.Snackbar.Button</item>
     </style>
 
     <style name="AppTheme.Amoled.SurfacesOnly" parent="">
