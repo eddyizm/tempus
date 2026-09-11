@@ -43,7 +43,7 @@ public class PodcastEpisodeBottomSheetViewModel extends AndroidViewModel {
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                            if (response.isSuccessful() && response.body() != null) {
+                            if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse() != null && "ok".equals(response.body().getSubsonicResponse().getStatus())) {
                                 Toast.makeText(getApplication(), "Podcast episode deleted", Toast.LENGTH_SHORT).show();
                             } else {
                                 Log.e(TAG, "deletePodcastEpisode failed with code: " + response.code());

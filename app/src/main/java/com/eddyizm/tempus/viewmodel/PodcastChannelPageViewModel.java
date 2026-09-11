@@ -49,7 +49,7 @@ public class PodcastChannelPageViewModel extends AndroidViewModel {
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                            if (response.isSuccessful() && response.body() != null) {
+                            if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse() != null && "ok".equals(response.body().getSubsonicResponse().getStatus())) {
                                 Log.d(TAG, "downloadPodcastEpisode successful for id: " + podcastEpisode.getId());
                             } else {
                                 Log.e(TAG, "downloadPodcastEpisode failed with code: " + response.code());
