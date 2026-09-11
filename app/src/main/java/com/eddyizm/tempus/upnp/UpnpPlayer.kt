@@ -107,7 +107,7 @@ class UpnpPlayer(
         }
 
     private class Entry(val uid: Long, val item: MediaItem, val url: String?) {
-        val tracks: Tracks = audioTracks(uid)
+        val tracks: Tracks = audioTracks(uid, mimeTypeFor(item, url))
     }
 
     private var nextUid = 0L
@@ -772,9 +772,27 @@ class UpnpPlayer(
 
         private const val SEEK_WAIT_POLL_MS = 200L
 
+        // The format the app asked the server for, else the format of the file on the server.
+        private fun mimeTypeFor(item: MediaItem, url: String?): String {
+            val extras = item.mediaMetadata.extras
+            val asked = when (extras?.getString("type")) {
+                Constants.MEDIA_TYPE_MUSIC, Constants.MEDIA_TYPE_PODCAST ->
+                    url?.toUri()?.getQueryParameter("format")
+                else -> null
+            }
+            val format = asked?.takeIf { it.isNotEmpty() && it != "raw" }
+                ?: MusicUtil.sourceSuffix(extras)?.takeIf { it.isNotEmpty() }
+                ?: return MimeTypes.AUDIO_UNKNOWN
+            // Format.Builder normalizes it, so mp3 lands as audio/mpeg.
+            return "audio/$format"
+        }
+
+        /** On every format this player publishes, so the player screen knows a renderer plays. */
+        const val FORMAT_ID = "upnp"
+
         // Without tracks onTracksChanged never fires, and scrobbling and continuous play hang off it.
-        private fun audioTracks(uid: Long): Tracks {
-            val format = Format.Builder().setSampleMimeType(MimeTypes.AUDIO_UNKNOWN).build()
+        private fun audioTracks(uid: Long, mimeType: String): Tracks {
+            val format = Format.Builder().setId(FORMAT_ID).setSampleMimeType(mimeType).build()
             val group = TrackGroup(uid.toString(), format)
             return Tracks(
                 listOf(
@@ -800,6 +818,8 @@ class UpnpPlayer(
             Player.COMMAND_GET_TIMELINE,
             Player.COMMAND_GET_CURRENT_MEDIA_ITEM,
             Player.COMMAND_GET_METADATA,
+            // Without it the session strips the tracks from what a controller sees.
+            Player.COMMAND_GET_TRACKS,
             Player.COMMAND_RELEASE
         ).build()
 

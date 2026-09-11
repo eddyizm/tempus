@@ -8,8 +8,11 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaController
+import androidx.media3.session.MediaSession
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.eddyizm.tempus.util.Constants
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -154,6 +157,26 @@ class UpnpPlayerQueueTest {
         .setMediaMetadata(
             MediaMetadata.Builder()
                 .setExtras(Bundle().apply { putInt("duration", seconds) })
+                .build()
+        )
+        .build()
+
+    private fun itemWith(
+        n: Int,
+        suffix: String,
+        type: String = Constants.MEDIA_TYPE_MUSIC,
+        path: String? = null
+    ): MediaItem = MediaItem.Builder()
+        .setMediaId("track-$n")
+        .setUri(urlAt(n))
+        .setMediaMetadata(
+            MediaMetadata.Builder()
+                .setExtras(Bundle().apply {
+                    putInt("duration", 180)
+                    putString("type", type)
+                    putString("suffix", suffix)
+                    path?.let { putString("path", it) }
+                })
                 .build()
         )
         .build()
@@ -1394,6 +1417,126 @@ class UpnpPlayerQueueTest {
 
         reportedTrackUri = urlAt(1)
         assertEquals("the queue went back to the first copy of the song", 2, awaitIndex(2))
+    }
+
+    private fun streamUrlAsking(formats: Map<String, String>): (MediaItem) -> String? = { item ->
+        item.localConfiguration?.uri?.toString()?.let { url ->
+            formats[item.mediaId]?.let { "$url&format=$it" } ?: url
+        }
+    }
+
+    @Test
+    fun theTrackFormatIsWhatTheServerWasAskedFor() {
+        onMain {
+            player.release()
+            player = UpnpPlayer(
+                controlPoint(), device, Looper.getMainLooper(),
+                streamUrl = streamUrlAsking(
+                    mapOf(
+                        "track-1" to "opus", "track-2" to "raw", "track-4" to "aac",
+                        "track-5" to "raw", "track-6" to "", "track-7" to "mp3"
+                    )
+                )
+            )
+            player.setMediaItems(
+                listOf(
+                    itemWith(1, "flac"),
+                    itemWith(2, "flac"),
+                    itemWith(3, "m4a"),
+                    itemWith(4, "mp3", type = Constants.MEDIA_TYPE_PODCAST),
+                    // A download transcoded to opus, while the renderer plays the server's flac named by the path.
+                    itemWith(5, "opus", path = "Artist/Album.Deluxe/05 track.flac"),
+                    // Empty values would otherwise publish the mime "audio/".
+                    itemWith(6, ""),
+                    // The one format whose mime is not audio/ plus its name, which media3 normalizes.
+                    itemWith(7, "flac")
+                ),
+                0, 0L
+            )
+            player.playWhenReady = true
+        }
+
+        assertEquals("audio/opus", awaitMime("audio/opus"))
+        onMain { player.seekToNextMediaItem() }
+        assertEquals("audio/flac", awaitMime("audio/flac"))
+        onMain { player.seekToNextMediaItem() }
+        assertEquals("audio/m4a", awaitMime("audio/m4a"))
+        onMain { player.seekToNextMediaItem() }
+        assertEquals("audio/aac", awaitMime("audio/aac"))
+        onMain { player.seekToNextMediaItem() }
+        assertEquals("audio/flac", awaitMime("audio/flac"))
+        assertEquals(
+            "the published format does not say a renderer plays",
+            UpnpPlayer.FORMAT_ID,
+            onMainGet { player.currentTracks.groups.first().getTrackFormat(0).id }
+        )
+        onMain { player.seekToNextMediaItem() }
+        assertEquals("audio/x-unknown", awaitMime("audio/x-unknown"))
+        onMain { player.seekToNextMediaItem() }
+        assertEquals("audio/mpeg", awaitMime("audio/mpeg"))
+    }
+
+    @Test
+    fun aControllerSeesThePublishedFormat() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        // Its own stream URL, or the format rides on whatever transcode preference this device has saved.
+        onMain {
+            player.release()
+            player = UpnpPlayer(controlPoint(), device, Looper.getMainLooper(), streamUrl = streamUrlAsking(emptyMap()))
+        }
+        val session = onMainGet { MediaSession.Builder(context, player).setId("upnp-tracks-test").build() }
+        try {
+            val controller = MediaController.Builder(context, session.token).buildAsync().get(10, TimeUnit.SECONDS)
+            try {
+                onMain { player.setMediaItems(listOf(itemWith(1, "flac")), 0, 0L) }
+
+                val deadline = SystemClock.elapsedRealtime() + 10_000
+                var seen: Pair<String?, String?>? = null
+                while (SystemClock.elapsedRealtime() < deadline) {
+                    seen = onMainGet {
+                        controller.currentTracks.groups.firstOrNull()?.getTrackFormat(0)?.let { it.sampleMimeType to it.id }
+                    }
+                    if (seen?.first == "audio/flac") break
+                    SystemClock.sleep(100)
+                }
+                assertEquals("the controller never saw the published format", "audio/flac", seen?.first)
+                assertEquals("the format the controller sees carries no id", UpnpPlayer.FORMAT_ID, seen?.second)
+            } finally {
+                onMain { controller.release() }
+            }
+        } finally {
+            onMain { session.release() }
+        }
+    }
+
+    @Test
+    fun anOpaqueStationAddressDoesNotBringDownTheApp() {
+        val station = MediaItem.Builder()
+            .setMediaId("radio-1")
+            .setUri("radio.example:8000/live?format=pls")
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setExtras(Bundle().apply { putString("type", Constants.MEDIA_TYPE_RADIO) })
+                    .build()
+            )
+            .build()
+
+        onMain { player.setMediaItems(listOf(station), 0, 0L) }
+
+        assertEquals("audio/x-unknown", awaitMime("audio/x-unknown"))
+    }
+
+    private fun awaitMime(wanted: String): String? {
+        val deadline = SystemClock.elapsedRealtime() + 10_000
+        var seen: String? = null
+        while (SystemClock.elapsedRealtime() < deadline) {
+            seen = onMainGet {
+                player.currentTracks.groups.firstOrNull()?.getTrackFormat(0)?.sampleMimeType
+            }
+            if (seen == wanted) return seen
+            SystemClock.sleep(100)
+        }
+        return seen
     }
 
     /** Records the reason for each track change and the id every ending names. Main thread only. */

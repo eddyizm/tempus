@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.Format;
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.MimeTypes;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.Tracks;
@@ -60,6 +61,7 @@ import com.eddyizm.tempus.ui.dialog.TrackInfoDialog;
 import com.eddyizm.tempus.ui.fragment.pager.PlayerControllerHorizontalPager;
 import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.upnp.UpnpPlayer;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlayerBottomSheetViewModel;
@@ -437,8 +439,15 @@ public class PlayerControllerFragment extends Fragment {
         Format format = MusicUtil.getCurrentAudioFormat(browser);
         if (format == null) return;
 
+        // A renderer's unknown format says nothing about the stream, and it carries no bitrate.
+        boolean renderer = UpnpPlayer.FORMAT_ID.equals(format.id);
+        if (renderer && MimeTypes.AUDIO_UNKNOWN.equals(format.sampleMimeType)) return;
+
         String actual = MusicUtil.audioFormatLabel(format.sampleMimeType);
-        String original = MusicUtil.getCurrentOriginalSuffix(browser);
+        // A renderer plays the server's file, not a transcoded download.
+        String original = renderer
+                ? MusicUtil.sourceSuffix(browser.getMediaMetadata().extras)
+                : MusicUtil.getCurrentOriginalSuffix(browser);
         boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
 
         if (actual != null && !actual.isEmpty()) {
