@@ -41,6 +41,9 @@
         <item name="android:scrollbars">none</item>
 
         <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.App.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.Snackbar.Button</item>
     </style>
 
     <style name="Divider">
@@ -71,5 +74,47 @@
 
     <style name="CircleShapeAppearance" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="BottomSheetIconRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="BottomSheetIconRowIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <!-- Material3 puts a snackbar on the inverse surface, which lands it a light bar in the dark
+         theme and a black bar in the light one. These put it on the normal surface, so it follows
+         the theme it sits on, true black included. -->
+    <style name="Widget.App.Snackbar" parent="Widget.Material3.Snackbar">
+        <item name="backgroundTint">?attr/colorSurfaceContainerHigh</item>
+    </style>
+
+    <style name="Widget.App.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Snackbar.Button" parent="ThemeOverlay.Material3.Button.TextButton.Snackbar">
+        <item name="colorOnContainer">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Widget.App.Snackbar.Button" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Snackbar.Button</item>
     </style>
 </resources>
