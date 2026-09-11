@@ -1,0 +1,45 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  pr-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          # Disables cache writing if triggered from restricted/fork PR permissions
+          cache-read-only: ${{ github.event.repository.fork && github.actor != github.repository_owner }}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Run checks and tests
+        run: ./gradlew check
+
+      - name: Publish Test Summary
+        uses: test-summary/action@v2
+        if: always()
+        with:
+          paths: '**/build/test-results/**/*.xml'
+
+      - name: Upload Test Report Artifact
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-report
+          path: '**/build/reports/tests/'

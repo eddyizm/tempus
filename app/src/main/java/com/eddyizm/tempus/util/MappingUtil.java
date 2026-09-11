@@ -58,6 +58,19 @@ public class MappingUtil {
 
     private static final String TAG = "MappingUtil";
 
+    /**
+     * Where a stored queue row ended up in a mapped list, or -1 when it is not there.
+     * mapMediaItems drops songs it cannot map, so a row's stored track order is not a
+     * position in the list it returns.
+     */
+    public static int indexOfMediaId(List<MediaItem> items, String mediaId) {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).mediaId.equals(mediaId)) return i;
+        }
+
+        return -1;
+    }
+
     public static MediaItem mapMediaItem(Child media) {
         try {
             Download downloaded = getCachedDownloads().get(media.getId());
@@ -102,6 +115,7 @@ public class MappingUtil {
             bundle.putLong("created", media.getCreated() != null ? media.getCreated().getTime() : 0);
             bundle.putLong("starred", media.getStarred() != null ? media.getStarred().getTime() : 0);
             bundle.putString("albumId", media.getAlbumId());
+            bundle.putString("albumArtist", media.getAlbumArtist());
             bundle.putString("artistId", media.getArtistId());
             bundle.putString("type", Constants.MEDIA_TYPE_MUSIC);
             bundle.putLong("bookmarkPosition", media.getBookmarkPosition() != null ? media.getBookmarkPosition() : 0);
@@ -418,6 +432,7 @@ public class MappingUtil {
             child.setPath(extras.getString("path"));
             child.setVideo(extras.getBoolean("isVideo"));
             child.setAlbumId(extras.getString("albumId"));
+            child.setAlbumArtist(extras.getString("albumArtist"));
             child.setArtistId(extras.getString("artistId"));
             child.setType(extras.getString("type"));
 

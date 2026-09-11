@@ -211,48 +211,28 @@ public class QueueRepository {
         dbExecutor.execute(() -> queueDao.setLastPlay(id, System.currentTimeMillis()));
     }
 
-    public void setPlayingPausedTimestamp(String id, long ms) {
-        dbExecutor.execute(() -> queueDao.setPlayingChanged(id, ms));
+    /**
+     * Marks a song as the one to come back to, and stores how far into it playback had got.
+     * This write moves both columns together, so a pause cannot leave the pointer on one row
+     * and the position on another. setLastPlayedTimestamp moves last_play on its own, so a
+     * song reached by a track change can still carry a position from an earlier pause.
+     */
+    public void setResumePoint(String id, long positionMs) {
+        dbExecutor.execute(() -> queueDao.setResumePoint(id, System.currentTimeMillis(), positionMs));
     }
 
-    public int getLastPlayedMediaIndex() {
-        int index = 0;
-
+    public Queue getLastPlayedMedia() {
         GetLastPlayedMediaThreadSafe getLastPlayedMediaThreadSafe = new GetLastPlayedMediaThreadSafe(queueDao);
         Thread thread = new Thread(getLastPlayedMediaThreadSafe);
         thread.start();
 
         try {
             thread.join();
-            Queue lastMediaPlayed = getLastPlayedMediaThreadSafe.getQueueItem();
-            if (lastMediaPlayed != null) {
-                index = lastMediaPlayed.getTrackOrder();
-            }
+            return getLastPlayedMediaThreadSafe.getQueueItem();
         } catch (InterruptedException e) {
             e.printStackTrace();
+            return null;
         }
-
-        return index;
-    }
-
-    public long getLastPlayedMediaTimestamp() {
-        long timestamp = 0;
-
-        GetLastPlayedMediaThreadSafe getLastPlayedMediaThreadSafe = new GetLastPlayedMediaThreadSafe(queueDao);
-        Thread thread = new Thread(getLastPlayedMediaThreadSafe);
-        thread.start();
-
-        try {
-            thread.join();
-            Queue lastMediaPlayed = getLastPlayedMediaThreadSafe.getQueueItem();
-            if (lastMediaPlayed != null) {
-                timestamp = lastMediaPlayed.getPlayingChanged();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return timestamp;
     }
 
     private static class GetMediaThreadSafe implements Runnable {

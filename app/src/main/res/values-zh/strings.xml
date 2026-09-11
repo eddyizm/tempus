@@ -543,4 +543,8 @@
     <string name="widget_placeholder_subtitle">打开 Tempus</string>
     <string name="widget_time_duration_placeholder">0:00</string>
     <string name="widget_time_elapsed_placeholder">0:00</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">开启此选项会将播放列表设为公开。保持原样不会改变播放列表的可见性。</string>
+    <string name="playlist_editor_dialog_action_save_empty">播放列表必须至少保留一首曲目</string>
+    <string name="search_title_empty_response">没有结果。</string>
+    <string name="search_description_empty_response">我们检查了您的服务器响应，但它是空的。</string>
 </resources>

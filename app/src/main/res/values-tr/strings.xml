@@ -449,4 +449,8 @@
     <string name="widget_content_desc_prev">Önceki parça</string>
     <string name="settings_song_rating">Şarkının yıldız derecelendirmesini göster</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">"Etkinleştirildiğinde yıldızlı albümler çevrimdışı kullanım için indirilecek. "</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Bunu açtığınızda çalma listesi herkese açık hale gelir. Kendi haline bıraktığınızda çalma listesinin görünürlüğü değişmez.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Bir çalma listesi en az bir parça içermelidir</string>
+    <string name="search_title_empty_response">Sonuç yok.</string>
+    <string name="search_description_empty_response">Sunucu yanıtınızı kontrol ettik ancak boştu.</string>
 </resources>

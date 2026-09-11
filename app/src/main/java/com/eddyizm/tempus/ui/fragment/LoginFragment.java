@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.ui.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -154,8 +155,10 @@ public class LoginFragment extends Fragment implements ClickCallback {
             public void onError(Exception exception) {
                 Preferences.switchInUseServerAddress();
                 resetServerPreference();
-                if (requireContext() != null) { // Swapping activities does not ensure non-null
-                    Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+
+                Context context = getContext();
+                if (context != null && isAdded()) {
+                    Toast.makeText(context, exception.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
 

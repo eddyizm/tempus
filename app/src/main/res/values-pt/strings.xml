@@ -364,4 +364,8 @@
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">Um agradecimento especial ao unDraw, sem cujas ilustrações não poderíamos ter deixado esta aplicação tão bonita.</string>
     <string name="undraw_url">https://undraw.co/</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Ativar isso torna a playlist pública. Deixá-lo como está não altera a visibilidade da playlist.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Uma playlist precisa manter pelo menos uma faixa</string>
+    <string name="search_title_empty_response">Sem resultados.</string>
+    <string name="search_description_empty_response">Verificamos a resposta do seu servidor, mas estava vazia.</string>
 </resources>

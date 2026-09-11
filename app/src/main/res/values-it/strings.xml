@@ -534,4 +534,8 @@
     <string name="settings_album_detail_summary">Se abilitato, mostra i dettagli dell\'album come genere, numero di canzoni, ecc. nella pagina dell\'album</string>
     <string name="settings_artist_sort_by_album_count">Ordina artisti per numero di album</string>
     <string name="settings_artist_sort_by_album_count_summary">Se abilitato, ordina gli artisti per numero di album. Ordina per nome se disabilitato.</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Attivando questa opzione, la playlist diventa pubblica. Lasciandola inalterata, la visibilità della playlist non cambia.</string>
+    <string name="playlist_editor_dialog_action_save_empty">Una playlist deve avere almeno un brano</string>
+    <string name="search_title_empty_response">Nessun risultato.</string>
+    <string name="search_description_empty_response">Abbiamo controllato la risposta del server ma era vuota.</string>
 </resources>

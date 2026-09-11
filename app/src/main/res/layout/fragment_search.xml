@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:background="?attr/colorSurface">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/search_result_nested_scroll_view"
@@ -167,30 +168,36 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        android:elevation="0dp">
 
         <com.google.android.material.search.SearchBar
             android:id="@+id/search_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/search_hint">
+            android:hint="@string/search_hint"
+            app:elevation="0dp"
+            app:backgroundTint="?attr/colorSurfaceContainer"/>
 
-        </com.google.android.material.search.SearchBar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.search.SearchView
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="false"
         android:hint="@string/search_hint"
-        app:layout_anchor="@id/search_bar">
+        app:layout_anchor="@id/search_bar"
+        app:elevation="0dp"
+        app:backgroundTint="?attr/colorSurface">
 
-        <!-- Content goes here (ScrollView, RecyclerView, etc.). -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
-            android:paddingBottom="@dimen/global_padding_bottom">
+            android:paddingBottom="@dimen/global_padding_bottom"
+            android:background="?attr/colorSurface">
 
             <LinearLayout
                 android:id="@+id/search_view_suggestion_container"

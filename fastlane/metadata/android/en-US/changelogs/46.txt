@@ -1,0 +1,10 @@
+feat: Increase song/image cache size
+feat: Add Cover Flow/Carousel to player
+feat: darker than darkness theme
+feat: add no search result placeholder
+feat: explicit accent color on player view
+fix: stop a playlist edit forcing the playlist public
+fix: make the notification previous button restart the song like the app does
+fix: make saving a playlist edit replace its contents instead of appending
+fix: keep the playlist when you download one song from it
+and more...

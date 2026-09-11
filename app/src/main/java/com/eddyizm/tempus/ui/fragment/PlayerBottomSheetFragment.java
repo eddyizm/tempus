@@ -303,11 +303,13 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     public void goBackToFirstPage() {
+        if (getContext() == null || !isAdded() || getView() == null) return;
         bind.playerBodyLayout.playerBodyBottomSheetViewPager.setCurrentItem(0, false);
         goToControllerPage();
     }
 
     public void goToControllerPage() {
+        if (getContext() == null || !isAdded() || getView() == null) return;
         PlayerControllerVerticalPager playerControllerVerticalPager = (PlayerControllerVerticalPager) bind.playerBodyLayout.playerBodyBottomSheetViewPager.getAdapter();
         if (playerControllerVerticalPager != null) {
             PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) playerControllerVerticalPager.getRegisteredFragment(0);
@@ -318,6 +320,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     public void goToLyricsPage() {
+        if (getContext() == null || !isAdded() || getView() == null) return;
         PlayerControllerVerticalPager playerControllerVerticalPager = (PlayerControllerVerticalPager) bind.playerBodyLayout.playerBodyBottomSheetViewPager.getAdapter();
         if (playerControllerVerticalPager != null) {
             PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) playerControllerVerticalPager.getRegisteredFragment(0);
@@ -328,6 +331,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     public void goToQueuePage() {
+        if (getContext() == null || !isAdded() || getView() == null) return;
         bind.playerBodyLayout.playerBodyBottomSheetViewPager.setCurrentItem(1, true);
     }
 

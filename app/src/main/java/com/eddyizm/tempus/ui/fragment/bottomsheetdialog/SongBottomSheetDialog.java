@@ -202,15 +202,23 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
+        String playlistId = requireArguments().getString(Constants.PLAYLIST_ID);
+        String playlistName = requireArguments().getString(Constants.PLAYLIST_NAME);
+        int itemPosition = requireArguments().getInt(Constants.ITEM_POSITION, -1);
+
         downloadButton = view.findViewById(R.id.download_text_view);
         downloadButton.setOnClickListener(v -> {
             if (Preferences.getDownloadDirectoryUri() == null) {
+                Download download = new Download(song);
+                download.setPlaylistId(playlistId);
+                download.setPlaylistName(playlistName);
+
                 DownloadUtil.getDownloadTracker(requireContext()).download(
                         MappingUtil.mapDownload(song),
-                        new Download(song)
+                        download
                 );
             } else {
-                ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
+                ExternalAudioWriter.downloadToUserDirectory(requireContext(), song, playlistId, playlistName);
             }
             dismissBottomSheet();
         });
@@ -229,9 +237,6 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         });
 
         updateDownloadButtons();
-        
-        String playlistId = requireArguments().getString(Constants.PLAYLIST_ID);
-        int itemPosition = requireArguments().getInt(Constants.ITEM_POSITION, -1);
 
         TextView removeFromPlaylist = view.findViewById(R.id.remove_from_playlist_text_view);
         if (playlistId != null && itemPosition != -1) {

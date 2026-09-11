@@ -755,4 +755,8 @@
     <string name="playlist_error_not_found_message">このプレイリストはサーバー上に見つかりませんでした。ローカルキャッシュから削除されます。</string>
     <string name="playlist_error_not_found_toast">プレイリストをキャッシュから削除しました</string>
     <string name="player_overflow_menu_add_to_playlist">プレイリストに追加</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">これをオンにすると、プレイリストが公開されます。そのままにしておくと、プレイリストの公開範囲は変更されません。</string>
+    <string name="playlist_editor_dialog_action_save_empty">プレイリストには少なくとも1つのトラックが必要です</string>
+    <string name="search_title_empty_response">結果がありません。</string>
+    <string name="search_description_empty_response">サーバーの応答を確認しましたが、空でした。</string>
 </resources>
