@@ -513,53 +513,37 @@ public class HomeViewModel extends AndroidViewModel {
         }
     }
 
+    private StarCallback dropWhenAnswered(Favorite favorite) {
+        return new StarCallback() {
+            @Override
+            public void onSuccess() {
+                favoriteRepository.delete(favorite);
+            }
+
+            @Override
+            public void onRefused() {
+                favoriteRepository.delete(favorite);
+            }
+        };
+    }
+
     private void favoriteToStar(Favorite favorite) {
         if (favorite.getSongId() != null) {
-            favoriteRepository.star(favorite.getSongId(), null, null, new StarCallback() {
-                @Override
-                public void onSuccess() {
-                    favoriteRepository.delete(favorite);
-                }
-            });
+            favoriteRepository.star(favorite.getSongId(), null, null, dropWhenAnswered(favorite));
         } else if (favorite.getAlbumId() != null) {
-            favoriteRepository.star(null, favorite.getAlbumId(), null, new StarCallback() {
-                @Override
-                public void onSuccess() {
-                    favoriteRepository.delete(favorite);
-                }
-            });
+            favoriteRepository.star(null, favorite.getAlbumId(), null, dropWhenAnswered(favorite));
         } else if (favorite.getArtistId() != null) {
-            favoriteRepository.star(null, null, favorite.getArtistId(), new StarCallback() {
-                @Override
-                public void onSuccess() {
-                    favoriteRepository.delete(favorite);
-                }
-            });
+            favoriteRepository.star(null, null, favorite.getArtistId(), dropWhenAnswered(favorite));
         }
     }
 
     private void favoriteToUnstar(Favorite favorite) {
         if (favorite.getSongId() != null) {
-            favoriteRepository.unstar(favorite.getSongId(), null, null, new StarCallback() {
-                @Override
-                public void onSuccess() {
-                    favoriteRepository.delete(favorite);
-                }
-            });
+            favoriteRepository.unstar(favorite.getSongId(), null, null, dropWhenAnswered(favorite));
         } else if (favorite.getAlbumId() != null) {
-            favoriteRepository.unstar(null, favorite.getAlbumId(), null, new StarCallback() {
-                @Override
-                public void onSuccess() {
-                    favoriteRepository.delete(favorite);
-                }
-            });
+            favoriteRepository.unstar(null, favorite.getAlbumId(), null, dropWhenAnswered(favorite));
         } else if (favorite.getArtistId() != null) {
-            favoriteRepository.unstar(null, null, favorite.getArtistId(), new StarCallback() {
-                @Override
-                public void onSuccess() {
-                    favoriteRepository.delete(favorite);
-                }
-            });
+            favoriteRepository.unstar(null, null, favorite.getArtistId(), dropWhenAnswered(favorite));
         }
     }
 }

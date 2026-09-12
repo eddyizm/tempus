@@ -17,6 +17,7 @@ import com.eddyizm.tempus.subsonic.models.AlbumInfo;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.util.NetworkUtil;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 
 import java.util.Date;
 import java.util.List;
@@ -59,7 +60,7 @@ public class AlbumPageViewModel extends AndroidViewModel {
         AlbumID3 currentAlbum = album.getValue();
         if (currentAlbum == null) return;
         
-        if (currentAlbum.getStarred() != null) {
+        if (FavoriteRegistry.resolve(FavoriteRegistry.Kind.ALBUM, currentAlbum.getId(), currentAlbum.getStarred() != null)) {
             if (NetworkUtil.isOffline()) {
                 removeFavoriteOffline(currentAlbum);
             } else {

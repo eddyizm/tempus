@@ -294,7 +294,7 @@
     <string name="playlist_editor_dialog_negative_button">Annuler</string>
     <string name="playlist_editor_dialog_neutral_button">Supprimer</string>
     <string name="playlist_editor_dialog_positive_button">Enregistrer</string>
-    <string name="playlist_editor_dialog_title">Créer une playlist</string>
+    <string name="playlist_editor_dialog_title">Modifier la playlist</string>
     <string name="playlist_editor_dialog_action_delete_success">Playlist supprimée</string>
     <string name="playlist_editor_dialog_action_delete_failure">Échec de suppression de la playlist</string>
     <string name="playlist_editor_dialog_action_save_success">Playlist sauvegardée</string>

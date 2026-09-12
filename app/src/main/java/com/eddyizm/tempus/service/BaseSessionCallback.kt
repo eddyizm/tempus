@@ -21,8 +21,10 @@ import androidx.media3.session.SessionResult
 import com.eddyizm.tempus.App
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.subsonic.base.ApiResponse
+import com.eddyizm.tempus.subsonic.models.ResponseStatus
 import com.eddyizm.tempus.util.Constants
 import com.eddyizm.tempus.util.Preferences
+import com.eddyizm.tempus.util.FavoriteRegistry
 import com.google.common.collect.ImmutableList
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
@@ -345,6 +347,11 @@ open class BaseSessionCallback(
         rating: Rating
     ): ListenableFuture<SessionResult> {
         val isStarring = (rating as HeartRating).isHeart
+        val record = (0 until session.player.mediaItemCount)
+            .map { session.player.getMediaItemAt(it) }
+            .firstOrNull { it.mediaId == mediaId }
+            ?.takeIf { it.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC }
+            ?.let { FavoriteRegistry.set(FavoriteRegistry.Kind.SONG, mediaId, isStarring) }
 
         val networkCall = if (isStarring)
             App.getSubsonicClientInstance(false)
@@ -360,7 +367,11 @@ open class BaseSessionCallback(
         networkCall.enqueue(object : Callback<ApiResponse?> {
             @OptIn(UnstableApi::class)
             override fun onResponse(call: Call<ApiResponse?>, response: Response<ApiResponse?>) {
-                if (response.isSuccessful) {
+                val refused = response.body()?.subsonicResponse?.status == ResponseStatus.FAILED
+
+                if (response.isSuccessful && !refused) {
+                    FavoriteRegistry.accept(record)
+
                     for (i in 0 until session.player.mediaItemCount) {
                         val mediaItem = session.player.getMediaItemAt(i)
                         if (mediaItem.mediaId == mediaId) {
@@ -375,13 +386,15 @@ open class BaseSessionCallback(
                     updateMediaNotificationCustomLayout(session)
                     future.set(SessionResult(SessionResult.RESULT_SUCCESS))
                 } else {
+                    if (refused) FavoriteRegistry.strike(record) else FavoriteRegistry.withdraw(record)
                     updateMediaNotificationCustomLayout(session)
-                    future.set(SessionResult(SessionError(response.code(), response.message())))
+                    future.set(SessionResult(if (refused) SessionError(SessionError.ERROR_UNKNOWN, "The server refused the change") else SessionError(response.code(), response.message())))
                 }
             }
 
             @OptIn(UnstableApi::class)
             override fun onFailure(call: Call<ApiResponse?>, t: Throwable) {
+                FavoriteRegistry.withdraw(record)
                 updateMediaNotificationCustomLayout(session)
                 future.set(SessionResult(SessionError(SessionError.ERROR_UNKNOWN, "An error has occurred")))
             }

@@ -23,6 +23,7 @@ import com.eddyizm.tempus.repository.DownloadRepository;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.InternetRadioStation;
 import com.eddyizm.tempus.subsonic.models.PodcastEpisode;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.common.collect.ImmutableList;
 
 import java.io.File;
@@ -146,7 +147,7 @@ public class MappingUtil {
                                     .setAlbumTitle(media.getAlbum())
                                     .setArtist(media.getArtist())
                                     .setArtworkUri(artworkUri)
-                                    .setUserRating(new HeartRating(media.getStarred() != null && media.getStarred().getTime() > 0))
+                                    .setUserRating(new HeartRating(FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, media.getId(), media.getStarred() != null && media.getStarred().getTime() > 0)))
                                     .setSupportedCommands(
                                         ImmutableList.of(
                                                 Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,

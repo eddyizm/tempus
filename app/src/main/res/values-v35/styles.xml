@@ -34,5 +34,8 @@
         <item name="android:scrollbars">none</item>
 
         <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
+        <item name="snackbarTextViewStyle">@style/Widget.App.Snackbar.TextView</item>
+        <item name="snackbarButtonStyle">@style/Widget.App.Snackbar.Button</item>
     </style>
 </resources>

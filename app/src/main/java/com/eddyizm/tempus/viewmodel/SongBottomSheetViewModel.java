@@ -16,7 +16,6 @@ import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
 import com.eddyizm.tempus.repository.FavoriteRepository;
-import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.repository.SharingRepository;
 import com.eddyizm.tempus.repository.SongRepository;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
@@ -28,6 +27,7 @@ import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.NetworkUtil;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 
 import java.util.Collections;
 import java.util.Date;
@@ -40,7 +40,6 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
     private final SharingRepository sharingRepository;
-    private final PlaylistRepository playlistRepository;
 
     private Child song;
 
@@ -54,7 +53,6 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         artistRepository = new ArtistRepository();
         favoriteRepository = new FavoriteRepository();
         sharingRepository = new SharingRepository();
-        playlistRepository = new PlaylistRepository();
     }
 
     public Child getSong() {
@@ -65,12 +63,8 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         this.song = song;
     }
 
-    public void removeFromPlaylist(String playlistId, int index, PlaylistRepository.AddToPlaylistCallback callback) {
-        playlistRepository.removeSongFromPlaylist(playlistId, index, callback);
-    }
-
     public void setFavorite(Context context) {
-        if (song.getStarred() != null) {
+        if (FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, song.getId(), song.getStarred() != null)) {
             if (NetworkUtil.isOffline()) {
                 removeFavoriteOffline(song);
             } else {
@@ -94,7 +88,6 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         favoriteRepository.unstar(media.getId(), null, null, new StarCallback() {
             @Override
             public void onError() {
-                // media.setStarred(new Date());
                 favoriteRepository.starLater(media.getId(), null, null, false);
             }
         });
@@ -111,7 +104,6 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         favoriteRepository.star(media.getId(), null, null, new StarCallback() {
             @Override
             public void onError() {
-                // media.setStarred(null);
                 favoriteRepository.starLater(media.getId(), null, null, true);
             }
         });

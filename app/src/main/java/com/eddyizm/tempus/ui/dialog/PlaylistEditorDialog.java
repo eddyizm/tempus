@@ -10,26 +10,18 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.media3.common.util.UnstableApi;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.DialogPlaylistEditorBinding;
 import com.eddyizm.tempus.interfaces.PlaylistCallback;
 import com.eddyizm.tempus.repository.PlaylistRepository;
-import com.eddyizm.tempus.ui.adapter.PlaylistDialogSongHorizontalAdapter;
 import com.eddyizm.tempus.util.Constants;
-import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlaylistEditorViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Collections;
 import java.util.Objects;
 
 public class PlaylistEditorDialog extends DialogFragment {
@@ -39,7 +31,6 @@ public class PlaylistEditorDialog extends DialogFragment {
     private final PlaylistCallback playlistCallback;
 
     private String playlistName;
-    private PlaylistDialogSongHorizontalAdapter playlistDialogSongHorizontalAdapter;
 
     public PlaylistEditorDialog(PlaylistCallback playlistCallback) {
         this.playlistCallback = playlistCallback;
@@ -54,7 +45,7 @@ public class PlaylistEditorDialog extends DialogFragment {
 
         return new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
-                .setTitle(R.string.playlist_editor_dialog_title)
+                .setTitle(R.string.playlist_details_dialog_title)
                 .setPositiveButton(R.string.playlist_editor_dialog_positive_button, (dialog, id) -> { })
                 .setNeutralButton(R.string.playlist_editor_dialog_neutral_button, (dialog, id) -> dialog.cancel())
                 .setNegativeButton(R.string.playlist_editor_dialog_negative_button, (dialog, id) -> dialog.cancel())
@@ -67,7 +58,6 @@ public class PlaylistEditorDialog extends DialogFragment {
 
         setParameterInfo();
         setButtonAction();
-        initSongsView();
     }
 
     @Override
@@ -117,22 +107,12 @@ public class PlaylistEditorDialog extends DialogFragment {
                             });
                         }
                     }
-
-                    @Override
-                    @OptIn(markerClass = UnstableApi.class)
-                    public void onEmptied() {
-                        if (isAdded() && getContext() != null) {
-                            requireActivity().runOnUiThread(() -> {
-                                Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_empty, Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    }
                 };
 
                 if (playlistEditorViewModel.getSongsToAdd() != null) {
                     playlistEditorViewModel.createPlaylist(playlistName, callback);
                 } else if (playlistEditorViewModel.getPlaylistToEdit() != null) {
-                    playlistEditorViewModel.updatePlaylist(playlistName, callback);
+                    playlistEditorViewModel.renamePlaylist(playlistName, callback);
                 }
             }
         });
@@ -177,60 +157,6 @@ public class PlaylistEditorDialog extends DialogFragment {
         bind.playlistShareButton.setVisibility(Preferences.isSharingEnabled() ? View.VISIBLE : View.GONE);
     }
 
-    private void initSongsView() {
-        bind.playlistSongRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        bind.playlistSongRecyclerView.setHasFixedSize(true);
-
-        playlistDialogSongHorizontalAdapter = new PlaylistDialogSongHorizontalAdapter();
-        bind.playlistSongRecyclerView.setAdapter(playlistDialogSongHorizontalAdapter);
-
-        playlistEditorViewModel.getPlaylistSongLiveList().observe(requireActivity(), songs -> {
-            if (songs != null) playlistDialogSongHorizontalAdapter.setItems(songs);
-        });
-
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
-            int originalPosition = -1;
-            int fromPosition = -1;
-            int toPosition = -1;
-
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                if (originalPosition == -1)
-                    originalPosition = viewHolder.getBindingAdapterPosition();
-
-                fromPosition = viewHolder.getBindingAdapterPosition();
-                toPosition = target.getBindingAdapterPosition();
-
-                Collections.swap(playlistDialogSongHorizontalAdapter.getItems(), fromPosition, toPosition);
-                Objects.requireNonNull(recyclerView.getAdapter()).notifyItemMoved(fromPosition, toPosition);
-
-                return false;
-            }
-
-            @Override
-            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                super.clearView(recyclerView, viewHolder);
-
-                /*
-                 * Qui vado a riscivere tutta la table Queue, quando teoricamente potrei solo swappare l'ordine degli elementi interessati
-                 * Nel caso la coda contenesse parecchi brani, potrebbero verificarsi rallentamenti pesanti
-                 */
-                playlistEditorViewModel.orderPlaylistSongLiveListAfterSwap(playlistDialogSongHorizontalAdapter.getItems());
-
-                originalPosition = -1;
-                fromPosition = -1;
-                toPosition = -1;
-            }
-
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                playlistEditorViewModel.removeFromPlaylistSongLiveList(viewHolder.getBindingAdapterPosition());
-                Objects.requireNonNull(bind.playlistSongRecyclerView.getAdapter()).notifyItemRemoved(viewHolder.getBindingAdapterPosition());
-            }
-        }
-        ).attachToRecyclerView(bind.playlistSongRecyclerView);
-    }
-
     private boolean validateInput() {
         playlistName = Objects.requireNonNull(bind.playlistNameTextView.getText()).toString().trim();
 
@@ -246,9 +172,6 @@ public class PlaylistEditorDialog extends DialogFragment {
         Dialog dialog = getDialog();
         if (dialog != null) {
             dialog.dismiss();
-        }
-        if (playlistCallback != null) {
-            playlistCallback.onDismiss();
         }
     }
 }
