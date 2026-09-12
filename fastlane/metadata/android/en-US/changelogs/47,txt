@@ -1,0 +1,7 @@
+fix: treat a refused playlist add, remove or delete as a failure
+fix: no search result placeholder never goes away after triggered
+fix: Sort downloads by album artist so compilations stay together
+fix: dark theme not applying when app in polish lang
+fix: crash when login fails
+fix: view swaps from callbacks crash the app when activity is suspended
+fix: apply playlist sort preference to playlist chooser dialog

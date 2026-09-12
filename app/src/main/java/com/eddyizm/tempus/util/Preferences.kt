@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.util
 
 import android.util.Log
+import androidx.core.content.edit
 import androidx.media3.common.Player
 import com.eddyizm.tempus.App
 import com.eddyizm.tempus.model.HomeSector
@@ -52,6 +53,9 @@ object Preferences {
     private const val DOWNLOAD_WIFI_ONLY = "download_wifi_only"
     private const val DOWNLOAD_DATABASE_REPAIRED = "download_database_repaired_version"
     private const val DOWNLOAD_REPAIR_ATTEMPTS = "download_repair_attempts"
+    private const val ALBUM_ARTIST_BACKFILLED = "album_artist_backfilled_version"
+    private const val ALBUM_ARTIST_ATTEMPTS = "album_artist_backfill_attempts"
+    private const val ALBUM_ARTIST_ATTEMPTS_VERSION = "album_artist_backfill_attempts_version"
     private const val DATA_SAVING_MODE = "data_saving_mode"
     private const val SERVER_UNREACHABLE = "server_unreachable"
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
@@ -97,7 +101,7 @@ object Preferences {
     private const val LAST_INSTANT_MIX = "last_instant_mix"
     private const val ALLOW_PLAYLIST_DUPLICATES = "allow_playlist_duplicates"
     private const val HOME_SORT_PLAYLISTS = "home_sort_playlists"
-    private const val DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER = Constants.PLAYLIST_ORDER_BY_RANDOM
+    private const val DEFAULT_HOME_SORT_PLAYLISTS_SORT_ORDER = Constants.PLAYLIST_ORDER_BY_NAME
     private const val SELECTED_EQUALIZER = "selected_equalizer"
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
@@ -535,6 +539,36 @@ object Preferences {
     @JvmStatic
     fun setDownloadRepairAttempts(attempts: Int) {
         App.getInstance().preferences.edit().putInt(DOWNLOAD_REPAIR_ATTEMPTS, attempts).apply()
+    }
+
+    @JvmStatic
+    fun getBackfilledAlbumArtistVersion(): Int {
+        return App.getInstance().preferences.getInt(ALBUM_ARTIST_BACKFILLED, 0)
+    }
+
+    @JvmStatic
+    fun setAlbumArtistBackfilled(version: Int) {
+        App.getInstance().preferences.edit { putInt(ALBUM_ARTIST_BACKFILLED, version) }
+    }
+
+    @JvmStatic
+    fun getAlbumArtistAttempts(): Int {
+        return App.getInstance().preferences.getInt(ALBUM_ARTIST_ATTEMPTS, 0)
+    }
+
+    @JvmStatic
+    fun setAlbumArtistAttempts(attempts: Int) {
+        App.getInstance().preferences.edit { putInt(ALBUM_ARTIST_ATTEMPTS, attempts) }
+    }
+
+    @JvmStatic
+    fun getAlbumArtistAttemptsVersion(): Int {
+        return App.getInstance().preferences.getInt(ALBUM_ARTIST_ATTEMPTS_VERSION, 0)
+    }
+
+    @JvmStatic
+    fun setAlbumArtistAttemptsVersion(version: Int) {
+        App.getInstance().preferences.edit { putInt(ALBUM_ARTIST_ATTEMPTS_VERSION, version) }
     }
 
     @JvmStatic

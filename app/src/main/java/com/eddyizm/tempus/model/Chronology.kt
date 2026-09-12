@@ -51,6 +51,7 @@ class Chronology(
         starred = if (starredLong > 0) Date(starredLong) else null
         albumId = mediaItem.mediaMetadata.extras!!.getString("albumId")
         artistId = mediaItem.mediaMetadata.extras!!.getString("artistId")
+        albumArtist = mediaItem.mediaMetadata.extras!!.getString("albumArtist")
         type = mediaItem.mediaMetadata.extras!!.getString("type")
         bookmarkPosition = mediaItem.mediaMetadata.extras!!.getLong("bookmarkPosition")
         originalWidth = mediaItem.mediaMetadata.extras!!.getInt("originalWidth")
