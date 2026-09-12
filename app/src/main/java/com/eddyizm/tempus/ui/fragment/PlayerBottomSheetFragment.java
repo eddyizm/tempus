@@ -68,6 +68,14 @@ public class PlayerBottomSheetFragment extends Fragment {
         initViewPager();
         setHeaderBookmarksButton();
 
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (activity.isBottomSheetExpanded()) {
+                bind.playerHeaderLayout.getRoot().setAlpha(0f);
+                bind.playerHeaderLayout.getRoot().setVisibility(View.GONE);
+            }
+        }
+
         return view;
     }
 
@@ -291,7 +299,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     public View getPlayerHeader() {
-        return requireView().findViewById(R.id.player_header_layout);
+        return bind != null ? bind.playerHeaderLayout.getRoot() : null;
     }
 
     public void goBackToFirstPage() {

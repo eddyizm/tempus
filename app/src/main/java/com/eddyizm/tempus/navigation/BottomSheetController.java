@@ -14,7 +14,11 @@ public class BottomSheetController {
     }
 
     public void expand() {
-        helper.setState(BottomSheetBehavior.STATE_EXPANDED);
+        helper.expand();
+    }
+
+    public boolean isExpanded() {
+        return helper.isExpanded();
     }
 
     public void hide() {
