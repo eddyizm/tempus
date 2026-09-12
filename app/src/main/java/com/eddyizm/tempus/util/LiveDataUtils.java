@@ -25,10 +25,10 @@ public final class LiveDataUtils {
         final Observer<List<Child>> observer = new Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> songs) {
-                if (songs != null && !songs.isEmpty()) {
-                    action.accept(songs);
-                    live.removeObserver(this);
-                }
+                // The songs live data has no initial value, so the first emission is the real
+                // answer, and the observer is removed on it whatever the value.
+                live.removeObserver(this);
+                if (songs != null && !songs.isEmpty()) action.accept(songs);
             }
         };
         live.observe(owner, observer);
