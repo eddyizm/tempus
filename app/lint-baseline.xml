@@ -7649,7 +7649,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_hint&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_hint&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_hint&quot;>Drag the handle to reorder, tap the trash to remove. Nothing is sent until Save.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7660,7 +7660,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_remove_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_remove_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_remove_track&quot;>Remove track&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7671,7 +7671,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_drag_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_drag_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_drag_track&quot;>Drag to reorder&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7682,7 +7682,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;menu_edit_playlist_details_button&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;menu_edit_playlist_details_button&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;menu_edit_playlist_details_button&quot;>Edit details&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7693,7 +7693,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_details_dialog_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_details_dialog_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_details_dialog_title&quot;>Playlist details&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7704,7 +7704,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_load_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_load_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_load_failure&quot;>Could not load the playlist&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7715,7 +7715,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_removed_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_removed_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_removed_track&quot;>Removed from the list&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7726,7 +7726,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;song_bottom_sheet_undo&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;song_bottom_sheet_undo&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;song_bottom_sheet_undo&quot;>Undo&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7737,7 +7737,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;song_bottom_sheet_undo_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;song_bottom_sheet_undo_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;song_bottom_sheet_undo_failure&quot;>Failed to put the song back&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
