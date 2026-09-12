@@ -104,6 +104,8 @@
     <string name="home_sync_starred_title">동기화가 필요한 즐겨찾기 트랙이 있는 것 같습니다.</string>
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Discovery</string>
+    <string name="home_title_continue_listening">계속 듣기</string>
+    <string name="home_continue_listening_resume_at">%1$s에서 계속</string>
     <string name="home_title_discovery_shuffle_all_button">모두 셔플</string>
     <string name="home_title_flashback">Flashback</string>
     <string name="home_title_internet_radio_station">인터넷 라디오 스테이션</string>

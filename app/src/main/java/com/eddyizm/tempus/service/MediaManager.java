@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.Timeline;
 import androidx.media3.common.util.UnstableApi;
@@ -235,7 +236,7 @@ public class MediaManager {
                                     : -1;
 
                             final int index = found >= 0 ? found : 0;
-                            final long position = found >= 0 ? lastPlayed.getPlayingChanged() : 0;
+                            final long position = found >= 0 ? resumePosition(lastPlayed) : 0;
 
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 // The user can start something while we map, and check() only
@@ -257,6 +258,11 @@ public class MediaManager {
 
     @OptIn(markerClass = UnstableApi.class)
     public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex) {
+        startQueue(mediaBrowserListenableFuture, media, startIndex, 0L);
+    }
+
+    @OptIn(markerClass = UnstableApi.class)
+    public static void startQueue(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media, int startIndex, long startPositionMs) {
         if (mediaBrowserListenableFuture != null) {
 
             mediaBrowserListenableFuture.addListener(() -> {
@@ -273,7 +279,7 @@ public class MediaManager {
 
                             new Handler(Looper.getMainLooper()).post(() -> {
                                 justStarted.set(true);
-                                browser.setMediaItems(items, startIndex, 0);
+                                browser.setMediaItems(items, startIndex, startPositionMs);
                                 browser.prepare();
 
                                 Player.Listener timelineListener = new Player.Listener() {
@@ -281,7 +287,7 @@ public class MediaManager {
                                     public void onTimelineChanged(Timeline timeline, int reason) {
                                         int itemCount = browser.getMediaItemCount();
                                         if (itemCount > 0 && startIndex >= 0 && startIndex < itemCount) {
-                                            browser.seekTo(startIndex, 0);
+                                            browser.seekTo(startIndex, startPositionMs);
                                             browser.play();
                                             browser.removeListener(this);
                                         } else {
@@ -557,8 +563,57 @@ public class MediaManager {
     }
 
     public static void setResumePoint(MediaItem mediaItem, long ms) {
-        if (mediaItem != null)
-            getQueueRepository().setResumePoint(mediaItem.mediaId, ms);
+        if (mediaItem == null) return;
+        MediaMetadata metadata = mediaItem.mediaMetadata;
+        String type = metadata.extras != null ? metadata.extras.getString("type") : null;
+        long durationMs = (metadata.extras != null ? metadata.extras.getInt("duration") : 0) * 1000L;
+
+        // DSub model: don't auto-bookmark radio/video; keep a live resume point for
+        // podcasts, audiobooks, and long music tracks (>10 min). No position cutoff here -
+        // the point is re-persisted periodically during playback (see BaseMediaService) and
+        // cleared when the track actually plays to completion.
+        if (!isResumable(type, durationMs)) {
+            return;
+        }
+
+        getQueueRepository().setResumePoint(mediaItem.mediaId, ms);
+        // Durable per-song resume point with enough metadata to render a
+        // "Continue listening" overview without server lookups.
+        String title = metadata.title != null ? metadata.title.toString() : null;
+        String album = metadata.albumTitle != null ? metadata.albumTitle.toString() : null;
+        String artist = metadata.artist != null ? metadata.artist.toString() : null;
+        String albumId = metadata.extras != null ? metadata.extras.getString("albumId") : null;
+        String coverArtId = metadata.extras != null ? metadata.extras.getString("coverArtId") : null;
+        Preferences.saveResumePoint(mediaItem.mediaId, ms, title, album, artist, albumId, coverArtId);
+        // Mirror the resume point to the server bookmark so it syncs across devices.
+        getQueueRepository().createServerBookmark(mediaItem.mediaId, ms);
+    }
+
+    static boolean isResumable(String type, long durationMs) {
+        if (Constants.MEDIA_TYPE_PODCAST.equals(type) || Constants.MEDIA_TYPE_AUDIOBOOK.equals(type)) {
+            return true;
+        }
+        // Only long music tracks; radio/video are live or not resumable.
+        return Constants.MEDIA_TYPE_MUSIC.equals(type) && durationMs > 10L * 60L * 1000L;
+    }
+
+    /**
+     * Clears the resume point + server bookmark for a song that played to completion, so a
+     * fully-finished track no longer appears in "Continue listening".
+     */
+    public static void deleteResumePoint(MediaItem mediaItem) {
+        if (mediaItem != null) {
+            getQueueRepository().deleteServerBookmark(mediaItem.mediaId);
+        }
+    }
+
+    /**
+     * Saved resume position for a song, falling back to the legacy queue-row position
+     * (playing_changed) so an upgrade from a pre-resume-point build keeps its spot.
+     */
+    public static long resumePosition(Queue lastPlayed) {
+        long saved = Preferences.getResumePoint(lastPlayed.getId());
+        return saved != 0 ? saved : Math.max(0L, lastPlayed.getPlayingChanged());
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {

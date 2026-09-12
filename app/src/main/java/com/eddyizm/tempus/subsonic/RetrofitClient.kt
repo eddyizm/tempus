@@ -2,6 +2,8 @@ package com.eddyizm.tempus.subsonic
 
 import com.eddyizm.tempus.App
 import com.eddyizm.tempus.BuildConfig
+import com.eddyizm.tempus.subsonic.models.Bookmarks
+import com.eddyizm.tempus.subsonic.models.BookmarksDeserializer
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.subsonic.utils.EmptyDateTypeAdapter
 import com.eddyizm.tempus.util.ClientCertManager
@@ -21,6 +23,7 @@ class RetrofitClient(subsonic: Subsonic) {
     init {
         val gson = GsonBuilder()
             .registerTypeAdapter(Date::class.java, EmptyDateTypeAdapter())
+            .registerTypeAdapter(Bookmarks::class.java, BookmarksDeserializer())
             .setLenient()
             .create()
 

@@ -176,6 +176,8 @@
     </plurals>
     <string name="home_title_best_of">Lo mejor de</string>
     <string name="home_title_discovery">Descubrir</string>
+    <string name="home_title_continue_listening">Continuar escuchando</string>
+    <string name="home_continue_listening_resume_at">Continuar en %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Reproducir en aleatorio</string>
     <string name="home_title_flashback">Recuerdos</string>
     <string name="home_title_internet_radio_station">Estaciones de radio</string>

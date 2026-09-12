@@ -11,6 +11,7 @@ import android.net.NetworkCapabilities
 import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
+import android.os.SystemClock
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -74,12 +75,20 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     // posts the player calls back to this handler; if the service is destroyed mid map (the app
     // swiped away during launch), that post must not touch the now released player.
     @Volatile private var serviceDestroyed = false
+    private var lastResumeSaveAt = 0L
     private val widgetUpdateRunnable = object : Runnable {
         override fun run() {
             val player = mediaLibrarySession.player
             if (!player.isPlaying) {
                 widgetUpdateScheduled = false
                 return
+            }
+            // Keep the resume point (and server bookmark) live during playback so it
+            // never sits stale if a track is let to play without pausing or switching.
+            val now = SystemClock.elapsedRealtime()
+            if (now - lastResumeSaveAt >= RESUME_SAVE_INTERVAL_MS) {
+                lastResumeSaveAt = now
+                MediaManager.setResumePoint(player.currentMediaItem, player.currentPosition)
             }
             updateWidget(player)
             widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
@@ -259,7 +268,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 val found = MappingUtil.indexOfMediaId(mediaItems, lastPlayed.id)
                 if (found >= 0) {
                     lastIndex = found
-                    lastPosition = lastPlayed.playingChanged.coerceAtLeast(0L)
+                    lastPosition = MediaManager.resumePosition(lastPlayed)
                 }
             }
 
@@ -516,6 +525,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                         player.currentMediaItem,
                         player.currentPosition
                     )
+                    // Auto-push the queue + position to the server so resume works
+                    // without a manual button press.
+                    player.currentMediaItem?.mediaId?.let { id ->
+                        QueueRepository().savePlayQueueToServer(id, player.currentPosition)
+                    }
                 } else {
                     MediaManager.scrobble(player.currentMediaItem, false)
                 }
@@ -538,6 +552,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 ) {
                     MediaManager.scrobble(player.currentMediaItem, true)
                     MediaManager.saveChronology(player.currentMediaItem)
+                    // Last track played to completion - drop it from Continue listening.
+                    MediaManager.deleteResumePoint(player.currentMediaItem)
                 }
                 updateWidget(player)
             }
@@ -549,6 +565,19 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             ) {
                 Log.d(TAG, "onPositionDiscontinuity reason=$reason old=${oldPosition.mediaItemIndex} new=${newPosition.mediaItemIndex}")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+
+                // Save the resume point of the track we're leaving whenever we move to a
+                // different track, so coming back to it later resumes where it was. (Pause
+                // is handled separately in onIsPlayingChanged; this covers switching tracks
+                // while still playing, where no pause fires.) Skip natural auto-transition,
+                // where the track already ended, so a finished track doesn't grab a near-end
+                // resume point.
+                if (oldPosition.mediaItemIndex != newPosition.mediaItemIndex &&
+                    reason != Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
+                    oldPosition.mediaItem?.let {
+                        MediaManager.setResumePoint(it, oldPosition.positionMs)
+                    }
+                }
 
                 // Re-apply gain whenever we stay on the same track for any reason
                 // except an automatic transition to the next track.
@@ -569,6 +598,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                         MediaManager.scrobble(oldPosition.mediaItem, true)
                         MediaManager.saveChronology(oldPosition.mediaItem)
                     }
+                    // The old track played to completion - drop it from Continue listening.
+                    MediaManager.deleteResumePoint(oldPosition.mediaItem)
 
                     if (newPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.setLastPlayedTimestamp(newPosition.mediaItem)
@@ -675,6 +706,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         val player = mediaLibrarySession.player
 
         if (!player.playWhenReady || player.mediaItemCount == 0) {
+            // App swiped away while paused - write the final position so the resume
+            // point (and server bookmark) reflect exactly where the user stopped.
+            if (player.currentMediaItem != null && player.currentPosition > 0) {
+                MediaManager.setResumePoint(player.currentMediaItem, player.currentPosition)
+            }
             stopSelf()
         }
     }
@@ -1082,4 +1118,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 }
 
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
+// How often to re-persist the resume point (and server bookmark) during playback, so a
+// force-close or stop mid-playback still lands within a few seconds of where you were.
+private const val RESUME_SAVE_INTERVAL_MS = 15000L
 private const val RADIO_HEADER_CHECK_INTERVAL_SECONDS = 30L // Reduced frequency - only fallback when ICY fails

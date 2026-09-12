@@ -1,8 +1,11 @@
 package com.eddyizm.tempus.repository;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -12,10 +15,14 @@ import com.eddyizm.tempus.database.dao.QueueDao;
 import com.eddyizm.tempus.model.Queue;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.Child;
+import com.eddyizm.tempus.subsonic.models.Bookmark;
 import com.eddyizm.tempus.subsonic.models.PlayQueue;
+import com.eddyizm.tempus.util.Preferences;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -105,6 +112,130 @@ public class QueueRepository {
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
                         Log.e(TAG, "Play queue save failed", t);
+                    }
+                });
+    }
+
+    /**
+     * Reads the current queue on the DB executor and pushes it (with the given
+     * current song + position) to the server. Used for auto-save on pause so the
+     * resume point is always current without a UI button press.
+     */
+    public void savePlayQueueToServer(String current, long position) {
+        dbExecutor.execute(() -> {
+            List<String> ids = queueDao.getAllSimple().stream()
+                    .map(Queue::getId)
+                    .collect(Collectors.toList());
+            savePlayQueue(ids, current, position);
+        });
+    }
+
+    /**
+     * Creates/updates a server-side bookmark for a song (Navidrome/Subsonic). This is the
+     * cross-device "continue listening" source; the local Preferences store is the fast cache.
+     */
+    public void createServerBookmark(String id, long positionMs) {
+        // Skip trivial positions (a barely-started track isn't "in progress").
+        if (id == null || positionMs <= 5000L) return;
+        App.getSubsonicClientInstance(false)
+                .getBookmarksClient()
+                .createBookmark(id, positionMs)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        String status = "unknown";
+                        String error = "";
+                        if (response.body() != null && response.body().getSubsonicResponse() != null) {
+                            status = String.valueOf(response.body().getSubsonicResponse().getStatus());
+                            if (response.body().getSubsonicResponse().getError() != null) {
+                                error = response.body().getSubsonicResponse().getError().getMessage();
+                            }
+                        }
+                        if (!response.isSuccessful() || !"ok".equals(status)) {
+                            Log.w(TAG, "createBookmark id=" + id + " pos=" + positionMs
+                                    + " -> HTTP " + response.code() + " subsonicStatus=" + status + " " + error);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "createBookmark id=" + id + " pos=" + positionMs + " failed", t);
+                    }
+                });
+    }
+
+    /**
+     * Removes the server bookmark for a song (used when a track plays to completion, so a fully
+     * finished song no longer appears in "Continue listening"). Clears the local resume point too.
+     */
+    public void deleteServerBookmark(String id) {
+        if (id == null) return;
+        Preferences.clearResumePoint(id);
+        App.getSubsonicClientInstance(false)
+                .getBookmarksClient()
+                .deleteBookmark(id)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (!response.isSuccessful()) {
+                            Log.w(TAG, "deleteBookmark failed with code: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "deleteBookmark failed", t);
+                    }
+                });
+    }
+
+    /**
+     * Reads all server bookmarks and merges them into the durable local store (source for the
+     * Continue listening overview). Cross-device bookmarks appear because the server is authoritative.
+     * Runs [onSynced] (if given) on the main thread after the merge.
+     */
+    public void syncBookmarksFromServer(@Nullable Runnable onSynced) {
+        App.getSubsonicClientInstance(false)
+                .getBookmarksClient()
+                .getBookmarks()
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            List<Bookmark> bookmarks = response.body().getSubsonicResponse().getBookmarks() != null
+                                    ? response.body().getSubsonicResponse().getBookmarks().getBookmarks()
+                                    : null;
+                            if (bookmarks != null) {
+                                Map<String, Preferences.ResumePoint> merged = new HashMap<>();
+                                for (Bookmark bm : bookmarks) {
+                                    Child entry = bm.getEntry();
+                                    if (entry == null || entry.getId() == null || bm.getPosition() <= 0L) continue;
+                                    long ts = bm.getChanged() != null ? bm.getChanged().getTime() : System.currentTimeMillis();
+                                    merged.put(entry.getId(), new Preferences.ResumePoint(
+                                            entry.getId(),
+                                            bm.getPosition(),
+                                            entry.getTitle(),
+                                            entry.getAlbum(),
+                                            entry.getArtist(),
+                                            entry.getAlbumId(),
+                                            entry.getCoverArtId(),
+                                            ts
+                                    ));
+                                }
+                                Preferences.saveResumePoints(merged);
+                            }
+                        }
+                        if (onSynced != null) {
+                            new Handler(Looper.getMainLooper()).post(onSynced);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        Log.e(TAG, "syncBookmarks failed", t);
+                        if (onSynced != null) {
+                            new Handler(Looper.getMainLooper()).post(onSynced);
+                        }
                     }
                 });
     }
@@ -218,6 +349,8 @@ public class QueueRepository {
      * song reached by a track change can still carry a position from an earlier pause.
      */
     public void setResumePoint(String id, long positionMs) {
+        // Update the queue row for the launch-restore path which reads it back from the DB.
+        // (MediaManager.setResumePoint also writes the durable per-song store with metadata.)
         dbExecutor.execute(() -> queueDao.setResumePoint(id, System.currentTimeMillis(), positionMs));
     }
 

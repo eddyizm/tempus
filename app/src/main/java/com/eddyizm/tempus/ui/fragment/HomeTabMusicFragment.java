@@ -38,6 +38,7 @@ import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.HomeSector;
 import com.eddyizm.tempus.repository.PlaylistRepository;
+import com.eddyizm.tempus.repository.QueueRepository;
 import com.eddyizm.tempus.service.DownloaderManager;
 import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
@@ -51,6 +52,7 @@ import com.eddyizm.tempus.ui.adapter.AlbumHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.ArtistAdapter;
 import com.eddyizm.tempus.ui.adapter.ArtistHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.DiscoverSongAdapter;
+import com.eddyizm.tempus.ui.adapter.ContinueListeningAdapter;
 import com.eddyizm.tempus.ui.adapter.PlaylistHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.ShareHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.SimilarTrackAdapter;
@@ -103,6 +105,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private ShareHorizontalAdapter shareHorizontalAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private ContinueListeningAdapter continueListeningAdapter;
     private Observer<List<Child>> bestOfObserver = null;
 
     @Nullable
@@ -131,6 +134,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         initSyncStarredAlbumsView();
         initSyncStarredArtistsView();
         initDiscoverSongSlideView();
+        initContinueListening();
         initSimilarSongView();
         initArtistRadio();
         initArtistBestOf();
@@ -156,6 +160,10 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         super.onStart();
 
         initializeMediaBrowser();
+
+        if (continueListeningAdapter != null) {
+            continueListeningAdapter.setMediaBrowserFuture(mediaBrowserListenableFuture);
+        }
 
         MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
         observeStarredSongsPlayback();
@@ -711,6 +719,36 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
     }
 
+    private void initContinueListening() {
+        if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_CONTINUE_LISTENING)) return;
+
+        bind.continueListeningRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.continueListeningRecyclerView.setHasFixedSize(true);
+
+        continueListeningAdapter = new ContinueListeningAdapter(mediaBrowserListenableFuture);
+        bind.continueListeningRecyclerView.setAdapter(continueListeningAdapter);
+
+        List<Preferences.ResumePoint> resumePoints = Preferences.getContinueListening();
+        if (resumePoints.isEmpty()) {
+            bind.homeContinueListeningSector.setVisibility(View.GONE);
+        } else {
+            bind.homeContinueListeningSector.setVisibility(View.VISIBLE);
+            continueListeningAdapter.setItems(resumePoints);
+        }
+
+        // Sync from server bookmarks (async) so cross-device resume points appear too, then refresh.
+        new QueueRepository().syncBookmarksFromServer(() -> {
+            if (continueListeningAdapter == null || bind == null) return;
+            List<Preferences.ResumePoint> synced = Preferences.getContinueListening();
+            if (synced.isEmpty()) {
+                bind.homeContinueListeningSector.setVisibility(View.GONE);
+            } else {
+                bind.homeContinueListeningSector.setVisibility(View.VISIBLE);
+                continueListeningAdapter.setItems(synced);
+            }
+        });
+    }
+
     private void initSimilarSongView() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_MADE_FOR_YOU)) return;
 
@@ -1187,6 +1225,9 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                 switch (sector.getId()) {
                     case Constants.HOME_SECTOR_DISCOVERY:
                         bind.homeLinearLayoutContainer.addView(bind.homeDiscoverSector);
+                        break;
+                    case Constants.HOME_SECTOR_CONTINUE_LISTENING:
+                        bind.homeLinearLayoutContainer.addView(bind.homeContinueListeningSector);
                         break;
                     case Constants.HOME_SECTOR_MADE_FOR_YOU:
                         bind.homeLinearLayoutContainer.addView(bind.homeSimilarTracksSector);

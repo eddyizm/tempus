@@ -192,6 +192,8 @@
     </plurals>
     <string name="home_title_best_of">ベストトラック</string>
     <string name="home_title_discovery">ディスカバリー</string>
+    <string name="home_title_continue_listening">聴き続ける</string>
+    <string name="home_continue_listening_resume_at">%1$s から再開</string>
     <string name="home_title_discovery_shuffle_all_button">すべてシャッフル</string>
     <string name="home_title_flashback">フラッシュバック</string>
     <string name="home_title_internet_radio_station">インターネットラジオ局</string>
