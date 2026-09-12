@@ -1,0 +1,126 @@
+name: Emulator Tests
+
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  emulator-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        server:
+          - name: navidrome
+            image: deluan/navidrome:latest
+            port: 4533:4533
+            env: -e ND_DEVAUTOCREATEADMINPASSWORD=test -e ND_MUSICFOLDER=/music -e ND_DATAFOLDER=/data
+            password: test
+          - name: gonic
+            image: sentriz/gonic:latest
+            port: 4533:4747
+            env: -e GONIC_MUSIC_PATH=/music -e GONIC_DB_PATH=/data/gonic.db -e GONIC_PLAYLISTS_PATH=/playlists -e GONIC_SCAN_AT_START_ENABLED=1 -e GONIC_LISTEN_ADDR=0.0.0.0:4747
+            password: admin
+        flavor:
+          - tempus
+          - degoogled
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.event.repository.fork && github.actor != github.repository_owner }}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Generate a small test library so the app has something to render.
+      # GitHub runners don't ship ffmpeg, so install it first.
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Seed test library
+        run: |
+          mkdir -p "test-library/Test Album"
+          ffmpeg -f lavfi -i "sine=frequency=440:duration=30" \
+            -metadata title="Test Song 1" -metadata artist="Test Artist" \
+            -metadata album="Test Album" -q:a 9 -y "test-library/Test Album/01 Test Song 1.mp3"
+          ffmpeg -f lavfi -i "sine=frequency=550:duration=30" \
+            -metadata title="Test Song 2" -metadata artist="Test Artist" \
+            -metadata album="Test Album" -q:a 9 -y "test-library/Test Album/02 Test Song 2.mp3"
+
+      # Started as a step (not a `services:` container) so the test-library
+      # folder is checked out and mountable — service containers start before
+      # checkout and cannot bind-mount repo files.
+      - name: Start ${{ matrix.server.name }}
+        run: |
+          docker run -d --name ${{ matrix.server.name }} \
+            -p ${{ matrix.server.port }} \
+            ${{ matrix.server.env }} \
+            -v "$GITHUB_WORKSPACE/test-library:/music:ro" \
+            -v ${{ matrix.server.name }}-data:/data \
+            -v ${{ matrix.server.name }}-playlists:/playlists \
+            ${{ matrix.server.image }}
+
+      - name: Wait for ${{ matrix.server.name }}
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf "http://127.0.0.1:4533/rest/ping?u=admin&p=${{ matrix.server.password }}&v=1.16.1&c=tempus&f=json" | grep -q '"ok"'; then
+              echo "${{ matrix.server.name }} ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "${{ matrix.server.name }} did not become ready"
+          exit 1
+
+      # The server scans the library on startup; wait until the seeded songs
+      # are indexed before running the app against it.
+      - name: Wait for library index
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf "http://127.0.0.1:4533/rest/getRandomSongs?u=admin&p=${{ matrix.server.password }}&v=1.16.1&c=tempus&f=json&size=10" | grep -q "Test Song"; then
+              echo "Library indexed"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Library not indexed"
+          exit 1
+
+      # The emulator needs /dev/kvm; the runner user can't access it by
+      # default, which silently falls back to slow software emulation.
+      - name: Enable KVM access
+        run: |
+          sudo chmod 666 /dev/kvm
+
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          script: bash scripts/run-emulator-tests.sh ${{ matrix.server.password }} ${{ matrix.flavor }}
+
+      - name: Upload Test Report Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: emulator-test-report-${{ matrix.server.name }}-${{ matrix.flavor }}
+          path: |
+            **/build/reports/androidTests/
+            logcat.txt
