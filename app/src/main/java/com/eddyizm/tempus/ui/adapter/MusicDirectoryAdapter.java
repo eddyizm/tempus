@@ -62,7 +62,25 @@ public class MusicDirectoryAdapter extends RecyclerView.Adapter<MusicDirectoryAd
     }
 
     public void setItems(List<Child> children) {
-        this.children = children != null ? children : Collections.emptyList();
+        if (children != null) {
+           List<Child> sorted = new ArrayList<>(children);
+            sorted.sort((c1, c2) -> {
+                if (c1.isDir() && c2.isDir()) {
+                    String t1 = c1.getTitle() != null ? c1.getTitle() : "";
+                    String t2 = c2.getTitle() != null ? c2.getTitle() : "";
+                    return t1.compareToIgnoreCase(t2);
+                } else if (!c1.isDir() && !c2.isDir()) {
+                    int t1 = c1.getTrack() != null ? c1.getTrack() : 0;
+                    int t2 = c2.getTrack() != null ? c2.getTrack() : 0;
+                    return Integer.compare(t1, t2);
+                } else {
+                    return c1.isDir() ? -1 : 1;
+                }
+            });
+            this.children = sorted;
+        } else {
+            this.children = Collections.emptyList();
+        }
         notifyDataSetChanged();
     }
 
