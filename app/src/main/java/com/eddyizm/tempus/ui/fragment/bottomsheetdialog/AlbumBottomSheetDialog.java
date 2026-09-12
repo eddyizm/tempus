@@ -41,6 +41,7 @@ import com.eddyizm.tempus.util.ExternalAudioWriter;
 import com.eddyizm.tempus.util.ExternalAudioReader;
 import com.eddyizm.tempus.viewmodel.AlbumBottomSheetViewModel;
 import com.eddyizm.tempus.viewmodel.HomeViewModel;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -114,7 +115,7 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
         artistAlbum.setText(albumBottomSheetViewModel.getAlbum().getArtist());
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
-        favoriteToggle.setChecked(albumBottomSheetViewModel.getAlbum().getStarred() != null);
+        favoriteToggle.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.ALBUM, albumBottomSheetViewModel.getAlbum().getId(), albumBottomSheetViewModel.getAlbum().getStarred() != null));
         favoriteToggle.setOnClickListener(v -> albumBottomSheetViewModel.setFavorite(requireContext()));
 
         TextView playRadio = view.findViewById(R.id.play_radio_text_view);

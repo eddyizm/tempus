@@ -26,6 +26,7 @@ import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.NetworkUtil;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 
 import java.util.Collections;
 import java.util.Date;
@@ -66,7 +67,7 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
     }
 
     public void setFavorite(Context context) {
-        if (album.getStarred() != null) {
+        if (FavoriteRegistry.resolve(FavoriteRegistry.Kind.ALBUM, album.getId(), album.getStarred() != null)) {
             if (NetworkUtil.isOffline()) {
                 removeFavoriteOffline();
             } else {

@@ -24,6 +24,7 @@ import com.eddyizm.tempus.util.Constants
 import com.eddyizm.tempus.util.MusicUtil
 import com.eddyizm.tempus.util.Preferences.getImageSize
 import com.eddyizm.tempus.util.ReplayGainBundleUtil
+import com.eddyizm.tempus.util.FavoriteRegistry
 import java.util.Date
 
 @UnstableApi
@@ -263,7 +264,7 @@ class SessionMediaItem() {
                     .setAlbumTitle(album)
                     .setArtist(artist)
                     .setArtworkUri(artworkUri)
-                    .setUserRating(HeartRating(starred != null))
+                    .setUserRating(HeartRating(if (type == Constants.MEDIA_TYPE_MUSIC) FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, id, starred != null) else starred != null))
                     .setSupportedCommands(
                         listOf(
                             Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,

@@ -49,6 +49,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import com.eddyizm.tempus.util.ExternalAudioWriter;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -129,7 +130,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
         bindAssetLinkView(artistSong, currentArtistLink != null ? currentArtistLink : currentSongLink);
 
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
-        favoriteToggle.setChecked(songBottomSheetViewModel.getSong().getStarred() != null);
+        favoriteToggle.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, songBottomSheetViewModel.getSong().getId(), songBottomSheetViewModel.getSong().getStarred() != null));
         favoriteToggle.setOnClickListener(v -> {
             songBottomSheetViewModel.setFavorite(requireContext());
         });

@@ -47,6 +47,7 @@ import com.eddyizm.tempus.util.ExternalAudioWriter;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.AlbumPageViewModel;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -182,14 +183,14 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     private void init(View view, AlbumID3 albumArg) {
         albumPageViewModel.setAlbum(getViewLifecycleOwner(), albumArg);
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
-        favoriteToggle.setChecked(albumArg.getStarred() != null);
+        favoriteToggle.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.ALBUM, albumArg.getId(), albumArg.getStarred() != null));
 
         favoriteToggle.setOnClickListener(v -> {
             albumPageViewModel.setFavorite();
         });
         albumPageViewModel.getAlbum().observe(getViewLifecycleOwner(), album -> {
             if (album != null) {
-                favoriteToggle.setChecked(album.getStarred() != null);
+                favoriteToggle.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.ALBUM, album.getId(), album.getStarred() != null));
             }
         });
     }

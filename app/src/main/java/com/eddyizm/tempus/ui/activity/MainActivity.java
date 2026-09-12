@@ -64,6 +64,7 @@ import com.eddyizm.tempus.util.AlbumArtistBackfill;
 import com.eddyizm.tempus.util.DownloadRepair;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
+import com.eddyizm.tempus.util.FavoriteRegistry;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
@@ -503,6 +504,8 @@ public class MainActivity extends BaseActivity {
     }
 
     private void resetUserSession() {
+        FavoriteRegistry.clear();
+
         Preferences.setServerId(null);
         Preferences.setSalt(null);
         Preferences.setToken(null);
