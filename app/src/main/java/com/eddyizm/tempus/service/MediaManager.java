@@ -207,6 +207,14 @@ public class MediaManager {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         if (mediaBrowserListenableFuture.get().getMediaItemCount() < 1) {
+                            // The media service restores this same saved queue when it is created,
+                            // and that path waits for the address pings to answer before it builds
+                            // a single URL. This one does not, and it was winning the race with a
+                            // queue built against an address the app was about to leave. Reaching
+                            // a browser at all means the service was created, so its own restore
+                            // is already in flight and nothing is lost by leaving it to it.
+                            if (Preferences.pingsOutstanding()) return;
+
                             List<Child> media = getQueueRepository().getMedia();
                             if (media != null && media.size() >= 1) {
                                 init(mediaBrowserListenableFuture, media);

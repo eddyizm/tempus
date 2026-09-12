@@ -5,6 +5,7 @@ import android.util.Log;
 import com.eddyizm.tempus.subsonic.RetrofitClient;
 import com.eddyizm.tempus.subsonic.Subsonic;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
+import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Preferences;
 
 import java.util.concurrent.TimeUnit;
@@ -26,7 +27,13 @@ public class SystemClient {
         Log.d(TAG, "ping()");
         int timeoutSeconds = Preferences.getNetworkPingTimeout();
         Call<ApiResponse> pingCall = systemService.ping(subsonic.getParams());
-        if (Preferences.isInUseServerAddressLocal()) {
+        // Keyed to the address this client points at, since a local probe now runs on a client of
+        // its own while the in use address is still the public one. A bare prefix test would call
+        // a public http://nas.duckdns.invalid local when the local address is http://nas.
+        boolean pingingLocalAddress = MusicUtil.isUnderAddress(
+                subsonic.getUrl(), Preferences.getLocalAddress());
+
+        if (pingingLocalAddress) {
             pingCall.timeout()
                     .timeout(timeoutSeconds, TimeUnit.SECONDS);
         } else {

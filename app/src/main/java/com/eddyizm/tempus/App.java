@@ -123,6 +123,23 @@ public class App extends Application {
         return new Subsonic(preferences);
     }
 
+    // A client pinned to the local address, so that address can be probed while the app carries on
+    // using the one it is already on. Moving the in use address to probe it pointed every screen at
+    // an address that may not answer.
+    public static Subsonic getSubsonicLocalClientInstance() {
+        SubsonicPreferences preferences = new SubsonicPreferences();
+        preferences.setServerUrl(Preferences.getLocalAddress());
+        preferences.setUsername(Preferences.getUser());
+        preferences.setAuthentication(
+                Preferences.getPassword(),
+                Preferences.getToken(),
+                Preferences.getSalt(),
+                Preferences.isLowScurity()
+        );
+
+        return new Subsonic(preferences);
+    }
+
     public static Github getGithubClientInstance() {
         if (github == null) {
             github = new Github();

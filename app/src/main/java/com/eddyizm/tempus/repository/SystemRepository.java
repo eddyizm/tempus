@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.github.models.LatestRelease;
 import com.eddyizm.tempus.interfaces.SystemCallback;
+import com.eddyizm.tempus.subsonic.Subsonic;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.OpenSubsonicExtension;
 import com.eddyizm.tempus.subsonic.models.ResponseStatus;
@@ -52,9 +53,17 @@ public class SystemRepository {
     }
 
     public MutableLiveData<SubsonicResponse> ping() {
+        return ping(App.getSubsonicClientInstance(false));
+    }
+
+    public MutableLiveData<SubsonicResponse> pingLocalAddress() {
+        return ping(App.getSubsonicLocalClientInstance());
+    }
+
+    private MutableLiveData<SubsonicResponse> ping(Subsonic client) {
         MutableLiveData<SubsonicResponse> pingResult = new MutableLiveData<>();
 
-        App.getSubsonicClientInstance(false)
+        client
                 .getSystemClient()
                 .ping()
                 .enqueue(new Callback<ApiResponse>() {

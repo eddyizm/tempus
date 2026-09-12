@@ -1,11 +1,13 @@
 package com.eddyizm.tempus.util
 
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.edit
 import androidx.media3.common.Player
 import com.eddyizm.tempus.App
 import com.eddyizm.tempus.model.HomeSector
 import com.eddyizm.tempus.subsonic.models.OpenSubsonicExtension
+import java.util.concurrent.atomic.AtomicInteger
 import com.google.gson.Gson
 
 
@@ -312,6 +314,56 @@ object Preferences {
         return App.getInstance().preferences.getString(IN_USE_SERVER_ADDRESS, null)
             ?.takeIf { it.isNotBlank() }
             ?: getServer()
+    }
+
+    // The play queue's stream URLs carry whichever server address was in force when the queue was
+    // built, and on a cold start away from the local network that saved address has not been tested
+    // yet. This lets the media service hold the queue back while the app is still finding out which
+    // address it is on, which costs nothing, since nothing needs the queue until playback starts.
+    //
+    // Counted, not latched. The media service is created and destroyed several times inside one
+    // process, so anything that can only fire once lets every later start through, which is what a
+    // CountDownLatch did here and it built the second cold start's queue against a stale address.
+    private val pingsInFlight = AtomicInteger(0)
+
+    @Volatile
+    private var lastPingIssuedAt = 0L
+
+    // The wait has to outlast the ping it is waiting on, and that ping's timeout is a user
+    // setting with no upper bound, so it is read instead of fixed.
+    private fun pingWaitMs(): Long = getNetworkPingTimeout() * 1000L + 1_000L
+
+    @JvmStatic
+    fun markPingIssued() {
+        lastPingIssuedAt = SystemClock.elapsedRealtime()
+        pingsInFlight.incrementAndGet()
+    }
+
+    @JvmStatic
+    fun markPingAnswered() {
+        pingsInFlight.updateAndGet { if (it > 0) it - 1 else 0 }
+    }
+
+    // True while a recently issued ping has not answered. The age test is what stops a ping that
+    // never answers, an activity torn down while its request was out, from holding the queue back
+    // for the life of the process. A media button or Android Auto start with no activity behind
+    // it sees nothing outstanding and never waits.
+    @JvmStatic
+    fun pingsOutstanding(): Boolean {
+        return pingsInFlight.get() > 0 &&
+                SystemClock.elapsedRealtime() - lastPingIssuedAt < pingWaitMs()
+    }
+
+    @JvmStatic
+    fun awaitPingsAnswered() {
+        while (pingsOutstanding()) {
+            Thread.sleep(25)
+        }
+    }
+
+    @JvmStatic
+    fun setInUseServerAddress(address: String?) {
+        App.getInstance().preferences.edit().putString(IN_USE_SERVER_ADDRESS, address).apply()
     }
 
     @JvmStatic
