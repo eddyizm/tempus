@@ -61,6 +61,11 @@ android {
             dimension = "default"
             applicationId = "com.eddyizm.degoogled.tempus"
         }
+
+        play {
+            dimension = "default"
+            applicationId = "com.eddyizm.tempus"
+        }
     }
 
     buildTypes {
@@ -85,6 +90,14 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+    }
+
+    sourceSets {
+        play {
+            java.srcDirs += ['src/tempus/java']
+            kotlin.srcDirs += ['src/tempus/java']
+            res.srcDirs += ['src/tempus/res']
+        }
     }
 }
 
@@ -132,6 +145,7 @@ dependencies {
     implementation libs.media3.ui
     implementation libs.media3.exoplayer.hls
     tempusImplementation libs.media3.cast
+    playImplementation libs.media3.cast
 
     // Room Compiler
     annotationProcessor libs.androidx.room.compiler
