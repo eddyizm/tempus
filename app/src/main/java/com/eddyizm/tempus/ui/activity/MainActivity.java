@@ -29,6 +29,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
@@ -48,6 +49,7 @@ import com.eddyizm.tempus.helper.ThemeHelper;
 import com.eddyizm.tempus.navigation.NavigationController;
 import com.eddyizm.tempus.navigation.NavigationHelper;
 import com.eddyizm.tempus.service.MediaManager;
+import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
 import com.eddyizm.tempus.ui.activity.base.BaseActivity;
 import com.eddyizm.tempus.navigation.BottomSheetController;
 import com.eddyizm.tempus.navigation.BottomSheetHelper;
@@ -77,6 +79,10 @@ import java.util.concurrent.ExecutionException;
 @UnstableApi
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivityLogs";
+
+    // The probe whose answer is still wanted, identified by the request itself. A flag shared by
+    // every probe cannot tell a held answer from a fresh one, since a held one arrives later.
+    private LiveData<SubsonicResponse> outstandingProbe = null;
 
     public ActivityMainBinding bind;
     private MainViewModel mainViewModel;
@@ -176,6 +182,13 @@ public class MainActivity extends BaseActivity {
         super.onResume();
         pingServer();
         toggleNavigationDrawerLockOnOrientationChange();
+    }
+
+    @Override
+    protected void onStop() {
+        // Abandon the probe, since its answer would be applied on whatever network we come back to.
+        outstandingProbe = null;
+        super.onStop();
     }
 
     @Override
@@ -569,9 +582,16 @@ public class MainActivity extends BaseActivity {
     private void pingServer() {
         if (Preferences.getToken() == null && Preferences.getPassword() == null) return;
 
+        Preferences.markPingIssued();
+
         if (Preferences.isInUseServerAddressLocal()) {
             mainViewModel.ping().observe(this, subsonicResponse -> {
                 if (subsonicResponse == null) {
+                    // onStart and onResume each ping, so two failures arrive for one unreachable
+                    // address, and the toggle below would put the second one straight back on it.
+                    Preferences.markPingAnswered();
+                    if (!Preferences.isInUseServerAddressLocal()) return;
+
                     // Switching only helps when remote and local are different addresses. When
                     // they're equal (issue #242) switchInUseServerAddress() is a no-op, so we'd
                     // re-enter this branch forever (ping/refresh/resetView loop). Treat that case
@@ -588,19 +608,24 @@ public class MainActivity extends BaseActivity {
                         dialog.show(getSupportFragmentManager(), null);
                     }
                 } else {
+                    Preferences.markPingAnswered();
                     Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
                 }
             });
         } else {
-            if (Preferences.isServerSwitchable()) {
-                Preferences.setServerSwitchableTimer();
-                Preferences.switchInUseServerAddress();
-                App.refreshSubsonicClient();
-                pingServer();
-                resetView();
+            if (outstandingProbe != null) {
+                // A probe is deciding the address, and it falls back to this ping when none answers.
+                Preferences.markPingAnswered();
+            } else if (Preferences.isServerSwitchable()) {
+                probeLocalAddress();
             } else {
                 mainViewModel.ping().observe(this, subsonicResponse -> {
+                    Preferences.markPingAnswered();
                     if (subsonicResponse == null) {
+                        // A local address answered since, so this failure is stale. It matters
+                        // because one of the dialog's buttons clears the session and the queue.
+                        if (Preferences.isInUseServerAddressLocal() || outstandingProbe != null) return;
+
                         if (Preferences.showServerUnreachableDialog()) {
                             ServerUnreachableDialog dialog = new ServerUnreachableDialog();
                             dialog.show(getSupportFragmentManager(), null);
@@ -611,6 +636,48 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }
+    }
+
+    // Probed on a client of its own, so the app is never moved onto an address that has not
+    // answered. A probe that fails changes nothing.
+    private void probeLocalAddress() {
+        // Not stamped here on purpose. The window outlives the activity and the probe does not, so
+        // stamping at send left a recreated activity unable to probe for fifteen seconds.
+        String probedAddress = Preferences.getLocalAddress();
+        LiveData<SubsonicResponse> probe = mainViewModel.pingLocalAddress();
+        outstandingProbe = probe;
+
+        probe.observe(this, subsonicResponse -> {
+            // A held answer is delivered after onStart has issued the next probe.
+            boolean isCurrentProbe = probe == outstandingProbe;
+            if (isCurrentProbe) outstandingProbe = null;
+
+            // A server change moves the local address, so a late answer would carry the wrong credentials.
+            if (!isCurrentProbe
+                    || subsonicResponse == null
+                    || !probedAddress.equals(Preferences.getLocalAddress())) {
+                Preferences.markPingAnswered();
+
+                // No local address answered, so ask the public one. The window is stamped first, or
+                // a probe slower than the window sends this call into another probe.
+                if (isCurrentProbe && subsonicResponse == null) {
+                    Preferences.setServerSwitchableTimer();
+                    pingServer();
+                }
+                return;
+            }
+
+            Preferences.setInUseServerAddress(probedAddress);
+            App.refreshSubsonicClient();
+
+            // Released only once the client points at the new address, or a mapping waking in
+            // between reads the new address and the old client.
+            Preferences.markPingAnswered();
+
+            // The screens were built against the address just left, so they are built again. The
+            // old code did this on every switch, and this runs only when the probe succeeded.
+            resetView();
+        });
     }
 
     private void resetView() {

@@ -238,7 +238,14 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
         // Map off the main thread: mapMediaItems does a blocking lookup per song, so a
         // large saved queue froze the UI on launch (#600).
+        //
+        // Every URL carries the address in force when the mapping ran, so the address is checked
+        // again on the main thread, immediately before the install, and a move starts it over.
         Thread {
+            // Nothing needs the queue until playback starts, so it waits for a tested address.
+            Preferences.awaitPingsAnswered()
+
+            val addressWhenMapped = Preferences.getInUseServerAddress()
             val queueRepository = QueueRepository()
             val storedQueue = queueRepository.media
             if (storedQueue.isNullOrEmpty()) return@Thread
@@ -268,6 +275,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 // the mediaItemCount check below cannot detect a released player, so bail first.
                 if (serviceDestroyed) return@post
                 if (player.mediaItemCount > 0) return@post
+                if (addressWhenMapped != Preferences.getInUseServerAddress()) {
+                    restorePlayerFromQueue(player)
+                    return@post
+                }
                 player.setMediaItems(mediaItems, lastIndex, lastPosition)
                 player.prepare()
                 updateWidget(player)

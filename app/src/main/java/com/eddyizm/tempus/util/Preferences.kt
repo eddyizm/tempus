@@ -1,11 +1,13 @@
 package com.eddyizm.tempus.util
 
+import android.os.SystemClock
 import android.util.Log
 import androidx.core.content.edit
 import androidx.media3.common.Player
 import com.eddyizm.tempus.App
 import com.eddyizm.tempus.model.HomeSector
 import com.eddyizm.tempus.subsonic.models.OpenSubsonicExtension
+import java.util.concurrent.atomic.AtomicInteger
 import com.google.gson.Gson
 
 
@@ -312,6 +314,47 @@ object Preferences {
         return App.getInstance().preferences.getString(IN_USE_SERVER_ADDRESS, null)
             ?.takeIf { it.isNotBlank() }
             ?: getServer()
+    }
+
+    // The queue's stream URLs carry the address in force when it was built, so the media service
+    // holds the queue back until a ping answers. Counted, since the service starts several times.
+    private val pingsInFlight = AtomicInteger(0)
+
+    @Volatile
+    private var lastPingIssuedAt = 0L
+
+    // The ping timeout is a user setting with no upper bound, so the wait is read from it.
+    private fun pingWaitMs(): Long = getNetworkPingTimeout() * 1000L + 1_000L
+
+    @JvmStatic
+    fun markPingIssued() {
+        lastPingIssuedAt = SystemClock.elapsedRealtime()
+        pingsInFlight.incrementAndGet()
+    }
+
+    @JvmStatic
+    fun markPingAnswered() {
+        pingsInFlight.updateAndGet { if (it > 0) it - 1 else 0 }
+    }
+
+    // The age test stops a ping that never answers, an activity torn down mid request, from holding
+    // the queue for the life of the process. A start with no activity behind it never waits.
+    @JvmStatic
+    fun pingsOutstanding(): Boolean {
+        return pingsInFlight.get() > 0 &&
+                SystemClock.elapsedRealtime() - lastPingIssuedAt < pingWaitMs()
+    }
+
+    @JvmStatic
+    fun awaitPingsAnswered() {
+        while (pingsOutstanding()) {
+            Thread.sleep(25)
+        }
+    }
+
+    @JvmStatic
+    fun setInUseServerAddress(address: String?) {
+        App.getInstance().preferences.edit().putString(IN_USE_SERVER_ADDRESS, address).apply()
     }
 
     @JvmStatic

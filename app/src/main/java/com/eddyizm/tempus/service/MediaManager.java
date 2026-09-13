@@ -207,6 +207,10 @@ public class MediaManager {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         if (mediaBrowserListenableFuture.get().getMediaItemCount() < 1) {
+                            // The service restores this same queue and waits for the pings first,
+                            // and reaching a browser means that restore is already in flight.
+                            if (Preferences.pingsOutstanding()) return;
+
                             List<Child> media = getQueueRepository().getMedia();
                             if (media != null && media.size() >= 1) {
                                 init(mediaBrowserListenableFuture, media);
