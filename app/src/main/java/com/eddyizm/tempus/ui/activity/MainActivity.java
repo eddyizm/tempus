@@ -614,8 +614,7 @@ public class MainActivity extends BaseActivity {
             });
         } else {
             if (outstandingProbe != null) {
-                // A probe is deciding the address, so asking the public one now races it. The
-                // probe falls back to this ping itself when no local address answers.
+                // A probe is deciding the address, and it falls back to this ping when none answers.
                 Preferences.markPingAnswered();
             } else if (Preferences.isServerSwitchable()) {
                 probeLocalAddress();
@@ -639,20 +638,17 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    // Probed on a client of its own, so the app stays on an address that answers while the probe
-    // is outstanding. Moving the in use address in order to test it is what pointed every screen
-    // and the restored queue at an address that can have no route. A failed probe changes nothing.
+    // Probed on a client of its own, so the app is never moved onto an address that has not
+    // answered. A probe that fails changes nothing.
     private void probeLocalAddress() {
-        // The switch window is deliberately not stamped here. It is saved to disk and outlives the
-        // activity, while the probe dies with it, so an activity recreated before the answer came
-        // back could not probe again for fifteen seconds. It is stamped where the app acts instead.
+        // Not stamped here on purpose. The window outlives the activity and the probe does not, so
+        // stamping at send left a recreated activity unable to probe for fifteen seconds.
         String probedAddress = Preferences.getLocalAddress();
         LiveData<SubsonicResponse> probe = mainViewModel.pingLocalAddress();
         outstandingProbe = probe;
 
         probe.observe(this, subsonicResponse -> {
-            // An answer posted while stopped is held and delivered at the next start, after
-            // onStart has issued the next probe. Only the request's identity separates the two.
+            // A held answer is delivered after onStart has issued the next probe.
             boolean isCurrentProbe = probe == outstandingProbe;
             if (isCurrentProbe) outstandingProbe = null;
 
@@ -662,9 +658,8 @@ public class MainActivity extends BaseActivity {
                     || !probedAddress.equals(Preferences.getLocalAddress())) {
                 Preferences.markPingAnswered();
 
-                // No local address answered, so ask the public one, which this foreground has not
-                // done yet. The window is stamped first, or a probe slower than the window would
-                // send this call into another probe. The ping timeout has no upper bound.
+                // No local address answered, so ask the public one. The window is stamped first, or
+                // a probe slower than the window sends this call into another probe.
                 if (isCurrentProbe && subsonicResponse == null) {
                     Preferences.setServerSwitchableTimer();
                     pingServer();

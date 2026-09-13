@@ -13,7 +13,9 @@ import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.OpenSubsonicExtension;
 import com.eddyizm.tempus.subsonic.models.ResponseStatus;
 import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
+import com.eddyizm.tempus.util.Preferences;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -22,7 +24,12 @@ import retrofit2.Response;
 
 public class SystemRepository {
     public void checkUserCredential(SystemCallback callback) {
-        App.getSubsonicClientInstance(false)
+        checkUserCredential(App.getSubsonicClientInstance(false), callback);
+    }
+
+    // Takes the client so a server can be reached before anything about it is saved.
+    public void checkUserCredential(Subsonic client, SystemCallback callback) {
+        client
                 .getSystemClient()
                 .ping()
                 .enqueue(new Callback<ApiResponse>() {
@@ -47,7 +54,14 @@ public class SystemRepository {
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        callback.onError(new Exception(t.getMessage()));
+                        // Retrofit sends a body it cannot read here too, so a server answering
+                        // something that is not Subsonic would otherwise read as a network fault.
+                        Exception failure = new Exception(t.getMessage());
+                        if (t instanceof IOException) {
+                            callback.onNetworkFailure(failure);
+                        } else {
+                            callback.onError(failure);
+                        }
                     }
                 });
     }
@@ -57,7 +71,7 @@ public class SystemRepository {
     }
 
     public MutableLiveData<SubsonicResponse> pingLocalAddress() {
-        return ping(App.getSubsonicLocalClientInstance());
+        return ping(App.getSubsonicClientInstance(Preferences.getLocalAddress()));
     }
 
     private MutableLiveData<SubsonicResponse> ping(Subsonic client) {

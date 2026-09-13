@@ -27,9 +27,8 @@ public class SystemClient {
         Log.d(TAG, "ping()");
         int timeoutSeconds = Preferences.getNetworkPingTimeout();
         Call<ApiResponse> pingCall = systemService.ping(subsonic.getParams());
-        // Keyed to the address this client points at, since a local probe now runs on a client of
-        // its own while the in use address is still the public one. A bare prefix test would call
-        // a public http://nas.duckdns.invalid local when the local address is http://nas.
+        // Keyed to the address this client points at, since a probe runs on its own client while
+        // the in use address is still the public one.
         boolean pingingLocalAddress = MusicUtil.isUnderAddress(
                 subsonic.getUrl(), Preferences.getLocalAddress());
 

@@ -316,21 +316,14 @@ object Preferences {
             ?: getServer()
     }
 
-    // The play queue's stream URLs carry whichever server address was in force when the queue was
-    // built, and on a cold start away from the local network that saved address has not been tested
-    // yet. This lets the media service hold the queue back while the app is still finding out which
-    // address it is on, which costs nothing, since nothing needs the queue until playback starts.
-    //
-    // Counted, not latched. The media service is created and destroyed several times inside one
-    // process, so anything that can only fire once lets every later start through, which is what a
-    // CountDownLatch did here and it built the second cold start's queue against a stale address.
+    // The queue's stream URLs carry the address in force when it was built, so the media service
+    // holds the queue back until a ping answers. Counted, since the service starts several times.
     private val pingsInFlight = AtomicInteger(0)
 
     @Volatile
     private var lastPingIssuedAt = 0L
 
-    // The wait has to outlast the ping it is waiting on, and that ping's timeout is a user
-    // setting with no upper bound, so it is read instead of fixed.
+    // The ping timeout is a user setting with no upper bound, so the wait is read from it.
     private fun pingWaitMs(): Long = getNetworkPingTimeout() * 1000L + 1_000L
 
     @JvmStatic
@@ -344,10 +337,8 @@ object Preferences {
         pingsInFlight.updateAndGet { if (it > 0) it - 1 else 0 }
     }
 
-    // True while a recently issued ping has not answered. The age test is what stops a ping that
-    // never answers, an activity torn down while its request was out, from holding the queue back
-    // for the life of the process. A media button or Android Auto start with no activity behind
-    // it sees nothing outstanding and never waits.
+    // The age test stops a ping that never answers, an activity torn down mid request, from holding
+    // the queue for the life of the process. A start with no activity behind it never waits.
     @JvmStatic
     fun pingsOutstanding(): Boolean {
         return pingsInFlight.get() > 0 &&

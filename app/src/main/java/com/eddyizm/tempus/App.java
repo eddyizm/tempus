@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager;
 
 import com.eddyizm.tempus.github.Github;
 import com.eddyizm.tempus.helper.ThemeHelper;
+import com.eddyizm.tempus.model.Server;
 import com.eddyizm.tempus.subsonic.Subsonic;
 import com.eddyizm.tempus.subsonic.SubsonicPreferences;
 import com.eddyizm.tempus.ui.crash.CrashActivity;
@@ -123,19 +124,39 @@ public class App extends Application {
         return new Subsonic(preferences);
     }
 
-    // A client pinned to the local address, so that address can be probed while the app carries on
-    // using the one it is already on. Moving the in use address to probe it pointed every screen at
-    // an address that may not answer.
-    public static Subsonic getSubsonicLocalClientInstance() {
-        SubsonicPreferences preferences = new SubsonicPreferences();
-        preferences.setServerUrl(Preferences.getLocalAddress());
-        preferences.setUsername(Preferences.getUser());
-        preferences.setAuthentication(
+    // Pinned to one address instead of the one in use, so an address can be reached without the
+    // app being moved onto it first.
+    public static Subsonic getSubsonicClientInstance(String serverAddress) {
+        return buildSubsonicClient(
+                serverAddress,
+                Preferences.getUser(),
                 Preferences.getPassword(),
                 Preferences.getToken(),
                 Preferences.getSalt(),
                 Preferences.isLowScurity()
         );
+    }
+
+    // For a server the app is not signed in to, so it can be reached before anything about it is
+    // written to the preferences.
+    public static Subsonic getSubsonicClientInstance(Server server) {
+        return buildSubsonicClient(
+                server.getAddress(),
+                server.getUsername(),
+                server.getPassword(),
+                null,
+                null,
+                server.isLowSecurity()
+        );
+    }
+
+    private static Subsonic buildSubsonicClient(String serverAddress, String username,
+                                                String password, String token, String salt,
+                                                boolean isLowSecurity) {
+        SubsonicPreferences preferences = new SubsonicPreferences();
+        preferences.setServerUrl(serverAddress);
+        preferences.setUsername(username);
+        preferences.setAuthentication(password, token, salt, isLowSecurity);
 
         return new Subsonic(preferences);
     }

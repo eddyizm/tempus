@@ -83,8 +83,7 @@ public class MusicUtil {
         return getStreamUri(id, 0);
     }
 
-    // A prefix test on its own is not enough, since a local address of http://nas is a prefix of
-    // the public http://nas.duckdns.invalid, and matching those would call one server the other. The
+    // A local address of http://nas is a prefix of the public http://nas.duckdns.invalid, so the
     // character after the address has to be a path separator. Pure, so a test can reach it.
     public static boolean isUnderAddress(String url, String address) {
         if (url == null || address == null || address.isEmpty()) return false;

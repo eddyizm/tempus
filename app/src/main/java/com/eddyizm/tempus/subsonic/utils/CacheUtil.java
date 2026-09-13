@@ -39,7 +39,9 @@ public class CacheUtil {
     };
 
 
-    private boolean isConnected() {
+    // Public so a caller can tell an unreachable server from a phone with no network at all. The
+    // offline branch above answers a synthetic 504 in that case, which says nothing on its own.
+    public static boolean isConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) App.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager == null) {
             return false;

@@ -177,12 +177,9 @@ public class LoginFragment extends Fragment implements ClickCallback {
     }
 
     private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert) {
-        // Only when the stored address belongs to some other server, so that a login inherits no
-        // address from the one selected before it. Tapping the same server again has to keep what
-        // onError's switchInUseServerAddress left behind, since that flip is how a second attempt
-        // reaches the local address when the public one has no route from where the user is. The
-        // server id cannot be the test, because onError clears it, so every later tap would look
-        // like a different server and write over the flip.
+        // Written only when the stored address belongs to another server. Tapping the same one
+        // again has to keep the flip onError made, which is how a second attempt reaches the local
+        // address. The server id cannot be the test, because onError clears it.
         String inUseAddress = Preferences.getInUseServerAddress();
         boolean addressIsThisServers = java.util.Objects.equals(inUseAddress, server)
                 || java.util.Objects.equals(inUseAddress, localAddress);
