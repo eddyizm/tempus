@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 
+import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.interfaces.StarCallback;
 import com.eddyizm.tempus.model.Chronology;
 import com.eddyizm.tempus.model.Favorite;
@@ -445,6 +446,11 @@ public class HomeViewModel extends AndroidViewModel {
                     new TypeToken<List<HomeSector>>() {
                     }.getType()
             );
+            // Migrate saved layouts that predate the Continue listening sector.
+            if (sectors != null && sectors.stream().noneMatch(s -> Constants.HOME_SECTOR_CONTINUE_LISTENING.equals(s.getId()))) {
+                sectors.add(new HomeSector(Constants.HOME_SECTOR_CONTINUE_LISTENING, getApplication().getString(R.string.home_title_continue_listening), true, 2));
+                Preferences.setHomeSectorList(sectors);
+            }
         }
     }
 

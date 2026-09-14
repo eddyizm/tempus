@@ -166,6 +166,8 @@
     </plurals>
     <string name="home_title_best_of">Лучшее из</string>
     <string name="home_title_discovery">Открытие</string>
+    <string name="home_title_continue_listening">Продолжить прослушивание</string>
+    <string name="home_continue_listening_resume_at">Продолжить с %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Перемешать все</string>
     <string name="home_title_flashback">Воспоминание</string>
     <string name="home_title_internet_radio_station">Интернет-радиостанции</string>
