@@ -92,6 +92,9 @@ class UpnpPlayerQueueTest {
                 val state = if (action == "GetTransportInfo" && stoppedPolls.get() > 0) {
                     stoppedPolls.decrementAndGet()
                     "STOPPED"
+                } else if (action == "GetTransportInfo" && pausedPolls.get() > 0) {
+                    pausedPolls.decrementAndGet()
+                    "PAUSED_PLAYBACK"
                 } else {
                     reportedState
                 }
@@ -143,6 +146,7 @@ class UpnpPlayerQueueTest {
     @Volatile private var reportedState = "PLAYING"
     @Volatile private var stoppedPollsAfterHandover = 0
     private val stoppedPolls = AtomicInteger()
+    private val pausedPolls = AtomicInteger()
     @Volatile private var holdHandovers: CountDownLatch? = null
     @Volatile private var holdPolls: CountDownLatch? = null
     @Volatile private var pollHeld = CountDownLatch(1)
@@ -1537,6 +1541,86 @@ class UpnpPlayerQueueTest {
             SystemClock.sleep(100)
         }
         return seen
+    }
+
+    @Test
+    fun aPauseFromTheRenderersOwnRemoteShowsInTheApp() {
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never ready", awaitState(Player.STATE_READY))
+        reportedRelTime = "00:00:20"
+        val from = actions.size
+        reportedState = "PAUSED_PLAYBACK"
+
+        assertTrue("the app still shows playing on a paused renderer", awaitPlayWhenReady(false))
+        val sent = actions.toList().subList(from, actions.size)
+        assertFalse("the app sent a command of its own: $sent", sent.any { it == "Pause" || it == "Stop" || it == "Play" })
+        SystemClock.sleep(2500)
+        val bar = onMainGet { player.currentPosition }
+        SystemClock.sleep(2500)
+        assertEquals("the bar moved on a paused renderer", bar, onMainGet { player.currentPosition })
+        assertEquals("the bar is not where the renderer paused", 20_000L, bar)
+    }
+
+    @Test
+    fun aPlayFromTheRenderersOwnRemoteShowsInTheAppAndSendsWhatWaited() {
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never ready", awaitState(Player.STATE_READY))
+        reportedState = "PAUSED_PLAYBACK"
+        onMain { player.playWhenReady = false }
+        assertTrue("the app never paused", awaitPlayWhenReady(false))
+        onMain {
+            player.seekTo(60_000L)
+            player.addMediaItem(itemAt(2))
+        }
+        SystemClock.sleep(3000)
+        val from = actions.size
+        reportedState = "PLAYING"
+
+        assertTrue("the app still shows paused on a playing renderer", awaitPlayWhenReady(true))
+        SystemClock.sleep(500)
+        val sent = actions.toList().subList(from, actions.size)
+        assertFalse("the app sent a Play of its own: $sent", sent.contains("Play"))
+        assertTrue("the seek made while paused never reached the renderer: $sent", sent.contains("Seek"))
+        assertTrue("the track added while paused was never sent as next: $sent", sent.contains("SetNextAVTransportURI"))
+    }
+
+    @Test
+    fun oneReadingOfTheOtherStateIsNotFollowed() {
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(2500)
+        // Every change is kept, since a flip the next reading undoes leaves the end state looking right.
+        val changes = CopyOnWriteArrayList<Boolean>()
+        onMain {
+            player.addListener(object : Player.Listener {
+                override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                    changes += playWhenReady
+                }
+            })
+        }
+        pausedPolls.set(1)
+        SystemClock.sleep(5000)
+
+        assertEquals("the paused reading was never served, so this proves nothing", 0, pausedPolls.get())
+        assertTrue("one paused reading changed the app's play state: $changes", changes.isEmpty())
+    }
+
+    private fun awaitPlayWhenReady(wanted: Boolean): Boolean {
+        val deadline = SystemClock.elapsedRealtime() + 10_000
+        while (SystemClock.elapsedRealtime() < deadline) {
+            if (onMainGet { player.playWhenReady } == wanted) return true
+            SystemClock.sleep(100)
+        }
+        return false
     }
 
     /** Records the reason for each track change and the id every ending names. Main thread only. */

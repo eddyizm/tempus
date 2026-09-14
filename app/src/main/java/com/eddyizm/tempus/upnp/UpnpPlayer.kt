@@ -68,6 +68,8 @@ class UpnpPlayer(
     @Volatile private var nextTrackSentFor: String? = null
     @Volatile private var stoppedAtEndPolls = 0
 
+    @Volatile private var outsidePlayPausePolls = 0
+
     @Volatile private var seekSentAt = 0L
 
     // Furthest the bar got on the current track, which is what decides whether it counted.
@@ -582,6 +584,7 @@ class UpnpPlayer(
                     stoppedAtEndPolls = 0
                     rendererStarted = true
                     playbackState = Player.STATE_READY
+                    followOutsidePlayPause(transport["CurrentTransportState"] == "PLAYING")
                 }
                 "TRANSITIONING" -> {
                     // getState freezes the bar on positionMs next, so make it current first.
@@ -670,6 +673,30 @@ class UpnpPlayer(
             playbackState = if (counted) Player.STATE_ENDED else Player.STATE_IDLE
             stopPolling()
         }
+    }
+
+    private fun followOutsidePlayPause(rendererPlaying: Boolean) {
+        if (rendererPlaying == playWhenReady) {
+            outsidePlayPausePolls = 0
+            return
+        }
+        if (++outsidePlayPausePolls < OUTSIDE_PLAY_PAUSE_POLLS) return
+        outsidePlayPausePolls = 0
+
+        if (!rendererPlaying) positionMs = positionNow()
+        playWhenReady = rendererPlaying
+        updateWakeLock()
+        if (!rendererPlaying) return
+
+        // Held back while paused, and no Play from the app is coming to send them.
+        pendingSeekMs?.let {
+            pendingSeekMs = null
+            if (seekOrKeepPlaying(it)) {
+                positionMs = it
+                playedHighWaterMs = it
+            }
+        }
+        sendNextTrack()
     }
 
     private fun currentEntry(): Entry? = playlist.getOrNull(index)
@@ -762,6 +789,8 @@ class UpnpPlayer(
 
         // Stopped polls waited out at a track end when the renderer holds the next one.
         private const val MAX_POLLS_AWAITING_HANDOVER = 3
+
+        private const val OUTSIDE_PLAY_PAUSE_POLLS = 2
 
         // A stop this close to a track's end is the track ending, and anything earlier came from outside.
         private val END_WINDOW_MS = TimeUnit.SECONDS.toMillis(10)
