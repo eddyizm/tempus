@@ -168,6 +168,17 @@ class UpnpPlayer(
         return state.build()
     }
 
+    // A play from paused shows playing while the renderer starts, and the bar snaps back once it has.
+    override fun getPlaceholderState(suggestedPlaceholderState: State): State {
+        val suggested = suggestedPlaceholderState
+        if (suggested.playbackState != Player.STATE_READY || !suggested.playWhenReady ||
+            super.getPlayWhenReady() || rendererStarted
+        ) {
+            return suggested
+        }
+        return suggested.buildUpon().setPlaybackState(Player.STATE_BUFFERING).build()
+    }
+
     override fun handleSetMediaItems(
         mediaItems: List<MediaItem>,
         startIndex: Int,
@@ -252,18 +263,23 @@ class UpnpPlayer(
         worker.submit<Unit> {
             try {
                 if (playWhenReady) {
+                    // A play while already playing would otherwise show a pause and step the bar back.
+                    val alreadyPlaying = this.playWhenReady
                     controlPoint.play(device)
                     this.playWhenReady = true
                     updateWakeLock()
-                    playbackState = Player.STATE_READY
-                    rendererStarted = false
-                    pollsBeforeStart = 0
-                    pendingSeekMs?.let {
-                        pendingSeekMs = null
-                        seekOnceStarted(it)
+                    if (!alreadyPlaying) {
+                        // Buffering until the renderer reports playing, since a controller runs the bar while ready.
+                        playbackState = if (rendererStarted) Player.STATE_READY else Player.STATE_BUFFERING
+                        rendererStarted = false
+                        pollsBeforeStart = 0
+                        pendingSeekMs?.let {
+                            pendingSeekMs = null
+                            seekOnceStarted(it)
+                        }
+                        // Below the seek, above the lookahead. Either lands in the offset otherwise.
+                        positionIsCurrentNow()
                     }
-                    // Below the seek, above the lookahead. Either lands in the offset otherwise.
-                    positionIsCurrentNow()
                     sendNextTrack()
                     handler.post { startPolling() }
                 } else {
@@ -414,7 +430,8 @@ class UpnpPlayer(
         positionIsCurrentNow()
         sendNextTrack()
 
-        playbackState = Player.STATE_READY
+        // After a Play the poll that reads playing makes it ready. A WiiM Pro takes about 2 s to get there.
+        if (!playWhenReady) playbackState = Player.STATE_READY
         handler.post { if (playWhenReady) startPolling() }
         invalidateLater()
     }
@@ -742,9 +759,12 @@ class UpnpPlayer(
         if (durationUs <= 0) Long.MAX_VALUE else durationUs / 1000 - 1
 
     // Held below the length, or media3 reads the next correction as a track ending.
-    private fun positionNow(): Long =
-        (positionMs + if (positionAt == 0L) 0L else SystemClock.elapsedRealtime() - positionAt)
+    // Runs only when getState runs the bar, or a pause while buffering keeps time the renderer never played.
+    private fun positionNow(): Long {
+        val running = playbackState == Player.STATE_READY && playWhenReady && positionAt != 0L
+        return (positionMs + if (running) SystemClock.elapsedRealtime() - positionAt else 0L)
             .coerceAtMost(barCeiling())
+    }
 
     private fun takeReading(reading: Long, sentAt: Long, arrivedAt: Long) {
         // Above the playing gate, since the poll after a transition carries the handover's nonsense.

@@ -638,6 +638,8 @@ class UpnpPlayerQueueTest {
 
     @Test
     fun aSlowLoadDoesNotAddItsOwnDelayToTheReportedPosition() {
+        // Ready comes from the poll that reads playing, and that poll also takes the renderer's position.
+        reportedRelTime = "00:00:00"
         val readyAt = CopyOnWriteArrayList<Long>()
         onMain {
             player.addListener(object : Player.Listener {
@@ -1514,6 +1516,212 @@ class UpnpPlayerQueueTest {
     }
 
     @Test
+    fun aNextTrackDoesNotShowAsPlayingBeforeTheRendererStartsIt() {
+        onMain {
+            player.setMediaItems(listOf(itemAt(1), itemAt(2)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(2500)
+
+        stoppedPollsAfterHandover = 2
+        val shown = playingShownThroughAController { it.seekToNextMediaItem() }
+
+        assertEquals("track-2", onMainGet { player.currentMediaItem?.mediaId })
+        assertNotShownPlayingBeforeTheStart(shown)
+    }
+
+    @Test
+    fun aPlayOnALoadedTrackDoesNotShowAsPlayingBeforeTheRendererStartsIt() {
+        stoppedPollsAfterHandover = 2
+        onMain { player.setMediaItems(listOf(itemAt(1), itemAt(2)), 0, 0L) }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+
+        assertNotShownPlayingBeforeTheStart(playingShownThroughAController { it.play() })
+    }
+
+    @Test
+    fun aPlayWithAPositionWaitingDoesNotShowAsPlayingWhileTheRendererStarts() {
+        // About two seconds of the 200 ms reads the waiting seek makes, the WiiM Pro's start.
+        stoppedPollsAfterHandover = 10
+        onMain { player.setMediaItems(listOf(itemAt(1), itemAt(2)), 0, 60_000L) }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+
+        val shown = playingShownThroughAController { it.play() }
+
+        assertNotShownPlayingBeforeTheStart(shown)
+        assertTrue("the waiting seek never went out: $actions", actions.contains("Seek"))
+    }
+
+    @Test
+    fun aPlayWhilePlayingDoesNotShowAPauseOrStepTheBarBack() {
+        relTimeCountingFrom = SystemClock.elapsedRealtime()
+        onMain {
+            player.setMediaItems(listOf(itemAt(1), itemAt(2), itemAt(3)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(2500)
+
+        val playsBefore = actions.count { it == "Play" }
+        var before = 0L to 0L
+        var after = 0L to 0L
+        var showedPlaying = false
+        val shown = playingShownWhile { controller ->
+            // Late in the poll interval, where a clock taken again drops the most time.
+            val polled = actions.count { it == "GetPositionInfo" }
+            val deadline = SystemClock.elapsedRealtime() + 5000
+            while (actions.count { it == "GetPositionInfo" } == polled && SystemClock.elapsedRealtime() < deadline) {
+                SystemClock.sleep(20)
+            }
+            SystemClock.sleep(1500)
+            before = onMainGet { controller.currentPosition to SystemClock.elapsedRealtime() }
+            showedPlaying = onMainGet { controller.isPlaying }
+            onMain { controller.play() }
+            // Two polls, and the session's own position update, which is what carries a step to a controller.
+            SystemClock.sleep(4500)
+            after = onMainGet { controller.currentPosition to SystemClock.elapsedRealtime() }
+        }
+
+        assertTrue("the controller did not show playing before the second play", showedPlaying)
+        assertTrue("the second play never reached the renderer, so this proves nothing: $actions", actions.count { it == "Play" } > playsBefore)
+        assertTrue("the second play showed a pause: $shown", shown.none { !it.playing })
+        val expected = before.first + (after.second - before.second)
+        assertTrue(
+            "the second play stepped the bar back from $expected to ${after.first}",
+            after.first >= expected - 500
+        )
+    }
+
+    @Test
+    fun aRendererMovingOnWithoutStoppingDoesNotShowAPause() {
+        onMain {
+            player.setMediaItems(listOf(itemAt(1), itemAt(2), itemAt(3)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(2500)
+
+        val shown = playingShownWhile {
+            // A WiiM Pro names the next track and its start in one reply, and never answers stopped between them.
+            reportedRelTime = "00:00:00"
+            reportedTrackUri = urlAt(2)
+            assertEquals("the app never followed the renderer", 1, awaitIndex(1))
+            // Through the poll after the handover as well, which is where a wait for the start would end.
+            SystemClock.sleep(2500)
+        }
+
+        assertTrue("the handover showed a pause: $shown", shown.none { !it.playing })
+    }
+
+    @Test
+    fun aRendererStoppedBrieflyBetweenTracksDoesNotShowAPause() {
+        onMain {
+            player.setMediaItems(listOf(itemAt(1), itemAt(2), itemAt(3)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        runTheBarToTheEndOfTheTrack()
+
+        // An LG C1 answers stopped on the finished track for a poll or two, inside the wait for the handover.
+        reportedTrackUri = urlAt(1)
+        val shown = playingShownWhile {
+            stoppedPolls.set(2)
+            val deadline = SystemClock.elapsedRealtime() + 10_000
+            while (stoppedPolls.get() > 0 && SystemClock.elapsedRealtime() < deadline) SystemClock.sleep(20)
+            assertEquals("the stopped readings were never served, so this proves nothing", 0, stoppedPolls.get())
+            reportedRelTime = "00:00:00"
+            reportedTrackUri = urlAt(2)
+            assertEquals("the app never followed the renderer onto the next track", 1, awaitIndex(1))
+            SystemClock.sleep(2500)
+        }
+
+        assertEquals("the next track was handed over although the renderer had it: $handovers", listOf(urlAt(1)), handovers)
+        assertTrue("the stop between tracks showed a pause: $shown", shown.none { !it.playing })
+    }
+
+    @Test
+    fun aPauseWhileTheRendererStartsKeepsNoTimeItNeverPlayed() {
+        // A WiiM Pro answers zero and stopped for about two seconds after the Play.
+        reportedRelTime = "00:00:00"
+        stoppedPollsAfterHandover = 5
+        onMain { player.setMediaItems(listOf(itemAt(1), itemAt(2)), 0, 0L) }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+
+        var paused = 0L
+        val shown = playingShownWhile { controller ->
+            onMain { controller.play() }
+            SystemClock.sleep(1000)
+            onMain { controller.pause() }
+            val polled = actions.count { it == "GetPositionInfo" }
+            SystemClock.sleep(500)
+            assertTrue("the renderer started before the pause, so this proves nothing", stoppedPolls.get() > 0)
+            paused = onMainGet { player.currentPosition }
+            assertEquals("a reading after the pause reset the bar, so this proves nothing",
+                polled, actions.count { it == "GetPositionInfo" })
+        }
+
+        assertTrue("the pause kept $paused ms the renderer never played: $shown", paused < 500)
+    }
+
+    private class Shown(val playing: Boolean, val stoppedReadingsLeft: Int, val at: Long) {
+        override fun toString() = "${if (playing) "playing" else "not"}@$at left=$stoppedReadingsLeft"
+    }
+
+    /** Runs [act] through a controller, the way the player screen sees it, until the renderer has started. */
+    private fun playingShownThroughAController(act: (MediaController) -> Unit): List<Shown> =
+        playingShownWhile { controller ->
+            onMain { act(controller) }
+            val deadline = SystemClock.elapsedRealtime() + 15_000
+            while (!(stoppedPolls.get() == 0 && onMainGet { controller.isPlaying }) &&
+                SystemClock.elapsedRealtime() < deadline
+            ) {
+                SystemClock.sleep(100)
+            }
+        }
+
+    /** Every change of playing a controller shows while [drive] runs on the test thread. */
+    private fun playingShownWhile(drive: (MediaController) -> Unit): List<Shown> {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val session = onMainGet { MediaSession.Builder(context, player).setId("upnp-start-test").build() }
+        try {
+            val controller = MediaController.Builder(context, session.token).buildAsync().get(10, TimeUnit.SECONDS)
+            try {
+                val shown = CopyOnWriteArrayList<Shown>()
+                onMain {
+                    controller.addListener(object : Player.Listener {
+                        override fun onIsPlayingChanged(isPlaying: Boolean) {
+                            shown += Shown(isPlaying, stoppedPolls.get(), SystemClock.elapsedRealtime())
+                        }
+                    })
+                }
+                drive(controller)
+                return shown.toList()
+            } finally {
+                onMain { controller.release() }
+            }
+        } finally {
+            onMain { session.release() }
+        }
+    }
+
+    // A controller runs its own bar while it shows playing, so showing it before the start is the jump.
+    // Its own play() shows playing until the session answers, which no player can prevent.
+    private fun assertNotShownPlayingBeforeTheStart(shown: List<Shown>) {
+        assertTrue("the controller never showed playing after the start: $shown", shown.lastOrNull()?.let {
+            it.playing && it.stoppedReadingsLeft == 0
+        } == true)
+        shown.forEachIndexed { i, edge ->
+            if (!edge.playing || edge.stoppedReadingsLeft == 0) return@forEachIndexed
+            val until = shown.getOrNull(i + 1)?.at ?: SystemClock.elapsedRealtime()
+            assertTrue(
+                "the controller showed playing for ${until - edge.at} ms before the renderer started: $shown",
+                until - edge.at < SESSION_ANSWER_MS
+            )
+        }
+    }
+
+    @Test
     fun anOpaqueStationAddressDoesNotBringDownTheApp() {
         val station = MediaItem.Builder()
             .setMediaId("radio-1")
@@ -1698,6 +1906,11 @@ class UpnpPlayerQueueTest {
             SystemClock.sleep(200)
         }
         return null
+    }
+
+    private companion object {
+        // Tested at 5 to 14 ms on an emulator, against the WiiM Pro's start of about 2 s.
+        const val SESSION_ANSWER_MS = 500L
     }
 
     private fun onMain(block: () -> Unit) =
