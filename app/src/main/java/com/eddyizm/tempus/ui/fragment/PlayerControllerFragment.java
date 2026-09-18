@@ -245,7 +245,7 @@ public class PlayerControllerFragment extends Fragment {
                 popup.inflate(R.menu.player_overflow_menu);
 
                 int selectedEq = Preferences.getSelectedEqualizer();
-                if (selectedEq == 0 || selectedEq == 2) {
+                if (selectedEq != 1) {
                     popup.getMenu().removeItem(R.id.action_open_equalizer);
                 }
 
