@@ -15,7 +15,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 import android.widget.Toast;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -368,51 +367,15 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
         String playlistCoverId = playlist.getCoverArtId();
 
-        // Retrieve the parent container holding the cover views
-        ViewGroup coverContainer = (ViewGroup) bind.playlistCoverImageViewTopLeft.getParent();
-
-        // Look for an existing single cover view dynamically added previously
-        ImageView singleCoverView = coverContainer.findViewWithTag("SINGLE_PLAYLIST_COVER");
-
-        // Loads the playlist's own explicit custom cover image
         if (playlistCoverId != null && !playlistCoverId.trim().isEmpty()) {
+            bind.playlistCoverImageViewSingle.setVisibility(View.VISIBLE);
 
-            // Dynamically instantiate and attach the single ImageView if it doesn't exist yet
-            if (singleCoverView == null) {
-                singleCoverView = new ImageView(requireContext());
-                singleCoverView.setTag("SINGLE_PLAYLIST_COVER");
-                singleCoverView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-                // Generate appropriate LayoutParams based on the parent view container type
-                ViewGroup.MarginLayoutParams params = getMarginLayoutParams(coverContainer);
-
-                // Convert 62dp to pixels for horizontal margin alignment
-                int sideMarginPx = (int) (62 * requireContext().getResources().getDisplayMetrics().density);
-                params.setMargins(sideMarginPx, 0, sideMarginPx, 0);
-
-                coverContainer.addView(singleCoverView, params);
-            }
-
-            singleCoverView.setVisibility(View.VISIBLE);
-
-            // Loads the custom cover image with rounded corners on all four sides using Glide
             CustomGlideRequest.Builder
                     .from(requireContext(), playlistCoverId, CustomGlideRequest.ResourceType.Playlist)
                     .build()
-                    .transform(new GranularRoundedCorners(
-                            CustomGlideRequest.CORNER_RADIUS,
-                            CustomGlideRequest.CORNER_RADIUS,
-                            CustomGlideRequest.CORNER_RADIUS,
-                            CustomGlideRequest.CORNER_RADIUS
-                    ))
-                    .into(singleCoverView);
+                    .into(bind.playlistCoverImageViewSingle);
 
         } else {
-            // Fallback: Hide the single cover view if it exists and render the 2x2 song collage
-            if (singleCoverView != null) {
-                singleCoverView.setVisibility(View.GONE);
-            }
-
             playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
                 if (bind != null && songs != null && !songs.isEmpty()) {
 
@@ -449,31 +412,6 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                 }
             });
         }
-    }
-
-    // Creates full-match layout parameters compatible with the type of container group passed.
-    @NonNull
-    private static ViewGroup.MarginLayoutParams getMarginLayoutParams(ViewGroup coverContainer) {
-        ViewGroup.MarginLayoutParams params;
-
-        if (coverContainer instanceof android.widget.FrameLayout) {
-            params = new android.widget.FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            );
-        } else if (coverContainer instanceof androidx.constraintlayout.widget.ConstraintLayout) {
-            params = new androidx.constraintlayout.widget.ConstraintLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            );
-        } else {
-            params = new ViewGroup.MarginLayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-            );
-        }
-
-        return params;
     }
 
     private void initSongsView() {
