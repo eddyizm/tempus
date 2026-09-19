@@ -575,7 +575,7 @@
         errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="194"
+            line="196"
             column="9"
             message="Occurrence in layout"/>
         <location
@@ -1038,7 +1038,7 @@
 
     <issue
         id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.application than 9.2.1 is available: 9.3.2"
+        message="A newer version of com.android.application than 9.2.1 is available: 9.4.0"
         errorLine1="agp = &quot;9.2.1&quot;"
         errorLine2="      ~~~~~~~">
         <location
@@ -1049,7 +1049,7 @@
 
     <issue
         id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.library than 9.2.1 is available: 9.3.2"
+        message="A newer version of com.android.library than 9.2.1 is available: 9.4.0"
         errorLine1="agp = &quot;9.2.1&quot;"
         errorLine2="      ~~~~~~~">
         <location
@@ -1082,7 +1082,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.navigation:navigation-fragment-ktx than 2.8.6 is available: 2.10.0"
+        message="A newer version of androidx.navigation:navigation-fragment-ktx than 2.8.6 is available: 2.10.1"
         errorLine1="navigation = &quot;2.8.6&quot;"
         errorLine2="             ~~~~~~~">
         <location
@@ -1093,7 +1093,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.navigation:navigation-ui-ktx than 2.8.6 is available: 2.10.0"
+        message="A newer version of androidx.navigation:navigation-ui-ktx than 2.8.6 is available: 2.10.1"
         errorLine1="navigation = &quot;2.8.6&quot;"
         errorLine2="             ~~~~~~~">
         <location
@@ -1104,7 +1104,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.room:room-compiler than 2.7.0 is available: 2.8.4"
+        message="A newer version of androidx.room:room-compiler than 2.7.0 is available: 2.8.5"
         errorLine1="room = &quot;2.7.0&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -1115,7 +1115,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.room:room-runtime than 2.7.0 is available: 2.8.4"
+        message="A newer version of androidx.room:room-runtime than 2.7.0 is available: 2.8.5"
         errorLine1="room = &quot;2.7.0&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -1159,7 +1159,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-cast than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-cast than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1170,7 +1170,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-common than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-common than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1181,7 +1181,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-exoplayer than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-exoplayer than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1192,7 +1192,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-exoplayer-hls than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-exoplayer-hls than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1203,7 +1203,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-session than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-session than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1214,7 +1214,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-ui than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-ui than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1246,6 +1246,17 @@
     </issue>
 
     <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2026.08.00 is available: 2026.09.00"
+        errorLine1="composeBom = &quot;2026.08.00&quot;"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="$HOME/src/tempus/gradle/libs.versions.toml"
+            line="37"
+            column="14"/>
+    </issue>
+
+    <issue
         id="NewerVersionAvailable"
         message="A newer version of org.mockito:mockito-core than 5.12.0 is available: 5.23.0"
         errorLine1="    testImplementation &apos;org.mockito:mockito-core:5.12.0&apos;"
@@ -1269,7 +1280,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.android than 2.2.20 is available: 2.4.10"
+        message="A newer version of org.jetbrains.kotlin.android than 2.2.20 is available: 2.4.20"
         errorLine1="kotlin = &quot;2.2.20&quot;"
         errorLine2="         ~~~~~~~~">
         <location
@@ -1280,7 +1291,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.20 is available: 2.4.10"
+        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.20 is available: 2.4.20"
         errorLine1="kotlin = &quot;2.2.20&quot;"
         errorLine2="         ~~~~~~~~">
         <location
@@ -1291,7 +1302,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.plugin.parcelize than 2.2.20 is available: 2.4.10"
+        message="A newer version of org.jetbrains.kotlin.plugin.parcelize than 2.2.20 is available: 2.4.20"
         errorLine1="kotlin = &quot;2.2.20&quot;"
         errorLine2="         ~~~~~~~~">
         <location
@@ -2462,7 +2473,7 @@
         errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/fragment_search.xml"
-            line="12"
+            line="13"
             column="30"/>
     </issue>
 
@@ -3304,7 +3315,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;artist_bottom_sheet_play_next&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;artist_bottom_sheet_play_next&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;artist_bottom_sheet_play_next&quot;>Play next&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -3315,7 +3326,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;artist_bottom_sheet_add_to_queue&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;artist_bottom_sheet_add_to_queue&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;artist_bottom_sheet_add_to_queue&quot;>Add to queue&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -3326,7 +3337,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;artist_bottom_sheet_add_to_playlist&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;artist_bottom_sheet_add_to_playlist&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;artist_bottom_sheet_add_to_playlist&quot;>Add to playlist&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -3337,7 +3348,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;artist_bottom_sheet_loading_tracks&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;artist_bottom_sheet_loading_tracks&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;artist_bottom_sheet_loading_tracks&quot;>Loading tracks\u2026&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -3480,7 +3491,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;content_description_more_options&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;content_description_more_options&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;content_description_more_options&quot;>More options&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4151,7 +4162,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;settings_search_hint&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;settings_search_hint&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;settings_search_hint&quot;>Search settings&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4657,7 +4668,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_page_empty&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_page_empty&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_page_empty&quot;>No songs in this playlist&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4679,7 +4690,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;podcast_release_no_date&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;podcast_release_no_date&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;podcast_release_no_date&quot;>No date&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4690,7 +4701,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;podcast_release_unknown_duration&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;podcast_release_unknown_duration&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;podcast_release_unknown_duration&quot;>Unknown duration&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7077,7 +7088,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_tab_greeter&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_tab_greeter&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_tab_greeter&quot;>Welcome&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7088,7 +7099,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_tab_permission&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_tab_permission&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_tab_permission&quot;>Permissions&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7099,7 +7110,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_tab_themes&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_tab_themes&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_tab_themes&quot;>Themes&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7110,7 +7121,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_tab_server&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_tab_server&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_tab_server&quot;>Servers&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7121,7 +7132,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_appbar_greeter_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_appbar_greeter_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_appbar_greeter_title&quot;>About&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7132,7 +7143,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_appbar_permission_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_appbar_permission_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_appbar_permission_title&quot;>Permissions overview&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7143,7 +7154,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_appbar_themes_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_appbar_themes_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_appbar_themes_title&quot;>Theme editor&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7154,7 +7165,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_appbar_server_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_appbar_server_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_appbar_server_title&quot;>Server editor&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7165,7 +7176,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_greeting_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_greeting_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_greeting_description&quot;>Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7176,7 +7187,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_title&quot;>Server Setup&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7187,7 +7198,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_empty_error&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_empty_error&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_empty_error&quot;>Mandatory field&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7198,7 +7209,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_url_error&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_url_error&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_url_error&quot;>URL not valid&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7209,7 +7220,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_name&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_name&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_name&quot;>Server name&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7220,7 +7231,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_user&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_user&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_user&quot;>User name&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7231,7 +7242,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_pass&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_pass&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_pass&quot;>Password&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7242,7 +7253,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_public_url&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_public_url&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_public_url&quot;>Public URL&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7253,7 +7264,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_local_url&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_local_url&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_local_url&quot;>Local URL&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7264,7 +7275,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_server_cert&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_server_cert&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_server_cert&quot;>Client certificate (optional)&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7275,7 +7286,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_field_plaintext_password_checkbox&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_field_plaintext_password_checkbox&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_field_plaintext_password_checkbox&quot;>Plaintext password&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7286,7 +7297,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_button_create&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_button_create&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_button_create&quot;>Create&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7297,7 +7308,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_button_update&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_button_update&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_button_update&quot;>Update&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7308,7 +7319,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_button_delete&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_button_delete&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_button_delete&quot;>Delete&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7319,7 +7330,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_button_test&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_button_test&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_button_test&quot;>Test&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7330,7 +7341,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_button_login&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_button_login&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_button_login&quot;>Go to login&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7341,7 +7352,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_dropdown_add_new&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_dropdown_add_new&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_dropdown_add_new&quot;>Add new server&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7352,7 +7363,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_toast_created&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_toast_created&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_toast_created&quot;>Server created&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7363,7 +7374,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_toast_updated&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_toast_updated&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_toast_updated&quot;>Server updated&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7374,7 +7385,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_toast_deleted&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_toast_deleted&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_toast_deleted&quot;>Server deleted&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7385,7 +7396,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_toast_connection_testing&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_toast_connection_testing&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_toast_connection_testing&quot;>Testing connection&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7396,7 +7407,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_toast_connection_success&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_toast_connection_success&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_toast_connection_success&quot;>Connected Successfully!&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7407,7 +7418,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_toast_connection_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_toast_connection_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_toast_connection_failure&quot;>Failed: Invalid server, URL, or credentials&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7418,7 +7429,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_toast_connection_error&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_toast_connection_error&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_toast_connection_error&quot;>Network error:&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7429,7 +7440,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_switch_plaintext_password&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_switch_plaintext_password&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_switch_plaintext_password&quot;>Plaintext passowrd (legacy servers)&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7440,7 +7451,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_switch_local_url&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_switch_local_url&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_switch_local_url&quot;>Set a local URL&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7451,7 +7462,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_server_switch_cert&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_server_switch_cert&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_server_switch_cert&quot;>Client certificate (mTLS)&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7462,7 +7473,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_title&quot;>Choose Accent Color&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7473,7 +7484,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_description&quot;>Style for your app\&apos;s dynamic palette.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7484,7 +7495,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_button_return&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_button_return&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_button_return&quot;>Go to home&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7495,7 +7506,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_switch_true_black&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_switch_true_black&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_switch_true_black&quot;>True black background for dark mode&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7506,7 +7517,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_switch_default_dynamic&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_switch_default_dynamic&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_switch_default_dynamic&quot;>Dynamic color accent from wallpaper&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7517,7 +7528,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_default&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_card_default&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_card_default&quot;>Default&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7528,7 +7539,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_flirt_red_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_card_flirt_red_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_card_flirt_red_description&quot;>Flirt red accent color&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7539,7 +7550,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_coral_red_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_theme_card_coral_red_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_card_coral_red_description&quot;>Coral red accent color&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7550,9 +7561,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_royal_blue_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_theme_card_royal_blue_description&quot;>Emerald green accent color&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_theme_card_emerald_green_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_theme_card_emerald_green_description&quot;>Emerald green accent color&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="853"
@@ -7561,9 +7572,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_purple_violet_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_theme_card_purple_violet_description&quot;>Purple violet accent color&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_theme_card_royal_blue_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_theme_card_royal_blue_description&quot;>Royal blue accent color&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="854"
@@ -7572,9 +7583,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_sunset_amber_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_theme_card_sunset_amber_description&quot;>Sunset amber accent color&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_theme_card_purple_violet_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_theme_card_purple_violet_description&quot;>Purple violet accent color&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="855"
@@ -7583,9 +7594,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_teal_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_theme_card_teal_description&quot;>Teal amber accent color&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_theme_card_sunset_amber_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_theme_card_sunset_amber_description&quot;>Sunset amber accent color&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="856"
@@ -7594,9 +7605,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_slate_gray_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_theme_card_slate_gray_description&quot;>Slate gray accent color&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_theme_card_teal_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_theme_card_teal_description&quot;>Teal accent color&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="857"
@@ -7605,9 +7616,9 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_dialog_color_picker_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_theme_dialog_color_picker_title&quot;>Pick and accent color&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_theme_card_slate_gray_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_theme_card_slate_gray_description&quot;>Slate gray accent color&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="858"
@@ -7616,20 +7627,20 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_shortcut_label&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_shortcut_label&quot;>Introduction&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_theme_dialog_color_picker_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_theme_dialog_color_picker_title&quot;>Pick and accent color&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="860"
+            line="859"
             column="13"/>
     </issue>
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_button_advanced_editor&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_button_advanced_editor&quot;>Advanced editor (beta)&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        message="&quot;la_shortcut_label&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_shortcut_label&quot;>Introduction&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
             line="861"
@@ -7638,12 +7649,23 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;hello_blank_fragment&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_button_advanced_editor&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_button_advanced_editor&quot;>Advanced editor (beta)&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="862"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;hello_blank_fragment&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;hello_blank_fragment&quot;>Hello blank fragment&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/strings.xml"
-            line="864"
+            line="865"
             column="13"/>
     </issue>
 
@@ -8061,7 +8083,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ja/strings.xml"
-            line="223"
+            line="228"
             column="40"/>
     </issue>
 
@@ -8072,7 +8094,7 @@
         errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ja/strings.xml"
-            line="224"
+            line="229"
             column="38"/>
     </issue>
 
@@ -8298,17 +8320,6 @@
 
     <issue
         id="Untranslatable"
-        message="The resource string &quot;settings_support_discussion_link&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
-        errorLine1="    &lt;string name=&quot;settings_support_discussion_link&quot; translatable=&quot;false&quot;>https://github.com/eddyizm/tempus/discussions&lt;/string>"
-        errorLine2="                                                    ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="453"
-            column="53"/>
-    </issue>
-
-    <issue
-        id="Untranslatable"
         message="The resource string &quot;settings_version_summary&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;zh&quot; (Chinese) here"
         errorLine1="    &lt;string name=&quot;settings_version_summary&quot; translatable=&quot;false&quot;>3.1.0&lt;/string>"
         errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~">
@@ -8338,6 +8349,17 @@
             file="src/main/res/values-zh/strings.xml"
             line="453"
             column="45"/>
+    </issue>
+
+    <issue
+        id="Untranslatable"
+        message="The resource string &quot;settings_support_discussion_link&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
+        errorLine1="    &lt;string name=&quot;settings_support_discussion_link&quot; translatable=&quot;false&quot;>https://github.com/eddyizm/tempus/discussions&lt;/string>"
+        errorLine2="                                                    ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="466"
+            column="53"/>
     </issue>
 
     <issue
@@ -8518,17 +8540,6 @@
 
     <issue
         id="Untranslatable"
-        message="The resource string &quot;settings_version_summary&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
-        errorLine1="    &lt;string name=&quot;settings_version_summary&quot; translatable=&quot;false&quot;>3.1.0&lt;/string>"
-        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="576"
-            column="45"/>
-    </issue>
-
-    <issue
-        id="Untranslatable"
         message="The resource string &quot;undraw_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;de&quot; (German) here"
         errorLine1="    &lt;string name=&quot;undraw_url&quot; translatable=&quot;false&quot;>https://undraw.co/&lt;/string>"
         errorLine2="                              ~~~~~~~~~~~~~~~~~~~~">
@@ -8536,6 +8547,17 @@
             file="src/main/res/values-de/strings.xml"
             line="582"
             column="31"/>
+    </issue>
+
+    <issue
+        id="Untranslatable"
+        message="The resource string &quot;settings_version_summary&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
+        errorLine1="    &lt;string name=&quot;settings_version_summary&quot; translatable=&quot;false&quot;>3.1.0&lt;/string>"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="589"
+            column="45"/>
     </issue>
 
     <issue
@@ -8606,17 +8628,6 @@
 
     <issue
         id="Untranslatable"
-        message="The resource string &quot;support_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
-        errorLine1="    &lt;string name=&quot;support_url&quot; translatable=&quot;false&quot;>https://ko-fi.com/eddyizm&lt;/string>"
-        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="647"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="Untranslatable"
         message="The resource string &quot;undraw_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;eu&quot; (Basque) here"
         errorLine1="    &lt;string name=&quot;undraw_url&quot; translatable=&quot;false&quot;>https://undraw.co/&lt;/string>"
         errorLine2="                              ~~~~~~~~~~~~~~~~~~~~">
@@ -8624,6 +8635,17 @@
             file="src/main/res/values-eu/strings.xml"
             line="657"
             column="31"/>
+    </issue>
+
+    <issue
+        id="Untranslatable"
+        message="The resource string &quot;support_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
+        errorLine1="    &lt;string name=&quot;support_url&quot; translatable=&quot;false&quot;>https://ko-fi.com/eddyizm&lt;/string>"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="660"
+            column="32"/>
     </issue>
 
     <issue
@@ -8644,7 +8666,7 @@
         errorLine2="                              ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ja/strings.xml"
-            line="676"
+            line="689"
             column="31"/>
     </issue>
 
@@ -8666,7 +8688,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ja/strings.xml"
-            line="741"
+            line="754"
             column="40"/>
     </issue>
 
@@ -9932,6 +9954,17 @@
         <location
             file="src/main/res/layout/fragment_login_theme.xml"
             line="8"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `?attr/colorSurface` with a theme that also paints a background (inferred theme is `@style/AppTheme.SplashScreen`)"
+        errorLine1="    android:background=&quot;?attr/colorSurface&quot;>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/layout/fragment_search.xml"
+            line="7"
             column="5"/>
     </issue>
 
@@ -11588,17 +11621,6 @@
     <issue
         id="TypographyEllipsis"
         message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;bottom_sheet_generating_instant_mix&quot;>インスタントミックスを生成中...&lt;/string>"
-        errorLine2="                                                       ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="88"
-            column="56"/>
-    </issue>
-
-    <issue
-        id="TypographyEllipsis"
-        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
         errorLine1="    &lt;string name=&quot;bottom_sheet_generating_instant_mix&quot;>Berehalako nahasketa sortzen...&lt;/string>"
         errorLine2="                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -11615,6 +11637,17 @@
         <location
             file="src/main/res/values-ca/strings.xml"
             line="90"
+            column="56"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;bottom_sheet_generating_instant_mix&quot;>インスタントミックスを生成中...&lt;/string>"
+        errorLine2="                                                       ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="92"
             column="56"/>
     </issue>
 
@@ -11724,7 +11757,7 @@
         errorLine2="                                            ~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ja/strings.xml"
-            line="715"
+            line="728"
             column="45"/>
     </issue>
 
@@ -11944,7 +11977,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="436"
+            line="440"
             column="17"/>
     </issue>
 
@@ -13250,7 +13283,7 @@
         errorLine2="                 ~~~~~~~~~">
         <location
             file="src/main/res/layout/fragment_search.xml"
-            line="140"
+            line="141"
             column="18"/>
     </issue>
 
@@ -13338,7 +13371,7 @@
         errorLine2="     ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="193"
+            line="195"
             column="6"/>
     </issue>
 
@@ -13393,7 +13426,7 @@
         errorLine2="     ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="295"
+            line="298"
             column="6"/>
     </issue>
 
@@ -13437,7 +13470,7 @@
         errorLine2="     ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="309"
+            line="312"
             column="6"/>
     </issue>
 
@@ -13480,8 +13513,8 @@
         errorLine1="    &lt;ImageButton"
         errorLine2="     ~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="322"
+            file="src/main/res/layout-sw600dp-land/inner_fragment_player_controller_layout.xml"
+            line="325"
             column="6"/>
     </issue>
 
@@ -13491,7 +13524,7 @@
         errorLine1="    &lt;ImageButton"
         errorLine2="     ~~~~~~~~~~~">
         <location
-            file="src/main/res/layout-sw600dp-land/inner_fragment_player_controller_layout.xml"
+            file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
             line="325"
             column="6"/>
     </issue>
@@ -13524,8 +13557,8 @@
         errorLine1="    &lt;ImageButton"
         errorLine2="     ~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="335"
+            file="src/main/res/layout-sw600dp-land/inner_fragment_player_controller_layout.xml"
+            line="338"
             column="6"/>
     </issue>
 
@@ -13535,7 +13568,7 @@
         errorLine1="    &lt;ImageButton"
         errorLine2="     ~~~~~~~~~~~">
         <location
-            file="src/main/res/layout-sw600dp-land/inner_fragment_player_controller_layout.xml"
+            file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
             line="338"
             column="6"/>
     </issue>
@@ -13568,8 +13601,8 @@
         errorLine1="    &lt;ImageButton"
         errorLine2="     ~~~~~~~~~~~">
         <location
-            file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="348"
+            file="src/main/res/layout-sw600dp-land/inner_fragment_player_controller_layout.xml"
+            line="351"
             column="6"/>
     </issue>
 
@@ -13579,7 +13612,7 @@
         errorLine1="    &lt;ImageButton"
         errorLine2="     ~~~~~~~~~~~">
         <location
-            file="src/main/res/layout-sw600dp-land/inner_fragment_player_controller_layout.xml"
+            file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
             line="351"
             column="6"/>
     </issue>
@@ -13613,7 +13646,7 @@
         errorLine2="     ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="361"
+            line="364"
             column="6"/>
     </issue>
 
@@ -13646,7 +13679,7 @@
         errorLine2="     ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="374"
+            line="377"
             column="6"/>
     </issue>
 
@@ -13701,7 +13734,7 @@
         errorLine2="             ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="424"
+            line="427"
             column="14"/>
     </issue>
 
@@ -13745,7 +13778,7 @@
         errorLine2="         ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="443"
+            line="447"
             column="10"/>
     </issue>
 
@@ -13778,7 +13811,7 @@
         errorLine2="         ~~~~~~~~~~~">
         <location
             file="src/main/res/layout/inner_fragment_player_controller_layout.xml"
-            line="457"
+            line="462"
             column="10"/>
     </issue>
 
@@ -15505,7 +15538,7 @@
         errorLine2="                    ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/layout/fragment_search.xml"
-            line="117"
+            line="118"
             column="21"/>
     </issue>
 
