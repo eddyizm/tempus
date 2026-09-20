@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <!-- Translate display labels only; internal values and resource references are inherited. -->
+    <string-array name="theme_list_titles">
+        <item>Ljust</item>
+        <item>Mörkt</item>
+        <item>Systemstandard</item>
+    </string-array>
+    <string-array name="dark_theme_style_titles">
+        <item>Standard</item>
+        <item>AMOLED (helsvart)</item>
+    </string-array>
+    <string-array name="pref_cache_size_titles">
+        <item>Stor</item>
+        <item>Medelstor</item>
+        <item>Liten</item>
+        <item>Extra stor (1 GiB)</item>
+    </string-array>
+    <string-array name="pref_image_size_titles">
+        <item>Hög</item>
+        <item>Medel</item>
+        <item>Låg</item>
+    </string-array>
+    <string-array name="streaming_cache_size_titles">
+        <item>Avstängd</item>
+        <item>128 MiB</item>
+        <item>256 MiB</item>
+        <item>512 MiB</item>
+        <item>1024 MiB</item>
+        <item>2048 MiB</item>
+        <item>4096 MiB</item>
+    </string-array>
+    <string-array name="max_bitrate_wifi_list_titles">
+        <item>Original</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_mobile_list_titles">
+        <item>Original</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="max_bitrate_download_list_titles">
+        <item>Original</item>
+        <item>32 kbps</item>
+        <item>48 kbps</item>
+        <item>64 kbps</item>
+        <item>80 kbps</item>
+        <item>96 kbps</item>
+        <item>112 kbps</item>
+        <item>128 kbps</item>
+        <item>160 kbps</item>
+        <item>192 kbps</item>
+        <item>256 kbps</item>
+        <item>320 kbps</item>
+    </string-array>
+    <string-array name="audio_transcode_format_wifi_list_titles">
+        <item>Direktuppspelning</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_mobile_list_titles">
+        <item>Direktuppspelning</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="audio_transcode_format_download_list_titles">
+        <item>Direkthämtning</item>
+        <item>Opus</item>
+        <item>AAC</item>
+        <item>Mp3</item>
+        <item>Flac</item>
+    </string-array>
+    <string-array name="queue_syncing_countdown_titles">
+        <item>Tio sekunder</item>
+        <item>Fem sekunder</item>
+        <item>Två sekunder</item>
+    </string-array>
+    <string-array name="rounded_corner_size_titles">
+        <item>Stor</item>
+        <item>Medelstor</item>
+        <item>Liten</item>
+    </string-array>
+    <string-array name="replay_gain_titles">
+        <item>Avstängt</item>
+        <item>Låt</item>
+        <item>Album</item>
+        <item>Automatiskt</item>
+    </string-array>
+    <string-array name="transcoded_download_option_list_titles">
+        <item>Ingen omkodning</item>
+        <item>Serverinställningar</item>
+        <item>Omkodningsformat för wifi</item>
+        <item>Omkodningsformat för mobildata</item>
+    </string-array>
+    <string-array name="song_preload_buffer_titles">
+        <item>5 sekunder</item>
+        <item>30 sekunder</item>
+        <item>1 minut</item>
+        <item>3 minuter</item>
+        <item>5 minuter</item>
+    </string-array>
+    <string-array name="precache_tracks_titles">
+        <item>Avstängd</item>
+        <item>Nästa låt</item>
+        <item>Nästa 2 låtar</item>
+        <item>Nästa 3 låtar</item>
+        <item>Nästa 5 låtar</item>
+    </string-array>
+    <string-array name="skip_min_star_rating_titles">
+        <item>Minst 0 stjärnor</item>
+        <item>Minst 1 stjärna</item>
+        <item>Minst 2 stjärnor</item>
+        <item>Minst 3 stjärnor</item>
+        <item>Minst 4 stjärnor</item>
+    </string-array>
+    <string-array name="tile_size_titles">
+        <item>Mycket små</item>
+        <item>Små</item>
+        <item>Medelstora</item>
+        <item>Stora</item>
+        <item>Standard</item>
+    </string-array>
+    <string-array name="selected_equalizer_entries">
+        <item>Standard</item>
+        <item>Inbyggd</item>
+        <item>Extern</item>
+    </string-array>
+    <string-array name="aa_tab_titles">
+        <item>Visa inte</item>
+        <item>Hem</item>
+        <item>Senaste</item>
+        <item>Album</item>
+        <item>Artister</item>
+        <item>Spellistor</item>
+        <item>Poddar</item>
+        <item>Radio</item>
+        <item>Mapp</item>
+        <item>Mest spelade album</item>
+        <item>Tillagda album</item>
+        <item>För dig</item>
+        <item>Stjärnmärkta</item>
+        <item>Låtar</item>
+        <item>Genrer</item>
+    </string-array>
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Stjärnmärkta artister</item>
+        <item>Stjärnmärkta album</item>
+        <item>Stjärnmärkta låtar</item>
+    </string-array>
+    <string-array name="custom_commands_titles">
+        <item>Hjärta</item>
+        <item>Upprepa</item>
+        <item>Blanda</item>
+        <item>Direktmix</item>
+    </string-array>
+</resources>
