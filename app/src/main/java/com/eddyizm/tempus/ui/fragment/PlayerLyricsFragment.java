@@ -298,14 +298,13 @@ public class PlayerLyricsFragment extends Fragment {
                 return;
             }
 
-            // Find the index of the currently playing line
             int curIdx = 0;
-            for (; curIdx < lines.size(); ++curIdx) {
-                Integer start = lines.get(curIdx).getStart();
+            for (int i = 0; i < lines.size(); i++) {
+                Integer start = lines.get(i).getStart();
                 if (start != null && start > timestamp) {
-                    curIdx--; // Found the first line that starts after the current timestamp
                     break;
                 }
+                curIdx = i;
             }
 
             // Only update if the highlighted line has changed
