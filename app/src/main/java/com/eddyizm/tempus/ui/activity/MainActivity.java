@@ -850,16 +850,23 @@ public class MainActivity extends BaseActivity {
     private void fixUpEdgeToEdge() {
         View rootView = findViewById(android.R.id.content);
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
-            Insets innerPadding = insets.getInsets(
-                    WindowInsetsCompat.Type.statusBars()
-            );
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
+
+            int topPadding = Math.max(systemBars.top, displayCutout.top);
+
             rootView.setPadding(
-                    innerPadding.left,
-                    innerPadding.top,
-                    innerPadding.right,
-                    innerPadding.bottom
+                    systemBars.left,
+                    topPadding,
+                    systemBars.right,
+                    0
             );
-            return insets;
+
+            return new WindowInsetsCompat.Builder(insets)
+                    .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(systemBars.left, 0, systemBars.right, systemBars.bottom))
+                    .setInsets(WindowInsetsCompat.Type.statusBars(), Insets.NONE)
+                    .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(displayCutout.left, 0, displayCutout.right, displayCutout.bottom))
+                    .build();
         });
     }
 
