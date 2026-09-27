@@ -193,6 +193,7 @@ public class DownloaderService extends androidx.media3.exoplayer.offline.Downloa
                     break;
 
                 case Download.STATE_FAILED:
+                    DownloaderManager.forgetRequest(download);
                     failedCount.incrementAndGet();
                     DownloaderService.batchCompletedCount = completedCount.get() + failedCount.get();
                     break;

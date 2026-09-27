@@ -2,6 +2,8 @@ package com.eddyizm.tempus.util;
 
 import android.app.Notification;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
 import androidx.media3.common.util.UnstableApi;
@@ -23,7 +25,9 @@ import androidx.media3.exoplayer.offline.DownloadManager;
 import androidx.media3.exoplayer.offline.DownloadNotificationHelper;
 import androidx.media3.exoplayer.scheduler.Requirements;
 
+import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.service.DownloaderManager;
+import com.eddyizm.tempus.subsonic.models.Child;
 
 import java.io.File;
 import java.net.CookieHandler;
@@ -31,7 +35,11 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.IntConsumer;
+import java.util.stream.Collectors;
 import java.util.concurrent.Executors;
 
 @UnstableApi
@@ -296,6 +304,46 @@ public final class DownloadUtil {
 
     public static synchronized long getStreamingCacheSize(Context context) {
         return getStreamingCache(context).getCacheSpace();
+    }
+
+    /**
+     * Queues the tracks neither on the device nor already asked for. Reports on the main thread how
+     * many reached the download service, or a negative number when every start was refused. Call on the main thread.
+     */
+    public static void downloadMissing(Context context, List<Child> songs, String playlistId, String playlistName, IntConsumer onQueued) {
+        // A playlist can list the same track twice.
+        Map<String, Child> byId = new LinkedHashMap<>();
+        for (Child song : songs) byId.putIfAbsent(song.getId(), song);
+        Context appContext = context.getApplicationContext();
+        Handler main = new Handler(Looper.getMainLooper());
+
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            DownloaderManager manager = getDownloadTracker(context);
+            List<Child> missing = byId.values().stream()
+                    .filter(song -> !manager.isDownloaded(song.getId()) && !manager.isRequested(song.getId()))
+                    .collect(Collectors.toList());
+            int sent = manager.download(
+                    MappingUtil.mapDownloads(missing),
+                    missing.stream().map(child -> {
+                        Download toDownload = new Download(child);
+                        toDownload.setPlaylistId(playlistId);
+                        toDownload.setPlaylistName(playlistName);
+                        return toDownload;
+                    }).collect(Collectors.toList())
+            );
+            onQueued.accept(sent == 0 && !missing.isEmpty() ? -1 : sent);
+        } else {
+            // The folder index only builds off main. While a rebuild runs it is empty and every track reads as
+            // missing, and the writer's own size check is what keeps a file already there from being written again.
+            new Thread(() -> {
+                ExternalAudioReader.ensureCache();
+                List<Child> missing = byId.values().stream()
+                        .filter(song -> ExternalAudioReader.getUri(song) == null && !ExternalAudioWriter.isPending(song.getId()))
+                        .collect(Collectors.toList());
+                missing.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(appContext, child, playlistId, playlistName));
+                main.post(() -> onQueued.accept(missing.size()));
+            }).start();
+        }
     }
 
     public static Notification buildGroupSummaryNotification(Context context, String channelId, String groupId, int icon, String title) {

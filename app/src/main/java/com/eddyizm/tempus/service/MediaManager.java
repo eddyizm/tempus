@@ -31,6 +31,7 @@ import com.eddyizm.tempus.subsonic.models.InternetRadioStation;
 import com.eddyizm.tempus.subsonic.models.PodcastEpisode;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.MappingUtil;
+import com.eddyizm.tempus.util.ConnectionUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.google.common.util.concurrent.FutureCallback;
@@ -207,6 +208,10 @@ public class MediaManager {
                 try {
                     if (mediaBrowserListenableFuture.isDone()) {
                         if (mediaBrowserListenableFuture.get().getMediaItemCount() < 1) {
+                            // The service restores this same queue and waits for the pings first,
+                            // and reaching a browser means that restore is already in flight.
+                            if (ConnectionUtil.pingsOutstanding()) return;
+
                             List<Child> media = getQueueRepository().getMedia();
                             if (media != null && media.size() >= 1) {
                                 init(mediaBrowserListenableFuture, media);
