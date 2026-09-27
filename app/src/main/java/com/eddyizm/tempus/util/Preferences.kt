@@ -315,6 +315,11 @@ object Preferences {
     }
 
     @JvmStatic
+    fun setInUseServerAddress(address: String?) {
+        App.getInstance().preferences.edit().putString(IN_USE_SERVER_ADDRESS, address).apply()
+    }
+
+    @JvmStatic
     fun isInUseServerAddressLocal(): Boolean {
         return getInUseServerAddress() == getLocalAddress()
     }

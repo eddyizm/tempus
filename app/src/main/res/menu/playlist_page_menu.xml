@@ -36,4 +36,9 @@
         android:icon="@drawable/ic_close"
         android:title="@string/menu_unpin_button"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_keep_synced"
+        android:checkable="true"
+        android:title="@string/menu_keep_synced_button"
+        app:showAsAction="never" />
 </menu>

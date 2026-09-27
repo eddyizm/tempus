@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.repository;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.database.dao.PlaylistDao;
 import com.eddyizm.tempus.database.dao.PinnedPlaylistDao;
 import com.eddyizm.tempus.database.dao.PlaylistSongDao;
+import com.eddyizm.tempus.database.dao.SyncedPlaylistDao;
 import com.eddyizm.tempus.model.PinnedPlaylist;
 import com.eddyizm.tempus.model.PlaylistSong;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
@@ -24,6 +26,9 @@ import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.subsonic.models.ResponseStatus;
 import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
+import com.eddyizm.tempus.util.DownloadRepair;
+import com.eddyizm.tempus.util.DownloadUtil;
+import com.eddyizm.tempus.util.Preferences;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +58,8 @@ public class PlaylistRepository {
             // Must delete dependent records first to avoid foreign key constraint violations
             playlistSongDao.deleteForPlaylist(id);
             pinnedPlaylistDao.unpin(id);
+            String server = Preferences.getServer();
+            if (server != null) syncedPlaylistDao.remove(id, server);
             playlistDao.deleteById(id);
             
             if (onMissing != null) {
@@ -66,6 +73,9 @@ public class PlaylistRepository {
     private final PinnedPlaylistDao pinnedPlaylistDao = AppDatabase.getInstance().pinnedPlaylistDao();
     private final PlaylistDao playlistDao = AppDatabase.getInstance().playlistDao();
     private final PlaylistSongDao playlistSongDao = AppDatabase.getInstance().playlistSongDao();
+    private final SyncedPlaylistDao syncedPlaylistDao = AppDatabase.getInstance().syncedPlaylistDao();
+    private static final java.util.concurrent.ExecutorService SYNCED_WRITES = java.util.concurrent.Executors.newSingleThreadExecutor();
+    private static volatile String keptSyncRanFor;
     private static final MutableLiveData<List<Playlist>> allPlaylistsLiveData = new MutableLiveData<>();
 
     public LiveData<List<Playlist>> getAllPlaylists(LifecycleOwner owner) {
@@ -109,10 +119,12 @@ public class PlaylistRepository {
                     remoteIds.add(remote.getId());
                 }
 
+                String server = Preferences.getServer();
                 for (Playlist cached : cachedPlaylists) {
                     if (!remoteIds.contains(cached.getId())) {
                         playlistSongDao.deleteForPlaylist(cached.getId());
                         pinnedPlaylistDao.unpin(cached.getId());
+                        if (server != null) syncedPlaylistDao.remove(cached.getId(), server);
                         playlistDao.delete(cached);
                         android.util.Log.d("PlaylistRepository", "Removed orphaned playlist " + cached.getId() + " from local DB.");
                     }
@@ -535,6 +547,66 @@ public class PlaylistRepository {
         }).start();
     }
 
+    // Keyed by the server URL, not the server id preference, which only one of the two login screens writes.
+    public LiveData<Boolean> isKeptSynced(String id) {
+        String server = Preferences.getServer();
+        if (server == null) return new MutableLiveData<>(false);
+        return syncedPlaylistDao.isSynced(id, server);
+    }
+
+    /** Returns false, and writes nothing, when there is no server address to key the flag by. */
+    public boolean setKeptSynced(String id, boolean kept) {
+        String server = Preferences.getServer();
+        if (server == null) {
+            android.util.Log.w("PlaylistRepository", "No server address in use, keep synced not saved for " + id);
+            return false;
+        }
+        // One writer thread keeps a fast on then off in order.
+        SYNCED_WRITES.execute(() -> {
+            if (kept) {
+                syncedPlaylistDao.add(id, server);
+            } else {
+                syncedPlaylistDao.remove(id, server);
+            }
+        });
+        return true;
+    }
+
+    // Never from the cache, a stale copy would miss exactly the tracks this exists to catch, so offline this does nothing.
+    @OptIn(markerClass = UnstableApi.class)
+    public void syncKeptPlaylists(Context context) {
+        String server = Preferences.getServer();
+        if (server == null || !DownloadRepair.isUserAuthenticated()) return;
+        // Once per server per app open, and a failed fetch hands the gate back so an offline open does not spend it.
+        if (server.equals(keptSyncRanFor)) return;
+        keptSyncRanFor = server;
+        new Thread(() -> {
+            List<Playlist> kept = syncedPlaylistDao.getAllSynced(server);
+            if (kept.isEmpty()) return;
+
+            new Handler(Looper.getMainLooper()).post(() -> {
+                for (Playlist playlist : kept) {
+                    LiveData<List<Child>> songs = getPlaylistSongs(playlist.getId(), false);
+                    songs.observeForever(new androidx.lifecycle.Observer<List<Child>>() {
+                        @Override
+                        public void onChanged(List<Child> children) {
+                            songs.removeObserver(this);
+                            if (children == null) {
+                                keptSyncRanFor = null;
+                                return;
+                            }
+                            DownloadUtil.downloadMissing(context, children, playlist.getId(), playlist.getName(), sent -> {});
+                        }
+                    });
+                }
+            });
+        }).start();
+    }
+
+    public static void resetKeptSync() {
+        keptSyncRanFor = null;
+    }
+
     public interface PlaylistActionCallback {
         void onSuccess();
         void onFailure();
@@ -552,8 +624,10 @@ public class PlaylistRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (isAccepted(response)) {
+                            String server = Preferences.getServer();
                             new Thread(() -> {
                                 playlistSongDao.deleteForPlaylist(playlistId);
+                                if (server != null) syncedPlaylistDao.remove(playlistId, server);
                                 playlistDao.deleteById(playlistId);
                                 android.util.Log.d("PlaylistRepository", "Deleted playlist " + playlistId + " and its songs from local DB.");
                             }).start();
