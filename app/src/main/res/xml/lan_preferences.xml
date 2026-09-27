@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/lan_this_device">
+        <EditTextPreference
+            android:key="lan_name"
+            android:title="@string/lan_device_name"
+            android:dialogTitle="@string/lan_device_name"
+            android:persistent="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/lan_receiver_role">
+        <SwitchPreference
+            android:key="lan_receiver_enabled"
+            android:title="@string/lan_allow"
+            android:summary="@string/lan_receiver_summary"
+            android:persistent="false" />
+        <SwitchPreference
+            android:key="lan_pairing_enabled"
+            android:title="@string/lan_pair_new"
+            android:summary="@string/lan_pairing_closed"
+            android:persistent="false"
+            app:isPreferenceVisible="false" />
+        <Preference
+            android:key="lan_paired_controllers"
+            android:title="@string/lan_paired"
+            android:summary="@string/lan_paired_summary"
+            android:icon="@drawable/ic_navigate_next"
+            app:isPreferenceVisible="false" />
+        <PreferenceCategory
+            android:key="lan_pair_requests"
+            android:title="@string/lan_pair_requests"
+            app:isPreferenceVisible="false" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/lan_controller_role">
+        <Preference
+            android:key="lan_find_devices"
+            android:title="@string/lan_search"
+            android:summary="@string/lan_controller_summary"
+            android:icon="@drawable/ic_navigate_next" />
+        <Preference
+            android:key="lan_setup_status"
+            android:summary="@string/lan_search_hint"
+            android:selectable="false" />
+        <Preference
+            android:key="lan_controlled_device"
+            android:title="@string/lan_controlled_device"
+            android:selectable="false"
+            app:isPreferenceVisible="false" />
+        <Preference
+            android:key="lan_release_device"
+            android:title="@string/lan_release_control"
+            android:summary="@string/lan_release_summary"
+            app:isPreferenceVisible="false" />
+        <PreferenceCategory
+            android:key="lan_available_devices"
+            android:title="@string/lan_available_devices"
+            app:isPreferenceVisible="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

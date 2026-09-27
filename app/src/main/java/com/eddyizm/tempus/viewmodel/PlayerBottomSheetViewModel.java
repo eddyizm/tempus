@@ -216,7 +216,10 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         if (mediaType != null) {
             switch (mediaType) {
                 case Constants.MEDIA_TYPE_MUSIC:
-                    songRepository.getSong(mediaId).observe(owner, liveMedia::postValue);
+                    if (!TextUtils.isEmpty(mediaId)) songRepository.getSong(mediaId).observe(owner, song -> {
+                        if (java.util.Objects.equals(currentSongId, mediaId)) liveMedia.postValue(song);
+                    });
+                    else liveMedia.postValue(null);
                     descriptionLiveData.postValue(null);
                     break;
                 case Constants.MEDIA_TYPE_PODCAST:
@@ -286,6 +289,13 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     }
 
     public boolean savePlayQueue() {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+            com.eddyizm.tempus.lan.LanRemoteState state = com.eddyizm.tempus.lan.LanRemoteSession.current();
+            if (!com.eddyizm.tempus.lan.LanRemoteSession.queueIsCurrent() || state.getMediaId().isEmpty()) return false;
+            List<String> ids = com.eddyizm.tempus.lan.LanRemoteSession.queueItems().stream().map(Child::getId).collect(Collectors.toList());
+            queueRepository.savePlayQueue(ids, state.getMediaId(), state.positionAt(android.os.SystemClock.elapsedRealtime()));
+            return true;
+        }
         Child media = getLiveMedia().getValue();
         List<Child> queue = queueRepository.getMedia();
         List<String> ids = queue.stream().map(Child::getId).collect(Collectors.toList());

@@ -270,6 +270,12 @@
 
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory
+        android:key="lan_playback"
+        android:title="@string/lan_title"
+        android:summary="@string/lan_menu_summary"
+        android:icon="@drawable/ic_navigate_next" />
+
     <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_playlist">
         <SwitchPreference
             android:title="@string/settings_allow_playlist_duplicates"

@@ -1,4 +1,78 @@
-# Tempus Usage Guide 
+# Tempus Usage Guide
+
+## Experimental local-network playback
+
+Local-network playback adds **Settings → Remote player** as a
+standalone entry and **Play on…** in the player's overflow menu. Two Tempus phones
+can pair by comparing a code, then choose music and control playback
+over the LAN. The receiver resolves track IDs using its own server account;
+both phones must use the same server address. The receiving service is opt-in,
+has a visible notification and can be stopped or have controller access revoked.
+
+The mini player has a two-phone device icon, and the expanded player has a **Play on…** button with the same icon. The overflow entry also opens the device selector. Select an already paired receiver to
+control its existing playback without transferring or replacing either queue.
+The main player and mini player show the receiver's title, artwork, position and
+playback state. Updates arrive on playback events and about once per second.
+The original Tempus player remains visible: its controls, swipeable artwork,
+queue page and lyrics page are reused. The device button shows **Playing on
+[device name]** while remote control is selected. Playback controls, shuffle,
+repeat, speed, lyrics seeking and the sleep timer act on the receiver. Device
+audio effects are configured on the receiver itself. There is no separate
+remote-player screen. Tap the device button again to return to the local player:
+the receiver continues playing and local playback does not automatically resume.
+
+Physical volume keys control the receiver's Android music output,
+including its Bluetooth output, rather than the controller's volume. Relative
+steps are applied on the receiver, and its actual volume/range are reported back
+to Android's remote-volume session. The system session also routes playback
+commands to the receiver. In-app keys are consumed while reconnecting to avoid
+changing local volume. Background and screen-off routing depends on Android
+selecting this active media session and the controller process remaining alive;
+verify it on physical phones. Releasing remote control releases that session.
+Both phones need a version supporting LAN remote playback.
+Settings uses the same preference rows, switch style and toolbar as the original
+settings. **This device** contains the editable device name. **Receiver** enables
+local network control on the phone that plays music. Only while that receiver is
+running, **Make available for pairing** appears as a switch with a two-minute
+countdown, followed by **Paired controllers**. Switching pairing off cancels
+pending requests; expiry prevents late confirmations. Already paired controllers
+do not need the window open. **Controller** searches for receiving phones and
+shows the selected device with **Release remote control**. Selecting an approved
+receiver opens the normal player directly. Both roles can be used on one phone;
+there is no master/slave mode selector. Playback/queue/volume controls belong in
+the player, not this settings page. Diagnostic export is absent.
+
+While a receiver is selected, the library's **Play**, **Add to queue** and
+**Play next** actions apply to that receiver, including playlists and albums.
+An empty receiver queue does not release the selection: choose music normally
+to start it on the receiver. Adding to an empty queue prepares it without
+automatically starting playback. The controller's local queue remains intact.
+**Queue** opens the regular queue list, showing the receiver's tracks. Tap to
+play/pause, swipe to remove, drag to reorder, and use the queue menu to shuffle
+upcoming tracks, clear upcoming tracks or save the list to a playlist. Queue
+revisions prevent edits from applying to different tracks after a concurrent
+change on the receiver. Changes on either phone refresh the displayed list.
+Remote playback supports up to 500 music tracks, including repeated tracks; radio
+and podcasts are rejected while remote control is selected. Songs downloaded
+on the controller still require server access on the receiver.
+The selection survives screen rotation but
+not process termination. On a brief interruption commands are disabled and the
+controller retries the same endpoint; if the receiver restarts or changes network
+address, release control and select it again. Failed remote actions never fall
+back to local playback. Use compatible LAN playback versions on both phones.
+In Settings → Remote player, discovering/selecting a phone checks pairing and
+opens the normal player once pairing is confirmed. Previously approved certificates do not
+require another pairing code; new identities still require approval.
+English and Italian labels are included.
+
+If a discovered phone cannot connect, the controller reports whether the failure
+occurred while preparing its certificate, reaching the phone, negotiating TLS,
+verifying identity, or receiving the pairing response. Discovery alone does not
+confirm that a connection can be established. Report the message shown on screen.
+Internal Android diagnostics still exclude device names, addresses, pairing
+codes, credentials and queue contents. No diagnostic export button is shown.
+
+Connections use mutual TLS and manual approval of certificate identities; there is no plaintext fallback.
 [<- back home](README.md)
 
 ## Table of Contents

@@ -26,7 +26,7 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintEnd_toStartOf="@+id/placeholder_left_view"
+        app:layout_constraintEnd_toStartOf="@+id/player_header_remote_button"
         app:layout_constraintStart_toEndOf="@+id/player_header_media_cover_image"
         app:layout_constraintTop_toTopOf="@+id/player_header_media_cover_image"
         app:layout_constraintBottom_toTopOf="@+id/player_header_media_artist_label"/>
@@ -40,11 +40,23 @@
         android:maxLines="1"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/placeholder_left_view"
+        app:layout_constraintEnd_toStartOf="@+id/player_header_remote_button"
         app:layout_constraintStart_toEndOf="@+id/player_header_media_cover_image"
         app:layout_constraintTop_toBottomOf="@+id/player_header_media_title_label"
         app:layout_constraintBottom_toBottomOf="@+id/player_header_media_cover_image"/>
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/player_header_remote_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/lan_play_on"
+        app:srcCompat="@drawable/ic_lan_remote"
+        app:tint="@color/lan_remote_icon_tint"
+        app:layout_constraintEnd_toStartOf="@id/placeholder_left_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/player_header_seek_bar" />
     <View
         android:id="@+id/placeholder_left_view"
         android:layout_width="28dp"

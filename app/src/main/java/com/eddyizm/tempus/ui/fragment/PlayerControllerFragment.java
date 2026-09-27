@@ -81,6 +81,8 @@ public class PlayerControllerFragment extends Fragment {
     private static final String TAG = "PlayerCoverFragment";
 
     private InnerFragmentPlayerControllerBinding bind;
+    private com.eddyizm.tempus.lan.LanPlayerAdapter remotePlayer;
+    private boolean renderingRemote;
     private ViewPager2 playerMediaCoverViewPager;
     private ToggleButton buttonFavorite;
     private ImageButton playerOverflowButton;
@@ -123,6 +125,10 @@ public class PlayerControllerFragment extends Fragment {
         ratingViewModel = new ViewModelProvider(requireActivity()).get(RatingViewModel.class);
 
         init();
+        remotePlayer = new com.eddyizm.tempus.lan.LanPlayerAdapter();
+        com.eddyizm.tempus.lan.LanRemoteSession.state().observe(getViewLifecycleOwner(), state -> refreshPlaybackDestination());
+        com.eddyizm.tempus.lan.LanRemoteSession.queueState().observe(getViewLifecycleOwner(), queue -> refreshPlaybackDestination());
+        bind.playerRemoteToggle.setOnClickListener(v -> com.eddyizm.tempus.lan.LanDevicePicker.toggle(requireActivity()));
         initOverflowButton();
         initQuickActionView();
         initCoverLyricsSlideView();
@@ -152,7 +158,53 @@ public class PlayerControllerFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (bind != null) bind.nowPlayingMediaControllerView.setPlayer(null);
+        if (remotePlayer != null) remotePlayer.release();
+        remotePlayer = null;
         bind = null;
+    }
+
+    private void refreshPlaybackDestination() {
+        if (bind == null || remotePlayer == null) return;
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+            remotePlayer.refresh();
+            bind.nowPlayingMediaControllerView.setPlayer(remotePlayer);
+            com.eddyizm.tempus.lan.LanRemoteState state = com.eddyizm.tempus.lan.LanRemoteSession.current();
+            bind.playerRemoteToggle.setText(getString(R.string.lan_operating_on, state.getName()));
+            bind.playerRemoteToggle.setContentDescription(getString(R.string.lan_controlling, state.getName()));
+            bind.playerRemoteToggle.setSelected(true);
+            bind.nowPlayingMediaControllerView.setShowShuffleButton(true);
+            bind.nowPlayingMediaControllerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL | RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
+            bind.nowPlayingMediaControllerView.setShowRewindButton(false);
+            bind.nowPlayingMediaControllerView.setShowFastForwardButton(false);
+            bind.nowPlayingMediaControllerView.setShowPreviousButton(true);
+            bind.nowPlayingMediaControllerView.setShowNextButton(true);
+            playbackSpeedButton.setVisibility(View.VISIBLE);
+            skipSilenceToggleButton.setVisibility(View.GONE);
+            buttonFavorite.setVisibility(View.VISIBLE);
+            var displayedSong = playerBottomSheetViewModel.getLiveMedia().getValue();
+            buttonFavorite.setEnabled(displayedSong != null && Objects.equals(displayedSong.getId(), state.getMediaId()));
+            renderingRemote = true;
+            try {
+                MediaMetadata metadata = com.eddyizm.tempus.lan.LanPlayerAdapter.metadata(com.eddyizm.tempus.lan.LanRemoteSession.currentSong());
+                setMetadata(metadata);
+                setMediaInfo(metadata);
+                playbackSpeedButton.setText(getString(R.string.player_playback_speed, state.getSpeed()));
+                updateSleepTimerUI();
+            } finally { renderingRemote = false; }
+        } else {
+            bind.playerRemoteToggle.setText(R.string.lan_play_on);
+            bind.playerRemoteToggle.setContentDescription(getString(R.string.lan_play_on));
+            bind.playerRemoteToggle.setSelected(false);
+            buttonFavorite.setEnabled(true);
+            MediaBrowser browser = getBrowser();
+            if (browser != null) {
+                bind.nowPlayingMediaControllerView.setPlayer(browser);
+                setMediaControllerUI(browser);
+                setMetadata(browser.getMediaMetadata());
+                setMediaInfo(browser.getMediaMetadata());
+            }
+        }
     }
 
     private void init() {
@@ -194,6 +246,10 @@ public class PlayerControllerFragment extends Fragment {
                 }
 
                 popup.setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.action_lan_playback) {
+                        com.eddyizm.tempus.lan.LanDevicePicker.toggle(requireActivity());
+                        return true;
+                    }
                     if (item.getItemId() == R.id.action_open_equalizer) {
                         navigateToEqualizerFragment();
                         return true;
@@ -245,11 +301,13 @@ public class PlayerControllerFragment extends Fragment {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
 
-                bind.nowPlayingMediaControllerView.setPlayer(mediaBrowser);
+                bind.nowPlayingMediaControllerView.setPlayer(com.eddyizm.tempus.lan.LanRemoteSession.isActive() ? remotePlayer : mediaBrowser);
                 mediaBrowser.setShuffleModeEnabled(Preferences.isShuffleModeEnabled());
                 mediaBrowser.setRepeatMode(Preferences.getRepeatMode());
                 setMediaControllerListener(mediaBrowser);
                 initSleepTimerButton(mediaBrowser);
+                initPlaybackSpeedButton(mediaBrowser);
+                refreshPlaybackDestination();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -294,6 +352,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMetadata(MediaMetadata mediaMetadata) {
+        if (bind == null || (com.eddyizm.tempus.lan.LanRemoteSession.isActive() && !renderingRemote)) return;
         String type = mediaMetadata.extras != null ? mediaMetadata.extras.getString("type") : null;
 
         if (Objects.equals(type, Constants.MEDIA_TYPE_RADIO)) {
@@ -367,7 +426,8 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
-        boolean isLocal = MusicUtil.isCurrentTrackLocal(getBrowser());
+        if (bind == null || (com.eddyizm.tempus.lan.LanRemoteSession.isActive() && !renderingRemote)) return;
+        boolean isLocal = !com.eddyizm.tempus.lan.LanRemoteSession.isActive() && MusicUtil.isCurrentTrackLocal(getBrowser());
 
         if (mediaMetadata.extras != null) {
             String extension = mediaMetadata.extras.getString("suffix", getString(R.string.player_unknown_format));
@@ -427,6 +487,7 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMediaFormatFromFileReturnedByServer() {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) return;
         if (playerMediaExtension == null) return;
 
         MediaBrowser browser = getBrowser();
@@ -610,29 +671,30 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void setMediaControllerUI(MediaBrowser mediaBrowser) {
+        if (bind == null || com.eddyizm.tempus.lan.LanRemoteSession.isActive()) return;
         initPlaybackSpeedButton(mediaBrowser);
 
         if (mediaBrowser.getMediaMetadata().extras != null) {
             switch (mediaBrowser.getMediaMetadata().extras.getString("type", Constants.MEDIA_TYPE_MUSIC)) {
                 case Constants.MEDIA_TYPE_PODCAST:
-                    bind.getRoot().setShowShuffleButton(false);
-                    bind.getRoot().setShowRewindButton(true);
-                    bind.getRoot().setShowPreviousButton(false);
-                    bind.getRoot().setShowNextButton(false);
-                    bind.getRoot().setShowFastForwardButton(true);
-                    bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
+                    bind.nowPlayingMediaControllerView.setShowShuffleButton(false);
+                    bind.nowPlayingMediaControllerView.setShowRewindButton(true);
+                    bind.nowPlayingMediaControllerView.setShowPreviousButton(false);
+                    bind.nowPlayingMediaControllerView.setShowNextButton(false);
+                    bind.nowPlayingMediaControllerView.setShowFastForwardButton(true);
+                    bind.nowPlayingMediaControllerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
                     bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.VISIBLE);
                     bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button).setVisibility(View.VISIBLE);
                     bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.GONE);
                     setPlaybackParameters(mediaBrowser);
                     break;
                 case Constants.MEDIA_TYPE_RADIO:
-                    bind.getRoot().setShowShuffleButton(false);
-                    bind.getRoot().setShowRewindButton(false);
-                    bind.getRoot().setShowPreviousButton(false);
-                    bind.getRoot().setShowNextButton(false);
-                    bind.getRoot().setShowFastForwardButton(false);
-                    bind.getRoot().setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
+                    bind.nowPlayingMediaControllerView.setShowShuffleButton(false);
+                    bind.nowPlayingMediaControllerView.setShowRewindButton(false);
+                    bind.nowPlayingMediaControllerView.setShowPreviousButton(false);
+                    bind.nowPlayingMediaControllerView.setShowNextButton(false);
+                    bind.nowPlayingMediaControllerView.setShowFastForwardButton(false);
+                    bind.nowPlayingMediaControllerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_NONE);
                     bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.GONE);
                     bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button).setVisibility(View.GONE);
                     bind.getRoot().findViewById(R.id.button_favorite).setVisibility(View.GONE);
@@ -640,12 +702,12 @@ public class PlayerControllerFragment extends Fragment {
                     break;
                 case Constants.MEDIA_TYPE_MUSIC:
                 default:
-                    bind.getRoot().setShowShuffleButton(true);
-                    bind.getRoot().setShowRewindButton(false);
-                    bind.getRoot().setShowPreviousButton(true);
-                    bind.getRoot().setShowNextButton(true);
-                    bind.getRoot().setShowFastForwardButton(false);
-                    bind.getRoot().setRepeatToggleModes(
+                    bind.nowPlayingMediaControllerView.setShowShuffleButton(true);
+                    bind.nowPlayingMediaControllerView.setShowRewindButton(false);
+                    bind.nowPlayingMediaControllerView.setShowPreviousButton(true);
+                    bind.nowPlayingMediaControllerView.setShowNextButton(true);
+                    bind.nowPlayingMediaControllerView.setShowFastForwardButton(false);
+                    bind.nowPlayingMediaControllerView.setRepeatToggleModes(
                             RepeatModeUtil.REPEAT_TOGGLE_MODE_ALL | RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
                     bind.getRoot().findViewById(R.id.player_playback_speed_button).setVisibility(View.VISIBLE);
                     bind.getRoot().findViewById(R.id.player_skip_silence_toggle_button).setVisibility(View.GONE);
@@ -672,18 +734,21 @@ public class PlayerControllerFragment extends Fragment {
             dialog.setSleepTimerListener(new SleepTimerDialog.SleepTimerListener() {
                 @Override
                 public void onTimerSet(int minutes) {
+                    if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) { com.eddyizm.tempus.lan.LanRemoteSession.sleepTimer("minutes", minutes); return; }
                     SleepTimerManager.getInstance().startTimer(minutes);
                     connectSleepTimerTick(mediaBrowser);
                 }
 
                 @Override
                 public void onTimerCancelled() {
+                    if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) { com.eddyizm.tempus.lan.LanRemoteSession.sleepTimer("cancel", 0); return; }
                     SleepTimerManager.getInstance().cancelTimer();
                     updateSleepTimerUI();
                 }
 
                 @Override
                 public void onEndOfTrackSet() {
+                    if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) { com.eddyizm.tempus.lan.LanRemoteSession.sleepTimer("end", 0); return; }
                     SleepTimerManager.getInstance().startEndOfTrack();
                     connectSleepTimerTick(mediaBrowser);
                 }
@@ -714,13 +779,15 @@ public class PlayerControllerFragment extends Fragment {
         if (sleepTimerButton == null || sleepTimerLabel == null)
             return;
 
-        boolean active = SleepTimerManager.getInstance().isActive();
+        boolean remote = com.eddyizm.tempus.lan.LanRemoteSession.isActive();
+        com.eddyizm.tempus.lan.LanRemoteState remoteState = com.eddyizm.tempus.lan.LanRemoteSession.current();
+        boolean active = remote ? remoteState.getTimerActive() : SleepTimerManager.getInstance().isActive();
 
         if (active) {
-            boolean isEndOfTrack = SleepTimerManager.getInstance().isEndOfTrack();
+            boolean isEndOfTrack = remote ? remoteState.getTimerEndOfTrack() : SleepTimerManager.getInstance().isEndOfTrack();
             String label = isEndOfTrack
                     ? getString(R.string.sleep_timer_end_of_track_label)
-                    : SleepTimerManager.getInstance().getRemainingFormatted();
+                    : remote ? remoteState.getTimerRemaining() : SleepTimerManager.getInstance().getRemainingFormatted();
             sleepTimerLabel.setText(label);
             sleepTimerLabel.setVisibility(View.VISIBLE);
             int accentColor = com.google.android.material.color.MaterialColors.getColor(
@@ -784,6 +851,9 @@ public class PlayerControllerFragment extends Fragment {
     private void initMediaListenable() {
         playerBottomSheetViewModel.getLiveMedia().observe(getViewLifecycleOwner(), media -> {
             if (media != null) {
+                if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()
+                        && !Objects.equals(media.getId(), com.eddyizm.tempus.lan.LanRemoteSession.current().getMediaId())) return;
+                buttonFavorite.setEnabled(true);
                 ratingViewModel.setSong(media);
                 buttonFavorite.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, media.getId(), media.getStarred() != null));
                 buttonFavorite.setOnClickListener(v -> playerBottomSheetViewModel.setFavorite(requireContext(), media));
@@ -875,6 +945,10 @@ public class PlayerControllerFragment extends Fragment {
     }
 
     private void navigateToEqualizerFragment() {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+            Toast.makeText(requireContext(), R.string.lan_receiver_audio_settings, Toast.LENGTH_LONG).show();
+            return;
+        }
         NavController navController = NavHostFragment.findNavController(this);
         NavOptions navOptions = new NavOptions.Builder()
                 .setLaunchSingleTop(true)
@@ -923,6 +997,10 @@ public class PlayerControllerFragment extends Fragment {
 
     private void applyPlaybackSpeed(float speed) {
         playbackSpeedButton.setText(getString(R.string.player_playback_speed, speed));
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+            com.eddyizm.tempus.lan.LanRemoteSession.playbackParameters(speed, getPlaybackParameters(speed).pitch);
+            return;
+        }
 
         if (mediaBrowserListenableFuture == null) {
             return;
