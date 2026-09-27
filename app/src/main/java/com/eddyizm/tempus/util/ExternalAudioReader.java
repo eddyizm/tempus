@@ -46,7 +46,7 @@ public class ExternalAudioReader {
         return s.toLowerCase(Locale.ROOT);
     }
 
-    private static void ensureCache() {
+    public static void ensureCache() {
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
             synchronized (LOCK) {

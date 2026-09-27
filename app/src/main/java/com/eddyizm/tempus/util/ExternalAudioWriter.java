@@ -27,6 +27,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.Normalizer;
 import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,6 +38,11 @@ import androidx.media3.common.util.UnstableApi;
 public class ExternalAudioWriter {
 
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final Set<String> PENDING = ConcurrentHashMap.newKeySet();
+
+    public static boolean isPending(String mediaId) {
+        return PENDING.contains(mediaId);
+    }
     private static final int BUFFER_SIZE = 8192;
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 60_000;
@@ -86,7 +93,14 @@ public class ExternalAudioWriter {
         // total count is accurate even when many tracks are enqueued in rapid succession.
         DownloadProgressState.getInstance().onEnqueue(appContext);
 
-        EXECUTOR.execute(() -> performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName));
+        PENDING.add(child.getId());
+        EXECUTOR.execute(() -> {
+            try {
+                performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName);
+            } finally {
+                PENDING.remove(child.getId());
+            }
+        });
     }
 
     private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
