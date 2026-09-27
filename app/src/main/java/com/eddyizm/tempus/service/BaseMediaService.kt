@@ -708,6 +708,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         serviceDestroyed = true
         // Process scoped, so it outlives the service unless it is cleared here.
         MediaServiceExtensionRegistry.handler = null
+        FavoriteRegistry.onChange = null
         releaseNetworkCallback()
         equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
