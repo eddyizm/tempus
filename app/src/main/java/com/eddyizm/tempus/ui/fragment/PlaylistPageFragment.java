@@ -22,6 +22,8 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -34,7 +36,6 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentPlaylistPageBinding;
 import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.interfaces.ClickCallback;
-import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Playlist;
@@ -43,10 +44,7 @@ import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
-import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.MusicUtil;
-import com.eddyizm.tempus.util.ExternalAudioWriter;
-import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.eddyizm.tempus.viewmodel.PlaylistPageViewModel;
 import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
@@ -72,6 +70,11 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     private androidx.appcompat.app.AlertDialog playlistMissingDialog;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+
+    private boolean keptSynced;
+    private boolean keptStateKnown;
+    private List<String> lastSyncedIds;
+    private boolean downloadAllWaiting;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -127,7 +130,8 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         initMusicButton();
         initBackCover();
         initSongsView();
-        
+        initKeepSynced(savedInstanceState == null);
+
         playlistPageViewModel.getPlaylistMissingEvent().observe(getViewLifecycleOwner(), isMissing -> {
             // One dialog at a time. The event is raised again by a fetch landing after a
             // rotation rebuilt this view, and a second dialog's OK would navigate up twice.
@@ -177,31 +181,35 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         super.onDestroyView();
         if (playlistMissingDialog != null && playlistMissingDialog.isShowing()) playlistMissingDialog.dismiss();
         playlistMissingDialog = null;
+        // The instance outlives its view on the back stack, and both belong to the view.
+        downloadAllWaiting = false;
+        lastSyncedIds = null;
         bind = null;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_download_playlist) {
-            String _playListID = playlistPageViewModel.getPlaylist().getId();
-            String _playListName = playlistPageViewModel.getPlaylist().getName();
-            playlistPageViewModel.getPlaylistSongLiveList().observe(getViewLifecycleOwner(), songs -> {
-                if (isVisible() && getActivity() != null) {
-                    if (Preferences.getDownloadDirectoryUri() == null) {
-                        DownloadUtil.getDownloadTracker(requireContext()).download(
-                            MappingUtil.mapDownloads(songs),
-                            songs.stream().map(child -> {
-                                Download toDownload = new Download(child);
-                                toDownload.setPlaylistId(_playListID);
-                                toDownload.setPlaylistName(_playListName);
-                                return toDownload;
-                            }).collect(Collectors.toList())
-                        );
-                    } else {
-                        songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child, _playListID, _playListName));
-                    }
+            if (downloadAllWaiting) return true;
+            downloadAllWaiting = true;
+            LiveData<List<Child>> live = playlistPageViewModel.songs();
+            live.observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
+                @Override
+                public void onChanged(List<Child> songs) {
+                    if (songs == null) return;
+                    live.removeObserver(this);
+                    downloadAllWaiting = false;
+                    downloadMissing(songs);
                 }
             });
+            return true;
+        } else if (item.getItemId() == R.id.action_keep_synced) {
+            // If the songs are still loading, the songs observer runs the download when they arrive.
+            boolean turnOn = !item.isChecked();
+            if (!playlistPageViewModel.setKeptSynced(turnOn)) return true;
+            item.setChecked(turnOn);
+            keptSynced = turnOn;
+            if (turnOn) downloadMissing(playlistPageViewModel.songs().getValue());
             return true;
         } else if (item.getItemId() == R.id.action_pin_playlist) {
             playlistPageViewModel.setPinned(true);
@@ -251,6 +259,44 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         playlistPageViewModel.isPinned(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), isPinned -> {
             menu.findItem(R.id.action_unpin_playlist).setVisible(isPinned);
             menu.findItem(R.id.action_pin_playlist).setVisible(!isPinned);
+        });
+        playlistPageViewModel.isKeptSynced().observe(getViewLifecycleOwner(), kept -> {
+            menu.findItem(R.id.action_keep_synced).setChecked(kept);
+        });
+    }
+
+    // The view model keeps the song list across reopens of the same playlist, so a kept playlist
+    // asks the server again on every fresh open, once. A rotation is not a fresh open.
+    private void initKeepSynced(boolean freshOpen) {
+        keptSynced = false;
+        keptStateKnown = false;
+        playlistPageViewModel.isKeptSynced().observe(getViewLifecycleOwner(), kept -> {
+            keptSynced = kept;
+            if (freshOpen && !keptStateKnown && kept && playlistPageViewModel.songs().getValue() != null) {
+                playlistPageViewModel.refreshSongs();
+            }
+            keptStateKnown = true;
+        });
+    }
+
+    // The list is posted more than once per open, the same tracks in the same order do not earn a second pass.
+    private void syncIfChanged(List<Child> songs) {
+        if (songs == null) return;
+        List<String> ids = songs.stream().map(Child::getId).collect(Collectors.toList());
+        if (ids.equals(lastSyncedIds)) return;
+        lastSyncedIds = ids;
+        downloadMissing(songs);
+    }
+
+    private void downloadMissing(List<Child> songs) {
+        if (songs == null || bind == null) return;
+
+        lastSyncedIds = songs.stream().map(Child::getId).collect(Collectors.toList());
+        Playlist playlist = playlistPageViewModel.getPlaylist();
+        DownloadUtil.downloadMissing(requireContext(), songs, playlist.getId(), playlist.getName(), missing -> {
+            Context context = getContext();
+            if (context == null || missing <= 0) return;
+            Toast.makeText(context, getResources().getQuantityString(R.plurals.playlist_sync_downloading, missing, missing), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -474,6 +520,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                 bind.playlistSongCountLabel.setText(getString(R.string.playlist_song_count, songs.size()));
                 long totalDuration = songs.stream().mapToLong(s -> s.getDuration() != null ? s.getDuration() : 0).sum();
                 bind.playlistDurationLabel.setText(getString(R.string.playlist_duration, MusicUtil.getReadableDurationString(totalDuration, false)));
+                if (keptSynced) syncIfChanged(songs);
             }
             reapplyPlayback();
         });
