@@ -56,7 +56,7 @@ public class AlbumListPageFragment extends Fragment implements ClickCallback {
 
         bind = FragmentAlbumListPageBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
-        albumListPageViewModel = new ViewModelProvider(requireActivity()).get(AlbumListPageViewModel.class);
+        albumListPageViewModel = new ViewModelProvider(this).get(AlbumListPageViewModel.class);
 
         Bundle args = getArguments();
         if (args == null) {

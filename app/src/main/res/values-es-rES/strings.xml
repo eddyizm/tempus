@@ -381,7 +381,7 @@
     <string name="settings_auto_download_lyrics_summary">Descargar las letras automáticamente cuando estén disponibles para que se puedan mostrar cuando no hay conexión.</string>
     <string name="settings_replay_gain">Configurar el modo de ganancia de reproducción</string>
     <string name="settings_rounded_corner">Esquinas redondeadas</string>
-    <string name="settings_rounded_corner_size">Tamaño de las esquinas</string>
+    <string name="settings_rounded_corner_size">Tamaño de las esquinas redondeadas</string>
     <string name="settings_rounded_corner_summary">Si se habilita, establece un ángulo de curvatura para todas las portadas de álbumes. Los cambios se aplicarán después de reiniciar la app.</string>
     <string name="settings_scan_title">Escanear biblioteca</string>
     <string name="streaming_cache_storage_dialog_summary">Cambiar la ubicación de los archivos en caché a otro almacenamiento puede causar el borrado de todos los archivos en caché en el anterior almacenamiento.</string>

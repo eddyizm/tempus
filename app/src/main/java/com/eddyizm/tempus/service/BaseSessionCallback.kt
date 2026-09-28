@@ -3,6 +3,8 @@ package com.eddyizm.tempus.service
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.HeartRating
@@ -183,6 +185,11 @@ open class BaseSessionCallback(
 
     private var currentSession: MediaSession? = null
 
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    private val layoutUpdate =
+        Runnable { currentSession?.let { updateMediaNotificationCustomLayout(it) } }
+
     /**
      * Updates the player listener when the player changes (e.g., when switching to Cast).
      */
@@ -220,6 +227,10 @@ open class BaseSessionCallback(
             currentSession?.let { session.player.removeListener(playerListener) }
             currentSession = session
             session.player.addListener(playerListener)
+            FavoriteRegistry.onChange = Runnable {
+                mainHandler.removeCallbacks(layoutUpdate)
+                mainHandler.post(layoutUpdate)
+            }
         }
 
         if (session.isMediaNotificationController(controller) ||
@@ -304,7 +315,7 @@ open class BaseSessionCallback(
         return when (id) {
             "[heartID]" -> when {
                 player.currentMediaItem == null || isRatingPending -> null
-                (player.mediaMetadata.userRating as HeartRating?)?.isHeart == true -> customCommandToggleHeartOn
+                isCurrentItemStarred(player) -> customCommandToggleHeartOn
                 else -> customCommandToggleHeartOff
             }
 
@@ -321,6 +332,16 @@ open class BaseSessionCallback(
             else customCommandInstantMixOff
             else -> null
         }
+    }
+
+    // A star made in the app writes the registry and never the session, so the playing item keeps
+    // whatever rating it was loaded with. Read the registry first and keep the item's own rating
+    // as the fallback.
+    private fun isCurrentItemStarred(player: Player): Boolean {
+        val item = player.currentMediaItem ?: return false
+        val itemRating = (player.mediaMetadata.userRating as? HeartRating)?.isHeart == true
+        if (item.mediaMetadata.extras?.getString("type") != Constants.MEDIA_TYPE_MUSIC) return itemRating
+        return FavoriteRegistry.resolve(FavoriteRegistry.Kind.SONG, item.mediaId, itemRating)
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -460,8 +481,7 @@ open class BaseSessionCallback(
             }
             Constants.CUSTOM_COMMAND_TOGGLE_HEART_ON,
             Constants.CUSTOM_COMMAND_TOGGLE_HEART_OFF -> {
-                val currentRating = session.player.mediaMetadata.userRating as? HeartRating
-                val isCurrentlyLiked = currentRating?.isHeart ?: false
+                val isCurrentlyLiked = isCurrentItemStarred(session.player)
                 updateMediaNotificationCustomLayout(session, isRatingPending = true)
                 onSetRating(session, controller, HeartRating(!isCurrentlyLiked))
             }

@@ -187,6 +187,12 @@ public class PlayerControllerFragment extends Fragment {
             playerOverflowButton.setOnClickListener(v -> {
                 PopupMenu popup = new PopupMenu(requireContext(), v);
                 popup.inflate(R.menu.player_overflow_menu);
+
+                int selectedEq = Preferences.getSelectedEqualizer();
+                if (selectedEq == 0 || selectedEq == 2) {
+                    popup.getMenu().removeItem(R.id.action_open_equalizer);
+                }
+
                 popup.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.action_open_equalizer) {
                         navigateToEqualizerFragment();

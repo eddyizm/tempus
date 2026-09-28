@@ -205,7 +205,7 @@ public class DownloadRepair {
         Preferences.setDownloadDatabaseRepaired(schemaVersion);
     }
 
-    private static boolean isUserAuthenticated() {
+    public static boolean isUserAuthenticated() {
         return Preferences.getPassword() != null
                 || (Preferences.getToken() != null && Preferences.getSalt() != null);
     }

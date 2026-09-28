@@ -1,10 +1,12 @@
 package com.eddyizm.tempus.util;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.eddyizm.tempus.util.FavoriteRegistry.Kind;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,7 +14,13 @@ public class FavoriteRegistryTest {
 
     @Before
     public void reset() {
+        FavoriteRegistry.onChange = null;
         FavoriteRegistry.clear();
+    }
+
+    @After
+    public void dropTheListener() {
+        FavoriteRegistry.onChange = null;
     }
 
     @Test
@@ -290,5 +298,43 @@ public class FavoriteRegistryTest {
         FavoriteRegistry.clear();
 
         assertFalse(FavoriteRegistry.resolve(Kind.ALBUM, "1", false));
+    }
+
+    @Test
+    public void everyMutationTellsTheListener() {
+        int[] fired = {0};
+        FavoriteRegistry.onChange = () -> fired[0]++;
+
+        FavoriteRegistry.Record record = FavoriteRegistry.set(Kind.SONG, "1", true);
+        assertEquals(1, fired[0]);
+
+        FavoriteRegistry.accept(record);
+        assertEquals(2, fired[0]);
+
+        FavoriteRegistry.withdraw(FavoriteRegistry.set(Kind.SONG, "1", false));
+        assertEquals(4, fired[0]);
+
+        FavoriteRegistry.strike(FavoriteRegistry.set(Kind.SONG, "1", false));
+        assertEquals(6, fired[0]);
+
+        FavoriteRegistry.supersede(Kind.SONG, "1", true);
+        assertEquals(7, fired[0]);
+
+        FavoriteRegistry.clear();
+        assertEquals(8, fired[0]);
+    }
+
+    @Test
+    public void aCallWithANullIdOrRecordStaysQuiet() {
+        int[] fired = {0};
+        FavoriteRegistry.onChange = () -> fired[0]++;
+
+        FavoriteRegistry.set(Kind.ALBUM, null, true);
+        FavoriteRegistry.accept(null);
+        FavoriteRegistry.strike(null);
+        FavoriteRegistry.withdraw(null);
+        FavoriteRegistry.supersede(Kind.ALBUM, null, true);
+
+        assertEquals(0, fired[0]);
     }
 }

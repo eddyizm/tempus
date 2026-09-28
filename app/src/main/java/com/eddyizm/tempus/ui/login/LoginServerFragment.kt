@@ -16,19 +16,13 @@ import androidx.media3.common.util.UnstableApi
 import com.eddyizm.tempus.App
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.databinding.FragmentLoginServerBinding
+import com.eddyizm.tempus.interfaces.SystemCallback
 import com.eddyizm.tempus.model.Server
-import com.eddyizm.tempus.subsonic.utils.StringUtil
+import com.eddyizm.tempus.repository.SystemRepository
+import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.viewmodel.ServerViewModel
-import okhttp3.Call
-import okhttp3.Callback
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import org.json.JSONObject
-import java.io.IOException
-import java.util.UUID
 
 private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
 
@@ -390,76 +384,48 @@ class LoginServerFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
 
-        val serverUrl = serverList[selectedServerPosition].address
-        val username = serverList[selectedServerPosition].username
-        val password = serverList[selectedServerPosition].password
-        val clientName = "Tempus"
-        val apiVersion = "1.16.0"
-        val url: String
-
-        if (serverList[selectedServerPosition].isLowSecurity) {
-            url = "$serverUrl/rest/ping.view?u=$username&p=$password&v=$apiVersion&c=$clientName&f=json"
-        } else {
-            val salt = UUID.randomUUID().toString().substring(0, 6)
-            val token = StringUtil.tokenize(password + salt)
-            url = "$serverUrl/rest/ping.view?u=$username&t=$token&s=$salt&v=$apiVersion&c=$clientName&f=json"
-        }
-
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                binding.testButton.post {
-                    binding.testButton.isEnabled = true
-                    Toast.makeText(
-                        context,
-                        getString(R.string.la_server_toast_connection_error) + e.localizedMessage,
+        SystemRepository().checkUserCredential(
+            App.getSubsonicClientInstance(serverList[selectedServerPosition]),
+            object : SystemCallback {
+                override fun onNetworkFailure(exception: Exception) {
+                    showTestResult(
+                        R.string.la_server_toast_connection_error,
+                        exception.message,
                         Toast.LENGTH_LONG
-                    ).show()
+                    )
+                }
+
+                override fun onError(exception: Exception) {
+                    // The server answered, so this is not a network fault. With no network at
+                    // all it never answered, and the cache makes a 504 of its own that arrives
+                    // here instead of through onNetworkFailure.
+                    val messageId = if (CacheUtil.isConnected())
+                        R.string.la_server_toast_connection_failure
+                    else
+                        R.string.la_server_toast_connection_error
+
+                    showTestResult(messageId, exception.message, Toast.LENGTH_LONG)
+                }
+
+                override fun onSuccess(password: String?, token: String?, salt: String?) {
+                    showTestResult(
+                        R.string.la_server_toast_connection_success,
+                        null,
+                        Toast.LENGTH_SHORT
+                    )
                 }
             }
+        )
+    }
 
-            override fun onResponse(call: Call, response: Response) {
-                response.use {
-                    var isSubsonicOk = false
+    // The answer can arrive after the screen is gone. The text is resolved past the guard because
+    // getString reaches requireContext, which throws once the fragment is detached.
+    private fun showTestResult(messageId: Int, detail: String?, duration: Int) {
+        val binding = _binding ?: return
+        binding.testButton.isEnabled = true
 
-                    if (response.isSuccessful) {
-                        val responseBody = response.body?.string()
-                        if (responseBody != null) {
-                            try {
-                                val jsonRoot = JSONObject(responseBody)
-                                val subsonicResponse =
-                                    jsonRoot.getJSONObject("subsonic-response")
-                                if (subsonicResponse.getString("status") == "ok") {
-                                    isSubsonicOk = true
-                                }
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    }
-
-                    // Switch back to Main Thread to update UI
-                    binding.testButton.post {
-                        binding.testButton.isEnabled = true
-                        if (isSubsonicOk) {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.la_server_toast_connection_success),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            Toast.makeText(
-                                context,
-                                getString(R.string.la_server_toast_connection_failure),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    }
-                }
-            }
-        })
+        val message = getString(messageId) + if (detail == null) "" else "\n" + detail
+        Toast.makeText(context, message, duration).show()
     }
 
     companion object {

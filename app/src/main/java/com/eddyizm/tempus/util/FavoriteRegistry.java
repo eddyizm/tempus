@@ -29,6 +29,10 @@ public final class FavoriteRegistry {
 
     private static final Map<String, Record> records = new HashMap<>();
 
+    // Set by the session callback so the notification heart follows a song star made anywhere in
+    // the app. It runs on the caller's thread while the lock is held, so it must only post work.
+    public static volatile Runnable onChange;
+
     private FavoriteRegistry() {
     }
 
@@ -37,6 +41,7 @@ public final class FavoriteRegistry {
         String key = key(kind, id);
         Record record = new Record(key, isStarred, records.get(key));
         records.put(key, record);
+        changed();
         return record;
     }
 
@@ -53,18 +58,23 @@ public final class FavoriteRegistry {
         if (record == null) return;
         record.accepted = true;
         record.struck = false;
+        changed();
     }
 
     public static synchronized void strike(Record record) {
+        if (record == null) return;
         for (Record r = record; r != null; r = r.previous) {
             if (r.struck) continue;
             if (r.accepted || r.starred != record.starred) break;
             r.struck = true;
         }
+        changed();
     }
 
     public static synchronized void withdraw(Record record) {
-        if (record != null && !record.accepted) record.struck = true;
+        if (record == null || record.accepted) return;
+        record.struck = true;
+        changed();
     }
 
     public static synchronized void supersede(Kind kind, String id, boolean isStarred) {
@@ -72,10 +82,17 @@ public final class FavoriteRegistry {
         for (Record r = records.get(key(kind, id)); r != null && !r.accepted; r = r.previous) {
             if (r.starred != isStarred) r.struck = true;
         }
+        changed();
     }
 
     public static synchronized void clear() {
         records.clear();
+        changed();
+    }
+
+    private static void changed() {
+        Runnable listener = onChange;
+        if (listener != null) listener.run();
     }
 
     private static Record surviving(Record record) {

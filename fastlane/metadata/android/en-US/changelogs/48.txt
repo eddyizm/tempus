@@ -1,0 +1,8 @@
+feat: Full screen playlist editor with a working drag handle
+fix: Repeat one restarts a transcoded track from the start after a seek
+fix: enqueued the Retrofit Call<ApiResponse> in requestPodcastEpisode
+fix: prevent startup crash on duplicate tracks in playback queue
+feat: Sort directories in lexicographical order and files by track number
+fix: Keep the favorite heart in step across every screen
+feat: Add Azerbaijani (az) translation
+fix: expand now playing on media notification tap

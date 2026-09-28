@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.Share;
+import com.eddyizm.tempus.util.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class SharingRepository {
     public MutableLiveData<Share> createShare(String id, String description, Long expires) {
         MutableLiveData<Share> share = new MutableLiveData<>();
 
-        App.getSubsonicPublicClientInstance(false)
+        App.getSubsonicClientInstance(Preferences.getServer())
                 .getSharingClient()
                 .createShare(id, description, expires)
                 .enqueue(new Callback<ApiResponse>() {
@@ -64,7 +65,7 @@ public class SharingRepository {
     }
 
     public void updateShare(String id, String description, Long expires) {
-        App.getSubsonicPublicClientInstance(false)
+        App.getSubsonicClientInstance(Preferences.getServer())
                 .getSharingClient()
                 .updateShare(id, description, expires)
                 .enqueue(new Callback<ApiResponse>() {
