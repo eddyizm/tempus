@@ -30,11 +30,13 @@ import java.util.concurrent.Future
 
 /** Receiver availability and controller discovery are independent roles, not app modes. */
 class LanSettingsFragment : PreferenceFragmentCompat() {
+    private data class FoundDevice(val info: NsdServiceInfo, val foundAt: Long)
+
     private lateinit var app: Context
     private lateinit var nsd: NsdManager
     private lateinit var receiver: SwitchPreference
     private lateinit var pairing: SwitchPreference
-    private lateinit var paired: Preference
+    private lateinit var paired: PreferenceCategory
     private lateinit var pendingRequests: PreferenceCategory
     private lateinit var devices: PreferenceCategory
     private lateinit var status: Preference
@@ -44,8 +46,9 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
     private val main = Handler(Looper.getMainLooper())
     private val io = Executors.newSingleThreadExecutor()
     private val pairingClient = LanPairingClient()
-    private val discovered = linkedMapOf<String, NsdServiceInfo>()
+    private val discovered = linkedMapOf<String, FoundDevice>()
     private var discoveryListener: NsdManager.DiscoveryListener? = null
+    private var restartDiscovery = false
     private var operation: Future<*>? = null
     private var dialog: AlertDialog? = null
     private var active = false
@@ -55,6 +58,9 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
     private var receiverStartingAt = 0L
     private var receiverStopping = false
     private var pendingKey = ""
+    private var pairedKey: String? = null
+    private var promptedRequestKey = ""
+    private var dialogRequest: LanReceiverService.PairRequest? = null
     private var requestingReceiver = false
 
     private val permission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -89,10 +95,6 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
             if (value == true) LanReceiverService.openPairing() else LanReceiverService.closePairing()
             renderReceiver()
             false
-        }
-        paired.setOnPreferenceClickListener {
-            showPairedControllers()
-            true
         }
         preference<Preference>("lan_find_devices").setOnPreferenceClickListener {
             search()
@@ -192,6 +194,7 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
         receiver.summary = getString(if (receiverStartingAt != 0L) R.string.lan_connecting else R.string.lan_receiver_summary)
         pairing.isVisible = enabled
         paired.isVisible = enabled
+        if (enabled) renderPairedControllers()
         val open = enabled && now < LanReceiverService.pairingUntil
         pairing.isChecked = open
         pairing.summary = if (open) {
@@ -206,6 +209,18 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
             .filter { LanPolicy.mayApprove(now, LanReceiverService.pairingUntil, it.time) }
             .sortedBy { it.fingerprint } else emptyList()
         pendingRequests.isVisible = requests.isNotEmpty()
+        // A visible approval dialog must close with its pairing window. The
+        // service independently checks the deadline again before trusting it.
+        if (dialogRequest != null && dialogRequest !in requests) {
+            dialog?.dismiss()
+            dialogRequest = null
+        }
+        if (active && dialog?.isShowing != true) {
+            requests.firstOrNull { requestKey(it) != promptedRequestKey }?.let {
+                promptedRequestKey = requestKey(it)
+                showPairingRequest(it)
+            }
+        }
         val key = requests.joinToString { "${it.fingerprint}:${it.time}" }
         if (key == pendingKey) return
         pendingKey = key
@@ -216,37 +231,59 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
                 summary = getString(R.string.lan_pair_request, request.name, request.code)
                 isPersistent = false
                 setOnPreferenceClickListener {
-                    showDialog(MaterialAlertDialogBuilder(requireContext())
-                        .setTitle(R.string.lan_pair_title)
-                        .setMessage(getString(R.string.lan_pair_request, request.name, request.code))
-                        .setPositiveButton(R.string.lan_pair_confirm) { _, _ ->
-                            if (!LanReceiverService.approve(app, request)) showStatus(R.string.lan_pairing_expired)
-                            renderReceiver()
-                        }.setNegativeButton(android.R.string.cancel, null).create())
+                    showPairingRequest(request)
                     true
                 }
             })
         }
     }
 
-    private fun showPairedControllers() {
-        val fingerprints = LanReceiverService.trusted(app).sorted()
-        if (fingerprints.isEmpty()) {
-            showStatus(R.string.lan_no_paired)
-            return
-        }
-        val prefs = LanReceiverService.prefs(app)
-        val names = fingerprints.map { prefs.getString("peer-$it", getString(R.string.lan_unknown_device)) }.toTypedArray()
-        showDialog(MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.lan_paired)
-            .setItems(names) { _, index ->
-                val fingerprint = fingerprints[index]
-                showDialog(MaterialAlertDialogBuilder(requireContext()).setTitle(names[index])
-                    .setMessage(R.string.lan_revoke_question)
-                    .setPositiveButton(R.string.lan_revoke) { _, _ ->
-                        prefs.edit().putStringSet("trusted", LanReceiverService.trusted(app) - fingerprint)
-                            .remove("peer-$fingerprint").apply()
-                    }.setNegativeButton(android.R.string.cancel, null).create())
+    private fun requestKey(request: LanReceiverService.PairRequest) = "${request.fingerprint}:${request.time}"
+
+    private fun showPairingRequest(request: LanReceiverService.PairRequest) {
+        showDialog(MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.lan_pair_title)
+            .setMessage(getString(R.string.lan_pair_request, request.name, request.code))
+            .setPositiveButton(R.string.lan_pair_confirm) { _, _ ->
+                if (!LanReceiverService.approve(app, request)) showStatus(R.string.lan_pairing_expired)
+                dialogRequest = null
+                renderReceiver()
             }.setNegativeButton(android.R.string.cancel, null).create())
+        dialogRequest = request
+    }
+
+    private fun renderPairedControllers() {
+        val prefs = LanReceiverService.prefs(app)
+        val controllers = LanReceiverService.trusted(app).map { fingerprint ->
+            fingerprint to (prefs.getString("peer-$fingerprint", null)
+                ?.takeIf { it.isNotBlank() } ?: getString(R.string.lan_unknown_device))
+        }.sortedBy { it.second.lowercase() }
+        val key = controllers.joinToString { "${it.first}:${it.second}" }
+        if (key == pairedKey) return
+        pairedKey = key
+        paired.removeAll()
+        if (controllers.isEmpty()) {
+            paired.addPreference(Preference(requireContext()).apply {
+                summary = getString(R.string.lan_no_paired)
+                isSelectable = false
+            })
+        } else controllers.forEach { (fingerprint, name) ->
+            paired.addPreference(Preference(requireContext()).apply {
+                title = name
+                summary = getString(R.string.lan_revoke_hint)
+                isPersistent = false
+                setOnPreferenceClickListener {
+                    showDialog(MaterialAlertDialogBuilder(requireContext()).setTitle(name)
+                        .setMessage(R.string.lan_revoke_question)
+                        .setPositiveButton(R.string.lan_revoke) { _, _ ->
+                            prefs.edit().putStringSet("trusted", LanReceiverService.trusted(app) - fingerprint)
+                                .remove("peer-$fingerprint").apply()
+                            renderPairedControllers()
+                        }.setNegativeButton(android.R.string.cancel, null).create())
+                    true
+                }
+            })
+        }
     }
 
     private fun search() {
@@ -255,27 +292,58 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
             permission.launch(arrayOf("android.permission.ACCESS_LOCAL_NETWORK"))
             return
         }
-        if (discoveryListener != null) return
+        discoveryListener?.let { listener ->
+            // Restart discovery on a new tap: Android need not repeat
+            // onServiceFound during one continuous discovery session.
+            restartDiscovery = true
+            runCatching { nsd.stopServiceDiscovery(listener) }.onFailure {
+                discoveryListener = null
+                restartDiscovery = false
+                search()
+            }
+            return
+        }
         discovered.clear()
         renderDevices()
         val token = generation
         val listener = object : NsdManager.DiscoveryListener {
             override fun onDiscoveryStarted(type: String) = Unit
-            override fun onDiscoveryStopped(type: String) = Unit
-            override fun onStopDiscoveryFailed(type: String, error: Int) = Unit
+            override fun onDiscoveryStopped(type: String) = discoveryEnded()
+            override fun onStopDiscoveryFailed(type: String, error: Int) = discoveryEnded()
+            private fun discoveryEnded() {
+                val finished = this
+                main.post {
+                    if (isCurrent(token) && discoveryListener === finished) {
+                        discoveryListener = null
+                        if (restartDiscovery) {
+                            restartDiscovery = false
+                            search()
+                        }
+                    }
+                }
+            }
             override fun onStartDiscoveryFailed(type: String, error: Int) {
                 main.post {
                     if (isCurrent(token)) {
                         discoveryListener = null
+                        restartDiscovery = false
                         showStatus(R.string.lan_discovery_error)
                     }
                 }
             }
             override fun onServiceFound(info: NsdServiceInfo) {
-                main.post { if (isCurrent(token)) { discovered[info.serviceName] = info; renderDevices() } }
+                main.post { if (isCurrent(token)) {
+                    discovered[info.serviceName] = FoundDevice(info, SystemClock.elapsedRealtime())
+                    renderDevices()
+                    if (!busy && !resolving) showStatus(R.string.lan_devices_found)
+                } }
             }
             override fun onServiceLost(info: NsdServiceInfo) {
-                main.post { if (isCurrent(token)) { discovered.remove(info.serviceName); renderDevices() } }
+                main.post { if (isCurrent(token)) {
+                    discovered.remove(info.serviceName)
+                    renderDevices()
+                    if (discovered.isEmpty() && !busy && !resolving) showStatus(R.string.lan_searching)
+                } }
             }
         }
         discoveryListener = listener
@@ -291,13 +359,13 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
     private fun renderDevices() {
         devices.removeAll()
         devices.isVisible = discovered.isNotEmpty()
-        discovered.values.forEach { info ->
+        discovered.values.forEach { found ->
             devices.addPreference(Preference(requireContext()).apply {
-                title = info.serviceName.removePrefix("Tempus ")
+                title = found.info.serviceName.removePrefix("Tempus ")
                 summary = getString(R.string.lan_select_receiver)
                 setIcon(R.drawable.ic_navigate_next)
                 isPersistent = false
-                setOnPreferenceClickListener { resolve(info); true }
+                setOnPreferenceClickListener { resolve(found.info); true }
             })
         }
     }
@@ -311,7 +379,12 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
         try {
             nsd.resolveService(info, object : NsdManager.ResolveListener {
                 override fun onResolveFailed(service: NsdServiceInfo, error: Int) {
-                    main.post { if (isCurrent(token)) { resolving = false; showStatus(R.string.lan_connection_error) } }
+                    main.post { if (isCurrent(token)) {
+                        resolving = false
+                        discovered.remove(info.serviceName)
+                        renderDevices()
+                        showStatus(R.string.lan_connection_error)
+                    } }
                 }
                 override fun onServiceResolved(service: NsdServiceInfo) {
                     main.post { if (isCurrent(token)) { resolving = false; connectOrPair(service) } }
@@ -373,6 +446,7 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
     private fun isCurrent(token: Long): Boolean = active && token == generation
 
     private fun showDialog(next: AlertDialog) {
+        dialogRequest = null
         dialog?.dismiss()
         dialog = next
         next.show()
@@ -383,6 +457,17 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
             if (!active) return
             renderReceiver()
             LanReceiverService.error?.let { status.summary = it }
+            // NSD does not reliably deliver onServiceLost. Treat discovery
+            // entries as temporary and start a fresh scan when they expire.
+            val now = SystemClock.elapsedRealtime()
+            val expired = discovered.entries.removeAll { now - it.value.foundAt >= 45000 }
+            if (expired) {
+                renderDevices()
+                if (discovered.isEmpty() && !busy && !resolving) {
+                    showStatus(R.string.lan_search_again)
+                    search()
+                }
+            }
             main.postDelayed(this, 1000)
         }
     }
@@ -403,10 +488,12 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
         main.removeCallbacks(refresh)
         discoveryListener?.let { runCatching { nsd.stopServiceDiscovery(it) } }
         discoveryListener = null
+        restartDiscovery = false
         operation?.cancel(true)
         pairingClient.cancel()
         dialog?.dismiss()
         dialog = null
+        dialogRequest = null
         super.onStop()
     }
 

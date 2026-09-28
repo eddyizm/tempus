@@ -56,11 +56,13 @@
     <string name="lan_pairing_remaining">Available to new controllers for %1$s</string>
     <string name="lan_pairing_expired">Pairing is closed. Open it again and compare the codes.</string>
     <string name="lan_pair_requests">Pairing requests</string>
-    <string name="lan_paired_summary">Manage devices authorized to control this phone.</string>
+    <string name="lan_revoke_hint">Tap to revoke access</string>
     <string name="lan_controlled_device">Controlled device</string>
     <string name="lan_release_summary">Playback continues on the receiver.</string>
     <string name="lan_available_devices">Available receivers</string>
     <string name="lan_select_receiver">Select to pair or take control.</string>
+    <string name="lan_devices_found">Select a receiver below.</string>
+    <string name="lan_search_again">Search again to refresh the available receivers.</string>
     <string name="lan_unknown_device">Unknown device</string>
     <string name="lan_name_required">Enter a device name of 1–40 characters.</string>
 </resources>

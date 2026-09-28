@@ -55,11 +55,13 @@
     <string name="lan_pairing_remaining">Disponibile ai nuovi telecomandi per %1$s</string>
     <string name="lan_pairing_expired">Abbinamento chiuso. Riaprilo e confronta nuovamente i codici.</string>
     <string name="lan_pair_requests">Richieste di abbinamento</string>
-    <string name="lan_paired_summary">Gestisci i dispositivi autorizzati a controllare questo telefono.</string>
+    <string name="lan_revoke_hint">Tocca per revocare l’accesso</string>
     <string name="lan_controlled_device">Dispositivo controllato</string>
     <string name="lan_release_summary">La riproduzione sul ricevente continua.</string>
     <string name="lan_available_devices">Riceventi disponibili</string>
     <string name="lan_select_receiver">Seleziona per abbinare o prendere il controllo.</string>
+    <string name="lan_devices_found">Seleziona un ricevente qui sotto.</string>
+    <string name="lan_search_again">Cerca di nuovo per aggiornare i riceventi disponibili.</string>
     <string name="lan_unknown_device">Dispositivo sconosciuto</string>
     <string name="lan_name_required">Inserisci un nome dispositivo da 1 a 40 caratteri.</string>
 </resources>

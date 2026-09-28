@@ -6,7 +6,7 @@
         android:id="@+id/player_remote_toggle"
         style="@style/Widget.Material3.Button.TextButton"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        app:icon="@drawable/ic_lan_remote" app:iconGravity="textStart" android:minHeight="48dp" android:text="@string/lan_play_on" />
+        app:icon="@drawable/ic_lan_remote" app:iconTint="@null" app:iconGravity="textStart" android:minHeight="48dp" android:text="@string/lan_play_on" />
 <androidx.media3.ui.PlayerControlView
     android:id="@+id/now_playing_media_controller_view"
     android:layout_width="match_parent"

@@ -34,13 +34,21 @@ Settings uses the same preference rows, switch style and toolbar as the original
 settings. **This device** contains the editable device name. **Receiver** enables
 local network control on the phone that plays music. Only while that receiver is
 running, **Make available for pairing** appears as a switch with a two-minute
-countdown, followed by **Paired controllers**. Switching pairing off cancels
-pending requests; expiry prevents late confirmations. Already paired controllers
+countdown, followed by an inline list of **Paired controllers**. Tap a controller
+to review and confirm revoking its access. Switching pairing off cancels
+pending requests; expiry prevents late confirmations. An incoming pairing request
+opens a confirmation dialog on the receiver with the code to compare against the
+controller. It also remains in **Pairing requests** if the dialog is dismissed.
+Already paired controllers
 do not need the window open. **Controller** searches for receiving phones and
 shows the selected device with **Release remote control**. Selecting an approved
 receiver opens the normal player directly. Both roles can be used on one phone;
 there is no master/slave mode selector. Playback/queue/volume controls belong in
 the player, not this settings page. Diagnostic export is absent.
+
+The device list updates as receivers are found. Discovery results expire after
+45 seconds and the search restarts, because Android may not report when a
+receiver disappears. Tap **Find devices** to scan again at any time.
 
 While a receiver is selected, the library's **Play**, **Add to queue** and
 **Play next** actions apply to that receiver, including playlists and albums.
