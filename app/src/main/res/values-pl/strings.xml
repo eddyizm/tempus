@@ -292,6 +292,11 @@
     <string name="menu_sort_least_recently_starred">Ostatnio oznaczone najniższą liczbą gwiazdek</string>
     <string name="menu_pin_button">Dodaj do ulubionych</string>
     <string name="menu_unpin_button">Usuń z ulubionych</string>
+	<string name="menu_keep_synced_button">Utrzymaj zsynchronizowanie</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Pobieranie %d utworu</item>
+        <item quantity="other">Pobieranie %d utworów</item>
+    </plurals>
     <string name="playlist_sort_pinned">Ulubione</string>
 	<string name="playlist_sort_last_played">Ostatnio odtwarzane</string>
     <string name="playlist_sort_last_updated">Ostatnio zaktualizowane</string>
@@ -862,7 +867,8 @@
     <string name="la_theme_card_default">Domyślny</string>
     <string name="la_theme_card_flirt_red_description">Czerwony kolor akcentu</string>
     <string name="la_theme_card_coral_red_description">Koralowa czerwień kolor akcentu</string>
-    <string name="la_theme_card_royal_blue_description">Szmaragdowa zieleń kolor akcentu</string>
+	<string name="la_theme_card_emerald_green_description">Szmaragdowa zieleń kolor akcentu</string>
+    <string name="la_theme_card_royal_blue_description">Ciemnoniebieski kolor akcentu</string>
     <string name="la_theme_card_purple_violet_description">Fioletowy kolor akcentu</string>
     <string name="la_theme_card_sunset_amber_description">Pomarańcz zachodu kolor akcentu</string>
     <string name="la_theme_card_teal_description">Turkusowy kolor akcentu</string>
