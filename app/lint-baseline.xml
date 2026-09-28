@@ -444,7 +444,7 @@
         errorLine2="                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerControllerFragment.java"
-            line="339"
+            line="345"
             column="35"/>
     </issue>
 
@@ -966,12 +966,12 @@
     <issue
         id="QueryPermissionsNeeded"
         message="Consider adding a `&lt;queries>` declaration to your manifest when calling this method; see https://g.co/dev/packagevisibility for details"
-        errorLine1="        if ((intent.resolveActivity(requireActivity().getPackageManager()) != null)) {"
-        errorLine2="                    ~~~~~~~~~~~~~~~">
+        errorLine1="            if ((intent.resolveActivity(requireActivity().getPackageManager()) != null)) {"
+        errorLine2="                        ~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/SettingsContainerFragment.java"
-            line="360"
-            column="21"/>
+            line="369"
+            column="25"/>
     </issue>
 
     <issue
@@ -1042,7 +1042,7 @@
 
     <issue
         id="AndroidGradlePluginVersion"
-        message="A newer version of Gradle than 9.4.1 is available: 9.7.1"
+        message="A newer version of Gradle than 9.4.1 is available: 9.8.0"
         errorLine1="distributionUrl=https\://services.gradle.org/distributions/gradle-9.4.1-bin.zip"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -1053,7 +1053,7 @@
 
     <issue
         id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.application than 9.2.1 is available: 9.3.2"
+        message="A newer version of com.android.application than 9.2.1 is available: 9.4.1"
         errorLine1="agp = &quot;9.2.1&quot;"
         errorLine2="      ~~~~~~~">
         <location
@@ -1064,7 +1064,7 @@
 
     <issue
         id="AndroidGradlePluginVersion"
-        message="A newer version of com.android.library than 9.2.1 is available: 9.3.2"
+        message="A newer version of com.android.library than 9.2.1 is available: 9.4.1"
         errorLine1="agp = &quot;9.2.1&quot;"
         errorLine2="      ~~~~~~~">
         <location
@@ -1097,7 +1097,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.navigation:navigation-fragment-ktx than 2.8.6 is available: 2.10.0"
+        message="A newer version of androidx.navigation:navigation-fragment-ktx than 2.8.6 is available: 2.10.2"
         errorLine1="navigation = &quot;2.8.6&quot;"
         errorLine2="             ~~~~~~~">
         <location
@@ -1108,7 +1108,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.navigation:navigation-ui-ktx than 2.8.6 is available: 2.10.0"
+        message="A newer version of androidx.navigation:navigation-ui-ktx than 2.8.6 is available: 2.10.2"
         errorLine1="navigation = &quot;2.8.6&quot;"
         errorLine2="             ~~~~~~~">
         <location
@@ -1119,7 +1119,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.room:room-compiler than 2.7.0 is available: 2.8.4"
+        message="A newer version of androidx.room:room-compiler than 2.7.0 is available: 2.8.5"
         errorLine1="room = &quot;2.7.0&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -1130,7 +1130,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.room:room-runtime than 2.7.0 is available: 2.8.4"
+        message="A newer version of androidx.room:room-runtime than 2.7.0 is available: 2.8.5"
         errorLine1="room = &quot;2.7.0&quot;"
         errorLine2="       ~~~~~~~">
         <location
@@ -1174,7 +1174,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-cast than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-cast than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1185,7 +1185,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-common than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-common than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1196,7 +1196,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-exoplayer than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-exoplayer than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1207,7 +1207,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-exoplayer-hls than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-exoplayer-hls than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1218,7 +1218,7 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-session than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-session than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
@@ -1229,13 +1229,24 @@
 
     <issue
         id="GradleDependency"
-        message="A newer version of androidx.media3:media3-ui than 1.9.2 is available: 1.11.0"
+        message="A newer version of androidx.media3:media3-ui than 1.9.2 is available: 1.11.1"
         errorLine1="media3 = &quot;1.9.2&quot;"
         errorLine2="         ~~~~~~~">
         <location
             file="$HOME/src/tempus/gradle/libs.versions.toml"
             line="21"
             column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.annotation:annotation than 1.10.0 is available: 1.11.0"
+        errorLine1="annotation = &quot;1.10.0&quot;"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="$HOME/src/tempus/gradle/libs.versions.toml"
+            line="27"
+            column="14"/>
     </issue>
 
     <issue
@@ -1261,8 +1272,19 @@
     </issue>
 
     <issue
+        id="GradleDependency"
+        message="A newer version of androidx.compose:compose-bom than 2026.08.00 is available: 2026.09.00"
+        errorLine1="composeBom = &quot;2026.08.00&quot;"
+        errorLine2="             ~~~~~~~~~~~~">
+        <location
+            file="$HOME/src/tempus/gradle/libs.versions.toml"
+            line="37"
+            column="14"/>
+    </issue>
+
+    <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.mockito:mockito-core than 5.12.0 is available: 5.23.0"
+        message="A newer version of org.mockito:mockito-core than 5.12.0 is available: 5.24.0"
         errorLine1="    testImplementation &apos;org.mockito:mockito-core:5.12.0&apos;"
         errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -1273,7 +1295,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.mockito.kotlin:mockito-kotlin than 5.4.0 is available: 6.3.0"
+        message="A newer version of org.mockito.kotlin:mockito-kotlin than 5.4.0 is available: 6.4.0"
         errorLine1="    testImplementation &apos;org.mockito.kotlin:mockito-kotlin:5.4.0&apos;"
         errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -1284,7 +1306,18 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.android than 2.2.20 is available: 2.4.10"
+        message="A newer version of com.github.skydoves:colorpickerview than 2.4.0 is available: 2.5.0"
+        errorLine1="colorpickerview = &quot;2.4.0&quot;"
+        errorLine2="                  ~~~~~~~">
+        <location
+            file="$HOME/src/tempus/gradle/libs.versions.toml"
+            line="3"
+            column="19"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlin.android than 2.2.20 is available: 2.4.20"
         errorLine1="kotlin = &quot;2.2.20&quot;"
         errorLine2="         ~~~~~~~~">
         <location
@@ -1295,7 +1328,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.20 is available: 2.4.10"
+        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.20 is available: 2.4.20"
         errorLine1="kotlin = &quot;2.2.20&quot;"
         errorLine2="         ~~~~~~~~">
         <location
@@ -1306,7 +1339,7 @@
 
     <issue
         id="NewerVersionAvailable"
-        message="A newer version of org.jetbrains.kotlin.plugin.parcelize than 2.2.20 is available: 2.4.10"
+        message="A newer version of org.jetbrains.kotlin.plugin.parcelize than 2.2.20 is available: 2.4.20"
         errorLine1="kotlin = &quot;2.2.20&quot;"
         errorLine2="         ~~~~~~~~">
         <location
@@ -4243,7 +4276,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;menu_keep_synced_button&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;menu_keep_synced_button&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;menu_keep_synced_button&quot;>Keep synced&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4254,7 +4287,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_sync_downloading&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_sync_downloading&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;plurals name=&quot;playlist_sync_downloading&quot;>"
         errorLine2="             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4650,7 +4683,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_hint&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_hint&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_hint&quot;>Drag the handle to reorder, tap the trash to remove. Nothing is sent until Save.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4661,7 +4694,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_remove_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_remove_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_remove_track&quot;>Remove track&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4672,7 +4705,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_drag_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_drag_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_drag_track&quot;>Drag to reorder&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4683,7 +4716,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;menu_edit_playlist_details_button&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;menu_edit_playlist_details_button&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;menu_edit_playlist_details_button&quot;>Edit details&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4694,7 +4727,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_details_dialog_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_details_dialog_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_details_dialog_title&quot;>Playlist details&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4705,7 +4738,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_load_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_load_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_load_failure&quot;>Could not load the playlist&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -4716,7 +4749,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;playlist_editor_removed_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;playlist_editor_removed_track&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_editor_removed_track&quot;>Removed from the list&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -6311,7 +6344,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;song_bottom_sheet_undo&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;song_bottom_sheet_undo&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;song_bottom_sheet_undo&quot;>Undo&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -6322,7 +6355,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;song_bottom_sheet_undo_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;song_bottom_sheet_undo_failure&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;song_bottom_sheet_undo_failure&quot;>Failed to put the song back&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -8313,17 +8346,6 @@
 
     <issue
         id="Untranslatable"
-        message="The resource string &quot;settings_support_discussion_link&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
-        errorLine1="    &lt;string name=&quot;settings_support_discussion_link&quot; translatable=&quot;false&quot;>https://github.com/eddyizm/tempus/discussions&lt;/string>"
-        errorLine2="                                                    ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="466"
-            column="53"/>
-    </issue>
-
-    <issue
-        id="Untranslatable"
         message="The resource string &quot;support_url&quot; has been marked as translatable=&quot;false&quot; elsewhere (usually in the `values` folder), but is translated to &quot;it&quot; (Italian) here"
         errorLine1="    &lt;string name=&quot;support_url&quot;>https://ko-fi.com/eddyizm&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
@@ -8331,6 +8353,17 @@
             file="src/main/res/values-it/strings.xml"
             line="474"
             column="13"/>
+    </issue>
+
+    <issue
+        id="Untranslatable"
+        message="The resource string &quot;settings_support_discussion_link&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
+        errorLine1="    &lt;string name=&quot;settings_support_discussion_link&quot; translatable=&quot;false&quot;>https://github.com/eddyizm/tempus/discussions&lt;/string>"
+        errorLine2="                                                    ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="477"
+            column="53"/>
     </issue>
 
     <issue
@@ -8527,7 +8560,7 @@
         errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ja/strings.xml"
-            line="589"
+            line="600"
             column="45"/>
     </issue>
 
@@ -8621,17 +8654,6 @@
 
     <issue
         id="Untranslatable"
-        message="The resource string &quot;support_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
-        errorLine1="    &lt;string name=&quot;support_url&quot; translatable=&quot;false&quot;>https://ko-fi.com/eddyizm&lt;/string>"
-        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="660"
-            column="32"/>
-    </issue>
-
-    <issue
-        id="Untranslatable"
         message="The resource string &quot;support_url&quot; has been marked as translatable=&quot;false&quot; elsewhere (usually in the `values` folder), but is translated to &quot;pl&quot; (Polish) here"
         errorLine1="    &lt;string name=&quot;support_url&quot;>https://ko-fi.com/eddyizm&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~">
@@ -8639,6 +8661,17 @@
             file="src/main/res/values-pl/strings.xml"
             line="673"
             column="13"/>
+    </issue>
+
+    <issue
+        id="Untranslatable"
+        message="The resource string &quot;support_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
+        errorLine1="    &lt;string name=&quot;support_url&quot; translatable=&quot;false&quot;>https://ko-fi.com/eddyizm&lt;/string>"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="673"
+            column="32"/>
     </issue>
 
     <issue
@@ -8654,17 +8687,6 @@
 
     <issue
         id="Untranslatable"
-        message="The resource string &quot;undraw_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
-        errorLine1="    &lt;string name=&quot;undraw_url&quot; translatable=&quot;false&quot;>https://undraw.co/&lt;/string>"
-        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="689"
-            column="31"/>
-    </issue>
-
-    <issue
-        id="Untranslatable"
         message="The resource string &quot;undraw_url&quot; has been marked as translatable=&quot;false&quot; elsewhere (usually in the `values` folder), but is translated to &quot;pl&quot; (Polish) here"
         errorLine1="    &lt;string name=&quot;undraw_url&quot;>https://undraw.co/&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~">
@@ -8672,6 +8694,17 @@
             file="src/main/res/values-pl/strings.xml"
             line="701"
             column="13"/>
+    </issue>
+
+    <issue
+        id="Untranslatable"
+        message="The resource string &quot;undraw_url&quot; is marked as translatable=&quot;false&quot;, but is translated to &quot;ja&quot; (Japanese) here"
+        errorLine1="    &lt;string name=&quot;undraw_url&quot; translatable=&quot;false&quot;>https://undraw.co/&lt;/string>"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="702"
+            column="31"/>
     </issue>
 
     <issue
@@ -8692,7 +8725,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-ja/strings.xml"
-            line="754"
+            line="767"
             column="40"/>
     </issue>
 
@@ -8967,7 +9000,7 @@
         errorLine2="                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/service/BaseMediaService.kt"
-            line="773"
+            line="774"
             column="23"/>
     </issue>
 
@@ -10568,34 +10601,12 @@
 
     <issue
         id="UnusedResources"
-        message="The resource `R.color.md_theme_amoled_surfaceVariant` appears to be unused"
-        errorLine1="    &lt;color name=&quot;md_theme_amoled_surfaceVariant&quot;>#1A1A1A&lt;/color>"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/colors.xml"
-            line="80"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
         message="The resource `R.color.md_theme_amoled_onSurfaceVariant` appears to be unused"
         errorLine1="    &lt;color name=&quot;md_theme_amoled_onSurfaceVariant&quot;>#CAC4D0&lt;/color>"
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values/colors.xml"
             line="81"
-            column="12"/>
-    </issue>
-
-    <issue
-        id="UnusedResources"
-        message="The resource `R.color.md_theme_amoled_outline` appears to be unused"
-        errorLine1="    &lt;color name=&quot;md_theme_amoled_outline&quot;>#49454F&lt;/color>"
-        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/colors.xml"
-            line="82"
             column="12"/>
     </issue>
 
@@ -11574,7 +11585,7 @@
         errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/res/values-night/styles.xml"
-            line="214"
+            line="218"
             column="12"/>
     </issue>
 
@@ -11900,17 +11911,6 @@
     <issue
         id="TypographyEllipsis"
         message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
-        errorLine1="    &lt;string name=&quot;search_all_songs_loading&quot;>すべての曲を取得中...&lt;/string>"
-        errorLine2="                                            ~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values-ja/strings.xml"
-            line="728"
-            column="45"/>
-    </issue>
-
-    <issue
-        id="TypographyEllipsis"
-        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
         errorLine1="    &lt;string name=&quot;search_all_songs_loading&quot;>Bütün mahnılar alınır ...&lt;/string>"
         errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -11927,6 +11927,17 @@
         <location
             file="src/main/res/values-sv/strings.xml"
             line="740"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="TypographyEllipsis"
+        message="Replace &quot;...&quot; with ellipsis character (…, &amp;#8230;) ?"
+        errorLine1="    &lt;string name=&quot;search_all_songs_loading&quot;>すべての曲を取得中...&lt;/string>"
+        errorLine2="                                            ~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values-ja/strings.xml"
+            line="741"
             column="45"/>
     </issue>
 
@@ -12242,7 +12253,7 @@
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/activity/MainActivity.java"
-            line="888"
+            line="895"
             column="17"/>
     </issue>
 
@@ -15421,7 +15432,7 @@
         errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerControllerFragment.java"
-            line="445"
+            line="451"
             column="40"/>
     </issue>
 
@@ -15432,7 +15443,7 @@
         errorLine2="                                                                 ~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerControllerFragment.java"
-            line="445"
+            line="451"
             column="66"/>
     </issue>
 
@@ -15443,7 +15454,7 @@
         errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerControllerFragment.java"
-            line="449"
+            line="455"
             column="44"/>
     </issue>
 
@@ -15454,7 +15465,7 @@
         errorLine2="                                                                     ~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerControllerFragment.java"
-            line="449"
+            line="455"
             column="70"/>
     </issue>
 
@@ -15465,7 +15476,7 @@
         errorLine2="                                           ~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerControllerFragment.java"
-            line="455"
+            line="461"
             column="44"/>
     </issue>
 
@@ -15476,7 +15487,7 @@
         errorLine2="                                                           ~~~~~~">
         <location
             file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerControllerFragment.java"
-            line="455"
+            line="461"
             column="60"/>
     </issue>
 
