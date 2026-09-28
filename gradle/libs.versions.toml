@@ -32,6 +32,7 @@ lifecycleViewmodelKtx = "2.11.0"
 # Testing
 androidxTestExtJunit = "1.2.1"
 androidxTestRunner = "1.6.2"
+androidxTestEspresso = "3.6.1"
 
 # Compose
 composeBom = "2026.08.00"
@@ -88,6 +89,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxTestEspresso" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
