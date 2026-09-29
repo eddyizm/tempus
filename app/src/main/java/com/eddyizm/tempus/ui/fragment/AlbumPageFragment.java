@@ -176,6 +176,14 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
             });
             return true;
         }
+        if (item.getItemId() == R.id.action_play_next || item.getItemId() == R.id.action_add_to_queue) {
+            boolean playNext = item.getItemId() == R.id.action_play_next;
+            albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
+                MediaManager.enqueue(mediaBrowserListenableFuture, songs, playNext);
+                activity.setBottomSheetInPeek(true);
+            });
+            return true;
+        }
 
         return false;
     }
