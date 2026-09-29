@@ -384,8 +384,8 @@ public class PlayerControllerFragment extends Fragment {
                 mainTitle = stationName;
             }
 
-            playerMediaTitleLabel.setText(mainTitle);
-            playerArtistNameLabel.setText(stationName);
+            setTextIfChanged(playerMediaTitleLabel, mainTitle);
+            setTextIfChanged(playerArtistNameLabel, stationName);
 
             playerMediaTitleLabel.setSelected(true);
             playerArtistNameLabel.setSelected(true);
@@ -397,14 +397,14 @@ public class PlayerControllerFragment extends Fragment {
             return;
         }
 
-        playerMediaTitleLabel.setText(
+        setTextIfChanged(playerMediaTitleLabel,
                 Preferences.getTrackNumberVisible()
                         && mediaMetadata.trackNumber != null
                         && !String.valueOf(mediaMetadata.trackNumber).isEmpty()
                                 ? String.format("%02d", mediaMetadata.trackNumber) + ". "
                                         + String.valueOf(mediaMetadata.title)
                                 : String.valueOf(mediaMetadata.title));
-        playerArtistNameLabel.setText(
+        setTextIfChanged(playerArtistNameLabel,
                 mediaMetadata.artist != null
                         ? String.valueOf(mediaMetadata.artist)
                         : "");
@@ -423,6 +423,12 @@ public class PlayerControllerFragment extends Fragment {
                                         : View.GONE);
 
         updateAssetLinkChips(mediaMetadata);
+    }
+
+    private void setTextIfChanged(TextView label, CharSequence text) {
+        // Remote position updates arrive every second. Reassigning the same
+        // title restarts Android's marquee before it can begin scrolling.
+        if (!TextUtils.equals(label.getText(), text)) label.setText(text);
     }
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
