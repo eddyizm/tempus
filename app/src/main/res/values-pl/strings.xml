@@ -735,8 +735,10 @@
         <item quantity="other">%d wykonawców do zsynchronizowania</item>
     </plurals>
     <plurals name="songs_download_started">
-        <item quantity="one">Pobieranie %d piosenki</item>
-        <item quantity="other">Pobieranie %d piosenek</item>
+        <item quantity="one">Pobieram %d piosenkę</item>
+		<item quantity="few">Pobieram %d piosenki</item>
+		<item quantity="many">Pobieram %d piosenek</item>
+        <item quantity="other">Pobieram %d piosenek</item>
     </plurals>
     <string name="equalizer_fragment_title">Korektor dźwięku</string>
     <string name="equalizer_reset">Reset</string>
