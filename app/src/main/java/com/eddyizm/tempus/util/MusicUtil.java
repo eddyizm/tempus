@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Html;
 import android.util.Log;
@@ -446,6 +447,18 @@ public class MusicUtil {
             case "flac": return "audio/flac";
             default: return null;
         }
+    }
+
+    // The file's format on the server, from its path, since a transcoded download's suffix is rewritten.
+    public static String sourceSuffix(Bundle extras) {
+        if (extras == null) return null;
+        String path = extras.getString("path");
+        if (path != null) {
+            int dot = path.lastIndexOf('.');
+            int slash = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+            if (dot > slash && dot < path.length() - 1) return path.substring(dot + 1);
+        }
+        return extras.getString("suffix");
     }
 
     // Maps a Media3 sample MIME type (e.g. "audio/flac") to a short, user-facing format

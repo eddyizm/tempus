@@ -8,6 +8,7 @@
 - [Main Features](#main-features)
 - [Navigation](#navigation)
 - [Playback Controls](#playback-controls)
+- [Playing on another device](#playing-on-another-device)
 - [Favorites](#favorites)
 - [Playlist Management](#playlist-management)
 - [Android Auto](#android-auto)
@@ -54,6 +55,8 @@ This app works with any service that implements the Subsonic API, including:
 1. Enter your server URL (e.g., `https://your-subsonic-server.com`)
 2. Provide your username and password. Or in some cases, API key (eg LMS: https://github.com/epoupon/lms/discussions/562).
 3. Test the connection to ensure proper configuration
+
+If you intend to play to a TV or a network speaker, the address you enter here also has to be reachable from that device, because it fetches the music from your server itself. See [Playing on another device](#playing-on-another-device).
 
 ### Advanced Settings
 **TODO**
@@ -148,6 +151,22 @@ If your server supports it - add a internet radio station feed
 
 ### Advanced Controls
 **TODO**
+
+## Playing on another device
+
+Tempus can hand playback to a UPnP or DLNA renderer on your network, such as a TV, an AV receiver or a network speaker. Tap the cast button in the toolbar, pick the device, and the queue, the position and the play state move to it while the app keeps the controls. On the GitHub build the same button lists Chromecast devices and network renderers together.
+
+The renderer fetches the music from your server itself. Nothing is streamed through the phone, which is how the protocol works. Downloaded tracks are played from your server too, because the renderer cannot reach what is stored on the phone.
+
+**Your server address has to be one the renderer can reach.** If Tempus is configured with an address only the phone can use, the device still appears in the list and still accepts being selected, and then plays nothing. Addresses that fail this way:
+
+- a VPN or mesh network address, a Tailscale or WireGuard address for example, when the renderer is not on that network
+- `localhost` or `127.0.0.1`
+- an address on a different subnet from the renderer, which is easy to end up with when there is a second router
+
+Use the address your server has on the same network as the renderer.
+
+Volume is left to the renderer's own remote, because some renderers report a volume that does not match what they are doing. The sleep timer's fade out has no effect on a renderer, so playback stops at full volume when the timer runs out. Discovery uses SSDP, which is UDP and lossy, so if your device does not appear the first time, close the picker and open it again.
 
 ## Favorites
 

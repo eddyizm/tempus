@@ -33,7 +33,12 @@ import com.eddyizm.tempus.equalizer.EqualizerBackend
 import com.eddyizm.tempus.equalizer.EqualizerManager
 import com.eddyizm.tempus.equalizer.ExternalBackend
 import com.eddyizm.tempus.equalizer.DefaultBackend
+import androidx.mediarouter.media.MediaRouter
 import com.eddyizm.tempus.repository.QueueRepository
+import com.eddyizm.tempus.upnp.UpnpControlPoint
+import com.eddyizm.tempus.upnp.UpnpDevice
+import com.eddyizm.tempus.upnp.UpnpPlayer
+import com.eddyizm.tempus.upnp.UpnpRouteProvider
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.*
 import com.eddyizm.tempus.util.SleepTimerManager
@@ -65,6 +70,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
     protected var sessionCallback: MediaLibrarySession.Callback? = null
+    private var upnpRouteProvider: UpnpRouteProvider? = null
+    private var upnpPlayer: UpnpPlayer? = null
     private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
@@ -674,6 +681,45 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
+    /** Offers renderers as routes and moves playback onto one through [setPlayer], as Cast does. */
+    private fun initializeUpnpRoutes() {
+        val controlPoint = UpnpControlPoint()
+        val provider = UpnpRouteProvider(this, controlPoint)
+        provider.selectionListener = object : UpnpRouteProvider.SelectionListener {
+            override fun onRendererSelected(device: UpnpDevice) {
+                val previous = upnpPlayer
+                val player = UpnpPlayer(controlPoint, device, mainLooper, context = this@BaseMediaService)
+                upnpPlayer = player
+                initializePlayerListener(player)
+                setPlayer(mediaLibrarySession.player, player)
+                // The unselect that follows names the old renderer, so it is released here.
+                previous?.release()
+            }
+
+            override fun onRendererUnselected(device: UpnpDevice) {
+                val player = upnpPlayer ?: return
+                if (player.device != device) return
+                upnpPlayer = null
+                setPlayer(player, exoplayer)
+                player.release()
+            }
+        }
+        MediaRouter.getInstance(this).addProvider(provider)
+        upnpRouteProvider = provider
+    }
+
+    private fun releaseUpnpRoutes() {
+        upnpRouteProvider?.let { provider ->
+            provider.selectionListener = null
+            MediaRouter.getInstance(this).removeProvider(provider)
+            provider.release()
+        }
+        upnpRouteProvider = null
+        // Left playing on the renderer otherwise, with nothing left to control it.
+        upnpPlayer?.release()
+        upnpPlayer = null
+    }
+
     open fun releasePlayers() {
         exoplayer.release()
     }
@@ -696,6 +742,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         playerInitHook()
         initializeEqualizer()
         initializeNetworkListener()
+        initializeUpnpRoutes()
         restorePlayerFromQueue(mediaLibrarySession.player)
     }
 
@@ -718,6 +765,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
         if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
+        releaseUpnpRoutes()
         releasePlayers()
         mediaLibrarySession.release()
         super.onDestroy()

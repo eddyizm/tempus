@@ -21,10 +21,12 @@ import com.eddyizm.tempus.model.Server;
 import com.eddyizm.tempus.repository.ServerRepository;
 import com.eddyizm.tempus.subsonic.models.MusicFolder;
 import com.eddyizm.tempus.ui.activity.MainActivity;
+import com.eddyizm.tempus.util.Flavors;
 import com.eddyizm.tempus.util.MusicFolderUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.LibraryViewModel;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
+import com.eddyizm.tempus.upnp.UpnpRouteSetup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +62,8 @@ public class ToolbarFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_page_menu, menu);
+        Flavors.setUpRouteButton(requireContext(), menu);
+        UpnpRouteSetup.pointAtUpnpRenderers(menu);
     }
 
     @Override

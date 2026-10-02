@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.net.NetworkCapabilities;
+import android.os.Bundle;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -109,5 +110,34 @@ public class MusicUtilTest {
         int transport = MusicUtil.transportOf(null);
         assertNotEquals(NetworkCapabilities.TRANSPORT_WIFI, transport);
         assertNotEquals(NetworkCapabilities.TRANSPORT_CELLULAR, transport);
+    }
+
+    private static Bundle extrasWith(String path, String suffix) {
+        Bundle extras = mock(Bundle.class);
+        when(extras.getString("path")).thenReturn(path);
+        when(extras.getString("suffix")).thenReturn(suffix);
+        return extras;
+    }
+
+    // A transcoded download's suffix is rewritten to the download's format and its path is not.
+    @Test
+    public void sourceSuffix_readsTheExtensionOffThePath() {
+        assertEquals("flac", MusicUtil.sourceSuffix(extrasWith("Artist/Album/05 track.flac", "opus")));
+    }
+
+    // A dot in a folder name is not an extension, and neither is a trailing one.
+    @Test
+    public void sourceSuffix_fallsBackToTheSuffixWhenThePathHasNoExtension() {
+        assertEquals("opus", MusicUtil.sourceSuffix(extrasWith("Artist/Album.Deluxe/05 track", "opus")));
+        assertEquals("opus", MusicUtil.sourceSuffix(extrasWith("D:\\Music\\Album.Deluxe\\05 track", "opus")));
+        assertEquals("opus", MusicUtil.sourceSuffix(extrasWith("Artist/Album/05 track.", "opus")));
+        assertEquals("opus", MusicUtil.sourceSuffix(extrasWith("track", "opus")));
+        assertEquals("opus", MusicUtil.sourceSuffix(extrasWith(null, "opus")));
+    }
+
+    @Test
+    public void sourceSuffix_isNullWhenNothingIsKnown() {
+        assertNull(MusicUtil.sourceSuffix(null));
+        assertNull(MusicUtil.sourceSuffix(extrasWith(null, null)));
     }
 }
