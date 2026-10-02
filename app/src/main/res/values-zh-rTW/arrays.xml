@@ -2,13 +2,23 @@
     <string-array name="theme_list_titles">
         <item>淺色</item>
         <item>深色</item>
-        <item>跟隨系統</item>
+        <item>系統預設</item>
     </string-array>
     <string-array name="theme_list_values">
         <item>light</item>
         <item>dark</item>
         <item>default</item>
     </string-array>
+
+    <string-array name="dark_theme_style_titles">
+        <item>標準</item>
+        <item>AMOLED (純黑)</item>
+    </string-array>
+    <string-array name="dark_theme_style_values">
+        <item>standard</item>
+        <item>amoled</item>
+    </string-array>
+
 
     <string-array name="pref_cache_size_titles">
         <item>高</item>
@@ -35,7 +45,7 @@
     </string-array>
 
     <string-array name="streaming_cache_size_titles">
-        <item>禁用</item>
+        <item>已停用</item>
         <item>128 MiB</item>
         <item>256 MiB</item>
         <item>512 MiB</item>
@@ -141,7 +151,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_wifi_list_titles">
-        <item>播放原始</item>
+        <item>直接播放</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -156,7 +166,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_mobile_list_titles">
-        <item>播放原始</item>
+        <item>直接播放</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -171,7 +181,7 @@
     </string-array>
 
     <string-array name="audio_transcode_format_download_list_titles">
-        <item>下載原始</item>
+        <item>直接下載</item>
         <item>Opus</item>
         <item>AAC</item>
         <item>Mp3</item>
@@ -186,9 +196,9 @@
     </string-array>
 
     <string-array name="queue_syncing_countdown_titles">
-        <item>10秒</item>
-        <item>5秒</item>
-        <item>2秒</item>
+        <item>十秒</item>
+        <item>五秒</item>
+        <item>兩秒</item>
     </string-array>
     <string-array name="queue_syncing_countdown_values">
         <item>10</item>
@@ -208,7 +218,7 @@
     </string-array>
 
     <string-array name="replay_gain_titles">
-        <item>禁用</item>
+        <item>已停用</item>
         <item>曲目</item>
         <item>專輯</item>
         <item>自動</item>
@@ -221,10 +231,10 @@
     </string-array>
 
     <string-array name="transcoded_download_option_list_titles">
-        <item>不轉碼</item>
+        <item>不要轉碼</item>
         <item>伺服器設定</item>
-        <item>Wi-Fi轉碼設定</item>
-        <item>行動資料轉碼設定</item>
+        <item>Wi-Fi 轉碼格式</item>
+        <item>行動網路轉碼格式</item>
     </string-array>
     <string-array name="transcoded_download_option_list_values">
         <item>0</item>
@@ -233,12 +243,64 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="song_preload_buffer_titles">
+        <item>5 秒</item>
+        <item>30 秒</item>
+        <item>1 分鐘</item>
+        <item>3 分鐘</item>
+        <item>5 分鐘</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="precache_tracks_titles">
+        <item>已停用</item>
+        <item>下個曲目</item>
+        <item>下 2 個曲目</item>
+        <item>下 3 個曲目</item>
+        <item>下 5 個曲目</item>
+    </string-array>
+    <string-array name="precache_tracks_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
+    <string-array name="playlist_sort_option_titles">
+        <item>@string/menu_sort_name</item>
+        <item>@string/menu_sort_random</item>
+        <item>@string/menu_sort_date_created</item>
+        <item>@string/menu_sort_song_count</item>
+        <item>@string/playlist_sort_pinned</item>
+        <item>@string/playlist_sort_last_played</item>
+        <item>@string/playlist_sort_last_updated</item>
+        <item>@string/playlist_sort_both</item>
+    </string-array>
+    <string-array name="playlist_sort_option_values">
+        <item>ORDER_BY_NAME</item>
+        <item>ORDER_BY_RANDOM</item>
+        <item>ORDER_BY_DATE</item>
+        <item>ORDER_BY_SONGS</item>
+        <item>ORDER_BY_PINNED</item>
+        <item>ORDER_BY_LAST_PLAYED</item>
+        <item>ORDER_BY_LAST_UPDATED</item>
+        <item>ORDER_BY_BOTH</item>
+    </string-array>
+
+
     <string-array name="skip_min_star_rating_titles">
-        <item>不篩選評分</item>
-        <item>1 星及以上</item>
-        <item>2 星及以上</item>
-        <item>3 星及以上</item>
-        <item>4 星及以上</item>
+        <item>最少 0 顆星</item>
+        <item>最少 1 顆星</item>
+        <item>最少 2 顆星</item>
+        <item>最少 3 顆星</item>
+        <item>最少 4 顆星</item>
     </string-array>
     <string-array name="skip_min_star_rating_values">
         <item>0</item>
@@ -247,4 +309,107 @@
         <item>3</item>
         <item>4</item>
     </string-array>
+    <string-array name="landscape_items_per_row">
+        <item>3"</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="landscape_items_per_row_values">
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+		
+    <string-array name="tile_size_titles">
+        <item>超小</item>
+        <item>小</item>
+        <item>中</item>
+        <item>大</item>
+        <item>預設</item>
+    </string-array>
+    <string-array name="tile_size_divisor">
+        <item>6</item>
+        <item>5</item>
+        <item>4</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="selected_equalizer_entries">
+        <item>預設</item>
+        <item>內建</item>
+        <item>外部</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="aa_tab_titles">
+        <item>不要顯示</item>
+        <item>主頁</item>
+        <item>最近</item>
+        <item>專輯</item>
+        <item>藝人</item>
+        <item>播放清單</item>
+        <item>Podcast</item>
+        <item>電臺</item>
+        <item>資料夾</item>
+        <item>最多播放數的專輯</item>
+        <item>新增的專輯</item>
+        <item>For you</item>
+        <item>Starred</item>
+        <item>曲目</item>
+        <item>流派</item>
+    </string-array>
+    <string-array name="aa_tab_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+    </string-array>
+
+    <string-array name="aa_starred_for_made_for_you_titles">
+        <item>Star artists</item>
+        <item>Star albums</item>
+        <item>Star tracks</item>
+    </string-array>
+    <string-array name="aa_starred_for_made_for_you_values" translatable="false">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="custom_commands_titles">
+        <item>Heart</item>
+        <item>重複播放</item>
+        <item>隨機播放</item>
+        <item>即時混音</item>
+    </string-array>
+    <string-array name="custom_commands_values" translatable="false">
+        <item>[heartID]</item>
+        <item>[repeatID]</item>
+        <item>[shuffleID]</item>
+        <item>[instantMixID]</item>
+    </string-array>
+
 </resources>
