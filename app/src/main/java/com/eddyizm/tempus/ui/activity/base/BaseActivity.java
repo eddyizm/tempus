@@ -25,6 +25,9 @@ import com.eddyizm.tempus.util.Flavors;
 import com.eddyizm.tempus.util.Preferences;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @UnstableApi
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = "BaseActivity";
@@ -74,23 +77,23 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void checkPermission() {
+        // One request for everything, since Android refuses a second request while the first is still open.
+        List<String> missing = new ArrayList<>();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                        101);
+                missing.add(Manifest.permission.POST_NOTIFICATIONS);
             }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CINNAMON_BUN) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_LOCAL_NETWORK) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.ACCESS_LOCAL_NETWORK},
-                        102
-                );
+                missing.add(Manifest.permission.ACCESS_LOCAL_NETWORK);
             }
+        }
+
+        if (!missing.isEmpty()) {
+            ActivityCompat.requestPermissions(this, missing.toArray(new String[0]), 101);
         }
     }
 
