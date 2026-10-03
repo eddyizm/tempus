@@ -176,6 +176,8 @@
     </plurals>
     <string name="home_title_best_of">Onenak</string>
     <string name="home_title_discovery">Aurkikuntza</string>
+    <string name="home_title_continue_listening">Entzuten jarraitu</string>
+    <string name="home_continue_listening_resume_at">Jarraitu %1$s-tan</string>
     <string name="home_title_discovery_shuffle_all_button">Denak nahastu</string>
     <string name="home_title_flashback">Atzera begira</string>
     <string name="home_title_internet_radio_station">Interneteko irrati-uhinak</string>
