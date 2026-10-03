@@ -111,6 +111,12 @@ public class MainActivity extends BaseActivity {
         return bind;
     }
 
+    @Override
+    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        if (com.eddyizm.tempus.lan.LanRemoteVolume.dispatch(event)) return true;
+        return super.dispatchKeyEvent(event);
+    }
+
     // #688: Deep navigation accumulates fragment + back-stack state in the saved
     // instance Bundle. When the activity is stopped (app sent to background) the
     // platform persists it over a Binder transaction that throws
@@ -534,6 +540,8 @@ public class MainActivity extends BaseActivity {
     }
 
     public void quit() {
+        com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
+        stopService(new Intent(this, com.eddyizm.tempus.lan.LanReceiverService.class));
         resetUserSession();
         resetMusicSession();
         resetViewModel();
@@ -563,6 +571,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void resetMusicSession() {
+        com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
         MediaManager.reset(getMediaBrowserListenableFuture());
     }
 

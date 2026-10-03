@@ -60,7 +60,8 @@ public class PlaybackSpeedDialog extends DialogFragment {
         final boolean[] isResetting = { false };
         final Button[] resetButton = { null };
 
-        float currentSpeed = normalizeSpeed(Preferences.getPlaybackSpeed());
+        float currentSpeed = normalizeSpeed(com.eddyizm.tempus.lan.LanRemoteSession.isActive()
+                ? com.eddyizm.tempus.lan.LanRemoteSession.current().getSpeed() : Preferences.getPlaybackSpeed());
         float currentPitch = normalizePitch(Preferences.getPlaybackSpeedManualPitch());
         playbackSpeedPitchSwitch.setChecked(Preferences.isPlaybackSpeedPitchEnabled());
         playbackSpeedManualPitchSwitch.setChecked(Preferences.isPlaybackSpeedManualPitchEnabled());
