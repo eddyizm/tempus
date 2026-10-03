@@ -51,10 +51,12 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_artist_dialog, container, false);
 
-        artist = this.requireArguments().getParcelable(Constants.ARTIST_OBJECT);
-        if (artist != null) {
-            artist = artist.strippedForNav();
+        Bundle args = getArguments();
+        if (args == null || (artist = args.getParcelable(Constants.ARTIST_OBJECT)) == null) {
+            dismissAllowingStateLoss();
+            return view;
         }
+        artist = artist.strippedForNav();
 
         artistBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(ArtistBottomSheetViewModel.class);
         artistBottomSheetViewModel.setArtist(artist);
@@ -67,13 +69,16 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
     @Override
     public void onStart() {
         super.onStart();
-
-        initializeMediaBrowser();
+        if (artist != null) {
+            initializeMediaBrowser();
+        }
     }
 
     @Override
     public void onStop() {
-        releaseMediaBrowser();
+        if (mediaBrowserListenableFuture != null) {
+            releaseMediaBrowser();
+        }
         super.onStop();
     }
 
