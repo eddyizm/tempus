@@ -349,7 +349,8 @@ class LanReceiverService : Service() {
                 "replace" -> {
                     val index = request.getInt("index")
                     require(index in added.indices)
-                    player.setMediaItems(added, index, 0)
+                    val position = request.optLong("position", 0).coerceAtLeast(0)
+                    player.setMediaItems(added, index, position)
                     player.prepare()
                     player.play()
                 }

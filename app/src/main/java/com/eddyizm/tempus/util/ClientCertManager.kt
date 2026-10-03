@@ -28,9 +28,8 @@ object ClientCertManager {
     fun setupSslSocketFactory(context: Context) {
         sslSocketFactory = createSslSocketFactory(context)
         sslSocketFactory?.let {
-            // HttpsURLConnection is used both by:
-            // - Glide: in IPv6StringLoader
-            // - ExoPlayer: in DefaultHttpDataSource
+            // ExoPlayer uses HttpsURLConnection in DefaultHttpDataSource.
+            // Glide configures its OkHttp client with this socket factory in IPv6StringLoader.
             HttpsURLConnection.setDefaultSSLSocketFactory(it)
         }
     }

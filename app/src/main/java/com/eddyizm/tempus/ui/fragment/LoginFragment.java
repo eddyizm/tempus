@@ -29,6 +29,7 @@ import com.eddyizm.tempus.databinding.FragmentLoginBinding;
 import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.interfaces.SystemCallback;
 import com.eddyizm.tempus.model.Server;
+import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.repository.SystemRepository;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.dialog.ServerSignupDialog;
@@ -164,6 +165,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
 
             @Override
             public void onSuccess(String password, String token, String salt) {
+                new PlaylistRepository().refreshAllPlaylists();
                 activity.goFromLogin();
             }
         });

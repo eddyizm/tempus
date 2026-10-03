@@ -295,6 +295,11 @@ object LanRemoteSession {
 
     /** True means the action belongs to the selected receiver, even if it is unavailable. */
     @JvmStatic fun routeSongs(songs: List<Child>, action: String, index: Int): Boolean {
+        return routeSongs(songs, action, index, 0L)
+    }
+
+    /** A replacement may start at a saved playback position. */
+    @JvmStatic fun routeSongs(songs: List<Child>, action: String, index: Int, positionMs: Long): Boolean {
         if (!isActive()) return false
         if (!current().connected) { notify(R.string.lan_reconnecting); return true }
         if (action == "reorder" && loadedRevision != current().revision) {
@@ -305,6 +310,7 @@ object LanRemoteSession {
             notify(R.string.lan_queue_limit); return true
         }
         val body = editBody(action).put("ids", JSONArray(ids)).put("index", index)
+        if (action == "replace") body.put("position", positionMs.coerceAtLeast(0))
         if (body.toString().toByteArray(Charsets.UTF_8).size > LanWire.MAX_FRAME) { notify(R.string.lan_queue_limit); return true }
         if (action in setOf("replace", "append", "next")) notify(R.string.lan_transferring)
         request(body, { loadedRevision = null; refreshQueue() }) { loadedRevision = null; refreshQueue() }
