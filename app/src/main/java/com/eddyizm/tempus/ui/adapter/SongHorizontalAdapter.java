@@ -22,6 +22,7 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.ItemHorizontalTrackBinding;
 import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.interfaces.ClickCallback;
+import com.eddyizm.tempus.lan.LanRemoteSession;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.DiscTitle;
@@ -349,13 +350,22 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
 
         public void onClick() {
             int pos = getBindingAdapterPosition();
+            if (pos == RecyclerView.NO_POSITION) return;
             Child tappedSong = differ.getCurrentList().get(pos);
 
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(MusicUtil.limitPlayableMedia(differ.getCurrentList(), getBindingAdapterPosition())));
             bundle.putInt(Constants.ITEM_POSITION, MusicUtil.getPlayableMediaPosition(differ.getCurrentList(), getBindingAdapterPosition()));
 
-            if (tappedSong.getId().equals(currentPlayingId)) {
+            if (LanRemoteSession.isActive()) {
+                // The local song ID can remain selected after taking control of
+                // another phone. Never resume that paused local player here.
+                if (tappedSong.getId().equals(LanRemoteSession.current().getMediaId())) {
+                    LanRemoteSession.command(LanRemoteSession.current().getPlayWhenReady() ? "pause" : "play");
+                } else {
+                    click.onMediaClick(bundle);
+                }
+            } else if (tappedSong.getId().equals(currentPlayingId)) {
                 Log.i("SongHorizontalAdapter", "Tapping on currently playing song, toggling playback");
                 try{
                     MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
