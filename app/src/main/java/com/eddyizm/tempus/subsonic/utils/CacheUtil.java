@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.os.Build;
 
 import com.eddyizm.tempus.App;
 
@@ -57,20 +59,30 @@ public class CacheUtil {
             return false;
         }
 
+        boolean hasAppropriateTransport = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+                && capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+                && !hasAppropriateTransport) {
+            return hasNetworkUnderVpn(connectivityManager);
+        }
+
         boolean hasInternet = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
         if (!hasInternet) {
             return false;
         }
 
-        boolean hasAppropriateTransport = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-                || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_BLUETOOTH);
-        if (!hasAppropriateTransport) {
-            return false;
-        }
-
-        return true;
+        return hasAppropriateTransport;
     }
-    
+
+    // Before Android 10 a VPN can report only TRANSPORT_VPN even while it runs over another network.
+    // getActiveNetworkInfo() describes the network under the VPN there, and is null when it has none.
+    private static boolean hasNetworkUnderVpn(ConnectivityManager connectivityManager) {
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        return info != null && info.isConnected();
+    }
+
 }
