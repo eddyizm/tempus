@@ -12,6 +12,15 @@
         android:title="@string/menu_add_to_playlist_button"
         app:showAsAction="never" />
     <item
+        android:id="@+id/action_play_next"
+        android:title="@string/album_bottom_sheet_play_next"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_add_to_queue"
+        android:icon="@drawable/ic_queue"
+        android:title="@string/menu_add_to_queue_button"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_rate_album"
         android:icon="@drawable/ic_add"
         android:title="@string/menu_rate_album"
