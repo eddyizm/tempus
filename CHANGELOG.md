@@ -1,5 +1,46 @@
 # Changelog
 
+## [4.28.0](https://github.com/eddyizm/tempus/releases/tag/v4.28.0) (2026-10-01)
+## What's Changed
+* feat(android-auto): group multi-disc album tracks by @a-mcc in https://github.com/eddyizm/tempus/pull/1097
+* fix: probe the local server address without switching onto it by @herrerad85 in https://github.com/eddyizm/tempus/pull/1098
+* feat: Keep a playlist's downloads in sync with the server by @herrerad85 in https://github.com/eddyizm/tempus/pull/1105
+* feat(i18n): add Swedish translation by @NickWick13 in https://github.com/eddyizm/tempus/pull/1116
+* feat: update Russian localization by @ponfertato in https://github.com/eddyizm/tempus/pull/1091
+* fix: hide access to equalizer when it's set to External or Default by @jaime-grj in https://github.com/eddyizm/tempus/pull/1119
+* fix: highlight the last line of lyrics correctly by @jaime-grj in https://github.com/eddyizm/tempus/pull/1120
+* fix: resolve some UI bugs by @jaime-grj in https://github.com/eddyizm/tempus/pull/1122
+* fix: show server name in toolbar when there is only one library by @jaime-grj in https://github.com/eddyizm/tempus/pull/1123
+* fix: give the album list page its own view model by @herrerad85 in https://github.com/eddyizm/tempus/pull/1124
+* fix: keep the notification heart in step with a star made in the app by @herrerad85 in https://github.com/eddyizm/tempus/pull/1128
+* chore(i18n): Update Japanese translation by @kou029w in https://github.com/eddyizm/tempus/pull/1129
+
+## New Contributors
+* @a-mcc made their first contribution in https://github.com/eddyizm/tempus/pull/1097
+* @NickWick13 made their first contribution in https://github.com/eddyizm/tempus/pull/1116
+* @ponfertato made their first contribution in https://github.com/eddyizm/tempus/pull/1091
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.27.0...v4.28.0
+
+## [4.27.0](https://github.com/eddyizm/tempus/releases/tag/v4.27.0) (2026-09-19)
+## What's Changed
+* feat: Full screen playlist editor with a working drag handle by @herrerad85 in https://github.com/eddyizm/tempus/pull/1076
+* fix: Repeat one restarts a transcoded track from the start after a seek by @herrerad85 in https://github.com/eddyizm/tempus/pull/1084
+* fix: enqueued the Retrofit Call<ApiResponse> in requestPodcastEpisode… by @eddyizm in https://github.com/eddyizm/tempus/pull/1088
+* fix: prevent startup crash on duplicate tracks in playback queue by @shkarlsson in https://github.com/eddyizm/tempus/pull/1085
+* feat: Sort directories in lexicographical order and files by track number by @SteveMKII in https://github.com/eddyizm/tempus/pull/1086
+* fix: Keep the favorite heart in step across every screen by @herrerad85 in https://github.com/eddyizm/tempus/pull/1095
+* chore(i18n): Add Azerbaijani (az) translation by @jamalkamaladdin in https://github.com/eddyizm/tempus/pull/1090
+* fix: expand now playing on media notification tap by @sungoldsv in https://github.com/eddyizm/tempus/pull/1051
+* fix: add the az locale to nine lint baseline entries by @herrerad85 in https://github.com/eddyizm/tempus/pull/1096
+* chore(i18n): Update Japanese translation by @kou029w in https://github.com/eddyizm/tempus/pull/1087
+
+## New Contributors
+* @SteveMKII made their first contribution in https://github.com/eddyizm/tempus/pull/1086
+* @jamalkamaladdin made their first contribution in https://github.com/eddyizm/tempus/pull/1090
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.26.8...v4.27.0
+
 ## [4.26.8](https://github.com/eddyizm/tempus/releases/tag/v4.26.8) (2026-09-10)
 ## What's Changed
 * fix: treat a refused playlist add, remove or delete as a failure by @herrerad85 in https://github.com/eddyizm/tempus/pull/1066

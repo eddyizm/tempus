@@ -179,10 +179,14 @@
         <item name="colorOutlineVariant">@color/md_theme_amoled_surface_override</item>
     </style>
 
+    <style name="ThemeOverlay.App.MaterialSwitch.Amoled" parent="">
+        <item name="colorOutline">@color/md_theme_amoled_outline</item>
+        <item name="colorSurfaceVariant">@color/md_theme_amoled_surfaceVariant</item>
+        <item name="colorSurfaceContainerHighest">@color/md_theme_amoled_surfaceVariant</item>
+    </style>
+
     <style name="Widget.App.MaterialSwitch.Amoled" parent="Widget.Material3.CompoundButton.MaterialSwitch">
-        <item name="trackTint">@color/md_theme_amoled_surface_override</item>
-        <item name="thumbTint">?attr/colorPrimary</item>
-        <item name="colorOutline">@color/md_theme_amoled_surface_override</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.MaterialSwitch.Amoled</item>
     </style>
 
     <style name="Divider">

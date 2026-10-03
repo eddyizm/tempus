@@ -29,6 +29,7 @@ import com.eddyizm.tempus.databinding.FragmentLoginBinding;
 import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.interfaces.SystemCallback;
 import com.eddyizm.tempus.model.Server;
+import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.repository.SystemRepository;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.dialog.ServerSignupDialog;
@@ -164,6 +165,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
 
             @Override
             public void onSuccess(String password, String token, String salt) {
+                new PlaylistRepository().refreshAllPlaylists();
                 activity.goFromLogin();
             }
         });
@@ -177,9 +179,17 @@ public class LoginFragment extends Fragment implements ClickCallback {
     }
 
     private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert) {
+        // Written only when the stored address belongs to another server. Tapping the same one
+        // again has to keep the flip onError made, which is how a second attempt reaches the local
+        // address. The server id cannot be the test, because onError clears it.
+        String inUseAddress = Preferences.getInUseServerAddress();
+        boolean addressIsThisServers = java.util.Objects.equals(inUseAddress, server)
+                || java.util.Objects.equals(inUseAddress, localAddress);
+
         Preferences.setServerId(serverId);
         Preferences.setServer(server);
         Preferences.setLocalAddress(localAddress);
+        if (!addressIsThisServers) Preferences.setInUseServerAddress(server);
         Preferences.setUser(user);
         Preferences.setPassword(password);
         Preferences.setLowSecurity(isLowSecurity);

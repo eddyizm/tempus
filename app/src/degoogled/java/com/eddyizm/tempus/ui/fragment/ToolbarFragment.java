@@ -179,7 +179,7 @@ public class ToolbarFragment extends Fragment {
 
         // Podcast and Radio are the tabs the library never reaches, so the line carries the
         // server instead of nothing. No caret there, since nothing is tappable.
-        boolean showServerName = !visible && serverName != null && isLibraryScopedScreen() && !isLibraryScopedTab();
+        boolean showServerName = !visible && serverName != null && isLibraryScopedScreen();
 
         bind.toolbarTitleContainer.setClickable(visible);
         bind.toolbarMusicLibraryTextView.setVisibility(visible || showServerName ? View.VISIBLE : View.GONE);

@@ -1,5 +1,7 @@
 package com.eddyizm.tempus.ui.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -187,6 +189,12 @@ public class PlayerControllerFragment extends Fragment {
             playerOverflowButton.setOnClickListener(v -> {
                 PopupMenu popup = new PopupMenu(requireContext(), v);
                 popup.inflate(R.menu.player_overflow_menu);
+
+                int selectedEq = Preferences.getSelectedEqualizer();
+                if (selectedEq == 0 || selectedEq == 2) {
+                    popup.getMenu().removeItem(R.id.action_open_equalizer);
+                }
+
                 popup.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.action_open_equalizer) {
                         navigateToEqualizerFragment();
@@ -826,6 +834,7 @@ public class PlayerControllerFragment extends Fragment {
                     NavHostFragment.findNavController(this).navigate(R.id.albumPageFragment, bundle);
                     activity.collapseBottomSheetDelayed();
                 });
+                setupCopyTextOnLongTap(playerMediaTitleLabel);
             }
         });
     }
@@ -839,7 +848,22 @@ public class PlayerControllerFragment extends Fragment {
                     NavHostFragment.findNavController(this).navigate(R.id.artistPageFragment, bundle);
                     activity.collapseBottomSheetDelayed();
                 });
+                setupCopyTextOnLongTap(playerArtistNameLabel);
             }
+        });
+    }
+
+    private void setupCopyTextOnLongTap(TextView textView) {
+        if (textView == null) return;
+        textView.setOnLongClickListener(v -> {
+            CharSequence text = textView.getText();
+            if (!TextUtils.isEmpty(text)) {
+                ClipboardManager clipboardManager = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText(getString(R.string.app_name), text);
+                clipboardManager.setPrimaryClip(clipData);
+                Toast.makeText(requireContext(), getString(R.string.asset_link_copied_toast, text), Toast.LENGTH_SHORT).show();
+            }
+            return true;
         });
     }
 

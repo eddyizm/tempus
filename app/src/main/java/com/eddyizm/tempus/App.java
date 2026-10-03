@@ -11,6 +11,7 @@ import androidx.preference.PreferenceManager;
 
 import com.eddyizm.tempus.github.Github;
 import com.eddyizm.tempus.helper.ThemeHelper;
+import com.eddyizm.tempus.model.Server;
 import com.eddyizm.tempus.subsonic.Subsonic;
 import com.eddyizm.tempus.subsonic.SubsonicPreferences;
 import com.eddyizm.tempus.ui.crash.CrashActivity;
@@ -80,46 +81,41 @@ public class App extends Application {
         }
         return subsonic;
     }
-    
-    public static Subsonic getSubsonicPublicClientInstance(boolean override) {
 
-        /*
-        If I do the shortcut that the IDE suggests:
-            SubsonicPreferences preferences = getSubsonicPreferences1();
-        During the chain of calls it will run the following:
-            String server = Preferences.getInUseServerAddress();
-        Which could return Local URL, causing issues like generating public shares with Local URL
+    // Pinned to one address instead of the one in use, so an address can be reached without the
+    // app being moved onto it first.
+    public static Subsonic getSubsonicClientInstance(String serverAddress) {
+        return buildSubsonicClient(
+                serverAddress,
+                Preferences.getUser(),
+                Preferences.getPassword(),
+                Preferences.getToken(),
+                Preferences.getSalt(),
+                Preferences.isLowScurity()
+        );
+    }
 
-        To prevent this I just replicated the entire chain of functions here,
-        if you need a call to Subsonic using the Server (Public) URL use this function.
-         */
+    // For a server the app is not signed in to, so it can be reached before anything about it is
+    // written to the preferences.
+    public static Subsonic getSubsonicClientInstance(Server server) {
+        return buildSubsonicClient(
+                server.getAddress(),
+                server.getUsername(),
+                server.getPassword(),
+                null,
+                null,
+                server.isLowSecurity()
+        );
+    }
 
-        String server = Preferences.getServer();
-        String username = Preferences.getUser();
-        String password = Preferences.getPassword();
-        String token = Preferences.getToken();
-        String salt = Preferences.getSalt();
-        boolean isLowSecurity = Preferences.isLowScurity();
-
+    private static Subsonic buildSubsonicClient(String serverAddress, String username,
+                                                String password, String token, String salt,
+                                                boolean isLowSecurity) {
         SubsonicPreferences preferences = new SubsonicPreferences();
-        preferences.setServerUrl(server);
+        preferences.setServerUrl(serverAddress);
         preferences.setUsername(username);
         preferences.setAuthentication(password, token, salt, isLowSecurity);
 
-        if (subsonic == null || override) {
-            
-            if (preferences.getAuthentication() != null) {
-                if (preferences.getAuthentication().getPassword() != null)
-                    Preferences.setPassword(preferences.getAuthentication().getPassword());
-                if (preferences.getAuthentication().getToken() != null)
-                    Preferences.setToken(preferences.getAuthentication().getToken());
-                if (preferences.getAuthentication().getSalt() != null)
-                    Preferences.setSalt(preferences.getAuthentication().getSalt());
-            }
-
-            
-        }
-        
         return new Subsonic(preferences);
     }
 

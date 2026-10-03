@@ -288,6 +288,11 @@
     <string name="menu_sort_least_recently_starred">Least recently starred</string>
     <string name="menu_pin_button">Add to faves</string>
     <string name="menu_unpin_button">Remove from faves</string>
+    <string name="menu_keep_synced_button">Keep synced</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Downloading %d track</item>
+        <item quantity="other">Downloading %d tracks</item>
+    </plurals>
     <string name="playlist_sort_pinned">Faves</string>
     <string name="playlist_sort_last_played">Last played</string>
     <string name="playlist_sort_last_updated">Last updated</string>
@@ -861,10 +866,11 @@
     <string name="la_theme_card_default">Default</string>
     <string name="la_theme_card_flirt_red_description">Flirt red accent color</string>
     <string name="la_theme_card_coral_red_description">Coral red accent color</string>
-    <string name="la_theme_card_royal_blue_description">Emerald green accent color</string>
+    <string name="la_theme_card_emerald_green_description">Emerald green accent color</string>
+    <string name="la_theme_card_royal_blue_description">Royal blue accent color</string>
     <string name="la_theme_card_purple_violet_description">Purple violet accent color</string>
     <string name="la_theme_card_sunset_amber_description">Sunset amber accent color</string>
-    <string name="la_theme_card_teal_description">Teal amber accent color</string>
+    <string name="la_theme_card_teal_description">Teal accent color</string>
     <string name="la_theme_card_slate_gray_description">Slate gray accent color</string>
     <string name="la_theme_dialog_color_picker_title">Pick and accent color</string>
 

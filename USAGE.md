@@ -183,6 +183,9 @@ Two things to know:
 
 ## Settings
 
+### Language
+
+Select **Settings → UI → Language** to choose an app language. Swedish is available as **Swedish** (or **Svenska**, depending on the current language). Select **System language** to follow your device language.
 
 ## Android Auto
 

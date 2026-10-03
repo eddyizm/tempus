@@ -97,7 +97,7 @@ fun NowPlayingArtworkPager(
     val cornerRadius = if (Preferences.isCornerRoundingEnabled()) {
         Preferences.getRoundedCornerSize().dp
     } else {
-        4.dp
+        0.dp
     }
 
     HorizontalPager(

@@ -66,7 +66,12 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         return songLiveList;
     }
 
-    private void refreshSongs() {
+    /** The list as it stands, without starting a fetch. */
+    public LiveData<List<Child>> songs() {
+        return songLiveList;
+    }
+
+    public void refreshSongs() {
         if (playlist == null) return;
         int sequence = ++fetchSequence;
         String forPlaylist = playlist.getId();
@@ -305,6 +310,17 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         } else {
             playlistRepository.unpin(playlist.getId());
         }
+    }
+
+    public LiveData<Boolean> isKeptSynced() {
+        if (playlist == null) return new MutableLiveData<>(false);
+        return playlistRepository.isKeptSynced(playlist.getId());
+    }
+
+    public boolean setKeptSynced(boolean kept) {
+        if (playlist == null) return false;
+        playlistRepository.insertIfAbsent(playlist);
+        return playlistRepository.setKeptSynced(playlist.getId(), kept);
     }
 
     public void updateLastPlayed(String playlistId) {

@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.repository;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -27,10 +28,12 @@ import com.eddyizm.tempus.model.SessionMediaItem;
 import com.eddyizm.tempus.provider.AlbumArtContentProvider;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
+import com.eddyizm.tempus.subsonic.models.AlbumWithSongsID3;
 import com.eddyizm.tempus.subsonic.models.Artist;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Directory;
+import com.eddyizm.tempus.subsonic.models.DiscTitle;
 import com.eddyizm.tempus.subsonic.models.Index;
 import com.eddyizm.tempus.subsonic.models.IndexID3;
 import com.eddyizm.tempus.subsonic.models.InternetRadioStation;
@@ -49,7 +52,10 @@ import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -891,11 +897,14 @@ public class AutomotiveRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
-                            List<Child> tracks = response.body().getSubsonicResponse().getAlbum().getSongs();
+                            AlbumWithSongsID3 album = response.body().getSubsonicResponse().getAlbum();
+                            List<Child> tracks = album.getSongs();
 
                             setChildrenMetadata(tracks);
 
                             List<MediaItem> mediaItems = MappingUtil.mapMediaItems(tracks, ConstantsAA.QUEUE_CACHED_SOURCE);
+
+                            setMultiDiscTitleGrouping(App.getContext(), album.getDiscTitles(), mediaItems);
 
                             LibraryResult<ImmutableList<MediaItem>> libraryResult = LibraryResult.ofItemList(ImmutableList.copyOf(mediaItems), null);
 
@@ -912,6 +921,64 @@ public class AutomotiveRepository {
                 });
 
         return listenableFuture;
+    }
+
+    static void setMultiDiscTitleGrouping(Context context, List<DiscTitle> discTitles, List<MediaItem> mediaItems) {
+        Map<Integer, String> discTitleMap = getMultiDiscTitles(context, discTitles, mediaItems);
+
+        if (discTitleMap.isEmpty()) {
+            return;
+        }
+
+        for (int i = 0; i < mediaItems.size(); i++) {
+            var mediaItem = mediaItems.get(i);
+            var disc = mediaItem.mediaMetadata.discNumber;
+
+            if (disc == null) {
+                continue;
+            }
+
+            Bundle extras = mediaItem.mediaMetadata.extras == null ? new Bundle() : new Bundle(mediaItem.mediaMetadata.extras);
+
+            extras.putString(MediaConstants.EXTRAS_KEY_CONTENT_STYLE_GROUP_TITLE, discTitleMap.get(disc));
+
+            var metadata = mediaItem.mediaMetadata.buildUpon().setExtras(extras).build();
+
+            mediaItems.set(i, mediaItem.buildUpon().setMediaMetadata(metadata).build());
+        }
+    }
+
+    static Map<Integer, String> getMultiDiscTitles(Context context, List<DiscTitle> discTitles, List<MediaItem> mediaItems) {
+        var discs = mediaItems.stream()
+                .map(it -> it.mediaMetadata.discNumber)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (discs.size() < 2) {
+            return Collections.emptyMap();
+        }
+
+        Map<Integer, String> discTitleMap = new HashMap<>();
+
+        if (discTitles != null && !discTitles.isEmpty()) {
+            discTitles.forEach(it -> {
+                var disc = it.getDisc();
+                var title = it.getTitle();
+
+                if (disc == null || title == null || title.isBlank()) {
+                    return;
+                }
+
+                var discTitle = context.getString(R.string.disc_titlefull, disc.toString(), title);
+
+                discTitleMap.put(disc, discTitle);
+            });
+        }
+
+        discs.forEach(disc -> discTitleMap.computeIfAbsent(disc, it -> context.getString(R.string.disc_titleless, it.toString())));
+
+        return discTitleMap;
     }
 
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getArtistAlbum(String prefix, String id) {
