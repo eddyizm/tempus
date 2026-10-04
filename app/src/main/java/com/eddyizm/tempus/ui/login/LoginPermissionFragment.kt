@@ -20,25 +20,7 @@ class LoginPermissionFragment : Fragment() {
     private var _binding: FragmentLoginPermissionBinding? = null
     private val binding get() = _binding!!
 
-    private val requestInternetLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { _ ->
-        updatePermissionStates()
-    }
-
-    private val requestNotificationLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { _ ->
-        updatePermissionStates()
-    }
-
-    private val requestLocalNetworkLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { _ ->
-        updatePermissionStates()
-    }
-
-    private val requestNearbyDevicesLauncher = registerForActivityResult(
+    private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { _ ->
         updatePermissionStates()
@@ -64,27 +46,27 @@ class LoginPermissionFragment : Fragment() {
 
         // Internet Permission
         binding.btnRequestInternet.setOnClickListener {
-            requestInternetLauncher.launch(Manifest.permission.INTERNET)
+            requestPermissionLauncher.launch(Manifest.permission.INTERNET)
         }
 
         // Notification Permission (API 33+)
         binding.btnRequestNotification.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requestNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
 
         // Local Network Permission (API 37+)
         binding.btnRequestLocalNetwork.setOnClickListener {
             if (Build.VERSION.SDK_INT >= 37) {
-                requestLocalNetworkLauncher.launch(Manifest.permission.ACCESS_LOCAL_NETWORK)
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_LOCAL_NETWORK)
             }
         }
 
         // Nearby Devices Permission (API 33+)
         binding.btnRequestNearbyDevices.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requestNearbyDevicesLauncher.launch(Manifest.permission.NEARBY_WIFI_DEVICES)
+                requestPermissionLauncher.launch(Manifest.permission.NEARBY_WIFI_DEVICES)
             }
         }
 
