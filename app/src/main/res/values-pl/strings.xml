@@ -209,6 +209,8 @@
     </plurals>
     <string name="home_title_best_of">Najlepsze</string>
     <string name="home_title_discovery">Odkrywanie</string>
+    <string name="home_title_continue_listening">Kontynuuj słuchanie</string>
+    <string name="home_continue_listening_resume_at">Wznów na %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Odtwórz wszystkie losowo</string>
     <string name="home_title_flashback">Podróż w czasie</string>
     <string name="home_title_internet_radio_station">Internetowe stacje radiowe</string>
@@ -292,6 +294,11 @@
     <string name="menu_sort_least_recently_starred">Ostatnio oznaczone najniższą liczbą gwiazdek</string>
     <string name="menu_pin_button">Dodaj do ulubionych</string>
     <string name="menu_unpin_button">Usuń z ulubionych</string>
+	<string name="menu_keep_synced_button">Utrzymaj zsynchronizowanie</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Pobieranie %d utworu</item>
+        <item quantity="other">Pobieranie %d utworów</item>
+    </plurals>
     <string name="playlist_sort_pinned">Ulubione</string>
 	<string name="playlist_sort_last_played">Ostatnio odtwarzane</string>
     <string name="playlist_sort_last_updated">Ostatnio zaktualizowane</string>
@@ -347,7 +354,14 @@
     <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
     <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>
     <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
-	<string name="playlist_editor_dialog_action_save_empty">Playlista musi mieć co najmniej jeden utwór</string>
+    <string name="playlist_editor_dialog_action_save_empty">Playlista musi mieć co najmniej jeden utwór</string>
+    <string name="playlist_editor_hint">Przesuń uchwyt, aby zmienić kolejność, naciśnij na kosz, aby usunąć. Nic nie jest wysyłane dopóki nie jest zapisywane.</string>
+    <string name="playlist_editor_remove_track">Usuń utwór</string>
+    <string name="playlist_editor_drag_track">Przesuń, aby zmienić kolejność</string>
+    <string name="menu_edit_playlist_details_button">Edytuj szczegóły</string>
+    <string name="playlist_details_dialog_title">Szczegóły playlisty</string>
+    <string name="playlist_editor_load_failure">Nie udało się załadować playlisty</string>
+    <string name="playlist_editor_removed_track">Usunięto z listy</string>
     <string name="playlist_page_empty">Brak piosenek w tej playliście</string>
     <string name="playlist_page_play_button">Odtwórz</string>
     <string name="playlist_page_shuffle_button">Odtwarzaj losowo</string>
@@ -646,6 +660,8 @@
     <string name="song_bottom_sheet_rate">Oceń</string>
     <string name="song_bottom_sheet_remove">Usuń z urządzenia</string>
     <string name="song_bottom_sheet_remove_from_playlist">Usuń z playlisty</string>
+    <string name="song_bottom_sheet_undo">Cofnij</string>
+    <string name="song_bottom_sheet_undo_failure">Nie udało się odłożyć piosenki na miejsce</string>
     <string name="song_bottom_sheet_share">Udostępnij</string>
     <string name="song_list_page_downloaded">Pobrane</string>
     <string name="song_list_page_most_played">Najczęściej odtwarzane utwory</string>
@@ -721,8 +737,10 @@
         <item quantity="other">%d wykonawców do zsynchronizowania</item>
     </plurals>
     <plurals name="songs_download_started">
-        <item quantity="one">Pobieranie %d piosenki</item>
-        <item quantity="other">Pobieranie %d piosenek</item>
+        <item quantity="one">Pobieram %d piosenkę</item>
+		<item quantity="few">Pobieram %d piosenki</item>
+		<item quantity="many">Pobieram %d piosenek</item>
+        <item quantity="other">Pobieram %d piosenek</item>
     </plurals>
     <string name="equalizer_fragment_title">Korektor dźwięku</string>
     <string name="equalizer_reset">Reset</string>
@@ -853,7 +871,8 @@
     <string name="la_theme_card_default">Domyślny</string>
     <string name="la_theme_card_flirt_red_description">Czerwony kolor akcentu</string>
     <string name="la_theme_card_coral_red_description">Koralowa czerwień kolor akcentu</string>
-    <string name="la_theme_card_royal_blue_description">Szmaragdowa zieleń kolor akcentu</string>
+	<string name="la_theme_card_emerald_green_description">Szmaragdowa zieleń kolor akcentu</string>
+    <string name="la_theme_card_royal_blue_description">Ciemnoniebieski kolor akcentu</string>
     <string name="la_theme_card_purple_violet_description">Fioletowy kolor akcentu</string>
     <string name="la_theme_card_sunset_amber_description">Pomarańcz zachodu kolor akcentu</string>
     <string name="la_theme_card_teal_description">Turkusowy kolor akcentu</string>
