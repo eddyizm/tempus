@@ -1,0 +1,8 @@
+feat(android-auto): group multi-disc album tracks
+fix: probe the local server address without switching onto it
+feat: Keep a playlist's downloads in sync with the server
+feat(i18n): add Swedish translation
+fix: hide access to equalizer when it's set to External or Default
+fix: highlight the last line of lyrics correctly
+fix: show server name in toolbar when there is only one library
+fix: keep the notification heart in step with a star made in the app

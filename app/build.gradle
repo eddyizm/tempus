@@ -15,8 +15,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 37
 
-        versionCode 48
-        versionName '4.27.1-dev'
+        versionCode 49
+        versionName '4.28.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -146,6 +146,10 @@ dependencies {
     implementation libs.media3.exoplayer.hls
     tempusImplementation libs.media3.cast
     playImplementation libs.media3.cast
+
+    // Route picker. Pulled in transitively by the Cast SDK for the tempus flavor
+    // already; declared here at the same version so the degoogled flavor has it too.
+    implementation libs.mediarouter
 
     // Room Compiler
     annotationProcessor libs.androidx.room.compiler

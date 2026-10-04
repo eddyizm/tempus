@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      The shared title for this button reads "Cast" and is translated everywhere this app ships.
+      A flavor resource only replaces the same qualifier, so overriding that key here would fix
+      the English build and leave every translated one still offering to Cast from a build with
+      no Cast SDK in it. This flavor uses a key of its own instead, English only, which is what
+      every untranslated string in this app already does. The picker behind the button lists UPnP
+      renderers on the network and nothing else.
+    -->
+    <string name="upnp_route_menu_title" translatable="false">Play on device</string>
+</resources>

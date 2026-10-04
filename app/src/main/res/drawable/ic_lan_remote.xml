@@ -1,0 +1,8 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="@color/lan_remote_icon_tint" android:fillType="evenOdd"
+        android:pathData="M2.2,1.8H8.8Q9.8,1.8 9.8,2.8V21.2Q9.8,22.2 8.8,22.2H2.2Q1.2,22.2 1.2,21.2V2.8Q1.2,1.8 2.2,1.8ZM2.8,5.4H8.2V18.6H2.8ZM15.2,1.8H21.8Q22.8,1.8 22.8,2.8V21.2Q22.8,22.2 21.8,22.2H15.2Q14.2,22.2 14.2,21.2V2.8Q14.2,1.8 15.2,1.8ZM15.8,5.4H21.2V18.6H15.8Z" />
+    <path android:fillColor="@color/lan_remote_icon_tint" android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="0.85" android:strokeLineJoin="round"
+        android:pathData="M5.5,10.2H11.8V7.2L19.2,12L11.8,16.8V13.8H5.5Z" />
+</vector>

@@ -52,7 +52,11 @@ public class PlaylistRowBottomSheetDialog extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_playlist_row_dialog, container, false);
 
-        playlist = requireArguments().getParcelable(Constants.PLAYLIST_OBJECT);
+        Bundle args = getArguments();
+        if (args == null || (playlist = args.getParcelable(Constants.PLAYLIST_OBJECT)) == null) {
+            dismissAllowingStateLoss();
+            return view;
+        }
 
         init(view);
 

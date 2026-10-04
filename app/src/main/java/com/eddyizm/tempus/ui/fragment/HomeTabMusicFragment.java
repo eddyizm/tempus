@@ -38,6 +38,7 @@ import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.HomeSector;
 import com.eddyizm.tempus.repository.PlaylistRepository;
+import com.eddyizm.tempus.repository.QueueRepository;
 import com.eddyizm.tempus.service.DownloaderManager;
 import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
@@ -51,6 +52,7 @@ import com.eddyizm.tempus.ui.adapter.AlbumHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.ArtistAdapter;
 import com.eddyizm.tempus.ui.adapter.ArtistHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.DiscoverSongAdapter;
+import com.eddyizm.tempus.ui.adapter.ContinueListeningAdapter;
 import com.eddyizm.tempus.ui.adapter.PlaylistHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.ShareHorizontalAdapter;
 import com.eddyizm.tempus.ui.adapter.SimilarTrackAdapter;
@@ -103,6 +105,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private ShareHorizontalAdapter shareHorizontalAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private ContinueListeningAdapter continueListeningAdapter;
     private Observer<List<Child>> bestOfObserver = null;
 
     @Nullable
@@ -131,6 +134,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         initSyncStarredAlbumsView();
         initSyncStarredArtistsView();
         initDiscoverSongSlideView();
+        initContinueListening();
         initSimilarSongView();
         initArtistRadio();
         initArtistBestOf();
@@ -156,6 +160,10 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         super.onStart();
 
         initializeMediaBrowser();
+
+        if (continueListeningAdapter != null) {
+            continueListeningAdapter.setMediaBrowserFuture(mediaBrowserListenableFuture);
+        }
 
         MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
         observeStarredSongsPlayback();
@@ -711,6 +719,36 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
     }
 
+    private void initContinueListening() {
+        if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_CONTINUE_LISTENING)) return;
+
+        bind.continueListeningRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        bind.continueListeningRecyclerView.setHasFixedSize(true);
+
+        continueListeningAdapter = new ContinueListeningAdapter(mediaBrowserListenableFuture);
+        bind.continueListeningRecyclerView.setAdapter(continueListeningAdapter);
+
+        List<Preferences.ResumePoint> resumePoints = Preferences.getContinueListening();
+        if (resumePoints.isEmpty()) {
+            bind.homeContinueListeningSector.setVisibility(View.GONE);
+        } else {
+            bind.homeContinueListeningSector.setVisibility(View.VISIBLE);
+            continueListeningAdapter.setItems(resumePoints);
+        }
+
+        // Sync from server bookmarks (async) so cross-device resume points appear too, then refresh.
+        new QueueRepository().syncBookmarksFromServer(() -> {
+            if (continueListeningAdapter == null || bind == null) return;
+            List<Preferences.ResumePoint> synced = Preferences.getContinueListening();
+            if (synced.isEmpty()) {
+                bind.homeContinueListeningSector.setVisibility(View.GONE);
+            } else {
+                bind.homeContinueListeningSector.setVisibility(View.VISIBLE);
+                continueListeningAdapter.setItems(synced);
+            }
+        });
+    }
+
     private void initSimilarSongView() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_MADE_FOR_YOU)) return;
 
@@ -1165,76 +1203,128 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
     }
 
+    // True while a coalesced home-tree rebuild is already posted, so the burst of reorder()
+    // calls that the ~24 async section loads fire at app open collapses into one rebuild/frame.
+    private boolean reorderRequested = false;
+
     public void reorder() {
-        if (bind != null && homeViewModel.getHomeSectorList() != null) {
-            bind.homeLinearLayoutContainer.removeAllViews();
+        // One rebuild per frame at most. Every section load that finishes calls this, and each
+        // call used to removeAllViews() + re-add the whole Home tree (~17 nested RecyclerViews).
+        // The short-circuit below skips even that when the visible set hasn't changed.
+        //
+        // Note for the next reader: I first sold this as the fix for the "isn't responding" ANR
+        // on app open, and that was wrong. The ANRs kept happening after this landed, and an
+        // instrumented build never logged a single reorder() on the reproduce path. The Home tab
+        // is drowning in memory pressure from full-resolution cover art, which is a separate
+        // problem. This just stops doing the same rebuild many times over - a cheap win, not the
+        // ANR fix.
+        if (bind == null || homeViewModel.getHomeSectorList() == null) return;
+        if (reorderRequested) return;
+        reorderRequested = true;
+        bind.homeLinearLayoutContainer.post(() -> {
+            reorderRequested = false;
+            reorderNow();
+        });
+    }
 
-            if (bind.homeSyncStarredCard.getVisibility() == View.VISIBLE) {
-                bind.homeLinearLayoutContainer.addView(bind.homeSyncStarredCard);
-            }
+    private void reorderNow() {
+        if (bind == null || homeViewModel.getHomeSectorList() == null) return;
 
-            if (bind.homeSyncStarredAlbumsCard.getVisibility() == View.VISIBLE) {
-                bind.homeLinearLayoutContainer.addView(bind.homeSyncStarredAlbumsCard);
-            }
+        ArrayList<View> desired = buildDesiredOrder();
 
-            if (bind.homeSyncStarredArtistsCard.getVisibility() == View.VISIBLE) {
-                bind.homeLinearLayoutContainer.addView(bind.homeSyncStarredArtistsCard);
-            }
-
-            for (HomeSector sector : homeViewModel.getHomeSectorList()) {
-                if (!sector.isVisible()) continue;
-
-                switch (sector.getId()) {
-                    case Constants.HOME_SECTOR_DISCOVERY:
-                        bind.homeLinearLayoutContainer.addView(bind.homeDiscoverSector);
-                        break;
-                    case Constants.HOME_SECTOR_MADE_FOR_YOU:
-                        bind.homeLinearLayoutContainer.addView(bind.homeSimilarTracksSector);
-                        break;
-                    case Constants.HOME_SECTOR_BEST_OF:
-                        bind.homeLinearLayoutContainer.addView(bind.homeBestOfArtistSector);
-                        break;
-                    case Constants.HOME_SECTOR_RADIO_STATION:
-                        bind.homeLinearLayoutContainer.addView(bind.homeRadioArtistSector);
-                        break;
-                    case Constants.HOME_SECTOR_TOP_SONGS:
-                        bind.homeLinearLayoutContainer.addView(bind.homeGridTracksSector);
-                        break;
-                    case Constants.HOME_SECTOR_STARRED_TRACKS:
-                        bind.homeLinearLayoutContainer.addView(bind.starredTracksSector);
-                        break;
-                    case Constants.HOME_SECTOR_STARRED_ALBUMS:
-                        bind.homeLinearLayoutContainer.addView(bind.starredAlbumsSector);
-                        break;
-                    case Constants.HOME_SECTOR_STARRED_ARTISTS:
-                        bind.homeLinearLayoutContainer.addView(bind.starredArtistsSector);
-                        break;
-                    case Constants.HOME_SECTOR_NEW_RELEASES:
-                        bind.homeLinearLayoutContainer.addView(bind.homeNewReleasesSector);
-                        break;
-                    case Constants.HOME_SECTOR_FLASHBACK:
-                        bind.homeLinearLayoutContainer.addView(bind.homeFlashbackSector);
-                        break;
-                    case Constants.HOME_SECTOR_MOST_PLAYED:
-                        bind.homeLinearLayoutContainer.addView(bind.homeMostPlayedAlbumsSector);
-                        break;
-                    case Constants.HOME_SECTOR_LAST_PLAYED:
-                        bind.homeLinearLayoutContainer.addView(bind.homeRecentlyPlayedAlbumsSector);
-                        break;
-                    case Constants.HOME_SECTOR_RECENTLY_ADDED:
-                        bind.homeLinearLayoutContainer.addView(bind.homeRecentlyAddedAlbumsSector);
-                        break;
-                    case Constants.HOME_SECTOR_PINNED_PLAYLISTS:
-                        bind.homeLinearLayoutContainer.addView(bind.pinnedPlaylistsSector);
-                        break;
-                    case Constants.HOME_SECTOR_SHARED:
-                        bind.homeLinearLayoutContainer.addView(bind.sharesSector);
-                        break;
+        // No change to the visible/ordered set -> nothing to rebuild. Section adapters already
+        // update their own rows via setItems(); a reorder is only needed when the set of visible
+        // sector views (or their order) changes.
+        ViewGroup container = bind.homeLinearLayoutContainer;
+        if (container.getChildCount() == desired.size()) {
+            boolean unchanged = true;
+            for (int i = 0; i < desired.size(); i++) {
+                if (container.getChildAt(i) != desired.get(i)) {
+                    unchanged = false;
+                    break;
                 }
             }
-
-            bind.homeLinearLayoutContainer.addView(bind.homeSectorRearrangementButton);
+            if (unchanged) return;
         }
+
+        container.removeAllViews();
+        for (View v : desired) {
+            container.addView(v);
+        }
+    }
+
+    private ArrayList<View> buildDesiredOrder() {
+        ArrayList<View> desired = new ArrayList<>();
+
+        if (bind.homeSyncStarredCard.getVisibility() == View.VISIBLE) {
+            desired.add(bind.homeSyncStarredCard);
+        }
+
+        if (bind.homeSyncStarredAlbumsCard.getVisibility() == View.VISIBLE) {
+            desired.add(bind.homeSyncStarredAlbumsCard);
+        }
+
+        if (bind.homeSyncStarredArtistsCard.getVisibility() == View.VISIBLE) {
+            desired.add(bind.homeSyncStarredArtistsCard);
+        }
+
+        for (HomeSector sector : homeViewModel.getHomeSectorList()) {
+            if (!sector.isVisible()) continue;
+
+            switch (sector.getId()) {
+                case Constants.HOME_SECTOR_DISCOVERY:
+                    desired.add(bind.homeDiscoverSector);
+                    break;
+                case Constants.HOME_SECTOR_CONTINUE_LISTENING:
+                    desired.add(bind.homeContinueListeningSector);
+                    break;
+                case Constants.HOME_SECTOR_MADE_FOR_YOU:
+                    desired.add(bind.homeSimilarTracksSector);
+                    break;
+                case Constants.HOME_SECTOR_BEST_OF:
+                    desired.add(bind.homeBestOfArtistSector);
+                    break;
+                case Constants.HOME_SECTOR_RADIO_STATION:
+                    desired.add(bind.homeRadioArtistSector);
+                    break;
+                case Constants.HOME_SECTOR_TOP_SONGS:
+                    desired.add(bind.homeGridTracksSector);
+                    break;
+                case Constants.HOME_SECTOR_STARRED_TRACKS:
+                    desired.add(bind.starredTracksSector);
+                    break;
+                case Constants.HOME_SECTOR_STARRED_ALBUMS:
+                    desired.add(bind.starredAlbumsSector);
+                    break;
+                case Constants.HOME_SECTOR_STARRED_ARTISTS:
+                    desired.add(bind.starredArtistsSector);
+                    break;
+                case Constants.HOME_SECTOR_NEW_RELEASES:
+                    desired.add(bind.homeNewReleasesSector);
+                    break;
+                case Constants.HOME_SECTOR_FLASHBACK:
+                    desired.add(bind.homeFlashbackSector);
+                    break;
+                case Constants.HOME_SECTOR_MOST_PLAYED:
+                    desired.add(bind.homeMostPlayedAlbumsSector);
+                    break;
+                case Constants.HOME_SECTOR_LAST_PLAYED:
+                    desired.add(bind.homeRecentlyPlayedAlbumsSector);
+                    break;
+                case Constants.HOME_SECTOR_RECENTLY_ADDED:
+                    desired.add(bind.homeRecentlyAddedAlbumsSector);
+                    break;
+                case Constants.HOME_SECTOR_PINNED_PLAYLISTS:
+                    desired.add(bind.pinnedPlaylistsSector);
+                    break;
+                case Constants.HOME_SECTOR_SHARED:
+                    desired.add(bind.sharesSector);
+                    break;
+            }
+        }
+
+        desired.add(bind.homeSectorRearrangementButton);
+        return desired;
     }
 
     private void showPopupMenu(View view, int menuResource) {
