@@ -16250,4 +16250,147 @@
             column="5"/>
     </issue>
 
+    <issue
+        id="MissingTranslation"
+        message="&quot;settings_permissions&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;settings_permissions&quot;>App permissions&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="582"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_title&quot;>Request Permissions&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="878"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_description&quot;>The required permissions and their usage are displayed below.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="879"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_status_provided&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_status_provided&quot;>Provided&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="880"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_status_not_provided&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_status_not_provided&quot;>Request&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="881"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_internet_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_internet_title&quot;>Internet&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="882"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_internet_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_internet_description&quot;>Required to access your music server on the internet.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="883"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_notifications_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_notifications_title&quot;>Notifications&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="884"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_notifications_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_notifications_description&quot;>Required to show download status and player controls.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="885"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_access_local_network_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_access_local_network_title&quot;>Access Local Network&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="886"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_access_local_network_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_access_local_network_description&quot;>Required to access other deivces on the same LAN as your current device.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="887"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_nearby_devices_title&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_nearby_devices_title&quot;>Nearby Devices&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="888"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;la_perms_nearby_devices_description&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;sv&quot; (Swedish), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;pl&quot; (Polish), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        errorLine1="    &lt;string name=&quot;la_perms_nearby_devices_description&quot;>Required to discover other deivces through UPnP and Chromecast.&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/values/strings.xml"
+            line="889"
+            column="13"/>
+    </issue>
+
 </issues>
