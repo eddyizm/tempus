@@ -875,9 +875,11 @@
     <string name="la_theme_dialog_color_picker_title">Pick and accent color</string>
 
     <string name="la_perms_title">Request Permissions</string>
-    <string name="la_perms_description">The following permissions are required for the proper functioning of the app.</string>
+    <string name="la_perms_description">The required permissions and their usage are displayed below.</string>
     <string name="la_perms_status_provided">Provided</string>
     <string name="la_perms_status_not_provided">Request</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Required to access your music server on the internet.</string>
     <string name="la_perms_notifications_title">Notifications</string>
     <string name="la_perms_notifications_description">Required to show download status and player controls.</string>
     <string name="la_perms_access_local_network_title">Access Local Network</string>

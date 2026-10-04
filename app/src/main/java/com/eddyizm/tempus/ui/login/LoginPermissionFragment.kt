@@ -20,6 +20,12 @@ class LoginPermissionFragment : Fragment() {
     private var _binding: FragmentLoginPermissionBinding? = null
     private val binding get() = _binding!!
 
+    private val requestInternetLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { _ ->
+        updatePermissionStates()
+    }
+
     private val requestNotificationLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { _ ->
@@ -56,6 +62,11 @@ class LoginPermissionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Internet Permission
+        binding.btnRequestInternet.setOnClickListener {
+            requestInternetLauncher.launch(Manifest.permission.INTERNET)
+        }
+
         // Notification Permission (API 33+)
         binding.btnRequestNotification.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -86,9 +97,17 @@ class LoginPermissionFragment : Fragment() {
     }
 
     private fun updatePermissionStates() {
+        updateInternetState()
         updateNotificationState()
         updateLocalNetworkState()
         updateNearbyDevicesState()
+    }
+
+    private fun updateInternetState() {
+        val hasInternet = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+
+        binding.tvInternetProvided.visibility = if (hasInternet) View.VISIBLE else View.GONE
+        binding.btnRequestInternet.visibility = if (hasInternet) View.GONE else View.VISIBLE
     }
 
     private fun updateNotificationState() {
