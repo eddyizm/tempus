@@ -15,6 +15,7 @@ splashscreen = "1.0.1"
 appcompat = "1.7.0"
 swiperefreshlayout = "1.2.0"
 material = "1.10.0"
+mediarouter = "1.8.1"
 
 # Third-party
 glide = "4.16.0"
@@ -64,6 +65,8 @@ material = { group = "com.google.android.material", name = "material", version.r
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-annotations = { group = "com.github.bumptech.glide", name = "annotations", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+
+mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouter" }
 
 media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
 media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }

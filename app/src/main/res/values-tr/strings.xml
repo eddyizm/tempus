@@ -120,6 +120,8 @@
     <string name="home_sync_starred_albums_subtitle">Yıldız ile işaretlenen albümler çevrimdışı kullanılabilir olacak</string>
     <string name="home_title_best_of">En iyiler</string>
     <string name="home_title_discovery">Keşfet</string>
+    <string name="home_title_continue_listening">Dinlemeye devam et</string>
+    <string name="home_continue_listening_resume_at">%1$s\'de devam et</string>
     <string name="home_title_discovery_shuffle_all_button">Tümünü karıştır</string>
     <string name="home_title_flashback">Geçmişe dönüş</string>
     <string name="home_title_internet_radio_station">İnternet radyo istasyonları</string>

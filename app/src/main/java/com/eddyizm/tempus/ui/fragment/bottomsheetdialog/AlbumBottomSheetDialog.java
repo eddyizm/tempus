@@ -70,7 +70,11 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_album_dialog, container, false);
 
-        album = this.requireArguments().getParcelable(Constants.ALBUM_OBJECT);
+        Bundle args = getArguments();
+        if (args == null || (album = args.getParcelable(Constants.ALBUM_OBJECT)) == null) {
+            dismissAllowingStateLoss();
+            return view;
+        }
 
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         albumBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(AlbumBottomSheetViewModel.class);
@@ -84,19 +88,24 @@ public class AlbumBottomSheetDialog extends BottomSheetDialogFragment implements
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateRemoveAllVisibility);
+        if (album != null) {
+            MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateRemoveAllVisibility);
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        initializeMediaBrowser();
+        if (album != null) {
+            initializeMediaBrowser();
+        }
     }
 
     @Override
     public void onStop() {
-        releaseMediaBrowser();
+        if (mediaBrowserListenableFuture != null) {
+            releaseMediaBrowser();
+        }
         super.onStop();
     }
 

@@ -74,7 +74,7 @@ public class BottomSheetHelper {
     }
 
     public void setStateInPeek(boolean isVisible) {
-        if (isVisible) {
+        if (isVisible || com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);

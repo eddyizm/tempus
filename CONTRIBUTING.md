@@ -21,6 +21,11 @@ The following command uses `mappings.txt` to return de-obfuscated logs:
 $ANDROID_HOME/cmdline-tools/latest/bin/retrace app/build/outputs/mapping/tempusRelease/mapping.txt stack_error_transcript.txt 
 ```
 
+The tools may be elsewhere, depending on which version of android studio. I found my `retrace` here:
+```bash
+$ANDROID_HOME/cmdline-tools/tools/bin/retrace
+```
+
 Now the final users don't need to install debug apk's to generate readable logs.
 
 ### Pull PR's from GitHub

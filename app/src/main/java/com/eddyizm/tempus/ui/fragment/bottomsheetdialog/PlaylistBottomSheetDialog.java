@@ -36,7 +36,11 @@ public class PlaylistBottomSheetDialog extends BottomSheetDialogFragment impleme
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_playlist_dialog, container, false);
 
-        playlist = requireArguments().getParcelable(Constants.PLAYLIST_OBJECT);
+        Bundle args = getArguments();
+        if (args == null || (playlist = args.getParcelable(Constants.PLAYLIST_OBJECT)) == null) {
+            dismissAllowingStateLoss();
+            return view;
+        }
 
         init(view);
 
@@ -51,13 +55,16 @@ public class PlaylistBottomSheetDialog extends BottomSheetDialogFragment impleme
     @Override
     public void onStart() {
         super.onStart();
-
-        initializeMediaBrowser();
+        if (playlist != null) {
+            initializeMediaBrowser();
+        }
     }
 
     @Override
     public void onStop() {
-        releaseMediaBrowser();
+        if (mediaBrowserListenableFuture != null) {
+            releaseMediaBrowser();
+        }
         super.onStop();
     }
 
