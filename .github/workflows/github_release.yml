@@ -90,12 +90,6 @@ jobs:
             mv "$file" "$new_name"
           done
 
-          # Rename Play signed AAB
-          for file in app/build/outputs/bundle/playRelease/*-signed.aab; do
-            new_name=$(echo "$file" | sed 's/-signed\.aab$/.aab/')
-            mv "$file" "$new_name"
-          done
-
       - name: Rename Mapping Files
         run: |
           mv -v app/build/outputs/mapping/tempusRelease/mapping.txt app/build/outputs/mapping/tempusRelease/mapping_Tempus.txt
