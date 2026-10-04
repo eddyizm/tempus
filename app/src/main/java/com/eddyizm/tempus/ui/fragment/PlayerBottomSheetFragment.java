@@ -48,6 +48,9 @@ import java.util.stream.IntStream;
 
 @OptIn(markerClass = UnstableApi.class)
 public class PlayerBottomSheetFragment extends Fragment {
+    private boolean remoteVisible = false;
+    private String remoteCover = null;
+    private String remoteMediaSignature = null;
     private FragmentPlayerBottomSheetBinding bind;
 
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
@@ -67,6 +70,7 @@ public class PlayerBottomSheetFragment extends Fragment {
         customizeBottomSheetAction();
         initViewPager();
         setHeaderBookmarksButton();
+        com.eddyizm.tempus.lan.LanRemoteSession.state().observe(getViewLifecycleOwner(), this::renderRemote);
 
         if (getActivity() instanceof MainActivity) {
             MainActivity activity = (MainActivity) getActivity();
@@ -103,6 +107,9 @@ public class PlayerBottomSheetFragment extends Fragment {
         if (progressBarHandler != null) {
             progressBarHandler.removeCallbacks(progressBarRunnable);
         }
+        remoteVisible = false;
+        remoteCover = null;
+        remoteMediaSignature = null;
         bind = null;
     }
 
@@ -111,6 +118,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     private void customizeBottomSheetAction() {
+        bind.playerHeaderLayout.playerHeaderRemoteButton.setOnClickListener(v -> com.eddyizm.tempus.lan.LanDevicePicker.toggle(requireActivity()));
         bind.playerHeaderLayout.getRoot().setOnClickListener(view -> ((MainActivity) requireActivity()).expandBottomSheet());
     }
 
@@ -187,6 +195,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     private void setMetadata(MediaMetadata mediaMetadata) {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive() || bind == null) return;
         if (mediaMetadata.extras != null) {
             playerBottomSheetViewModel.setLiveMedia(getViewLifecycleOwner(), mediaMetadata.extras.getString("type"), mediaMetadata.extras.getString("id"));
             playerBottomSheetViewModel.setLiveAlbum(getViewLifecycleOwner(), mediaMetadata.extras.getString("type"), mediaMetadata.extras.getString("albumId"));
@@ -255,6 +264,7 @@ public class PlayerBottomSheetFragment extends Fragment {
 
 
     private void setMediaControllerUI(MediaBrowser mediaBrowser) {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive() || bind == null) return;
         if (mediaBrowser.getMediaMetadata().extras != null) {
             switch (mediaBrowser.getMediaMetadata().extras.getString("type", Constants.MEDIA_TYPE_MUSIC)) {
                 case Constants.MEDIA_TYPE_PODCAST:
@@ -273,33 +283,105 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     private void setContentDuration(long duration) {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive() || bind == null) return;
         bind.playerHeaderLayout.playerHeaderSeekBar.setMax((int) (duration / 1000));
     }
 
     private void setProgress(MediaBrowser mediaBrowser) {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+            if (bind != null) bind.playerHeaderLayout.playerHeaderSeekBar.setProgress((int)
+                    (com.eddyizm.tempus.lan.LanRemoteSession.current().positionAt(android.os.SystemClock.elapsedRealtime()) / 1000), true);
+            return;
+        }
         if (bind != null)
             bind.playerHeaderLayout.playerHeaderSeekBar.setProgress((int) (mediaBrowser.getCurrentPosition() / 1000), true);
     }
 
     private void setPlayingState(boolean isPlaying) {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive() || bind == null) return;
         bind.playerHeaderLayout.playerHeaderButton.setChecked(isPlaying);
         runProgressBarHandler(isPlaying);
     }
 
     private void setHeaderMediaController() {
-        bind.playerHeaderLayout.playerHeaderButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_play_pause).performClick());
-        bind.playerHeaderLayout.playerHeaderNextMediaButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_next).performClick());
+        bind.playerHeaderLayout.playerHeaderButton.setOnClickListener(view -> {
+            if (com.eddyizm.tempus.lan.LanRemoteSession.isActive())
+                com.eddyizm.tempus.lan.LanRemoteSession.command(com.eddyizm.tempus.lan.LanRemoteSession.current().getPlayWhenReady() ? "pause" : "play");
+            else bind.getRoot().findViewById(R.id.exo_play_pause).performClick();
+        });
+        bind.playerHeaderLayout.playerHeaderNextMediaButton.setOnClickListener(view -> {
+            if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) com.eddyizm.tempus.lan.LanRemoteSession.command("next");
+            else bind.getRoot().findViewById(R.id.exo_next).performClick();
+        });
         bind.playerHeaderLayout.playerHeaderRewindMediaButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_rew).performClick());
         bind.playerHeaderLayout.playerHeaderFastForwardMediaButton.setOnClickListener(view -> bind.getRoot().findViewById(R.id.exo_ffwd).performClick());
     }
 
     private void setHeaderNextButtonState(boolean isEnabled) {
+        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive() || bind == null) return;
         bind.playerHeaderLayout.playerHeaderNextMediaButton.setEnabled(isEnabled);
         bind.playerHeaderLayout.playerHeaderNextMediaButton.setAlpha(isEnabled ? (float) 1.0 : (float) 0.3);
     }
 
     public View getPlayerHeader() {
         return bind != null ? bind.playerHeaderLayout.getRoot() : null;
+    }
+
+    private void renderRemote(com.eddyizm.tempus.lan.LanRemoteState state) {
+        if (bind == null) return;
+        bind.playerHeaderLayout.playerHeaderRemoteButton.setSelected(state.getActive());
+        bind.playerHeaderLayout.playerHeaderRemoteButton.setContentDescription(
+                state.getActive() ? getString(R.string.lan_controlling, state.getName()) : getString(R.string.lan_play_on));
+        androidx.appcompat.widget.TooltipCompat.setTooltipText(bind.playerHeaderLayout.playerHeaderRemoteButton,
+                bind.playerHeaderLayout.playerHeaderRemoteButton.getContentDescription());
+        boolean wasRemote = remoteVisible;
+        remoteVisible = state.getActive();
+        if (remoteVisible) {
+            if (!wasRemote) ((MainActivity) requireActivity()).setBottomSheetInPeek(true);
+            com.eddyizm.tempus.subsonic.models.Child song = com.eddyizm.tempus.lan.LanRemoteSession.currentSong();
+            String signature = song.getId() + ":" + song.getAlbumId() + ":" + song.getArtistId();
+            if (!Objects.equals(remoteMediaSignature, signature)) {
+                remoteMediaSignature = signature;
+                String type = song.getId().isEmpty() ? null : Constants.MEDIA_TYPE_MUSIC;
+                playerBottomSheetViewModel.setLiveMedia(getViewLifecycleOwner(), type, song.getId());
+                playerBottomSheetViewModel.setLiveAlbum(getViewLifecycleOwner(), TextUtils.isEmpty(song.getAlbumId()) ? null : type, song.getAlbumId());
+                playerBottomSheetViewModel.setLiveArtist(getViewLifecycleOwner(), TextUtils.isEmpty(song.getArtistId()) ? null : type, song.getArtistId());
+                playerBottomSheetViewModel.setLiveDescription(null);
+            }
+            bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setText(state.getTitle().isEmpty() ? getString(R.string.lan_no_track) : state.getTitle());
+            bind.playerHeaderLayout.playerHeaderMediaTitleLabel.setVisibility(View.VISIBLE);
+            bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setText(getString(R.string.lan_device_status, state.getName(),
+                    getString(state.getError() != 0 ? state.getError() : state.getConnected() ? R.string.lan_remote_active : R.string.lan_connecting)));
+            bind.playerHeaderLayout.playerHeaderMediaArtistLabel.setVisibility(View.VISIBLE);
+            bind.playerHeaderLayout.playerHeaderButton.setChecked(state.getPlayWhenReady());
+            bind.playerHeaderLayout.playerHeaderButton.setEnabled(state.getConnected() && state.getCount() > 0);
+            bind.playerHeaderLayout.playerHeaderNextMediaButton.setVisibility(View.VISIBLE);
+            bind.playerHeaderLayout.playerHeaderNextMediaButton.setEnabled(state.getConnected() && state.getHasNext());
+            bind.playerHeaderLayout.playerHeaderNextMediaButton.setAlpha(state.getConnected() ? 1f : .3f);
+            bind.playerHeaderLayout.playerHeaderRewindMediaButton.setVisibility(View.GONE);
+            bind.playerHeaderLayout.playerHeaderFastForwardMediaButton.setVisibility(View.GONE);
+            bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.GONE);
+            bind.playerHeaderLayout.playerHeaderSeekBar.setMax((int) (state.getDuration() / 1000));
+            bind.playerHeaderLayout.playerHeaderSeekBar.setProgress((int) (state.getPosition() / 1000));
+            if (!Objects.equals(remoteCover, state.getCoverId())) {
+                remoteCover = state.getCoverId();
+                CustomGlideRequest.Builder.from(requireContext(), remoteCover.isEmpty() ? null : remoteCover,
+                        CustomGlideRequest.ResourceType.Song).build().into(bind.playerHeaderLayout.playerHeaderMediaCoverImage);
+            }
+        } else if (wasRemote) {
+            remoteCover = null;
+            remoteMediaSignature = null;
+            bind.playerHeaderLayout.playerHeaderButton.setEnabled(true);
+            if (mediaBrowserListenableFuture != null && mediaBrowserListenableFuture.isDone()) {
+                try {
+                    MediaBrowser player = mediaBrowserListenableFuture.get();
+                    setMediaControllerUI(player); setMetadata(player.getMediaMetadata());
+                    setPlayingState(player.isPlaying()); setContentDuration(player.getContentDuration());
+                    setHeaderNextButtonState(player.hasNextMediaItem()); setProgress(player);
+                    if (player.getMediaItemCount() == 0) ((MainActivity) requireActivity()).setBottomSheetInPeek(false);
+                } catch (Exception ignored) { }
+            }
+        }
     }
 
     public void goBackToFirstPage() {
@@ -363,7 +445,7 @@ public class PlayerBottomSheetFragment extends Fragment {
                 public void onChanged(PlayQueue playQueue) {
                     playerBottomSheetViewModel.getPlayQueue().removeObserver(this);
 
-                    if (bind == null) return;
+                    if (bind == null || com.eddyizm.tempus.lan.LanRemoteSession.isActive()) return;
 
                     if (playQueue != null && playQueue.getEntries() != null && !playQueue.getEntries().isEmpty()) {
                         int index = IntStream.range(0, playQueue.getEntries().size()).filter(ix -> playQueue.getEntries().get(ix).getId().equals(playQueue.getCurrent())).findFirst().orElse(-1);

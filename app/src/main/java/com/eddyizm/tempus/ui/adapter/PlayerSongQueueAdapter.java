@@ -134,6 +134,14 @@ public class PlayerSongQueueAdapter extends RecyclerView.Adapter<PlayerSongQueue
             holder.item.ratingIndicatorImageView.setVisibility(View.GONE);
         }
         holder.itemView.setOnClickListener(v -> {
+            if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+                int pos = holder.getBindingAdapterPosition();
+                if (pos == RecyclerView.NO_POSITION) return;
+                com.eddyizm.tempus.lan.LanRemoteState state = com.eddyizm.tempus.lan.LanRemoteSession.current();
+                if (pos == state.getIndex()) com.eddyizm.tempus.lan.LanRemoteSession.command(state.getPlayWhenReady() ? "pause" : "play");
+                else com.eddyizm.tempus.lan.LanRemoteSession.routeEdit("select", pos, pos);
+                return;
+            }
             mediaBrowserListenableFuture.addListener(() -> {
                 try {
                     MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
