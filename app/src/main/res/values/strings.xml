@@ -579,6 +579,7 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
+    <string name="settings_permissions">App permissions</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_dark_theme_style">Dark theme style</string>
     <string name="settings_tile_size">Tiles size</string>
@@ -825,7 +826,7 @@
     <string name="la_tab_server">Servers</string>
 
     <string name="la_appbar_greeter_title">About</string>
-    <string name="la_appbar_permission_title">Permissions overview</string>
+    <string name="la_appbar_permission_title">Permissions management</string>
     <string name="la_appbar_themes_title">Theme editor</string>
     <string name="la_appbar_server_title">Server editor</string>
 
