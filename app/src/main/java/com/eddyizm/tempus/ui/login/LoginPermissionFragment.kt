@@ -56,17 +56,21 @@ class LoginPermissionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Notification Permission (API 33+)
         binding.btnRequestNotification.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requestNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
 
+        // Local Network Permission (API 37+)
         binding.btnRequestLocalNetwork.setOnClickListener {
-            val localNetworkPermission = "android.permission.ACCESS_LOCAL_NETWORK"
-            requestLocalNetworkLauncher.launch(localNetworkPermission)
+            if (Build.VERSION.SDK_INT >= 37) {
+                requestLocalNetworkLauncher.launch(Manifest.permission.ACCESS_LOCAL_NETWORK)
+            }
         }
 
+        // Nearby Devices Permission (API 33+)
         binding.btnRequestNearbyDevices.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requestNearbyDevicesLauncher.launch(Manifest.permission.NEARBY_WIFI_DEVICES)
@@ -88,66 +92,27 @@ class LoginPermissionFragment : Fragment() {
     }
 
     private fun updateNotificationState() {
-        try {
-            val hasNotification = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
+        val hasNotification = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
 
-            if (hasNotification) {
-                binding.tvNotificationProvided.visibility = View.VISIBLE
-                binding.btnRequestNotification.visibility = View.GONE
-            } else {
-                binding.tvNotificationProvided.visibility = View.GONE
-                binding.btnRequestNotification.visibility = View.VISIBLE
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        binding.tvNotificationProvided.visibility = if (hasNotification) View.VISIBLE else View.GONE
+        binding.btnRequestNotification.visibility = if (hasNotification) View.GONE else View.VISIBLE
     }
 
     private fun updateLocalNetworkState() {
-        try {
-            val localNetworkPermission = "android.permission.ACCESS_LOCAL_NETWORK"
-            val hasLocalNetwork = ContextCompat.checkSelfPermission(
-                requireContext(),
-                localNetworkPermission
-            ) == PackageManager.PERMISSION_GRANTED
+        val hasLocalNetwork = Build.VERSION.SDK_INT < 37 ||
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_LOCAL_NETWORK) == PackageManager.PERMISSION_GRANTED
 
-            if (hasLocalNetwork) {
-                binding.tvLocalNetworkProvided.visibility = View.VISIBLE
-                binding.btnRequestLocalNetwork.visibility = View.GONE
-            } else {
-                binding.tvLocalNetworkProvided.visibility = View.GONE
-                binding.btnRequestLocalNetwork.visibility = View.VISIBLE
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        binding.tvLocalNetworkProvided.visibility = if (hasLocalNetwork) View.VISIBLE else View.GONE
+        binding.btnRequestLocalNetwork.visibility = if (hasLocalNetwork) View.GONE else View.VISIBLE
     }
 
     private fun updateNearbyDevicesState() {
-        try {
-            val hasNearbyDevices = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.NEARBY_WIFI_DEVICES
-                ) == PackageManager.PERMISSION_GRANTED
-            } else {
-                // Permission doesn't exist below API 33
-                true
-            }
+        val hasNearbyDevices = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.NEARBY_WIFI_DEVICES) == PackageManager.PERMISSION_GRANTED
 
-            if (hasNearbyDevices) {
-                binding.tvNearbyDevicesProvided.visibility = View.VISIBLE
-                binding.btnRequestNearbyDevices.visibility = View.GONE
-            } else {
-                binding.tvNearbyDevicesProvided.visibility = View.GONE
-                binding.btnRequestNearbyDevices.visibility = View.VISIBLE
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        binding.tvNearbyDevicesProvided.visibility = if (hasNearbyDevices) View.VISIBLE else View.GONE
+        binding.btnRequestNearbyDevices.visibility = if (hasNearbyDevices) View.GONE else View.VISIBLE
     }
 
     override fun onDestroyView() {
