@@ -177,6 +177,8 @@
     </plurals>
     <string name="home_title_best_of">El millor de</string>
     <string name="home_title_discovery">Descobriment</string>
+    <string name="home_title_continue_listening">Continua escoltant</string>
+    <string name="home_continue_listening_resume_at">Continua a les %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Reprodueix-ho tot aleatòriament</string>
     <string name="home_title_flashback">Viatge al passat</string>
     <string name="home_title_internet_radio_station">Emissores de ràdio per Internet</string>

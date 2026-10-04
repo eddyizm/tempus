@@ -143,6 +143,8 @@
     </plurals>
     <string name="home_title_best_of">Cel mai bun</string>
     <string name="home_title_discovery">Descoperire</string>
+    <string name="home_title_continue_listening">Continuă ascultarea</string>
+    <string name="home_continue_listening_resume_at">Continuă la %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Amestecare toate</string>
     <string name="home_title_flashback">Retrospectivă</string>
     <string name="home_title_internet_radio_station">Stații radio internet</string>

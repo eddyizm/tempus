@@ -177,6 +177,7 @@
     <string name="github_update_dialog_positive_button">İndi yüklə</string>
     <string name="github_update_dialog_summary">Tətbiqin yeni versiyası Github üzərində mövcuddur.</string>
     <string name="github_update_dialog_title">Yeniləmə mövcuddur</string>
+    <string name="home_continue_listening_resume_at">Davam et %1$s</string>
     <string name="home_rearrangement_dialog_negative_button">Ləğv et</string>
     <string name="home_rearrangement_dialog_neutral_button">Sıfırla</string>
     <string name="home_rearrangement_dialog_positive_button">Yadda saxla</string>
@@ -189,6 +190,7 @@
     <string name="home_subtitle_made_for_you">Bəyəndiyin mahnıdan qarışıq başlat</string>
     <string name="home_subtitle_new_internet_radio_station">Yeni radio əlavə et</string>
     <string name="home_subtitle_new_podcast_channel">Yeni podkast kanalı əlavə et</string>
+    <string name="home_title_continue_listening">Dinləməyə davam et</string>
     <string name="home_sync_starred_cancel">Ləğv et</string>
     <string name="home_sync_starred_download">Yüklə</string>
     <string name="home_sync_starred_subtitle">Bu mahnıların yüklənməsi çoxlu internet trafiki sərf edə bilər</string>

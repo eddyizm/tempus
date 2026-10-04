@@ -235,6 +235,10 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                     }
                     category.setOnClickListener(cat -> {
                         String key = cat.getKey();
+                        if ("lan_playback".equals(key)) {
+                            startActivity(new Intent(requireContext(), com.eddyizm.tempus.lan.LanPlaybackActivity.class));
+                            return;
+                        }
                         if (expandedCategories.contains(key)) {
                             expandedCategories.remove(key);
                         } else {

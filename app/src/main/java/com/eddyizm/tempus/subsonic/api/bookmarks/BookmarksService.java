@@ -16,4 +16,13 @@ public interface BookmarksService {
 
     @GET("savePlayQueue")
     Call<ApiResponse> savePlayQueue(@QueryMap Map<String, String> params, @Query("id") List<String> ids, @Query("current") String current, @Query("position") long position);
+
+    @GET("getBookmarks")
+    Call<ApiResponse> getBookmarks(@QueryMap Map<String, String> params);
+
+    @GET("createBookmark")
+    Call<ApiResponse> createBookmark(@QueryMap Map<String, String> params, @Query("id") String id, @Query("position") long position);
+
+    @GET("deleteBookmark")
+    Call<ApiResponse> deleteBookmark(@QueryMap Map<String, String> params, @Query("id") String id);
 }
