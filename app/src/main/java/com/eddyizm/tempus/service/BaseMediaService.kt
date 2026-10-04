@@ -1081,7 +1081,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 return DefaultAudioSink.Builder(context)
                     .setAudioProcessors(arrayOf(ReplayGainUtil.getAudioProcessor()))
                     .setEnableFloatOutput(enableFloatOutput)
-                    .setEnableAudioTrackPlaybackParams(enableAudioTrackPlaybackParams)
+                    .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
                     .build()
             }
         }
