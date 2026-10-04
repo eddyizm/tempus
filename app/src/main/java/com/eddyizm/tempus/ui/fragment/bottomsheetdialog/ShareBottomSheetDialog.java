@@ -39,7 +39,11 @@ public class ShareBottomSheetDialog extends BottomSheetDialogFragment implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_share_dialog, container, false);
 
-        share = this.requireArguments().getParcelable(Constants.SHARE_OBJECT);
+        Bundle args = getArguments();
+        if (args == null || (share = args.getParcelable(Constants.SHARE_OBJECT)) == null) {
+            dismissAllowingStateLoss();
+            return view;
+        }
 
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         shareBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(ShareBottomSheetViewModel.class);

@@ -290,7 +290,9 @@ public class PlayerLyricsFragment extends Fragment {
 
     private void displaySyncedLyrics() {
         LyricsList lyricsList = playerBottomSheetViewModel.getLiveLyricsList().getValue();
-        int timestamp = (int) (mediaBrowser.getCurrentPosition());
+        int timestamp = (int) (com.eddyizm.tempus.lan.LanRemoteSession.isActive()
+                ? com.eddyizm.tempus.lan.LanRemoteSession.current().positionAt(android.os.SystemClock.elapsedRealtime())
+                : mediaBrowser != null ? mediaBrowser.getCurrentPosition() : 0);
 
         if (hasStructuredLyrics(lyricsList)) {
             List<Line> lines = lyricsList.getStructuredLyrics().get(0).getLine();
@@ -333,7 +335,8 @@ public class PlayerLyricsFragment extends Fragment {
                     @Override
                     public void onClick(@NonNull View view) {
                         // Seeking to 1ms after the actual start prevents scrolling / highlighting artifacts
-                        mediaBrowser.seekTo(lineStart + 1);
+                        if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) com.eddyizm.tempus.lan.LanRemoteSession.command("seek", lineStart + 1);
+                        else if (mediaBrowser != null) mediaBrowser.seekTo(lineStart + 1);
                     }
 
                     @Override
