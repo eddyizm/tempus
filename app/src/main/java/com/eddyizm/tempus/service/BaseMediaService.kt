@@ -956,8 +956,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         // Skip if we already have embedded metadata (ICY/ID3) - HTTP headers are only fallback
         val hasEmbeddedMetadata = !currentItem.mediaMetadata.artist.isNullOrBlank() ||
                 !currentItem.mediaMetadata.title.isNullOrBlank() ||
-                (extras != null && !extras.getString("radioArtist").isNullOrBlank()) ||
-                (extras != null && !extras.getString("radioTitle").isNullOrBlank())
+                (!extras.getString("radioArtist").isNullOrBlank()) ||
+                (!extras.getString("radioTitle").isNullOrBlank())
         if (hasEmbeddedMetadata) return
         
         val streamUrl = extras?.getString("uri") ?: currentItem.requestMetadata.mediaUri?.toString()
@@ -1020,8 +1020,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             // Double-check we still don't have embedded metadata (might have arrived since check)
             val hasEmbeddedMetadata = !currentItemNow.mediaMetadata.artist.isNullOrBlank() ||
                     !currentItemNow.mediaMetadata.title.isNullOrBlank() ||
-                    (currentExtras != null && !currentExtras.getString("radioArtist").isNullOrBlank()) ||
-                    (currentExtras != null && !currentExtras.getString("radioTitle").isNullOrBlank())
+                    (!currentExtras.getString("radioArtist").isNullOrBlank()) ||
+                    (!currentExtras.getString("radioTitle").isNullOrBlank())
             if (hasEmbeddedMetadata) return@post
             
             val metadataBuilder = currentItemNow.mediaMetadata.buildUpon()
