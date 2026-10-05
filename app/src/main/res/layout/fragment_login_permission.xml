@@ -1,14 +1,273 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
     tools:context=".ui.login.LoginPermissionFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Subtitle / Description -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:text="@string/la_perms_description"
+        android:textSize="14sp"
+        android:layout_marginBottom="24dp" />
 
-</FrameLayout>
+    <!-- Scrollable Permissions Container -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 0. Internet Permission Item -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_internet_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_internet_description"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvInternetProvided"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_provided"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/btnRequestInternet"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_not_provided"
+                        android:textSize="14sp" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:alpha="0.2" />
+
+            <!-- 1. Notifications Permission Item -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_notifications_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_notifications_description"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvNotificationProvided"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_provided"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <Button
+                        android:id="@+id/btnRequestNotification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_not_provided"
+                        android:textSize="14sp"
+                        tools:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:alpha="0.2" />
+
+            <!-- 2. Local Network Permission Item -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_access_local_network_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_access_local_network_description"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvLocalNetworkProvided"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_provided"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/btnRequestLocalNetwork"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_not_provided"
+                        android:textSize="14sp" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray"
+                android:alpha="0.2" />
+
+            <!-- 3. Nearby Devices Permission Item -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:layout_marginEnd="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_nearby_devices_title"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_nearby_devices_description"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/darker_gray"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tvNearbyDevicesProvided"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_provided"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:visibility="gone" />
+
+                    <Button
+                        android:id="@+id/btnRequestNearbyDevices"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/la_perms_status_not_provided"
+                        android:textSize="14sp" />
+                </FrameLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
