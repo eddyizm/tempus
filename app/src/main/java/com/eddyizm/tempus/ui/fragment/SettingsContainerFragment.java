@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
@@ -48,7 +47,6 @@ import androidx.preference.SwitchPreference;
 
 import com.eddyizm.tempus.BuildConfig;
 import com.eddyizm.tempus.R;
-import com.eddyizm.tempus.helper.ThemeHelper;
 import com.eddyizm.tempus.interfaces.DialogClickCallback;
 import com.eddyizm.tempus.interfaces.ScanCallback;
 import com.eddyizm.tempus.equalizer.EqualizerManager;
@@ -174,6 +172,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         setVersion();
         setNetorkPingTimeoutBase();
 
+        actionPermission();
         actionTheme();
         actionLogout();
         actionScan();
@@ -635,6 +634,17 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private void setVersion() {
         findPreference("version").setSummary(BuildConfig.VERSION_NAME);
+    }
+
+    private void actionPermission() {
+        findPreference("permissions").setOnPreferenceClickListener( preference -> {
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
+            tempus.putExtra("SELECT_FRAGMENT", 1);
+            startActivity(tempus);
+            return true;
+        });
     }
 
     private void actionTheme() {
