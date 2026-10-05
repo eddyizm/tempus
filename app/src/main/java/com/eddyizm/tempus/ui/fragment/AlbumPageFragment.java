@@ -323,9 +323,12 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
             removePendingArtistObserver();
             pendingArtist = albumPageViewModel.getArtist();
             pendingArtistObserver = artist -> {
-                if (artist == null) return;
-
                 removePendingArtistObserver();
+                if (artist == null) {
+                    Toast.makeText(requireContext(), R.string.album_error_retrieving_artist, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(Constants.ARTIST_OBJECT, artist.strippedForNav());
                 activity.navController.navigate(R.id.action_albumPageFragment_to_artistPageFragment, bundle);
