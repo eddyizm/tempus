@@ -861,6 +861,20 @@
     <string name="la_server_switch_cert">Certyfikat klienta (mTLS)</string>
 
 	<string name="la_theme_title">Wybierz kolor akcentu</string>
+	
+    <string name="la_perms_title">Poproś o uprawnienia</string>
+    <string name="la_perms_description">Wymagane uprawnienia i ich wykorzystanie jest wyświetlone poniżej.</string>
+    <string name="la_perms_status_provided">Udzielone</string>
+    <string name="la_perms_status_not_provided">Poproś</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Wymagane do uzyskania dostępu do twojego serwera muzyki w internecie.</string>
+    <string name="la_perms_notifications_title">Powiadomienia</string>
+    <string name="la_perms_notifications_description">Wymagane do pokazywania statusu pobierania i sterowania odtwarzacza.</string>
+    <string name="la_perms_access_local_network_title">Dostęp do sieci lokalnej</string>
+    <string name="la_perms_access_local_network_description">Wymagany do uzyskania dostępu do innych urządzeń w tej samej sieci LAN co twoje aktualne urządzenie.</string>
+    <string name="la_perms_nearby_devices_title">Urządzenia w pobliżuNearby Devices</string>
+    <string name="la_perms_nearby_devices_description">Wymagane do znajdowania urządzeń przez UPnP i Chromecast.</string>
+	
     <string name="la_theme_description">Styl dla palety dynamicznej twojej aplikacji.</string>
 
     <string name="la_theme_button_return">Wróć</string>
