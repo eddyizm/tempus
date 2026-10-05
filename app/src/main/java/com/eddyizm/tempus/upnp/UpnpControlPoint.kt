@@ -184,6 +184,47 @@ open class UpnpControlPoint(
     fun positionInfo(device: UpnpDevice): Map<String, String> =
         soap(requireAvTransport(device), UpnpDevice.AV_TRANSPORT, "GetPositionInfo", listOf("InstanceID" to "0"))
 
+    fun setVolume(device: UpnpDevice, volume: Int) {
+        val control = device.controlUrls[UpnpDevice.RENDERING_CONTROL]
+            ?: throw UpnpException(501, "no RenderingControl on ${device.friendlyName}")
+        soap(
+            control, UpnpDevice.RENDERING_CONTROL, "SetVolume",
+            listOf("InstanceID" to "0", "Channel" to "Master", "DesiredVolume" to volume.toString())
+        )
+    }
+
+    fun volumeMax(device: UpnpDevice): Int? =
+        device.scpdUrls[UpnpDevice.RENDERING_CONTROL]?.let { get(it) }?.let { volumeMaxOf(it) }
+
+    /** Returns the subscription id and the seconds the renderer granted. */
+    fun subscribe(eventUrl: String, callbackUrl: String): Pair<String, Long> = subscription(
+        Request.Builder().url(eventUrl).method("SUBSCRIBE", null)
+            .header("CALLBACK", "<$callbackUrl>")
+            .header("NT", "upnp:event")
+            .header("TIMEOUT", "Second-$SUBSCRIBE_SECONDS")
+    )
+
+    fun renew(eventUrl: String, sid: String): Pair<String, Long> = subscription(
+        Request.Builder().url(eventUrl).method("SUBSCRIBE", null)
+            .header("SID", sid)
+            .header("TIMEOUT", "Second-$SUBSCRIBE_SECONDS")
+    )
+
+    fun unsubscribe(eventUrl: String, sid: String) {
+        http.newCall(Request.Builder().url(eventUrl).method("UNSUBSCRIBE", null).header("SID", sid).build())
+            .execute().close()
+    }
+
+    private fun subscription(request: Request.Builder): Pair<String, Long> =
+        http.newCall(request.build()).execute().use { response ->
+            val sid = response.header("SID")
+            if (!response.isSuccessful || sid.isNullOrBlank()) {
+                throw UpnpException(response.code, "event subscription refused")
+            }
+            // "Second-infinite" is legal, and renewing on our own schedule covers it.
+            sid to (response.header("TIMEOUT")?.substringAfter("Second-")?.toLongOrNull() ?: SUBSCRIBE_SECONDS)
+        }
+
     private fun requireAvTransport(device: UpnpDevice): String =
         device.avTransportControlUrl ?: throw UpnpException(501, "no AVTransport on ${device.friendlyName}")
 
@@ -255,6 +296,8 @@ open class UpnpControlPoint(
 
         private const val MAX_DESCRIPTION_FETCHES = 8
 
+        private const val SUBSCRIBE_SECONDS = 300L
+
         /** Cap on a description body, which any device on the network can make as large as it likes. */
         private const val MAX_DESCRIPTION_BYTES = 1L * 1024 * 1024
 
@@ -303,6 +346,41 @@ open class UpnpControlPoint(
             collect(root, action, out)
             return out
         }
+
+        @JvmStatic
+        fun volumeMaxOf(scpd: String): Int? {
+            val root = try {
+                DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder()
+                    .parse(InputSource(StringReader(scpd)))
+                    .documentElement
+            } catch (e: Exception) {
+                return null
+            }
+            val variables = root.getElementsByTagName("stateVariable")
+            for (i in 0 until variables.length) {
+                val variable = variables.item(i) as? Element ?: continue
+                if (variable.getElementsByTagName("name").item(0)?.textContent?.trim() != "Volume") continue
+                return variable.getElementsByTagName("maximum").item(0)?.textContent?.trim()?.toIntOrNull()
+                    ?.takeIf { it > 0 }
+            }
+            return null
+        }
+
+        /** The Master volume in a RenderingControl event, which carries it inside LastChange as escaped XML. */
+        @JvmStatic
+        fun masterVolumeOf(notify: String): Int? {
+            val lastChange = parseSoapResponse(notify, "")["LastChange"] ?: notify
+            return VOLUME_ELEMENT.findAll(lastChange)
+                .map { it.groupValues[1] }
+                .firstOrNull { CHANNEL_MASTER.containsMatchIn(it) }
+                ?.let { VOLUME_VALUE.find(it)?.groupValues?.get(1)?.toIntOrNull() }
+        }
+
+        private val VOLUME_ELEMENT = Regex("<(?:\\w+:)?Volume\\b([^>]*)>")
+        // Some renderers write Channel with a capital C.
+        private val CHANNEL_MASTER = Regex("\\bchannel\\s*=\\s*\"Master\"", RegexOption.IGNORE_CASE)
+        private val VOLUME_VALUE = Regex("\\bval\\s*=\\s*\"(\\d+)\"")
 
         private fun collect(element: Element, action: String, out: MutableMap<String, String>) {
             val children = element.childNodes
