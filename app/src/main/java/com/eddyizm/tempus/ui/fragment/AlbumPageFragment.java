@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -66,6 +68,8 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     private PlaybackViewModel playbackViewModel;
     private SongHorizontalAdapter songHorizontalAdapter;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private LiveData<ArtistID3> pendingArtist;
+    private Observer<ArtistID3> pendingArtistObserver;
 
     /** @noinspection deprecation*/
     @Override
@@ -138,8 +142,17 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
     @Override
     public void onDestroyView() {
+        removePendingArtistObserver();
         super.onDestroyView();
         bind = null;
+    }
+
+    private void removePendingArtistObserver() {
+        if (pendingArtist != null && pendingArtistObserver != null) {
+            pendingArtist.removeObserver(pendingArtistObserver);
+        }
+        pendingArtist = null;
+        pendingArtistObserver = null;
     }
 
         /** @noinspection deprecation*/
@@ -307,14 +320,17 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
     private void initAlbumInfoTextButton() {
         bind.albumArtistLabel.setOnClickListener(v -> {
-            ArtistID3 artist = albumPageViewModel.getArtist().getValue();
-            if (artist != null) {
+            removePendingArtistObserver();
+            pendingArtist = albumPageViewModel.getArtist();
+            pendingArtistObserver = artist -> {
+                if (artist == null) return;
+
+                removePendingArtistObserver();
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(Constants.ARTIST_OBJECT, artist.strippedForNav());
                 activity.navController.navigate(R.id.action_albumPageFragment_to_artistPageFragment, bundle);
-            } else {
-                Toast.makeText(requireContext(), getString(R.string.album_error_retrieving_artist), Toast.LENGTH_SHORT).show();
-            }
+            };
+            pendingArtist.observe(getViewLifecycleOwner(), pendingArtistObserver);
         });
     }
 
