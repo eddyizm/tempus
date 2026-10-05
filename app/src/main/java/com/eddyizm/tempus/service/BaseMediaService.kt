@@ -259,7 +259,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         // again on the main thread, immediately before the install, and a move starts it over.
         Thread {
             // Nothing needs the queue until playback starts, so it waits for a tested address.
-            ConnectionUtil.awaitPingsAnswered()
+            while (ConnectionUtil.pingsOutstanding()) {
+                if (serviceDestroyed) return@Thread
+                Thread.sleep(25)
+            }
 
             val addressWhenMapped = Preferences.getInUseServerAddress()
             val queueRepository = QueueRepository()
