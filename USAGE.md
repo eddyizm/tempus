@@ -141,7 +141,25 @@ This app works with any service that implements the Subsonic API, including:
 If you intend to play to a TV or a network speaker, the address you enter here also has to be reachable from that device, because it fetches the music from your server itself. See [Playing on another device](#playing-on-another-device).
 
 ### Advanced Settings
-**TODO**
+
+#### Custom HTTP headers
+
+For servers behind an authenticating proxy (e.g. Cloudflare Access service tokens), enable
+**Custom HTTP headers** on the server and enter one header per line:
+
+    CF-Access-Client-Id: <id>
+    CF-Access-Client-Secret: <secret>
+
+Blank lines and lines starting with `#` are ignored. A line that is not `Name: Value`, or that names `Host`, `Content-Length`, `Transfer-Encoding` or `Connection`, is refused when you save, with the line number.
+
+Headers are sent only to that server's address and local address (same scheme, host and port), on API calls, streaming, downloads and cover art. They are not sent to radio stations or other hosts, and they are not carried along when the server redirects to another host. Debug builds hide their values in the HTTP log.
+
+Devices that fetch the music themselves cannot send them:
+
+- Chromecast and UPnP/DLNA renderers (see [Playing on another device](#playing-on-another-device)) get a plain stream URL, so they will be refused by a proxy that requires the headers.
+- Local-network playback to another phone running Tempus works only if that phone has the same headers set on its own server entry, because it streams from your server with its own settings.
+
+The values are stored on the device the same way as your password.
 
 ## Main Features
 
