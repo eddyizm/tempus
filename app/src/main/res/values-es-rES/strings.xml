@@ -798,6 +798,33 @@
     <string name="artist_page_title_most_streamed_song_unavailable">No hay canciones principales disponibles\nToca para ocultar</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Al activar esto, la lista de reproducción se hace pública. Si lo dejas como está, no cambia la visibilidad de la lista de reproducción.</string>
     <string name="playlist_editor_dialog_action_save_empty">Una lista de reproducción debe tener al menos una pista</string>
+    <string name="menu_keep_synced_button">Mantener sincronizada</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Descargando %d pista</item>
+        <item quantity="other">Descargando %d pistas</item>
+    </plurals>
+    <string name="playlist_editor_hint">Arrastra el asa para reordenar y toca la papelera para quitar. No se enviará nada hasta que guardes.</string>
+    <string name="playlist_editor_remove_track">Quitar pista</string>
+    <string name="playlist_editor_drag_track">Arrastra para reordenar</string>
+    <string name="menu_edit_playlist_details_button">Editar detalles</string>
+    <string name="playlist_details_dialog_title">Detalles de la lista de reproducción</string>
+    <string name="playlist_editor_load_failure">No se pudo cargar la lista de reproducción</string>
+    <string name="playlist_editor_removed_track">Quitada de la lista</string>
+    <string name="song_bottom_sheet_undo">Deshacer</string>
+    <string name="song_bottom_sheet_undo_failure">No se pudo restaurar la canción</string>
+    <string name="la_theme_card_emerald_green_description">Color de acento verde esmeralda</string>
+    <string name="la_perms_title">Solicitar permisos</string>
+    <string name="la_perms_description">Los permisos necesarios y su uso se muestran a continuación.</string>
+    <string name="la_perms_status_provided">Concedido</string>
+    <string name="la_perms_status_not_provided">Solicitar</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Necesario para acceder a tu servidor de música por internet.</string>
+    <string name="la_perms_notifications_title">Notificaciones</string>
+    <string name="la_perms_notifications_description">Necesario para mostrar el estado de las descargas y los controles del reproductor.</string>
+    <string name="la_perms_access_local_network_title">Acceso a la red local</string>
+    <string name="la_perms_access_local_network_description">Necesario para acceder a otros dispositivos en la misma LAN que tu dispositivo actual.</string>
+    <string name="la_perms_nearby_devices_title">Dispositivos cercanos</string>
+    <string name="la_perms_nearby_devices_description">Necesario para descubrir otros dispositivos mediante UPnP y Chromecast.</string>
     <string name="search_title_empty_response">Sin resultados.</string>
     <string name="search_description_empty_response">Hemos comprobado la respuesta de su servidor pero estaba vacía.</string>
 </resources>

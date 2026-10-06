@@ -742,6 +742,33 @@
     <string name="playlist_error_not_found_toast">Playlist supprimée du cache</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">L\'activation de cette option rend la liste de lecture publique. Si vous la laissez telle quelle, la visibilité de la liste de lecture ne sera pas modifiée.</string>
     <string name="playlist_editor_dialog_action_save_empty">Une liste de lecture doit contenir au moins un titre</string>
+    <string name="menu_keep_synced_button">Garder synchronisée</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Téléchargement de %d titre en cours</item>
+        <item quantity="other">Téléchargement de %d titres en cours</item>
+    </plurals>
+    <string name="playlist_editor_hint">Faites glisser la poignée pour réorganiser et touchez la corbeille pour supprimer. Rien n\'est envoyé avant l\'enregistrement.</string>
+    <string name="playlist_editor_remove_track">Supprimer le titre</string>
+    <string name="playlist_editor_drag_track">Faire glisser pour réorganiser</string>
+    <string name="menu_edit_playlist_details_button">Modifier les détails</string>
+    <string name="playlist_details_dialog_title">Détails de la playlist</string>
+    <string name="playlist_editor_load_failure">Impossible de charger la playlist</string>
+    <string name="playlist_editor_removed_track">Retiré de la liste</string>
+    <string name="song_bottom_sheet_undo">Annuler</string>
+    <string name="song_bottom_sheet_undo_failure">Impossible de restaurer le morceau</string>
+    <string name="la_theme_card_emerald_green_description">Couleur d\'accent vert émeraude</string>
+    <string name="la_perms_title">Demander des autorisations</string>
+    <string name="la_perms_description">Les autorisations nécessaires et leur utilisation sont indiquées ci-dessous.</string>
+    <string name="la_perms_status_provided">Accordée</string>
+    <string name="la_perms_status_not_provided">Demander</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Requise pour accéder à votre serveur musical sur Internet.</string>
+    <string name="la_perms_notifications_title">Notifications</string>
+    <string name="la_perms_notifications_description">Requise pour afficher l\'état des téléchargements et les commandes du lecteur.</string>
+    <string name="la_perms_access_local_network_title">Accès au réseau local</string>
+    <string name="la_perms_access_local_network_description">Requis pour accéder aux autres appareils sur le même réseau local que votre appareil actuel.</string>
+    <string name="la_perms_nearby_devices_title">Appareils à proximité</string>
+    <string name="la_perms_nearby_devices_description">Requise pour découvrir d\'autres appareils via UPnP et Chromecast.</string>
     <string name="search_title_empty_response">Aucun résultat.</string>
     <string name="search_description_empty_response">Nous avons vérifié la réponse de votre serveur, mais elle était vide.</string>
 </resources>

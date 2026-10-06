@@ -858,4 +858,31 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Salam, boş fraqment</string>
 
+    <string name="menu_keep_synced_button">Sinxronizasiyanı saxla</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">%d trek endirilir</item>
+        <item quantity="other">%d trek endirilir</item>
+    </plurals>
+    <string name="playlist_editor_hint">Yenidən sıralamaq üçün tutacağı sürükləyin, silmək üçün zibil qutusuna toxunun. Yadda saxlayana qədər heç nə göndərilmir.</string>
+    <string name="playlist_editor_remove_track">Treki sil</string>
+    <string name="playlist_editor_drag_track">Yenidən sıralamaq üçün sürükləyin</string>
+    <string name="menu_edit_playlist_details_button">Təfərrüatları redaktə et</string>
+    <string name="playlist_details_dialog_title">Pleylist təfərrüatları</string>
+    <string name="playlist_editor_load_failure">Pleylisti yükləmək mümkün olmadı</string>
+    <string name="playlist_editor_removed_track">Siyahıdan silindi</string>
+    <string name="song_bottom_sheet_undo">Geri al</string>
+    <string name="song_bottom_sheet_undo_failure">Mahnını geri qaytarmaq mümkün olmadı</string>
+    <string name="la_theme_card_emerald_green_description">Zümrüd yaşıl vurğu rəngi</string>
+    <string name="la_perms_title">İcazələr tələb et</string>
+    <string name="la_perms_description">Tələb olunan icazələr və onların istifadəsi aşağıda göstərilib.</string>
+    <string name="la_perms_status_provided">Verilib</string>
+    <string name="la_perms_status_not_provided">Tələb et</string>
+    <string name="la_perms_internet_title">İnternet</string>
+    <string name="la_perms_internet_description">Musiqi serverinizə internet vasitəsilə daxil olmaq üçün tələb olunur.</string>
+    <string name="la_perms_notifications_title">Bildirişlər</string>
+    <string name="la_perms_notifications_description">Endirmə vəziyyətini və pleyer idarəetmələrini göstərmək üçün tələb olunur.</string>
+    <string name="la_perms_access_local_network_title">Lokal şəbəkəyə giriş</string>
+    <string name="la_perms_access_local_network_description">Cari cihazınızla eyni LAN-da olan digər cihazlara daxil olmaq üçün tələb olunur.</string>
+    <string name="la_perms_nearby_devices_title">Yaxınlıqdakı cihazlar</string>
+    <string name="la_perms_nearby_devices_description">UPnP və Chromecast vasitəsilə digər cihazları tapmaq üçün tələb olunur.</string>
 </resources>
