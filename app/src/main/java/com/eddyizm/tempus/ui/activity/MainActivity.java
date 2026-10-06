@@ -29,6 +29,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
@@ -200,10 +201,19 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        boolean wasOpen = isLocalNetworkRequestOpen();
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // On Android 17 a request the user denied for good is answered with no prompt, after onResume.
+        if (wasOpen && !isLocalNetworkRequestOpen() && getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) pingServer();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         connectivityStatusReceiverManager(false);
         if (isFinishing()) PlaylistRepository.resetKeptSync();
+        if (!isChangingConfigurations()) ConnectionUtil.expirePingDeferral();
         bind = null;
     }
 
@@ -595,8 +605,13 @@ public class MainActivity extends BaseActivity {
 
     private void pingServer() {
         if (Preferences.getToken() == null && Preferences.getPassword() == null) return;
+        if (isLocalNetworkRequestOpen()) {
+            ConnectionUtil.deferPing();
+            return;
+        }
 
         ConnectionUtil.markPingIssued();
+        ConnectionUtil.endPingDeferral();
 
         if (Preferences.isInUseServerAddressLocal()) {
             mainViewModel.ping().observe(this, subsonicResponse -> {

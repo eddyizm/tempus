@@ -24,6 +24,10 @@
             android:inputType="number"
             android:singleLine="true"
             android:defaultValue="2" />
+
+        <Preference
+            android:key="permissions"
+            android:title="@string/settings_permissions"/>
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
     <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
