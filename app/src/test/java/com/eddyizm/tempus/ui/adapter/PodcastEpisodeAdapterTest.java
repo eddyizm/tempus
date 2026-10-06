@@ -68,6 +68,7 @@ public class PodcastEpisodeAdapterTest {
 
         episodes.add(ep1);
         episodes.add(ep2);
+        episodes.add(null);
 
         adapter.setItems(episodes);
 

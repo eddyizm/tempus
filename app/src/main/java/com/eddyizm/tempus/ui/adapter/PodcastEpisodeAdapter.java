@@ -91,9 +91,11 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
             this.podcastEpisodesFull = Collections.emptyList();
             this.podcastEpisodes = Collections.emptyList();
         } else {
-            this.podcastEpisodesFull = podcastEpisodes;
+            this.podcastEpisodesFull = podcastEpisodes.stream()
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
             this.podcastEpisodes = podcastEpisodesFull.stream()
-                    .filter(podcastEpisode -> podcastEpisode != null && Objects.equals(podcastEpisode.getStatus(), "completed"))
+                    .filter(podcastEpisode -> Objects.equals(podcastEpisode.getStatus(), "completed"))
                     .collect(Collectors.toList());
         }
         notifyDataSetChanged();
