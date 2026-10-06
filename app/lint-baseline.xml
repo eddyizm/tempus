@@ -2758,6 +2758,17 @@
 
     <issue
         id="MissingQuantity"
+        message="For locale &quot;es&quot; (Spanish) the following quantity should also be defined: `many`"
+        errorLine1="    &lt;plurals name=&quot;playlist_sync_downloading&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-es/strings.xml"
+            line="3"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
         message="For locale &quot;it&quot; (Italian) the following quantity should also be defined: `many`"
         errorLine1="    &lt;plurals name=&quot;download_refresh_removed&quot;>"
         errorLine2="    ^">
@@ -2923,6 +2934,17 @@
 
     <issue
         id="MissingQuantity"
+        message="For locale &quot;it&quot; (Italian) the following quantity should also be defined: `many`"
+        errorLine1="    &lt;plurals name=&quot;playlist_sync_downloading&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-it/strings.xml"
+            line="542"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
         message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
         errorLine1="    &lt;plurals name=&quot;home_sync_starred_albums_count&quot;>"
         errorLine2="    ^">
@@ -2995,6 +3017,28 @@
         <location
             file="src/main/res/values-pl/strings.xml"
             line="735"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;fr&quot; (French) the following quantity should also be defined: `many` (e.g. &quot;1000000 de jours&quot;)"
+        errorLine1="    &lt;plurals name=&quot;playlist_sync_downloading&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-fr/strings.xml"
+            line="746"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;ca&quot; (Catalan) the following quantity should also be defined: `many`"
+        errorLine1="    &lt;plurals name=&quot;playlist_sync_downloading&quot;>"
+        errorLine2="    ^">
+        <location
+            file="src/main/res/values-ca/strings.xml"
+            line="750"
             column="5"/>
     </issue>
 
@@ -4276,28 +4320,6 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;menu_keep_synced_button&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;menu_keep_synced_button&quot;>Keep synced&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="291"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;playlist_sync_downloading&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;plurals name=&quot;playlist_sync_downloading&quot;>"
-        errorLine2="             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="292"
-            column="14"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
         message="&quot;playlist_sort_pinned&quot; is not translated in &quot;de&quot; (German), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;zh&quot; (Chinese), &quot;ro&quot; (Romanian), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;playlist_sort_pinned&quot;>Faves&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -4678,83 +4700,6 @@
         <location
             file="src/main/res/values/strings.xml"
             line="350"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;playlist_editor_hint&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;playlist_editor_hint&quot;>Drag the handle to reorder, tap the trash to remove. Nothing is sent until Save.&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="352"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;playlist_editor_remove_track&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;playlist_editor_remove_track&quot;>Remove track&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="353"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;playlist_editor_drag_track&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;playlist_editor_drag_track&quot;>Drag to reorder&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="354"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;menu_edit_playlist_details_button&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;menu_edit_playlist_details_button&quot;>Edit details&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="355"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;playlist_details_dialog_title&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;playlist_details_dialog_title&quot;>Playlist details&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="356"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;playlist_editor_load_failure&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;playlist_editor_load_failure&quot;>Could not load the playlist&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="357"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;playlist_editor_removed_track&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;playlist_editor_removed_track&quot;>Removed from the list&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="358"
             column="13"/>
     </issue>
 
@@ -6355,28 +6300,6 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;song_bottom_sheet_undo&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;song_bottom_sheet_undo&quot;>Undo&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="660"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
-        message="&quot;song_bottom_sheet_undo_failure&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;song_bottom_sheet_undo_failure&quot;>Failed to put the song back&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="661"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
         message="&quot;starred_artist_sync_dialog_summary&quot; is not translated in &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;starred_artist_sync_dialog_summary&quot;>Downloading starred artists may require a large amount of data.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -7675,17 +7598,6 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_theme_card_emerald_green_description&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
-        errorLine1="    &lt;string name=&quot;la_theme_card_emerald_green_description&quot;>Emerald green accent color&lt;/string>"
-        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/res/values/strings.xml"
-            line="870"
-            column="13"/>
-    </issue>
-
-    <issue
-        id="MissingTranslation"
         message="&quot;la_theme_card_royal_blue_description&quot; is not translated in &quot;de&quot; (German), &quot;ko&quot; (Korean), &quot;pt&quot; (Portuguese), &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
         errorLine1="    &lt;string name=&quot;la_theme_card_royal_blue_description&quot;>Royal blue accent color&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
@@ -7752,7 +7664,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_title&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_title&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_title&quot;>Request Permissions&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7763,7 +7675,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_description&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_description&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_description&quot;>The required permissions and their usage are displayed below.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7774,7 +7686,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_status_provided&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_status_provided&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_status_provided&quot;>Provided&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7785,7 +7697,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_status_not_provided&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_status_not_provided&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_status_not_provided&quot;>Request&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7796,7 +7708,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_internet_title&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_internet_title&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_internet_title&quot;>Internet&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7807,7 +7719,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_internet_description&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_internet_description&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_internet_description&quot;>Required to access your music server on the internet.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7818,7 +7730,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_notifications_title&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_notifications_title&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_notifications_title&quot;>Notifications&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7829,7 +7741,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_notifications_description&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_notifications_description&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_notifications_description&quot;>Required to show download status and player controls.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7840,7 +7752,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_access_local_network_title&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_access_local_network_title&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_access_local_network_title&quot;>Access Local Network&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7851,7 +7763,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_access_local_network_description&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_access_local_network_description&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_access_local_network_description&quot;>Required to access other deivces on the same LAN as your current device.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7862,7 +7774,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_nearby_devices_title&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_nearby_devices_title&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_nearby_devices_title&quot;>Nearby Devices&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
@@ -7873,7 +7785,7 @@
 
     <issue
         id="MissingTranslation"
-        message="&quot;la_perms_nearby_devices_description&quot; is not translated in &quot;it&quot; (Italian), &quot;fr&quot; (French), &quot;es&quot; (Spanish), &quot;zh&quot; (Chinese), &quot;eu&quot; (Basque), &quot;ja&quot; (Japanese), &quot;az&quot; (Azerbaijani), &quot;ro&quot; (Romanian), &quot;ca&quot; (Catalan), &quot;tr&quot; (Turkish)"
+        message="&quot;la_perms_nearby_devices_description&quot; is not translated in &quot;ja&quot; (Japanese)"
         errorLine1="    &lt;string name=&quot;la_perms_nearby_devices_description&quot;>Required to discover other deivces through UPnP and Chromecast.&lt;/string>"
         errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
