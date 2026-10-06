@@ -91,7 +91,8 @@ public class App extends Application {
                 Preferences.getPassword(),
                 Preferences.getToken(),
                 Preferences.getSalt(),
-                Preferences.isLowScurity()
+                Preferences.isLowScurity(),
+                Preferences.getCustomHeaders()
         );
     }
 
@@ -104,17 +105,19 @@ public class App extends Application {
                 server.getPassword(),
                 null,
                 null,
-                server.isLowSecurity()
+                server.isLowSecurity(),
+                server.getCustomHeaders()
         );
     }
 
     private static Subsonic buildSubsonicClient(String serverAddress, String username,
                                                 String password, String token, String salt,
-                                                boolean isLowSecurity) {
+                                                boolean isLowSecurity, String customHeaders) {
         SubsonicPreferences preferences = new SubsonicPreferences();
         preferences.setServerUrl(serverAddress);
         preferences.setUsername(username);
         preferences.setAuthentication(password, token, salt, isLowSecurity);
+        preferences.setCustomHeaders(customHeaders);
 
         return new Subsonic(preferences);
     }
@@ -166,6 +169,7 @@ public class App extends Application {
         preferences.setServerUrl(server);
         preferences.setUsername(username);
         preferences.setAuthentication(password, token, salt, isLowSecurity);
+        preferences.setCustomHeaders(Preferences.getCustomHeaders());
 
         return preferences;
     }

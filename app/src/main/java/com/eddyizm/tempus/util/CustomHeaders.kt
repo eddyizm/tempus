@@ -2,6 +2,10 @@ package com.eddyizm.tempus.util
 
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import java.io.IOException
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.function.Consumer
 
 /**
  * User-defined HTTP headers for a server (for example Cloudflare Access service tokens).
@@ -13,6 +17,9 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 object CustomHeaders {
     private val NAME = Regex("^[!#\$%&'*+.^_`|~0-9A-Za-z-]+\$")
     private val FORBIDDEN = setOf("host", "content-length", "transfer-encoding", "connection")
+
+    /** Most redirects [openConnectionForActiveServer] follows, like browsers and OkHttp. */
+    private const val MAX_REDIRECTS = 20
 
     /** Valid headers in input order. Invalid, blank and '#' lines are skipped. */
     @JvmStatic
@@ -85,5 +92,33 @@ object CustomHeaders {
                 Preferences.getLocalAddress()
             )
         )
+    }
+
+    /**
+     * Opens [url] with the signed-in server's headers when it points at that server.
+     *
+     * [HttpURLConnection] would carry request headers across a redirect to another host, so when
+     * headers are attached, redirects are followed here instead and every hop is checked again.
+     * [configure] is applied to each connection before it connects.
+     */
+    @JvmStatic
+    fun openConnectionForActiveServer(url: String, configure: Consumer<HttpURLConnection>): HttpURLConnection {
+        var current = URL(url)
+        repeat(MAX_REDIRECTS + 1) {
+            val headers = forActiveServer(current.toString())
+            val connection = current.openConnection() as HttpURLConnection
+            configure.accept(connection)
+            if (headers.isEmpty()) return connection
+            connection.instanceFollowRedirects = false
+            headers.forEach { (name, value) -> connection.setRequestProperty(name, value) }
+            val code = connection.responseCode
+            val location = connection.getHeaderField("Location")
+            if (code !in 300..399 || code == HttpURLConnection.HTTP_NOT_MODIFIED || location == null) {
+                return connection
+            }
+            connection.disconnect()
+            current = URL(current, location)
+        }
+        throw IOException("Too many redirects: $url")
     }
 }

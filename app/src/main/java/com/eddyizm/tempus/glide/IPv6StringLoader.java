@@ -11,6 +11,7 @@ import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.bumptech.glide.signature.ObjectKey;
 import com.eddyizm.tempus.util.ClientCertManager;
+import com.eddyizm.tempus.util.CustomHeadersInterceptor;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,7 +109,9 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
         public Factory() {
             OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .connectTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                    .readTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+                    .readTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                    // Cover art from the signed-in server gets its custom headers; other hosts don't.
+                    .addNetworkInterceptor(CustomHeadersInterceptor.forActiveServer());
             if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
                 builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
                         ClientCertManager.INSTANCE.getTrustManager());

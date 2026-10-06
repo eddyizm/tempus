@@ -9,6 +9,7 @@ public class SubsonicPreferences {
     private String username;
     private String clientName = "Tempus";
     private SubsonicAuthentication authentication;
+    private String customHeaders;
 
     public String getServerUrl() {
         return serverUrl;
@@ -36,6 +37,14 @@ public class SubsonicPreferences {
 
     public void setClientName(String clientName) {
         this.clientName = clientName;
+    }
+
+    public String getCustomHeaders() {
+        return customHeaders;
+    }
+
+    public void setCustomHeaders(String customHeaders) {
+        this.customHeaders = customHeaders;
     }
 
     public void setAuthentication(String password, String token, String salt, boolean isLowSecurity) {
