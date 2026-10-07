@@ -24,7 +24,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -90,6 +89,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private MediaService.LocalBinder mediaServiceBinder;
     private boolean isServiceBound = false;
+    private boolean pendingEqualizerReload = false;
     private ActivityResultLauncher<Intent> equalizerResultLauncher;
 
     private final Set<String> expandedCategories = new HashSet<>();
@@ -890,6 +890,10 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mediaServiceBinder = (MediaService.LocalBinder) service;
             isServiceBound = true;
+            if (pendingEqualizerReload) {
+                mediaServiceBinder.reloadEqualizer();
+                pendingEqualizerReload = false;
+            }
             checkEqualizerBands();
             applyAccordionState();
         }
@@ -961,9 +965,11 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
                         checkSystemEqualizer();
 
-                        Intent intent = new Intent(getContext().getApplicationContext(), MediaService.class);
-                        intent.setAction(MediaService.ACTION_RELOAD_EQUALIZER);
-                        ContextCompat.startForegroundService(getContext().getApplicationContext(), intent);
+                        if (mediaServiceBinder != null) {
+                            mediaServiceBinder.reloadEqualizer();
+                        } else {
+                            pendingEqualizerReload = true;
+                        }
                         return true;
                     });
         }
@@ -992,6 +998,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         if (isServiceBound) {
             requireActivity().unbindService(serviceConnection);
             isServiceBound = false;
+            mediaServiceBinder = null;
         }
     }
 }
