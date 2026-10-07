@@ -112,4 +112,43 @@ class ServerHeadersTest {
         ServerHeaders.unregister(source)
         assertTrue(ServerHeaders.forUrl("$serverUrl/x", server()).isEmpty())
     }
+
+    private fun withLocal(localAddress: String?, raw: String? = "X-A: 1") =
+        ServerContext(addresses = listOf(serverUrl), customHeaders = raw, localAddress = localAddress)
+
+    @Test
+    fun plainHttpLocalAddress_getsNoHeaders() {
+        var calls = 0
+        register { calls++; mapOf("Authorization" to "Basic dTpw") }
+        val ctx = withLocal("http://192.168.1.5:4533")
+        assertTrue(ServerHeaders.forUrl("http://192.168.1.5:4533/rest/ping", ctx).isEmpty())
+        assertEquals(0, calls)
+        // The public address is unaffected.
+        assertEquals(
+            mapOf("Authorization" to "Basic dTpw", "X-A" to "1"),
+            ServerHeaders.forUrl("$serverUrl/rest/ping", ctx)
+        )
+    }
+
+    @Test
+    fun httpsLocalAddress_getsHeaders() {
+        val ctx = withLocal("https://nas.lan:4533")
+        assertEquals(mapOf("X-A" to "1"), ServerHeaders.forUrl("https://nas.lan:4533/rest/ping", ctx))
+        // Same host over http is a different origin and gets nothing.
+        assertTrue(ServerHeaders.forUrl("http://nas.lan:4533/rest/ping", ctx).isEmpty())
+    }
+
+    @Test
+    fun localAddressEqualToPublic_isTreatedAsPublic() {
+        val publicHttp = "http://192.168.1.5:4533"
+        val ctx = ServerContext(addresses = listOf(publicHttp), customHeaders = "X-A: 1", localAddress = publicHttp)
+        assertEquals(mapOf("X-A" to "1"), ServerHeaders.forUrl("$publicHttp/rest/ping", ctx))
+    }
+
+    @Test
+    fun blankOrInvalidLocalAddress_isIgnored() {
+        assertTrue(ServerHeaders.forUrl("https://nas.lan/rest", withLocal("")).isEmpty())
+        assertTrue(ServerHeaders.forUrl("https://nas.lan/rest", withLocal("not a url")).isEmpty())
+        assertEquals(mapOf("X-A" to "1"), ServerHeaders.forUrl("$serverUrl/rest", withLocal("")))
+    }
 }

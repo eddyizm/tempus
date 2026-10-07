@@ -1,10 +1,16 @@
 package com.eddyizm.tempus.repository;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.lifecycle.LiveData;
+
+import com.eddyizm.tempus.App;
 
 import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.database.dao.ServerDao;
 import com.eddyizm.tempus.model.Server;
+import com.eddyizm.tempus.util.Preferences;
 
 import java.util.List;
 
@@ -35,6 +41,18 @@ public class ServerRepository {
         thread.start();
     }
 
+    /**
+     * Applies an edit of the signed-in server's custom headers to the running session, so a
+     * rotated token takes effect without signing in again. Glide, ExoPlayer and downloads read the
+     * preference on every request; the API client is rebuilt to pick it up.
+     */
+    static void syncSignedInServer(Server server) {
+        String signedInId = Preferences.getServerId();
+        if (signedInId == null || !signedInId.equals(server.getServerId())) return;
+        Preferences.setCustomHeaders(server.getCustomHeaders());
+        new Handler(Looper.getMainLooper()).post(App::refreshSubsonicClient);
+    }
+
     private static class InsertThreadSafe implements Runnable {
         private final ServerDao serverDao;
         private final Server server;
@@ -47,6 +65,7 @@ public class ServerRepository {
         @Override
         public void run() {
             serverDao.insert(server);
+            syncSignedInServer(server);
         }
     }
 
@@ -62,6 +81,7 @@ public class ServerRepository {
         @Override
         public void run() {
             serverDao.update(server);
+            syncSignedInServer(server);
         }
     }
 

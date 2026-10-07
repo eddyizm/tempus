@@ -306,7 +306,6 @@ class LoginServerFragment : Fragment() {
 
         val s: Server = serverList[selectedServerPosition]
 
-        val server: String = s.serverName
         val user: String = s.username
         val password: String = s.password
         val address: String = s.address
@@ -314,7 +313,10 @@ class LoginServerFragment : Fragment() {
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
 
-        App.getInstance().preferences.edit { putString("server", server) }
+        // "server" is the address everywhere it is read (address switching, custom headers,
+        // sharing), and "server_id" lets edits of this server reach the running session.
+        App.getInstance().preferences.edit { putString("server_id", s.serverId) }
+        App.getInstance().preferences.edit { putString("server", address) }
         App.getInstance().preferences.edit { putString("user", user) }
         App.getInstance().preferences.edit { putString("password", password) }
         App.getInstance().preferences.edit { putString("in_use_server_address", address) }

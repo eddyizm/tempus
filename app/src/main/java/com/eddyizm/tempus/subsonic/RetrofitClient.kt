@@ -114,7 +114,13 @@ class RetrofitClient(subsonic: Subsonic) {
      * redirect hop, so the origin check also stops the headers following a redirect to another host.
      */
     private fun getCustomHeadersInterceptor(subsonic: Subsonic): CustomHeadersInterceptor {
-        val server = ServerContext(addresses = listOf(subsonic.url), customHeaders = subsonic.customHeaders)
+        // The client may be pinned to the local address (e.g. the local probe). That address only
+        // gets headers over https, so it is passed as the local address, not as a public one.
+        val server = ServerContext(
+            addresses = listOf(subsonic.publicAddress ?: subsonic.url),
+            customHeaders = subsonic.customHeaders,
+            localAddress = subsonic.localAddress
+        )
         return CustomHeadersInterceptor { url -> ServerHeaders.forUrl(url, server) }
     }
 

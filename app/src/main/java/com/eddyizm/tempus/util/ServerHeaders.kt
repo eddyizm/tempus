@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.util
 
 import android.util.Log
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -9,10 +10,12 @@ import java.util.function.Consumer
 
 /** The server a request is going to, as seen by a [HeaderSource]. */
 data class ServerContext(
-    /** Addresses of the server (public, local, in use). Requests are only for this origin. */
+    /** Addresses that always get headers (the public address). Requests are only for these origins. */
     val addresses: List<String?>,
     /** The user's raw custom headers text (see [CustomHeaders]). */
     val customHeaders: String?,
+    /** The server's local address. Gets headers only over https, see [ServerHeaders.forUrl]. */
+    val localAddress: String? = null,
 )
 
 /**
@@ -61,7 +64,7 @@ object ServerHeaders {
     @JvmStatic
     fun forUrl(url: String?, server: ServerContext): Map<String, String> {
         if (sources.isEmpty() && server.customHeaders.isNullOrBlank()) return emptyMap()
-        if (!CustomHeaders.isSameOrigin(url, server.addresses)) return emptyMap()
+        if (!isEligible(url, server)) return emptyMap()
 
         val merged = LinkedHashMap<String, String>()
         for (source in sources) {
@@ -84,6 +87,17 @@ object ServerHeaders {
         return merged
     }
 
+    /**
+     * True when [url] is one of the server's [ServerContext.addresses], or its
+     * [ServerContext.localAddress] over https. A plain-http local address could be any machine
+     * that answers on that IP on whatever network the phone is on, so it never gets headers.
+     */
+    private fun isEligible(url: String?, server: ServerContext): Boolean {
+        if (CustomHeaders.isSameOrigin(url, server.addresses)) return true
+        val local = server.localAddress?.trim()?.toHttpUrlOrNull() ?: return false
+        return local.isHttps && CustomHeaders.isSameOrigin(url, listOf(server.localAddress))
+    }
+
     /** Headers of the signed-in server if [url] points at it, otherwise empty. */
     @JvmStatic
     fun forActiveServer(url: String?): Map<String, String> {
@@ -92,12 +106,9 @@ object ServerHeaders {
         return forUrl(
             url,
             ServerContext(
-                addresses = listOf(
-                    Preferences.getInUseServerAddress(),
-                    Preferences.getServer(),
-                    Preferences.getLocalAddress()
-                ),
-                customHeaders = raw
+                addresses = listOf(Preferences.getServer()),
+                customHeaders = raw,
+                localAddress = Preferences.getLocalAddress()
             )
         )
     }

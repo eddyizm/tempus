@@ -56,6 +56,7 @@ public class AlbumArtContentProvider extends ContentProvider {
         Context context = getContext();
         String albumId = uri.getLastPathSegment();
         Uri artworkUri = null;
+        String serverArtworkUrl = null;
         File localFile = null;
 
         if (albumId != null && albumId.startsWith("rl_")) {
@@ -64,15 +65,20 @@ public class AlbumArtContentProvider extends ContentProvider {
             // provider's own process and piping the bytes makes it accessible cross-process.
             localFile = RadioCoverArtDownloader.getLocalCoverFile(albumId.substring("rl_".length()));
         } else if (albumId != null && albumId.startsWith("ir_")) {
+            // The URL comes from the caller, and this provider is exported, so it is loaded as a
+            // Uri: Glide's default loader for Uris never adds the server's custom headers.
             String encodedUrl = albumId.substring("ir_".length());
             String decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
             artworkUri = Uri.parse(decodedUrl);
         } else {
-            artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
+            // Loaded as a String so it goes through IPv6StringLoader, whose OkHttp client adds the
+            // server's custom headers (a Uri would use Glide's HttpURLConnection loader, which
+            // doesn't). It also shares the disk-cache entry of the same cover loaded in the app.
+            serverArtworkUrl = CustomGlideRequest.createUrl(albumId, Preferences.getImageSize());
         }
 
         final File localFileFinal = localFile;
-        final Uri artworkUriFinal = artworkUri;
+        final Object artworkModel = serverArtworkUrl != null ? serverArtworkUrl : artworkUri;
 
         try {
             // use pipe to communicate between background thread and caller of openFile()
@@ -91,7 +97,7 @@ public class AlbumArtContentProvider extends ContentProvider {
                     } else {
                         var fileRequest = Glide.with(context)
                                 .asFile()
-                                .load(artworkUriFinal)
+                                .load(artworkModel)
                                 .diskCacheStrategy(DiskCacheStrategy.DATA);
                         if (Preferences.isDataSavingMode()) {
                             fileRequest = fileRequest.onlyRetrieveFromCache(true);
