@@ -7,7 +7,7 @@ import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.TransferListener
 
 /**
- * Sends requests that need the server's custom headers (see [CustomHeaders]) through a separate
+ * Sends requests that need the server's headers (see [ServerHeaders]) through a separate
  * data source, and everything else through the usual one.
  *
  * `DefaultHttpDataSource` re-sends a request's headers when it follows a redirect, even to another

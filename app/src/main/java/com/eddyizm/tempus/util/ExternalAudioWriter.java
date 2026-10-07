@@ -153,7 +153,7 @@ public class ExternalAudioWriter {
             if (scheme.equals("http") || scheme.equals("https")) {
                 // Adds the server's custom headers, following redirects itself so they never
                 // reach another host.
-                connection = CustomHeaders.openConnectionForActiveServer(mediaUri.toString(), c -> {
+                connection = ServerHeaders.openConnectionForActiveServer(mediaUri.toString(), c -> {
                     c.setConnectTimeout(CONNECT_TIMEOUT_MS);
                     c.setReadTimeout(READ_TIMEOUT_MS);
                     c.setRequestProperty("Accept-Encoding", "identity");

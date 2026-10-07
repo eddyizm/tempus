@@ -36,8 +36,8 @@ class CustomHeadersInterceptorTest {
     }
 
     private val raw = "X-Tempus-Test: letmein\nCF-Access-Client-Id: abc"
-    private val servers = listOf("https://music.example.com")
-    private val interceptor = CustomHeadersInterceptor { url -> CustomHeaders.forUrl(url, raw, servers) }
+    private val server = ServerContext(addresses = listOf("https://music.example.com"), customHeaders = raw)
+    private val interceptor = CustomHeadersInterceptor { url -> ServerHeaders.forUrl(url, server) }
 
     private fun run(url: String, existing: Map<String, String> = emptyMap()): Request {
         val builder = Request.Builder().url(url)

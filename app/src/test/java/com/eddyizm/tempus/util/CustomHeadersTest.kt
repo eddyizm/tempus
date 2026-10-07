@@ -80,11 +80,13 @@ class CustomHeadersTest {
     }
 
     @Test
-    fun forUrl_onlyForMatchingOrigin() {
-        val raw = "X-A: 1"
-        val servers = listOf("https://music.example.com")
-        assertEquals(mapOf("X-A" to "1"), CustomHeaders.forUrl("https://music.example.com/x", raw, servers))
-        assertTrue(CustomHeaders.forUrl("https://other.example.com/x", raw, servers).isEmpty())
-        assertTrue(CustomHeaders.forUrl("https://music.example.com/x", null, servers).isEmpty())
+    fun isValid_appliesSameRulesAsParse() {
+        assertTrue(CustomHeaders.isValid("Authorization", "Basic dTpw"))
+        assertTrue(CustomHeaders.isValid("X-Empty", ""))
+        assertFalse(CustomHeaders.isValid("Bad Name", "x"))
+        assertFalse(CustomHeaders.isValid("Host", "evil"))
+        assertFalse(CustomHeaders.isValid("X-A", "a\nb"))
+        assertFalse(CustomHeaders.isValid(null, "x"))
+        assertFalse(CustomHeaders.isValid("X-A", null))
     }
 }

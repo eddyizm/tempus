@@ -4,7 +4,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 /**
- * Adds a server's custom headers (see [CustomHeaders]) to OkHttp requests.
+ * Adds a server's headers (see [ServerHeaders]) to OkHttp requests.
  *
  * Install it with `addNetworkInterceptor`: a network interceptor runs once per network request,
  * including every redirect hop, so [headersFor] is asked again for each URL and the headers do
@@ -28,6 +28,6 @@ class CustomHeadersInterceptor(
     companion object {
         /** Headers of the signed-in server, looked up per request so a server switch applies at once. */
         @JvmStatic
-        fun forActiveServer(): CustomHeadersInterceptor = CustomHeadersInterceptor(CustomHeaders::forActiveServer)
+        fun forActiveServer(): CustomHeadersInterceptor = CustomHeadersInterceptor(ServerHeaders::forActiveServer)
     }
 }

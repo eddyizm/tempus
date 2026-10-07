@@ -93,7 +93,7 @@ public final class DownloadUtil {
             httpDataSourceFactory = new CustomHeadersDataSource.Factory(
                     serverHttpFactory,
                     new OkHttpDataSource.Factory(buildCustomHeadersHttpClient()),
-                    url -> !CustomHeaders.forActiveServer(url).isEmpty());
+                    url -> !ServerHeaders.forActiveServer(url).isEmpty());
         }
 
         return httpDataSourceFactory;

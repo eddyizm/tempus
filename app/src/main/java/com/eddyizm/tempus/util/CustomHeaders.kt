@@ -2,10 +2,6 @@ package com.eddyizm.tempus.util
 
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.function.Consumer
 
 /**
  * User-defined HTTP headers for a server (for example Cloudflare Access service tokens).
@@ -13,13 +9,13 @@ import java.util.function.Consumer
  * Stored as raw text, one "Name: Value" per line. Headers are only ever sent to the server they
  * belong to: same scheme, host and port as its public or local address. They are never sent to
  * radio stations, other hosts or UPnP renderers, and every redirect hop is checked again.
+ *
+ * This object parses and validates the text. [ServerHeaders] decides which headers a request
+ * gets, merging these with headers from other features.
  */
 object CustomHeaders {
     private val NAME = Regex("^[!#\$%&'*+.^_`|~0-9A-Za-z-]+\$")
     private val FORBIDDEN = setOf("host", "content-length", "transfer-encoding", "connection")
-
-    /** Most redirects [openConnectionForActiveServer] follows, like browsers and OkHttp. */
-    private const val MAX_REDIRECTS = 20
 
     /** Valid headers in input order. Invalid, blank and '#' lines are skipped. */
     @JvmStatic
@@ -53,11 +49,18 @@ object CustomHeaders {
         if (colon <= 0) return null
         val name = trimmed.substring(0, colon).trim()
         val value = trimmed.substring(colon + 1).trim()
-        if (!NAME.matches(name)) return null
-        if (name.lowercase() in FORBIDDEN) return null
+        return if (isValid(name, value)) name to value else null
+    }
+
+    /** True when [name] is an allowed header name and [value] is safe to send. */
+    @JvmStatic
+    fun isValid(name: String?, value: String?): Boolean {
+        if (name == null || value == null) return false
+        if (!NAME.matches(name)) return false
+        if (name.lowercase() in FORBIDDEN) return false
         // OkHttp only accepts TAB and printable ASCII in header values.
-        if (value.any { (it.code < 0x20 && it != '\t') || it.code > 0x7e }) return null
-        return name to value
+        if (value.any { (it.code < 0x20 && it != '\t') || it.code > 0x7e }) return false
+        return true
     }
 
     /** True when [url] has the same scheme, host and port as one of [serverAddresses]. */
@@ -72,53 +75,4 @@ object CustomHeaders {
             val server = address?.trim()?.toHttpUrlOrNull() ?: return@any false
             server.scheme == target.scheme && server.host == target.host && server.port == target.port
         }
-
-    /** Headers from [raw] if [url] belongs to one of [serverAddresses], otherwise empty. */
-    @JvmStatic
-    fun forUrl(url: String?, raw: String?, serverAddresses: Collection<String?>): Map<String, String> =
-        if (isSameOrigin(url, serverAddresses)) parse(raw) else emptyMap()
-
-    /** Headers of the signed-in server if [url] points at it, otherwise empty. */
-    @JvmStatic
-    fun forActiveServer(url: String?): Map<String, String> {
-        val raw = Preferences.getCustomHeaders()
-        if (raw.isNullOrBlank()) return emptyMap()
-        return forUrl(
-            url,
-            raw,
-            listOf(
-                Preferences.getInUseServerAddress(),
-                Preferences.getServer(),
-                Preferences.getLocalAddress()
-            )
-        )
-    }
-
-    /**
-     * Opens [url] with the signed-in server's headers when it points at that server.
-     *
-     * [HttpURLConnection] would carry request headers across a redirect to another host, so when
-     * headers are attached, redirects are followed here instead and every hop is checked again.
-     * [configure] is applied to each connection before it connects.
-     */
-    @JvmStatic
-    fun openConnectionForActiveServer(url: String, configure: Consumer<HttpURLConnection>): HttpURLConnection {
-        var current = URL(url)
-        repeat(MAX_REDIRECTS + 1) {
-            val headers = forActiveServer(current.toString())
-            val connection = current.openConnection() as HttpURLConnection
-            configure.accept(connection)
-            if (headers.isEmpty()) return connection
-            connection.instanceFollowRedirects = false
-            headers.forEach { (name, value) -> connection.setRequestProperty(name, value) }
-            val code = connection.responseCode
-            val location = connection.getHeaderField("Location")
-            if (code !in 300..399 || code == HttpURLConnection.HTTP_NOT_MODIFIED || location == null) {
-                return connection
-            }
-            connection.disconnect()
-            current = URL(current, location)
-        }
-        throw IOException("Too many redirects: $url")
-    }
 }
