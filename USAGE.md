@@ -152,11 +152,11 @@ For servers behind an authenticating proxy (e.g. Cloudflare Access service token
 
 Blank lines and lines starting with `#` are ignored. A line that is not `Name: Value`, or that names `Host`, `Content-Length`, `Transfer-Encoding` or `Connection`, is refused when you save, with the line number.
 
-Headers are sent only to that server's address (same scheme, host and port), on API calls, streaming, downloads and cover art, including the artwork shown in the notification, lock screen, Bluetooth and Android Auto. They are not sent to radio stations or other hosts, and they are not carried along when the server redirects to another host. Debug builds hide their values in the HTTP log.
+Headers are sent only to that server's address and local address (same scheme, host and port), on API calls, streaming, downloads and cover art, including the artwork shown in the notification, lock screen, Bluetooth and Android Auto. They are not sent to radio stations or other hosts, and they are not carried along when the server redirects to another host. Debug builds hide their values in the HTTP log.
 
-The local address gets the headers only if it uses `https`. A plain `http` local address could be any device that answers on that IP on whatever network you are connected to, so it never gets them. If your server only accepts requests with the headers on the local network too, give it an `https` local address; otherwise Tempus stays on the public address.
+The local address gets the headers too, like it already gets your Subsonic credentials. If your local address is plain `http`, any device answering on that IP on the network you are connected to would receive them, so use an `https` local address or leave it empty when the headers are sensitive.
 
-Changes to the headers of the server you are signed in to apply right away, so rotating a token does not need a new sign-in.
+After editing the headers of the server you are signed in to, sign out and back in for them to take effect.
 
 Devices that fetch the music themselves cannot send them:
 

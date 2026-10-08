@@ -93,7 +93,7 @@ public final class DownloadUtil {
             httpDataSourceFactory = new CustomHeadersDataSource.Factory(
                     serverHttpFactory,
                     new OkHttpDataSource.Factory(buildCustomHeadersHttpClient()),
-                    url -> !ServerHeaders.forActiveServer(url).isEmpty());
+                    url -> !ServerHeaders.getHeadersForActiveServer(url).isEmpty());
         }
 
         return httpDataSourceFactory;
@@ -107,7 +107,7 @@ public final class DownloadUtil {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                .addNetworkInterceptor(CustomHeadersInterceptor.forActiveServer());
+                .addNetworkInterceptor(ServerHeaders.createInterceptor());
         if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
             builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
                     ClientCertManager.INSTANCE.getTrustManager());

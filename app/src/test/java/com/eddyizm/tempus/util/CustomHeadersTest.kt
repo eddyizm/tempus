@@ -57,26 +57,26 @@ class CustomHeadersTest {
     }
 
     @Test
-    fun isSameOrigin_matchesSchemeHostPort() {
+    fun isServerOrigin_matchesSchemeHostPort() {
         val servers = listOf("https://music.example.com", "http://192.168.1.5:4533", null, "not a url")
-        assertTrue(CustomHeaders.isSameOrigin("https://music.example.com/rest/stream?id=1", servers))
-        assertTrue(CustomHeaders.isSameOrigin("https://music.example.com:443/rest/ping", servers))
-        assertTrue(CustomHeaders.isSameOrigin("http://192.168.1.5:4533/rest/ping", servers))
-        assertTrue(CustomHeaders.isSameOrigin("HTTPS://MUSIC.example.com/rest", servers))
-        assertFalse(CustomHeaders.isSameOrigin("http://music.example.com/rest/ping", servers))
-        assertFalse(CustomHeaders.isSameOrigin("https://music.example.com:8443/rest", servers))
-        assertFalse(CustomHeaders.isSameOrigin("https://radio.example.org/stream", servers))
-        assertFalse(CustomHeaders.isSameOrigin("https://evil.music.example.com/rest", servers))
-        assertFalse(CustomHeaders.isSameOrigin("https://music.example.com.evil.org/rest", servers))
-        assertFalse(CustomHeaders.isSameOrigin("http://192.168.1.5/rest/ping", servers))
-        assertFalse(CustomHeaders.isSameOrigin(null, servers))
-        assertFalse(CustomHeaders.isSameOrigin("content://media/1", servers))
+        assertTrue(CustomHeaders.isServerOrigin("https://music.example.com/rest/stream?id=1", servers))
+        assertTrue(CustomHeaders.isServerOrigin("https://music.example.com:443/rest/ping", servers))
+        assertTrue(CustomHeaders.isServerOrigin("http://192.168.1.5:4533/rest/ping", servers))
+        assertTrue(CustomHeaders.isServerOrigin("HTTPS://MUSIC.example.com/rest", servers))
+        assertFalse(CustomHeaders.isServerOrigin("http://music.example.com/rest/ping", servers))
+        assertFalse(CustomHeaders.isServerOrigin("https://music.example.com:8443/rest", servers))
+        assertFalse(CustomHeaders.isServerOrigin("https://radio.example.org/stream", servers))
+        assertFalse(CustomHeaders.isServerOrigin("https://evil.music.example.com/rest", servers))
+        assertFalse(CustomHeaders.isServerOrigin("https://music.example.com.evil.org/rest", servers))
+        assertFalse(CustomHeaders.isServerOrigin("http://192.168.1.5/rest/ping", servers))
+        assertFalse(CustomHeaders.isServerOrigin(null, servers))
+        assertFalse(CustomHeaders.isServerOrigin("content://media/1", servers))
     }
 
     @Test
-    fun isSameOrigin_serverWithPath() {
+    fun isServerOrigin_serverWithPath() {
         val servers = listOf("https://example.com/navidrome/")
-        assertTrue(CustomHeaders.isSameOrigin("https://example.com/navidrome/rest/ping", servers))
+        assertTrue(CustomHeaders.isServerOrigin("https://example.com/navidrome/rest/ping", servers))
     }
 
     @Test

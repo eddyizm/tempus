@@ -65,12 +65,12 @@ object CustomHeaders {
 
     /** True when [url] has the same scheme, host and port as one of [serverAddresses]. */
     @JvmStatic
-    fun isSameOrigin(url: String?, serverAddresses: Collection<String?>): Boolean {
+    fun isServerOrigin(url: String?, serverAddresses: Collection<String?>): Boolean {
         val target = url?.trim()?.toHttpUrlOrNull() ?: return false
-        return isSameOrigin(target, serverAddresses)
+        return isServerOrigin(target, serverAddresses)
     }
 
-    private fun isSameOrigin(target: HttpUrl, serverAddresses: Collection<String?>): Boolean =
+    private fun isServerOrigin(target: HttpUrl, serverAddresses: Collection<String?>): Boolean =
         serverAddresses.any { address ->
             val server = address?.trim()?.toHttpUrlOrNull() ?: return@any false
             server.scheme == target.scheme && server.host == target.host && server.port == target.port

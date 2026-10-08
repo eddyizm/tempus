@@ -141,16 +141,6 @@ public class Subsonic {
         return preferences.getCustomHeaders();
     }
 
-    /** The server's public address, or null when unknown; see {@link SubsonicPreferences#setAddresses}. */
-    public String getPublicAddress() {
-        return preferences.getPublicAddress();
-    }
-
-    /** The server's local address, or null; it only gets custom headers over https. */
-    public String getLocalAddress() {
-        return preferences.getLocalAddress();
-    }
-
     public String getUrl() {
         String url = preferences.getServerUrl() + "/rest/";
         return url.replace("//rest", "/rest");

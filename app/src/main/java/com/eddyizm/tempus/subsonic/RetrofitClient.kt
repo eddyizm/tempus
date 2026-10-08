@@ -6,10 +6,9 @@ import com.eddyizm.tempus.subsonic.models.Bookmarks
 import com.eddyizm.tempus.subsonic.models.BookmarksDeserializer
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.subsonic.utils.EmptyDateTypeAdapter
+import com.eddyizm.tempus.model.ServerContext
 import com.eddyizm.tempus.util.ClientCertManager
 import com.eddyizm.tempus.util.CustomHeaders
-import com.eddyizm.tempus.util.CustomHeadersInterceptor
-import com.eddyizm.tempus.util.ServerContext
 import com.eddyizm.tempus.util.ServerHeaders
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
@@ -113,15 +112,9 @@ class RetrofitClient(subsonic: Subsonic) {
      * Adds the server's headers (see [ServerHeaders]). A network interceptor runs on every
      * redirect hop, so the origin check also stops the headers following a redirect to another host.
      */
-    private fun getCustomHeadersInterceptor(subsonic: Subsonic): CustomHeadersInterceptor {
-        // The client may be pinned to the local address (e.g. the local probe). That address only
-        // gets headers over https, so it is passed as the local address, not as a public one.
-        val server = ServerContext(
-            addresses = listOf(subsonic.publicAddress ?: subsonic.url),
-            customHeaders = subsonic.customHeaders,
-            localAddress = subsonic.localAddress
-        )
-        return CustomHeadersInterceptor { url -> ServerHeaders.forUrl(url, server) }
+    private fun getCustomHeadersInterceptor(subsonic: Subsonic): ServerHeaders.Interceptor {
+        val server = ServerContext(addresses = listOf(subsonic.url), customHeaders = subsonic.customHeaders)
+        return ServerHeaders.createInterceptor(server)
     }
 
     private fun getCache(): Cache {

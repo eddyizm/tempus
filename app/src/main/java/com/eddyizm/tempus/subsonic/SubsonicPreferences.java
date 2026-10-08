@@ -10,8 +10,6 @@ public class SubsonicPreferences {
     private String clientName = "Tempus";
     private SubsonicAuthentication authentication;
     private String customHeaders;
-    private String publicAddress;
-    private String localAddress;
 
     public String getServerUrl() {
         return serverUrl;
@@ -47,23 +45,6 @@ public class SubsonicPreferences {
 
     public void setCustomHeaders(String customHeaders) {
         this.customHeaders = customHeaders;
-    }
-
-    public String getPublicAddress() {
-        return publicAddress;
-    }
-
-    public String getLocalAddress() {
-        return localAddress;
-    }
-
-    /**
-     * The server's public and local addresses, whichever {@link #setServerUrl} points at. Custom
-     * headers go to the public address, and to the local one only over https.
-     */
-    public void setAddresses(String publicAddress, String localAddress) {
-        this.publicAddress = publicAddress;
-        this.localAddress = localAddress;
     }
 
     public void setAuthentication(String password, String token, String salt, boolean isLowSecurity) {
