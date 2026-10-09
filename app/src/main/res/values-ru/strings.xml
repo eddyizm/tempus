@@ -873,7 +873,6 @@
     <string name="la_perms_nearby_devices_description">Требуется для обнаружения других устройств через UPnP и Chromecast.</string>
 
     <string name="la_shortcut_label">Введение</string>
-    <string name="la_button_advanced_editor">Расширенный редактор (бета)</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

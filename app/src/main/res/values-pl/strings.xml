@@ -881,7 +881,6 @@
 	<string name="la_theme_dialog_color_picker_title">Wybierz kolor akcentu</string>
 
     <string name="la_shortcut_label">Wprowadzenie</string>
-    <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
 	
     <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
 </resources>

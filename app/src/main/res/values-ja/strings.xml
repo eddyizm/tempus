@@ -821,6 +821,5 @@
     <string name="la_theme_card_slate_gray_description">スレートグレーのアクセントカラー</string>
     <string name="la_theme_dialog_color_picker_title">アクセントカラーを選ぶ</string>
     <string name="la_shortcut_label">はじめに</string>
-    <string name="la_button_advanced_editor">高度な編集（ベータ版）</string>
     <string name="hello_blank_fragment">空のフラグメント</string>
 </resources>

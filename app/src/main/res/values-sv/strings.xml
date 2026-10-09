@@ -838,6 +838,5 @@
     <string name="la_perms_nearby_devices_description">Krävs för att upptäcka andra enheter via UPnP och Chromecast.</string>
 
     <string name="la_shortcut_label">Introduktion</string>
-    <string name="la_button_advanced_editor">Avancerad redigerare (beta)</string>
     <string name="hello_blank_fragment">Hej från ett tomt fragment</string>
 </resources>
