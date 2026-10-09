@@ -38,4 +38,7 @@ data class Server(
 
     @ColumnInfo(name = "client_cert")
     val clientCert: String?,
+
+    @ColumnInfo(name = "custom_headers")
+    val customHeaders: String? = null,
 ) : Parcelable

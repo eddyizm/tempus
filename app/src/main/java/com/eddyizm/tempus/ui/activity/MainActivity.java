@@ -570,6 +570,7 @@ public class MainActivity extends BaseActivity {
         Preferences.setLocalAddress(null);
         Preferences.setUser(null);
         Preferences.setClientCert(null);
+        Preferences.setCustomHeaders(null);
 
         // TODO Enter all settings to be reset
         Preferences.setOpenSubsonic(false);
