@@ -12,6 +12,7 @@ import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.ArtistInfo2;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.IndexID3;
+import com.eddyizm.tempus.subsonic.models.ResponseStatus;
 import com.eddyizm.tempus.util.Constants.SeedType;
 
 import java.util.ArrayList;
@@ -236,14 +237,23 @@ public class ArtistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getArtist() != null) {
-                            artist.setValue(response.body().getSubsonicResponse().getArtist());
+                        ApiResponse apiResponse = response.body();
+                        if (response.isSuccessful() && apiResponse != null && apiResponse.getSubsonicResponse() != null) {
+                            var subsonicResponse = apiResponse.getSubsonicResponse();
+                            ArtistID3 result = subsonicResponse.getArtist();
+                            if (ResponseStatus.OK.equals(subsonicResponse.getStatus()) && result != null) {
+                                artist.setValue(result);
+                            } else {
+                                artist.setValue(null);
+                            }
+                        } else {
+                            artist.setValue(null);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-
+                        artist.setValue(null);
                     }
                 });
 

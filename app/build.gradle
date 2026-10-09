@@ -15,8 +15,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 37
 
-        versionCode 49
-        versionName '4.28.0'
+        versionCode 50
+        versionName '4.29.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -90,6 +90,7 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+        disable += "MissingTranslation"
     }
 
     sourceSets {

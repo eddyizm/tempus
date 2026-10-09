@@ -297,6 +297,8 @@
     <string name="menu_sort_least_recently_starred">Давно в избранном</string>
     <string name="menu_pin_button">В избранное</string>
     <string name="menu_unpin_button">Из избранного</string>
+    <string name="menu_keep_synced_button">Сохранять синхронизацию</string>
+    <string name="menu_edit_playlist_details_button">Редактировать сведения</string>
     <string name="playlist_sort_pinned">Избранное</string>
     <string name="playlist_sort_last_played">Недавно играно</string>
     <string name="playlist_sort_last_updated">Недавно обновлено</string>
@@ -342,6 +344,13 @@
     <string name="playlist_chooser_dialog_visibility_summary_v2">Вкл: плейлист станет публичным. Выкл: видимость не изменится.</string>
     <string name="playlist_counted_tracks">%1$d треков • %2$s</string>
     <string name="playlist_duration">Длительность • %1$s</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Скачивание %d трека</item>
+        <item quantity="few">Скачивание %d треков</item>
+        <item quantity="many">Скачивание %d треков</item>
+        <item quantity="other">Скачивание %d треков</item>
+    </plurals>
+    <string name="playlist_details_dialog_title">Сведения о плейлисте</string>
     <string name="playlist_editor_dialog_action_delete_toast">Удерживайте для удаления</string>
     <string name="playlist_editor_dialog_hint_name">Название</string>
     <string name="playlist_editor_dialog_negative_button">Отмена</string>
@@ -353,6 +362,11 @@
     <string name="playlist_editor_dialog_action_save_success">Плейлист сохранён</string>
     <string name="playlist_editor_dialog_action_save_failure">Ошибка сохранения</string>
     <string name="playlist_editor_dialog_action_save_empty">Плейлист не может быть пустым</string>
+    <string name="playlist_editor_hint">Перетаскивайте для изменения порядка, нажмите корзину для удаления. Изменения применятся после сохранения.</string>
+    <string name="playlist_editor_remove_track">Удалить трек</string>
+    <string name="playlist_editor_drag_track">Перетащите для изменения порядка</string>
+    <string name="playlist_editor_load_failure">Не удалось загрузить плейлист</string>
+    <string name="playlist_editor_removed_track">Удалено из списка</string>
     <string name="playlist_page_empty">В плейлисте нет треков</string>
     <string name="playlist_page_play_button">Играть</string>
     <string name="playlist_page_shuffle_button">Перемешать</string>
@@ -651,6 +665,8 @@
     <string name="song_bottom_sheet_rate">Оценить</string>
     <string name="song_bottom_sheet_remove">Удалить с устройства</string>
     <string name="song_bottom_sheet_remove_from_playlist">Из плейлиста</string>
+    <string name="song_bottom_sheet_undo">Отмена</string>
+    <string name="song_bottom_sheet_undo_failure">Не удалось вернуть трек</string>
     <string name="song_bottom_sheet_share">Поделиться</string>
     <string name="song_list_page_downloaded">Скачанные</string>
     <string name="song_list_page_most_played">Часто слушаемые треки</string>
@@ -848,12 +864,27 @@
     <string name="la_theme_card_default">По умолчанию</string>
     <string name="la_theme_card_flirt_red_description">Акцент: кокетливый красный</string>
     <string name="la_theme_card_coral_red_description">Акцент: коралловый красный</string>
+    <string name="la_theme_card_emerald_green_description">Акцент: изумрудно-зелёный</string>
     <string name="la_theme_card_royal_blue_description">Акцент: королевский синий</string>
     <string name="la_theme_card_purple_violet_description">Акцент: пурпурный</string>
     <string name="la_theme_card_sunset_amber_description">Акцент: янтарный закат</string>
     <string name="la_theme_card_teal_description">Акцент: бирюзовый</string>
     <string name="la_theme_card_slate_gray_description">Акцент: сланцево-серый</string>
     <string name="la_theme_dialog_color_picker_title">Выбор акцентного цвета</string>
+
+    <string name="la_perms_title">Запрос разрешений</string>
+    <string name="la_perms_description">Необходимые разрешения и их назначение приведены ниже.</string>
+    <string name="la_perms_status_provided">Предоставлено</string>
+    <string name="la_perms_status_not_provided">Запросить</string>
+    <string name="la_perms_internet_title">Интернет</string>
+    <string name="la_perms_internet_description">Требуется для доступа к вашему музыкальному серверу через интернет.</string>
+    <string name="la_perms_notifications_title">Уведомления</string>
+    <string name="la_perms_notifications_description">Требуется для отображения статуса загрузки и элементов управления плеером.</string>
+    <string name="la_perms_access_local_network_title">Доступ к локальной сети</string>
+    <string name="la_perms_access_local_network_description">Требуется для доступа к другим устройствам в той же локальной сети.</string>
+    <string name="la_perms_nearby_devices_title">Устройства поблизости</string>
+    <string name="la_perms_nearby_devices_description">Требуется для обнаружения других устройств через UPnP и Chromecast.</string>
+
     <string name="la_shortcut_label">Введение</string>
     <string name="la_button_advanced_editor">Расширенный редактор (бета)</string>
 

@@ -11,6 +11,24 @@ object ConnectionUtil {
     @Volatile
     private var lastPingIssuedAt = 0L
 
+    @Volatile
+    private var pingDeferredUntil = 0L
+
+    @JvmStatic
+    fun deferPing() {
+        pingDeferredUntil = Long.MAX_VALUE
+    }
+
+    @JvmStatic
+    fun endPingDeferral() {
+        pingDeferredUntil = 0L
+    }
+
+    @JvmStatic
+    fun expirePingDeferral() {
+        if (pingDeferredUntil == Long.MAX_VALUE) pingDeferredUntil = SystemClock.elapsedRealtime() + pingWaitMs()
+    }
+
     // The ping timeout is a user setting with no upper bound, so the wait is read from it.
     private fun pingWaitMs(): Long = Preferences.getNetworkPingTimeout() * 1000L + 1_000L
 
@@ -29,15 +47,8 @@ object ConnectionUtil {
     // the queue for the life of the process. A start with no activity behind it never waits.
     @JvmStatic
     fun pingsOutstanding(): Boolean {
-        return pingsInFlight.get() > 0 &&
-                SystemClock.elapsedRealtime() - lastPingIssuedAt < pingWaitMs()
-    }
-
-    @JvmStatic
-    fun awaitPingsAnswered() {
-        while (pingsOutstanding()) {
-            Thread.sleep(25)
-        }
+        return SystemClock.elapsedRealtime() < pingDeferredUntil || (pingsInFlight.get() > 0 &&
+                SystemClock.elapsedRealtime() - lastPingIssuedAt < pingWaitMs())
     }
 
     // A local address of http://nas is a prefix of the public http://nas.duckdns.invalid, so the

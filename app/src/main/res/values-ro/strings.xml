@@ -556,4 +556,32 @@
     <string name="playlist_editor_dialog_action_save_empty">O listă de redare trebuie să conțină cel puțin o piesă</string>
     <string name="search_title_empty_response">Niciun rezultat.</string>
     <string name="search_description_empty_response">Am verificat răspunsul serverului, dar era gol.</string>
+    <string name="menu_keep_synced_button">Păstrează sincronizarea</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Se descarcă %d piesă</item>
+        <item quantity="few">Se descarcă %d piese</item>
+        <item quantity="other">Se descarcă %d piese</item>
+    </plurals>
+    <string name="playlist_editor_hint">Trageți de mâner pentru a reordona și atingeți coșul de gunoi pentru a elimina. Nimic nu se trimite până la salvare.</string>
+    <string name="playlist_editor_remove_track">Elimină piesa</string>
+    <string name="playlist_editor_drag_track">Trage pentru a reordona</string>
+    <string name="menu_edit_playlist_details_button">Editează detaliile</string>
+    <string name="playlist_details_dialog_title">Detaliile playlistului</string>
+    <string name="playlist_editor_load_failure">Playlistul nu a putut fi încărcat</string>
+    <string name="playlist_editor_removed_track">Eliminată din listă</string>
+    <string name="song_bottom_sheet_undo">Anulează</string>
+    <string name="song_bottom_sheet_undo_failure">Nu s-a putut restaura melodia</string>
+    <string name="la_theme_card_emerald_green_description">Culoare de accent verde smarald</string>
+    <string name="la_perms_title">Solicită permisiuni</string>
+    <string name="la_perms_description">Permisiunile necesare și utilizarea acestora sunt afișate mai jos.</string>
+    <string name="la_perms_status_provided">Acordată</string>
+    <string name="la_perms_status_not_provided">Solicită</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Necesară pentru a accesa serverul tău de muzică prin internet.</string>
+    <string name="la_perms_notifications_title">Notificări</string>
+    <string name="la_perms_notifications_description">Necesară pentru a afișa starea descărcărilor și comenzile playerului.</string>
+    <string name="la_perms_access_local_network_title">Acces la rețeaua locală</string>
+    <string name="la_perms_access_local_network_description">Necesar pentru a accesa alte dispozitive din aceeași rețea LAN ca dispozitivul actual.</string>
+    <string name="la_perms_nearby_devices_title">Dispozitive din apropiere</string>
+    <string name="la_perms_nearby_devices_description">Necesară pentru a descoperi alte dispozitive prin UPnP și Chromecast.</string>
 </resources>

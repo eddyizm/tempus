@@ -424,6 +424,32 @@
     <string name="settings_item_rating">평점 표시하기</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">이것을 켜면 재생목록이 공개됩니다. 그대로 두면 재생목록의 공개 상태가 변경되지 않습니다.</string>
     <string name="playlist_editor_dialog_action_save_empty">재생목록에는 하나 이상의 트랙이 있어야 합니다</string>
+    <string name="menu_keep_synced_button">동기화 유지</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="other">트랙 %d개 다운로드 중</item>
+    </plurals>
+    <string name="playlist_editor_hint">핸들을 끌어 순서를 변경하고 휴지통을 눌러 제거하세요. 저장하기 전까지는 아무것도 전송되지 않습니다.</string>
+    <string name="playlist_editor_remove_track">트랙 제거</string>
+    <string name="playlist_editor_drag_track">끌어서 순서 변경</string>
+    <string name="menu_edit_playlist_details_button">세부정보 수정</string>
+    <string name="playlist_details_dialog_title">플레이리스트 세부정보</string>
+    <string name="playlist_editor_load_failure">플레이리스트를 불러오지 못했습니다</string>
+    <string name="playlist_editor_removed_track">목록에서 제거됨</string>
+    <string name="song_bottom_sheet_undo">실행 취소</string>
+    <string name="song_bottom_sheet_undo_failure">곡을 복원하지 못했습니다</string>
+    <string name="la_theme_card_emerald_green_description">에메랄드 그린 강조 색상</string>
+    <string name="la_perms_title">권한 요청</string>
+    <string name="la_perms_description">필요한 권한과 사용 목적이 아래에 표시됩니다.</string>
+    <string name="la_perms_status_provided">허용됨</string>
+    <string name="la_perms_status_not_provided">요청</string>
+    <string name="la_perms_internet_title">인터넷</string>
+    <string name="la_perms_internet_description">인터넷을 통해 음악 서버에 접속하는 데 필요합니다.</string>
+    <string name="la_perms_notifications_title">알림</string>
+    <string name="la_perms_notifications_description">다운로드 상태와 플레이어 컨트롤을 표시하는 데 필요합니다.</string>
+    <string name="la_perms_access_local_network_title">로컬 네트워크 접근</string>
+    <string name="la_perms_access_local_network_description">현재 기기와 동일한 LAN에 연결된 다른 기기에 접근하는 데 필요합니다.</string>
+    <string name="la_perms_nearby_devices_title">주변 기기</string>
+    <string name="la_perms_nearby_devices_description">UPnP와 Chromecast를 통해 다른 기기를 검색하는 데 필요합니다.</string>
     <string name="search_title_empty_response">결과 없음.</string>
     <string name="search_description_empty_response">서버 응답을 확인했지만 비어 있었습니다.</string>
 </resources>

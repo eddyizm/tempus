@@ -1,5 +1,33 @@
 # Changelog
 
+## [4.29.0](https://github.com/eddyizm/tempus/releases/tag/v4.29.0) (2026-10-08)
+## What's Changed
+* feat: add to queue/play next options for album page by @eddyizm in https://github.com/eddyizm/tempus/pull/1137
+* fix: ask for notifications and local network access in one request by @herrerad85 in https://github.com/eddyizm/tempus/pull/1146
+* feat: allow copying the title and artist in PlayerControllerFragment by @jaime-grj in https://github.com/eddyizm/tempus/pull/1134
+* fix: clear cached playlists when you switch to another server by @herrerad85 in https://github.com/eddyizm/tempus/pull/1136
+* fix: keep the first home card full size after rotating to landscape by @herrerad85 in https://github.com/eddyizm/tempus/pull/1138
+* fix: load cover art through OkHttp by @paulbertoli94 in https://github.com/eddyizm/tempus/pull/1130
+* feat: Resume playback where you left off, with a Continue listening section by @xsteadfastx in https://github.com/eddyizm/tempus/pull/1089
+* feat: Add paired LAN remote playback using the original player by @gianlucaf81 in https://github.com/eddyizm/tempus/pull/1131
+* feat: play to UPnP and DLNA renderers on the network by @herrerad85 in https://github.com/eddyizm/tempus/pull/1101
+* fix: count a VPN as connected when a network sits under it by @herrerad85 in https://github.com/eddyizm/tempus/pull/1135
+* fix: handle no args across all bottom sheet dialogs by @eddyizm in https://github.com/eddyizm/tempus/pull/1148
+* fix: updates missing new actions by @eddyizm in https://github.com/eddyizm/tempus/pull/1155
+* fix: hold the startup ping until the local network prompt is answered by @herrerad85 in https://github.com/eddyizm/tempus/pull/1159
+* fix: restored artist click on album page by @eddyizm in https://github.com/eddyizm/tempus/pull/1156
+* feat: add permissions manager by @tvillega in https://github.com/eddyizm/tempus/pull/1153
+* fix: Uninitialized podcastEpisodesFull List by @eddyizm in https://github.com/eddyizm/tempus/pull/1162
+* chore(i18n): went gangbusters and added all the missing translations for the new lan stuff' by @eddyizm in https://github.com/eddyizm/tempus/pull/1163
+* fix: stop MissingTranslation from failing translation PRs by @herrerad85 in https://github.com/eddyizm/tempus/pull/1165
+
+## New Contributors
+* @paulbertoli94 made their first contribution in https://github.com/eddyizm/tempus/pull/1130
+* @xsteadfastx made their first contribution in https://github.com/eddyizm/tempus/pull/1089
+* @gianlucaf81 made their first contribution in https://github.com/eddyizm/tempus/pull/1131
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.28.0...v4.29.0
+
 ## [4.28.0](https://github.com/eddyizm/tempus/releases/tag/v4.28.0) (2026-10-01)
 ## What's Changed
 * feat(android-auto): group multi-disc album tracks by @a-mcc in https://github.com/eddyizm/tempus/pull/1097

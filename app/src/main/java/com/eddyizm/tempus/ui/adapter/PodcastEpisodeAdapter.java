@@ -33,6 +33,7 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
     public PodcastEpisodeAdapter(ClickCallback click) {
         this.click = click;
         this.podcastEpisodes = Collections.emptyList();
+        this.podcastEpisodesFull = Collections.emptyList();
     }
 
     @NonNull
@@ -82,12 +83,21 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
 
     @Override
     public int getItemCount() {
-        return podcastEpisodes.size();
+        return podcastEpisodes != null ? podcastEpisodes.size() : 0;
     }
 
     public void setItems(List<PodcastEpisode> podcastEpisodes) {
-        this.podcastEpisodesFull = podcastEpisodes;
-        this.podcastEpisodes = podcastEpisodesFull.stream().filter(podcastEpisode -> Objects.equals(podcastEpisode.getStatus(), "completed")).collect(Collectors.toList());
+        if (podcastEpisodes == null) {
+            this.podcastEpisodesFull = Collections.emptyList();
+            this.podcastEpisodes = Collections.emptyList();
+        } else {
+            this.podcastEpisodesFull = podcastEpisodes.stream()
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+            this.podcastEpisodes = podcastEpisodesFull.stream()
+                    .filter(podcastEpisode -> Objects.equals(podcastEpisode.getStatus(), "completed"))
+                    .collect(Collectors.toList());
+        }
         notifyDataSetChanged();
     }
 
@@ -156,13 +166,23 @@ public class PodcastEpisodeAdapter extends RecyclerView.Adapter<PodcastEpisodeAd
     }
 
     public void sort(String order) {
+        if (podcastEpisodesFull == null) {
+            podcastEpisodesFull = Collections.emptyList();
+        }
+
         switch (order) {
             case Constants.PODCAST_FILTER_BY_DOWNLOAD:
-                podcastEpisodes = podcastEpisodesFull.stream().filter(podcastEpisode -> Objects.equals(podcastEpisode.getStatus(), "completed")).collect(Collectors.toList());
+                podcastEpisodes = podcastEpisodesFull.stream()
+                        .filter(podcastEpisode -> podcastEpisode != null && Objects.equals(podcastEpisode.getStatus(), "completed"))
+                        .collect(Collectors.toList());
                 break;
             case Constants.PODCAST_FILTER_BY_ALL:
                 podcastEpisodes = podcastEpisodesFull;
                 break;
+        }
+
+        if (podcastEpisodes == null) {
+            podcastEpisodes = Collections.emptyList();
         }
 
         notifyDataSetChanged();

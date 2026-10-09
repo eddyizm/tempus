@@ -286,6 +286,7 @@
     <string name="menu_sort_least_recently_starred">Tidigast stjärnmärkt</string>
     <string name="menu_pin_button">Lägg till i favoriter</string>
     <string name="menu_unpin_button">Ta bort från favoriter</string>
+    <string name="menu_keep_synced_button">Håll synkroniserad</string>
     <string name="playlist_sort_pinned">Favoriter</string>
     <string name="playlist_sort_last_played">Senast spelat</string>
     <string name="playlist_sort_last_updated">Senast uppdaterat</string>
@@ -331,6 +332,10 @@
     <string name="playlist_chooser_dialog_visibility_summary_v2">Aktivera för att göra spellistan offentlig. Om du inte ändrar inställningen behåller spellistan sin synlighet.</string>
     <string name="playlist_counted_tracks">%1$d låtar •  %2$s</string>
     <string name="playlist_duration">Speltid  •  %1$s</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Hämtar %d låt</item>
+        <item quantity="other">Hämtar %d låtar</item>
+    </plurals>
     <string name="playlist_editor_dialog_action_delete_toast">Tryck länge för att radera</string>
     <string name="playlist_editor_dialog_hint_name">Spellistans namn</string>
     <string name="playlist_editor_dialog_negative_button">Avbryt</string>
@@ -831,6 +836,20 @@
     <string name="la_theme_card_teal_description">Blågrön accentfärg</string>
     <string name="la_theme_card_slate_gray_description">Skiffergrå accentfärg</string>
     <string name="la_theme_dialog_color_picker_title">Välj en accentfärg</string>
+
+    <string name="la_perms_title">Begär behörigheter</string>
+    <string name="la_perms_description">Nödvändiga behörigheter och deras användning visas nedan.</string>
+    <string name="la_perms_status_provided">Beviljad</string>
+    <string name="la_perms_status_not_provided">Begär</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Krävs för att komma åt din musikserver via internet.</string>
+    <string name="la_perms_notifications_title">Aviseringar</string>
+    <string name="la_perms_notifications_description">Krävs för att visa hämtningsstatus och uppspelningskontroller.</string>
+    <string name="la_perms_access_local_network_title">Åtkomst till lokalt nätverk</string>
+    <string name="la_perms_access_local_network_description">Krävs för att komma åt andra enheter på samma lokala nätverk.</string>
+    <string name="la_perms_nearby_devices_title">Enheter i närheten</string>
+    <string name="la_perms_nearby_devices_description">Krävs för att upptäcka andra enheter via UPnP och Chromecast.</string>
+
     <string name="la_shortcut_label">Introduktion</string>
     <string name="la_button_advanced_editor">Avancerad redigerare (beta)</string>
     <string name="hello_blank_fragment">Hej från ett tomt fragment</string>
