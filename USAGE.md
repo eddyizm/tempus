@@ -1,101 +1,52 @@
 # Tempus Usage Guide
 
-## Experimental local-network playback
-
-Local-network playback adds **Settings → Remote player** as a
-standalone entry and **Play on…** in the player's overflow menu. Two Tempus phones
-can pair by comparing a code, then choose music and control playback
-over the LAN. The receiver resolves track IDs using its own server account;
-both phones must use the same server address. The receiving service is opt-in,
-has a visible notification and can be stopped or have controller access revoked.
-
-The mini player has a two-phone device icon, and the expanded player has a **Play on…** button with the same icon. The overflow entry also opens the device selector. Select an already paired receiver to
-control its existing playback without transferring or replacing either queue.
-The main player and mini player show the receiver's title, artwork, position and
-playback state. Updates arrive on playback events and about once per second.
-The original Tempus player remains visible: its controls, swipeable artwork,
-queue page and lyrics page are reused. The device button shows **Playing on
-[device name]** while remote control is selected. Playback controls, shuffle,
-repeat, speed, lyrics seeking and the sleep timer act on the receiver. Device
-audio effects are configured on the receiver itself. There is no separate
-remote-player screen. Tap the device button again to return to the local player:
-the receiver continues playing and local playback does not automatically resume.
-
-Physical volume keys control the receiver's Android music output,
-including its Bluetooth output, rather than the controller's volume. Relative
-steps are applied on the receiver, and its actual volume/range are reported back
-to Android's remote-volume session. The system session also routes playback
-commands to the receiver. In-app keys are consumed while reconnecting to avoid
-changing local volume. Background and screen-off routing depends on Android
-selecting this active media session and the controller process remaining alive;
-verify it on physical phones. Releasing remote control releases that session.
-Both phones need a version supporting LAN remote playback.
-Settings uses the same preference rows, switch style and toolbar as the original
-settings. **This device** contains the editable device name. **Receiver** enables
-local network control on the phone that plays music. Only while that receiver is
-running, **Make available for pairing** appears as a switch with a two-minute
-countdown, followed by an inline list of **Paired controllers**. Tap a controller
-to review and confirm revoking its access. Switching pairing off cancels
-pending requests; expiry prevents late confirmations. An incoming pairing request
-opens a confirmation dialog on the receiver with the code to compare against the
-controller. It also remains in **Pairing requests** if the dialog is dismissed.
-Already paired controllers
-do not need the window open. **Controller** searches for receiving phones and
-shows the selected device with **Release remote control**. Selecting an approved
-receiver opens the normal player directly. Both roles can be used on one phone;
-there is no master/slave mode selector. Playback/queue/volume controls belong in
-the player, not this settings page. Diagnostic export is absent.
-
-The device list updates as receivers are found. Discovery results expire after
-45 seconds and the search restarts, because Android may not report when a
-receiver disappears. Tap **Find devices** to scan again at any time.
-
-While a receiver is selected, the library's **Play**, **Add to queue** and
-**Play next** actions apply to that receiver, including playlists and albums.
-An empty receiver queue does not release the selection: choose music normally
-to start it on the receiver. Adding to an empty queue prepares it without
-automatically starting playback. The controller's local queue remains intact.
-**Queue** opens the regular queue list, showing the receiver's tracks. Tap to
-play/pause, swipe to remove, drag to reorder, and use the queue menu to shuffle
-upcoming tracks, clear upcoming tracks or save the list to a playlist. Queue
-revisions prevent edits from applying to different tracks after a concurrent
-change on the receiver. Changes on either phone refresh the displayed list.
-Remote playback supports up to 500 music tracks, including repeated tracks; radio
-and podcasts are rejected while remote control is selected. Songs downloaded
-on the controller still require server access on the receiver.
-The selection survives screen rotation but
-not process termination. On a brief interruption commands are disabled and the
-controller retries the same endpoint; if the receiver restarts or changes network
-address, release control and select it again. Failed remote actions never fall
-back to local playback. Use compatible LAN playback versions on both phones.
-In Settings → Remote player, discovering/selecting a phone checks pairing and
-opens the normal player once pairing is confirmed. Previously approved certificates do not
-require another pairing code; new identities still require approval.
-English and Italian labels are included.
-
-If a discovered phone cannot connect, the controller reports whether the failure
-occurred while preparing its certificate, reaching the phone, negotiating TLS,
-verifying identity, or receiving the pairing response. Discovery alone does not
-confirm that a connection can be established. Report the message shown on screen.
-Internal Android diagnostics still exclude device names, addresses, pairing
-codes, credentials and queue contents. No diagnostic export button is shown.
-
-Connections use mutual TLS and manual approval of certificate identities; there is no plaintext fallback.
 [<- back home](README.md)
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
+    - [Verified backends](#verified-backends)
 - [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [First Launch](#first-launch)
 - [Server Configuration](#server-configuration)
+    - [Initial Setup](#initial-setup)
+    - [Home and away addresses](#home-and-away-addresses)
+    - [Advanced editor (beta)](#advanced-editor-beta)
 - [Main Features](#main-features)
+    - [Library View](#library-view)
+    - [Folder or index playback](#folder-or-index-playback)
+    - [Now Playing Screen](#now-playing-screen)
+    - [Podcasts](#podcasts)
+    - [Radio Stations](#radio-stations)
+    - [Downloads](#downloads)
+    - [Continue listening](#continue-listening)
 - [Navigation](#navigation)
-- [Playback Controls](#playback-controls)
+    - [Bottom Navigation Bar](#bottom-navigation-bar)
 - [Playing on another device](#playing-on-another-device)
+- [Controlling another phone](#controlling-another-phone)
 - [Favorites](#favorites)
+    - [Favorites (aka heart aka star) to albums and artists](#favorites-aka-heart-aka-star-to-albums-and-artists)
 - [Playlist Management](#playlist-management)
-- [Android Auto](#android-auto)
+    - [Editing a playlist](#editing-a-playlist)
+    - [Sorting playlists](#sorting-playlists)
 - [Settings](#settings)
+    - [Finding a setting](#finding-a-setting)
+    - [Language](#language)
+    - [Appearance](#appearance)
+    - [Sound](#sound)
+    - [Buffering and cache](#buffering-and-cache)
+    - [Scrobbling](#scrobbling)
+- [Android Auto](#android-auto)
+    - [Enabling on your head unit](#enabling-on-your-head-unit)
+    - [Tabs](#tabs)
+    - [Bundles](#bundles)
+    - [Thumbnails or lists](#thumbnails-or-lists)
+    - [Artists and Instant Mix](#artists-and-instant-mix)
+    - [A-Z and search](#a-z-and-search)
+    - [Shortcuts](#shortcuts)
 - [Known Issues](#known-issues)
+    - [Airsonic Distorted Playback](#airsonic-distorted-playback)
+    - [Support](#support)
 
 ## Prerequisites
 
@@ -116,7 +67,7 @@ This app works with any service that implements the Subsonic API, including:
 - [NextCloud Music](https://apps.nextcloud.com/apps/music)
 - [Airsonic Advanced](https://github.com/kagemomiji/airsonic-advanced)
 
-
+[Back to top](#table-of-contents)
 
 ## Getting Started
 
@@ -130,18 +81,46 @@ This app works with any service that implements the Subsonic API, including:
 2. You will be prompted to configure your server connection
 3. Grant necessary permissions for media playback and background operation
 
+[Back to top](#table-of-contents)
+
 ## Server Configuration
 
 ### Initial Setup
-**IN PROGRESS**
-1. Enter your server URL (e.g., `https://your-subsonic-server.com`)
-2. Provide your username and password. Or in some cases, API key (eg LMS: https://github.com/epoupon/lms/discussions/562).
-3. Test the connection to ensure proper configuration
+
+The first screen lists your servers. Tap **+** to add one:
+<p align="left">
+    <img src="mockup/usage/server_add.png" width=250>
+</p>
+
+
+1. **Server Name** is any name you like.
+2. **Username** and **Password** are your login for that server. Or in some cases, API key (eg LMS: https://github.com/epoupon/lms/discussions/562).
+3. **Server URL** is your server's address, starting with `http://` or `https://`, for example `https://your-subsonic-server.com`.
+4. **Local URL** is optional, see [Home and away addresses](#home-and-away-addresses).
+5. **Low security** sends your password with every request instead of a token. Turn it on only if your server does not accept token login.
+6. **Client certificate** is optional. Tap the field to pick a certificate installed on the phone, for servers that ask for one.
+
+Tap **Save**, then tap the server in the list to log in. If the login fails, Tempus shows the error and you stay on the list.
+
+Long press a server to edit it. The password field opens empty, so type the password again before you tap **Save**. To delete the server, long press **Delete**.
+
+To switch servers, go to **Settings → General → Log out**, which takes you back to this list.
 
 If you intend to play to a TV or a network speaker, the address you enter here also has to be reachable from that device, because it fetches the music from your server itself. See [Playing on another device](#playing-on-another-device).
 
-### Advanced Settings
-**TODO**
+### Home and away addresses
+
+With a Local URL set, Tempus uses it when it answers and the Server URL otherwise. Each time the app comes to the front while on the Server URL, it tests the Local URL and moves to it only if it answers. If the Local URL stops answering, the app moves back to the Server URL. This suits a server you reach by its home network address at home and by a public or VPN address everywhere else.
+
+When neither address answers, Tempus shows **Server unreachable**. **Continue anyway** hides it for 24 hours, and **Go to login** logs you out and returns to the server list.
+
+### Advanced editor (beta)
+
+**Advanced editor (beta)** on the server list opens a newer screen for the same servers. Pick a server at the top, or **Add new server**, fill in the fields and tap **Create** or **Update**. **Test** checks the saved server's connection. To log in, go back and tap the server in the list.
+
+Long press the Tempus icon and pick **Introduction** to open the welcome, permissions, themes and server pages on their own. If the app crashes at start, you can fix or delete a server there.
+
+[Back to top](#table-of-contents)
 
 ## Main Features
 
@@ -184,21 +163,33 @@ No extra config is needed—Tempus adjusts based on the connected backend.
 
 ### Now Playing Screen
 
-On the main player control screen, tapping on the artwork will reveal a small collection of 4 buttons/icons. 
+Swipe the artwork left or right to play the next or previous track in the queue. Radio stations have one cover and do not swipe.
+
+Tap the artwork to show four buttons over it, and tap again to hide them.
 <p align="left">
     <img src="mockup/usage/player_icons.png" width=159>
 </p>
 
 *marked the icons with numbers for clarity* 
 
-1. Downloads the track (there is a notification if the android screen but not a pop toast currently )
-2. Adds track to playlist - pops up playlist dialog.
-3. Adds tracks to the queue via instant mix function
-    * TBD: what is the _instant mix function_?
-    * Uses [getSimilarSongs](https://opensubsonic.netlify.app/docs/endpoints/getsimilarsongs/) of OpenSubsonic API.
-      Which tracks to be mixed depends on the server implementation. For example, Navidrome gets 15 similar artists from LastFM, then 20 top songs from each.
-4. Saves play queue (if the feature is enabled in the settings) 
-    * if the setting is not enabled, it toggles a view of the lyrics if available (slides to the right) 
+1. Downloads the track.
+2. Adds the track to a playlist.
+3. Adds this track again, followed by songs similar to it, right after the current track (Instant Mix). It uses [getSimilarSongs](https://opensubsonic.netlify.app/docs/endpoints/getsimilarsongs/) of the OpenSubsonic API, so which songs you get depends on your server. For example, Navidrome gets 15 similar artists from Last.fm, then 20 top songs from each.
+4. With **Sync play queue for this user** turned on under Settings → Miscellaneous, saves the play queue. With it off, this button opens the lyrics instead.
+
+Below the playback controls is a row of three buttons.
+
+- **Sleep timer** stops playback after 5 to 60 minutes, after a number of minutes you type in, or at the end of the current track. The volume fades out before playback pauses. While a timer is set, the time left shows under the button, and tapping it again lets you cancel.
+- **Lyrics** slides over to the lyrics. Tap it again or swipe back to return.
+- **Queue** opens the queue.
+
+Long press the format label above the artwork, "flac" for example, to hide this row, and long press it again to bring it back. A short tap on the label shows or hides the bitrate.
+
+Tap the title to open its album, or the artist to open the artist. Long press either one to copy it.
+
+To show the track number in front of the title, turn on **Show track number** under **Settings → UI**.
+
+The ⋮ menu next to the heart has **Play on…** and **Add to playlist**, plus **Built-in equalizer** when Built-in is picked under Settings → Sound. Tablets do not have this menu.
 
 **Format and bitrate**
 
@@ -213,30 +204,62 @@ If your server supports it - add a podcast rss feed
 </p>
 
 ### Radio Stations
-If your server supports it - add a internet radio station feed
+
+The Radio tab on Home lists your stations by name. Tap one to play it.
 <p align="left">
     <img src="mockup/usage/add_radio_station.png" width=326>
 </p>
 
+Tap **Add a new radio** to add a station. Type the name and stream address yourself, or tap the search icon next to the name to look the station up by name, country or both. The search uses [radio-browser.info](https://www.radio-browser.info/), a public directory, not your server. It lists up to 30 stations, the most voted first, and **Use** fills in the fields for you.
+
+Under **Save to**, pick where the station is kept.
+
+- **Server** saves it on your server, if your server supports radio stations. If saving fails, the dialog stays open so you can switch to **Local**.
+- **Local** keeps it on the phone, marked **LOCAL** in the list. A local station can also have a cover image, which Tempus downloads and keeps on the phone. Local stations show up with every server you log into.
+
+Long press a station, or tap its ⋮, to edit or delete it. A saved station cannot be moved between Server and Local.
+
+### Downloads
+
+The Download tab lists every track stored on the phone. Tap the filter button at the top right to list them by Track, Album, Artist, Genre, Playlist or Year. Tempus remembers the choice.
+
+The Track and Album lists are sorted by album artist, then album, then disc and track number, so a compilation with a different artist on each track stays together in track order and is listed under its album artist. An album whose server reports no album artist sorts under its own title.
+
+**Playlist** lists the tracks you downloaded from a playlist, under the playlist's name. Each download remembers one playlist only, so a track that is in two playlists, or was downloaded from an album first, may not show under the playlist you expect.
+
+**Keeping a playlist downloaded**
+
+In a playlist's ⋮ menu, turn on **Keep synced**. Tempus downloads every track of the playlist that is not on the phone yet, then checks again each time you open the playlist and once each time the app starts, and downloads any track added since. Tracks removed from the playlist stay downloaded. There is no check while Tempus is closed.
+
+**Download only on Wi-Fi**, under Settings → Data, pauses downloads on mobile data and resumes them on Wi-Fi. It does not apply when downloads are saved to a folder you picked.
+
+### Continue listening
+
+When you open Tempus again, your queue comes back with the track you were on, paused where you stopped.
+
+Podcast episodes, audiobooks and music tracks longer than 10 minutes also keep their spot after you move on to something else. Tempus saves it when you pause, when you switch tracks, and every 15 seconds while playing. These tracks are listed under **Continue listening** on the Music tab of Home, newest first, each with its cover, title, album and the time it resumes at. Tap one to play it from that spot, with the rest of its album after it. The row is hidden while it is empty.
+
+The spot is also saved as a bookmark on your server, if the server supports bookmarks, so the row also shows tracks you stopped on another device with the same account, and bookmarks made by other apps. A track leaves the row when it plays through to the next one.
+
+[Back to top](#table-of-contents)
+
 ## Navigation
 
 ### Bottom Navigation Bar
-**IN PROGRESS**
 - **Home**: Recently played and server recommendations
 - **Library**: Your server's complete music collection
 - **Download**: Locally downloaded files from server 
 
-## Playback Controls
-
-### Streaming Controls
-**TODO**
-
-### Advanced Controls
-**TODO**
+[Back to top](#table-of-contents)
 
 ## Playing on another device
 
-Tempus can hand playback to a UPnP or DLNA renderer on your network, such as a TV, an AV receiver or a network speaker. Tap the cast button in the toolbar, pick the device, and the queue, the position and the play state move to it while the app keeps the controls. On the GitHub build the same button lists Chromecast devices and network renderers together.
+Tempus can hand playback to a UPnP or DLNA renderer on your network, such as a TV, an AV receiver or a network speaker. Tap the cast button in the toolbar, pick the device, and the queue, the position and the play state move to it while the app keeps the controls. On the GitHub build the same button lists Chromecast devices and network renderers together. On the degoogled build the button shows a speaker icon, not the Cast icon.
+
+<p align="left">
+    <img src="mockup/usage/toolbar_github.png" width=400 style="margin-right:16px;">
+    <img src="mockup/usage/toolbar_degoogled.png" width=400>
+</p>
 
 The renderer fetches the music from your server itself. Nothing is streamed through the phone, which is how the protocol works. Downloaded tracks are played from your server too, because the renderer cannot reach what is stored on the phone.
 
@@ -249,6 +272,43 @@ The renderer fetches the music from your server itself. Nothing is streamed thro
 Use the address your server has on the same network as the renderer.
 
 Volume is left to the renderer's own remote, because some renderers report a volume that does not match what they are doing. The sleep timer's fade out has no effect on a renderer, so playback stops at full volume when the timer runs out. Discovery uses SSDP, which is UDP and lossy, so if your device does not appear the first time, close the picker and open it again.
+
+[Back to top](#table-of-contents)
+
+## Controlling another phone
+
+This feature is experimental. Two phones running Tempus can pair over your local network, so one phone, the controller, picks the music and runs playback on the other, the receiver. Both phones need a Tempus version with this feature and have to use the same server address, because the receiver plays every track from your server with its own account. Songs downloaded on the controller still need the server on the receiver.
+
+**Pairing**
+
+Open **Settings → Remote player**. Set the phone's name under **This device**. One phone can be both a receiver and a controller.
+
+1. On the phone that will play the music, turn on **Allow control from the local network** under **Receiver**. Tempus then shows a notification while the receiver runs.
+2. On the receiver, turn on **Make available for pairing**. This opens pairing for two minutes.
+3. On the controller, tap **Find devices** and select the receiver.
+4. Both phones show a code. If the codes match, confirm on the receiver first, then on the controller.
+
+A paired controller does not need pairing opened again. To remove one, tap it under **Paired controllers** on the receiver and confirm.
+
+**Playing on the receiver**
+
+Tap the device icon on the mini player, or **Play on…** in the expanded player or its overflow menu, and pick the receiver. The normal player then shows **Playing on** and the receiver's name, and its playback controls, shuffle, repeat, speed, seeking from the lyrics and the sleep timer all act on the receiver. The volume keys change the receiver's volume. With the screen off or Tempus in the background, that works only while Android keeps Tempus running and sends the keys to it. Audio effects are set on the receiver itself.
+
+While a receiver is selected, **Play**, **Add to queue** and **Play next** in the library send music to it, albums and playlists included. Adding to an empty receiver queue loads it without starting playback. **Queue** shows the receiver's queue, where you can tap to play or pause, swipe to remove, drag to reorder, and use the menu to shuffle or clear the upcoming tracks, or save the whole queue as a playlist. The controller's own queue is left as it was.
+
+Tap the device button again to go back. The receiver keeps playing, and the controller does not start playing on its own.
+
+**Limits**
+
+- Music only, up to 500 tracks, repeats included. Radio and podcasts are not supported.
+- The selection survives rotating the phone but not Tempus being closed. If the receiver restarts or changes address, release it and select it again.
+- A failed command never falls back to playing on the controller.
+- Guest networks may block discovery. Found receivers drop off the list after 45 seconds and the search starts again. Tap **Find devices** to search at any time.
+- When a found phone cannot connect, the message on screen says at which step it failed. Include that message in a report.
+
+Connections use mutual TLS, and each phone is approved by hand. There is no unencrypted fallback.
+
+[Back to top](#table-of-contents)
 
 ## Favorites
 
@@ -265,6 +325,7 @@ Volume is left to the renderer's own remote, because some renderers report a vol
     <img src="mockup/usage/fave_artist.png" width=376>
 </p>
 
+[Back to top](#table-of-contents)
 
 ## Playlist Management
 
@@ -276,21 +337,93 @@ Two things to know:
 - A playlist has to keep at least one track. A save that would leave it empty is refused and the editor says so, use Delete if you want the playlist gone.
 - Saving needs the server. The editor will not save from the offline cache, because writing that older copy back would drop anything added to the playlist since it was cached.
 
-### Server Playlists
-**TODO**
+### Sorting playlists
 
-### Creating Playlists
-**TODO**
+Open the full playlist list with **See all** next to Playlists on Home or Library, and tap the sort button to change the order. The same choice is under **Settings → Playlist → Playlist sorting**. It also orders the Playlists row on Home, which shows up to 20 playlists, and the list you pick from when you add songs to a playlist. Tempus remembers it.
+
+- **Name** sorts A to Z. This is the default.
+- **Random** shuffles the list.
+- **Date Created** puts the newest playlist first.
+- **Song Count** puts the playlist with the most songs first.
+- **Faves** puts your faves first.
+- **Last played** puts the playlist you opened most recently first.
+- **Last updated** puts the playlist changed on the server most recently first.
+- **Recently active** uses whichever is newer, when you last opened it or when it last changed.
+
+**Faves**
+
+To make a playlist a fave, tap **Add to faves** in its ⋮ menu, or long press it in the playlist list. Tap **Remove from faves** to undo it. Faves are kept on the phone, not on your server, and a playlist deleted from the server stops being a fave.
+
+[Back to top](#table-of-contents)
 
 ## Settings
+
+### Finding a setting
+
+Tap the search icon at the top of Settings and type part of a setting's name or description. Only the matching settings stay on screen, each under its page. Capital letters and accents are ignored, and a match on a page name, such as **Sound**, shows that whole page. The options on the Theme screen are not searched, so search for **Theme** to find that screen.
 
 ### Language
 
 Select **Settings → UI → Language** to choose an app language. Swedish is available as **Swedish** (or **Svenska**, depending on the current language). Select **System language** to follow your device language.
 
+### Appearance
+
+Open **Settings → UI → Theme** to change how Tempus looks. Each change applies right away.
+
+- **Theme** is Light, Dark or System default, which follows the phone.
+- **True black background for dark mode** makes the backgrounds pure black while Tempus is dark. It does nothing in Light.
+- **Dynamic color accent from wallpaper** takes the app's colors from your wallpaper. It is on by default.
+- **Choose Accent Color** builds the app's colors from one color instead. Turn off the wallpaper switch first, or your choice is saved but the wallpaper colors stay. Tap a color to use it. The first one opens a picker where you choose any color.
+
+Accent colors, from the wallpaper or picked, need Android 12 or newer, and some phones on Android 12 do not support them. Without them Tempus keeps its default colors.
+
+**Tiles size**, under **Settings → UI**, sets how big album and artist covers are in grids and rows, and the Discover cards on Home. **Default** is the largest and **Tiny** the smallest.
+
+**Rounded corners** rounds the corners of covers and **Corners size** sets how much. Restart Tempus after changing either.
+
+### Sound
+
+**Settings → Sound** holds the equalizer, ReplayGain and volume settings.
+
+**Select an equalizer to use** picks one of three:
+
+- **Default** adds no equalizer.
+- **Built-in** uses the equalizer in Android itself. Open it from **Built-in equalizer** below the choice, or from the ⋮ menu on the Now Playing screen, turn on **Enable** and set each band. How many bands you get depends on the phone. **Reset** puts every band back to 0 dB.
+- **External** lets an equalizer app on the phone work on Tempus. **System equalizer** below the choice opens that app, and shows only when the phone has one.
+
+**Set replay gain mode** evens out the volume between tracks. It is off by default.
+
+- **Track** plays every track at about the same loudness.
+- **Album** keeps the differences between tracks of an album and evens out albums. A track with no album value uses its track value.
+- **Auto** uses the album value when the track before it is from the same album, and the track value otherwise.
+
+Tempus takes the values from your server and, if the server sends none, from the file's tags. **Prevent clipping**, on by default, lowers the gain when the file's peak value shows the track would clip. It works only while ReplayGain is on.
+
+**Pre-amplification** makes everything Tempus plays louder or quieter, by up to 15 dB, with ReplayGain on or off. A change is heard from the next track.
+
+### Buffering and cache
+
+These are under **Settings → Data**.
+
+**Song preload buffer** sets how much music ahead of where you are Tempus downloads while streaming, 1 minute by default. Restart Tempus after changing it.
+
+**Size of streaming cache** keeps the music you stream on the phone, so playing it again does not download it again. It is 256 MiB by default, and when it is full the music you played longest ago is removed first. The setting shows how much of it is in use. A new size takes effect after Tempus restarts, and **Disabled** turns the cache off.
+
+**Pre-cache upcoming tracks** downloads the next 1, 2, 3 or 5 tracks of the queue into the streaming cache, so skipping to them starts at once and short signal drops do not stop playback. It follows shuffle and repeat, leaves out radio and downloaded tracks, and does nothing while the streaming cache is **Disabled**. **Pre-cache on Wi-Fi only**, on by default, pauses it on mobile data.
+
+### Scrobbling
+
+**Enable music scrobbling**, under **Settings → Miscellaneous**, is on by default. It tells your server what you are playing and which tracks you played. Tempus sends this only to your server, which may pass it on to a service such as Last.fm if it is set up to.
+
+A track counts as played when it plays to the end. When you skip to another track in the queue, the one you left counts if it played past its halfway point or 4 minutes, whichever comes first, unless it is 30 seconds or shorter. Only music counts, not podcasts or radio. A play that does not reach the server is not sent again later.
+
+[Back to top](#table-of-contents)
+
 ## Android Auto
 
-**Enabling on your head unit**
+Android Auto needs the `app-tempus` build from the GitHub releases. The degoogled build, `app-degoogled` and the version on F-Droid and IzzyOnDroid, does not offer your library to Android Auto, and its Settings has no Android Auto page.
+
+### Enabling on your head unit
 
 To allow the Tempus app on your car's head unit, "Unknown sources" needs to be enabled in the Android Auto "Developer settings". This is because Tempus isn't installed through Play Store. Note that the Android Auto developer settings are different from the global Android "Developer options".
 1. Switch to developer mode in the Android Auto settings by tapping ten times on the "Version" item at the bottom, followed by giving your permission.
@@ -299,7 +432,7 @@ To allow the Tempus app on your car's head unit, "Unknown sources" needs to be e
    <img width="270" height="600" alt="1b" src="https://github.com/user-attachments/assets/0795e508-ba01-41c5-96a7-7c03b0156591" />
    <img width="270" height="600" alt="1c" src="https://github.com/user-attachments/assets/51c15f67-fddb-452e-b5d3-5092edeab390" />
 </p>
-   
+
 2. Go to the "Developer settings" by the menu at the top right.
 <p align="left">
    <img width="270" height="600" alt="2" src="https://github.com/user-attachments/assets/1ecd1f3e-026d-4d25-87f2-be7f12efbac6" />
@@ -310,9 +443,9 @@ To allow the Tempus app on your car's head unit, "Unknown sources" needs to be e
    <img width="270" height="600" alt="3" src="https://github.com/user-attachments/assets/37db88e9-1b76-417f-9c47-da9f3a750fff" />
 </p>
 
-**Interface Configuration**
+### Tabs
 
-The Android Auto interface can be configured by user to best suit their preferences.
+The Android Auto interface can be configured by the user to best suit their preferences. The settings are under **Settings → Android Auto**.
 
 <p align="left">
     <img src="mockup/usage/aa_preferences.png" width=317 style="margin-right:16px;">
@@ -320,57 +453,72 @@ The Android Auto interface can be configured by user to best suit their preferen
 </p>
 
 4 tabs can be configured with the following functions:
-- Do not display : This tab is not used
-- Home : Displays all functions not used in other tabs
-- Recent : The 15 recently listened-to albums
-- Albums : Albums sorted by name
-- Artists : Albums sorted by artist or Artists, selected by preference
-- Playlists
-- Podcast : The 100 podcasts recently added
-- Radio : Your server's stations together with any you added locally in the app. The local ones show even when the server reports no stations of its own
-- Folder : Navigation through music directories
-- Albums most played : The 15 most played albums
-- Tracks played : The 100 last tracks that were completely played
-- Albums added : The 15 recently added albums
-- For You bundle
-- Starred bundle
-- Tracks bundle
-- Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
-- Downloads : the 500 first downloaded tracks OR 100 random downloaded tracks if "shuffle downloaded tracks" is selected. Shown at the top of the Home tab and playable without connectivity
 
-<p align="left">
-    <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
-    <img src="mockup/usage/aa_list.jpg" width=317>
-</p>
+| Function | What it shows |
+|---|---|
+| Do not display | This tab is not used |
+| Home | Displays all functions not used in other tabs |
+| Recent | The 15 recently listened-to albums |
+| Albums | Albums sorted by name |
+| Artists | Albums sorted by artist or Artists, selected by preference |
+| Playlists | |
+| Podcast | The 100 podcasts recently added |
+| Radio | Your server's stations together with any you added locally in the app. The local ones show even when the server reports no stations of its own |
+| Folder | Navigation through music directories |
+| Albums most played | The 15 most played albums |
+| Tracks played | The 100 last tracks that were completely played |
+| Albums added | The 15 recently added albums |
+| For You bundle | |
+| Starred bundle | |
+| Tracks bundle | |
+| Genres | 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected |
+| Downloads | the 500 first downloaded tracks OR 100 random downloaded tracks if "shuffle downloaded tracks" is selected. Shown at the top of the Home tab and playable without connectivity |
+
+If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
+
+If "Home" is selected after another tab, it becomes "More".
+
+### Bundles
 
 For You bundle includes:
-- Quick mix : features 12 tracks chosen randomly from the 15 last played albums
-- My mix : features 15 tracks chosen randomly from the 15 last played albums, and starred artists or starred albums, following preference
-- Discovery mix : features 18 tracks, as My mix, with similar songs
-- Starred artists
-- Starred albums
-- Starred tracks : the 500 first starred tracks OR 100 random starred tracks if "shuffle starred tracks" is selected
+
+| Item | What it shows |
+|---|---|
+| Quick mix | features 12 tracks chosen randomly from the 15 last played albums |
+| My mix | features 15 tracks chosen randomly from the 15 last played albums, and starred artists or starred albums, following preference |
+| Discovery mix | features 18 tracks, as My mix, with similar songs |
+| Starred artists | |
+| Starred albums | |
+| Starred tracks | the 500 first starred tracks OR 100 random starred tracks if "shuffle starred tracks" is selected |
 
 Starred bundle includes:
-- Starred artists
-- Starred albums
-- Starred tracks : the 500 first starred tracks OR 100 random starred tracks if "shuffle starred tracks" is selected
+
+| Item | What it shows |
+|---|---|
+| Starred artists | |
+| Starred albums | |
+| Starred tracks | the 500 first starred tracks OR 100 random starred tracks if "shuffle starred tracks" is selected |
 
 Tracks bundle includes:
-- Random : 100 random songs
-- Genres : 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected
-- Tracks played : The 100 recently listened-to tracks
-- Starred tracks : the 500 first starred tracks OR 100 random starred tracks if "shuffle starred tracks" is selected
 
+| Item | What it shows |
+|---|---|
+| Random | 100 random songs |
+| Genres | 500 songs of the chosen genre OR 100 random songs if "shuffle genre songs" is selected |
+| Tracks played | The 100 recently listened-to tracks |
+| Starred tracks | the 500 first starred tracks OR 100 random starred tracks if "shuffle starred tracks" is selected |
 
 <p align="left">
     <img src="mockup/usage/aa_tracks.jpg" width=317 style="margin-right:16px;">
     <img src="mockup/usage/aa_for_you.jpg" width=317>
 </p>
 
-If all tabs are set to "Do not display", then "Home" tab will be created with all functions inside.
+### Thumbnails or lists
 
-If "Home" is selected after another tab, it becomes "More".
+<p align="left">
+    <img src="mockup/usage/aa_thumbnails.jpg" width=317 style="margin-right:16px;">
+    <img src="mockup/usage/aa_list.jpg" width=317>
+</p>
 
 In addition, you can choose to display the following functions as thumbnails or lists:
 - Home, For You bundle, Starred bundle and Tracks bundle
@@ -379,7 +527,9 @@ In addition, you can choose to display the following functions as thumbnails or 
 - Radio
 - Podcast
 
-As they displayed tracks, Tracks played, Starred tracks, Random and Genres are always be displayed as a list.
+As they displayed tracks, Tracks played, Starred tracks, Random and Genres are always displayed as a list.
+
+### Artists and Instant Mix
 
 Artists view and View by albums:
 <p align="left">
@@ -393,12 +543,16 @@ Starred Artists view:
 </p>
 
 On an artist's page, if they have at least 2 albums with a minimum of 20 tracks, an "Instant Mix by Tempus" album is added at the beginning.
-This album features 12, 15 ou 18 tracks chosen randomly from their discography and is an one click play.
+This album features 12, 15 or 18 tracks chosen randomly from their discography and is one click play.
 The number of tracks on the album depends on the size of the artist's discography (>20, >30 or >40)
 
 <p align="left">
     <img src="mockup/usage/aa_instantMix.jpg" width=317>
 </p>
+
+When an album has tracks on more than one disc, its track list is grouped under a heading for each disc, such as **Disc 1**, with the disc's title after the number when your server sends one.
+
+### A-Z and search
 
 The A-Z button allows you to jump to items starting with the chosen letter.
 
@@ -413,25 +567,15 @@ Results of the A-Z jump will always be displayed as a list.
 
 Display of albums and artists is limited to 500. For large libraries, it's preferable to use star albums or star artists.
 
+### Shortcuts
+
 Shortcuts are displayed only if the function is selected from root level:
 - On albums page: jump to starred albums
 - On starred albums page: jump to albums
 - On artists page: jump to starred artists
 - On starred artists page: jump to artists
 
-### Server Settings
-**IN PROGRESS**
-- Manage multiple server connections
-- Configure sync intervals
-- Set data usage limits for streaming
-
-### Audio Settings
-**IN PROGRESS**
-- Streaming quality settings
-- Offline caching preferences
-
-### Appearance
-**TODO**
+[Back to top](#table-of-contents)
 
 ## Known Issues
 
@@ -449,3 +593,5 @@ For additional help:
 ---
 
 *Note: This app requires a pre-existing Subsonic-compatible server with music content.*
+
+[Back to top](#table-of-contents)
