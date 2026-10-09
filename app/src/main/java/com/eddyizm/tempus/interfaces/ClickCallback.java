@@ -18,7 +18,6 @@ public interface ClickCallback {
     default void onPlaylistLongClick(Bundle bundle) {}
     default void onYearClick(Bundle bundle) {}
     default void onServerClick(Bundle bundle) {}
-    default void onServerLongClick(Bundle bundle) {}
     default void onPodcastEpisodeClick(Bundle bundle) {}
     default void onPodcastEpisodeAltClick(Bundle bundle) {}
     default void onPodcastEpisodeLongClick(Bundle bundle) {}

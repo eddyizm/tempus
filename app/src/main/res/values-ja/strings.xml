@@ -243,7 +243,6 @@
     <string name="login_title">Subsonicサーバー</string>
     <string name="login_title_expanded">Subsonicサーバー</string>
     <string name="media_route_menu_title">キャスト</string>
-    <string name="menu_add_button">追加</string>
     <string name="menu_add_to_playlist_button">プレイリストに追加</string>
     <string name="playlist_added_to_queue">プレイリストをキューに追加しました</string>
     <string name="menu_go_to_playlist_button">再生</string>
@@ -415,18 +414,6 @@
     <string name="search_title_song">曲</string>
     <string name="search_title_empty_response">結果がありません。</string>
     <string name="search_description_empty_response">サーバーの応答を確認しましたが、空でした。</string>
-    <string name="server_signup_dialog_action_low_security">セキュリティが低い</string>
-    <string name="server_signup_dialog_action_delete_toast">長押しで削除</string>
-    <string name="server_signup_dialog_hint_local_address">ローカルURL</string>
-    <string name="server_signup_dialog_hint_name">サーバー名</string>
-    <string name="server_signup_dialog_hint_password">パスワード</string>
-    <string name="server_signup_dialog_hint_url">サーバーURL</string>
-    <string name="server_signup_dialog_hint_username">ユーザー名</string>
-    <string name="server_signup_dialog_hint_client_certificate">クライアント証明書（任意）</string>
-    <string name="server_signup_dialog_negative_button">キャンセル</string>
-    <string name="server_signup_dialog_neutral_button">削除</string>
-    <string name="server_signup_dialog_positive_button">保存</string>
-    <string name="server_signup_dialog_title">サーバーの追加</string>
     <string name="server_unreachable_dialog_negative_button">キャンセル</string>
     <string name="server_unreachable_dialog_neutral_button">ログイン画面へ</string>
     <string name="server_unreachable_dialog_positive_button">このまま続行</string>

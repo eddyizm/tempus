@@ -247,7 +247,6 @@
     <string name="login_title">Subsonic serverləri</string>
     <string name="login_title_expanded">Subsonic serverləri</string>
     <string name="media_route_menu_title">Cihaza yayımla</string>
-    <string name="menu_add_button">Əlavə et</string>
     <string name="menu_add_to_playlist_button">Pleylistə əlavə et</string>
     <string name="playlist_added_to_queue">Pleylist növbəyə əlavə edildi</string>
     <string name="menu_go_to_playlist_button">Səsləndir</string>
@@ -408,18 +407,6 @@
     <string name="search_title_song">Mahnılar</string>
     <string name="search_title_empty_response">Nəticə yoxdur.</string>
     <string name="search_description_empty_response">Serverin cavabı yoxlanıldı, lakin boş idi.</string>
-    <string name="server_signup_dialog_action_low_security">Aşağı təhlükəsizlik</string>
-    <string name="server_signup_dialog_action_delete_toast">Silmək üçün basıb saxlayın</string>
-    <string name="server_signup_dialog_hint_local_address">Yerli URL</string>
-    <string name="server_signup_dialog_hint_name">Server adı</string>
-    <string name="server_signup_dialog_hint_password">Parol</string>
-    <string name="server_signup_dialog_hint_url">Serverin URL ünvanı</string>
-    <string name="server_signup_dialog_hint_username">İstifadəçi adı</string>
-    <string name="server_signup_dialog_hint_client_certificate">Müştəri sertifikatı (istəyə bağlı)</string>
-    <string name="server_signup_dialog_negative_button">Ləğv et</string>
-    <string name="server_signup_dialog_neutral_button">Sil</string>
-    <string name="server_signup_dialog_positive_button">Yadda saxla</string>
-    <string name="server_signup_dialog_title">Yeni server</string>
     <string name="server_unreachable_dialog_negative_button">Ləğv et</string>
     <string name="server_unreachable_dialog_neutral_button">Girişə keç</string>
     <string name="server_unreachable_dialog_positive_button">Yenə də davam et</string>

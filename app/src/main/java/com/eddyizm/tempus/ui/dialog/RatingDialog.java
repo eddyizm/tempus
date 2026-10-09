@@ -14,7 +14,7 @@ import com.eddyizm.tempus.viewmodel.RatingViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class RatingDialog extends DialogFragment {
-    private static final String TAG = "ServerSignupDialog";
+    private static final String TAG = "RatingDialog";
 
     private DialogRatingBinding bind;
     private RatingViewModel ratingViewModel;

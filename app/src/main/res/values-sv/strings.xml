@@ -247,7 +247,6 @@
     <string name="login_title">Subsonic-servrar</string>
     <string name="login_title_expanded">Subsonic-servrar</string>
     <string name="media_route_menu_title">Casta</string>
-    <string name="menu_add_button">Lägg till</string>
     <string name="menu_add_to_playlist_button">Lägg till i spellista</string>
     <string name="playlist_added_to_queue">Spellistan har lagts till i kön</string>
     <string name="menu_go_to_playlist_button">Spela</string>
@@ -420,18 +419,6 @@
     <string name="search_title_song">Låtar</string>
     <string name="search_title_empty_response">Inga resultat.</string>
     <string name="search_description_empty_response">Serverns svar var tomt.</string>
-    <string name="server_signup_dialog_action_low_security">Låg säkerhet</string>
-    <string name="server_signup_dialog_action_delete_toast">Tryck länge för att radera</string>
-    <string name="server_signup_dialog_hint_local_address">Lokal adress</string>
-    <string name="server_signup_dialog_hint_name">Servernamn</string>
-    <string name="server_signup_dialog_hint_password">Lösenord</string>
-    <string name="server_signup_dialog_hint_url">Serveradress</string>
-    <string name="server_signup_dialog_hint_username">Användarnamn</string>
-    <string name="server_signup_dialog_hint_client_certificate">Klientcertifikat (valfritt)</string>
-    <string name="server_signup_dialog_negative_button">Avbryt</string>
-    <string name="server_signup_dialog_neutral_button">Radera</string>
-    <string name="server_signup_dialog_positive_button">Spara</string>
-    <string name="server_signup_dialog_title">Lägg till server</string>
     <string name="server_unreachable_dialog_negative_button">Avbryt</string>
     <string name="server_unreachable_dialog_neutral_button">Gå till inloggning</string>
     <string name="server_unreachable_dialog_positive_button">Fortsätt ändå</string>

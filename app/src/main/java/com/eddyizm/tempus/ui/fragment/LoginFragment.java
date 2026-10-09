@@ -32,7 +32,6 @@ import com.eddyizm.tempus.model.Server;
 import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.repository.SystemRepository;
 import com.eddyizm.tempus.ui.activity.MainActivity;
-import com.eddyizm.tempus.ui.dialog.ServerSignupDialog;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.LoginViewModel;
 
@@ -136,9 +135,12 @@ public class LoginFragment extends Fragment implements ClickCallback {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_add) {
-            ServerSignupDialog dialog = new ServerSignupDialog();
-            dialog.show(activity.getSupportFragmentManager(), null);
+        if (item.getItemId() == R.id.action_login) {
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
+            tempus.putExtra("SELECT_FRAGMENT", 3);
+            startActivity(tempus);
             return true;
         }
 
@@ -169,13 +171,6 @@ public class LoginFragment extends Fragment implements ClickCallback {
                 activity.goFromLogin();
             }
         });
-    }
-
-    @Override
-    public void onServerLongClick(Bundle bundle) {
-        ServerSignupDialog dialog = new ServerSignupDialog();
-        dialog.setArguments(bundle);
-        dialog.show(activity.getSupportFragmentManager(), null);
     }
 
     private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert, String customHeaders) {
