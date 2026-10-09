@@ -105,10 +105,6 @@ object ServerHeaders {
     @JvmStatic
     fun createInterceptor(): Interceptor = Interceptor(::getHeadersForActiveServer)
 
-    /** OkHttp interceptor adding [server]'s headers, for a client bound to one server. */
-    @JvmStatic
-    fun createInterceptor(server: ServerContext): Interceptor = Interceptor { url -> getHeadersForUrl(url, server) }
-
     /**
      * Opens [url] with the signed-in server's headers when it points at that server.
      *

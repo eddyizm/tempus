@@ -6,9 +6,7 @@ import com.eddyizm.tempus.subsonic.models.Bookmarks
 import com.eddyizm.tempus.subsonic.models.BookmarksDeserializer
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.subsonic.utils.EmptyDateTypeAdapter
-import com.eddyizm.tempus.model.ServerContext
 import com.eddyizm.tempus.util.ClientCertManager
-import com.eddyizm.tempus.util.CustomHeaders
 import com.eddyizm.tempus.util.ServerHeaders
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
@@ -33,7 +31,7 @@ class RetrofitClient(subsonic: Subsonic) {
         retrofit = Retrofit.Builder()
             .baseUrl(sanitizeBaseUrl(subsonic.url))
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(getOkHttpClient(subsonic))
+            .client(getOkHttpClient())
             .build()
     }
 
@@ -66,7 +64,7 @@ class RetrofitClient(subsonic: Subsonic) {
         private const val PLACEHOLDER_BASE_URL = "https://localhost/rest/"
     }
 
-    private fun getOkHttpClient(subsonic: Subsonic): OkHttpClient {
+    private fun getOkHttpClient(): OkHttpClient {
         val cacheUtil = CacheUtil(60, 60 * 60 * 24 * 30)
 
         // BrowsingClient 60
@@ -84,37 +82,23 @@ class RetrofitClient(subsonic: Subsonic) {
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
-            .addInterceptor(getHttpLoggingInterceptor(subsonic))
+            .addInterceptor(getHttpLoggingInterceptor())
             .addInterceptor(cacheUtil.offlineInterceptor)
-            .addNetworkInterceptor(getCustomHeadersInterceptor(subsonic))
+            .addNetworkInterceptor(ServerHeaders.createInterceptor())
             // .addNetworkInterceptor(cacheUtil.onlineInterceptor)
             .cache(getCache())
             .setupSsl()
             .build()
     }
 
-    private fun getHttpLoggingInterceptor(subsonic: Subsonic): HttpLoggingInterceptor {
+    private fun getHttpLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
         if (BuildConfig.DEBUG) {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS)
         } else {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE)
         }
-        // The custom headers are added by a network interceptor, after this one, so they are not
-        // logged anyway. Redact them too in case that order ever changes. Authorization is
-        // redacted as well, since a HeaderSource may add it.
-        CustomHeaders.parse(subsonic.customHeaders).keys.forEach { loggingInterceptor.redactHeader(it) }
-        loggingInterceptor.redactHeader("Authorization")
         return loggingInterceptor
-    }
-
-    /**
-     * Adds the server's headers (see [ServerHeaders]). A network interceptor runs on every
-     * redirect hop, so the origin check also stops the headers following a redirect to another host.
-     */
-    private fun getCustomHeadersInterceptor(subsonic: Subsonic): ServerHeaders.Interceptor {
-        val server = ServerContext(addresses = listOf(subsonic.url), customHeaders = subsonic.customHeaders)
-        return ServerHeaders.createInterceptor(server)
     }
 
     private fun getCache(): Cache {

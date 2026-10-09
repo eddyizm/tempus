@@ -148,7 +148,7 @@ class ServerHeadersTest {
 
     private val interceptorRaw = "X-Tempus-Test: letmein\nCF-Access-Client-Id: abc"
     private val interceptorServer = ServerContext(addresses = listOf("https://music.example.com"), customHeaders = interceptorRaw)
-    private val interceptor = ServerHeaders.createInterceptor(interceptorServer)
+    private val interceptor = ServerHeaders.Interceptor { url -> ServerHeaders.getHeadersForUrl(url, interceptorServer) }
 
     private fun run(url: String, existing: Map<String, String> = emptyMap()): Request {
         val builder = Request.Builder().url(url)

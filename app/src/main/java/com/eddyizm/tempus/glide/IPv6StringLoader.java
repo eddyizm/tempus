@@ -1,5 +1,7 @@
 package com.eddyizm.tempus.glide;
 
+import android.net.Uri;
+
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Priority;
@@ -103,26 +105,60 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
         }
     }
 
+    private static OkHttpClient buildClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                .readTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(ServerHeaders.createInterceptor());
+        if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
+            builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
+                    ClientCertManager.INSTANCE.getTrustManager());
+        }
+        return builder.build();
+    }
+
     public static class Factory implements ModelLoaderFactory<String, InputStream> {
         private final OkHttpClient client;
 
         public Factory() {
-            OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .connectTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                    .readTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
-                    // Cover art from the signed-in server gets its custom headers; other hosts don't.
-                    .addNetworkInterceptor(ServerHeaders.createInterceptor());
-            if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
-                builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
-                        ClientCertManager.INSTANCE.getTrustManager());
-            }
-            client = builder.build();
+            client = buildClient();
         }
 
         @NonNull
         @Override
         public ModelLoader<String, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
             return new IPv6StringLoader(client);
+        }
+
+        @Override
+        public void teardown() {
+            // No-op
+        }
+    }
+
+    /** Loads http(s) {@link Uri} models with the same client as {@link String} models. */
+    public static class UriFactory implements ModelLoaderFactory<Uri, InputStream> {
+        private final OkHttpClient client;
+
+        public UriFactory() {
+            client = buildClient();
+        }
+
+        @NonNull
+        @Override
+        public ModelLoader<Uri, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
+            IPv6StringLoader stringLoader = new IPv6StringLoader(client);
+            return new ModelLoader<Uri, InputStream>() {
+                @Override
+                public LoadData<InputStream> buildLoadData(@NonNull Uri model, int width, int height, @NonNull Options options) {
+                    return stringLoader.buildLoadData(model.toString(), width, height, options);
+                }
+
+                @Override
+                public boolean handles(@NonNull Uri model) {
+                    return stringLoader.handles(model.toString());
+                }
+            };
         }
 
         @Override

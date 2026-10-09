@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.DialogServerSignupBinding;
 import com.eddyizm.tempus.model.Server;
-import com.eddyizm.tempus.util.CustomHeaders;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.viewmodel.LoginViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -34,7 +33,6 @@ public class ServerSignupDialog extends DialogFragment {
     private String localAddress;
     private boolean lowSecurity = false;
     private String clientCertAlias;
-    private String customHeaders;
 
     @NonNull
     @Override
@@ -87,7 +85,6 @@ public class ServerSignupDialog extends DialogFragment {
                 bind.localAddressTextView.setText(loginViewModel.getServerToEdit().getLocalAddress());
                 bind.lowSecurityCheckbox.setChecked(loginViewModel.getServerToEdit().isLowSecurity());
                 bind.clientCertTextView.setText(loginViewModel.getServerToEdit().getClientCert());
-                bind.customHeadersTextView.setText(loginViewModel.getServerToEdit().getCustomHeaders());
             }
         } else {
             loginViewModel.setServerToEdit(null);
@@ -121,7 +118,6 @@ public class ServerSignupDialog extends DialogFragment {
         localAddress = bind.localAddressTextView.getText() != null && !bind.localAddressTextView.getText().toString().trim().isBlank() ? bind.localAddressTextView.getText().toString().trim() : null;
         lowSecurity = bind.lowSecurityCheckbox.isChecked();
         clientCertAlias = bind.clientCertTextView.getText() != null && !bind.clientCertTextView.getText().toString().trim().isBlank() ? bind.clientCertTextView.getText().toString().trim() : null;
-        customHeaders = bind.customHeadersTextView.getText() != null && !bind.customHeadersTextView.getText().toString().trim().isBlank() ? bind.customHeadersTextView.getText().toString().trim() : null;
 
         if (TextUtils.isEmpty(serverName)) {
             bind.serverNameTextView.setError(getString(R.string.error_required));
@@ -148,17 +144,12 @@ public class ServerSignupDialog extends DialogFragment {
             return false;
         }
 
-        java.util.List<Integer> invalidHeaderLines = CustomHeaders.INSTANCE.invalidLineNumbers(customHeaders);
-        if (!invalidHeaderLines.isEmpty()) {
-            bind.customHeadersTextView.setError(getString(R.string.error_custom_headers_invalid, String.valueOf(invalidHeaderLines.get(0))));
-            return false;
-        }
-
         return true;
     }
 
     private void saveServerPreference() {
         String serverID = loginViewModel.getServerToEdit() != null ? loginViewModel.getServerToEdit().getServerId() : UUID.randomUUID().toString();
-        loginViewModel.addServer(new Server(serverID, this.serverName, this.username, this.password, this.server, this.localAddress, System.currentTimeMillis(), this.lowSecurity, this.clientCertAlias, this.customHeaders));
+        String customHeaders = loginViewModel.getServerToEdit() != null ? loginViewModel.getServerToEdit().getCustomHeaders() : null;
+        loginViewModel.addServer(new Server(serverID, this.serverName, this.username, this.password, this.server, this.localAddress, System.currentTimeMillis(), this.lowSecurity, this.clientCertAlias, customHeaders));
     }
 }

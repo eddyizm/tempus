@@ -860,7 +860,6 @@
     <string name="la_server_switch_cert">Client certificate (mTLS)</string>
     <string name="la_server_switch_headers">Custom HTTP headers</string>
     <string name="la_server_field_server_headers">One per line, e.g. CF-Access-Client-Id: value</string>
-    <string name="server_signup_dialog_hint_custom_headers">Custom HTTP headers (optional, one per line: Name: Value)</string>
     <string name="error_custom_headers_invalid">Invalid header on line %1$s. Use Name: Value</string>
 
     <string name="la_theme_title">Choose Accent Color</string>

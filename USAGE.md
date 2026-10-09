@@ -145,7 +145,7 @@ If you intend to play to a TV or a network speaker, the address you enter here a
 #### Custom HTTP headers
 
 For servers behind an authenticating proxy (e.g. Cloudflare Access service tokens), enable
-**Custom HTTP headers** on the server and enter one header per line:
+**Custom HTTP headers** on the server in the server editor and enter one header per line:
 
     CF-Access-Client-Id: <id>
     CF-Access-Client-Secret: <secret>
@@ -157,6 +157,8 @@ Headers are sent only to that server's address and local address (same scheme, h
 The local address gets the headers too, like it already gets your Subsonic credentials. If your local address is plain `http`, any device answering on that IP on the network you are connected to would receive them, so use an `https` local address or leave it empty when the headers are sensitive.
 
 After editing the headers of the server you are signed in to, sign out and back in for them to take effect.
+
+**Test** in the server editor sends the headers only for the server you are signed in to. For a new server behind a proxy that requires them, Test fails; sign in to the server instead.
 
 Devices that fetch the music themselves cannot send them:
 

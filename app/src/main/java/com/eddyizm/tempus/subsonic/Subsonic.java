@@ -137,10 +137,6 @@ public class Subsonic {
         return openClient;
     }
 
-    public String getCustomHeaders() {
-        return preferences.getCustomHeaders();
-    }
-
     public String getUrl() {
         String url = preferences.getServerUrl() + "/rest/";
         return url.replace("//rest", "/rest");
