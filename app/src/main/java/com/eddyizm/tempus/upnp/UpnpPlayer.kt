@@ -9,6 +9,7 @@ import android.os.SystemClock
 import android.util.Log
 import androidx.core.net.toUri
 import androidx.media3.common.C
+import androidx.media3.common.DeviceInfo
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
@@ -108,6 +109,29 @@ class UpnpPlayer(
             updateWakeLock()
         }
 
+    // Its own thread, so a key press never waits behind a Play the renderer is holding.
+    private val volumeWorker = Executors.newSingleThreadExecutor()
+    private var events: UpnpEvents? = null
+    @Volatile private var subscriptionId: String? = null
+    @Volatile private var maxVolume = DEFAULT_MAX_VOLUME
+
+    // Null until the renderer's events settle on a level. Some renderers' GetVolume does not report their real one.
+    @Volatile private var deviceVolume: Int? = null
+    private var heardVolume = 0
+    @Volatile private var volumeRequests = 0L
+
+    private val settleVolume = Runnable {
+        if (released) return@Runnable
+        deviceVolume = heardVolume
+        invalidateLater()
+    }
+
+    init {
+        device.eventUrls[UpnpDevice.RENDERING_CONTROL]?.let { url ->
+            volumeWorker.execute { if (!subscribe(url)) renewAfter(RESUBSCRIBE_MS, url) }
+        }
+    }
+
     private class Entry(val uid: Long, val item: MediaItem, val url: String?) {
         val tracks: Tracks = audioTracks(uid, mimeTypeFor(item, url))
     }
@@ -145,8 +169,9 @@ class UpnpPlayer(
             PositionSupplier.getConstant(positionMs)
         }
 
+        val volume = deviceVolume
         val state = State.Builder()
-            .setAvailableCommands(COMMANDS)
+            .setAvailableCommands(if (volume != null) COMMANDS_WITH_VOLUME else COMMANDS)
             .setPlayerError(error)
             .setPlaybackState(
                 when {
@@ -160,6 +185,11 @@ class UpnpPlayer(
             .setPlaylist(items)
             .setCurrentMediaItemIndex(index.coerceIn(0, maxOf(0, items.size - 1)))
             .setContentPositionMs(position)
+
+        if (volume != null) {
+            state.setDeviceInfo(DeviceInfo.Builder(DeviceInfo.PLAYBACK_TYPE_REMOTE).setMaxVolume(maxVolume).build())
+                .setDeviceVolume(volume)
+        }
 
         if (rendererAdvancedItself) {
             rendererAdvancedItself = false
@@ -358,10 +388,100 @@ class UpnpPlayer(
         invalidateLater()
     }
 
+    override fun handleSetDeviceVolume(deviceVolume: Int, flags: Int): ListenableFuture<*> = setVolume { deviceVolume }
+
+    override fun handleIncreaseDeviceVolume(flags: Int): ListenableFuture<*> = setVolume { it + 1 }
+
+    override fun handleDecreaseDeviceVolume(flags: Int): ListenableFuture<*> = setVolume { it - 1 }
+
+    // A key held down queues a send per step, and only the newest of those sends.
+    private fun setVolume(change: (Int) -> Int): ListenableFuture<*> {
+        val current = deviceVolume ?: return Futures.immediateVoidFuture()
+        val target = change(current).coerceIn(0, maxVolume)
+        deviceVolume = target
+        // A level heard before this step would otherwise land after it.
+        handler.removeCallbacks(settleVolume)
+        val request = ++volumeRequests
+        volumeWorker.execute {
+            if (request != volumeRequests || released) return@execute
+            try {
+                controlPoint.setVolume(device, target)
+            } catch (e: Exception) {
+                Log.w(TAG, "renderer did not take volume $target", e)
+                handler.post { if (request == volumeRequests) heard(heardVolume) }
+            }
+        }
+        return Futures.immediateVoidFuture()
+    }
+
+    // Some renderers' first event can repeat the last level they were sent, with the real one a moment later.
+    private fun heard(volume: Int) {
+        if (released) return
+        heardVolume = volume.coerceIn(0, maxVolume)
+        handler.removeCallbacks(settleVolume)
+        handler.postDelayed(settleVolume, VOLUME_SETTLE_MS)
+    }
+
+    private fun subscribe(eventUrl: String): Boolean {
+        if (released) return false
+        return try {
+            controlPoint.volumeMax(device)?.let { maxVolume = it }
+                ?: Log.d(TAG, "renderer gave no volume range, keeping $maxVolume")
+            val listener = events
+                ?: UpnpEvents.open(eventUrl) { handler.post { heard(it) } }.also { events = it }
+            val (id, seconds) = controlPoint.subscribe(eventUrl, listener.callbackUrl)
+            subscriptionId = id
+            renewAfter(TimeUnit.SECONDS.toMillis(seconds) / 2, eventUrl)
+            true
+        } catch (e: Exception) {
+            Log.w(TAG, "renderer sends no volume events", e)
+            false
+        }
+    }
+
+    private fun renew(eventUrl: String) {
+        if (released) return
+        subscriptionId?.let { id ->
+            try {
+                val (_, seconds) = controlPoint.renew(eventUrl, id)
+                renewAfter(TimeUnit.SECONDS.toMillis(seconds) / 2, eventUrl)
+                return
+            } catch (e: Exception) {
+                Log.d(TAG, "renewal refused, subscribing again", e)
+                subscriptionId = null
+            }
+        }
+        if (!subscribe(eventUrl)) renewAfter(RESUBSCRIBE_MS, eventUrl)
+    }
+
+    private fun renewAfter(delayMs: Long, eventUrl: String) {
+        handler.post {
+            if (released) return@post
+            handler.postDelayed(
+                { if (!released) volumeWorker.execute { renew(eventUrl) } },
+                delayMs.coerceAtLeast(MIN_RENEW_MS)
+            )
+        }
+    }
+
     override fun handleRelease(): ListenableFuture<*> {
         released = true
         stopPolling()
         updateWakeLock()
+        handler.removeCallbacksAndMessages(null)
+        volumeWorker.execute {
+            val url = device.eventUrls[UpnpDevice.RENDERING_CONTROL]
+            val id = subscriptionId
+            if (url != null && id != null) {
+                try {
+                    controlPoint.unsubscribe(url, id)
+                } catch (e: Exception) {
+                    Log.d(TAG, "renderer did not acknowledge the unsubscribe", e)
+                }
+            }
+            events?.close()
+        }
+        volumeWorker.shutdown()
         return worker.submit<Unit> {
             stopRenderer("on release")
             worker.shutdown()
@@ -821,6 +941,14 @@ class UpnpPlayer(
 
         private const val SEEK_WAIT_POLL_MS = 200L
 
+        private const val DEFAULT_MAX_VOLUME = 100
+
+        private const val VOLUME_SETTLE_MS = 1000L
+
+        private val MIN_RENEW_MS = TimeUnit.SECONDS.toMillis(10)
+
+        private val RESUBSCRIBE_MS = TimeUnit.SECONDS.toMillis(30)
+
         // The format the app asked the server for, else the format of the file on the server.
         private fun mimeTypeFor(item: MediaItem, url: String?): String {
             val extras = item.mediaMetadata.extras
@@ -850,7 +978,6 @@ class UpnpPlayer(
             )
         }
 
-        // No volume, since an LG C1 reports zero while audibly playing.
         private val COMMANDS = Player.Commands.Builder().addAll(
             Player.COMMAND_PLAY_PAUSE,
             Player.COMMAND_PREPARE,
@@ -870,6 +997,15 @@ class UpnpPlayer(
             // Without it the session strips the tracks from what a controller sees.
             Player.COMMAND_GET_TRACKS,
             Player.COMMAND_RELEASE
+        ).build()
+
+        @Suppress("DEPRECATION")
+        private val COMMANDS_WITH_VOLUME = COMMANDS.buildUpon().addAll(
+            Player.COMMAND_GET_DEVICE_VOLUME,
+            Player.COMMAND_SET_DEVICE_VOLUME,
+            Player.COMMAND_SET_DEVICE_VOLUME_WITH_FLAGS,
+            Player.COMMAND_ADJUST_DEVICE_VOLUME,
+            Player.COMMAND_ADJUST_DEVICE_VOLUME_WITH_FLAGS
         ).build()
 
         // Never the item's own URL, which a download recorded long ago and a renderer has to fetch.

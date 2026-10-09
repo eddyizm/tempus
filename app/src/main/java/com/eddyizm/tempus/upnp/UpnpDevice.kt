@@ -13,7 +13,9 @@ data class UpnpDevice(
     val manufacturer: String,
     val modelName: String,
     val controlUrls: Map<String, String>,
-    val location: String
+    val location: String,
+    val eventUrls: Map<String, String> = emptyMap(),
+    val scpdUrls: Map<String, String> = emptyMap()
 ) {
     val avTransportControlUrl: String? get() = controlUrls[AV_TRANSPORT]
 
@@ -26,6 +28,7 @@ data class UpnpDevice(
         private const val TAG = "UpnpDevice"
 
         const val AV_TRANSPORT = "urn:schemas-upnp-org:service:AVTransport:1"
+        const val RENDERING_CONTROL = "urn:schemas-upnp-org:service:RenderingControl:1"
 
         // One device per element that declares services, since a multi zone receiver publishes one per zone.
         @JvmStatic
@@ -58,13 +61,16 @@ data class UpnpDevice(
             fun own(tag: String) = directChildren(device, tag).firstOrNull()?.textContent?.trim().orEmpty()
 
             val controlUrls = HashMap<String, String>()
+            val eventUrls = HashMap<String, String>()
+            val scpdUrls = HashMap<String, String>()
             val services = directChildren(device, "serviceList").flatMap { directChildren(it, "service") }
             for (service in services) {
                 val type = firstText(service, "serviceType")?.trim() ?: continue
-                // An empty controlURL resolves to the description URL itself and would pass as a control endpoint.
-                firstText(service, "controlURL")?.trim()?.takeIf { it.isNotEmpty() }?.let { raw ->
-                    resolve(base, raw)?.let { controlUrls[type] = it }
-                }
+                // An empty URL resolves to the description URL itself and would pass as an endpoint.
+                fun url(tag: String) = firstText(service, tag)?.trim()?.takeIf { it.isNotEmpty() }?.let { resolve(base, it) }
+                url("controlURL")?.let { controlUrls[type] = it }
+                url("eventSubURL")?.let { eventUrls[type] = it }
+                url("SCPDURL")?.let { scpdUrls[type] = it }
             }
             if (controlUrls.isEmpty()) return null
 
@@ -74,7 +80,9 @@ data class UpnpDevice(
                 manufacturer = own("manufacturer"),
                 modelName = own("modelName"),
                 controlUrls = controlUrls,
-                location = location
+                location = location,
+                eventUrls = eventUrls,
+                scpdUrls = scpdUrls
             )
         }
 
