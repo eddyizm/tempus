@@ -1,0 +1,9 @@
+feat: add to queue/play next options for album page
+feat: Resume playback where you left off, with a Continue listening section
+feat: Add paired LAN remote playback using the original player
+feat: play to UPnP and DLNA renderers on the network
+feat: add permissions manager
+fix: ask for notifications and local network access in one request
+fix: count a VPN as connected when a network sits under it
+
+Full Changelog: https://github.com/eddyizm/tempus/compare/v4.28.0...v4.29.0
