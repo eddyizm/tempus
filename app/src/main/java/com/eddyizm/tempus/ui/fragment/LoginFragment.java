@@ -137,9 +137,9 @@ public class LoginFragment extends Fragment implements ClickCallback {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_login) {
             Intent tempus = new Intent(requireActivity(), LoginActivity.class);
-            tempus.putExtra("HIDE_TAB_LAYOUT", true);
-            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
-            tempus.putExtra("SELECT_FRAGMENT", 3);
+            tempus.putExtra("HIDE_TAB_LAYOUT", false);
+            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", true);
+            tempus.putExtra("SELECT_FRAGMENT", 0);
             startActivity(tempus);
             return true;
         }
