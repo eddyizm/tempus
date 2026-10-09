@@ -1177,6 +1177,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         fun getPlayer(): ExoPlayer {
             return exoplayer
         }
+
+        fun reloadEqualizer() {
+            this@BaseMediaService.reloadEqualizer()
+        }
     }
 }
 
