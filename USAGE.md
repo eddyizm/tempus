@@ -2,7 +2,11 @@
 
 ## Experimental local-network playback
 
-Local-network playback adds **Settings → Remote player** as a
+Local-network playback is off until you turn on **Settings → Network playback → Remote player**.
+While it is off, nothing listens, advertises or searches on your network, and the
+entries below are hidden. Turning it off ends any remote control, pairing or receiver in progress.
+
+Once on, local-network playback adds **Settings → Remote player** as a
 standalone entry and **Play on…** in the player's overflow menu. Two Tempus phones
 can pair by comparing a code, then choose music and control playback
 over the LAN. The receiver resolves track IDs using its own server account;
@@ -236,7 +240,7 @@ If your server supports it - add a internet radio station feed
 
 ## Playing on another device
 
-Tempus can hand playback to a UPnP or DLNA renderer on your network, such as a TV, an AV receiver or a network speaker. Tap the cast button in the toolbar, pick the device, and the queue, the position and the play state move to it while the app keeps the controls. On the GitHub build the same button lists Chromecast devices and network renderers together.
+Tempus can hand playback to a UPnP or DLNA renderer on your network, such as a TV, an AV receiver or a network speaker. This is off until you turn on **Settings → Network playback → UPnP / DLNA renderers**; while it is off no discovery runs, and turning it off during playback brings playback back to the phone. Tap the cast button in the toolbar, pick the device, and the queue, the position and the play state move to it while the app keeps the controls. On the GitHub build the same button lists Chromecast devices and network renderers together.
 
 The renderer fetches the music from your server itself. Nothing is streamed through the phone, which is how the protocol works. Downloaded tracks are played from your server too, because the renderer cannot reach what is stored on the phone.
 

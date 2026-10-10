@@ -255,6 +255,9 @@ public class PlayerControllerFragment extends Fragment {
                 if (selectedEq == 0 || selectedEq == 2) {
                     popup.getMenu().removeItem(R.id.action_open_equalizer);
                 }
+                if (!com.eddyizm.tempus.lan.LanDevicePicker.isOffered()) {
+                    popup.getMenu().removeItem(R.id.action_lan_playback);
+                }
 
                 popup.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.action_lan_playback) {
@@ -1096,11 +1099,9 @@ public class PlayerControllerFragment extends Fragment {
         bindMediaService();
     }
 
-    // Kept while a session is live, so a switch turned off mid-session still leaves a way to end it.
     private void updateRemoteToggleVisibility() {
         if (bind == null) return;
-        bind.playerRemoteToggle.setVisibility(Preferences.isLanRemoteEnabled()
-                || com.eddyizm.tempus.lan.LanRemoteSession.isActive() ? View.VISIBLE : View.GONE);
+        bind.playerRemoteToggle.setVisibility(com.eddyizm.tempus.lan.LanDevicePicker.isOffered() ? View.VISIBLE : View.GONE);
     }
 
     @Override

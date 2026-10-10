@@ -720,7 +720,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     /** Offers renderers as routes and moves playback onto one through [setPlayer], as Cast does. */
     private fun initializeUpnpRoutes() {
-        val controlPoint = UpnpControlPoint()
+        val controlPoint = upnpControlPoint
         val provider = UpnpRouteProvider(this, controlPoint)
         provider.selectionListener = object : UpnpRouteProvider.SelectionListener {
             override fun onRendererSelected(device: UpnpDevice) {
@@ -745,6 +745,9 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         upnpRouteProvider = provider
     }
 
+    // One per service, so turning the UPnP switch off and on again does not leave an HTTP client behind each time.
+    private val upnpControlPoint by lazy { UpnpControlPoint() }
+
     // The UPnP switch is read at start and on every change, so turning it off takes effect without a restart.
     private val upnpSwitchListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == Preferences.UPNP_ENABLED) applyUpnpSwitch()
@@ -755,7 +758,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             UpnpRoutesGate.Change.REGISTER -> initializeUpnpRoutes()
             UpnpRoutesGate.Change.RELEASE -> {
                 // Bring playback home first, or the renderer keeps playing with nothing left to control it.
-                upnpPlayer?.let { setPlayer(it, exoplayer) }
+                // Paused there, since a settings switch should not start the phone's speaker by itself.
+                upnpPlayer?.let {
+                    setPlayer(it, exoplayer)
+                    exoplayer.playWhenReady = false
+                }
                 releaseUpnpRoutes()
             }
             UpnpRoutesGate.Change.NONE -> Unit

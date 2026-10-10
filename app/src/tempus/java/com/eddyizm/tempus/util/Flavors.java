@@ -22,8 +22,8 @@ public class Flavors {
         CastButtonFactory.setUpMediaRouteButton(context, menu, R.id.media_route_menu_item);
     }
 
-    /** False here, the button still offers Cast with UPnP turned off. */
-    public static boolean routeButtonIsOnlyForUpnp() {
-        return false;
+    /** The button still offers Cast with UPnP turned off, unless Play services are missing and Cast never started. */
+    public static boolean routeButtonIsOnlyForUpnp(Context context) {
+        return GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) != ConnectionResult.SUCCESS;
     }
 }

@@ -335,9 +335,8 @@ public class PlayerBottomSheetFragment extends Fragment {
 
     private void renderRemote(com.eddyizm.tempus.lan.LanRemoteState state) {
         if (bind == null) return;
-        // Kept while a session is live, so a switch turned off mid-session still leaves a way to end it.
         bind.playerHeaderLayout.playerHeaderRemoteButton.setVisibility(
-                Preferences.isLanRemoteEnabled() || state.getActive() ? View.VISIBLE : View.GONE);
+                com.eddyizm.tempus.lan.LanDevicePicker.isOffered() ? View.VISIBLE : View.GONE);
         bind.playerHeaderLayout.playerHeaderRemoteButton.setSelected(state.getActive());
         bind.playerHeaderLayout.playerHeaderRemoteButton.setContentDescription(
                 state.getActive() ? getString(R.string.lan_controlling, state.getName()) : getString(R.string.lan_play_on));

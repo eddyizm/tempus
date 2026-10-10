@@ -598,14 +598,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         }
     };
 
-    /**
-     * Below two libraries there is nothing to choose between, so the setting is noise.
-     *
-     * Call applyAccordionState rather than this, including from the folder response. That method
-     * resets every category child to visible, runs these checks, and only then re-hides the
-     * children of collapsed categories. Calling this alone performs only the middle step, so a row
-     * it reveals would stay showing under a category the user has collapsed.
-     */
     private void checkLanPlayback() {
         Preference lanPref = findPreference("lan_playback");
         if (lanPref != null) lanPref.setVisible(Preferences.isLanRemoteEnabled());
@@ -616,19 +608,29 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         if (preference == null) return;
 
         preference.setOnPreferenceChangeListener((pref, newValue) -> {
-            boolean enabled = Boolean.TRUE.equals(newValue);
-            if (!enabled) {
+            if (!Boolean.TRUE.equals(newValue)) {
                 // Turning it off ends whatever is running: a controlled device, an open pairing, the listener.
                 com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
                 com.eddyizm.tempus.lan.LanReceiverService.Companion.closePairing();
                 requireContext().stopService(new Intent(requireContext(), com.eddyizm.tempus.lan.LanReceiverService.class));
             }
-            Preference lanPref = findPreference("lan_playback");
-            if (lanPref != null) lanPref.setVisible(enabled);
+            // Posted so the new value is saved before checkLanPlayback reads it, and run through
+            // applyAccordionState so an active search filter still applies to the row it reveals.
+            getListView().post(() -> {
+                if (getView() != null) applyAccordionState();
+            });
             return true;
         });
     }
 
+    /**
+     * Below two libraries there is nothing to choose between, so the setting is noise.
+     *
+     * Call applyAccordionState rather than this, including from the folder response. That method
+     * resets every category child to visible, runs these checks, and only then re-hides the
+     * children of collapsed categories. Calling this alone performs only the middle step, so a row
+     * it reveals would stay showing under a category the user has collapsed.
+     */
     private void checkMusicLibrary() {
         Preference libraryPref = findPreference("active_music_folder_id");
         if (libraryPref == null) return;

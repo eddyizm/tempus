@@ -288,7 +288,7 @@
             android:defaultValue="false"
             android:key="lan_remote_enabled"
             android:summary="@string/settings_lan_remote_summary"
-            android:title="@string/settings_lan_remote_title" />
+            android:title="@string/lan_title" />
 
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 

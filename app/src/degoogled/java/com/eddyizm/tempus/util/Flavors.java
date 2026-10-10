@@ -16,7 +16,7 @@ public class Flavors {
     }
 
     /** True here, this build has no Cast, so the button has nothing to offer with UPnP turned off. */
-    public static boolean routeButtonIsOnlyForUpnp() {
+    public static boolean routeButtonIsOnlyForUpnp(Context context) {
         return true;
     }
 

@@ -43,15 +43,6 @@ public class ToolbarFragment extends Fragment {
     private MainActivity activity;
     private LibraryViewModel libraryViewModel;
     private MainViewModel mainViewModel;
-    // Whether the menu was last built with UPnP routes; null until the menu exists.
-    private Boolean upnpInMenu;
-    // Settings is a fragment in this activity, so a flipped switch is heard here rather than on resume.
-    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener upnpSwitchListener = (prefs, key) -> {
-        if (Preferences.UPNP_ENABLED.equals(key) && upnpInMenu != null && upnpInMenu != Preferences.isUpnpEnabled()
-                && getActivity() != null) {
-            getActivity().invalidateOptionsMenu();
-        }
-    };
 
     private final List<MusicFolder> musicFolders = new ArrayList<>();
 
@@ -65,13 +56,6 @@ public class ToolbarFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        com.eddyizm.tempus.App.getInstance().getPreferences().registerOnSharedPreferenceChangeListener(upnpSwitchListener);
-    }
-
-    @Override
-    public void onDestroy() {
-        com.eddyizm.tempus.App.getInstance().getPreferences().unregisterOnSharedPreferenceChangeListener(upnpSwitchListener);
-        super.onDestroy();
     }
 
     @Override
@@ -79,10 +63,10 @@ public class ToolbarFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_page_menu, menu);
         Flavors.setUpRouteButton(requireContext(), menu);
-        upnpInMenu = Preferences.isUpnpEnabled();
-        if (upnpInMenu) {
+        // Read on every build. Settings replaces the host screen, whose setSupportActionBar on return rebuilds this menu.
+        if (Preferences.isUpnpEnabled()) {
             UpnpRouteSetup.pointAtUpnpRenderers(menu);
-        } else if (Flavors.routeButtonIsOnlyForUpnp()) {
+        } else if (Flavors.routeButtonIsOnlyForUpnp(requireContext())) {
             menu.findItem(R.id.media_route_menu_item).setVisible(false);
         }
     }
