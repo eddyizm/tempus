@@ -30,4 +30,19 @@ public class BookmarksClient {
         Log.d(TAG, "savePlayQueue()");
         return bookmarksService.savePlayQueue(subsonic.getParams(), ids, current, position);
     }
+
+    public Call<ApiResponse> getBookmarks() {
+        Log.d(TAG, "getBookmarks()");
+        return bookmarksService.getBookmarks(subsonic.getParams());
+    }
+
+    public Call<ApiResponse> createBookmark(String id, long positionMs) {
+        Log.d(TAG, "createBookmark() id=" + id + " position=" + positionMs);
+        return bookmarksService.createBookmark(subsonic.getParams(), id, positionMs);
+    }
+
+    public Call<ApiResponse> deleteBookmark(String id) {
+        Log.d(TAG, "deleteBookmark() id=" + id);
+        return bookmarksService.deleteBookmark(subsonic.getParams(), id);
+    }
 }

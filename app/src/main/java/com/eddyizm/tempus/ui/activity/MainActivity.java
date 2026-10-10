@@ -29,6 +29,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
@@ -48,6 +50,7 @@ import com.eddyizm.tempus.helper.ThemeHelper;
 import com.eddyizm.tempus.navigation.NavigationController;
 import com.eddyizm.tempus.navigation.NavigationHelper;
 import com.eddyizm.tempus.service.MediaManager;
+import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
 import com.eddyizm.tempus.ui.activity.base.BaseActivity;
 import com.eddyizm.tempus.navigation.BottomSheetController;
 import com.eddyizm.tempus.navigation.BottomSheetHelper;
@@ -62,6 +65,8 @@ import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.AlbumArtistBackfill;
 import com.eddyizm.tempus.util.DownloadRepair;
+import com.eddyizm.tempus.repository.PlaylistRepository;
+import com.eddyizm.tempus.util.ConnectionUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.eddyizm.tempus.util.FavoriteRegistry;
@@ -77,6 +82,10 @@ import java.util.concurrent.ExecutionException;
 @UnstableApi
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivityLogs";
+
+    // The probe whose answer is still wanted, identified by the request itself. A flag shared by
+    // every probe cannot tell a held answer from a fresh one, since a held one arrives later.
+    private LiveData<SubsonicResponse> outstandingProbe = null;
 
     public ActivityMainBinding bind;
     private MainViewModel mainViewModel;
@@ -101,6 +110,12 @@ public class MainActivity extends BaseActivity {
 
     public ActivityMainBinding getBinding() {
         return bind;
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
+        if (com.eddyizm.tempus.lan.LanRemoteVolume.dispatch(event)) return true;
+        return super.dispatchKeyEvent(event);
     }
 
     // #688: Deep navigation accumulates fragment + back-stack state in the saved
@@ -179,9 +194,26 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void onStop() {
+        // Abandon the probe, since its answer would be applied on whatever network we come back to.
+        outstandingProbe = null;
+        super.onStop();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        boolean wasOpen = isLocalNetworkRequestOpen();
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // On Android 17 a request the user denied for good is answered with no prompt, after onResume.
+        if (wasOpen && !isLocalNetworkRequestOpen() && getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) pingServer();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         connectivityStatusReceiverManager(false);
+        if (isFinishing()) PlaylistRepository.resetKeptSync();
+        if (!isChangingConfigurations()) ConnectionUtil.expirePingDeferral();
         bind = null;
     }
 
@@ -494,6 +526,7 @@ public class MainActivity extends BaseActivity {
 
     public void goFromLogin() {
         setBottomSheetInPeek(mainViewModel.isQueueLoaded());
+        new PlaylistRepository().syncKeptPlaylists(getApplicationContext());
         goToHome();
         consumePendingAssetLink();
         consumePendingNowPlayingIntent();
@@ -517,6 +550,8 @@ public class MainActivity extends BaseActivity {
     }
 
     public void quit() {
+        com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
+        stopService(new Intent(this, com.eddyizm.tempus.lan.LanReceiverService.class));
         resetUserSession();
         resetMusicSession();
         resetViewModel();
@@ -526,6 +561,7 @@ public class MainActivity extends BaseActivity {
     private void resetUserSession() {
         FavoriteRegistry.clear();
 
+        PlaylistRepository.resetKeptSync();
         Preferences.setServerId(null);
         Preferences.setSalt(null);
         Preferences.setToken(null);
@@ -545,6 +581,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void resetMusicSession() {
+        com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
         MediaManager.reset(getMediaBrowserListenableFuture());
     }
 
@@ -568,10 +605,22 @@ public class MainActivity extends BaseActivity {
 
     private void pingServer() {
         if (Preferences.getToken() == null && Preferences.getPassword() == null) return;
+        if (isLocalNetworkRequestOpen()) {
+            ConnectionUtil.deferPing();
+            return;
+        }
+
+        ConnectionUtil.markPingIssued();
+        ConnectionUtil.endPingDeferral();
 
         if (Preferences.isInUseServerAddressLocal()) {
             mainViewModel.ping().observe(this, subsonicResponse -> {
                 if (subsonicResponse == null) {
+                    // onStart and onResume each ping, so two failures arrive for one unreachable
+                    // address, and the toggle below would put the second one straight back on it.
+                    ConnectionUtil.markPingAnswered();
+                    if (!Preferences.isInUseServerAddressLocal()) return;
+
                     // Switching only helps when remote and local are different addresses. When
                     // they're equal (issue #242) switchInUseServerAddress() is a no-op, so we'd
                     // re-enter this branch forever (ping/refresh/resetView loop). Treat that case
@@ -588,19 +637,24 @@ public class MainActivity extends BaseActivity {
                         dialog.show(getSupportFragmentManager(), null);
                     }
                 } else {
+                    ConnectionUtil.markPingAnswered();
                     Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
                 }
             });
         } else {
-            if (Preferences.isServerSwitchable()) {
-                Preferences.setServerSwitchableTimer();
-                Preferences.switchInUseServerAddress();
-                App.refreshSubsonicClient();
-                pingServer();
-                resetView();
+            if (outstandingProbe != null) {
+                // A probe is deciding the address, and it falls back to this ping when none answers.
+                ConnectionUtil.markPingAnswered();
+            } else if (Preferences.isServerSwitchable()) {
+                probeLocalAddress();
             } else {
                 mainViewModel.ping().observe(this, subsonicResponse -> {
+                    ConnectionUtil.markPingAnswered();
                     if (subsonicResponse == null) {
+                        // A local address answered since, so this failure is stale. It matters
+                        // because one of the dialog's buttons clears the session and the queue.
+                        if (Preferences.isInUseServerAddressLocal() || outstandingProbe != null) return;
+
                         if (Preferences.showServerUnreachableDialog()) {
                             ServerUnreachableDialog dialog = new ServerUnreachableDialog();
                             dialog.show(getSupportFragmentManager(), null);
@@ -611,6 +665,48 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }
+    }
+
+    // Probed on a client of its own, so the app is never moved onto an address that has not
+    // answered. A probe that fails changes nothing.
+    private void probeLocalAddress() {
+        // Not stamped here on purpose. The window outlives the activity and the probe does not, so
+        // stamping at send left a recreated activity unable to probe for fifteen seconds.
+        String probedAddress = Preferences.getLocalAddress();
+        LiveData<SubsonicResponse> probe = mainViewModel.pingLocalAddress();
+        outstandingProbe = probe;
+
+        probe.observe(this, subsonicResponse -> {
+            // A held answer is delivered after onStart has issued the next probe.
+            boolean isCurrentProbe = probe == outstandingProbe;
+            if (isCurrentProbe) outstandingProbe = null;
+
+            // A server change moves the local address, so a late answer would carry the wrong credentials.
+            if (!isCurrentProbe
+                    || subsonicResponse == null
+                    || !probedAddress.equals(Preferences.getLocalAddress())) {
+                ConnectionUtil.markPingAnswered();
+
+                // No local address answered, so ask the public one. The window is stamped first, or
+                // a probe slower than the window sends this call into another probe.
+                if (isCurrentProbe && subsonicResponse == null) {
+                    Preferences.setServerSwitchableTimer();
+                    pingServer();
+                }
+                return;
+            }
+
+            Preferences.setInUseServerAddress(probedAddress);
+            App.refreshSubsonicClient();
+
+            // Released only once the client points at the new address, or a mapping waking in
+            // between reads the new address and the old client.
+            ConnectionUtil.markPingAnswered();
+
+            // The screens were built against the address just left, so they are built again. The
+            // old code did this on every switch, and this runs only when the probe succeeded.
+            resetView();
+        });
     }
 
     private void resetView() {
@@ -778,16 +874,23 @@ public class MainActivity extends BaseActivity {
     private void fixUpEdgeToEdge() {
         View rootView = findViewById(android.R.id.content);
         ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
-            Insets innerPadding = insets.getInsets(
-                    WindowInsetsCompat.Type.statusBars()
-            );
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets displayCutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
+
+            int topPadding = Math.max(systemBars.top, displayCutout.top);
+
             rootView.setPadding(
-                    innerPadding.left,
-                    innerPadding.top,
-                    innerPadding.right,
-                    innerPadding.bottom
+                    systemBars.left,
+                    topPadding,
+                    systemBars.right,
+                    0
             );
-            return insets;
+
+            return new WindowInsetsCompat.Builder(insets)
+                    .setInsets(WindowInsetsCompat.Type.systemBars(), Insets.of(systemBars.left, 0, systemBars.right, systemBars.bottom))
+                    .setInsets(WindowInsetsCompat.Type.statusBars(), Insets.NONE)
+                    .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(displayCutout.left, 0, displayCutout.right, displayCutout.bottom))
+                    .build();
         });
     }
 

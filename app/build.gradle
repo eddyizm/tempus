@@ -15,8 +15,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 37
 
-        versionCode 48
-        versionName '4.27.0'
+        versionCode 50
+        versionName '4.29.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -85,6 +85,7 @@ android {
 
     lint {
         baseline = file("lint-baseline.xml")
+        disable += "MissingTranslation"
     }
 }
 
@@ -132,6 +133,10 @@ dependencies {
     implementation libs.media3.ui
     implementation libs.media3.exoplayer.hls
     tempusImplementation libs.media3.cast
+
+    // Route picker. Pulled in transitively by the Cast SDK for the tempus flavor
+    // already; declared here at the same version so the degoogled flavor has it too.
+    implementation libs.mediarouter
 
     // Room Compiler
     annotationProcessor libs.androidx.room.compiler

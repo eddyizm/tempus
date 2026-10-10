@@ -171,6 +171,8 @@
     <string name="home_sync_starred_title">似乎有一些收藏的歌曲需要同步</string>
     <string name="home_title_best_of">最佳</string>
     <string name="home_title_discovery">发现</string>
+    <string name="home_title_continue_listening">继续收听</string>
+    <string name="home_continue_listening_resume_at">从 %1$s 继续</string>
     <string name="home_title_discovery_shuffle_all_button">随机播放全部</string>
     <string name="home_title_flashback">重温旧曲</string>
     <string name="home_title_internet_radio_station">网络广播电台</string>
@@ -547,4 +549,30 @@
     <string name="playlist_editor_dialog_action_save_empty">播放列表必须至少保留一首曲目</string>
     <string name="search_title_empty_response">没有结果。</string>
     <string name="search_description_empty_response">我们检查了您的服务器响应，但它是空的。</string>
+    <string name="menu_keep_synced_button">保持同步</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="other">正在下载 %d 首曲目</item>
+    </plurals>
+    <string name="playlist_editor_hint">拖动手柄可调整顺序，点击垃圾桶可移除曲目。点击“保存”前不会发送任何内容。</string>
+    <string name="playlist_editor_remove_track">移除曲目</string>
+    <string name="playlist_editor_drag_track">拖动以重新排序</string>
+    <string name="menu_edit_playlist_details_button">编辑详情</string>
+    <string name="playlist_details_dialog_title">播放列表详情</string>
+    <string name="playlist_editor_load_failure">无法加载播放列表</string>
+    <string name="playlist_editor_removed_track">已从列表中移除</string>
+    <string name="song_bottom_sheet_undo">撤销</string>
+    <string name="song_bottom_sheet_undo_failure">无法恢复歌曲</string>
+    <string name="la_theme_card_emerald_green_description">祖母绿强调色</string>
+    <string name="la_perms_title">请求权限</string>
+    <string name="la_perms_description">所需权限及其用途如下。</string>
+    <string name="la_perms_status_provided">已授予</string>
+    <string name="la_perms_status_not_provided">请求</string>
+    <string name="la_perms_internet_title">互联网</string>
+    <string name="la_perms_internet_description">通过互联网访问音乐服务器所必需。</string>
+    <string name="la_perms_notifications_title">通知</string>
+    <string name="la_perms_notifications_description">显示下载状态和播放器控件所必需。</string>
+    <string name="la_perms_access_local_network_title">访问本地网络</string>
+    <string name="la_perms_access_local_network_description">访问与当前设备位于同一局域网中的其他设备所必需。</string>
+    <string name="la_perms_nearby_devices_title">附近设备</string>
+    <string name="la_perms_nearby_devices_description">通过 UPnP 和 Chromecast 发现其他设备所必需。</string>
 </resources>

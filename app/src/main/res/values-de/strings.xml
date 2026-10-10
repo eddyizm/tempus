@@ -161,6 +161,8 @@
     </plurals>
     <string name="home_title_best_of">Das Beste von</string>
     <string name="home_title_discovery">Entdecken</string>
+    <string name="home_title_continue_listening">Weiterhören</string>
+    <string name="home_continue_listening_resume_at">Weiter bei %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Alles zufällig spielen</string>
     <string name="home_title_flashback">Rückblende</string>
     <string name="home_title_internet_radio_station">Internet-Radiosender</string>
@@ -235,6 +237,8 @@
     <string name="menu_sort_least_recently_starred">Älteste Favoriten</string>
     <string name="menu_pin_button">Zur Startseite hinzufügen</string>
     <string name="menu_unpin_button">Von Startseite entfernen</string>
+    <string name="menu_keep_synced_button">Synchronisiert halten</string>
+    <string name="menu_edit_playlist_details_button">Details bearbeiten</string>
     <string name="menu_sort_year">Jahr</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Wiedergabegeschwindigkeit</string>
@@ -267,12 +271,22 @@
     <string name="playlist_chooser_dialog_visibility_switch_label">Wiedergabeliste als öffentlich markieren</string>
     <string name="playlist_counted_tracks">%1$d Titel •  %2$s</string>
     <string name="playlist_duration">Laufzeit  •  %1$s</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Lade %d Titel herunter</item>
+        <item quantity="other">Lade %d Titel herunter</item>
+    </plurals>
+    <string name="playlist_details_dialog_title">Wiedergabelistendetails</string>
     <string name="playlist_editor_dialog_action_delete_toast">Halten um zu löschen</string>
     <string name="playlist_editor_dialog_hint_name">Name der Wiedergabeliste</string>
     <string name="playlist_editor_dialog_negative_button">Abbrechen</string>
     <string name="playlist_editor_dialog_neutral_button">Löschen</string>
     <string name="playlist_editor_dialog_positive_button">Speichern</string>
     <string name="playlist_editor_dialog_title">Wiedergabeliste bearbeiten</string>
+    <string name="playlist_editor_hint">Am Griff ziehen zum Neuordnen, auf den Papierkorb tippen zum Entfernen. Die Änderungen werden erst beim Speichern gesendet.</string>
+    <string name="playlist_editor_remove_track">Titel entfernen</string>
+    <string name="playlist_editor_drag_track">Ziehen zum Neuordnen</string>
+    <string name="playlist_editor_load_failure">Wiedergabeliste konnte nicht geladen werden</string>
+    <string name="playlist_editor_removed_track">Aus Liste entfernt</string>
     <string name="playlist_page_play_button">Wiedergabe</string>
     <string name="playlist_page_shuffle_button">Zufall</string>
     <string name="playlist_song_count">Wiedergabeliste  •  %1$d Titel</string>
@@ -527,6 +541,8 @@
     <string name="song_bottom_sheet_rate">Bewerten</string>
     <string name="song_bottom_sheet_remove">Von Gerät entfernen</string>
     <string name="song_bottom_sheet_remove_from_playlist">Aus Wiedergabeliste entfernen</string>
+    <string name="song_bottom_sheet_undo">Rückgängig</string>
+    <string name="song_bottom_sheet_undo_failure">Titel konnte nicht wiederhergestellt werden</string>
     <string name="song_bottom_sheet_share">Teilen</string>
     <string name="song_list_page_downloaded">Heruntergeladen</string>
     <string name="song_list_page_most_played">Oft gespielte Titel</string>
@@ -628,4 +644,18 @@
     <string name="playlist_editor_dialog_action_save_empty">Eine Wiedergabeliste muss mindestens einen Titel enthalten</string>
     <string name="search_title_empty_response">Keine Ergebnisse.</string>
     <string name="search_description_empty_response">Wir haben Ihre Serverantwort überprüft, aber sie war leer.</string>
+
+    <string name="la_theme_card_emerald_green_description">Smaragdgrüne Akzentfarbe</string>
+    <string name="la_perms_title">Berechtigungen anfordern</string>
+    <string name="la_perms_description">Die erforderlichen Berechtigungen und deren Verwendung sind unten aufgeführt.</string>
+    <string name="la_perms_status_provided">Gewährt</string>
+    <string name="la_perms_status_not_provided">Anfordern</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Erforderlich für den Zugriff auf deinen Musikserver im Internet.</string>
+    <string name="la_perms_notifications_title">Benachrichtigungen</string>
+    <string name="la_perms_notifications_description">Erforderlich zur Anzeige von Download-Status und Player-Steuerung.</string>
+    <string name="la_perms_access_local_network_title">Zugriff auf lokales Netzwerk</string>
+    <string name="la_perms_access_local_network_description">Erforderlich für den Zugriff auf andere Geräte im selben lokalen Netzwerk.</string>
+    <string name="la_perms_nearby_devices_title">Geräte in der Nähe</string>
+    <string name="la_perms_nearby_devices_description">Erforderlich zum Ermitteln anderer Geräte über UPnP und Chromecast.</string>
 </resources>

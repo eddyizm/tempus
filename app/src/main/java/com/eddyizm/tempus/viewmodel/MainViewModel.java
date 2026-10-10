@@ -59,6 +59,10 @@ public class MainViewModel extends AndroidViewModel {
         return systemRepository.ping();
     }
 
+    public LiveData<SubsonicResponse> pingLocalAddress() {
+        return systemRepository.pingLocalAddress();
+    }
+
     public LiveData<List<OpenSubsonicExtension>> getOpenSubsonicExtensions() {
         return systemRepository.getOpenSubsonicExtensions();
     }

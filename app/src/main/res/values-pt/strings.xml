@@ -97,6 +97,8 @@
     <string name="home_sync_starred_title">Parece que existem algumas faixas favoritas para sincronizar</string>
     <string name="home_title_best_of">Melhor de</string>
     <string name="home_title_discovery">Descobrir</string>
+    <string name="home_title_continue_listening">Continuar a ouvir</string>
+    <string name="home_continue_listening_resume_at">Continuar em %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Aleatório</string>
     <string name="home_title_flashback">Flashback</string>
     <string name="home_title_internet_radio_station">Estações de rádio via internet</string>
@@ -366,6 +368,33 @@
     <string name="undraw_url">https://undraw.co/</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Ativar isso torna a playlist pública. Deixá-lo como está não altera a visibilidade da playlist.</string>
     <string name="playlist_editor_dialog_action_save_empty">Uma playlist precisa manter pelo menos uma faixa</string>
+    <string name="menu_keep_synced_button">Manter sincronizada</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Baixando %d faixa</item>
+        <item quantity="other">Baixando %d faixas</item>
+    </plurals>
+    <string name="playlist_editor_hint">Arraste a alça para reordenar e toque na lixeira para remover. Nada será enviado até você salvar.</string>
+    <string name="playlist_editor_remove_track">Remover faixa</string>
+    <string name="playlist_editor_drag_track">Arraste para reordenar</string>
+    <string name="menu_edit_playlist_details_button">Editar detalhes</string>
+    <string name="playlist_details_dialog_title">Detalhes da playlist</string>
+    <string name="playlist_editor_load_failure">Não foi possível carregar a playlist</string>
+    <string name="playlist_editor_removed_track">Removida da lista</string>
+    <string name="song_bottom_sheet_undo">Desfazer</string>
+    <string name="song_bottom_sheet_undo_failure">Não foi possível restaurar a música</string>
+    <string name="la_theme_card_emerald_green_description">Cor de destaque verde-esmeralda</string>
+    <string name="la_perms_title">Solicitar permissões</string>
+    <string name="la_perms_description">As permissões necessárias e seus usos são exibidos abaixo.</string>
+    <string name="la_perms_status_provided">Concedida</string>
+    <string name="la_perms_status_not_provided">Solicitar</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Necessária para acessar seu servidor de música pela internet.</string>
+    <string name="la_perms_notifications_title">Notificações</string>
+    <string name="la_perms_notifications_description">Necessárias para mostrar o status dos downloads e os controles do player.</string>
+    <string name="la_perms_access_local_network_title">Acesso à rede local</string>
+    <string name="la_perms_access_local_network_description">Necessária para acessar outros dispositivos na mesma rede local que o dispositivo atual.</string>
+    <string name="la_perms_nearby_devices_title">Dispositivos próximos</string>
+    <string name="la_perms_nearby_devices_description">Necessária para descobrir outros dispositivos por meio de UPnP e Chromecast.</string>
     <string name="search_title_empty_response">Sem resultados.</string>
     <string name="search_description_empty_response">Verificamos a resposta do seu servidor, mas estava vazia.</string>
 </resources>

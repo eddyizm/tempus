@@ -72,6 +72,7 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     private PlayerSongQueueAdapter playerSongQueueAdapter;
+    private List<Child> localQueue = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -122,7 +123,9 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         updateNowPlayingItem();
         mediaBrowserListenableFuture.addListener(() -> {
             try {
-                long position = mediaBrowserListenableFuture.get().getCurrentMediaItemIndex();
+                long position = com.eddyizm.tempus.lan.LanRemoteSession.isActive()
+                        ? com.eddyizm.tempus.lan.LanRemoteSession.current().getIndex()
+                        : mediaBrowserListenableFuture.get().getCurrentMediaItemIndex();
                 requireActivity().runOnUiThread(() -> {
                     bind.playerQueueRecyclerView.scrollToPosition((int) position);
                 });
@@ -183,9 +186,20 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
         playerBottomSheetViewModel.getQueueSong().observe(getViewLifecycleOwner(), queue -> {
             if (queue != null) {
-                playerSongQueueAdapter.setItems(queue.stream().map(item -> (Child) item).collect(Collectors.toList()));
+                localQueue = queue.stream().map(item -> (Child) item).collect(Collectors.toList());
+                if (!com.eddyizm.tempus.lan.LanRemoteSession.isActive()) playerSongQueueAdapter.setItems(new ArrayList<>(localQueue));
                 reapplyPlayback();
             }
+        });
+        com.eddyizm.tempus.lan.LanRemoteSession.queueState().observe(getViewLifecycleOwner(), queue -> {
+            if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+                playerSongQueueAdapter.setItems(new ArrayList<>(queue));
+                reapplyPlayback();
+            }
+        });
+        com.eddyizm.tempus.lan.LanRemoteSession.state().observe(getViewLifecycleOwner(), state -> {
+            if (!state.getActive()) playerSongQueueAdapter.setItems(new ArrayList<>(localQueue));
+            reapplyPlayback();
         });
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT) {
@@ -239,12 +253,14 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
     private void observePlayback() {
         playbackViewModel.getCurrentSongId().observe(getViewLifecycleOwner(), id -> {
+            if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) { reapplyPlayback(); return; }
             if (playerSongQueueAdapter != null) {
                 Boolean playing = playbackViewModel.getIsPlaying().getValue();
                 playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
             }
         });
         playbackViewModel.getIsPlaying().observe(getViewLifecycleOwner(), playing -> {
+            if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) { reapplyPlayback(); return; }
             if (playerSongQueueAdapter != null) {
                 String id = playbackViewModel.getCurrentSongId().getValue();
                 playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
@@ -254,6 +270,13 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
 
     private void reapplyPlayback() {
         if (playerSongQueueAdapter != null) {
+            if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
+                com.eddyizm.tempus.lan.LanRemoteState state = com.eddyizm.tempus.lan.LanRemoteSession.current();
+                List<Child> queue = com.eddyizm.tempus.lan.LanRemoteSession.queueItems();
+                String id = state.getIndex() >= 0 && state.getIndex() < queue.size() ? queue.get(state.getIndex()).getId() : null;
+                playerSongQueueAdapter.setPlaybackState(id, state.getPlaying());
+                return;
+            }
             String id = playbackViewModel.getCurrentSongId().getValue();
             Boolean playing = playbackViewModel.getIsPlaying().getValue();
             playerSongQueueAdapter.setPlaybackState(id, playing != null && playing);
@@ -320,7 +343,8 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-                int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
+                int startPosition = (com.eddyizm.tempus.lan.LanRemoteSession.isActive()
+                        ? com.eddyizm.tempus.lan.LanRemoteSession.current().getIndex() : mediaBrowser.getCurrentMediaItemIndex()) + 1;
                 int endPosition = playerSongQueueAdapter.getItems().size() - 1;
 
                 if (startPosition < endPosition) {
@@ -360,7 +384,8 @@ public class PlayerQueueFragment extends Fragment implements ClickCallback {
         mediaBrowserListenableFuture.addListener(() -> {
             try {
                 MediaBrowser mediaBrowser = mediaBrowserListenableFuture.get();
-                int startPosition = mediaBrowser.getCurrentMediaItemIndex() + 1;
+                int startPosition = (com.eddyizm.tempus.lan.LanRemoteSession.isActive()
+                        ? com.eddyizm.tempus.lan.LanRemoteSession.current().getIndex() : mediaBrowser.getCurrentMediaItemIndex()) + 1;
                 int endPosition = playerSongQueueAdapter.getItems().size();
 
                 MediaManager.removeRange(mediaBrowserListenableFuture, playerSongQueueAdapter.getItems(), startPosition, endPosition);

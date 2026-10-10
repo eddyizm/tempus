@@ -177,6 +177,8 @@
     </plurals>
     <string name="home_title_best_of">El millor de</string>
     <string name="home_title_discovery">Descobriment</string>
+    <string name="home_title_continue_listening">Continua escoltant</string>
+    <string name="home_continue_listening_resume_at">Continua a les %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Reprodueix-ho tot aleatòriament</string>
     <string name="home_title_flashback">Viatge al passat</string>
     <string name="home_title_internet_radio_station">Emissores de ràdio per Internet</string>
@@ -744,4 +746,31 @@
     <string name="playlist_editor_dialog_action_save_empty">Una llista de reproducció ha de tenir almenys una pista</string>
     <string name="search_title_empty_response">Sense resultats.</string>
     <string name="search_description_empty_response">Hem comprovat la resposta del servidor però estava buida.</string>
+    <string name="menu_keep_synced_button">Mantén sincronitzada</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">S\'està baixant %d pista</item>
+        <item quantity="other">S\'estan baixant %d pistes</item>
+    </plurals>
+    <string name="playlist_editor_hint">Arrossega l\'ansa per reordenar i toca la paperera per suprimir. No s\'enviarà res fins que desis.</string>
+    <string name="playlist_editor_remove_track">Suprimeix la pista</string>
+    <string name="playlist_editor_drag_track">Arrossega per reordenar</string>
+    <string name="menu_edit_playlist_details_button">Edita els detalls</string>
+    <string name="playlist_details_dialog_title">Detalls de la llista de reproducció</string>
+    <string name="playlist_editor_load_failure">No s\'ha pogut carregar la llista de reproducció</string>
+    <string name="playlist_editor_removed_track">Suprimida de la llista</string>
+    <string name="song_bottom_sheet_undo">Desfés</string>
+    <string name="song_bottom_sheet_undo_failure">No s\'ha pogut restaurar la cançó</string>
+    <string name="la_theme_card_emerald_green_description">Color d\'accent verd maragda</string>
+    <string name="la_perms_title">Sol·licita permisos</string>
+    <string name="la_perms_description">Els permisos necessaris i el seu ús es mostren a continuació.</string>
+    <string name="la_perms_status_provided">Concedit</string>
+    <string name="la_perms_status_not_provided">Sol·licita</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Necessari per accedir al vostre servidor de música a través d\'internet.</string>
+    <string name="la_perms_notifications_title">Notificacions</string>
+    <string name="la_perms_notifications_description">Necessari per mostrar l\'estat de les baixades i els controls del reproductor.</string>
+    <string name="la_perms_access_local_network_title">Accés a la xarxa local</string>
+    <string name="la_perms_access_local_network_description">Necessari per accedir a altres dispositius de la mateixa LAN que el dispositiu actual.</string>
+    <string name="la_perms_nearby_devices_title">Dispositius propers</string>
+    <string name="la_perms_nearby_devices_description">Necessari per descobrir altres dispositius mitjançant UPnP i Chromecast.</string>
 </resources>

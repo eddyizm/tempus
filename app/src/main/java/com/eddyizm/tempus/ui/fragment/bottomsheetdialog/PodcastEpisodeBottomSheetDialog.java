@@ -38,7 +38,11 @@ public class PodcastEpisodeBottomSheetDialog extends BottomSheetDialogFragment i
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_podcast_episode_dialog, container, false);
 
-        podcastEpisode = requireArguments().getParcelable(Constants.PODCAST_OBJECT);
+        Bundle args = getArguments();
+        if (args == null || (podcastEpisode = args.getParcelable(Constants.PODCAST_OBJECT)) == null) {
+            dismissAllowingStateLoss();
+            return view;
+        }
 
         podcastEpisodeBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PodcastEpisodeBottomSheetViewModel.class);
         podcastEpisodeBottomSheetViewModel.setPodcastEpisode(podcastEpisode);
@@ -51,13 +55,16 @@ public class PodcastEpisodeBottomSheetDialog extends BottomSheetDialogFragment i
     @Override
     public void onStart() {
         super.onStart();
-
-        initializeMediaBrowser();
+        if (podcastEpisode != null) {
+            initializeMediaBrowser();
+        }
     }
 
     @Override
     public void onStop() {
-        releaseMediaBrowser();
+        if (mediaBrowserListenableFuture != null) {
+            releaseMediaBrowser();
+        }
         super.onStop();
     }
 

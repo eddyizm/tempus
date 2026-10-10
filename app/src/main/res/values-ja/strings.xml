@@ -197,6 +197,8 @@
     </plurals>
     <string name="home_title_best_of">ベストトラック</string>
     <string name="home_title_discovery">ディスカバリー</string>
+    <string name="home_title_continue_listening">聴き続ける</string>
+    <string name="home_continue_listening_resume_at">%1$s から再開</string>
     <string name="home_title_discovery_shuffle_all_button">すべてシャッフル</string>
     <string name="home_title_flashback">フラッシュバック</string>
     <string name="home_title_internet_radio_station">インターネットラジオ局</string>
@@ -280,6 +282,10 @@
     <string name="menu_sort_least_recently_starred">お気に入りして時間の経った項目</string>
     <string name="menu_pin_button">ホーム画面に追加</string>
     <string name="menu_unpin_button">ホーム画面から削除</string>
+    <string name="menu_keep_synced_button">常に同期</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="other">%d 曲をダウンロード中</item>
+    </plurals>
     <string name="playlist_sort_pinned">お気に入り</string>
     <string name="playlist_sort_last_played">最後に再生した日時</string>
     <string name="playlist_sort_last_updated">最終更新日時</string>
@@ -336,6 +342,13 @@
     <string name="playlist_editor_dialog_action_save_success">プレイリストを保存しました</string>
     <string name="playlist_editor_dialog_action_save_failure">プレイリストを保存できませんでした</string>
     <string name="playlist_editor_dialog_action_save_empty">プレイリストには少なくとも1つのトラックが必要です</string>
+    <string name="playlist_editor_hint">ハンドルをドラッグして並べ替え、ゴミ箱をタップして削除できます。保存するまで変更は送信されません。</string>
+    <string name="playlist_editor_remove_track">トラックを削除</string>
+    <string name="playlist_editor_drag_track">ドラッグして並べ替え</string>
+    <string name="menu_edit_playlist_details_button">詳細を編集</string>
+    <string name="playlist_details_dialog_title">プレイリストの詳細</string>
+    <string name="playlist_editor_load_failure">プレイリストを読み込めませんでした</string>
+    <string name="playlist_editor_removed_track">リストから削除しました</string>
     <string name="playlist_page_empty">このプレイリストに曲がありません</string>
     <string name="playlist_page_play_button">再生</string>
     <string name="playlist_page_shuffle_button">シャッフル</string>
@@ -634,6 +647,8 @@
     <string name="song_bottom_sheet_rate">評価</string>
     <string name="song_bottom_sheet_remove">削除</string>
     <string name="song_bottom_sheet_remove_from_playlist">プレイリストから削除</string>
+    <string name="song_bottom_sheet_undo">元に戻す</string>
+    <string name="song_bottom_sheet_undo_failure">曲を元に戻せませんでした</string>
     <string name="song_bottom_sheet_share">共有</string>
     <string name="song_list_page_downloaded">ダウンロード済み</string>
     <string name="song_list_page_most_played">よく再生するトラック</string>

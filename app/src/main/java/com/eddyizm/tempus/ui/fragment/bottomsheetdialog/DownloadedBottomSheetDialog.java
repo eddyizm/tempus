@@ -48,9 +48,13 @@ public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment imple
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_downloaded_dialog, container, false);
 
-        songs = this.requireArguments().getParcelableArrayList(Constants.DOWNLOAD_GROUP);
-        groupTitle = this.requireArguments().getString(Constants.DOWNLOAD_GROUP_TITLE);
-        groupSubtitle = this.requireArguments().getString(Constants.DOWNLOAD_GROUP_SUBTITLE);
+        Bundle args = getArguments();
+        if (args == null || (songs = args.getParcelableArrayList(Constants.DOWNLOAD_GROUP)) == null) {
+            dismissAllowingStateLoss();
+            return view;
+        }
+        groupTitle = args.getString(Constants.DOWNLOAD_GROUP_TITLE);
+        groupSubtitle = args.getString(Constants.DOWNLOAD_GROUP_SUBTITLE);
 
         initUI(view);
         init(view);
@@ -61,13 +65,16 @@ public class DownloadedBottomSheetDialog extends BottomSheetDialogFragment imple
     @Override
     public void onStart() {
         super.onStart();
-
-        initializeMediaBrowser();
+        if (songs != null) {
+            initializeMediaBrowser();
+        }
     }
 
     @Override
     public void onStop() {
-        releaseMediaBrowser();
+        if (mediaBrowserListenableFuture != null) {
+            releaseMediaBrowser();
+        }
         super.onStop();
     }
 

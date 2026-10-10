@@ -28,6 +28,7 @@ import com.eddyizm.tempus.R
 import com.eddyizm.tempus.databinding.InnerFragmentPlayerCoverBinding
 import com.eddyizm.tempus.model.Download
 import com.eddyizm.tempus.service.MediaManager
+import com.eddyizm.tempus.lan.LanRemoteSession
 import com.eddyizm.tempus.service.MediaService
 import com.eddyizm.tempus.subsonic.models.Child
 import com.eddyizm.tempus.ui.components.NowPlayingArtworkPager
@@ -54,6 +55,7 @@ class PlayerCoverFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
 
     private var queueItems by mutableStateOf<List<Child>>(emptyList())
+    private var localQueue: List<Child> = emptyList()
     private var currentPlayingIndex by mutableIntStateOf(0)
     private var isRadioStation by mutableStateOf(false)
     private var radioStationArtworkUri by mutableStateOf<Uri?>(null)
@@ -74,8 +76,12 @@ class PlayerCoverFragment : Fragment() {
                     isRadio = isRadioStation,
                     radioArtworkUri = radioStationArtworkUri,
                     radioCoverArtId = radioStationCoverArtId,
-                    onPageSelected = { page ->
+                    onPageSelected = pageSelected@ { page ->
                         if (page in queueItems.indices) {
+                            if (LanRemoteSession.isActive()) {
+                                if (LanRemoteSession.queueIsCurrent()) LanRemoteSession.routeEdit("select", page, page)
+                                return@pageSelected
+                            }
                             currentPlayingIndex = page
                             val browser = mediaBrowser
                             if (browser != null && browser.mediaItemCount > 0 && page in 0 until browser.mediaItemCount) {
@@ -122,10 +128,19 @@ class PlayerCoverFragment : Fragment() {
 
     private fun observeQueue() {
         playerBottomSheetViewModel.getQueueSong().observe(viewLifecycleOwner) { queue ->
-            queueItems = queue?.map { it as Child } ?: emptyList()
+            localQueue = queue?.map { it as Child } ?: emptyList()
+            if (!LanRemoteSession.isActive()) queueItems = localQueue
+        }
+        LanRemoteSession.queueState().observe(viewLifecycleOwner) { if (LanRemoteSession.isActive()) refreshRemoteArtwork() }
+        LanRemoteSession.state().observe(viewLifecycleOwner) { state ->
+            if (state.active) refreshRemoteArtwork()
+            else {
+                queueItems = localQueue
+                mediaBrowser?.let { updatePlaybackState(it.mediaMetadata, it.currentMediaItemIndex) }
+            }
         }
         playerBottomSheetViewModel.getLiveMedia().observe(viewLifecycleOwner) { song ->
-            if (song != null && queueItems.isNotEmpty()) {
+            if (!LanRemoteSession.isActive() && song != null && queueItems.isNotEmpty()) {
                 val idx = queueItems.indexOfFirst { it.id == song.id }
                 if (idx >= 0 && idx != currentPlayingIndex) {
                     currentPlayingIndex = idx
@@ -143,6 +158,14 @@ class PlayerCoverFragment : Fragment() {
             }
             handler.postDelayed(runnable, 10000)
         }
+    }
+
+    private fun refreshRemoteArtwork() {
+        val state = LanRemoteSession.current()
+        isRadioStation = false
+        queueItems = if (LanRemoteSession.queueIsCurrent()) LanRemoteSession.queueItems()
+            else if (state.count > 0) listOf(LanRemoteSession.currentSong()) else emptyList()
+        currentPlayingIndex = if (LanRemoteSession.queueIsCurrent()) state.index.coerceAtLeast(0) else 0
     }
 
     private fun initOverlay() {
@@ -265,6 +288,7 @@ class PlayerCoverFragment : Fragment() {
     }
 
     private fun updatePlaybackState(mediaMetadata: MediaMetadata, itemIndex: Int) {
+        if (LanRemoteSession.isActive()) return
         val extras = mediaMetadata.extras
         val isRadio = extras != null && Constants.MEDIA_TYPE_RADIO == extras.getString("type")
 

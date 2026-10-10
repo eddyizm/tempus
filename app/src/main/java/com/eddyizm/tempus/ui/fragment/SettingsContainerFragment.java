@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
@@ -48,7 +47,6 @@ import androidx.preference.SwitchPreference;
 
 import com.eddyizm.tempus.BuildConfig;
 import com.eddyizm.tempus.R;
-import com.eddyizm.tempus.helper.ThemeHelper;
 import com.eddyizm.tempus.interfaces.DialogClickCallback;
 import com.eddyizm.tempus.interfaces.ScanCallback;
 import com.eddyizm.tempus.equalizer.EqualizerManager;
@@ -174,6 +172,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         setVersion();
         setNetorkPingTimeoutBase();
 
+        actionPermission();
         actionTheme();
         actionLogout();
         actionScan();
@@ -235,6 +234,10 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                     }
                     category.setOnClickListener(cat -> {
                         String key = cat.getKey();
+                        if ("lan_playback".equals(key)) {
+                            startActivity(new Intent(requireContext(), com.eddyizm.tempus.lan.LanPlaybackActivity.class));
+                            return;
+                        }
                         if (expandedCategories.contains(key)) {
                             expandedCategories.remove(key);
                         } else {
@@ -268,16 +271,16 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         resetVisibility(screen);
 
+        checkSystemEqualizer();
+        checkCacheStorage();
+        checkStorage();
+        checkDownloadDirectory();
+        checkEqualizerBands();
+        checkMusicLibrary();
+
         if (!searchQuery.isEmpty()) {
             filterPreferences(screen);
         } else {
-            checkSystemEqualizer();
-            checkCacheStorage();
-            checkStorage();
-            checkDownloadDirectory();
-            checkEqualizerBands();
-            checkMusicLibrary();
-
             for (int i = 0; i < screen.getPreferenceCount(); i++) {
                 Preference pref = screen.getPreference(i);
                 if (pref instanceof PreferenceCategory) {
@@ -331,8 +334,9 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             }
 
             if (pref instanceof PreferenceGroup) {
-                boolean childMatches = filterPreferences((PreferenceGroup) pref, matches);
-                boolean groupVisible = matches || childMatches;
+                boolean wasVisible = pref.isVisible();
+                boolean childMatches = filterPreferences((PreferenceGroup) pref, matches && wasVisible);
+                boolean groupVisible = (matches || childMatches) && wasVisible;
                 pref.setVisible(groupVisible);
                 if (pref instanceof PreferenceCategory && isRoot) {
                     pref.setIcon(R.drawable.ic_arrow_down);
@@ -341,8 +345,10 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                     hasVisibleChild = true;
                 }
             } else {
-                pref.setVisible(matches);
-                if (matches) {
+                boolean wasVisible = pref.isVisible();
+                boolean shouldBeVisible = matches && wasVisible;
+                pref.setVisible(shouldBeVisible);
+                if (shouldBeVisible) {
                     hasVisibleChild = true;
                 }
             }
@@ -352,18 +358,26 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private void checkSystemEqualizer() {
         Preference equalizer = findPreference("system_equalizer");
+        Preference builtinEqualizer = findPreference("builtin_equalizer");
 
-        if (equalizer == null) return;
+        int selectedEqValue = Preferences.getSelectedEqualizer();
 
-        Intent intent = new Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL);
+        if (builtinEqualizer != null) {
+            builtinEqualizer.setVisible(selectedEqValue == 1);
+        }
 
-        if ((intent.resolveActivity(requireActivity().getPackageManager()) != null)) {
-            equalizer.setOnPreferenceClickListener(preference -> {
-                equalizerResultLauncher.launch(intent);
-                return true;
-            });
-        } else {
-            equalizer.setVisible(false);
+        if (equalizer != null) {
+            Intent intent = new Intent(AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL);
+
+            if ((intent.resolveActivity(requireActivity().getPackageManager()) != null)) {
+                equalizer.setOnPreferenceClickListener(preference -> {
+                    equalizerResultLauncher.launch(intent);
+                    return true;
+                });
+                equalizer.setVisible(selectedEqValue == 2);
+            } else {
+                equalizer.setVisible(false);
+            }
         }
     }
 
@@ -620,6 +634,17 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private void setVersion() {
         findPreference("version").setSummary(BuildConfig.VERSION_NAME);
+    }
+
+    private void actionPermission() {
+        findPreference("permissions").setOnPreferenceClickListener( preference -> {
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
+            tempus.putExtra("SELECT_FRAGMENT", 1);
+            startActivity(tempus);
+            return true;
+        });
     }
 
     private void actionTheme() {
@@ -933,6 +958,8 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                         }
                         selectedEqualizer.setSummary(newEntry);
                         Preferences.setSelectedEqualizer(newValStr);
+
+                        checkSystemEqualizer();
 
                         Intent intent = new Intent(getContext().getApplicationContext(), MediaService.class);
                         intent.setAction(MediaService.ACTION_RELOAD_EQUALIZER);

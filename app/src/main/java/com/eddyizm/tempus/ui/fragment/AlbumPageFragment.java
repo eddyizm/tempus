@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -32,6 +34,8 @@ import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
+import com.eddyizm.tempus.subsonic.models.ArtistID3;
+import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.ui.activity.MainActivity;
@@ -52,6 +56,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -63,6 +68,8 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     private PlaybackViewModel playbackViewModel;
     private SongHorizontalAdapter songHorizontalAdapter;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private LiveData<ArtistID3> pendingArtist;
+    private Observer<ArtistID3> pendingArtistObserver;
 
     /** @noinspection deprecation*/
     @Override
@@ -135,8 +142,17 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
     @Override
     public void onDestroyView() {
+        removePendingArtistObserver();
         super.onDestroyView();
         bind = null;
+    }
+
+    private void removePendingArtistObserver() {
+        if (pendingArtist != null && pendingArtistObserver != null) {
+            pendingArtist.removeObserver(pendingArtistObserver);
+        }
+        pendingArtist = null;
+        pendingArtistObserver = null;
     }
 
         /** @noinspection deprecation*/
@@ -153,27 +169,41 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
             }
 
         if (item.getItemId() == R.id.action_download_album) {
-            albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
-                if (Preferences.getDownloadDirectoryUri() == null) {
-                    DownloadUtil.getDownloadTracker(requireContext()).download(
-                        MappingUtil.mapDownloads(songs),
-                        songs.stream().map(Download::new).collect(Collectors.toList())
-                    );
-                } else {
-                    songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
-                }
-            });
+            List<Child> songs = albumPageViewModel.getAlbumSongLiveList().getValue();
+            if (songs == null || songs.isEmpty()) {
+                return true;
+            }
+            if (Preferences.getDownloadDirectoryUri() == null) {
+                DownloadUtil.getDownloadTracker(requireContext()).download(
+                    MappingUtil.mapDownloads(songs),
+                    songs.stream().map(Download::new).collect(Collectors.toList())
+                );
+            } else {
+                songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+            }
             return true;
         }
         if (item.getItemId() == R.id.action_add_to_playlist) {
-            albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
+            List<Child> songs = albumPageViewModel.getAlbumSongLiveList().getValue();
+            if (songs == null || songs.isEmpty()) {
+                return true;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Constants.TRACKS_OBJECT, new ArrayList<>(songs));
 
-                PlaylistChooserDialog dialog = new PlaylistChooserDialog();
-                dialog.setArguments(bundle);
-                dialog.show(requireActivity().getSupportFragmentManager(), null);
-            });
+            PlaylistChooserDialog dialog = new PlaylistChooserDialog();
+            dialog.setArguments(bundle);
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
+            return true;
+        }
+        if (item.getItemId() == R.id.action_play_next || item.getItemId() == R.id.action_add_to_queue) {
+            boolean playNext = item.getItemId() == R.id.action_play_next;
+            List<Child> songs = albumPageViewModel.getAlbumSongLiveList().getValue();
+            if (songs == null || songs.isEmpty()) {
+                return true;
+            }
+            MediaManager.enqueue(mediaBrowserListenableFuture, songs, playNext);
+            activity.setBottomSheetInPeek(true);
             return true;
         }
 
@@ -289,14 +319,22 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initAlbumInfoTextButton() {
-        bind.albumArtistLabel.setOnClickListener(v -> albumPageViewModel.getArtist().observe(getViewLifecycleOwner(), artist -> {
-            if (artist != null) {
+        bind.albumArtistLabel.setOnClickListener(v -> {
+            removePendingArtistObserver();
+            pendingArtist = albumPageViewModel.getArtist();
+            pendingArtistObserver = artist -> {
+                removePendingArtistObserver();
+                if (artist == null) {
+                    Toast.makeText(requireContext(), R.string.album_error_retrieving_artist, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Bundle bundle = new Bundle();
                 bundle.putParcelable(Constants.ARTIST_OBJECT, artist.strippedForNav());
                 activity.navController.navigate(R.id.action_albumPageFragment_to_artistPageFragment, bundle);
-            } else
-                Toast.makeText(requireContext(), getString(R.string.album_error_retrieving_artist), Toast.LENGTH_SHORT).show();
-        }));
+            };
+            pendingArtist.observe(getViewLifecycleOwner(), pendingArtistObserver);
+        });
     }
 
     private void initAlbumNotes() {
@@ -321,7 +359,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
     private void initMusicButton() {
         albumPageViewModel.getAlbumSongLiveList().observe(getViewLifecycleOwner(), songs -> {
-            if (bind != null && !songs.isEmpty()) {
+            if (bind != null && songs != null && !songs.isEmpty()) {
                 bind.albumPagePlayButton.setOnClickListener(v -> {
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     activity.setBottomSheetInPeek(true);
@@ -334,7 +372,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                 });
             }
 
-            if (bind != null && songs.isEmpty()) {
+            if (bind != null && (songs == null || songs.isEmpty())) {
                 bind.albumPagePlayButton.setEnabled(false);
                 bind.albumPageShuffleButton.setEnabled(false);
             }

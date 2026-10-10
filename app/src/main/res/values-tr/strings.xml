@@ -120,6 +120,8 @@
     <string name="home_sync_starred_albums_subtitle">Yıldız ile işaretlenen albümler çevrimdışı kullanılabilir olacak</string>
     <string name="home_title_best_of">En iyiler</string>
     <string name="home_title_discovery">Keşfet</string>
+    <string name="home_title_continue_listening">Dinlemeye devam et</string>
+    <string name="home_continue_listening_resume_at">%1$s\'de devam et</string>
     <string name="home_title_discovery_shuffle_all_button">Tümünü karıştır</string>
     <string name="home_title_flashback">Geçmişe dönüş</string>
     <string name="home_title_internet_radio_station">İnternet radyo istasyonları</string>
@@ -453,4 +455,31 @@
     <string name="playlist_editor_dialog_action_save_empty">Bir çalma listesi en az bir parça içermelidir</string>
     <string name="search_title_empty_response">Sonuç yok.</string>
     <string name="search_description_empty_response">Sunucu yanıtınızı kontrol ettik ancak boştu.</string>
+    <string name="menu_keep_synced_button">Eşitlemeyi sürdür</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">%d parça indiriliyor</item>
+        <item quantity="other">%d parça indiriliyor</item>
+    </plurals>
+    <string name="playlist_editor_hint">Yeniden sıralamak için tutamacı sürükleyin, kaldırmak için çöp kutusuna dokunun. Siz Kaydet\'e dokunana kadar hiçbir şey gönderilmez.</string>
+    <string name="playlist_editor_remove_track">Parçayı kaldır</string>
+    <string name="playlist_editor_drag_track">Yeniden sıralamak için sürükleyin</string>
+    <string name="menu_edit_playlist_details_button">Ayrıntıları düzenle</string>
+    <string name="playlist_details_dialog_title">Çalma listesi ayrıntıları</string>
+    <string name="playlist_editor_load_failure">Çalma listesi yüklenemedi</string>
+    <string name="playlist_editor_removed_track">Listeden kaldırıldı</string>
+    <string name="song_bottom_sheet_undo">Geri al</string>
+    <string name="song_bottom_sheet_undo_failure">Şarkı geri yüklenemedi</string>
+    <string name="la_theme_card_emerald_green_description">Zümrüt yeşili vurgu rengi</string>
+    <string name="la_perms_title">İzin iste</string>
+    <string name="la_perms_description">Gerekli izinler ve kullanım amaçları aşağıda gösterilmiştir.</string>
+    <string name="la_perms_status_provided">Verildi</string>
+    <string name="la_perms_status_not_provided">İste</string>
+    <string name="la_perms_internet_title">İnternet</string>
+    <string name="la_perms_internet_description">Müzik sunucunuza internet üzerinden erişmek için gereklidir.</string>
+    <string name="la_perms_notifications_title">Bildirimler</string>
+    <string name="la_perms_notifications_description">İndirme durumunu ve oynatıcı denetimlerini göstermek için gereklidir.</string>
+    <string name="la_perms_access_local_network_title">Yerel Ağa Erişim</string>
+    <string name="la_perms_access_local_network_description">Mevcut cihazınızla aynı LAN üzerindeki diğer cihazlara erişmek için gereklidir.</string>
+    <string name="la_perms_nearby_devices_title">Yakındaki Cihazlar</string>
+    <string name="la_perms_nearby_devices_description">UPnP ve Chromecast aracılığıyla diğer cihazları keşfetmek için gereklidir.</string>
 </resources>

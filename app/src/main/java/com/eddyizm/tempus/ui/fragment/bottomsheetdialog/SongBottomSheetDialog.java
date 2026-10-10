@@ -79,7 +79,11 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.bottom_sheet_song_dialog, container, false);
 
-        song = requireArguments().getParcelable(Constants.TRACK_OBJECT);
+        Bundle args = getArguments();
+        if (args == null || (song = args.getParcelable(Constants.TRACK_OBJECT)) == null) {
+            dismissAllowingStateLoss();
+            return view;
+        }
 
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         songBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(SongBottomSheetViewModel.class);
@@ -93,19 +97,24 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateDownloadButtons);
+        if (song != null) {
+            MappingUtil.observeExternalAudioRefresh(getViewLifecycleOwner(), this::updateDownloadButtons);
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        initializeMediaBrowser();
+        if (song != null) {
+            initializeMediaBrowser();
+        }
     }
 
     @Override
     public void onStop() {
-        releaseMediaBrowser();
+        if (mediaBrowserListenableFuture != null) {
+            releaseMediaBrowser();
+        }
         super.onStop();
     }
 
@@ -206,9 +215,10 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
             dismissBottomSheet();
         });
 
-        String playlistId = requireArguments().getString(Constants.PLAYLIST_ID);
-        String playlistName = requireArguments().getString(Constants.PLAYLIST_NAME);
-        int itemPosition = requireArguments().getInt(Constants.ITEM_POSITION, -1);
+        Bundle args = getArguments();
+        String playlistId = args != null ? args.getString(Constants.PLAYLIST_ID) : null;
+        String playlistName = args != null ? args.getString(Constants.PLAYLIST_NAME) : null;
+        int itemPosition = args != null ? args.getInt(Constants.ITEM_POSITION, -1) : -1;
 
         downloadButton = view.findViewById(R.id.download_text_view);
         downloadButton.setOnClickListener(v -> {
@@ -360,7 +370,7 @@ public class SongBottomSheetDialog extends BottomSheetDialogFragment implements 
     }
 
     private void updateDownloadButtons() {
-        if (downloadButton == null || removeButton == null) {
+        if (downloadButton == null || removeButton == null || song == null) {
             return;
         }
 

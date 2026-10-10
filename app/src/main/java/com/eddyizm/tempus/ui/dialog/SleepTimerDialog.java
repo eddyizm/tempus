@@ -45,7 +45,9 @@ public class SleepTimerDialog extends DialogFragment {
         // Labels come from strings.xml so they are fully localizable.
         String[] labels = getResources().getStringArray(R.array.sleep_timer_duration_labels);
 
-        boolean timerActive = SleepTimerManager.getInstance().isActive();
+        boolean remote = com.eddyizm.tempus.lan.LanRemoteSession.isActive();
+        com.eddyizm.tempus.lan.LanRemoteState remoteState = com.eddyizm.tempus.lan.LanRemoteSession.current();
+        boolean timerActive = remote ? remoteState.getTimerActive() : SleepTimerManager.getInstance().isActive();
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity())
                 .setTitle(R.string.sleep_timer_dialog_title)
@@ -66,12 +68,12 @@ public class SleepTimerDialog extends DialogFragment {
                         (dialog, id) -> dialog.cancel());
 
         if (timerActive) {
-            boolean isEndOfTrack = SleepTimerManager.getInstance().isEndOfTrack();
+            boolean isEndOfTrack = remote ? remoteState.getTimerEndOfTrack() : SleepTimerManager.getInstance().isEndOfTrack();
             String statusMessage;
             if (isEndOfTrack) {
                 statusMessage = getString(R.string.sleep_timer_dialog_end_of_track_active);
             } else {
-                String remaining = SleepTimerManager.getInstance().getRemainingFormatted();
+                String remaining = remote ? remoteState.getTimerRemaining() : SleepTimerManager.getInstance().getRemainingFormatted();
                 statusMessage = getString(R.string.sleep_timer_dialog_active_message, remaining);
             }
             builder.setMessage(statusMessage);

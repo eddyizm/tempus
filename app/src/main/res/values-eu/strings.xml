@@ -176,6 +176,8 @@
     </plurals>
     <string name="home_title_best_of">Onenak</string>
     <string name="home_title_discovery">Aurkikuntza</string>
+    <string name="home_title_continue_listening">Entzuten jarraitu</string>
+    <string name="home_continue_listening_resume_at">Jarraitu %1$s-tan</string>
     <string name="home_title_discovery_shuffle_all_button">Denak nahastu</string>
     <string name="home_title_flashback">Atzera begira</string>
     <string name="home_title_internet_radio_station">Interneteko irrati-uhinak</string>
@@ -763,4 +765,31 @@
     <string name="playlist_editor_dialog_action_save_empty">Erreprodukzio-zerrenda batek gutxienez pista bat izan behar du</string>
     <string name="search_title_empty_response">Emaitzarik ez.</string>
     <string name="search_description_empty_response">Zure zerbitzariaren erantzuna egiaztatu dugu, baina hutsik zegoen.</string>
+    <string name="menu_keep_synced_button">Sinkronizatuta mantendu</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">%d pista deskargatzen</item>
+        <item quantity="other">%d pista deskargatzen</item>
+    </plurals>
+    <string name="playlist_editor_hint">Arrastatu heldulekua berrantolatzeko eta ukitu zakarrontzia kentzeko. Ez da ezer bidaliko Gorde sakatu arte.</string>
+    <string name="playlist_editor_remove_track">Kendu pista</string>
+    <string name="playlist_editor_drag_track">Arrastatu berrantolatzeko</string>
+    <string name="menu_edit_playlist_details_button">Editatu xehetasunak</string>
+    <string name="playlist_details_dialog_title">Erreprodukzio-zerrendaren xehetasunak</string>
+    <string name="playlist_editor_load_failure">Ezin izan da erreprodukzio-zerrenda kargatu</string>
+    <string name="playlist_editor_removed_track">Zerrendatik kendu da</string>
+    <string name="song_bottom_sheet_undo">Desegin</string>
+    <string name="song_bottom_sheet_undo_failure">Ezin izan da abestia leheneratu</string>
+    <string name="la_theme_card_emerald_green_description">Esmeralda berdearen azentu-kolorea</string>
+    <string name="la_perms_title">Eskatu baimenak</string>
+    <string name="la_perms_description">Beharrezko baimenak eta haien erabilera behean ageri dira.</string>
+    <string name="la_perms_status_provided">Emana</string>
+    <string name="la_perms_status_not_provided">Eskatu</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Beharrezkoa da zure musika-zerbitzarian internet bidez sartzeko.</string>
+    <string name="la_perms_notifications_title">Jakinarazpenak</string>
+    <string name="la_perms_notifications_description">Beharrezkoa da deskarga-egoera eta erreproduzitzailearen kontrolak erakusteko.</string>
+    <string name="la_perms_access_local_network_title">Sare lokalera sartzea</string>
+    <string name="la_perms_access_local_network_description">Beharrezkoa da uneko gailuaren LAN bereko beste gailu batzuetara sartzeko.</string>
+    <string name="la_perms_nearby_devices_title">Hurbileko gailuak</string>
+    <string name="la_perms_nearby_devices_description">Beharrezkoa da beste gailu batzuk UPnP eta Chromecast bidez aurkitzeko.</string>
 </resources>

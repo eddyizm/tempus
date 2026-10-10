@@ -203,6 +203,8 @@
     </plurals>
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Discovery</string>
+    <string name="home_title_continue_listening">Continue listening</string>
+    <string name="home_continue_listening_resume_at">Resume at %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
     <string name="home_title_flashback">Flashback</string>
     <string name="home_title_internet_radio_station">Internet radio stations</string>
@@ -286,6 +288,11 @@
     <string name="menu_sort_least_recently_starred">Least recently starred</string>
     <string name="menu_pin_button">Add to faves</string>
     <string name="menu_unpin_button">Remove from faves</string>
+    <string name="menu_keep_synced_button">Keep synced</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Downloading %d track</item>
+        <item quantity="other">Downloading %d tracks</item>
+    </plurals>
     <string name="playlist_sort_pinned">Faves</string>
     <string name="playlist_sort_last_played">Last played</string>
     <string name="playlist_sort_last_updated">Last updated</string>
@@ -572,6 +579,7 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
+    <string name="settings_permissions">App permissions</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_dark_theme_style">Dark theme style</string>
     <string name="settings_tile_size">Tiles size</string>
@@ -818,7 +826,7 @@
     <string name="la_tab_server">Servers</string>
 
     <string name="la_appbar_greeter_title">About</string>
-    <string name="la_appbar_permission_title">Permissions overview</string>
+    <string name="la_appbar_permission_title">Permissions management</string>
     <string name="la_appbar_themes_title">Theme editor</string>
     <string name="la_appbar_server_title">Server editor</string>
 
@@ -866,6 +874,19 @@
     <string name="la_theme_card_teal_description">Teal accent color</string>
     <string name="la_theme_card_slate_gray_description">Slate gray accent color</string>
     <string name="la_theme_dialog_color_picker_title">Pick and accent color</string>
+
+    <string name="la_perms_title">Request Permissions</string>
+    <string name="la_perms_description">The required permissions and their usage are displayed below.</string>
+    <string name="la_perms_status_provided">Provided</string>
+    <string name="la_perms_status_not_provided">Request</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_internet_description">Required to access your music server on the internet.</string>
+    <string name="la_perms_notifications_title">Notifications</string>
+    <string name="la_perms_notifications_description">Required to show download status and player controls.</string>
+    <string name="la_perms_access_local_network_title">Access Local Network</string>
+    <string name="la_perms_access_local_network_description">Required to access other deivces on the same LAN as your current device.</string>
+    <string name="la_perms_nearby_devices_title">Nearby Devices</string>
+    <string name="la_perms_nearby_devices_description">Required to discover other deivces through UPnP and Chromecast.</string>
 
     <string name="la_shortcut_label">Introduction</string>
     <string name="la_button_advanced_editor">Advanced editor (beta)</string>
