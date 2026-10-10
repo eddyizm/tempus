@@ -211,7 +211,12 @@ class PlayerQueueBridge @JvmOverloads constructor(
                         val startPos = if (curIdx >= 0) curIdx + 1 else 0
                         val endPos = songs.size
                         if (startPos < endPos) {
-                            MediaManager.removeRange(browserFuture, songs, startPos, endPos)
+                            if (!LanRemoteSession.isActive()) {
+                                queueState = queueState.take(startPos)
+                            }
+                            // Copy: removeRangeDatabase mutates the passed list in
+                            // place, which must never be our state-held instance.
+                            MediaManager.removeRange(browserFuture, ArrayList(songs), startPos, endPos)
                         }
                     },
                     onShuffleUpcoming = { songs, curIdx ->
@@ -222,6 +227,9 @@ class PlayerQueueBridge @JvmOverloads constructor(
                             val childList = songs.toMutableList()
                             val upcomingSublist = childList.subList(startPos, endPos + 1)
                             upcomingSublist.shuffle()
+                            if (!LanRemoteSession.isActive()) {
+                                queueState = ArrayList(childList)
+                            }
                             MediaManager.shuffle(browserFuture, childList, startPos, endPos)
                         }
                     },
