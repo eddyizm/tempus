@@ -271,6 +271,7 @@ public class PlayerControllerFragment extends Fragment {
 
     private void initQuickActionView() {
         playerQuickActionView.setVisibility(Preferences.getQuickActionVisible() ? View.VISIBLE : View.GONE);
+        updateQueueButtonTint(false);
 
         playerOpenQueueButton.setOnClickListener(view -> {
             PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity()
@@ -825,30 +826,23 @@ public class PlayerControllerFragment extends Fragment {
         playerMediaCoverViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         playerMediaCoverViewPager.setAdapter(new PlayerControllerHorizontalPager(this));
         playerMediaCoverViewPager.setUserInputEnabled(false);
+        playerMediaCoverViewPager.setNestedScrollingEnabled(false);
+        if (playerMediaCoverViewPager.getChildCount() > 0) {
+            playerMediaCoverViewPager.getChildAt(0).setNestedScrollingEnabled(false);
+        }
 
         playerMediaCoverViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
 
-                PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity()
-                        .getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
-
                 if (position == 0) {
                     activity.setBottomSheetDraggableState(true);
                     playerMediaCoverViewPager.setUserInputEnabled(false);
-
-                    if (playerBottomSheetFragment != null) {
-                        playerBottomSheetFragment.setPlayerControllerVerticalPagerDraggableState(true);
-                    }
                     updateLyricsButtonTint(false);
                 } else if (position == 1) {
-                    activity.setBottomSheetDraggableState(true);
+                    activity.setBottomSheetDraggableState(false);
                     playerMediaCoverViewPager.setUserInputEnabled(true);
-
-                    if (playerBottomSheetFragment != null) {
-                        playerBottomSheetFragment.setPlayerControllerVerticalPagerDraggableState(false);
-                    }
                     updateLyricsButtonTint(true);
                 }
             }
@@ -863,6 +857,16 @@ public class PlayerControllerFragment extends Fragment {
                 : com.google.android.material.R.attr.colorOnSurface;
         int color = com.google.android.material.color.MaterialColors.getColor(playerOpenLyricsButton, colorAttr);
         ImageViewCompat.setImageTintList(playerOpenLyricsButton, ColorStateList.valueOf(color));
+    }
+
+    public void updateQueueButtonTint(boolean isQueueActive) {
+        if (playerOpenQueueButton == null)
+            return;
+        int colorAttr = isQueueActive
+                ? com.google.android.material.R.attr.colorPrimary
+                : com.google.android.material.R.attr.colorOnSurface;
+        int color = com.google.android.material.color.MaterialColors.getColor(playerOpenQueueButton, colorAttr);
+        ImageViewCompat.setImageTintList(playerOpenQueueButton, ColorStateList.valueOf(color));
     }
 
     private void initMediaListenable() {
@@ -998,6 +1002,10 @@ public class PlayerControllerFragment extends Fragment {
 
     public void goToLyricsPage() {
         playerMediaCoverViewPager.setCurrentItem(1, true);
+    }
+
+    public boolean isLyricsPage() {
+        return playerMediaCoverViewPager != null && playerMediaCoverViewPager.getCurrentItem() == 1;
     }
 
     private void checkAndSetRatingContainerVisibility() {

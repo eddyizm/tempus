@@ -17,13 +17,13 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentPlayerBottomSheetBinding;
@@ -32,14 +32,14 @@ import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.subsonic.models.PlayQueue;
 import com.eddyizm.tempus.ui.activity.MainActivity;
-import com.eddyizm.tempus.ui.fragment.pager.PlayerControllerVerticalPager;
+import com.eddyizm.tempus.ui.queue.PlayerQueueBridge;
+import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.bumptech.glide.Glide;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.RadioCoverArtDownloader;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlayerBottomSheetViewModel;
-import com.google.android.material.elevation.SurfaceColors;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -54,6 +54,8 @@ public class PlayerBottomSheetFragment extends Fragment {
     private FragmentPlayerBottomSheetBinding bind;
 
     private PlayerBottomSheetViewModel playerBottomSheetViewModel;
+    private PlaybackViewModel playbackViewModel;
+    private PlayerQueueBridge playerQueueBridge;
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
     private Handler progressBarHandler;
@@ -66,9 +68,11 @@ public class PlayerBottomSheetFragment extends Fragment {
         View view = bind.getRoot();
 
         playerBottomSheetViewModel = new ViewModelProvider(requireActivity()).get(PlayerBottomSheetViewModel.class);
+        playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         customizeBottomSheetAction();
-        initViewPager();
+        initPlayerController();
+        initQueueBridge(playbackViewModel);
         setHeaderBookmarksButton();
         com.eddyizm.tempus.lan.LanRemoteSession.state().observe(getViewLifecycleOwner(), this::renderRemote);
 
@@ -100,6 +104,10 @@ public class PlayerBottomSheetFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (playerQueueBridge != null && playerQueueBridge.isQueueOpen()) {
+            playerQueueBridge.closeQueue();
+        }
+        playerQueueBridge = null;
         // #777: cancel the self-reposting progress updater. Otherwise its pending
         // Handler message keeps this destroyed fragment alive — and, via the
         // MediaBrowser the runnable captures, the whole MainActivity and its
@@ -113,18 +121,27 @@ public class PlayerBottomSheetFragment extends Fragment {
         bind = null;
     }
 
-    private void customizeBottomSheetBackground() {
-        bind.playerHeaderLayout.getRoot().setBackgroundColor(SurfaceColors.getColorForElevation(requireContext(), 8));
-    }
-
     private void customizeBottomSheetAction() {
         bind.playerHeaderLayout.playerHeaderRemoteButton.setOnClickListener(v -> com.eddyizm.tempus.lan.LanDevicePicker.toggle(requireActivity()));
         bind.playerHeaderLayout.getRoot().setOnClickListener(view -> ((MainActivity) requireActivity()).expandBottomSheet());
     }
 
-    private void initViewPager() {
-        bind.playerBodyLayout.playerBodyBottomSheetViewPager.setOrientation(ViewPager2.ORIENTATION_VERTICAL);
-        bind.playerBodyLayout.playerBodyBottomSheetViewPager.setAdapter(new PlayerControllerVerticalPager(this));
+    private void initPlayerController() {
+        if (getChildFragmentManager().findFragmentById(R.id.player_controller_container) == null) {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.player_controller_container, new PlayerControllerFragment(), "PlayerControllerFragment")
+                    .commit();
+        }
+    }
+
+    private void initQueueBridge(PlaybackViewModel playbackViewModel) {
+        playerQueueBridge = new PlayerQueueBridge(
+                bind.playerBodyLayout.playerQueueComposeView,
+                this,
+                playerBottomSheetViewModel,
+                playbackViewModel
+        );
+        playerQueueBridge.init();
     }
 
     private void initializeMediaBrowser() {
@@ -132,6 +149,12 @@ public class PlayerBottomSheetFragment extends Fragment {
     }
 
     private void releaseMediaBrowser() {
+        if (mediaBrowserListenableFuture != null && mediaBrowserListenableFuture.isDone()) {
+            try {
+                MediaManager.onBrowserReleased(mediaBrowserListenableFuture.get());
+            } catch (Exception ignored) {
+            }
+        }
         MediaController.releaseFuture(mediaBrowserListenableFuture);
     }
 
@@ -144,6 +167,9 @@ public class PlayerBottomSheetFragment extends Fragment {
                 mediaBrowser.setRepeatMode(Preferences.getRepeatMode());
 
                 setMediaControllerListener(mediaBrowser);
+                if (playbackViewModel != null) {
+                    MediaManager.registerPlaybackObserver(mediaBrowserListenableFuture, playbackViewModel);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -160,6 +186,20 @@ public class PlayerBottomSheetFragment extends Fragment {
         setHeaderNextButtonState(mediaBrowser.hasNextMediaItem());
 
         mediaBrowser.addListener(new Player.Listener() {
+            @Override
+            public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
+                setMediaControllerUI(mediaBrowser);
+                setMetadata(mediaBrowser.getMediaMetadata());
+                setContentDuration(mediaBrowser.getContentDuration());
+            }
+
+            @Override
+            public void onPositionDiscontinuity(@NonNull Player.PositionInfo oldPosition, @NonNull Player.PositionInfo newPosition, int reason) {
+                setMediaControllerUI(mediaBrowser);
+                setMetadata(mediaBrowser.getMediaMetadata());
+                setContentDuration(mediaBrowser.getContentDuration());
+            }
+
             @Override
             public void onMediaMetadataChanged(@NonNull MediaMetadata mediaMetadata) {
                 setMediaControllerUI(mediaBrowser);
@@ -386,40 +426,62 @@ public class PlayerBottomSheetFragment extends Fragment {
 
     public void goBackToFirstPage() {
         if (getContext() == null || !isAdded() || getView() == null) return;
-        bind.playerBodyLayout.playerBodyBottomSheetViewPager.setCurrentItem(0, false);
+        if (playerQueueBridge != null && playerQueueBridge.isQueueOpen()) {
+            playerQueueBridge.closeQueue();
+        }
         goToControllerPage();
     }
 
     public void goToControllerPage() {
         if (getContext() == null || !isAdded() || getView() == null) return;
-        PlayerControllerVerticalPager playerControllerVerticalPager = (PlayerControllerVerticalPager) bind.playerBodyLayout.playerBodyBottomSheetViewPager.getAdapter();
-        if (playerControllerVerticalPager != null) {
-            PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) playerControllerVerticalPager.getRegisteredFragment(0);
-            if (playerControllerFragment != null) {
-                playerControllerFragment.goToControllerPage();
-            }
+        PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) getChildFragmentManager()
+                .findFragmentByTag("PlayerControllerFragment");
+        if (playerControllerFragment != null) {
+            playerControllerFragment.goToControllerPage();
         }
     }
 
     public void goToLyricsPage() {
         if (getContext() == null || !isAdded() || getView() == null) return;
-        PlayerControllerVerticalPager playerControllerVerticalPager = (PlayerControllerVerticalPager) bind.playerBodyLayout.playerBodyBottomSheetViewPager.getAdapter();
-        if (playerControllerVerticalPager != null) {
-            PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) playerControllerVerticalPager.getRegisteredFragment(0);
-            if (playerControllerFragment != null) {
-                playerControllerFragment.goToLyricsPage();
-            }
+        PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) getChildFragmentManager()
+                .findFragmentByTag("PlayerControllerFragment");
+        if (playerControllerFragment != null) {
+            playerControllerFragment.goToLyricsPage();
         }
     }
 
     public void goToQueuePage() {
         if (getContext() == null || !isAdded() || getView() == null) return;
-        bind.playerBodyLayout.playerBodyBottomSheetViewPager.setCurrentItem(1, true);
+        if (playerQueueBridge != null) {
+            playerQueueBridge.openQueue();
+        }
     }
 
-    public void setPlayerControllerVerticalPagerDraggableState(Boolean isDraggable) {
-        ViewPager2 playerControllerVerticalPager = (ViewPager2) bind.playerBodyLayout.playerBodyBottomSheetViewPager;
-        playerControllerVerticalPager.setUserInputEnabled(isDraggable);
+    public boolean isLyricsPage() {
+        PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) getChildFragmentManager()
+                .findFragmentByTag("PlayerControllerFragment");
+        return playerControllerFragment != null && playerControllerFragment.isLyricsPage();
+    }
+
+    public void updateBottomSheetDraggableState() {
+        boolean isQueueOpen = playerQueueBridge != null && playerQueueBridge.isQueueOpen();
+        if (getActivity() instanceof MainActivity) {
+            MainActivity activity = (MainActivity) getActivity();
+            if (isQueueOpen) {
+                activity.setBottomSheetDraggableState(false);
+            } else {
+                activity.setBottomSheetDraggableState(!isLyricsPage());
+            }
+        }
+        PlayerControllerFragment playerControllerFragment = (PlayerControllerFragment) getChildFragmentManager()
+                .findFragmentByTag("PlayerControllerFragment");
+        if (playerControllerFragment != null) {
+            playerControllerFragment.updateQueueButtonTint(isQueueOpen);
+        }
+    }
+
+    public ListenableFuture<MediaBrowser> getMediaBrowserListenableFuture() {
+        return mediaBrowserListenableFuture;
     }
 
     private void defineProgressBarHandler(MediaBrowser mediaBrowser) {
