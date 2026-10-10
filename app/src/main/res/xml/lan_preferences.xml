@@ -33,6 +33,11 @@
             app:isPreferenceVisible="false" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/lan_controller_role">
+        <SwitchPreference
+            android:key="lan_player_controls"
+            android:title="@string/lan_show_player_controls"
+            android:summary="@string/lan_show_player_controls_summary"
+            android:persistent="false" />
         <Preference
             android:key="lan_find_devices"
             android:title="@string/lan_search"

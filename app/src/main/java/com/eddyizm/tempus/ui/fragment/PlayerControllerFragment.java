@@ -170,6 +170,7 @@ public class PlayerControllerFragment extends Fragment {
 
     private void refreshPlaybackDestination() {
         if (bind == null || remotePlayer == null) return;
+        bind.playerRemoteToggle.setVisibility(Preferences.isLanPlayerControlsVisible() ? View.VISIBLE : View.GONE);
         if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
             remotePlayer.refresh();
             bind.nowPlayingMediaControllerView.setPlayer(remotePlayer);
@@ -243,6 +244,7 @@ public class PlayerControllerFragment extends Fragment {
             playerOverflowButton.setOnClickListener(v -> {
                 PopupMenu popup = new PopupMenu(requireContext(), v);
                 popup.inflate(R.menu.player_overflow_menu);
+                popup.getMenu().findItem(R.id.action_lan_playback).setVisible(Preferences.isLanPlayerControlsVisible());
 
                 int selectedEq = Preferences.getSelectedEqualizer();
                 if (selectedEq == 0 || selectedEq == 2) {
@@ -1086,6 +1088,7 @@ public class PlayerControllerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        refreshPlaybackDestination();
         bindMediaService();
     }
 

@@ -3,11 +3,25 @@
 ## Experimental local-network playback
 
 Local-network playback adds **Settings → Remote player** as a
-standalone entry and **Play on…** in the player's overflow menu. Two Tempus phones
+standalone entry. **Show remote player controls** in its **Controller** section
+is off by default. Enable it to show the mini-player device icon, the expanded
+player's **Play on…** button and the overflow menu entry. Disabling it hides these
+shortcuts without releasing remote control or stopping the receiver. Device
+selection and **Release remote control** remain available in Settings → Remote player. Two Tempus phones
 can pair by comparing a code, then choose music and control playback
 over the LAN. The receiver resolves track IDs using its own server account;
-both phones must use the same server address. The receiving service is opt-in,
+both phones must have the same **Server URL** configured. The receiving service is opt-in,
 has a visible notification and can be stopped or have controller access revoked.
+
+For Navidrome reachable through both LAN and Tailscale, configure the same
+**Server URL** on both phones (for example, the Tailscale URL) and put the LAN
+address in **Local URL**. Both addresses must point to the same Navidrome
+instance. The remote-player compatibility check uses **Server URL**, even when
+the app connects to Navidrome through **Local URL**. Merely entering both URLs
+is not enough if the **Server URL** fields differ between the phones. After
+changing the configuration, stop and restart the receiver and reconnect the
+controller. This setup allows the existing LAN control to work with alternate
+Navidrome access addresses; it does not add phone-to-phone discovery over a VPN.
 
 The mini player has a two-phone device icon, and the expanded player has a **Play on…** button with the same icon. The overflow entry also opens the device selector. Select an already paired receiver to
 control its existing playback without transferring or replacing either queue.

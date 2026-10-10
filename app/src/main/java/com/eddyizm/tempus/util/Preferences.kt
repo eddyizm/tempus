@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 
 object Preferences {
     const val THEME = "theme"
+    private const val LAN_PLAYER_CONTROLS = "lan_player_controls"
     private const val DARK_THEME_BLACK = "dark_theme_black"
     private const val COLOR_ACCENT = "color_accent"
     private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
@@ -369,6 +370,15 @@ object Preferences {
     @JvmStatic
     fun setOpenSubsonicExtensions(extension: List<OpenSubsonicExtension>) {
         App.getInstance().preferences.edit().putString(OPEN_SUBSONIC_EXTENSIONS, Gson().toJson(extension)).apply()
+    }
+
+    @JvmStatic
+    fun isLanPlayerControlsVisible(): Boolean =
+        App.getInstance().preferences.getBoolean(LAN_PLAYER_CONTROLS, false)
+
+    @JvmStatic
+    fun setLanPlayerControlsVisible(visible: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(LAN_PLAYER_CONTROLS, visible).apply()
     }
 
     @JvmStatic
