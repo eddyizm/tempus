@@ -274,14 +274,16 @@ class LoginServerFragment : Fragment() {
 
         val s: Server = serverList[selectedServerPosition]
 
-        val server: String = s.serverName
         val user: String = s.username
         val password: String = s.password
         val address: String = s.address
         val localAddress: String = s.localAddress ?: s.address
         val clientCert: String = s.clientCert ?: ""
 
-        App.getInstance().preferences.edit { putString("server", server) }
+        // "server" holds the address everywhere it is read (sharing, playlists, client cert, LAN),
+        // and "server_id" identifies the signed-in server (toolbar name, chronology).
+        App.getInstance().preferences.edit { putString("server_id", s.serverId) }
+        App.getInstance().preferences.edit { putString("server", address) }
         App.getInstance().preferences.edit { putString("user", user) }
         App.getInstance().preferences.edit { putString("password", password) }
         App.getInstance().preferences.edit { putString("in_use_server_address", address) }
