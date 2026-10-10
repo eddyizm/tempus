@@ -240,6 +240,7 @@ class LoginServerFragment : Fragment() {
         }
     }
 
+    @OptIn(UnstableApi::class)
     fun initOldLoginButton() {
         binding.goToLoginButton.setOnClickListener {
             requireActivity().finish()
