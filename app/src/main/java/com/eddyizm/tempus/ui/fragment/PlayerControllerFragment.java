@@ -836,12 +836,17 @@ public class PlayerControllerFragment extends Fragment {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
 
-                if (position == 0) {
+                if (getParentFragment() instanceof PlayerBottomSheetFragment) {
+                    ((PlayerBottomSheetFragment) getParentFragment()).updateBottomSheetDraggableState();
+                } else if (position == 0) {
                     activity.setBottomSheetDraggableState(true);
+                } else if (position == 1) {
+                    activity.setBottomSheetDraggableState(false);
+                }
+                if (position == 0) {
                     playerMediaCoverViewPager.setUserInputEnabled(false);
                     updateLyricsButtonTint(false);
                 } else if (position == 1) {
-                    activity.setBottomSheetDraggableState(false);
                     playerMediaCoverViewPager.setUserInputEnabled(true);
                     updateLyricsButtonTint(true);
                 }

@@ -168,7 +168,7 @@ class PlayerQueueBridge @JvmOverloads constructor(
                         }, ContextCompat.getMainExecutor(context))
                     },
                     onRemoveTrack = { removeIndex ->
-                        if (!LanRemoteSession.isActive()) {
+                        if (!LanRemoteSession.isActive() && removeIndex != currentIndex && currentRawSongs.size > 1) {
                             queueState = queueState.toMutableList().also { list ->
                                 if (removeIndex in list.indices) {
                                     list.removeAt(removeIndex)

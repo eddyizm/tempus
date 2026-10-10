@@ -32,9 +32,7 @@ public class PlaybackViewModel extends ViewModel {
         if (!Objects.equals(currentSongId.getValue(), songId)) {
             currentSongId.postValue(songId);
         }
-        if (!Objects.equals(currentMediaItemIndex.getValue(), mediaItemIndex)) {
-            currentMediaItemIndex.postValue(mediaItemIndex);
-        }
+        currentMediaItemIndex.postValue(mediaItemIndex);
         if (!Objects.equals(isPlaying.getValue(), playing)) {
             isPlaying.postValue(playing);
         }
