@@ -580,6 +580,11 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
     <string name="settings_permissions">App permissions</string>
+    <string name="settings_network_playback_title">Network playback</string>
+    <string name="settings_upnp_title">UPnP / DLNA renderers</string>
+    <string name="settings_upnp_summary">Find and play to UPnP and DLNA renderers on your network. When off, no discovery runs.</string>
+    <string name="settings_lan_remote_title">Remote player</string>
+    <string name="settings_lan_remote_summary">Control Tempus on another device, or let one control this device. When off, nothing listens, advertises or searches on your network.</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_dark_theme_style">Dark theme style</string>
     <string name="settings_tile_size">Tiles size</string>

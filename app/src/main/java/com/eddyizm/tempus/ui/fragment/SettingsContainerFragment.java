@@ -187,6 +187,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionKeepScreenOn();
         actionAutoDownloadLyrics();
         actionMiniPlayerHeart();
+        actionLanRemote();
 
         bindMediaService();
         actionBuiltinEqualizer();
@@ -277,6 +278,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         checkDownloadDirectory();
         checkEqualizerBands();
         checkMusicLibrary();
+        checkLanPlayback();
 
         if (!searchQuery.isEmpty()) {
             filterPreferences(screen);
@@ -604,6 +606,29 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
      * children of collapsed categories. Calling this alone performs only the middle step, so a row
      * it reveals would stay showing under a category the user has collapsed.
      */
+    private void checkLanPlayback() {
+        Preference lanPref = findPreference("lan_playback");
+        if (lanPref != null) lanPref.setVisible(Preferences.isLanRemoteEnabled());
+    }
+
+    private void actionLanRemote() {
+        SwitchPreference preference = findPreference(Preferences.LAN_REMOTE_ENABLED);
+        if (preference == null) return;
+
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            boolean enabled = Boolean.TRUE.equals(newValue);
+            if (!enabled) {
+                // Turning it off ends whatever is running: a controlled device, an open pairing, the listener.
+                com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
+                com.eddyizm.tempus.lan.LanReceiverService.Companion.closePairing();
+                requireContext().stopService(new Intent(requireContext(), com.eddyizm.tempus.lan.LanReceiverService.class));
+            }
+            Preference lanPref = findPreference("lan_playback");
+            if (lanPref != null) lanPref.setVisible(enabled);
+            return true;
+        });
+    }
+
     private void checkMusicLibrary() {
         Preference libraryPref = findPreference("active_music_folder_id");
         if (libraryPref == null) return;

@@ -275,6 +275,24 @@
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
     <com.eddyizm.tempus.util.ClickablePreferenceCategory
+        android:key="network_playback"
+        app:title="@string/settings_network_playback_title">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="upnp_enabled"
+            android:summary="@string/settings_upnp_summary"
+            android:title="@string/settings_upnp_title" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="lan_remote_enabled"
+            android:summary="@string/settings_lan_remote_summary"
+            android:title="@string/settings_lan_remote_title" />
+
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
+
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory
         android:key="lan_playback"
         android:title="@string/lan_title"
         android:icon="@drawable/ic_navigate_next" />

@@ -72,6 +72,7 @@ object LanRemoteSession {
 
     @JvmStatic @JvmOverloads fun connect(context: Context, info: NsdServiceInfo, expectedPin: String? = null) {
         disconnect()
+        if (!Preferences.isLanRemoteEnabled()) return
         val token = generation
         val app = context.applicationContext
         appContext = app

@@ -5,6 +5,7 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -29,6 +30,7 @@ import androidx.media3.session.MediaSession.ControllerInfo
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
+import com.eddyizm.tempus.App
 import com.eddyizm.tempus.equalizer.BuiltinBackend
 import com.eddyizm.tempus.equalizer.EqualizerBackend
 import com.eddyizm.tempus.equalizer.EqualizerManager
@@ -40,6 +42,7 @@ import com.eddyizm.tempus.upnp.UpnpControlPoint
 import com.eddyizm.tempus.upnp.UpnpDevice
 import com.eddyizm.tempus.upnp.UpnpPlayer
 import com.eddyizm.tempus.upnp.UpnpRouteProvider
+import com.eddyizm.tempus.upnp.UpnpRoutesGate
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.*
 import com.eddyizm.tempus.util.SleepTimerManager
@@ -742,6 +745,23 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         upnpRouteProvider = provider
     }
 
+    // The UPnP switch is read at start and on every change, so turning it off takes effect without a restart.
+    private val upnpSwitchListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == Preferences.UPNP_ENABLED) applyUpnpSwitch()
+    }
+
+    private fun applyUpnpSwitch() {
+        when (UpnpRoutesGate.change(Preferences.isUpnpEnabled(), upnpRouteProvider != null)) {
+            UpnpRoutesGate.Change.REGISTER -> initializeUpnpRoutes()
+            UpnpRoutesGate.Change.RELEASE -> {
+                // Bring playback home first, or the renderer keeps playing with nothing left to control it.
+                upnpPlayer?.let { setPlayer(it, exoplayer) }
+                releaseUpnpRoutes()
+            }
+            UpnpRoutesGate.Change.NONE -> Unit
+        }
+    }
+
     private fun releaseUpnpRoutes() {
         upnpRouteProvider?.let { provider ->
             provider.selectionListener = null
@@ -781,7 +801,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         playerInitHook()
         initializeEqualizer()
         initializeNetworkListener()
-        initializeUpnpRoutes()
+        applyUpnpSwitch()
+        App.getInstance().preferences.registerOnSharedPreferenceChangeListener(upnpSwitchListener)
         restorePlayerFromQueue(mediaLibrarySession.player)
     }
 
@@ -804,6 +825,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
         if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
+        App.getInstance().preferences.unregisterOnSharedPreferenceChangeListener(upnpSwitchListener)
         releaseUpnpRoutes()
         releasePlayers()
         mediaLibrarySession.release()
