@@ -253,7 +253,7 @@ class LoginServerFragment : Fragment() {
     *  */
     @OptIn(UnstableApi::class)
     fun initOldLoginButton() {
-        binding.button5.setOnClickListener {
+        binding.goToLoginButton.setOnClickListener {
             requireActivity().finish()
             val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
                 putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_login_fragment")
