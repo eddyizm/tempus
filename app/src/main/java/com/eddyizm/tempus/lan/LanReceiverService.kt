@@ -96,6 +96,13 @@ class LanReceiverService : Service() {
             .setSmallIcon(R.drawable.ic_queue).setContentTitle(getString(R.string.lan_available))
             .setContentText(name(this)).setContentIntent(open).setOngoing(true)
             .addAction(0, getString(R.string.lan_disable), stop).build())
+        // Stopped before any socket or mDNS advertisement exists while the LAN remote switch is off.
+        // startForeground still had to run first, or the system kills the app for a missed foreground start.
+        if (!Preferences.isLanRemoteEnabled()) {
+            alive = false
+            stopSelf()
+            return
+        }
         nsd = getSystemService(NsdManager::class.java)
         browserFuture = MediaBrowser.Builder(this, SessionToken(this, ComponentName(this, MediaService::class.java))).buildAsync()
         running = true
@@ -418,7 +425,7 @@ class LanReceiverService : Service() {
         sockets.forEach { runCatching { it.close() } }
         workers.shutdownNow()
         if (registered) runCatching { nsd.unregisterService(registration) }
-        MediaBrowser.releaseFuture(browserFuture)
+        if (::browserFuture.isInitialized) MediaBrowser.releaseFuture(browserFuture)
         super.onDestroy()
     }
 }

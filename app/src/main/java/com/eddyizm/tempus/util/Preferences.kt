@@ -12,6 +12,8 @@ import com.google.gson.reflect.TypeToken
 
 object Preferences {
     const val THEME = "theme"
+    const val UPNP_ENABLED = "upnp_enabled"
+    const val LAN_REMOTE_ENABLED = "lan_remote_enabled"
     private const val DARK_THEME_BLACK = "dark_theme_black"
     private const val COLOR_ACCENT = "color_accent"
     private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
@@ -969,6 +971,23 @@ object Preferences {
     @JvmStatic
     fun setTempusUpdateReminder() {
         App.getInstance().preferences.edit().putLong(NEXT_UPDATE_CHECK, System.currentTimeMillis()).apply()
+    }
+
+    // Off until the user turns them on, so an update starts nothing on the local network by itself.
+    @JvmStatic
+    fun isUpnpEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(UPNP_ENABLED, false)
+    }
+
+    @JvmStatic
+    fun isLanRemoteEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(LAN_REMOTE_ENABLED, false)
+    }
+
+    /** Only the network playback features use the nearby Wi-Fi devices permission. */
+    @JvmStatic
+    fun needsNearbyDevices(): Boolean {
+        return isUpnpEnabled() || isLanRemoteEnabled()
     }
 
     @JvmStatic

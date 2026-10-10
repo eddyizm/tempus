@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.eddyizm.tempus.databinding.FragmentLoginPermissionBinding
+import com.eddyizm.tempus.util.Preferences
 
 private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
 
@@ -109,6 +110,12 @@ class LoginPermissionFragment : Fragment() {
     }
 
     private fun updateNearbyDevicesState() {
+        // Only UPnP and the LAN remote use it, so it is not offered while both are switched off.
+        val needed = Preferences.needsNearbyDevices()
+        binding.nearbyDevicesRow.visibility = if (needed) View.VISIBLE else View.GONE
+        binding.nearbyDevicesDivider.visibility = if (needed) View.VISIBLE else View.GONE
+        if (!needed) return
+
         val hasNearbyDevices = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                 ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.NEARBY_WIFI_DEVICES) == PackageManager.PERMISSION_GRANTED
 

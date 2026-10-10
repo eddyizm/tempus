@@ -11,11 +11,17 @@ import android.os.Looper
 import android.widget.ArrayAdapter
 import androidx.fragment.app.FragmentActivity
 import com.eddyizm.tempus.R
+import com.eddyizm.tempus.util.Preferences
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 object LanDevicePicker {
+    /** Whether a way into [toggle] is shown. Kept while a session is live, so a switch turned off mid-session still leaves a way to end it. */
+    @JvmStatic fun isOffered(): Boolean = Preferences.isLanRemoteEnabled() || LanRemoteSession.isActive()
+
     @JvmStatic fun toggle(activity: FragmentActivity) {
         if (LanRemoteSession.isActive()) { LanRemoteSession.disconnect(); return }
+        // No discovery at all while the LAN remote switch is off.
+        if (!Preferences.isLanRemoteEnabled()) return
         if (Build.VERSION.SDK_INT >= 37 && activity.checkSelfPermission("android.permission.ACCESS_LOCAL_NETWORK") != PackageManager.PERMISSION_GRANTED) {
             activity.startActivity(Intent(activity, LanPlaybackActivity::class.java)); return
         }

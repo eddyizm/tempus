@@ -86,6 +86,9 @@ public class PlayerControllerFragment extends Fragment {
 
     private InnerFragmentPlayerControllerBinding bind;
     private com.eddyizm.tempus.lan.LanPlayerAdapter remotePlayer;
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener lanSwitchListener = (prefs, key) -> {
+        if (Preferences.LAN_REMOTE_ENABLED.equals(key)) updateRemoteToggleVisibility();
+    };
     private boolean renderingRemote;
     private ViewPager2 playerMediaCoverViewPager;
     private ToggleButton buttonFavorite;
@@ -130,6 +133,8 @@ public class PlayerControllerFragment extends Fragment {
 
         init();
         remotePlayer = new com.eddyizm.tempus.lan.LanPlayerAdapter();
+        // Settings is a fragment in this activity, so a flipped switch is heard here rather than on resume.
+        com.eddyizm.tempus.App.getInstance().getPreferences().registerOnSharedPreferenceChangeListener(lanSwitchListener);
         com.eddyizm.tempus.lan.LanRemoteSession.state().observe(getViewLifecycleOwner(), state -> refreshPlaybackDestination());
         com.eddyizm.tempus.lan.LanRemoteSession.queueState().observe(getViewLifecycleOwner(), queue -> refreshPlaybackDestination());
         bind.playerRemoteToggle.setOnClickListener(v -> com.eddyizm.tempus.lan.LanDevicePicker.toggle(requireActivity()));
@@ -162,6 +167,7 @@ public class PlayerControllerFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        com.eddyizm.tempus.App.getInstance().getPreferences().unregisterOnSharedPreferenceChangeListener(lanSwitchListener);
         if (bind != null) bind.nowPlayingMediaControllerView.setPlayer(null);
         if (remotePlayer != null) remotePlayer.release();
         remotePlayer = null;
@@ -170,6 +176,7 @@ public class PlayerControllerFragment extends Fragment {
 
     private void refreshPlaybackDestination() {
         if (bind == null || remotePlayer == null) return;
+        updateRemoteToggleVisibility();
         if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
             remotePlayer.refresh();
             bind.nowPlayingMediaControllerView.setPlayer(remotePlayer);
@@ -247,6 +254,9 @@ public class PlayerControllerFragment extends Fragment {
                 int selectedEq = Preferences.getSelectedEqualizer();
                 if (selectedEq == 0 || selectedEq == 2) {
                     popup.getMenu().removeItem(R.id.action_open_equalizer);
+                }
+                if (!com.eddyizm.tempus.lan.LanDevicePicker.isOffered()) {
+                    popup.getMenu().removeItem(R.id.action_lan_playback);
                 }
 
                 popup.setOnMenuItemClickListener(item -> {
@@ -1087,6 +1097,11 @@ public class PlayerControllerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         bindMediaService();
+    }
+
+    private void updateRemoteToggleVisibility() {
+        if (bind == null) return;
+        bind.playerRemoteToggle.setVisibility(com.eddyizm.tempus.lan.LanDevicePicker.isOffered() ? View.VISIBLE : View.GONE);
     }
 
     @Override
