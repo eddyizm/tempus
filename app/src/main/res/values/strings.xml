@@ -249,7 +249,7 @@
     <string name="login_title">Subsonic servers</string>
     <string name="login_title_expanded">Subsonic servers</string>
     <string name="media_route_menu_title">Cast</string>
-    <string name="menu_add_button">Add</string>
+    <string name="menu_login_button">Login</string>
     <string name="menu_add_to_playlist_button">Add to playlist</string>
     <string name="playlist_added_to_queue">Playlist added to queue</string>
     <string name="menu_go_to_playlist_button">Play</string>
@@ -422,18 +422,6 @@
     <string name="search_title_song">Songs</string>
     <string name="search_title_empty_response">No results.</string>
     <string name="search_description_empty_response">We checked your server response but it was empty.</string>
-    <string name="server_signup_dialog_action_low_security">Low security</string>
-    <string name="server_signup_dialog_action_delete_toast">Long press to delete</string>
-    <string name="server_signup_dialog_hint_local_address">Local URL</string>
-    <string name="server_signup_dialog_hint_name">Server Name</string>
-    <string name="server_signup_dialog_hint_password">Password</string>
-    <string name="server_signup_dialog_hint_url">Server URL</string>
-    <string name="server_signup_dialog_hint_username">Username</string>
-    <string name="server_signup_dialog_hint_client_certificate">Client certificate (optional)</string>
-    <string name="server_signup_dialog_negative_button">Cancel</string>
-    <string name="server_signup_dialog_neutral_button">Delete</string>
-    <string name="server_signup_dialog_positive_button">Save</string>
-    <string name="server_signup_dialog_title">Add server</string>
     <string name="server_unreachable_dialog_negative_button">Cancel</string>
     <string name="server_unreachable_dialog_neutral_button">Go to login</string>
     <string name="server_unreachable_dialog_positive_button">Continue anyway</string>
@@ -858,6 +846,9 @@
     <string name="la_server_switch_plaintext_password">Plaintext passowrd (legacy servers)</string>
     <string name="la_server_switch_local_url">Set a local URL</string>
     <string name="la_server_switch_cert">Client certificate (mTLS)</string>
+    <string name="la_server_switch_headers">Custom HTTP headers</string>
+    <string name="la_server_field_server_headers">One per line, e.g. CF-Access-Client-Id: value</string>
+    <string name="error_custom_headers_invalid">Invalid header on line %1$s. Use Name: Value</string>
 
     <string name="la_theme_title">Choose Accent Color</string>
     <string name="la_theme_description">Style for your app\'s dynamic palette.</string>
@@ -889,7 +880,7 @@
     <string name="la_perms_nearby_devices_description">Required to discover other deivces through UPnP and Chromecast.</string>
 
     <string name="la_shortcut_label">Introduction</string>
-    <string name="la_button_advanced_editor">Advanced editor (beta)</string>
+    <string name="la_button_advanced_editor">Open server editor</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

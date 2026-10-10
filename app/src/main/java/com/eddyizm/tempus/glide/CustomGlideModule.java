@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.glide;
 
 import android.content.Context;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 
@@ -28,5 +29,6 @@ public class CustomGlideModule extends AppGlideModule {
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         registry.replace(String.class, InputStream.class, new IPv6StringLoader.Factory());
+        registry.prepend(Uri.class, InputStream.class, new IPv6StringLoader.UriFactory());
     }
 }

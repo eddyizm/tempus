@@ -146,7 +146,6 @@
     <string name="login_title">Subsonic 서버</string>
     <string name="login_title_expanded">Subsonic 서버</string>
     <string name="media_route_menu_title">Cast</string>
-    <string name="menu_add_button">추가</string>
     <string name="menu_add_to_playlist_button">플레이리스트에 추가</string>
     <string name="menu_download_all_button">모두 다운로드</string>
     <string name="menu_rate_album">앨범 평점 매기기</string>
@@ -226,15 +225,6 @@
     <string name="search_title_album">앨범</string>
     <string name="search_title_artist">아티스트</string>
     <string name="search_title_song">음악</string>
-    <string name="server_signup_dialog_action_low_security">낮은 보안</string>
-    <string name="server_signup_dialog_hint_name">서버 이름</string>
-    <string name="server_signup_dialog_hint_password">암호</string>
-    <string name="server_signup_dialog_hint_url">서버 URL</string>
-    <string name="server_signup_dialog_hint_username">사용자 이름</string>
-    <string name="server_signup_dialog_negative_button">취소</string>
-    <string name="server_signup_dialog_neutral_button">삭제</string>
-    <string name="server_signup_dialog_positive_button">저장</string>
-    <string name="server_signup_dialog_title">서버 추가</string>
     <string name="server_unreachable_dialog_negative_button">취소</string>
     <string name="server_unreachable_dialog_neutral_button">로그인으로 이동</string>
     <string name="server_unreachable_dialog_positive_button">무시하고 계속</string>
@@ -417,7 +407,6 @@
     <string name="menu_sort_most_recently_starred">즐겨찾기 최신순</string>
     <string name="player_unknown_format">즐겨찾기 오래된순</string>
     <string name="player_transcoding">트랜스코딩</string>
-    <string name="server_signup_dialog_action_delete_toast">길게 눌러 삭제하기</string>
     <string name="settings_song_rating_summary">활성화 시, 별점이 음악 페이지에서 숨겨집니다 \n*다시 시작이 필요합니다</string>
     <string name="starred_album_sync_dialog_summary">즐겨찾기한 앨범을 다운로드할 시 많은 양의 데이터가 필요할 수 있습니다.</string>
     <string name="starred_album_sync_dialog_title">즐겨찾기 한 앨범 동기화</string>

@@ -255,7 +255,6 @@
     <string name="login_title">Serwery Subsonic</string>
     <string name="login_title_expanded">Serwery Subsonic</string>
     <string name="media_route_menu_title">Przesyłanie</string>
-    <string name="menu_add_button">Dodaj</string>
     <string name="menu_add_to_playlist_button">Dodaj do playlisty</string>
     <string name="playlist_added_to_queue">Playlista dodana do kolejki</string>
     <string name="menu_go_to_playlist_button">Odtwarzaj</string>
@@ -428,18 +427,6 @@
     <string name="search_title_song">Piosenki</string>
     <string name="search_title_empty_response">Brak wyników.</string>
     <string name="search_description_empty_response">Sprawdziliśmy odpowiedź twojego serwera, ale była pusta.</string>
-    <string name="server_signup_dialog_action_low_security">Niskie bezpieczeństwo</string>
-    <string name="server_signup_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
-    <string name="server_signup_dialog_hint_local_address">Lokalny URL</string>
-    <string name="server_signup_dialog_hint_name">Nazwa Serwera</string>
-    <string name="server_signup_dialog_hint_password">Hasło</string>
-    <string name="server_signup_dialog_hint_url">URL Serwera</string>
-    <string name="server_signup_dialog_hint_username">Nazwa użytkownika</string>
-    <string name="server_signup_dialog_hint_client_certificate">Certyfikat klienta (opcjonalny)</string>
-    <string name="server_signup_dialog_negative_button">Anuluj</string>
-    <string name="server_signup_dialog_neutral_button">Usuń</string>
-    <string name="server_signup_dialog_positive_button">Zapisz</string>
-    <string name="server_signup_dialog_title">Dodaj serwer</string>
     <string name="server_unreachable_dialog_negative_button">Anuluj</string>
     <string name="server_unreachable_dialog_neutral_button">Przejdź do logowania</string>
     <string name="server_unreachable_dialog_positive_button">Kontynuuj mimo wszystko</string>
@@ -894,7 +881,6 @@
 	<string name="la_theme_dialog_color_picker_title">Wybierz kolor akcentu</string>
 
     <string name="la_shortcut_label">Wprowadzenie</string>
-    <string name="la_button_advanced_editor">Zaawansowany edytor (beta)</string>
 	
     <string name="hello_blank_fragment">Witaj pusty fragmencie</string>
 </resources>

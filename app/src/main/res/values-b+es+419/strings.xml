@@ -222,7 +222,6 @@
     <string name="login_title">Servidores</string>
     <string name="login_title_expanded">Servidores de Subsonic</string>
     <string name="media_route_menu_title">Transmitir</string>
-    <string name="menu_add_button">Añadir</string>
     <string name="menu_add_to_playlist_button">Añadir a una lista de reproducción</string>
     <string name="playlist_added_to_queue">¡Se añadió la lista a la cola!</string>
     <string name="menu_go_to_playlist_button">Reproducir</string>
@@ -365,18 +364,6 @@
     <string name="search_title_album">Álbumes</string>
     <string name="search_title_artist">Artistas</string>
     <string name="search_title_song">Canciones</string>
-    <string name="server_signup_dialog_action_low_security">Baja seguridad</string>
-    <string name="server_signup_dialog_action_delete_toast">Mantén presionado para borrar</string>
-    <string name="server_signup_dialog_hint_local_address">URL Local</string>
-    <string name="server_signup_dialog_hint_name">Nombre del servidor</string>
-    <string name="server_signup_dialog_hint_password">Contraseña</string>
-    <string name="server_signup_dialog_hint_url">URL del servidor</string>
-    <string name="server_signup_dialog_hint_username">Nombre de usuario</string>
-    <string name="server_signup_dialog_hint_client_certificate">Certificados (optional)</string>
-    <string name="server_signup_dialog_negative_button">Cancelar</string>
-    <string name="server_signup_dialog_neutral_button">Borrar</string>
-    <string name="server_signup_dialog_positive_button">Guardar</string>
-    <string name="server_signup_dialog_title">Añadir servidor</string>
     <string name="server_unreachable_dialog_negative_button">Cancelar</string>
     <string name="server_unreachable_dialog_neutral_button">Iniciar sesión</string>
     <string name="server_unreachable_dialog_positive_button">Continuar de todo modos</string>

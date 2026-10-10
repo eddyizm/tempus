@@ -223,7 +223,6 @@
     <string name="login_title">Servidors del Subsonic</string>
     <string name="login_title_expanded">Servidors del Subsonic</string>
     <string name="media_route_menu_title">Emissió</string>
-    <string name="menu_add_button">Afegeix</string>
     <string name="menu_add_to_playlist_button">Afegeix a la llista de reproducció</string>
     <string name="playlist_added_to_queue">S\'ha afegit la llista de reproducció a la cua</string>
     <string name="menu_go_to_playlist_button">Reprodueix</string>
@@ -365,18 +364,6 @@
     <string name="search_title_album">Àlbums</string>
     <string name="search_title_artist">Artistes</string>
     <string name="search_title_song">Cançons</string>
-    <string name="server_signup_dialog_action_low_security">Seguretat baixa</string>
-    <string name="server_signup_dialog_action_delete_toast">Manteniu-ho premut per a suprimir-ho</string>
-    <string name="server_signup_dialog_hint_local_address">URL local</string>
-    <string name="server_signup_dialog_hint_name">Nom del servidor</string>
-    <string name="server_signup_dialog_hint_password">Contrasenya</string>
-    <string name="server_signup_dialog_hint_url">URL del servidor</string>
-    <string name="server_signup_dialog_hint_username">Nom d\'usuari</string>
-    <string name="server_signup_dialog_hint_client_certificate">Certificat del client (opcional)</string>
-    <string name="server_signup_dialog_negative_button">Cancel·la</string>
-    <string name="server_signup_dialog_neutral_button">Suprimeix</string>
-    <string name="server_signup_dialog_positive_button">Desa</string>
-    <string name="server_signup_dialog_title">Addició d\'un servidor</string>
     <string name="server_unreachable_dialog_negative_button">Cancel·la</string>
     <string name="server_unreachable_dialog_neutral_button">Ves a l\'inici de sessió</string>
     <string name="server_unreachable_dialog_positive_button">Continua igualment</string>

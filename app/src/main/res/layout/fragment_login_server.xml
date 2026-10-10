@@ -191,6 +191,35 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Server custom headers switch -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/server_headers_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:checked="false"
+                android:text="@string/la_server_switch_headers"/>
+
+            <!-- Server custom headers field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/server_headers_field_container"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/server_headers_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+                    android:hint="@string/la_server_field_server_headers"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:minLines="2" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
         </LinearLayout>
     </ScrollView>
 
@@ -202,7 +231,7 @@
         android:orientation="vertical"
         android:gravity="center_horizontal"
         android:padding="8dp"
-        app:layout_constraintBottom_toTopOf="@id/button5"
+        app:layout_constraintBottom_toTopOf="@id/goToLoginButton"
         app:layout_constraintTop_toBottomOf="@id/scrollable">
 
         <!-- Buttoner -->
@@ -244,8 +273,7 @@
 
     <!-- Return to login -->
     <com.google.android.material.button.MaterialButton
-        android:visibility="gone"
-        android:id="@+id/button5"
+        android:id="@+id/goToLoginButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/la_server_button_login"
