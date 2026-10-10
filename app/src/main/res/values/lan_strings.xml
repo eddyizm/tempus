@@ -1,5 +1,7 @@
 <!-- Local preview: English fallback is intentional until community translations are available. -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="lan_show_player_controls">Show remote player controls</string>
+    <string name="lan_show_player_controls_summary">Show the device icon, Play on button and menu entry in the player.</string>
     <string name="lan_title">Remote player</string>
     <string name="lan_choose_device">Choose a remote player</string>
     <string name="lan_searching">Finding players…</string>

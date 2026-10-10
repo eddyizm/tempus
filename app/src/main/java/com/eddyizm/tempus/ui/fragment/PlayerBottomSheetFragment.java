@@ -86,6 +86,7 @@ public class PlayerBottomSheetFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        updateRemoteButtonVisibility();
 
         initializeMediaBrowser();
         bindMediaController();
@@ -117,7 +118,15 @@ public class PlayerBottomSheetFragment extends Fragment {
         bind.playerHeaderLayout.getRoot().setBackgroundColor(SurfaceColors.getColorForElevation(requireContext(), 8));
     }
 
+    private void updateRemoteButtonVisibility() {
+        if (bind != null) {
+            bind.playerHeaderLayout.playerHeaderRemoteButton.setVisibility(
+                    Preferences.isLanPlayerControlsVisible() ? View.VISIBLE : View.GONE);
+        }
+    }
+
     private void customizeBottomSheetAction() {
+        updateRemoteButtonVisibility();
         bind.playerHeaderLayout.playerHeaderRemoteButton.setOnClickListener(v -> com.eddyizm.tempus.lan.LanDevicePicker.toggle(requireActivity()));
         bind.playerHeaderLayout.getRoot().setOnClickListener(view -> ((MainActivity) requireActivity()).expandBottomSheet());
     }
@@ -329,6 +338,7 @@ public class PlayerBottomSheetFragment extends Fragment {
 
     private void renderRemote(com.eddyizm.tempus.lan.LanRemoteState state) {
         if (bind == null) return;
+        updateRemoteButtonVisibility();
         bind.playerHeaderLayout.playerHeaderRemoteButton.setSelected(state.getActive());
         bind.playerHeaderLayout.playerHeaderRemoteButton.setContentDescription(
                 state.getActive() ? getString(R.string.lan_controlling, state.getName()) : getString(R.string.lan_play_on));

@@ -85,6 +85,13 @@ class LanSettingsFragment : PreferenceFragmentCompat() {
         controlledDevice = preference("lan_controlled_device")
         releaseControl = preference("lan_release_device")
         configureDeviceName()
+        preference<SwitchPreference>("lan_player_controls").apply {
+            isChecked = Preferences.isLanPlayerControlsVisible()
+            setOnPreferenceChangeListener { _, value ->
+                Preferences.setLanPlayerControlsVisible(value == true)
+                true
+            }
+        }
 
         receiver.setOnPreferenceChangeListener { _, value ->
             if (value == true) requestReceiver() else stopReceiver()
