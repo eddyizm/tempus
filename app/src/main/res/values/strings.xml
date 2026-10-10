@@ -204,6 +204,11 @@
     <string name="home_title_best_of">Best of</string>
     <string name="home_title_discovery">Discovery</string>
     <string name="home_title_continue_listening">Continue listening</string>
+    <string name="home_continue_listening_clear_all">Clear all</string>
+    <string name="home_continue_listening_remove">Remove from Continue listening</string>
+    <string name="home_continue_listening_clear_all_title">Clear Continue listening?</string>
+    <string name="settings_continue_listening_title">Continue listening</string>
+    <string name="settings_continue_listening_summary">Remember where you stopped in podcasts, audiobooks and tracks over 10 minutes, and save it as a bookmark on your server. When off, nothing is saved or synced and the home row is hidden.</string>
     <string name="home_continue_listening_resume_at">Resume at %1$s</string>
     <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
     <string name="home_title_flashback">Flashback</string>
@@ -894,4 +899,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <plurals name="home_continue_listening_clear_all_message">
+        <item quantity="one">This removes the entry and its bookmark on your server, including a bookmark made by another app that uses it.</item>
+        <item quantity="other">This removes all %1$d entries and their bookmarks on your server, including bookmarks made by other apps that use it.</item>
+    </plurals>
 </resources>

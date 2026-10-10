@@ -347,15 +347,34 @@
             android:orientation="vertical"
             android:visibility="gone">
 
-            <TextView
-                style="@style/TitleLarge"
+            <!--  Label and button  -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
+                android:orientation="horizontal"
+                android:paddingStart="8dp"
                 android:paddingTop="16dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="8dp"
-                android:text="@string/home_title_continue_listening" />
+                android:paddingEnd="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/home_title_continue_listening" />
+
+                <TextView
+                    android:id="@+id/continue_listening_clear_all_text_view_clickable"
+                    style="@style/TitleMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/home_continue_listening_clear_all" />
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/continue_listening_recycler_view"

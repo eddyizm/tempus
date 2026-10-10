@@ -3,6 +3,7 @@ package com.eddyizm.tempus.ui.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.media3.session.MediaBrowser;
@@ -21,11 +22,18 @@ import java.util.Collections;
 import java.util.List;
 
 public class ContinueListeningAdapter extends RecyclerView.Adapter<ContinueListeningAdapter.ViewHolder> {
+    /** Asked to remove an entry; the owner deletes it and hands back the new list. */
+    public interface OnRemoveListener {
+        void onRemove(Preferences.ResumePoint resumePoint);
+    }
+
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
+    private final OnRemoveListener onRemoveListener;
     private List<Preferences.ResumePoint> items = Collections.emptyList();
 
-    public ContinueListeningAdapter(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
+    public ContinueListeningAdapter(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, OnRemoveListener onRemoveListener) {
         this.mediaBrowserListenableFuture = mediaBrowserListenableFuture;
+        this.onRemoveListener = onRemoveListener;
     }
 
     /** The MediaBrowser future may not exist yet at construction; refresh it once available. */
@@ -67,6 +75,20 @@ public class ContinueListeningAdapter extends RecyclerView.Adapter<ContinueListe
                 int pos = getBindingAdapterPosition();
                 if (pos < 0 || pos >= items.size()) return;
                 resume(items.get(pos));
+            });
+
+            itemView.setOnLongClickListener(v -> {
+                int pos = getBindingAdapterPosition();
+                if (pos < 0 || pos >= items.size()) return false;
+                Preferences.ResumePoint resumePoint = items.get(pos);
+                PopupMenu menu = new PopupMenu(v.getContext(), v);
+                menu.getMenu().add(R.string.home_continue_listening_remove);
+                menu.setOnMenuItemClickListener(item -> {
+                    onRemoveListener.onRemove(resumePoint);
+                    return true;
+                });
+                menu.show();
+                return true;
             });
         }
 

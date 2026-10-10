@@ -612,7 +612,7 @@ public class MediaManager {
         // (store + server bookmark) is scoped to podcasts, audiobooks, and long music tracks
         // (>10 min). No position cutoff here - the point is re-persisted periodically during
         // playback (see BaseMediaService) and cleared when the track plays to completion.
-        if (!isResumable(type, durationMs)) {
+        if (!savesToContinueListening(type, durationMs, Preferences.isContinueListeningEnabled())) {
             return;
         }
 
@@ -624,6 +624,11 @@ public class MediaManager {
         Preferences.saveResumePoint(mediaItem.mediaId, ms, title, album, artist, albumId, coverArtId, type);
         // Mirror the resume point to the server bookmark so it syncs across devices.
         getQueueRepository().createServerBookmark(mediaItem.mediaId, ms);
+    }
+
+    /** Whether a stopped track gets a Continue listening entry and a server bookmark. */
+    static boolean savesToContinueListening(String type, long durationMs, boolean enabled) {
+        return enabled && isResumable(type, durationMs);
     }
 
     static boolean isResumable(String type, long durationMs) {
@@ -639,9 +644,18 @@ public class MediaManager {
      * fully-finished track no longer appears in "Continue listening".
      */
     public static void deleteResumePoint(MediaItem mediaItem) {
-        if (mediaItem != null) {
+        // With Continue listening off, server bookmarks are left exactly as they are.
+        if (mediaItem != null && Preferences.isContinueListeningEnabled()) {
             getQueueRepository().deleteServerBookmark(mediaItem.mediaId);
         }
+    }
+
+    /**
+     * Removes one Continue listening entry at the user's request: the local entry at once, and
+     * the server bookmark, so the next sync does not bring it back.
+     */
+    public static void removeContinueListening(String id) {
+        if (id != null) getQueueRepository().deleteServerBookmark(id);
     }
 
     /**
