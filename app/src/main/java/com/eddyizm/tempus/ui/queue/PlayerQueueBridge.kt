@@ -10,6 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -35,6 +37,7 @@ import com.eddyizm.tempus.util.Preferences
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel
 import com.eddyizm.tempus.viewmodel.PlayerBottomSheetViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -101,6 +104,31 @@ class PlayerQueueBridge @JvmOverloads constructor(
                     liveDownloads?.mapNotNull { it.id }?.toSet() ?: emptySet()
                 }
                 val externalRefresh by ExternalAudioReader.getRefreshEvents().observeAsState()
+                val scope = rememberCoroutineScope()
+                val latestRaw by rememberUpdatedState(rawChildList)
+
+                // Reads the player, not the UI mirror: positions for edits must
+                // come from the browser (or the remote session), never from a
+                // potentially stale displayed index.
+                fun browserSnapshot() = try {
+                    fragment.mediaBrowserListenableFuture
+                        ?.takeIf { it.isDone }?.get()
+                } catch (_: Exception) {
+                    null
+                }
+
+                // Optimistic edits assume the backend applies them. If no
+                // confirming emission arrives, fall back to last known-good
+                // instead of stranding a divergent list.
+                fun watchConvergence(preIds: List<String>) {
+                    val pre = preIds.toList()
+                    scope.launch {
+                        delay(2000)
+                        if (!LanRemoteSession.isActive() && latestRaw.map { it.id } == pre) {
+                            queueState = latestRaw
+                        }
+                    }
+                }
 
                 val currentRawSongs = if (isLanActive) (lanQueue ?: emptyList()) else queueState
 
@@ -168,18 +196,28 @@ class PlayerQueueBridge @JvmOverloads constructor(
                         }, ContextCompat.getMainExecutor(context))
                     },
                     onRemoveTrack = { removeIndex ->
-                        if (!LanRemoteSession.isActive() && removeIndex != currentIndex && currentRawSongs.size > 1) {
-                            queueState = queueState.toMutableList().also { list ->
-                                if (removeIndex in list.indices) {
-                                    list.removeAt(removeIndex)
-                                }
+                        if (LanRemoteSession.isActive()) {
+                            MediaManager.remove(
+                                fragment.mediaBrowserListenableFuture,
+                                ArrayList(currentRawSongs),
+                                removeIndex
+                            )
+                        } else {
+                            val browser = browserSnapshot()
+                            val realIndex = browser?.currentMediaItemIndex
+                            val count = browser?.mediaItemCount ?: currentRawSongs.size
+                            if (realIndex != null && removeIndex != realIndex && count > 1 &&
+                                removeIndex in currentRawSongs.indices
+                            ) {
+                                watchConvergence(latestRaw.map { it.id })
+                                queueState = queueState.toMutableList().also { it.removeAt(removeIndex) }
                             }
+                            MediaManager.remove(
+                                fragment.mediaBrowserListenableFuture,
+                                ArrayList(currentRawSongs),
+                                removeIndex
+                            )
                         }
-                        MediaManager.remove(
-                            fragment.mediaBrowserListenableFuture,
-                            ArrayList(currentRawSongs),
-                            removeIndex
-                        )
                     },
                     onSwapTracks = { from, to ->
                         if (LanRemoteSession.isActive()) {
@@ -190,10 +228,9 @@ class PlayerQueueBridge @JvmOverloads constructor(
                                 to
                             )
                         } else {
-                            // swapDatabase() persists the passed list as the new order,
-                            // so it must be the reordered list — not the pre-drag snapshot.
                             val reordered = queueState.toMutableList()
                             if (from in reordered.indices && to in reordered.indices) {
+                                watchConvergence(latestRaw.map { it.id })
                                 val item = reordered.removeAt(from)
                                 reordered.add(to, item)
                                 queueState = reordered
@@ -208,26 +245,33 @@ class PlayerQueueBridge @JvmOverloads constructor(
                     },
                     onClearUpcoming = { songs, curIdx ->
                         val browserFuture = fragment.mediaBrowserListenableFuture ?: return@PlayerQueueSheet
-                        val startPos = if (curIdx >= 0) curIdx + 1 else 0
+                        val startPos = if (LanRemoteSession.isActive()) {
+                            LanRemoteSession.current().index + 1
+                        } else {
+                            (browserSnapshot()?.currentMediaItemIndex ?: curIdx) + 1
+                        }
                         val endPos = songs.size
-                        if (startPos < endPos) {
+                        if (startPos in 1..endPos) {
                             if (!LanRemoteSession.isActive()) {
+                                watchConvergence(latestRaw.map { it.id })
                                 queueState = queueState.take(startPos)
                             }
-                            // Copy: removeRangeDatabase mutates the passed list in
-                            // place, which must never be our state-held instance.
                             MediaManager.removeRange(browserFuture, ArrayList(songs), startPos, endPos)
                         }
                     },
                     onShuffleUpcoming = { songs, curIdx ->
                         val browserFuture = fragment.mediaBrowserListenableFuture ?: return@PlayerQueueSheet
-                        val startPos = if (curIdx >= 0) curIdx + 1 else 0
+                        val startPos = if (LanRemoteSession.isActive()) {
+                            LanRemoteSession.current().index + 1
+                        } else {
+                            (browserSnapshot()?.currentMediaItemIndex ?: curIdx) + 1
+                        }
                         val endPos = songs.size - 1
-                        if (startPos < endPos) {
+                        if (startPos in 1..endPos && startPos < endPos) {
                             val childList = songs.toMutableList()
-                            val upcomingSublist = childList.subList(startPos, endPos + 1)
-                            upcomingSublist.shuffle()
+                            childList.subList(startPos, endPos + 1).shuffle()
                             if (!LanRemoteSession.isActive()) {
+                                watchConvergence(latestRaw.map { it.id })
                                 queueState = ArrayList(childList)
                             }
                             MediaManager.shuffle(browserFuture, childList, startPos, endPos)

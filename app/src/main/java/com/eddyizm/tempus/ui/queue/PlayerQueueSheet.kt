@@ -1,7 +1,6 @@
 package com.eddyizm.tempus.ui.queue
 
 import android.os.Build
-import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -29,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -58,15 +58,15 @@ fun rememberAppColorScheme(): ColorScheme {
     val isAmoled = isDark && Preferences.isDarkThemeBlack()
 
     return remember(context, isDark, isAmoled) {
-        val theme = context.theme
-        val typedValue = TypedValue()
-
+        // MaterialColors resolves references and ColorStateLists correctly;
+        // reading TypedValue.data by hand does not (yielding transparent garbage).
         fun resolveColor(@AttrRes attr: Int, fallback: Color): Color {
-            return if (theme.resolveAttribute(attr, typedValue, true)) {
-                Color(typedValue.data)
-            } else {
-                fallback
-            }
+            val resolved = Color(
+                com.google.android.material.color.MaterialColors.getColor(
+                    context, attr, fallback.toArgb()
+                )
+            )
+            return if (resolved.alpha == 0f) fallback else resolved
         }
 
         val primary = resolveColor(com.google.android.material.R.attr.colorPrimary, defaultScheme.primary)

@@ -90,6 +90,10 @@ fun PlayerQueueItem(
     val currentIndex by rememberUpdatedState(index)
     val currentOnRemove by rememberUpdatedState(onRemove)
     val currentItem by rememberUpdatedState(item)
+    // confirmValueChange is captured on first composition: read these through
+    // updated state or rows keep their original dismiss behavior forever.
+    val currentIsCurrent by rememberUpdatedState(isCurrent)
+    val currentCanDismiss by rememberUpdatedState(canDismiss)
 
     val downloadDirUri = remember { Preferences.getDownloadDirectoryUri() }
     val downloaderManager = remember(context) { DownloadUtil.getDownloadTracker(context) }
@@ -126,7 +130,7 @@ fun PlayerQueueItem(
     val dismissState = rememberSwipeToDismissBoxState(
         positionalThreshold = { it * 0.4f },
         confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart && !isCurrent && canDismiss) {
+            if (value == SwipeToDismissBoxValue.EndToStart && !currentIsCurrent && currentCanDismiss) {
                 val offset = runCatching { dismissStateRef.value?.requireOffset() }.getOrNull() ?: 0f
                 val fraction = if (itemWidthPx > 0f) kotlin.math.abs(offset) / itemWidthPx else 1f
                 if (fraction < 0.4f) {
