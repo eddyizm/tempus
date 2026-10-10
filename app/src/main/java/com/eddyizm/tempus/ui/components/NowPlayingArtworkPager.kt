@@ -73,14 +73,18 @@ fun NowPlayingArtworkPager(
         }
     }
 
-    // Programmatic smooth scroll when track index changes externally (e.g. next/prev buttons, notification, end-of-track).
-    // Guarded by safeIndex != pagerState.targetPage to avoid interrupting manual swipes.
-    LaunchedEffect(safeIndex) {
+    // Slide for adjacent tracks, snap for far jumps (cold start, restore,
+    // distant tap) where animating would fling through the whole queue.
+    LaunchedEffect(safeIndex, count) {
         if (!isDragged && safeIndex in 0 until count && safeIndex != pagerState.targetPage) {
-            pagerState.animateScrollToPage(
-                page = safeIndex,
-                animationSpec = tween(durationMillis = 300)
-            )
+            if ((safeIndex - pagerState.currentPage).absoluteValue > 1) {
+                pagerState.scrollToPage(safeIndex)
+            } else {
+                pagerState.animateScrollToPage(
+                    page = safeIndex,
+                    animationSpec = tween(durationMillis = 300)
+                )
+            }
         }
     }
 
