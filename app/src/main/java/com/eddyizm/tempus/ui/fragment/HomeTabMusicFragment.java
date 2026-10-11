@@ -723,7 +723,6 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private void initContinueListening() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_CONTINUE_LISTENING)) return;
 
-        // Switched off in settings: hide the row and leave the server's bookmarks alone.
         if (!Preferences.isContinueListeningEnabled()) {
             bind.homeContinueListeningSector.setVisibility(View.GONE);
             return;
@@ -733,7 +732,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         bind.continueListeningRecyclerView.setHasFixedSize(true);
 
         continueListeningAdapter = new ContinueListeningAdapter(mediaBrowserListenableFuture, resumePoint -> {
-            MediaManager.removeContinueListening(resumePoint.getId());
+            new QueueRepository().deleteServerBookmark(resumePoint.getId());
             showContinueListening();
         });
         bind.continueListeningRecyclerView.setAdapter(continueListeningAdapter);
@@ -767,8 +766,9 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
                 .setMessage(getResources().getQuantityString(R.plurals.home_continue_listening_clear_all_message, resumePoints.size(), resumePoints.size()))
                 .setNegativeButton(android.R.string.cancel, null)
                 .setPositiveButton(R.string.home_continue_listening_clear_all, (dialog, which) -> {
+                    QueueRepository queueRepository = new QueueRepository();
                     for (Preferences.ResumePoint resumePoint : resumePoints) {
-                        MediaManager.removeContinueListening(resumePoint.getId());
+                        queueRepository.deleteServerBookmark(resumePoint.getId());
                     }
                     showContinueListening();
                 })

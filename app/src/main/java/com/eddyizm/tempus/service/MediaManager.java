@@ -641,21 +641,13 @@ public class MediaManager {
 
     /**
      * Clears the resume point + server bookmark for a song that played to completion, so a
-     * fully-finished track no longer appears in "Continue listening".
+     * fully-finished track no longer appears in "Continue listening". Does nothing while
+     * Continue listening is switched off: the entry and the server bookmark are left as they are.
      */
     public static void deleteResumePoint(MediaItem mediaItem) {
-        // With Continue listening off, server bookmarks are left exactly as they are.
         if (mediaItem != null && Preferences.isContinueListeningEnabled()) {
             getQueueRepository().deleteServerBookmark(mediaItem.mediaId);
         }
-    }
-
-    /**
-     * Removes one Continue listening entry at the user's request: the local entry at once, and
-     * the server bookmark, so the next sync does not bring it back.
-     */
-    public static void removeContinueListening(String id) {
-        if (id != null) getQueueRepository().deleteServerBookmark(id);
     }
 
     /**
@@ -663,8 +655,17 @@ public class MediaManager {
      * (playing_changed) so an upgrade from a pre-resume-point build keeps its spot.
      */
     public static long resumePosition(Queue lastPlayed) {
-        long saved = Preferences.getResumePoint(lastPlayed.getId());
-        return saved != 0 ? saved : Math.max(0L, lastPlayed.getPlayingChanged());
+        return resumePosition(Preferences.getResumePoint(lastPlayed.getId()),
+                lastPlayed.getPlayingChanged(), Preferences.isContinueListeningEnabled());
+    }
+
+    /**
+     * While Continue listening is off only the queue row is kept up to date, so an entry saved
+     * before it was switched off is stale and must not win over the queue row.
+     */
+    static long resumePosition(long continueListeningPosition, long queuePosition, boolean continueListeningEnabled) {
+        long saved = continueListeningEnabled ? continueListeningPosition : 0L;
+        return saved != 0 ? saved : Math.max(0L, queuePosition);
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {
