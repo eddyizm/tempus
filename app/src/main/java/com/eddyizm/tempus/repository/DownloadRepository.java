@@ -49,6 +49,20 @@ public class DownloadRepository {
         return download;
     }
 
+    public List<Download> getFailedDownloads() {
+        GetFailedDownloadsThreadSafe getDownloads = new GetFailedDownloadsThreadSafe(downloadDao);
+        Thread thread = new Thread(getDownloads);
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return getDownloads.getDownloads();
+    }
+
     private static class GetAllDownloadsThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private List<Download> downloads;
@@ -84,6 +98,24 @@ public class DownloadRepository {
 
         public Download getDownload() {
             return download;
+        }
+    }
+
+    private static class GetFailedDownloadsThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private List<Download> downloads;
+
+        public GetFailedDownloadsThreadSafe(DownloadDao downloadDao) {
+            this.downloadDao = downloadDao;
+        }
+
+        @Override
+        public void run() {
+            downloads = downloadDao.getFailedSync();
+        }
+
+        public List<Download> getDownloads() {
+            return downloads;
         }
     }
 
@@ -175,6 +207,12 @@ public class DownloadRepository {
         thread.start();
     }
 
+    public void deleteFailed(String id) {
+        DeleteFailedThreadSafe delete = new DeleteFailedThreadSafe(downloadDao, id);
+        Thread thread = new Thread(delete);
+        thread.start();
+    }
+
     public void delete(List<String> ids) {
         DeleteMultipleThreadSafe delete = new DeleteMultipleThreadSafe(downloadDao, ids);
         Thread thread = new Thread(delete);
@@ -193,6 +231,21 @@ public class DownloadRepository {
         @Override
         public void run() {
             downloadDao.delete(id);
+        }
+    }
+
+    private static class DeleteFailedThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private final String id;
+
+        public DeleteFailedThreadSafe(DownloadDao downloadDao, String id) {
+            this.downloadDao = downloadDao;
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            downloadDao.deleteFailed(id);
         }
     }
 

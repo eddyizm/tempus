@@ -130,6 +130,12 @@ public class DownloaderManager {
         } catch (IOException e) {
             Log.w(TAG, "Failed to query downloads", e);
         }
+
+        for (com.eddyizm.tempus.model.Download orphan : getDownloadRepository().getFailedDownloads()) {
+            if (!downloads.containsKey(orphan.getId()) && !requested.contains(orphan.getId())) {
+                deleteDatabase(orphan.getId());
+            }
+        }
     }
 
     public static String getDownloadNotificationMessage(String id) {
@@ -145,6 +151,13 @@ public class DownloaderManager {
 
     public static void removeRequestDownload(Download download) {
         deleteDatabase(download.request.id);
+        downloads.remove(download.request.id);
+        requested.remove(download.request.id);
+    }
+
+    public static void failRequestDownload(Download download) {
+        if (download == null) return;
+        getDownloadRepository().deleteFailed(download.request.id);
         downloads.remove(download.request.id);
         requested.remove(download.request.id);
     }
