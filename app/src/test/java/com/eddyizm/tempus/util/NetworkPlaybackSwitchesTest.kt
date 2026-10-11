@@ -54,23 +54,6 @@ class NetworkPlaybackSwitchesTest {
     }
 
     @Test
-    fun nearbyDevicesIsNotAskedForWithBothSwitchesOff() {
-        withPreferences(emptyMap()) {
-            assertFalse(Preferences.needsNearbyDevices())
-        }
-    }
-
-    @Test
-    fun nearbyDevicesIsAskedForWhenEitherSwitchIsOn() {
-        withPreferences(mapOf(Preferences.UPNP_ENABLED to true)) {
-            assertTrue(Preferences.needsNearbyDevices())
-        }
-        withPreferences(mapOf(Preferences.LAN_REMOTE_ENABLED to true)) {
-            assertTrue(Preferences.needsNearbyDevices())
-        }
-    }
-
-    @Test
     fun upnpRoutesAreRegisteredOnlyWhenTheSwitchIsOn() {
         assertEquals(UpnpRoutesGate.Change.REGISTER, UpnpRoutesGate.change(enabled = true, registered = false))
         assertEquals(UpnpRoutesGate.Change.NONE, UpnpRoutesGate.change(enabled = false, registered = false))

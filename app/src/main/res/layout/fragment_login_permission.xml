@@ -207,7 +207,6 @@
             </LinearLayout>
 
             <View
-                android:id="@+id/nearbyDevicesDivider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@android:color/darker_gray"
@@ -215,7 +214,6 @@
 
             <!-- 3. Nearby Devices Permission Item -->
             <LinearLayout
-                android:id="@+id/nearbyDevicesRow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"

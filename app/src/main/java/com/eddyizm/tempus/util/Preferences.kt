@@ -984,12 +984,6 @@ object Preferences {
         return App.getInstance().preferences.getBoolean(LAN_REMOTE_ENABLED, false)
     }
 
-    /** Only the network playback features use the nearby Wi-Fi devices permission. */
-    @JvmStatic
-    fun needsNearbyDevices(): Boolean {
-        return isUpnpEnabled() || isLanRemoteEnabled()
-    }
-
     @JvmStatic
     fun isContinuousPlayEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(CONTINUOUS_PLAY, true)
