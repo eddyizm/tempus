@@ -117,6 +117,8 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
         downloadHorizontalAdapter = new DownloadHorizontalAdapter(this);
         bind.downloadedRecyclerView.setAdapter(downloadHorizontalAdapter);
+        bind.downloadFastScrollbar.setViewsToUse(R.layout.layout_fast_scrollbar, R.id.fastscroller_bubble, R.id.fastscroller_handle);
+        bind.downloadFastScrollbar.setRecyclerView(bind.downloadedRecyclerView);
 
         downloadViewModel.getDownloadedTracks(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), songs -> {
             if (songs != null) {
@@ -125,6 +127,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                         bind.emptyDownloadLayout.setVisibility(View.VISIBLE);
                         bind.downloadDownloadedSector.setVisibility(View.GONE);
                         bind.downloadedGroupByImageView.setVisibility(View.GONE);
+                        bind.downloadFastScrollbar.setVisibility(View.GONE);
                     }
                 } else {
                     if (bind != null) {
@@ -190,6 +193,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                     break;
             }
 
+            bind.downloadFastScrollbar.setVisibility(downloadHorizontalAdapter.getItemCount() > 1 ? View.VISIBLE : View.GONE);
             bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
 
             setupBackPressing(stack.size());
