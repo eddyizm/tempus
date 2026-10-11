@@ -10,8 +10,12 @@ import com.eddyizm.tempus.model.Favorite;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DownloadRepository {
+    private static final ExecutorService DOWNLOAD_WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
+
     private final DownloadDao downloadDao = AppDatabase.getInstance().downloadDao();
 
     public LiveData<List<Download>> getLiveDownload() {
@@ -121,8 +125,7 @@ public class DownloadRepository {
 
     public void insert(Download download) {
         InsertThreadSafe insert = new InsertThreadSafe(downloadDao, download);
-        Thread thread = new Thread(insert);
-        thread.start();
+        DOWNLOAD_WRITE_EXECUTOR.execute(insert);
     }
 
     private static class InsertThreadSafe implements Runnable {
@@ -142,8 +145,7 @@ public class DownloadRepository {
 
     public void update(String id) {
         UpdateThreadSafe update = new UpdateThreadSafe(downloadDao, id);
-        Thread thread = new Thread(update);
-        thread.start();
+        DOWNLOAD_WRITE_EXECUTOR.execute(update);
     }
 
     private static class UpdateThreadSafe implements Runnable {
@@ -163,8 +165,7 @@ public class DownloadRepository {
 
     public void insertAll(List<Download> downloads) {
         InsertAllThreadSafe insertAll = new InsertAllThreadSafe(downloadDao, downloads);
-        Thread thread = new Thread(insertAll);
-        thread.start();
+        DOWNLOAD_WRITE_EXECUTOR.execute(insertAll);
     }
 
     private static class InsertAllThreadSafe implements Runnable {
@@ -184,8 +185,7 @@ public class DownloadRepository {
 
     public void deleteAll() {
         DeleteAllThreadSafe deleteAll = new DeleteAllThreadSafe(downloadDao);
-        Thread thread = new Thread(deleteAll);
-        thread.start();
+        DOWNLOAD_WRITE_EXECUTOR.execute(deleteAll);
     }
 
     private static class DeleteAllThreadSafe implements Runnable {
@@ -203,20 +203,17 @@ public class DownloadRepository {
 
     public void delete(String id) {
         DeleteThreadSafe delete = new DeleteThreadSafe(downloadDao, id);
-        Thread thread = new Thread(delete);
-        thread.start();
+        DOWNLOAD_WRITE_EXECUTOR.execute(delete);
     }
 
     public void deleteFailed(String id) {
         DeleteFailedThreadSafe delete = new DeleteFailedThreadSafe(downloadDao, id);
-        Thread thread = new Thread(delete);
-        thread.start();
+        DOWNLOAD_WRITE_EXECUTOR.execute(delete);
     }
 
     public void delete(List<String> ids) {
         DeleteMultipleThreadSafe delete = new DeleteMultipleThreadSafe(downloadDao, ids);
-        Thread thread = new Thread(delete);
-        thread.start();
+        DOWNLOAD_WRITE_EXECUTOR.execute(delete);
     }
 
     private static class DeleteThreadSafe implements Runnable {
