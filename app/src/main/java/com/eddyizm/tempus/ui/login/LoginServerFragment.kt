@@ -22,6 +22,7 @@ import com.eddyizm.tempus.repository.PlaylistRepository
 import com.eddyizm.tempus.repository.SystemRepository
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.ui.activity.MainActivity
+import com.eddyizm.tempus.util.CustomHeaders
 import com.eddyizm.tempus.viewmodel.ServerViewModel
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
@@ -69,6 +70,7 @@ class LoginServerFragment : Fragment() {
         initOldLoginButton()
         initLocalUrlSwitch()
         initClientCertSwitch()
+        initCustomHeadersSwitch()
     }
 
     @OptIn(UnstableApi::class)
@@ -92,7 +94,8 @@ class LoginServerFragment : Fragment() {
             localAddress = "",
             timestamp = 0,
             isLowSecurity = false,
-            clientCert = ""
+            clientCert = "",
+            customHeaders = ""
         )
 
         serverViewModel.allServers.observe(viewLifecycleOwner) { servers ->
@@ -106,7 +109,8 @@ class LoginServerFragment : Fragment() {
                     localAddress = server.localAddress,
                     timestamp = server.timestamp,
                     isLowSecurity = server.isLowSecurity,
-                    clientCert = server.clientCert
+                    clientCert = server.clientCert,
+                    customHeaders = server.customHeaders
                 )
             } ?: emptyList())
             val adapter = ArrayAdapter(
@@ -151,6 +155,9 @@ class LoginServerFragment : Fragment() {
         binding.serverPublicUrlField.setText("")
         binding.serverLocalUrlField.setText("")
         binding.serverCertField.setText("")
+        binding.serverHeadersSwitch.isChecked = false
+        binding.serverHeadersFieldContainer.visibility = View.GONE
+        binding.serverHeadersField.setText("")
     }
 
     private fun onNonFirstServerSelected(position: Int) {
@@ -180,6 +187,18 @@ class LoginServerFragment : Fragment() {
             binding.serverCertField.setText(clientCert)
         } else {
             binding.serverCertField.setText("") // migrate old null to string
+        }
+
+        /* Optional field */
+        val customHeaders: String? = serverList[position].customHeaders
+        if (!customHeaders.isNullOrBlank()) {
+            binding.serverHeadersSwitch.isChecked = true
+            binding.serverHeadersFieldContainer.visibility = View.VISIBLE
+            binding.serverHeadersField.setText(customHeaders)
+        } else {
+            binding.serverHeadersSwitch.isChecked = false
+            binding.serverHeadersFieldContainer.visibility = View.GONE
+            binding.serverHeadersField.setText("")
         }
     }
 
@@ -221,20 +240,9 @@ class LoginServerFragment : Fragment() {
         }
     }
 
-    /* DEPRECATION WARNING
-    *
-    * This button has been hidden from the UI in favor of the Top AppBar.
-    *
-    * This needs to be refactored to provide a true 'Login' button,
-    * set a propper id name and send the correct intent to MainActivity.
-    *
-    * This will become an entrypoint for the LoginActivity -> MainActivity workflow,
-    * and will become the guard that prevents users from crashing MainActivity with invalid creds.
-    *
-    *  */
     @OptIn(UnstableApi::class)
     fun initOldLoginButton() {
-        binding.button5.setOnClickListener {
+        binding.goToLoginButton.setOnClickListener {
             requireActivity().finish()
             val tempus = Intent(requireActivity(), MainActivity::class.java).apply {
                 putExtra("LOGIN_ACTIVITY_INTENT", "open_legacy_login_fragment")
@@ -270,6 +278,19 @@ class LoginServerFragment : Fragment() {
         }
     }
 
+    fun initCustomHeadersSwitch() {
+        binding.serverHeadersSwitch.setOnClickListener {
+            if (binding.serverHeadersSwitch.isChecked) {
+                binding.serverHeadersFieldContainer.visibility = View.VISIBLE
+                binding.serverHeadersField.setText(serverList[selectedServerPosition].customHeaders ?: "")
+            } else {
+                // Turning the switch off removes the headers when the server is saved
+                binding.serverHeadersFieldContainer.visibility = View.GONE
+                binding.serverHeadersField.setText("")
+            }
+        }
+    }
+
     fun updateLegacySharedPreferences() {
 
         val s: Server = serverList[selectedServerPosition]
@@ -280,6 +301,7 @@ class LoginServerFragment : Fragment() {
         val address: String = s.address
         val localAddress: String = s.localAddress ?: s.address
         val clientCert: String = s.clientCert ?: ""
+        val customHeaders: String = s.customHeaders ?: ""
 
         App.getInstance().preferences.edit { putString("server", server) }
         App.getInstance().preferences.edit { putString("user", user) }
@@ -287,6 +309,7 @@ class LoginServerFragment : Fragment() {
         App.getInstance().preferences.edit { putString("in_use_server_address", address) }
         App.getInstance().preferences.edit { putString("local_address", localAddress) }
         App.getInstance().preferences.edit { putString("client_cert", clientCert) }
+        App.getInstance().preferences.edit { putString("custom_headers", customHeaders) }
 
         App.getSubsonicClientInstance(true)
 
@@ -314,7 +337,8 @@ class LoginServerFragment : Fragment() {
                 localAddress = binding.serverLocalUrlField.text.toString(),
                 timestamp = System.currentTimeMillis(),
                 isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
-                clientCert = binding.serverCertField.text.toString()
+                clientCert = binding.serverCertField.text.toString(),
+                customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null }
             )
 
             if (selectedServerPosition == 0) {
@@ -365,6 +389,13 @@ class LoginServerFragment : Fragment() {
         ) {
             binding.serverLocalUrlField.error = errMsgUrl
             return false
+        } else if (binding.serverHeadersSwitch.isChecked) {
+            val invalidLines = CustomHeaders.invalidLineNumbers(binding.serverHeadersField.text.toString())
+            if (invalidLines.isNotEmpty()) {
+                binding.serverHeadersField.error =
+                    getString(R.string.error_custom_headers_invalid, invalidLines.first().toString())
+                return false
+            }
         }
         return true
     }

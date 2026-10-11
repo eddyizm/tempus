@@ -258,7 +258,6 @@
     <string name="login_title">Серверы Subsonic</string>
     <string name="login_title_expanded">Серверы Subsonic</string>
     <string name="media_route_menu_title">Трансляция</string>
-    <string name="menu_add_button">Добавить</string>
     <string name="menu_add_to_playlist_button">В плейлист</string>
     <string name="playlist_added_to_queue">Плейлист добавлен в очередь</string>
     <string name="menu_go_to_playlist_button">Играть</string>
@@ -433,18 +432,6 @@
     <string name="search_title_song">Треки</string>
     <string name="search_title_empty_response">Нет результатов.</string>
     <string name="search_description_empty_response">Сервер вернул пустой ответ.</string>
-    <string name="server_signup_dialog_action_low_security">Низкая безопасность</string>
-    <string name="server_signup_dialog_action_delete_toast">Удерживайте для удаления</string>
-    <string name="server_signup_dialog_hint_local_address">Локальный URL</string>
-    <string name="server_signup_dialog_hint_name">Имя сервера</string>
-    <string name="server_signup_dialog_hint_password">Пароль</string>
-    <string name="server_signup_dialog_hint_url">URL сервера</string>
-    <string name="server_signup_dialog_hint_username">Логин</string>
-    <string name="server_signup_dialog_hint_client_certificate">Сертификат (опц.)</string>
-    <string name="server_signup_dialog_negative_button">Отмена</string>
-    <string name="server_signup_dialog_neutral_button">Удалить</string>
-    <string name="server_signup_dialog_positive_button">Сохранить</string>
-    <string name="server_signup_dialog_title">Добавить сервер</string>
     <string name="server_unreachable_dialog_negative_button">Отмена</string>
     <string name="server_unreachable_dialog_neutral_button">Ко входу</string>
     <string name="server_unreachable_dialog_positive_button">Всё равно продолжить</string>
@@ -886,7 +873,6 @@
     <string name="la_perms_nearby_devices_description">Требуется для обнаружения других устройств через UPnP и Chromecast.</string>
 
     <string name="la_shortcut_label">Введение</string>
-    <string name="la_button_advanced_editor">Расширенный редактор (бета)</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
