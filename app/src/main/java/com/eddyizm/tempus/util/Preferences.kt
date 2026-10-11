@@ -22,6 +22,7 @@ object Preferences {
     private const val SALT = "salt"
     private const val LOW_SECURITY = "low_security"
     private const val CLIENT_CERT = "client_cert"
+    private const val CUSTOM_HEADERS = "custom_headers"
     private const val BATTERY_OPTIMIZATION = "battery_optimization"
     private const val SERVER_ID = "server_id"
     private const val OPEN_SUBSONIC = "open_subsonic"
@@ -339,6 +340,16 @@ object Preferences {
     @JvmStatic
     fun setClientCert(clientCert: String?) {
         App.getInstance().preferences.edit().putString(CLIENT_CERT, clientCert).apply()
+    }
+
+    @JvmStatic
+    fun getCustomHeaders(): String? {
+        return App.getInstance().preferences.getString(CUSTOM_HEADERS, null)
+    }
+
+    @JvmStatic
+    fun setCustomHeaders(customHeaders: String?) {
+        App.getInstance().preferences.edit().putString(CUSTOM_HEADERS, customHeaders).apply()
     }
 
     @JvmStatic
