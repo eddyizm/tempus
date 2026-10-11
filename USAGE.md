@@ -242,6 +242,16 @@ If your server supports it - add a internet radio station feed
     <img src="mockup/usage/add_radio_station.png" width=326>
 </p>
 
+### Continue listening
+When you stop partway through a podcast, an audiobook or a track over 10 minutes, Tempus remembers the position and saves it as a bookmark on your server, so it also shows up on your other devices. The home tab's **Continue listening** row lists these; tap one to pick up where you stopped. An entry goes away by itself once the track plays to the end.
+
+- **Remove one:** long-press it and choose **Remove from Continue listening**.
+- **Remove all:** tap **Clear all** in the row's header.
+
+Both also delete the matching bookmark on your server, so it does not come back on the next sync. That includes bookmarks made by other apps that use the same server. If the server can't be reached at that moment, the bookmark stays and the entry reappears later.
+
+To turn the feature off, switch off **Settings → Players → Continue listening**. Nothing new is saved or synced and the row is hidden. Entries you already have are kept, and come back if you switch it on again.
+
 ## Navigation
 
 ### Bottom Navigation Bar

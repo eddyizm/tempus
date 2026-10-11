@@ -593,10 +593,25 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 // while still playing, where no pause fires.) Skip natural auto-transition,
                 // where the track already ended, so a finished track doesn't grab a near-end
                 // resume point.
+                //
+                // A paused track already got its point when it paused, and has not moved since,
+                // so leaving it saves nothing. Saving again would bring back a Continue listening
+                // entry the user removed while it was paused, e.g. when a new queue replaces it
+                // or the launch restore clears it.
                 if (oldPosition.mediaItemIndex != newPosition.mediaItemIndex &&
-                    reason != Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
+                    reason != Player.DISCONTINUITY_REASON_AUTO_TRANSITION &&
+                    player.playWhenReady) {
                     oldPosition.mediaItem?.let {
                         MediaManager.setResumePoint(it, oldPosition.positionMs)
+                    }
+                }
+
+                // Seeking within a paused track moves its point, and no pause will follow to save it.
+                if (oldPosition.mediaItemIndex == newPosition.mediaItemIndex &&
+                    reason == Player.DISCONTINUITY_REASON_SEEK &&
+                    !player.playWhenReady) {
+                    newPosition.mediaItem?.let {
+                        MediaManager.setResumePoint(it, newPosition.positionMs)
                     }
                 }
 
@@ -766,11 +781,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         val player = mediaLibrarySession.player
 
         if (!player.playWhenReady || player.mediaItemCount == 0) {
-            // App swiped away while paused - write the final position so the resume
-            // point (and server bookmark) reflect exactly where the user stopped.
-            if (player.currentMediaItem != null && player.currentPosition > 0) {
-                MediaManager.setResumePoint(player.currentMediaItem, player.currentPosition)
-            }
+            // App swiped away while paused. The pause (or a seek since) already saved the
+            // position; saving it again would bring back an entry removed while paused.
             stopSelf()
         }
     }

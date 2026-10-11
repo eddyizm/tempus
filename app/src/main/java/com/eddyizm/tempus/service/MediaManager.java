@@ -612,7 +612,7 @@ public class MediaManager {
         // (store + server bookmark) is scoped to podcasts, audiobooks, and long music tracks
         // (>10 min). No position cutoff here - the point is re-persisted periodically during
         // playback (see BaseMediaService) and cleared when the track plays to completion.
-        if (!isResumable(type, durationMs)) {
+        if (!savesToContinueListening(type, durationMs, Preferences.isContinueListeningEnabled())) {
             return;
         }
 
@@ -626,6 +626,11 @@ public class MediaManager {
         getQueueRepository().createServerBookmark(mediaItem.mediaId, ms);
     }
 
+    /** Whether a stopped track gets a Continue listening entry and a server bookmark. */
+    static boolean savesToContinueListening(String type, long durationMs, boolean enabled) {
+        return enabled && isResumable(type, durationMs);
+    }
+
     static boolean isResumable(String type, long durationMs) {
         if (Constants.MEDIA_TYPE_PODCAST.equals(type) || Constants.MEDIA_TYPE_AUDIOBOOK.equals(type)) {
             return true;
@@ -636,10 +641,11 @@ public class MediaManager {
 
     /**
      * Clears the resume point + server bookmark for a song that played to completion, so a
-     * fully-finished track no longer appears in "Continue listening".
+     * fully-finished track no longer appears in "Continue listening". Does nothing while
+     * Continue listening is switched off: the entry and the server bookmark are left as they are.
      */
     public static void deleteResumePoint(MediaItem mediaItem) {
-        if (mediaItem != null) {
+        if (mediaItem != null && Preferences.isContinueListeningEnabled()) {
             getQueueRepository().deleteServerBookmark(mediaItem.mediaId);
         }
     }
@@ -649,8 +655,17 @@ public class MediaManager {
      * (playing_changed) so an upgrade from a pre-resume-point build keeps its spot.
      */
     public static long resumePosition(Queue lastPlayed) {
-        long saved = Preferences.getResumePoint(lastPlayed.getId());
-        return saved != 0 ? saved : Math.max(0L, lastPlayed.getPlayingChanged());
+        return resumePosition(Preferences.getResumePoint(lastPlayed.getId()),
+                lastPlayed.getPlayingChanged(), Preferences.isContinueListeningEnabled());
+    }
+
+    /**
+     * While Continue listening is off only the queue row is kept up to date, so an entry saved
+     * before it was switched off is stale and must not win over the queue row.
+     */
+    static long resumePosition(long continueListeningPosition, long queuePosition, boolean continueListeningEnabled) {
+        long saved = continueListeningEnabled ? continueListeningPosition : 0L;
+        return saved != 0 ? saved : Math.max(0L, queuePosition);
     }
 
     public static void scrobble(MediaItem mediaItem, boolean submission) {

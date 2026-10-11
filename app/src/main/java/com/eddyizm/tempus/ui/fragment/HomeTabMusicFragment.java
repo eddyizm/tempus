@@ -71,6 +71,7 @@ import com.eddyizm.tempus.util.UIUtil;
 import com.eddyizm.tempus.viewmodel.HomeViewModel;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -722,12 +723,32 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private void initContinueListening() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_CONTINUE_LISTENING)) return;
 
+        if (!Preferences.isContinueListeningEnabled()) {
+            bind.homeContinueListeningSector.setVisibility(View.GONE);
+            return;
+        }
+
         bind.continueListeningRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
         bind.continueListeningRecyclerView.setHasFixedSize(true);
 
-        continueListeningAdapter = new ContinueListeningAdapter(mediaBrowserListenableFuture);
+        continueListeningAdapter = new ContinueListeningAdapter(mediaBrowserListenableFuture, resumePoint -> {
+            new QueueRepository().deleteServerBookmark(resumePoint.getId());
+            showContinueListening();
+        });
         bind.continueListeningRecyclerView.setAdapter(continueListeningAdapter);
+        bind.continueListeningClearAllTextViewClickable.setOnClickListener(v -> confirmClearContinueListening());
 
+        showContinueListening();
+
+        // Sync from server bookmarks (async) so cross-device resume points appear too, then refresh.
+        new QueueRepository().syncBookmarksFromServer(() -> {
+            if (continueListeningAdapter == null || bind == null) return;
+            showContinueListening();
+        });
+    }
+
+    private void showContinueListening() {
+        if (bind == null || continueListeningAdapter == null) return;
         List<Preferences.ResumePoint> resumePoints = Preferences.getContinueListening();
         if (resumePoints.isEmpty()) {
             bind.homeContinueListeningSector.setVisibility(View.GONE);
@@ -735,18 +756,23 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             bind.homeContinueListeningSector.setVisibility(View.VISIBLE);
             continueListeningAdapter.setItems(resumePoints);
         }
+    }
 
-        // Sync from server bookmarks (async) so cross-device resume points appear too, then refresh.
-        new QueueRepository().syncBookmarksFromServer(() -> {
-            if (continueListeningAdapter == null || bind == null) return;
-            List<Preferences.ResumePoint> synced = Preferences.getContinueListening();
-            if (synced.isEmpty()) {
-                bind.homeContinueListeningSector.setVisibility(View.GONE);
-            } else {
-                bind.homeContinueListeningSector.setVisibility(View.VISIBLE);
-                continueListeningAdapter.setItems(synced);
-            }
-        });
+    private void confirmClearContinueListening() {
+        List<Preferences.ResumePoint> resumePoints = Preferences.getContinueListening();
+        if (resumePoints.isEmpty()) return;
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(R.string.home_continue_listening_clear_all_title)
+                .setMessage(getResources().getQuantityString(R.plurals.home_continue_listening_clear_all_message, resumePoints.size(), resumePoints.size()))
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.home_continue_listening_clear_all, (dialog, which) -> {
+                    QueueRepository queueRepository = new QueueRepository();
+                    for (Preferences.ResumePoint resumePoint : resumePoints) {
+                        queueRepository.deleteServerBookmark(resumePoint.getId());
+                    }
+                    showContinueListening();
+                })
+                .show();
     }
 
     private void initSimilarSongView() {

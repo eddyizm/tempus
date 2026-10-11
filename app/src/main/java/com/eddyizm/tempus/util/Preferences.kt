@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 
 object Preferences {
     const val THEME = "theme"
+    const val CONTINUE_LISTENING_ENABLED = "continue_listening_enabled"
     private const val DARK_THEME_BLACK = "dark_theme_black"
     private const val COLOR_ACCENT = "color_accent"
     private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
@@ -980,6 +981,12 @@ object Preferences {
     @JvmStatic
     fun setTempusUpdateReminder() {
         App.getInstance().preferences.edit().putLong(NEXT_UPDATE_CHECK, System.currentTimeMillis()).apply()
+    }
+
+    // On by default, as shipped in 4.29.0. Off stops saving places and server bookmarks.
+    @JvmStatic
+    fun isContinueListeningEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(CONTINUE_LISTENING_ENABLED, true)
     }
 
     @JvmStatic
