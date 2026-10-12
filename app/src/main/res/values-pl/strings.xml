@@ -318,6 +318,44 @@
     <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
     <string name="player_queue_save_to_playlist">Zapisz kolejkę do playlisty</string>
     <string name="player_queue_load_queue">Wczytaj kolejkę</string>
+	<string name="player_queue_playing_next">Następne odtwarzane</string>
+    <string name="player_queue_clear">Wyczyść</string>
+    <string name="player_queue_shuffle_upcoming">Wymieszaj nadchodzące</string>
+    <string name="player_queue_download_all">Pobierz wszystkie</string>
+    <string name="player_queue_empty">Kolejka jest pusta</string>
+    <string name="player_queue_reorder">Zmień kolejność</string>
+    <string name="player_queue_remove">Usuń z kolejki</string>
+    <plurals name="player_queue_song_count">
+        <item quantity="one">%d piosenka</item>
+		<item quantity="few">%d piosenki</item>
+        <item quantity="many">%d piosenek</item>
+        <item quantity="other">%d piosenek</item>
+    </plurals>
+    <plurals name="player_queue_duration_seconds">
+        <item quantity="one">%d sekunda</item>
+		<item quantity="few">%d sekundy</item>
+        <item quantity="many">%d sekund</item>
+        <item quantity="other">%d sekundy</item>
+    </plurals>
+    <plurals name="player_queue_duration_minutes">
+        <item quantity="one">%d minuta</item>
+		<item quantity="few">%d minuty</item>
+        <item quantity="many">%d minut</item>
+        <item quantity="other">%d minuty</item>
+    </plurals>
+    <plurals name="player_queue_duration_hours">
+        <item quantity="one">%d godzina</item>
+		<item quantity="few">%d godziny</item>
+        <item quantity="many">%d godzin</item>
+        <item quantity="other">%d godziny</item>
+    </plurals>
+    <string name="player_queue_starred">Oznaczone gwiazdką</string>
+    <string name="player_queue_downloaded">Pobrane</string>
+    <string name="player_queue_play">Odtwarzaj</string>
+    <string name="player_queue_pause">Pauza</string>
+    <string name="player_queue_all_downloaded">Pobrano już wszystkie piosenki</string>
+    <string name="player_queue_loaded">Kolejka załadowana</string>
+    <string name="player_queue_no_saved_queue">Nie znaleziono zapisanej kolejki</string>
     <string name="player_lyrics_download_content_description">Pobierz teksty do odtwarzania offline</string>
     <string name="player_lyrics_downloaded_content_description">Teksty pobrane do odtwarzania offline</string>
     <string name="player_lyrics_download_success">Zapisano tekst do odtwarzania offline.</string>
