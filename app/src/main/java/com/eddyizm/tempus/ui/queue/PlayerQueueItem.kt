@@ -318,7 +318,7 @@ private fun QueueArtwork(
     modifier: Modifier = Modifier,
     artworkUri: Uri? = null,
     size: Int = 160,
-    cornerRadius: Dp = 8.dp,
+    cornerRadius: Dp = 0.dp,
     contentDescription: String? = null,
     @DrawableRes placeholderRes: Int = R.drawable.ic_placeholder_song,
     overlayContent: (@Composable () -> Unit)? = null
