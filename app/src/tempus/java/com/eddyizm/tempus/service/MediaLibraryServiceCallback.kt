@@ -32,6 +32,8 @@ class MediaLibrarySessionCallback(
         MediaBrowserTree.initialize(context, automotiveRepository)
     }
 
+    override fun hasAutomotiveLyrics(): Boolean = true
+
     // ─────────────────────────────────────────────────────────────
     // Android Auto — browse
     // ─────────────────────────────────────────────────────────────

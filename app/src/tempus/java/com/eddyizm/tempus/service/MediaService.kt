@@ -14,6 +14,7 @@ import com.google.android.gms.common.GoogleApiAvailability
 class MediaService : BaseMediaService(), SessionAvailabilityListener {
     private val automotiveRepository = AutomotiveRepository()
     private lateinit var castPlayer: CastPlayer
+    private lateinit var automotiveLyricsUpdater: AutomotiveLyricsUpdater
 
     @Suppress("DEPRECATION")
     private fun initializeCastPlayer() {
@@ -40,12 +41,15 @@ class MediaService : BaseMediaService(), SessionAvailabilityListener {
 
     override fun playerInitHook() {
         super.playerInitHook()
+        automotiveLyricsUpdater = AutomotiveLyricsUpdater(mediaLibrarySession, exoplayer)
+        automotiveLyricsUpdater.start()
         initializeCastPlayer()
         if (this::castPlayer.isInitialized && castPlayer.isCastSessionAvailable)
             setPlayer(null, castPlayer)
     }
 
     override fun releasePlayers() {
+        if (this::automotiveLyricsUpdater.isInitialized) automotiveLyricsUpdater.release()
         if (this::castPlayer.isInitialized) {
             castPlayer.setSessionAvailabilityListener(null)
             castPlayer.release()

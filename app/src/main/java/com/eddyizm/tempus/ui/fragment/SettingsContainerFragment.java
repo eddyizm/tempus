@@ -187,6 +187,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionKeepScreenOn();
         actionAutoDownloadLyrics();
         actionMiniPlayerHeart();
+        actionAndroidAutoSyncedLyricsLead();
 
         bindMediaService();
         actionBuiltinEqualizer();
@@ -854,6 +855,25 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 Preferences.setAutoDownloadLyricsEnabled((Boolean) newValue);
             }
             return true;
+        });
+    }
+
+    private void actionAndroidAutoSyncedLyricsLead() {
+        SeekBarPreference preference = findPreference("androidauto_synced_lyrics_lead");
+        if (preference == null) {
+            return;
+        }
+
+        // Dragging moves the slider 1 ms at a time, so snap the chosen value to steps of 50 ms.
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (!(newValue instanceof Integer)) return true;
+
+            int value = (Integer) newValue;
+            int snapped = Math.round(value / 50f) * 50;
+            if (snapped == value) return true;
+
+            preference.setValue(snapped);
+            return false;
         });
     }
 

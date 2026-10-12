@@ -625,6 +625,24 @@
             android:defaultValue="false"
             android:key="androidauto_shuffle_downloaded_tracks" />
 
+        <SwitchPreference
+            android:title="@string/settings_androidauto_synced_lyrics"
+            android:defaultValue="false"
+            android:summary="@string/settings_androidauto_synced_lyrics_summary"
+            android:key="androidauto_synced_lyrics" />
+
+        <SeekBarPreference
+            android:defaultValue="500"
+            android:key="androidauto_synced_lyrics_lead"
+            android:title="@string/settings_androidauto_synced_lyrics_lead"
+            android:summary="@string/settings_androidauto_synced_lyrics_lead_summary"
+            android:dependency="androidauto_synced_lyrics"
+            android:max="2000"
+            app:min="0"
+            app:seekBarIncrement="50"
+            app:showSeekBarValue="true"
+            app:adjustable="true" />
+
         <ListPreference
             app:defaultValue="0"
             app:dialogTitle="@string/settings_androidauto_starred_for_made_for_you"

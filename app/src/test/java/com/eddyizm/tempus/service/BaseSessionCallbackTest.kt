@@ -21,6 +21,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -29,6 +30,8 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.times
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyBoolean
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mockito.mockConstruction
 import org.mockito.Mockito.mockStatic
 
@@ -209,6 +212,45 @@ class BaseSessionCallbackTest {
             }
         }
     }
+
+    private fun lastButtonIcon(hasAutomotiveLyrics: Boolean, lyricsEnabled: Boolean): Int {
+        val context = mock<Context>()
+        val service = mock<BaseMediaService>()
+        val player = mock<Player>()
+        val app = mock<App>()
+        val preferences = mock<SharedPreferences>()
+
+        whenever(context.getString(anyInt())).thenReturn("mock_string")
+        whenever(preferences.getString(any(), any())).thenReturn("[heartID]")
+        whenever(preferences.getBoolean(eq("androidauto_synced_lyrics"), anyBoolean())).thenReturn(lyricsEnabled)
+        whenever(app.preferences).thenReturn(preferences)
+
+        mockStatic(App::class.java).use { appStatic ->
+            appStatic.`when`<App> { App.getInstance() }.thenReturn(app)
+
+            mockConstruction(SessionCommand::class.java).use {
+                val callback = object : BaseSessionCallback(context, service) {
+                    override fun hasAutomotiveLyrics() = hasAutomotiveLyrics
+                    fun lastButton() = buildCustomLayout(player).last()
+                }
+
+                return callback.lastButton().iconResId
+            }
+        }
+    }
+
+    @Test
+    fun lyricsButton_hiddenWithoutAutomotiveLyrics() {
+        assertNotEquals(R.drawable.ic_lyrics, lastButtonIcon(hasAutomotiveLyrics = false, lyricsEnabled = true))
+        assertNotEquals(R.drawable.ic_lyrics_off, lastButtonIcon(hasAutomotiveLyrics = false, lyricsEnabled = false))
+    }
+
+    @Test
+    fun lyricsButton_followsTheSyncedLyricsSetting() {
+        assertEquals(R.drawable.ic_lyrics, lastButtonIcon(hasAutomotiveLyrics = true, lyricsEnabled = true))
+        assertEquals(R.drawable.ic_lyrics_off, lastButtonIcon(hasAutomotiveLyrics = true, lyricsEnabled = false))
+    }
+
     @Test
     fun heartTap_sendsUnstarWhenTheRegistrySaysStarredAndTheItemRatingIsStale() {
         val context = mock<Context>()

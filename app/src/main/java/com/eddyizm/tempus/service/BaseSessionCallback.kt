@@ -132,6 +132,24 @@ open class BaseSessionCallback(
             .setSlots(CommandButton.SLOT_OVERFLOW)
             .build()
 
+    @Suppress("DEPRECATION")
+    private val customCommandToggleLyricsOn =
+        CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+            .setDisplayName(context.getString(R.string.settings_androidauto_synced_lyrics_hide))
+            .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_LYRICS_ON, Bundle.EMPTY))
+            .setIconResId(R.drawable.ic_lyrics)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
+            .build()
+
+    @Suppress("DEPRECATION")
+    private val customCommandToggleLyricsOff =
+        CommandButton.Builder(CommandButton.ICON_UNDEFINED)
+            .setDisplayName(context.getString(R.string.settings_androidauto_synced_lyrics_show))
+            .setSessionCommand(SessionCommand(Constants.CUSTOM_COMMAND_TOGGLE_LYRICS_OFF, Bundle.EMPTY))
+            .setIconResId(R.drawable.ic_lyrics_off)
+            .setSlots(CommandButton.SLOT_OVERFLOW)
+            .build()
+
     // Standard transport controls. Kept pinned in setMediaButtonPreferences so the custom
     // overflow buttons can't take their place on the last track (see #663).
     private val previousButton =
@@ -162,7 +180,9 @@ open class BaseSessionCallback(
         customCommandToggleHeartOff,
         customCommandToggleHeartLoading,
         customCommandInstantMixOn,
-        customCommandInstantMixOff
+        customCommandInstantMixOff,
+        customCommandToggleLyricsOn,
+        customCommandToggleLyricsOff
     )
 
     private val playerListener = object : Player.Listener {
@@ -292,7 +312,8 @@ open class BaseSessionCallback(
             "[heartID]",
             "[repeatID]",
             "[shuffleID]",
-            "[instantMixID]")
+            "[instantMixID]",
+            "[lyricsID]")
         val tabButton = listOfNotNull(
             Preferences.getCustomCommandFirstButton(),
             Preferences.getCustomCommandSecondButton()
@@ -330,9 +351,18 @@ open class BaseSessionCallback(
 
             "[instantMixID]" -> if (!MediaManager.continuousPlayIsRunning.get()) customCommandInstantMixOn
             else customCommandInstantMixOff
+
+            "[lyricsID]" -> when {
+                !hasAutomotiveLyrics() -> null
+                Preferences.isAndroidAutoSyncedLyricsEnabled() -> customCommandToggleLyricsOn
+                else -> customCommandToggleLyricsOff
+            }
             else -> null
         }
     }
+
+    /** Whether this flavor shows synced lyrics on Android Auto, and so offers the lyrics button. */
+    protected open fun hasAutomotiveLyrics(): Boolean = false
 
     // A star made in the app writes the registry and never the session, so the playing item keeps
     // whatever rating it was loaded with. Read the registry first and keep the item's own rating
@@ -476,6 +506,14 @@ open class BaseSessionCallback(
                     else -> Player.REPEAT_MODE_OFF
                 }
                 session.player.repeatMode = nextMode
+                updateMediaNotificationCustomLayout(session)
+                Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+            }
+            Constants.CUSTOM_COMMAND_TOGGLE_LYRICS_ON,
+            Constants.CUSTOM_COMMAND_TOGGLE_LYRICS_OFF -> {
+                Preferences.setAndroidAutoSyncedLyricsEnabled(
+                    customCommand.customAction == Constants.CUSTOM_COMMAND_TOGGLE_LYRICS_OFF
+                )
                 updateMediaNotificationCustomLayout(session)
                 Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
             }

@@ -44,6 +44,7 @@
     - [Artists and Instant Mix](#artists-and-instant-mix)
     - [A-Z and search](#a-z-and-search)
     - [Shortcuts](#shortcuts)
+    - [Synced lyrics](#synced-lyrics)
 - [Known Issues](#known-issues)
     - [Airsonic Distorted Playback](#airsonic-distorted-playback)
     - [Support](#support)
@@ -598,6 +599,10 @@ Shortcuts are displayed only if the function is selected from root level:
 - On starred albums page: jump to albums
 - On artists page: jump to starred artists
 - On starred artists page: jump to artists
+
+### Synced lyrics
+
+Turn on **Settings → Android Auto → Show synced lyrics** to follow along in the car. While Android Auto is connected and a song with synced lyrics plays, the line being sung replaces the song title and the line below shows "Title - Artist". Both come back when the track changes or the car disconnects. Each line appears a little before it is sung so you can read ahead; set how early with **Lyrics lead time** (500 ms by default). The lyrics button in the Android Auto player controls turns the lyrics on and off without going to Settings. Lyrics come from the server's OpenSubsonic `songLyrics` extension or from lyrics you saved on the device. Plain, unsynced lyrics are not shown. While the car is connected, the phone's notification and lock screen show the lyrics line too.
 
 [Back to top](#table-of-contents)
 
