@@ -64,7 +64,7 @@ android {
 
         play {
             dimension = "default"
-            applicationId = "com.eddyizm.tempus"
+            applicationId = "com.eddyizm.play.tempus"
         }
     }
 
