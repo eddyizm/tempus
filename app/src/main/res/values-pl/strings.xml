@@ -847,7 +847,10 @@
     <string name="la_server_switch_plaintext_password">Hasło jako zwykły tekst (stare serwery)</string>
     <string name="la_server_switch_local_url">Ustaw lokalny adres URL</string>
     <string name="la_server_switch_cert">Certyfikat klienta (mTLS)</string>
-
+    <string name="la_server_switch_headers">Niestandardowe nagłówki HTTP</string>
+    <string name="la_server_field_server_headers">Jeden na linię, np. CF-Access-Client-Id: wartość</string>
+    <string name="error_custom_headers_invalid">Nieprawidłowy nagłówek na linii %1$s. Użyj Nazwa: wartość</string>
+	
 	<string name="la_theme_title">Wybierz kolor akcentu</string>
 	
     <string name="la_perms_title">Poproś o uprawnienia</string>
