@@ -165,7 +165,6 @@
     <string name="login_title">Subsonic sunucuları</string>
     <string name="login_title_expanded">Subsonic sunucuları</string>
     <string name="media_route_menu_title">Yayınla</string>
-    <string name="menu_add_button">Ekle</string>
     <string name="menu_add_to_playlist_button">Çalma listesine ekle</string>
     <string name="menu_download_all_button">Tümünü indir</string>
     <string name="menu_rate_album">Albümü oyla</string>
@@ -257,17 +256,6 @@
     <string name="search_title_album">Albümler</string>
     <string name="search_title_artist">Sanatçılar</string>
     <string name="search_title_song">Şarkılar</string>
-    <string name="server_signup_dialog_action_low_security">Düşük güvenlik</string>
-    <string name="server_signup_dialog_action_delete_toast">Silmek için uzun basın</string>
-    <string name="server_signup_dialog_hint_local_address">Yerel URL</string>
-    <string name="server_signup_dialog_hint_name">Sunucu Adı</string>
-    <string name="server_signup_dialog_hint_password">Parola</string>
-    <string name="server_signup_dialog_hint_url">Sunucu URL’si</string>
-    <string name="server_signup_dialog_hint_username">Kullanıcı adı</string>
-    <string name="server_signup_dialog_negative_button">İptal</string>
-    <string name="server_signup_dialog_neutral_button">Sil</string>
-    <string name="server_signup_dialog_positive_button">Kaydet</string>
-    <string name="server_signup_dialog_title">Sunucu ekle</string>
     <string name="server_unreachable_dialog_negative_button">İptal</string>
     <string name="server_unreachable_dialog_neutral_button">Girişe git</string>
     <string name="server_unreachable_dialog_positive_button">Yine de devam et</string>

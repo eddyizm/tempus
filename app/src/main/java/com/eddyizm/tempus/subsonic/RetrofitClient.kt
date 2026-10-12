@@ -7,6 +7,7 @@ import com.eddyizm.tempus.subsonic.models.BookmarksDeserializer
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.subsonic.utils.EmptyDateTypeAdapter
 import com.eddyizm.tempus.util.ClientCertManager
+import com.eddyizm.tempus.util.ServerHeaders
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -83,6 +84,7 @@ class RetrofitClient(subsonic: Subsonic) {
             .writeTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(getHttpLoggingInterceptor())
             .addInterceptor(cacheUtil.offlineInterceptor)
+            .addNetworkInterceptor(ServerHeaders.createInterceptor())
             // .addNetworkInterceptor(cacheUtil.onlineInterceptor)
             .cache(getCache())
             .setupSsl()

@@ -190,7 +190,6 @@
     <string name="login_title">Servidores de Subsonic</string>
     <string name="login_title_expanded">Servidores de Subsonic</string>
     <string name="media_route_menu_title">Emitir</string>
-    <string name="menu_add_button">Añadir</string>
     <string name="menu_add_to_playlist_button">Añadir a la lista de reproducción</string>
     <string name="menu_edit_playlist_button">Editar lista de reproducción</string>
     <string name="menu_download_all_button">Descargar todo</string>
@@ -315,18 +314,6 @@
     <string name="settings_system_equalizer_title">Ecualizador del sistema</string>
     <string name="search_title_artist">Artistas</string>
     <string name="search_title_song">Pistas</string>
-    <string name="server_signup_dialog_action_low_security">Baja seguridad</string>
-    <string name="server_signup_dialog_action_delete_toast">Pulsación larga para eliminar</string>
-    <string name="server_signup_dialog_hint_local_address">URL local</string>
-    <string name="server_signup_dialog_hint_name">Nombre del servidor</string>
-    <string name="server_signup_dialog_hint_password">Contraseña</string>
-    <string name="server_signup_dialog_hint_url">URL del servidor</string>
-    <string name="server_signup_dialog_hint_username">Nombre de usuario</string>
-    <string name="server_signup_dialog_hint_client_certificate">Certificado del cliente (opcional)</string>
-    <string name="server_signup_dialog_negative_button">Cancelar</string>
-    <string name="server_signup_dialog_neutral_button">Eliminar</string>
-    <string name="server_signup_dialog_positive_button">Guardar</string>
-    <string name="server_signup_dialog_title">Añadir servidor</string>
     <string name="server_unreachable_dialog_negative_button">Cancelar</string>
     <string name="server_unreachable_dialog_neutral_button">Ir al inicio de sesión</string>
     <string name="server_unreachable_dialog_positive_button">Continuar de todas formas</string>
@@ -794,7 +781,6 @@
     <string name="la_server_switch_local_url">Establece una URL local</string>
     <string name="la_server_switch_cert">Certificado del cliente (mTLS)</string>
     <string name="la_shortcut_label">Introducción</string>
-    <string name="la_button_advanced_editor">Editor avanzado (beta)</string>
     <string name="artist_page_title_most_streamed_song_unavailable">No hay canciones principales disponibles\nToca para ocultar</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Al activar esto, la lista de reproducción se hace pública. Si lo dejas como está, no cambia la visibilidad de la lista de reproducción.</string>
     <string name="playlist_editor_dialog_action_save_empty">Una lista de reproducción debe tener al menos una pista</string>

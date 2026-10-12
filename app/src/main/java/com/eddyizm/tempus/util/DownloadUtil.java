@@ -14,6 +14,7 @@ import androidx.media3.datasource.DataSpec;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.datasource.ResolvingDataSource;
+import androidx.media3.datasource.okhttp.OkHttpDataSource;
 import androidx.media3.datasource.cache.Cache;
 import androidx.media3.datasource.cache.CacheDataSource;
 import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor;
@@ -41,6 +42,9 @@ import java.util.Map;
 import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
 
 @UnstableApi
 public final class DownloadUtil {
@@ -81,12 +85,34 @@ public final class DownloadUtil {
             CookieManager cookieManager = new CookieManager();
             cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
             CookieHandler.setDefault(cookieManager);
-            httpDataSourceFactory = new DefaultHttpDataSource
+            DataSource.Factory serverHttpFactory = new DefaultHttpDataSource
                     .Factory()
                     .setAllowCrossProtocolRedirects(true);
+            // Requests to the signed-in server that need its custom headers go through OkHttp,
+            // which re-checks the host on every redirect; see CustomHeadersDataSource.
+            httpDataSourceFactory = new CustomHeadersDataSource.Factory(
+                    serverHttpFactory,
+                    new OkHttpDataSource.Factory(buildCustomHeadersHttpClient()),
+                    url -> !ServerHeaders.getHeadersForActiveServer(url).isEmpty());
         }
 
         return httpDataSourceFactory;
+    }
+
+    /**
+     * The OkHttp client behind {@link CustomHeadersDataSource}, with the same timeouts as
+     * {@link DefaultHttpDataSource} and the client certificate, if one is set up.
+     */
+    private static OkHttpClient buildCustomHeadersHttpClient() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(ServerHeaders.createInterceptor());
+        if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
+            builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
+                    ClientCertManager.INSTANCE.getTrustManager());
+        }
+        return builder.build();
     }
 
     public static synchronized DataSource.Factory getHttpDataSourceFactoryForRadio() {

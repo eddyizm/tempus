@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_add"
+        android:id="@+id/action_login"
+        android:icon="@drawable/ic_heart"
         android:iconTint="@color/titleTextColor"
-        android:title="@string/menu_add_button"
+        android:title="@string/menu_login_button"
         app:showAsAction="always" />
 </menu>
