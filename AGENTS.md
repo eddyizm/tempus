@@ -79,8 +79,6 @@
 - `settings.gradle` - Plugin management, Foojay resolver
 - `app/proguard-rules.pro` - ProGuard rules (Retrofit, exceptions, line numbers)
 - `bin/build.sh` - FFmpeg AAR build script (for custom decoder)
-- `app/src/test/.../service/DownloaderManagerNotificationTest.kt` - notification title tests (setMetadataCache seam)
-- `app/src/test/.../repository/DownloadRepositoryTest.kt` - repository CRUD/seam tests
 
 ## Contributing Notes (from CONTRIBUTING.md)
 - PRs against `development` branch
@@ -124,7 +122,6 @@ $ANDROID_HOME/cmdline-tools/tools/bin/retrace app/build/outputs/mapping/tempusRe
 2. **Database Integrity**: `isDownloaded()` must stay authoritative (Media3 index + Room DB row); external deletes must purge the Media3 index via `DownloaderManager.remove(...)`.
 3. **Notification UX**: Single notification with correct actions, tap opens app to queue fragment
 4. **Cross-Flavour**: Test on both `tempus` and `degoogled` flavors as they have different capabilities
-5. **Unit tests**: Added for download notification title (`DownloaderManagerNotificationTest.kt`) and repository (`DownloadRepositoryTest.kt`) — run `./gradlew testTempusDebugUnitTest testDegoogledDebugUnitTest`.
 
 Skills provide specialized instructions and workflows for specific tasks.
 Use the skill tool to load a skill when a task matches its description.
