@@ -289,6 +289,7 @@ class PlayerCoverFragment : Fragment() {
 
     private fun updatePlaybackState(mediaMetadata: MediaMetadata, itemIndex: Int) {
         if (LanRemoteSession.isActive()) return
+        if ((mediaBrowser?.mediaItemCount ?: 0) == 0) return
         val extras = mediaMetadata.extras
         val isRadio = extras != null && Constants.MEDIA_TYPE_RADIO == extras.getString("type")
 
