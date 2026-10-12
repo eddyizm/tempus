@@ -73,8 +73,6 @@ fun NowPlayingArtworkPager(
         }
     }
 
-    // Slide for adjacent tracks, snap for far jumps and the first valid
-    // selection (which can be adjacent when the index lands after load).
     var firstSelectionDone by remember { mutableStateOf(false) }
     LaunchedEffect(safeIndex, count) {
         if (!isDragged && safeIndex in 0 until count && safeIndex != pagerState.targetPage) {
@@ -106,7 +104,6 @@ fun NowPlayingArtworkPager(
         0.dp
     }
 
-    // initialPage reads once, so wait for real data and open on the current track.
     if (!isRadio && queue.isEmpty()) {
         Box(
             modifier = Modifier
