@@ -571,6 +571,7 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronizuj albumy oznaczone gwiazdką do użycia offline</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
+	<string name="settings_permissions">Uprawnienia aplikacji</string>
     <string name="settings_theme">Motyw</string>
 	<string name="settings_dark_theme_style">Styl ciemnego motywu</string>
     <string name="settings_tile_size">Rozmiar kafelków</string>
@@ -859,7 +860,7 @@
     <string name="la_perms_notifications_description">Wymagane do pokazywania statusu pobierania i sterowania odtwarzacza.</string>
     <string name="la_perms_access_local_network_title">Dostęp do sieci lokalnej</string>
     <string name="la_perms_access_local_network_description">Wymagany do uzyskania dostępu do innych urządzeń w tej samej sieci LAN co twoje aktualne urządzenie.</string>
-    <string name="la_perms_nearby_devices_title">Urządzenia w pobliżuNearby Devices</string>
+    <string name="la_perms_nearby_devices_title">Urządzenia w pobliżu</string>
     <string name="la_perms_nearby_devices_description">Wymagane do znajdowania urządzeń przez UPnP i Chromecast.</string>
 	
     <string name="la_theme_description">Styl dla palety dynamicznej twojej aplikacji.</string>
