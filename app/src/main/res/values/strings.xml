@@ -313,6 +313,36 @@
     <string name="player_queue_save_queue_success">Saved play queue</string>
     <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>
     <string name="player_queue_load_queue">Load Queue</string>
+    <string name="player_queue_playing_next">Playing Next</string>
+    <string name="player_queue_clear">Clear</string>
+    <string name="player_queue_shuffle_upcoming">Shuffle upcoming</string>
+    <string name="player_queue_download_all">Download all</string>
+    <string name="player_queue_empty">Queue is empty</string>
+    <string name="player_queue_reorder">Reorder</string>
+    <string name="player_queue_remove">Remove from queue</string>
+    <plurals name="player_queue_song_count">
+        <item quantity="one">%d song</item>
+        <item quantity="other">%d songs</item>
+    </plurals>
+    <plurals name="player_queue_duration_seconds">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+    <plurals name="player_queue_duration_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="player_queue_duration_hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
+    <string name="player_queue_starred">Starred</string>
+    <string name="player_queue_downloaded">Downloaded</string>
+    <string name="player_queue_play">Play</string>
+    <string name="player_queue_pause">Pause</string>
+    <string name="player_queue_all_downloaded">All songs already downloaded</string>
+    <string name="player_queue_loaded">Queue loaded</string>
+    <string name="player_queue_no_saved_queue">No saved queue found</string>
     <string name="player_lyrics_download_content_description">Download lyrics for offline playback</string>
     <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
     <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
