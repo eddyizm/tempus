@@ -361,7 +361,6 @@ open class BaseSessionCallback(
         }
     }
 
-    /** Whether this flavor shows synced lyrics on Android Auto, and so offers the lyrics button. */
     protected open fun hasAutomotiveLyrics(): Boolean = false
 
     // A star made in the app writes the registry and never the session, so the playing item keeps

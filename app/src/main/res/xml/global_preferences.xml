@@ -632,15 +632,14 @@
             android:key="androidauto_synced_lyrics" />
 
         <SeekBarPreference
-            android:defaultValue="500"
+            android:defaultValue="10"
             android:key="androidauto_synced_lyrics_lead"
             android:title="@string/settings_androidauto_synced_lyrics_lead"
-            android:summary="@string/settings_androidauto_synced_lyrics_lead_summary"
             android:dependency="androidauto_synced_lyrics"
-            android:max="2000"
+            android:max="40"
             app:min="0"
-            app:seekBarIncrement="50"
-            app:showSeekBarValue="true"
+            app:showSeekBarValue="false"
+            app:updatesContinuously="true"
             app:adjustable="true" />
 
         <ListPreference

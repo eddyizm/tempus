@@ -864,16 +864,14 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             return;
         }
 
-        // Dragging moves the slider 1 ms at a time, so snap the chosen value to steps of 50 ms.
+        preference.setSummary(getString(R.string.settings_androidauto_synced_lyrics_lead_summary,
+                Preferences.getAndroidAutoSyncedLyricsLead()));
         preference.setOnPreferenceChangeListener((pref, newValue) -> {
-            if (!(newValue instanceof Integer)) return true;
-
-            int value = (Integer) newValue;
-            int snapped = Math.round(value / 50f) * 50;
-            if (snapped == value) return true;
-
-            preference.setValue(snapped);
-            return false;
+            if (newValue instanceof Integer) {
+                pref.setSummary(getString(R.string.settings_androidauto_synced_lyrics_lead_summary,
+                        (Integer) newValue * Preferences.AA_SYNCED_LYRICS_LEAD_STEP_MS));
+            }
+            return true;
         });
     }
 

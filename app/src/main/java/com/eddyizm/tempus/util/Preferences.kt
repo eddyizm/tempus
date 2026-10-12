@@ -136,6 +136,7 @@ object Preferences {
     private const val AA_SHUFFLE_DOWNLOADED_TRACKS = "androidauto_shuffle_downloaded_tracks"
     private const val AA_SYNCED_LYRICS = "androidauto_synced_lyrics"
     private const val AA_SYNCED_LYRICS_LEAD = "androidauto_synced_lyrics_lead"
+    const val AA_SYNCED_LYRICS_LEAD_STEP_MS = 50
     private const val ACTIVE_MUSIC_FOLDER_ID = "active_music_folder_id"
 
     const val MUSIC_FOLDER_ALL = "default"
@@ -1223,7 +1224,7 @@ object Preferences {
 
     @JvmStatic
     fun getAndroidAutoSyncedLyricsLead(): Int {
-        return App.getInstance().preferences.getInt(AA_SYNCED_LYRICS_LEAD, 500)
+        return App.getInstance().preferences.getInt(AA_SYNCED_LYRICS_LEAD, 10)* AA_SYNCED_LYRICS_LEAD_STEP_MS
     }
 
     @JvmStatic

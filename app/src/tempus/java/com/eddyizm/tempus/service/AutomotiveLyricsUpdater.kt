@@ -114,7 +114,6 @@ class AutomotiveLyricsUpdater(
             return
         }
 
-        // Show each line slightly before it is sung, so it can be read in time.
         val leadMs = Preferences.getAndroidAutoSyncedLyricsLead()
         showLine(findLineIndex(current, player.currentPosition + leadMs))
     }
@@ -142,21 +141,18 @@ class AutomotiveLyricsUpdater(
     }
 
     companion object {
-        /** "Title - Artist", or whichever of the two is present. */
         fun formatSongInfo(title: CharSequence?, artist: CharSequence?): CharSequence? = when {
             title.isNullOrBlank() -> artist
             artist.isNullOrBlank() -> title
             else -> "$title - $artist"
         }
 
-        /** The lines of [lyricsList] when they carry timestamps, otherwise null. */
         fun getSyncedLines(lyricsList: LyricsList?): List<Line>? {
             val structured = lyricsList?.structuredLyrics?.firstOrNull() ?: return null
             if (!structured.synced) return null
             return structured.line?.takeIf { it.isNotEmpty() }
         }
 
-        /** The index of the line playing at [positionMs], or -1 before the first line starts. */
         fun findLineIndex(lines: List<Line>, positionMs: Long): Int {
             var idx = -1
             for (i in lines.indices) {

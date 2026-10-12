@@ -542,7 +542,7 @@
     <string name="settings_androidauto_synced_lyrics">Show synced lyrics</string>
     <string name="settings_androidauto_synced_lyrics_summary">Show the current lyrics line in place of the song title while playing</string>
     <string name="settings_androidauto_synced_lyrics_lead">Lyrics lead time</string>
-    <string name="settings_androidauto_synced_lyrics_lead_summary">Milliseconds each line is shown before it is sung</string>
+    <string name="settings_androidauto_synced_lyrics_lead_summary">Show each line %1$d ms before it is sung</string>
     <string name="settings_androidauto_synced_lyrics_hide">Hide lyrics</string>
     <string name="settings_androidauto_synced_lyrics_show">Show lyrics</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
