@@ -17,6 +17,8 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -176,6 +178,20 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                 }
             });
         }
+
+        bind.artistPageContentLayout.post(() -> {
+            if (bind == null) return;
+            int peekHeight = (int) getResources().getDimension(R.dimen.bottom_sheet_behavior_peek_height);
+            WindowInsetsCompat rootInsets = ViewCompat.getRootWindowInsets(
+                    requireActivity().getWindow().getDecorView());
+            int navBottom = rootInsets == null ? 0
+                    : rootInsets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            bind.artistPageContentLayout.setPadding(
+                    bind.artistPageContentLayout.getPaddingLeft(),
+                    bind.artistPageContentLayout.getPaddingTop(),
+                    bind.artistPageContentLayout.getPaddingRight(),
+                    navBottom+peekHeight);
+        });
     }
 
     private void initAppBar() {
