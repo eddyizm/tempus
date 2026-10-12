@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.ItemHorizontalDownloadBinding;
 import com.eddyizm.tempus.glide.CustomGlideRequest;
+import com.eddyizm.tempus.helper.recyclerview.FastScrollbar;
 import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.subsonic.models.Child;
@@ -19,15 +20,17 @@ import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Util;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @UnstableApi
-public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHorizontalAdapter.ViewHolder> implements StandardViewTypeAdapter {
+public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHorizontalAdapter.ViewHolder> implements StandardViewTypeAdapter, FastScrollbar.BubbleTextGetter {
     private final ClickCallback click;
 
     private String view;
@@ -89,10 +92,60 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         this.filterValue = filterValue;
 
         this.songs = songs;
-        this.grouped = groupSong(songs);
+        this.grouped = sortByDisplayLabel(groupSong(songs));
         this.shuffling = shufflingSong(new ArrayList<>(songs));
 
         notifyDataSetChanged();
+    }
+
+    private List<Child> sortByDisplayLabel(List<Child> items) {
+        Collator collator = Collator.getInstance();
+        collator.setStrength(Collator.PRIMARY);
+        items.sort(Comparator.comparing(this::getDisplayLabel, Comparator.nullsLast(collator)));
+        return items;
+    }
+
+    private String getDisplayLabel(Child item) {
+        if (item == null) return null;
+
+        String label;
+        switch (view) {
+            case Constants.DOWNLOAD_TYPE_TRACK:
+                label = item.getTitle();
+                break;
+            case Constants.DOWNLOAD_TYPE_ALBUM:
+                label = item.getAlbum();
+                break;
+            case Constants.DOWNLOAD_TYPE_ARTIST:
+                label = item.getArtist();
+                break;
+            case Constants.DOWNLOAD_TYPE_GENRE:
+                label = item.getGenre();
+                break;
+            case Constants.DOWNLOAD_TYPE_YEAR:
+                label = item.getYear() == null ? null : item.getYear().toString();
+                break;
+            case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                label = item instanceof Download ? ((Download) item).getPlaylistName() : null;
+                break;
+            default:
+                label = null;
+                break;
+        }
+
+        return label == null || label.trim().isEmpty() ? null : label.trim();
+    }
+
+    @Override
+    public String getTextToShowInBubble(int position) {
+        if (position < 0 || position >= grouped.size()) return null;
+
+        String label = getDisplayLabel(grouped.get(position));
+        if (label == null) return null;
+
+        int codePoint = label.codePointAt(0);
+        if (!Character.isLetterOrDigit(codePoint)) return "#";
+        return new String(Character.toChars(codePoint)).toUpperCase(Locale.getDefault());
     }
 
     public Child getItem(int id) {
