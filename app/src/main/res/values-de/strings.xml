@@ -17,6 +17,8 @@
     <string name="aa_starred_albums">★ Alben</string>
     <string name="aa_starred_artists">★ Interpreten</string>
     <string name="aa_starred_tracks">★ Titel</string>
+    <string name="aa_instant_mix">Sofort-Mix</string>
+    <string name="aa_tracks">Titel</string>
 
     <string name="activity_battery_optimizations_conclusion">Bei Problemen besuche https://dontkillmyapp.com. Dort finden sich detaillierte Anweisungen, wie man Energiespareinstellungen deaktiviert, die sich auf die Leistung von Apps auswirken.</string>
     <string name="activity_battery_optimizations_summary">Bitte deaktiviere Akku-Optimierungen für Wiedergabe bei ausgeschaltetem Bildschirm.</string>
@@ -49,7 +51,10 @@
     <string name="album_page_tracks_count_and_duration">%1$d Lieder  •  %2$d Minuten</string>
     <string name="app_name">Tempus</string>
     <string name="artist_adapter_radio_station_starting">Suchen…</string>
+    <string name="artist_bottom_sheet_add_to_playlist">Zu Wiedergabeliste hinzufügen</string>
+    <string name="artist_bottom_sheet_add_to_queue">Zu Warteschlange hinzufügen</string>
     <string name="artist_bottom_sheet_instant_mix">Sofort-Mix</string>
+    <string name="artist_bottom_sheet_play_next">Als nächstes spielen</string>
     <string name="artist_bottom_sheet_shuffle">Zufällig wiedergeben</string>
     <string name="artist_catalogue_title">Interpreten</string>
     <string name="artist_catalogue_title_expanded">Interpreten durchsuchen</string>
@@ -209,6 +214,9 @@
     <string name="media_route_menu_title">Streamen</string>
     <string name="menu_add_button">Hinzufügen</string>
     <string name="menu_add_to_playlist_button">Zu Wiedergabeliste hinzufügen</string>
+    <string name="menu_go_to_playlist_button">Wiedergabe</string>
+    <string name="menu_add_to_queue_button">Zu Warteschlange hinzufügen</string>
+    <string name="menu_edit_playlist_button">Wiedergabeliste bearbeiten</string>
     <string name="menu_download_all_button">Alle herunterladen</string>
     <string name="menu_rate_album">Album bewerten</string>
     <string name="menu_download_label">Downloads</string>
@@ -217,6 +225,7 @@
     <string name="menu_group_by_album">Album</string>
     <string name="menu_group_by_artist">Interpret</string>
     <string name="menu_group_by_genre">Genre</string>
+    <string name="menu_group_by_playlist">Wiedergabeliste</string>
     <string name="menu_group_by_track">Titel</string>
     <string name="menu_group_by_year">Jahr</string>
     <string name="menu_home_label">Start</string>
@@ -239,9 +248,12 @@
     <string name="menu_unpin_button">Von Startseite entfernen</string>
     <string name="menu_keep_synced_button">Synchronisiert halten</string>
     <string name="menu_edit_playlist_details_button">Details bearbeiten</string>
+    <string name="playlist_sort_last_played">Zuletzt gespielt</string>
     <string name="menu_sort_year">Jahr</string>
+    <string name="player_overflow_menu_add_to_playlist">Zu Wiedergabeliste hinzufügen</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="playback_speed_dialog_title">Wiedergabegeschwindigkeit</string>
+    <string name="playback_speed_dialog_reset_button">Zurücksetzen</string>
     <string name="playback_speed_dialog_negative_button">Abbrechen</string>
     <string name="player_queue_clean_all_button">Warteschlange leeren</string>
     <string name="player_queue_save_queue_success">Warteschlange gespeichert</string>
@@ -483,6 +495,7 @@
     <string name="settings_theme">Design</string>
 	<string name="settings_tile_size">Kachelgröße</string>
     <string name="settings_title_data">Daten</string>
+    <string name="settings_title_equalizer">Equalizer</string>
     <string name="settings_title_general">Allgemein</string>
     <string name="settings_title_playlist">Wiedergabelisten</string>
     <string name="settings_title_rating">Bewertung</string>
@@ -645,6 +658,15 @@
     <string name="search_title_empty_response">Keine Ergebnisse.</string>
     <string name="search_description_empty_response">Wir haben Ihre Serverantwort überprüft, aber sie war leer.</string>
 
+    <string name="la_appbar_greeter_title">Über</string>
+    <string name="la_server_field_server_name">Servername</string>
+    <string name="la_server_field_server_user">Benutzername</string>
+    <string name="la_server_field_server_pass">Passwort</string>
+    <string name="la_server_field_server_local_url">Lokale Adresse</string>
+    <string name="la_server_field_server_cert">Client-Zertifikat (optional)</string>
+    <string name="la_server_button_create">Erstellen</string>
+    <string name="la_server_button_delete">Löschen</string>
+    <string name="la_server_button_login">Zur Anmeldung</string>
     <string name="la_theme_card_emerald_green_description">Smaragdgrüne Akzentfarbe</string>
     <string name="la_perms_title">Berechtigungen anfordern</string>
     <string name="la_perms_description">Die erforderlichen Berechtigungen und deren Verwendung sind unten aufgeführt.</string>
