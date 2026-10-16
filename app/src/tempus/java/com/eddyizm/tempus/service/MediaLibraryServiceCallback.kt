@@ -321,12 +321,21 @@ class MediaLibrarySessionCallback(
                 val matches: List<MediaItem> = result?.value ?: emptyList()
 
                 when (val route = VoiceQueryRouter.route(query, matches)) {
-                    is VoiceRoute.Artist -> {
-                        // connect handle so the mix keeps extending itself during playback;
-                        // it stays idle when the artist falls back to a plain album queue
-                        MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
-                        startingAnywhere(toItemList(automotiveRepository.getInstantMix(route.artistId)))
-                    }
+                    is VoiceRoute.Artist -> startingAnywhere(
+                        Futures.transform(
+                            toItemList(automotiveRepository.getInstantMix(route.artistId)),
+                            { items ->
+                                // connect handle so the mix keeps extending itself during playback;
+                                // only once there is a mix, so a failed request leaves the current
+                                // queue alone. It stays idle when the artist falls back to an album
+                                if (items.isNotEmpty()) {
+                                    MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
+                                }
+                                items
+                            },
+                            MoreExecutors.directExecutor()
+                        )
+                    )
 
                     is VoiceRoute.Album -> startingAnywhere(toItemList(automotiveRepository.getAlbumTracks(route.albumId)))
 
