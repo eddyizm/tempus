@@ -15,6 +15,11 @@ public class Flavors {
 
     }
 
+    /** True here, this build has no Cast, so the button has nothing to offer with UPnP turned off. */
+    public static boolean routeButtonIsOnlyForUpnp(Context context) {
+        return true;
+    }
+
     public static void setUpRouteButton(Context context, Menu menu) {
         MenuItem item = menu.findItem(R.id.media_route_menu_item);
         item.setTitle(R.string.upnp_route_menu_title);

@@ -5,6 +5,7 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -16,6 +17,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.media3.common.*
+import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
@@ -29,17 +31,21 @@ import androidx.media3.session.MediaSession.ControllerInfo
 import androidx.media3.extractor.metadata.icy.IcyInfo
 import androidx.media3.extractor.metadata.id3.TextInformationFrame
 import androidx.media3.extractor.metadata.vorbis.VorbisComment
+import com.eddyizm.tempus.App
 import com.eddyizm.tempus.equalizer.BuiltinBackend
 import com.eddyizm.tempus.equalizer.EqualizerBackend
 import com.eddyizm.tempus.equalizer.EqualizerManager
 import com.eddyizm.tempus.equalizer.ExternalBackend
 import com.eddyizm.tempus.equalizer.DefaultBackend
+import com.eddyizm.tempus.equalizer.ParametricBackend
+import com.eddyizm.tempus.equalizer.ParametricEqAudioProcessor
 import androidx.mediarouter.media.MediaRouter
 import com.eddyizm.tempus.repository.QueueRepository
 import com.eddyizm.tempus.upnp.UpnpControlPoint
 import com.eddyizm.tempus.upnp.UpnpDevice
 import com.eddyizm.tempus.upnp.UpnpPlayer
 import com.eddyizm.tempus.upnp.UpnpRouteProvider
+import com.eddyizm.tempus.upnp.UpnpRoutesGate
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.*
 import com.eddyizm.tempus.util.SleepTimerManager
@@ -76,6 +82,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
+    private val parametricEqProcessor = ParametricEqAudioProcessor()
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
     private var widgetUpdateScheduled = false
     // Set in onDestroy. restorePlayerFromQueue maps the saved queue on a background thread and
@@ -717,7 +724,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     /** Offers renderers as routes and moves playback onto one through [setPlayer], as Cast does. */
     private fun initializeUpnpRoutes() {
-        val controlPoint = UpnpControlPoint()
+        val controlPoint = upnpControlPoint
         val provider = UpnpRouteProvider(this, controlPoint)
         provider.selectionListener = object : UpnpRouteProvider.SelectionListener {
             override fun onRendererSelected(device: UpnpDevice) {
@@ -740,6 +747,30 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         }
         MediaRouter.getInstance(this).addProvider(provider)
         upnpRouteProvider = provider
+    }
+
+    // One per service, so turning the UPnP switch off and on again does not leave an HTTP client behind each time.
+    private val upnpControlPoint by lazy { UpnpControlPoint() }
+
+    // The UPnP switch is read at start and on every change, so turning it off takes effect without a restart.
+    private val upnpSwitchListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == Preferences.UPNP_ENABLED) applyUpnpSwitch()
+    }
+
+    private fun applyUpnpSwitch() {
+        when (UpnpRoutesGate.change(Preferences.isUpnpEnabled(), upnpRouteProvider != null)) {
+            UpnpRoutesGate.Change.REGISTER -> initializeUpnpRoutes()
+            UpnpRoutesGate.Change.RELEASE -> {
+                // Bring playback home first, or the renderer keeps playing with nothing left to control it.
+                // Paused there, since a settings switch should not start the phone's speaker by itself.
+                upnpPlayer?.let {
+                    setPlayer(it, exoplayer)
+                    exoplayer.playWhenReady = false
+                }
+                releaseUpnpRoutes()
+            }
+            UpnpRoutesGate.Change.NONE -> Unit
+        }
     }
 
     private fun releaseUpnpRoutes() {
@@ -781,7 +812,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         playerInitHook()
         initializeEqualizer()
         initializeNetworkListener()
-        initializeUpnpRoutes()
+        applyUpnpSwitch()
+        App.getInstance().preferences.registerOnSharedPreferenceChangeListener(upnpSwitchListener)
         restorePlayerFromQueue(mediaLibrarySession.player)
     }
 
@@ -804,6 +836,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
         if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
+        App.getInstance().preferences.unregisterOnSharedPreferenceChangeListener(upnpSwitchListener)
         releaseUpnpRoutes()
         releasePlayers()
         mediaLibrarySession.release()
@@ -847,30 +880,23 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         }
     }
 
-    private fun initializeEqualizer() {
-
-        val equalizerBackend: EqualizerBackend =
-            when (Preferences.getSelectedEqualizer()) {
+    private fun buildBackend(): EqualizerBackend =
+        when (Preferences.getSelectedEqualizer()) {
             1 -> BuiltinBackend()
             2 -> ExternalBackend()
+            3 -> ParametricBackend(parametricEqProcessor)
             else -> DefaultBackend()
         }
 
-        equalizerManager = EqualizerManager(equalizerBackend, baseContext)
+    private fun initializeEqualizer() {
+        equalizerManager = EqualizerManager(buildBackend(), baseContext)
         equalizerManager.attach(exoplayer.audioSessionId)
         sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
     }
 
     fun reloadEqualizer() {
         equalizerManager.release(exoplayer.audioSessionId)
-
-        val backend: EqualizerBackend = when (Preferences.getSelectedEqualizer()) {
-            1 -> BuiltinBackend()
-            2 -> ExternalBackend()
-            else -> DefaultBackend()
-        }
-
-        equalizerManager = EqualizerManager(backend, baseContext)
+        equalizerManager = EqualizerManager(buildBackend(), baseContext)
         equalizerManager.attach(exoplayer.audioSessionId)
         sendBroadcast(Intent(ACTION_RELOAD_EQUALIZER))
     }
@@ -1130,7 +1156,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 enableAudioTrackPlaybackParams: Boolean
             ): AudioSink {
                 return DefaultAudioSink.Builder(context)
-                    .setAudioProcessors(arrayOf(ReplayGainUtil.getAudioProcessor()))
+                    .setAudioProcessors(arrayOf<AudioProcessor>(ReplayGainUtil.getAudioProcessor(), parametricEqProcessor))
                     .setEnableFloatOutput(enableFloatOutput)
                     .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
                     .build()

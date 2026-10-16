@@ -321,11 +321,13 @@
         <item>デフォルト</item>
         <item>内蔵</item>
         <item>外部</item>
+        <item>Parametric (AutoEq)</item>
     </string-array>
     <string-array name="selected_equalizer_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
     <string-array name="aa_tab_titles">
         <item>表示しない</item>

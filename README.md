@@ -142,8 +142,14 @@ Please add simple unit tests when applicable.
 
 Not a hard requirement but any new feature/change should ideally include an update to the nacent documentation. 
 
-*Special Thanks*  
-All the amazing [contributors](https://github.com/eddyizm/tempus/graphs/contributors)❤️
+*Special Thanks -> core contributors*  
+
+[tvillega](https://github.com/tvillega)  
+[herrerad85](https://github.com/herrerad85)  
+[MaFo-28](https://github.com/MaFo-28) for his amazing AA refactor
+
+and everyone else who has helped move the fork forward with comments, feedback, testing and of course 
+❤️ [contributors](https://github.com/eddyizm/tempus/graphs/contributors) ❤️
 
 ## Donate
 
