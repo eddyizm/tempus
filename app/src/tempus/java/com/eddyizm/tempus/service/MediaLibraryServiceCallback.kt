@@ -3,6 +3,7 @@ package com.eddyizm.tempus.service
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.LibraryResult
@@ -87,16 +88,24 @@ class MediaLibrarySessionCallback(
             return super.onSetMediaItems(mediaSession, controller, mediaItems, 0, 0)
         }
 
+        val voiceQuery = voiceQueryOf(firstItem)
+        if (voiceQuery != null) {
+            return Futures.transform(
+                resolveVoiceQuery(voiceQuery),
+                { resolved ->
+                    saveQueue(resolved.mediaItems)
+                    resolved
+                },
+                MoreExecutors.directExecutor()
+            )
+        }
+
         val futureQueue = resolveQueueForItem(firstItem, mediaItems)
 
         return Futures.transform(
             futureQueue,
             { resolvedItems ->
-                if (!resolvedItems.isNullOrEmpty()) {
-                    val resolvedItemsUntagged = resolvedItems.map { detagForQueue(it) }
-                    val children = resolvedItemsUntagged.mapNotNull { MappingUtil.mapToChild(it) }
-                    if (children.isNotEmpty()) QueueRepository().insertAll(children, true, 0)
-                }
+                if (!resolvedItems.isNullOrEmpty()) saveQueue(resolvedItems)
                 MediaSession.MediaItemsWithStartPosition(
                     resolvedItems ?: emptyList(),
                     startIndex,
@@ -105,6 +114,11 @@ class MediaLibrarySessionCallback(
             },
             MoreExecutors.directExecutor()
         )
+    }
+
+    private fun saveQueue(items: List<MediaItem>) {
+        val children = items.map { detagForQueue(it) }.mapNotNull { MappingUtil.mapToChild(it) }
+        if (children.isNotEmpty()) QueueRepository().insertAll(children, true, 0)
     }
 
     private fun detagForQueue(item: MediaItem): MediaItem {
@@ -134,6 +148,15 @@ class MediaLibrarySessionCallback(
         if (isRadio(firstItem)) {
             Log.d(TAG, "Radio")
             return fetchRadioItem(firstItem)
+        }
+
+        val voiceQuery = voiceQueryOf(firstItem)
+        if (voiceQuery != null) {
+            return Futures.transform(
+                resolveVoiceQuery(voiceQuery),
+                { it.mediaItems },
+                MoreExecutors.directExecutor()
+            )
         }
 
         return resolveQueueForItem(firstItem, mediaItems)
@@ -174,11 +197,6 @@ class MediaLibrarySessionCallback(
         mediaItems: List<MediaItem>
     ): ListenableFuture<List<MediaItem>> {
         Log.d(TAG, "Resolve queue for item")
-
-        val voiceQuery = firstItem.requestMetadata.searchQuery
-        if (voiceQuery != null && firstItem.mediaId.isBlank()) {
-            return resolveVoiceQuery(voiceQuery.trim())
-        }
 
         val extras = firstItem.requestMetadata.extras ?: firstItem.mediaMetadata.extras
         val parentId = extras?.getString("parent_id")
@@ -281,12 +299,22 @@ class MediaLibrarySessionCallback(
     // Android Auto — voice queries ("Hey Google, play ... on Tempus")
     // ─────────────────────────────────────────────────────────────
 
-    private fun resolveVoiceQuery(query: String): ListenableFuture<List<MediaItem>> {
+    private fun voiceQueryOf(item: MediaItem): String? {
+        val query = item.requestMetadata.searchQuery ?: return null
+        return if (item.mediaId.isBlank()) query.trim() else null
+    }
+
+    /**
+     * Resolves a voice query to a queue and the index to start at. The future fails when nothing
+     * playable was found (no match, empty album, server or network error): Media3 ignores a failed
+     * request, so whatever is playing keeps playing instead of the player being cleared.
+     */
+    private fun resolveVoiceQuery(query: String): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
         Log.d(TAG, "Resolving voice query \"$query\"")
 
-        val routed = if (query.isEmpty()) {
+        val routed: ListenableFuture<MediaSession.MediaItemsWithStartPosition> = if (query.isEmpty()) {
             // "Play some music" without specifics: same behaviour as the Random browse node
-            toItemList(automotiveRepository.getRandomSongs(ConstantsAA.MAX_SHUFFLE_ITEMS))
+            startingAnywhere(toItemList(automotiveRepository.getRandomSongs(ConstantsAA.MAX_SHUFFLE_ITEMS)))
         } else Futures.transformAsync(
             automotiveRepository.search(query, ConstantsAA.ALBUM_ID, ConstantsAA.ARTIST_ID),
             { result ->
@@ -297,21 +325,44 @@ class MediaLibrarySessionCallback(
                         // connect handle so the mix keeps extending itself during playback;
                         // it stays idle when the artist falls back to a plain album queue
                         MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
-                        toItemList(automotiveRepository.getInstantMix(route.artistId))
+                        startingAnywhere(toItemList(automotiveRepository.getInstantMix(route.artistId)))
                     }
 
-                    is VoiceRoute.Album -> toItemList(automotiveRepository.getAlbumTracks(route.albumId))
+                    is VoiceRoute.Album -> startingAnywhere(toItemList(automotiveRepository.getAlbumTracks(route.albumId)))
 
-                    is VoiceRoute.Songs -> Futures.immediateFuture(route.songs)
+                    // explicit start index, so the requested song plays first even with shuffle on
+                    is VoiceRoute.Songs -> Futures.immediateFuture(
+                        MediaSession.MediaItemsWithStartPosition(
+                            route.songs,
+                            VoiceQueryRouter.songStartIndex(query, route.songs),
+                            0
+                        )
+                    )
                 }
             },
             MoreExecutors.directExecutor()
         )
 
-        return Futures.catching(
+        return Futures.transformAsync(
             routed,
-            Exception::class.java,
-            { emptyList() },
+            { resolved ->
+                if (resolved.mediaItems.isEmpty()) {
+                    Log.w(TAG, "Voice query \"$query\" found nothing playable, keeping current playback")
+                    Futures.immediateFailedFuture(NoSuchElementException("Nothing playable for voice query"))
+                } else {
+                    Futures.immediateFuture(resolved)
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
+    }
+
+    private fun startingAnywhere(
+        future: ListenableFuture<List<MediaItem>>
+    ): ListenableFuture<MediaSession.MediaItemsWithStartPosition> {
+        return Futures.transform(
+            future,
+            { MediaSession.MediaItemsWithStartPosition(it, C.INDEX_UNSET, C.TIME_UNSET) },
             MoreExecutors.directExecutor()
         )
     }

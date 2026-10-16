@@ -35,6 +35,15 @@ object VoiceQueryRouter {
         }
     }
 
+    /**
+     * Index of the song whose title equals the query (ignoring case), or 0 when none does.
+     * The server may rank a longer title containing the query above the exact match.
+     */
+    @JvmStatic
+    fun songStartIndex(query: String, songs: List<MediaItem>): Int =
+        songs.indexOfFirst { it.mediaMetadata.title?.toString().equals(query, ignoreCase = true) }
+            .coerceAtLeast(0)
+
     private fun firstId(matches: List<MediaItem>, prefix: String, exactTitle: String?): String? =
         matches.firstOrNull {
             it.mediaId.startsWith(prefix) &&

@@ -46,4 +46,18 @@ class VoiceQueryRouterTest {
     @Test fun noResultsGivesEmptySongs() {
         assertEquals(VoiceRoute.Songs(emptyList()), VoiceQueryRouter.route("nothing here", emptyList()))
     }
+
+    @Test fun songStartIndexPicksExactTitleOverServerOrder() {
+        val songs = listOf(song("s1", "Yesterday Once More"), song("s2", "Yesterday"))
+        assertEquals(1, VoiceQueryRouter.songStartIndex("yesterday", songs))
+    }
+
+    @Test fun songStartIndexIsZeroWithoutExactTitle() {
+        val songs = listOf(song("s1", "Hey Jude"), song("s2", "Hey Jude (Live)"))
+        assertEquals(0, VoiceQueryRouter.songStartIndex("hey jude live", songs))
+    }
+
+    @Test fun songStartIndexIsZeroForNoSongs() {
+        assertEquals(0, VoiceQueryRouter.songStartIndex("anything", emptyList()))
+    }
 }
