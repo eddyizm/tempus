@@ -914,4 +914,61 @@
     <string name="lan_search_again">Busca de nuevo para recargar la lista de receptores disponibles.</string>
     <string name="lan_unknown_device">Dispositivo desconocido</string>
     <string name="lan_name_required">Introduce un nombre de dispositivo de 1 a 40 caracteres.</string>
+    <string name="empty_string" />
+    <string name="settings_permissions">Permisos de la aplicación</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="la_theme_card_flirt_red_description">Color de acento rojo flirt</string>
+    <string name="la_theme_card_coral_red_description">Color de acento rojo coral</string>
+    <string name="hello_blank_fragment">Hola, fragmento vacío</string>
+    <string name="la_theme_card_royal_blue_description">Color de acento azul real</string>
+    <string name="la_theme_card_purple_violet_description">Color de acento violeta púrpura</string>
+    <string name="la_theme_card_sunset_amber_description">Color de acento ámbar atardecer</string>
+    <string name="la_theme_card_teal_description">Color de acento verde azulado</string>
+    <string name="la_theme_card_slate_gray_description">Color de acento gris pizarra</string>
+    <plurals name="notification_tracks_downloaded">
+        <item quantity="one">1 pista descargada</item>
+        <item quantity="many">%d pistas descargadas</item>
+        <item quantity="other">%d pistas descargadas</item>
+    </plurals>
+    <plurals name="notification_tracks_failed">
+        <item quantity="one">1 pista falló</item>
+        <item quantity="many">%d pistas fallaron</item>
+        <item quantity="other">%d pistas fallaron</item>
+    </plurals>
+    <plurals name="notification_tracks_saved">
+        <item quantity="one">1 pista guardada</item>
+        <item quantity="many">%d pistas guardadas</item>
+        <item quantity="other">%d pistas guardadas</item>
+    </plurals>
+    <plurals name="player_queue_song_count">
+        <item quantity="one">%d canción</item>
+        <item quantity="many">%d canciones</item>
+        <item quantity="other">%d canciones</item>
+    </plurals>
+    <plurals name="player_queue_duration_seconds">
+        <item quantity="one">%d segundo</item>
+        <item quantity="many">%d segundos</item>
+        <item quantity="other">%d segundos</item>
+    </plurals>
+    <plurals name="player_queue_duration_minutes">
+        <item quantity="one">%d minuto</item>
+        <item quantity="many">%d minutos</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+    <plurals name="player_queue_duration_hours">
+        <item quantity="one">%d hora</item>
+        <item quantity="many">%d horas</item>
+        <item quantity="other">%d horas</item>
+    </plurals>
+    <string name="settings_network_playback_title">Reproducción en red</string>
+    <string name="settings_upnp_title">Reproductores UPnP / DLNA</string>
+    <string name="settings_upnp_summary">Busca y reproduce en reproductores UPnP y DLNA de tu red. Solo busca mientras el selector de transmisión está abierto.</string>
+    <string name="settings_lan_remote_summary">Controla Tempus desde otro dispositivo o deja que otro controle este. Solo escucha mientras el receptor está activado y solo busca cuando buscas dispositivos.</string>
+    <string name="settings_parametric_eq_import">Importar perfil de AutoEq</string>
+    <string name="settings_parametric_eq_import_summary">Elige un archivo ParametricEQ.txt de AutoEq</string>
+    <string name="settings_parametric_eq_summary">%1$s. Suena %2$s dB más bajo. La salida de transmisión no se ve afectada. Para auriculares Bluetooth, elige el perfil de su modo de cancelación de ruido y deja plano su propio ecualizador.</string>
+    <string name="settings_parametric_eq_summary_louder">%1$s. Suena %2$s dB más alto. La salida de transmisión no se ve afectada. Para auriculares Bluetooth, elige el perfil de su modo de cancelación de ruido y deja plano su propio ecualizador.</string>
+    <string name="settings_parametric_eq_imported">%1$s importado</string>
+    <string name="settings_parametric_eq_invalid">No es un archivo ParametricEQ de AutoEq válido</string>
+    <string name="settings_parametric_eq_per_ear">Los perfiles de dos canales (por oído) aún no son compatibles. Vuelve a exportarlo con un solo canal.</string>
 </resources>
