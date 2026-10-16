@@ -188,7 +188,6 @@
     <string name="login_title">Servere Subsonic</string>
     <string name="login_title_expanded">Servere Subsonic</string>
     <string name="media_route_menu_title">Cast</string>
-    <string name="menu_add_button">Adăugaţi</string>
     <string name="menu_add_to_playlist_button">Adăugați la playlist</string>
     <string name="menu_download_all_button">Descărcați tot</string>
     <string name="menu_rate_album">Evaluați albumul</string>
@@ -292,17 +291,6 @@
     <string name="search_title_album">Albume</string>
     <string name="search_title_artist">Artiști</string>
     <string name="search_title_song">Cântece</string>
-    <string name="server_signup_dialog_action_low_security">Securitate redusă</string>
-    <string name="server_signup_dialog_action_delete_toast">Apasă lung pentru a șterge</string>
-    <string name="server_signup_dialog_hint_local_address">URL Local</string>
-    <string name="server_signup_dialog_hint_name">Nume Server</string>
-    <string name="server_signup_dialog_hint_password">Parolă</string>
-    <string name="server_signup_dialog_hint_url">URL Server</string>
-    <string name="server_signup_dialog_hint_username">Nume Utilizator</string>
-    <string name="server_signup_dialog_negative_button">Anulati</string>
-    <string name="server_signup_dialog_neutral_button">Ștergeţi</string>
-    <string name="server_signup_dialog_positive_button">Salvaţi</string>
-    <string name="server_signup_dialog_title">Adăugați server</string>
     <string name="server_unreachable_dialog_negative_button">Anulati</string>
     <string name="server_unreachable_dialog_neutral_button">Mergeți la conectare</string>
     <string name="server_unreachable_dialog_positive_button">Continuaţi oricum</string>

@@ -64,7 +64,6 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
             item.serverNameTextView.setSelected(true);
 
             itemView.setOnClickListener(v -> onClick());
-            itemView.setOnLongClickListener(v -> onLongClick());
         }
 
         public void onClick() {
@@ -74,13 +73,5 @@ public class ServerAdapter extends RecyclerView.Adapter<ServerAdapter.ViewHolder
             click.onServerClick(bundle);
         }
 
-        public boolean onLongClick() {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("server_object", servers.get(getBindingAdapterPosition()));
-
-            click.onServerLongClick(bundle);
-
-            return true;
-        }
     }
 }

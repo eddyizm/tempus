@@ -215,7 +215,6 @@
     <string name="login_title">Subsonic 服务器</string>
     <string name="login_title_expanded">Subsonic 服务器</string>
     <string name="media_route_menu_title">投送</string>
-    <string name="menu_add_button">添加</string>
     <string name="menu_add_to_playlist_button">添加到播放列表</string>
     <string name="menu_download_all_button">全部下载</string>
     <string name="menu_download_label">下载</string>
@@ -321,17 +320,6 @@
     <string name="search_title_album">专辑</string>
     <string name="search_title_artist">艺术家</string>
     <string name="search_title_song">歌曲</string>
-    <string name="server_signup_dialog_action_delete_toast">长按删除</string>
-    <string name="server_signup_dialog_action_low_security">低安全性</string>
-    <string name="server_signup_dialog_hint_local_address">本地 URL</string>
-    <string name="server_signup_dialog_hint_name">服务器名称</string>
-    <string name="server_signup_dialog_hint_password">密码</string>
-    <string name="server_signup_dialog_hint_url">服务器地址</string>
-    <string name="server_signup_dialog_hint_username">用户名</string>
-    <string name="server_signup_dialog_negative_button">取消</string>
-    <string name="server_signup_dialog_neutral_button">删除</string>
-    <string name="server_signup_dialog_positive_button">保存</string>
-    <string name="server_signup_dialog_title">添加服务器</string>
     <string name="server_unreachable_dialog_negative_button">取消</string>
     <string name="server_unreachable_dialog_neutral_button">前往登录</string>
     <string name="server_unreachable_dialog_positive_button">仍然继续</string>

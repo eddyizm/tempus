@@ -21,6 +21,9 @@ public interface DownloadDao {
     @Query("SELECT * FROM download WHERE id = :id")
     Download getOne(String id);
 
+    @Query("SELECT * FROM download WHERE download_state = 0")
+    List<Download> getFailedSync();
+
     @Query("SELECT COUNT(*) FROM download WHERE download_state = 1")
     int countDownloaded();
 
@@ -49,6 +52,9 @@ public interface DownloadDao {
 
     @Query("DELETE FROM download WHERE id = :id")
     void delete(String id);
+
+    @Query("DELETE FROM download WHERE id = :id AND download_state = 0")
+    void deleteFailed(String id);
 
     @Query("DELETE FROM download WHERE id IN (:ids)")
     void deleteByIds(List<String> ids);

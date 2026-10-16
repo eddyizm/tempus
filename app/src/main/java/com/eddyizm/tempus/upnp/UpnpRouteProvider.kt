@@ -102,7 +102,7 @@ class UpnpRouteProvider(
                     .setDescription(device.modelName.ifBlank { device.manufacturer })
                     .addControlFilter(CONTROL_FILTER)
                     .setPlaybackType(MediaRouter.RouteInfo.PLAYBACK_TYPE_REMOTE)
-                    // Fixed, since an LG C1 reports zero volume while audibly playing and unmuted.
+                    // Fixed, since UpnpPlayer carries the volume through the session once the renderer reports one.
                     .setVolumeHandling(MediaRouter.RouteInfo.PLAYBACK_VOLUME_FIXED)
                     .setEnabled(true)
                     .build()

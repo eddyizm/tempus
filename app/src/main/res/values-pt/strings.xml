@@ -136,7 +136,6 @@
     <string name="login_title">Servidores Subsonic</string>
     <string name="login_title_expanded">Servidores Subsonic</string>
     <string name="media_route_menu_title">Transmitir</string>
-    <string name="menu_add_button">Adicionar</string>
     <string name="menu_add_to_playlist_button">Adicionar a uma playlist</string>
     <string name="menu_download_all_button">Baixar todos</string>
     <string name="menu_download_label">Download</string>
@@ -214,15 +213,6 @@
     <string name="search_title_album">Álbuns</string>
     <string name="search_title_artist">Artistas</string>
     <string name="search_title_song">Músicas</string>
-    <string name="server_signup_dialog_action_low_security">Baixa segurança</string>
-    <string name="server_signup_dialog_hint_name">Nome do Servidor</string>
-    <string name="server_signup_dialog_hint_password">Senha</string>
-    <string name="server_signup_dialog_hint_url">URL do servidor</string>
-    <string name="server_signup_dialog_hint_username">Usuário</string>
-    <string name="server_signup_dialog_negative_button">Cancelar</string>
-    <string name="server_signup_dialog_neutral_button">Excluir</string>
-    <string name="server_signup_dialog_positive_button">Salvar</string>
-    <string name="server_signup_dialog_title">Adicionar servidor</string>
     <string name="server_unreachable_dialog_negative_button">Cancelar</string>
     <string name="server_unreachable_dialog_neutral_button">Ir para o login</string>
     <string name="server_unreachable_dialog_positive_button">Continuar mesmo assim</string>
