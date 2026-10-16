@@ -9,7 +9,9 @@ import android.content.res.Resources;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -100,6 +102,9 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private ActivityResultLauncher<String[]> parametricEqPickerLauncher;
 
     private static final int PARAMETRIC_EQ_MAX_BYTES = 16 * 1024;
+
+    private static final long SCAN_STATUS_POLL_INTERVAL_MS = 2000;
+    private final Handler scanStatusHandler = new Handler(Looper.getMainLooper());
 
     private final Set<String> expandedCategories = new HashSet<>();
 
@@ -216,6 +221,8 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        scanStatusHandler.removeCallbacksAndMessages(null);
 
         // The flag means "this view already has the observer", and a child fragment can outlive
         // its parent's view, so it has to be cleared with the view rather than the instance.
@@ -723,7 +730,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 @Override
                 public void onSuccess(boolean isScanning, long count) {
                     findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
-                    if (isScanning) getScanStatus();
+                    if (isScanning) scheduleScanStatusPoll();
                 }
             });
 
@@ -905,17 +912,24 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         });
     }
 
+    private void scheduleScanStatusPoll() {
+        scanStatusHandler.removeCallbacksAndMessages(null);
+        scanStatusHandler.postDelayed(this::getScanStatus, SCAN_STATUS_POLL_INTERVAL_MS);
+    }
+
     private void getScanStatus() {
         settingViewModel.getScanStatus(new ScanCallback() {
             @Override
             public void onError(Exception exception) {
+                if (!isAdded()) return;
                 findPreference("scan_library").setSummary(exception.getMessage());
             }
 
             @Override
             public void onSuccess(boolean isScanning, long count) {
+                if (!isAdded()) return;
                 findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
-                if (isScanning) getScanStatus();
+                if (isScanning) scheduleScanStatusPoll();
             }
         });
     }
