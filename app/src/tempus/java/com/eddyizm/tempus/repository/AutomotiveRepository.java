@@ -1142,6 +1142,12 @@ public class AutomotiveRepository {
 
     private void queueInstantMixOpener(String artistId, int count, List<AlbumID3> albums,
                                        SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture) {
+        if (albums.isEmpty()) {
+            Log.e(TAG, "Instant Mix: Artist " + artistId + " has no albums");
+            listenableFuture.set(LibraryResult.ofError(SessionError.ERROR_BAD_VALUE));
+            return;
+        }
+
         Random random = new Random();
         Collections.shuffle(albums, random);
 
@@ -1156,7 +1162,8 @@ public class AutomotiveRepository {
                         if (response.isSuccessful()
                                 && response.body() != null
                                 && response.body().getSubsonicResponse().getAlbum() != null
-                                && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
+                                && response.body().getSubsonicResponse().getAlbum().getSongs() != null
+                                && !response.body().getSubsonicResponse().getAlbum().getSongs().isEmpty()) {
 
                             List<Child> songs = response.body().getSubsonicResponse().getAlbum().getSongs();
                             Child firstTrack = songs.get(random.nextInt(songs.size()));
