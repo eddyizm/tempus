@@ -724,11 +724,13 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             settingViewModel.launchScan(new ScanCallback() {
                 @Override
                 public void onError(Exception exception) {
+                    if (getView() == null) return;
                     findPreference("scan_library").setSummary(exception.getMessage());
                 }
 
                 @Override
                 public void onSuccess(boolean isScanning, long count) {
+                    if (getView() == null) return;
                     findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
                     if (isScanning) scheduleScanStatusPoll();
                 }
@@ -921,13 +923,13 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         settingViewModel.getScanStatus(new ScanCallback() {
             @Override
             public void onError(Exception exception) {
-                if (!isAdded()) return;
+                if (getView() == null) return;
                 findPreference("scan_library").setSummary(exception.getMessage());
             }
 
             @Override
             public void onSuccess(boolean isScanning, long count) {
-                if (!isAdded()) return;
+                if (getView() == null) return;
                 findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
                 if (isScanning) scheduleScanStatusPoll();
             }
