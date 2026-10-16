@@ -981,6 +981,17 @@ public class AutomotiveRepository {
         return discTitleMap;
     }
 
+    /**
+     * Number of tracks in an artist's Instant Mix, or 0 when the artist does not qualify for one
+     * (fewer than two albums or too few tracks). Shared by the browse node and the voice path.
+     */
+    static int instantMixTrackCount(int albumCount, int totalTracks) {
+        if (albumCount < 2 || totalTracks < ConstantsAA.MIN_TRACKS_SMALL_MIX) return 0;
+        if (totalTracks >= ConstantsAA.MIN_TRACKS_LARGE_MIX) return ConstantsAA.NUMBER_OF_TRACKS_IN_LARGE_MIX;
+        if (totalTracks >= ConstantsAA.MIN_TRACKS_MEDIUM_MIX) return ConstantsAA.NUMBER_OF_TRACKS_IN_MEDIUM_MIX;
+        return ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX;
+    }
+
     public ListenableFuture<LibraryResult<ImmutableList<MediaItem>>> getArtistAlbum(String prefix, String id) {
         final SettableFuture<LibraryResult<ImmutableList<MediaItem>>> listenableFuture = SettableFuture.create();
 
@@ -1014,11 +1025,8 @@ public class AutomotiveRepository {
                                 mediaItems.add(mediaItem);
                             }
 
-                            if (albums.size() >= 2 && totalTracks >= ConstantsAA.MIN_TRACKS_SMALL_MIX) {
-                                int numberOfTracks =
-                                        totalTracks >= ConstantsAA.MIN_TRACKS_LARGE_MIX ? ConstantsAA.NUMBER_OF_TRACKS_IN_LARGE_MIX :
-                                                totalTracks >= ConstantsAA.MIN_TRACKS_MEDIUM_MIX ? ConstantsAA.NUMBER_OF_TRACKS_IN_MEDIUM_MIX :
-                                                        ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX;
+                            int numberOfTracks = instantMixTrackCount(albums.size(), totalTracks);
+                            if (numberOfTracks > 0) {
                                 ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
                                 MediaItem instantMixItem = createAlbum(
                                         App.getContext().getString(R.string.aa_instant_mix),
@@ -1113,12 +1121,8 @@ public class AutomotiveRepository {
                                 }
                             }
 
-                            if (albums.size() >= 2 && totalTracks >= ConstantsAA.MIN_TRACKS_SMALL_MIX) {
-                                int count =
-                                        totalTracks >= ConstantsAA.MIN_TRACKS_LARGE_MIX ? ConstantsAA.NUMBER_OF_TRACKS_IN_LARGE_MIX :
-                                                totalTracks >= ConstantsAA.MIN_TRACKS_MEDIUM_MIX ? ConstantsAA.NUMBER_OF_TRACKS_IN_MEDIUM_MIX :
-                                                        ConstantsAA.NUMBER_OF_TRACKS_IN_SMALL_MIX;
-
+                            int count = instantMixTrackCount(albums.size(), totalTracks);
+                            if (count > 0) {
                                 queueInstantMixOpener(artistId, count, albums, listenableFuture);
                             } else {
                                 // Artist doesn't qualify for an Instant Mix: queue one of its albums in random order
