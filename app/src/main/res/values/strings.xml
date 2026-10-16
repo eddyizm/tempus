@@ -766,6 +766,13 @@
     <string name="settings_title_equalizer">Equalizer</string>
     <string name="settings_equalizer_select">Select an equalizer to use</string>
     <string name="settings_equalizer_dialog_title">Equalizers</string>
+    <string name="settings_parametric_eq_import">Import AutoEq profile</string>
+    <string name="settings_parametric_eq_import_summary">Pick a ParametricEQ.txt file from AutoEq</string>
+    <string name="settings_parametric_eq_summary">%1$s. Plays %2$s dB quieter. Cast output is not affected. For Bluetooth headphones, pick the profile for their noise cancelling mode and keep their own EQ flat.</string>
+    <string name="settings_parametric_eq_summary_louder">%1$s. Plays %2$s dB louder. Cast output is not affected. For Bluetooth headphones, pick the profile for their noise cancelling mode and keep their own EQ flat.</string>
+    <string name="settings_parametric_eq_imported">Imported %1$s</string>
+    <string name="settings_parametric_eq_invalid">Not a valid AutoEq ParametricEQ file</string>
+    <string name="settings_parametric_eq_per_ear">Two channel (per ear) profiles are not supported yet. Export it again with one channel.</string>
 
     <string name="settings_album_detail">Show album detail</string>
     <string name="settings_album_detail_summary">If enabled, show the album details like genre, song count etc. on the album page</string>

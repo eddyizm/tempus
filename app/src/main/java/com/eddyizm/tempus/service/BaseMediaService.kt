@@ -17,6 +17,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.media3.common.*
+import androidx.media3.common.audio.AudioProcessor
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.DefaultRenderersFactory
@@ -36,6 +37,8 @@ import com.eddyizm.tempus.equalizer.EqualizerBackend
 import com.eddyizm.tempus.equalizer.EqualizerManager
 import com.eddyizm.tempus.equalizer.ExternalBackend
 import com.eddyizm.tempus.equalizer.DefaultBackend
+import com.eddyizm.tempus.equalizer.ParametricBackend
+import com.eddyizm.tempus.equalizer.ParametricEqAudioProcessor
 import androidx.mediarouter.media.MediaRouter
 import com.eddyizm.tempus.repository.QueueRepository
 import com.eddyizm.tempus.upnp.UpnpControlPoint
@@ -79,6 +82,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
     private lateinit var equalizerManager: EqualizerManager
+    private val parametricEqProcessor = ParametricEqAudioProcessor()
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
     private var widgetUpdateScheduled = false
     // Set in onDestroy. restorePlayerFromQueue maps the saved queue on a background thread and
@@ -876,30 +880,23 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         }
     }
 
-    private fun initializeEqualizer() {
-
-        val equalizerBackend: EqualizerBackend =
-            when (Preferences.getSelectedEqualizer()) {
+    private fun buildBackend(): EqualizerBackend =
+        when (Preferences.getSelectedEqualizer()) {
             1 -> BuiltinBackend()
             2 -> ExternalBackend()
+            3 -> ParametricBackend(parametricEqProcessor)
             else -> DefaultBackend()
         }
 
-        equalizerManager = EqualizerManager(equalizerBackend, baseContext)
+    private fun initializeEqualizer() {
+        equalizerManager = EqualizerManager(buildBackend(), baseContext)
         equalizerManager.attach(exoplayer.audioSessionId)
         sendBroadcast(Intent(ACTION_EQUALIZER_UPDATED))
     }
 
     fun reloadEqualizer() {
         equalizerManager.release(exoplayer.audioSessionId)
-
-        val backend: EqualizerBackend = when (Preferences.getSelectedEqualizer()) {
-            1 -> BuiltinBackend()
-            2 -> ExternalBackend()
-            else -> DefaultBackend()
-        }
-
-        equalizerManager = EqualizerManager(backend, baseContext)
+        equalizerManager = EqualizerManager(buildBackend(), baseContext)
         equalizerManager.attach(exoplayer.audioSessionId)
         sendBroadcast(Intent(ACTION_RELOAD_EQUALIZER))
     }
@@ -1159,7 +1156,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 enableAudioTrackPlaybackParams: Boolean
             ): AudioSink {
                 return DefaultAudioSink.Builder(context)
-                    .setAudioProcessors(arrayOf(ReplayGainUtil.getAudioProcessor()))
+                    .setAudioProcessors(arrayOf<AudioProcessor>(ReplayGainUtil.getAudioProcessor(), parametricEqProcessor))
                     .setEnableFloatOutput(enableFloatOutput)
                     .setEnableAudioOutputPlaybackParameters(enableAudioTrackPlaybackParams)
                     .build()

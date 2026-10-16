@@ -178,6 +178,12 @@
                 android:key="builtin_equalizer"
                 android:summary="@string/settings_app_equalizer_summary"
                 android:title="@string/settings_app_equalizer" />
+
+            <Preference
+                android:layout_height="match_parent"
+                android:key="parametric_eq_import"
+                android:summary="@string/settings_parametric_eq_import_summary"
+                android:title="@string/settings_parametric_eq_import" />
         </PreferenceCategory>
 
         <PreferenceCategory app:title="@string/settings_title_replay_gain">

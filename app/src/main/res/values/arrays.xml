@@ -343,11 +343,13 @@
         <item>Default</item>
         <item>Built-in</item>
         <item>External</item>
+        <item>Parametric (AutoEq)</item>
     </string-array>
     <string-array name="selected_equalizer_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="aa_tab_titles">

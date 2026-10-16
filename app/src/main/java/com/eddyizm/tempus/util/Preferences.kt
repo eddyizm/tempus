@@ -109,6 +109,8 @@ object Preferences {
     private const val SELECTED_EQUALIZER = "selected_equalizer"
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
+    private const val PARAMETRIC_EQ_PROFILE = "parametric_eq_profile"
+    private const val PARAMETRIC_EQ_NAME = "parametric_eq_name"
     private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
     private const val CUSTOM_COMMAND_FIRST_BUTTON = "custom_command_first_button"
     private const val CUSTOM_COMMAND_SECOND_BUTTON = "custom_command_second_button"
@@ -1071,6 +1073,24 @@ object Preferences {
     @JvmStatic
     fun setSelectedEqualizer(selectedEqualizer: String) {
         App.getInstance().preferences.edit().putString(SELECTED_EQUALIZER, selectedEqualizer)
+            .apply()
+    }
+
+    @JvmStatic
+    fun getParametricEqProfile(): String? {
+        return App.getInstance().preferences.getString(PARAMETRIC_EQ_PROFILE, null)
+    }
+
+    @JvmStatic
+    fun getParametricEqName(): String? {
+        return App.getInstance().preferences.getString(PARAMETRIC_EQ_NAME, null)
+    }
+
+    @JvmStatic
+    fun setParametricEqProfile(profile: String, name: String) {
+        App.getInstance().preferences.edit()
+            .putString(PARAMETRIC_EQ_PROFILE, profile)
+            .putString(PARAMETRIC_EQ_NAME, name)
             .apply()
     }
 
