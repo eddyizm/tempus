@@ -73,14 +73,18 @@ fun NowPlayingArtworkPager(
         }
     }
 
-    // Programmatic smooth scroll when track index changes externally (e.g. next/prev buttons, notification, end-of-track).
-    // Guarded by safeIndex != pagerState.targetPage to avoid interrupting manual swipes.
-    LaunchedEffect(safeIndex) {
+    var firstSelectionDone by remember { mutableStateOf(false) }
+    LaunchedEffect(safeIndex, count) {
         if (!isDragged && safeIndex in 0 until count && safeIndex != pagerState.targetPage) {
-            pagerState.animateScrollToPage(
-                page = safeIndex,
-                animationSpec = tween(durationMillis = 300)
-            )
+            if (!firstSelectionDone || (safeIndex - pagerState.currentPage).absoluteValue > 1) {
+                pagerState.scrollToPage(safeIndex)
+                firstSelectionDone = true
+            } else {
+                pagerState.animateScrollToPage(
+                    page = safeIndex,
+                    animationSpec = tween(durationMillis = 300)
+                )
+            }
         }
     }
 
@@ -98,6 +102,18 @@ fun NowPlayingArtworkPager(
         Preferences.getRoundedCornerSize().dp
     } else {
         0.dp
+    }
+
+    if (!isRadio && queue.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(cornerRadius)),
+            contentAlignment = Alignment.Center
+        ) {
+            SongArtwork(coverArtId = null, title = null)
+        }
+        return
     }
 
     HorizontalPager(

@@ -178,6 +178,12 @@
                 android:key="builtin_equalizer"
                 android:summary="@string/settings_app_equalizer_summary"
                 android:title="@string/settings_app_equalizer" />
+
+            <Preference
+                android:layout_height="match_parent"
+                android:key="parametric_eq_import"
+                android:summary="@string/settings_parametric_eq_import_summary"
+                android:title="@string/settings_parametric_eq_import" />
         </PreferenceCategory>
 
         <PreferenceCategory app:title="@string/settings_title_replay_gain">
@@ -271,6 +277,24 @@
             app:showSeekBarValue="true"
             app:summary="@string/settings_summary_skip_min_star_rating"
             app:title="@string/settings_title_skip_min_star_rating" />
+
+    </com.eddyizm.tempus.util.ClickablePreferenceCategory>
+
+    <com.eddyizm.tempus.util.ClickablePreferenceCategory
+        android:key="network_playback"
+        app:title="@string/settings_network_playback_title">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="upnp_enabled"
+            android:summary="@string/settings_upnp_summary"
+            android:title="@string/settings_upnp_title" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="lan_remote_enabled"
+            android:summary="@string/settings_lan_remote_summary"
+            android:title="@string/lan_title" />
 
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 

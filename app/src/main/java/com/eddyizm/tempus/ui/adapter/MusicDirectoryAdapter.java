@@ -64,12 +64,17 @@ public class MusicDirectoryAdapter extends RecyclerView.Adapter<MusicDirectoryAd
     public void setItems(List<Child> children) {
         if (children != null) {
            List<Child> sorted = new ArrayList<>(children);
+            boolean useDisc = sorted.stream().filter(c -> !c.isDir())
+                    .allMatch(c -> c.getDiscNumber() != null && c.getDiscNumber() > 0);
             sorted.sort((c1, c2) -> {
                 if (c1.isDir() && c2.isDir()) {
                     String t1 = c1.getTitle() != null ? c1.getTitle() : "";
                     String t2 = c2.getTitle() != null ? c2.getTitle() : "";
                     return t1.compareToIgnoreCase(t2);
                 } else if (!c1.isDir() && !c2.isDir()) {
+                    if (useDisc && !c1.getDiscNumber().equals(c2.getDiscNumber())) {
+                        return Integer.compare(c1.getDiscNumber(), c2.getDiscNumber());
+                    }
                     int t1 = c1.getTrack() != null ? c1.getTrack() : 0;
                     int t2 = c2.getTrack() != null ? c2.getTrack() : 0;
                     return Integer.compare(t1, t2);

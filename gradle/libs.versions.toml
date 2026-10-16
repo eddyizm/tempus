@@ -2,6 +2,7 @@
 agp = "9.2.1"
 colorpickerview = "2.4.0"
 kotlin = "2.2.20"
+reorderable = "3.1.0"
 
 # AndroidX / Material
 activity = "1.13.0"
@@ -45,6 +46,8 @@ androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graph
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata" }
 
 androidx-activity = { group = "androidx.activity", name="activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -60,11 +63,13 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 colorpickerview = { module = "com.github.skydoves:colorpickerview", version.ref = "colorpickerview" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-annotations = { group = "com.github.bumptech.glide", name = "annotations", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+glide-compose = { group = "com.github.bumptech.glide", name = "compose", version = "1.0.0-beta10" }
 
 mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "mediarouter" }
 

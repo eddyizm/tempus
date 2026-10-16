@@ -84,14 +84,15 @@ public class DownloaderManager {
         // Marked before the send so a completion racing this call cannot leave the id behind.
         DownloadRequest request = buildDownloadRequest(mediaItem);
         requested.add(mediaItem.mediaId);
+        insertDatabase(download);
         try {
             DownloadService.sendAddDownload(context, DownloaderService.class, request, false);
         } catch (IllegalStateException e) {
             requested.remove(mediaItem.mediaId);
+            deleteDatabase(mediaItem.mediaId);
             Log.w(TAG, "Download service not started for " + mediaItem.mediaId, e);
             return false;
         }
-        insertDatabase(download);
         return true;
     }
 
@@ -129,6 +130,13 @@ public class DownloaderManager {
             }
         } catch (IOException e) {
             Log.w(TAG, "Failed to query downloads", e);
+            return;
+        }
+
+        for (com.eddyizm.tempus.model.Download orphan : getDownloadRepository().getFailedDownloads()) {
+            if (!downloads.containsKey(orphan.getId()) && !requested.contains(orphan.getId())) {
+                getDownloadRepository().deleteFailed(orphan.getId());
+            }
         }
     }
 
@@ -145,6 +153,13 @@ public class DownloaderManager {
 
     public static void removeRequestDownload(Download download) {
         deleteDatabase(download.request.id);
+        downloads.remove(download.request.id);
+        requested.remove(download.request.id);
+    }
+
+    public static void failRequestDownload(Download download) {
+        if (download == null) return;
+        getDownloadRepository().deleteFailed(download.request.id);
         downloads.remove(download.request.id);
         requested.remove(download.request.id);
     }

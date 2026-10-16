@@ -84,6 +84,21 @@
                         app:layout_constraintTop_toTopOf="@id/playlist_cover_image_view_bottom_left" />
 
 
+                    <ImageView
+                        android:id="@+id/playlist_cover_image_view_single"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="32dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="32dp"
+                        android:importantForAccessibility="no"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        app:layout_constraintDimensionRatio="H,1:1"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                     <TextView
                         android:id="@+id/playlist_name_label"
                         style="@style/LabelExtraLarge"
