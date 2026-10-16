@@ -175,6 +175,11 @@ class MediaLibrarySessionCallback(
     ): ListenableFuture<List<MediaItem>> {
         Log.d(TAG, "Resolve queue for item")
 
+        val voiceQuery = firstItem.requestMetadata.searchQuery
+        if (voiceQuery != null && firstItem.mediaId.isBlank()) {
+            return resolveVoiceQuery(voiceQuery.trim())
+        }
+
         val extras = firstItem.requestMetadata.extras ?: firstItem.mediaMetadata.extras
         val parentId = extras?.getString("parent_id")
 
@@ -268,6 +273,83 @@ class MediaLibrarySessionCallback(
                 updatedResolved[0] = newFirstResolved
                 updatedResolved
             },
+            MoreExecutors.directExecutor()
+        )
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Android Auto — voice queries ("Hey Google, play ... on Tempus")
+    // ─────────────────────────────────────────────────────────────
+
+    private fun resolveVoiceQuery(query: String): ListenableFuture<List<MediaItem>> {
+        Log.d(TAG, "Resolving voice query \"$query\"")
+
+        val routed = if (query.isEmpty()) {
+            // "Play some music" without specifics: same behaviour as the Random browse node
+            toItemList(automotiveRepository.getRandomSongs(ConstantsAA.MAX_SHUFFLE_ITEMS))
+        } else Futures.transformAsync(
+            automotiveRepository.search(query, ConstantsAA.ALBUM_ID, ConstantsAA.ARTIST_ID),
+            { result ->
+                val matches: List<MediaItem> = result?.value ?: emptyList()
+
+                val exactArtistId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ARTIST_ID) &&
+                            it.mediaMetadata.title?.toString().equals(query, ignoreCase = true)
+                }?.mediaId?.removePrefix(ConstantsAA.ARTIST_ID)
+
+                val exactAlbumId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ALBUM_ID) &&
+                            it.mediaMetadata.title?.toString().equals(query, ignoreCase = true)
+                }?.mediaId?.removePrefix(ConstantsAA.ALBUM_ID)
+
+                val playableSongs = matches.filter { it.mediaMetadata.isPlayable == true }
+
+                // No exact match and no playable songs: assume the query was a near miss
+                // (misheard artist/album name) and fall back to the closest search result,
+                // otherwise the Assistant announces playback but nothing plays.
+                val fuzzyArtistId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ARTIST_ID)
+                }?.mediaId?.removePrefix(ConstantsAA.ARTIST_ID)
+
+                val fuzzyAlbumId = matches.firstOrNull {
+                    it.mediaId.startsWith(ConstantsAA.ALBUM_ID)
+                }?.mediaId?.removePrefix(ConstantsAA.ALBUM_ID)
+
+                val artistId = exactArtistId
+                    ?: if (exactAlbumId == null && playableSongs.isEmpty()) fuzzyArtistId else null
+                val albumId = exactAlbumId
+                    ?: if (artistId == null && playableSongs.isEmpty()) fuzzyAlbumId else null
+
+                when {
+                    artistId != null -> {
+                        // connect handle so the mix keeps extending itself during playback;
+                        // it stays idle when the artist falls back to a plain album queue
+                        MediaServiceExtensionRegistry.handler = TracksChangedExtension(automotiveRepository)
+                        toItemList(automotiveRepository.getInstantMix(artistId))
+                    }
+
+                    albumId != null -> toItemList(automotiveRepository.getAlbumTracks(albumId))
+
+                    else -> Futures.immediateFuture(playableSongs)
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
+
+        return Futures.catching(
+            routed,
+            Exception::class.java,
+            { emptyList() },
+            MoreExecutors.directExecutor()
+        )
+    }
+
+    private fun toItemList(
+        future: ListenableFuture<LibraryResult<ImmutableList<MediaItem>>>
+    ): ListenableFuture<List<MediaItem>> {
+        return Futures.transform(
+            future,
+            { it?.value ?: emptyList() },
             MoreExecutors.directExecutor()
         )
     }
