@@ -36,7 +36,7 @@ public class ScanRepository {
     public void getScanStatus(ScanCallback callback) {
         App.getSubsonicClientInstance(false)
                 .getMediaLibraryScanningClient()
-                .startScan()
+                .getScanStatus()
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull retrofit2.Response<ApiResponse> response) {
