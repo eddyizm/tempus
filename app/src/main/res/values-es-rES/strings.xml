@@ -915,7 +915,6 @@
     <string name="lan_unknown_device">Dispositivo desconocido</string>
     <string name="lan_name_required">Introduce un nombre de dispositivo de 1 a 40 caracteres.</string>
     <string name="empty_string" />
-    <string name="settings_permissions">Permisos de la aplicación</string>
     <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
     <string name="la_theme_card_flirt_red_description">Color de acento rojo flirt</string>
     <string name="la_theme_card_coral_red_description">Color de acento rojo coral</string>
