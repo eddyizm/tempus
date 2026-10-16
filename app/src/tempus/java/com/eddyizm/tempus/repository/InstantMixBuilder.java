@@ -160,7 +160,8 @@ public class InstantMixBuilder {
                         if (response.isSuccessful()
                                 && response.body() != null
                                 && response.body().getSubsonicResponse().getAlbum() != null
-                                && response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
+                                && response.body().getSubsonicResponse().getAlbum().getSongs() != null
+                                && !response.body().getSubsonicResponse().getAlbum().getSongs().isEmpty()) {
 
                             List<Child> songs = response.body().getSubsonicResponse().getAlbum().getSongs();
                             Child candidate = songs.get(random.nextInt(songs.size()));
