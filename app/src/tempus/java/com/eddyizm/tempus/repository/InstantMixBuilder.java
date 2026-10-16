@@ -136,9 +136,12 @@ public class InstantMixBuilder {
                 return;
             }
             Log.d(TAG, "Mix complete with " + mixTracks.size() + "/" + maxTracks + " tracks, enqueuing");
-            repository.setChildrenMetadata(mixTracks);
-            enqueue(queueTarget, mixTracks, true);
-            isRunning.set(false);
+            try {
+                repository.setChildrenMetadata(mixTracks);
+                enqueue(queueTarget, mixTracks, true);
+            } finally {
+                isRunning.set(false);
+            }
             return;
         }
 
