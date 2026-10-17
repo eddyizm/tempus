@@ -36,7 +36,7 @@ While Tempus itself collects no information, downloading or updating the app via
 
 ## 4. Network Connections & Third-Party APIs
 
-* Tempus connects to the internet strictly to fetch [describe service, e.g., public radio listings]. Standard IP addresses are visible to the receiving server during standard HTTP requests, but no account tokens, device IDs, or tracking headers are sent.
+* Tempus connects to the internet strictly to fetch public radio listings (https://www.radio-browser.info) if you chose local radio usage (not required if your private server handles it). Standard IP addresses are visible to the receiving server during standard HTTP requests, but no account tokens, device IDs, or tracking headers are sent.
 
 ---
 
