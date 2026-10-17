@@ -169,6 +169,8 @@ private fun SongArtwork(
         return
     }
 
+    val dataSaving = Preferences.isDataSavingMode()
+
     GlideImage(
         model = CustomGlideRequest.createUrl(coverArtId, Preferences.getImageSize()),
         contentDescription = title,
@@ -178,7 +180,7 @@ private fun SongArtwork(
             var transformed = request
                 .signature(ObjectKey(coverArtId))
                 .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
-            if (Preferences.isDataSavingMode()) {
+            if (dataSaving) {
                 transformed = transformed.onlyRetrieveFromCache(true)
             }
             transformed

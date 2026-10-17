@@ -334,6 +334,7 @@ private fun QueueArtwork(
         }
     }
     val placeholder = placeholder(placeholderContent)
+    val dataSaving = Preferences.isDataSavingMode()
 
     Box(
         modifier = modifier
@@ -353,7 +354,7 @@ private fun QueueArtwork(
                     var transformed = request
                         .signature(ObjectKey(coverArtId ?: artworkUri.toString()))
                         .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
-                    if (Preferences.isDataSavingMode()) {
+                    if (dataSaving) {
                         transformed = transformed.onlyRetrieveFromCache(true)
                     }
                     if (artworkUri != null) {
