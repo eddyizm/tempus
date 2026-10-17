@@ -63,7 +63,12 @@ public class ToolbarFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main_page_menu, menu);
         Flavors.setUpRouteButton(requireContext(), menu);
-        UpnpRouteSetup.pointAtUpnpRenderers(menu);
+        // Read on every build. Settings replaces the host screen, whose setSupportActionBar on return rebuilds this menu.
+        if (Preferences.isUpnpEnabled()) {
+            UpnpRouteSetup.pointAtUpnpRenderers(menu);
+        } else if (Flavors.routeButtonIsOnlyForUpnp(requireContext())) {
+            menu.findItem(R.id.media_route_menu_item).setVisible(false);
+        }
     }
 
     @Override
