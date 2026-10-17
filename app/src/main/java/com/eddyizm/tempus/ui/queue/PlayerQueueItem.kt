@@ -318,7 +318,7 @@ private fun QueueArtwork(
     modifier: Modifier = Modifier,
     artworkUri: Uri? = null,
     size: Int = 160,
-    cornerRadius: Dp = 8.dp,
+    cornerRadius: Dp = 0.dp,
     contentDescription: String? = null,
     @DrawableRes placeholderRes: Int = R.drawable.ic_placeholder_song,
     overlayContent: (@Composable () -> Unit)? = null
@@ -334,6 +334,7 @@ private fun QueueArtwork(
         }
     }
     val placeholder = placeholder(placeholderContent)
+    val dataSaving = Preferences.isDataSavingMode()
 
     Box(
         modifier = modifier
@@ -353,7 +354,7 @@ private fun QueueArtwork(
                     var transformed = request
                         .signature(ObjectKey(coverArtId ?: artworkUri.toString()))
                         .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
-                    if (Preferences.isDataSavingMode()) {
+                    if (dataSaving) {
                         transformed = transformed.onlyRetrieveFromCache(true)
                     }
                     if (artworkUri != null) {
