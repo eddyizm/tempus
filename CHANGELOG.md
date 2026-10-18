@@ -1,5 +1,36 @@
 # Changelog
 
+## [4.30.0](https://github.com/eddyizm/tempus/releases/tag/v4.30.0) (2026-10-16)
+## What's Changed
+* feat: custom HTTP headers per server by @karan in https://github.com/eddyizm/tempus/pull/1169
+* refactor: remove null check for extras bundle by @tvillega in https://github.com/eddyizm/tempus/pull/1150
+* chore(i18n): Update zh-TW translation by @IEEE-754 in https://github.com/eddyizm/tempus/pull/1139
+* refactor: use newer method to set audio playback parameters by @tvillega in https://github.com/eddyizm/tempus/pull/1151
+* chore: upgrade gradle to 9.8 by @tvillega in https://github.com/eddyizm/tempus/pull/1152
+* feat: remove server dialog editor by @tvillega in https://github.com/eddyizm/tempus/pull/1180
+* fix: changing the equalizer while paused no longer hangs the app by @herrerad85 in https://github.com/eddyizm/tempus/pull/1170
+* feat: added fastscrollbar to download adapter by @eddyizm in https://github.com/eddyizm/tempus/pull/1198
+* docs: expand the usage guide to cover shipped features by @herrerad85 in https://github.com/eddyizm/tempus/pull/1179
+* feat: modern player queue sheet with summary and quick actions by @sungoldsv in https://github.com/eddyizm/tempus/pull/1181
+* fix: Cleaning failed rows on STATE_FAILED and sweeping stale rows dur… by @eddyizm in https://github.com/eddyizm/tempus/pull/1200
+* feat: control a UPnP renderer's volume from the phone by @herrerad85 in https://github.com/eddyizm/tempus/pull/1167
+* fix: keep multi disc albums in disc order in the music folders screen by @herrerad85 in https://github.com/eddyizm/tempus/pull/1192
+* fix: jump coverflow pager on far index changes by @sungoldsv in https://github.com/eddyizm/tempus/pull/1182
+* fix: keep the last row of the artist page above the mini player by @herrerad85 in https://github.com/eddyizm/tempus/pull/1202
+* chore(i18n): update Spanish (es-ES) translation by @jaime-grj in https://github.com/eddyizm/tempus/pull/1206
+* fix: add options to disable UPnP and remote player functions by @X-4-dev in https://github.com/eddyizm/tempus/pull/1186
+* feat: parametric equalizer that imports AutoEq profiles by @herrerad85 in https://github.com/eddyizm/tempus/pull/1207
+* fix: keep a playlist's own cover inside the header box by @herrerad85 in https://github.com/eddyizm/tempus/pull/1211
+* chore: update wording to match behavior by @eddyizm in https://github.com/eddyizm/tempus/pull/1212
+* feat: update Privacy policy by @eddyizm in https://github.com/eddyizm/tempus/pull/1218
+
+## New Contributors
+* @karan made their first contribution in https://github.com/eddyizm/tempus/pull/1169
+* @IEEE-754 made their first contribution in https://github.com/eddyizm/tempus/pull/1139
+* @X-4-dev made their first contribution in https://github.com/eddyizm/tempus/pull/1186
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.29.0...v4.30.0
+
 ## [4.29.0](https://github.com/eddyizm/tempus/releases/tag/v4.29.0) (2026-10-08)
 ## What's Changed
 * feat: add to queue/play next options for album page by @eddyizm in https://github.com/eddyizm/tempus/pull/1137
