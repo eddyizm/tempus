@@ -1,0 +1,12 @@
+feat: 
+* custom HTTP headers per server
+* added fastscrollbar to download adapter
+* modern player queue sheet with summary and quick actions
+* control a UPnP renderer's volume from the phone
+* parametric equalizer that imports AutoEq profiles
+fix: 
+* changing the equalizer while paused no longer hangs the app
+* keep multi disc albums in disc order in the music folders screen
+* jump coverflow pager on far index changes
+* keep a playlist's own cover inside the header box
+* and more...
