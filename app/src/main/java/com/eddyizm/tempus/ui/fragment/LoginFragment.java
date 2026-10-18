@@ -32,7 +32,6 @@ import com.eddyizm.tempus.model.Server;
 import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.repository.SystemRepository;
 import com.eddyizm.tempus.ui.activity.MainActivity;
-import com.eddyizm.tempus.ui.dialog.ServerSignupDialog;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.LoginViewModel;
 
@@ -136,9 +135,12 @@ public class LoginFragment extends Fragment implements ClickCallback {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_add) {
-            ServerSignupDialog dialog = new ServerSignupDialog();
-            dialog.show(activity.getSupportFragmentManager(), null);
+        if (item.getItemId() == R.id.action_login) {
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("HIDE_TAB_LAYOUT", false);
+            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", true);
+            tempus.putExtra("SELECT_FRAGMENT", 0);
+            startActivity(tempus);
             return true;
         }
 
@@ -148,7 +150,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
     @Override
     public void onServerClick(Bundle bundle) {
         Server server = bundle.getParcelable("server_object");
-        saveServerPreference(server.getServerId(), server.getAddress(), server.getLocalAddress(), server.getUsername(), server.getPassword(), server.isLowSecurity(), server.getClientCert());
+        saveServerPreference(server.getServerId(), server.getAddress(), server.getLocalAddress(), server.getUsername(), server.getPassword(), server.isLowSecurity(), server.getClientCert(), server.getCustomHeaders());
 
         SystemRepository systemRepository = new SystemRepository();
         systemRepository.checkUserCredential(new SystemCallback() {
@@ -171,14 +173,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
         });
     }
 
-    @Override
-    public void onServerLongClick(Bundle bundle) {
-        ServerSignupDialog dialog = new ServerSignupDialog();
-        dialog.setArguments(bundle);
-        dialog.show(activity.getSupportFragmentManager(), null);
-    }
-
-    private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert) {
+    private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert, String customHeaders) {
         // Written only when the stored address belongs to another server. Tapping the same one
         // again has to keep the flip onError made, which is how a second attempt reaches the local
         // address. The server id cannot be the test, because onError clears it.
@@ -194,6 +189,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
         Preferences.setPassword(password);
         Preferences.setLowSecurity(isLowSecurity);
         Preferences.setClientCert(clientCert);
+        Preferences.setCustomHeaders(customHeaders);
 
         App.getSubsonicClientInstance(true);
     }
@@ -207,6 +203,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
         Preferences.setSalt(null);
         Preferences.setLowSecurity(false);
         Preferences.setClientCert(null);
+        Preferences.setCustomHeaders(null);
 
         App.getSubsonicClientInstance(true);
     }

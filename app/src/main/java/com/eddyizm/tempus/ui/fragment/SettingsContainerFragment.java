@@ -24,8 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.core.os.LocaleListCompat;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
@@ -50,6 +50,7 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.interfaces.DialogClickCallback;
 import com.eddyizm.tempus.interfaces.ScanCallback;
 import com.eddyizm.tempus.equalizer.EqualizerManager;
+import com.eddyizm.tempus.equalizer.ParametricProfile;
 import com.eddyizm.tempus.service.DownloaderService;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.ui.activity.MainActivity;
@@ -69,6 +70,10 @@ import com.eddyizm.tempus.util.UIUtil;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.eddyizm.tempus.viewmodel.SettingViewModel;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -90,7 +95,11 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private MediaService.LocalBinder mediaServiceBinder;
     private boolean isServiceBound = false;
+    private boolean pendingEqualizerReload = false;
     private ActivityResultLauncher<Intent> equalizerResultLauncher;
+    private ActivityResultLauncher<String[]> parametricEqPickerLauncher;
+
+    private static final int PARAMETRIC_EQ_MAX_BYTES = 16 * 1024;
 
     private final Set<String> expandedCategories = new HashSet<>();
 
@@ -114,6 +123,12 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {}
         );
+
+        parametricEqPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri != null) importParametricEq(uri);
+                });
 
         directoryPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -187,10 +202,12 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionKeepScreenOn();
         actionAutoDownloadLyrics();
         actionMiniPlayerHeart();
+        actionLanRemote();
 
         bindMediaService();
         actionBuiltinEqualizer();
         actionEqualizerSelector();
+        actionParametricEqImport();
         actionReplayGainPreamp();
 
         applyAccordionState();
@@ -277,6 +294,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         checkDownloadDirectory();
         checkEqualizerBands();
         checkMusicLibrary();
+        checkLanPlayback();
 
         if (!searchQuery.isEmpty()) {
             filterPreferences(screen);
@@ -364,6 +382,11 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
         if (builtinEqualizer != null) {
             builtinEqualizer.setVisible(selectedEqValue == 1);
+        }
+
+        Preference parametricEqImport = findPreference("parametric_eq_import");
+        if (parametricEqImport != null) {
+            parametricEqImport.setVisible(selectedEqValue == 3);
         }
 
         if (equalizer != null) {
@@ -595,6 +618,31 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             setMusicLibrarySummary(libraryPref);
         }
     };
+
+    private void checkLanPlayback() {
+        Preference lanPref = findPreference("lan_playback");
+        if (lanPref != null) lanPref.setVisible(Preferences.isLanRemoteEnabled());
+    }
+
+    private void actionLanRemote() {
+        SwitchPreference preference = findPreference(Preferences.LAN_REMOTE_ENABLED);
+        if (preference == null) return;
+
+        preference.setOnPreferenceChangeListener((pref, newValue) -> {
+            if (!Boolean.TRUE.equals(newValue)) {
+                // Turning it off ends whatever is running: a controlled device, an open pairing, the listener.
+                com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
+                com.eddyizm.tempus.lan.LanReceiverService.Companion.closePairing();
+                requireContext().stopService(new Intent(requireContext(), com.eddyizm.tempus.lan.LanReceiverService.class));
+            }
+            // Posted so the new value is saved before checkLanPlayback reads it, and run through
+            // applyAccordionState so an active search filter still applies to the row it reveals.
+            getListView().post(() -> {
+                if (getView() != null) applyAccordionState();
+            });
+            return true;
+        });
+    }
 
     /**
      * Below two libraries there is nothing to choose between, so the setting is noise.
@@ -890,6 +938,10 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mediaServiceBinder = (MediaService.LocalBinder) service;
             isServiceBound = true;
+            if (pendingEqualizerReload) {
+                mediaServiceBinder.reloadEqualizer();
+                pendingEqualizerReload = false;
+            }
             checkEqualizerBands();
             applyAccordionState();
         }
@@ -961,12 +1013,82 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
                         checkSystemEqualizer();
 
-                        Intent intent = new Intent(getContext().getApplicationContext(), MediaService.class);
-                        intent.setAction(MediaService.ACTION_RELOAD_EQUALIZER);
-                        ContextCompat.startForegroundService(getContext().getApplicationContext(), intent);
+                        if (mediaServiceBinder != null) {
+                            mediaServiceBinder.reloadEqualizer();
+                        } else {
+                            pendingEqualizerReload = true;
+                        }
                         return true;
                     });
         }
+    }
+
+    private void actionParametricEqImport() {
+        Preference importPref = findPreference("parametric_eq_import");
+        if (importPref == null) return;
+
+        String text = Preferences.getParametricEqProfile();
+        ParametricProfile profile = text != null ? ParametricProfile.parse(text) : null;
+        if (profile != null) {
+            double preampDb = profile.getPreampDb();
+            importPref.setSummary(getString(preampDb > 0
+                            ? R.string.settings_parametric_eq_summary_louder
+                            : R.string.settings_parametric_eq_summary,
+                    Preferences.getParametricEqName(),
+                    String.format(Locale.getDefault(), "%.1f", Math.abs(preampDb))));
+        }
+
+        importPref.setOnPreferenceClickListener(preference -> {
+            parametricEqPickerLauncher.launch(new String[]{"text/*", "application/octet-stream"});
+            return true;
+        });
+    }
+
+    private void importParametricEq(Uri uri) {
+        String text = readParametricEqFile(uri);
+        ParametricProfile profile = text != null ? ParametricProfile.parse(text) : null;
+        if (profile == null) {
+            int message = text != null && ParametricProfile.isPerEarExport(text)
+                    ? R.string.settings_parametric_eq_per_ear
+                    : R.string.settings_parametric_eq_invalid;
+            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String name = displayName(uri);
+        Preferences.setParametricEqProfile(profile.toText(), name);
+        if (mediaServiceBinder != null) {
+            mediaServiceBinder.reloadEqualizer();
+        } else {
+            pendingEqualizerReload = true;
+        }
+        actionParametricEqImport();
+        Toast.makeText(requireContext(), getString(R.string.settings_parametric_eq_imported, name), Toast.LENGTH_SHORT).show();
+    }
+
+    private String readParametricEqFile(Uri uri) {
+        try (InputStream in = requireContext().getContentResolver().openInputStream(uri)) {
+            if (in == null) return null;
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            byte[] buffer = new byte[4096];
+            int read;
+            while ((read = in.read(buffer)) != -1 && bytes.size() <= PARAMETRIC_EQ_MAX_BYTES) {
+                bytes.write(buffer, 0, read);
+            }
+            return bytes.size() <= PARAMETRIC_EQ_MAX_BYTES
+                    ? new String(bytes.toByteArray(), StandardCharsets.UTF_8)
+                    : null;
+        } catch (IOException | SecurityException e) {
+            return null;
+        }
+    }
+
+    private String displayName(Uri uri) {
+        String name = DocumentFile.fromSingleUri(requireContext(), uri).getName();
+        if (name == null) name = uri.getLastPathSegment();
+        if (name == null) name = "AutoEq";
+        int dot = name.lastIndexOf('.');
+        return dot > 0 ? name.substring(0, dot) : name;
     }
 
     private void actionBuiltinEqualizer() {
@@ -992,6 +1114,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         if (isServiceBound) {
             requireActivity().unbindService(serviceConnection);
             isServiceBound = false;
+            mediaServiceBinder = null;
         }
     }
 }

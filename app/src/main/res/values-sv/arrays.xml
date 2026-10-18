@@ -147,6 +147,7 @@
         <item>Standard</item>
         <item>Inbyggd</item>
         <item>Extern</item>
+        <item>Parametric (AutoEq)</item>
     </string-array>
     <string-array name="aa_tab_titles">
         <item>Visa inte</item>

@@ -124,16 +124,17 @@ public class MediaManager {
                         public void onEvents(@NonNull Player player, @NonNull Player.Events events) {
                             if (events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION)
                                     || events.contains(Player.EVENT_PLAY_WHEN_READY_CHANGED)
-                                    || events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)) {
+                                    || events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED)
+                                    || events.contains(Player.EVENT_IS_PLAYING_CHANGED)
+                                    || events.contains(Player.EVENT_POSITION_DISCONTINUITY)) {
 
                                 String mediaId = player.getCurrentMediaItem() != null
                                         ? player.getCurrentMediaItem().mediaId
                                         : null;
+                                int itemIndex = player.getCurrentMediaItemIndex();
+                                boolean playing = player.isPlaying();
 
-                                boolean playing = player.getPlaybackState() == Player.STATE_READY
-                                        && player.getPlayWhenReady();
-
-                                playbackViewModel.update(mediaId, playing);
+                                playbackViewModel.update(mediaId, itemIndex, playing);
                             }
                         }
                     });
@@ -141,16 +142,18 @@ public class MediaManager {
                     String mediaId = browser.getCurrentMediaItem() != null
                             ? browser.getCurrentMediaItem().mediaId
                             : null;
-                    boolean playing = browser.getPlaybackState() == Player.STATE_READY && browser.getPlayWhenReady();
-                    playbackViewModel.update(mediaId, playing);
+                    int itemIndex = browser.getCurrentMediaItemIndex();
+                    boolean playing = browser.isPlaying();
+                    playbackViewModel.update(mediaId, itemIndex, playing);
 
                     attachedBrowserRef = new WeakReference<>(browser);
                 } else {
                     String mediaId = browser.getCurrentMediaItem() != null
                             ? browser.getCurrentMediaItem().mediaId
                             : null;
-                    boolean playing = browser.getPlaybackState() == Player.STATE_READY && browser.getPlayWhenReady();
-                    playbackViewModel.update(mediaId, playing);
+                    int itemIndex = browser.getCurrentMediaItemIndex();
+                    boolean playing = browser.isPlaying();
+                    playbackViewModel.update(mediaId, itemIndex, playing);
                 }
             }
 

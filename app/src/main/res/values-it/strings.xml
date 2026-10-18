@@ -180,7 +180,6 @@
     <string name="login_title">Server Subsonic</string>
     <string name="login_title_expanded">Server Subsonic</string>
     <string name="media_route_menu_title">Trasmetti</string>
-    <string name="menu_add_button">Aggiungi</string>
     <string name="menu_add_to_playlist_button">Aggiungi alla playlist</string>
     <string name="menu_download_all_button">Scarica tutto</string>
     <string name="menu_rate_album">Valuta l\'album</string>
@@ -282,17 +281,6 @@
     <string name="search_title_album">Album</string>
     <string name="search_title_artist">Artisti</string>
     <string name="search_title_song">Brani</string>
-    <string name="server_signup_dialog_action_low_security">Bassa sicurezza</string>
-    <string name="server_signup_dialog_action_delete_toast">Premi a lungo per eliminare</string>
-    <string name="server_signup_dialog_hint_local_address">URL locale</string>
-    <string name="server_signup_dialog_hint_name">Nome Server</string>
-    <string name="server_signup_dialog_hint_password">Password</string>
-    <string name="server_signup_dialog_hint_url">URL Server</string>
-    <string name="server_signup_dialog_hint_username">Nome utente</string>
-    <string name="server_signup_dialog_negative_button">Annulla</string>
-    <string name="server_signup_dialog_neutral_button">Elimina</string>
-    <string name="server_signup_dialog_positive_button">Salva</string>
-    <string name="server_signup_dialog_title">Aggiungi server</string>
     <string name="server_unreachable_dialog_negative_button">Annulla</string>
     <string name="server_unreachable_dialog_neutral_button">Vai al login</string>
     <string name="server_unreachable_dialog_positive_button">Continua comunque</string>

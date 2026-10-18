@@ -86,6 +86,9 @@ public class PlayerControllerFragment extends Fragment {
 
     private InnerFragmentPlayerControllerBinding bind;
     private com.eddyizm.tempus.lan.LanPlayerAdapter remotePlayer;
+    private final android.content.SharedPreferences.OnSharedPreferenceChangeListener lanSwitchListener = (prefs, key) -> {
+        if (Preferences.LAN_REMOTE_ENABLED.equals(key)) updateRemoteToggleVisibility();
+    };
     private boolean renderingRemote;
     private ViewPager2 playerMediaCoverViewPager;
     private ToggleButton buttonFavorite;
@@ -130,6 +133,8 @@ public class PlayerControllerFragment extends Fragment {
 
         init();
         remotePlayer = new com.eddyizm.tempus.lan.LanPlayerAdapter();
+        // Settings is a fragment in this activity, so a flipped switch is heard here rather than on resume.
+        com.eddyizm.tempus.App.getInstance().getPreferences().registerOnSharedPreferenceChangeListener(lanSwitchListener);
         com.eddyizm.tempus.lan.LanRemoteSession.state().observe(getViewLifecycleOwner(), state -> refreshPlaybackDestination());
         com.eddyizm.tempus.lan.LanRemoteSession.queueState().observe(getViewLifecycleOwner(), queue -> refreshPlaybackDestination());
         bind.playerRemoteToggle.setOnClickListener(v -> com.eddyizm.tempus.lan.LanDevicePicker.toggle(requireActivity()));
@@ -162,6 +167,7 @@ public class PlayerControllerFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        com.eddyizm.tempus.App.getInstance().getPreferences().unregisterOnSharedPreferenceChangeListener(lanSwitchListener);
         if (bind != null) bind.nowPlayingMediaControllerView.setPlayer(null);
         if (remotePlayer != null) remotePlayer.release();
         remotePlayer = null;
@@ -170,6 +176,7 @@ public class PlayerControllerFragment extends Fragment {
 
     private void refreshPlaybackDestination() {
         if (bind == null || remotePlayer == null) return;
+        updateRemoteToggleVisibility();
         if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
             remotePlayer.refresh();
             bind.nowPlayingMediaControllerView.setPlayer(remotePlayer);
@@ -245,8 +252,11 @@ public class PlayerControllerFragment extends Fragment {
                 popup.inflate(R.menu.player_overflow_menu);
 
                 int selectedEq = Preferences.getSelectedEqualizer();
-                if (selectedEq == 0 || selectedEq == 2) {
+                if (selectedEq != 1) {
                     popup.getMenu().removeItem(R.id.action_open_equalizer);
+                }
+                if (!com.eddyizm.tempus.lan.LanDevicePicker.isOffered()) {
+                    popup.getMenu().removeItem(R.id.action_lan_playback);
                 }
 
                 popup.setOnMenuItemClickListener(item -> {
@@ -271,6 +281,7 @@ public class PlayerControllerFragment extends Fragment {
 
     private void initQuickActionView() {
         playerQuickActionView.setVisibility(Preferences.getQuickActionVisible() ? View.VISIBLE : View.GONE);
+        updateQueueButtonTint(false);
 
         playerOpenQueueButton.setOnClickListener(view -> {
             PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity()
@@ -825,30 +836,28 @@ public class PlayerControllerFragment extends Fragment {
         playerMediaCoverViewPager.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
         playerMediaCoverViewPager.setAdapter(new PlayerControllerHorizontalPager(this));
         playerMediaCoverViewPager.setUserInputEnabled(false);
+        playerMediaCoverViewPager.setNestedScrollingEnabled(false);
+        if (playerMediaCoverViewPager.getChildCount() > 0) {
+            playerMediaCoverViewPager.getChildAt(0).setNestedScrollingEnabled(false);
+        }
 
         playerMediaCoverViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
 
-                PlayerBottomSheetFragment playerBottomSheetFragment = (PlayerBottomSheetFragment) requireActivity()
-                        .getSupportFragmentManager().findFragmentByTag("PlayerBottomSheet");
-
-                if (position == 0) {
+                if (getParentFragment() instanceof PlayerBottomSheetFragment) {
+                    ((PlayerBottomSheetFragment) getParentFragment()).updateBottomSheetDraggableState();
+                } else if (position == 0) {
                     activity.setBottomSheetDraggableState(true);
+                } else if (position == 1) {
+                    activity.setBottomSheetDraggableState(false);
+                }
+                if (position == 0) {
                     playerMediaCoverViewPager.setUserInputEnabled(false);
-
-                    if (playerBottomSheetFragment != null) {
-                        playerBottomSheetFragment.setPlayerControllerVerticalPagerDraggableState(true);
-                    }
                     updateLyricsButtonTint(false);
                 } else if (position == 1) {
-                    activity.setBottomSheetDraggableState(true);
                     playerMediaCoverViewPager.setUserInputEnabled(true);
-
-                    if (playerBottomSheetFragment != null) {
-                        playerBottomSheetFragment.setPlayerControllerVerticalPagerDraggableState(false);
-                    }
                     updateLyricsButtonTint(true);
                 }
             }
@@ -863,6 +872,16 @@ public class PlayerControllerFragment extends Fragment {
                 : com.google.android.material.R.attr.colorOnSurface;
         int color = com.google.android.material.color.MaterialColors.getColor(playerOpenLyricsButton, colorAttr);
         ImageViewCompat.setImageTintList(playerOpenLyricsButton, ColorStateList.valueOf(color));
+    }
+
+    public void updateQueueButtonTint(boolean isQueueActive) {
+        if (playerOpenQueueButton == null)
+            return;
+        int colorAttr = isQueueActive
+                ? com.google.android.material.R.attr.colorPrimary
+                : com.google.android.material.R.attr.colorOnSurface;
+        int color = com.google.android.material.color.MaterialColors.getColor(playerOpenQueueButton, colorAttr);
+        ImageViewCompat.setImageTintList(playerOpenQueueButton, ColorStateList.valueOf(color));
     }
 
     private void initMediaListenable() {
@@ -1000,6 +1019,10 @@ public class PlayerControllerFragment extends Fragment {
         playerMediaCoverViewPager.setCurrentItem(1, true);
     }
 
+    public boolean isLyricsPage() {
+        return playerMediaCoverViewPager != null && playerMediaCoverViewPager.getCurrentItem() == 1;
+    }
+
     private void checkAndSetRatingContainerVisibility() {
         if (ratingContainer == null)
             return;
@@ -1087,6 +1110,11 @@ public class PlayerControllerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         bindMediaService();
+    }
+
+    private void updateRemoteToggleVisibility() {
+        if (bind == null) return;
+        bind.playerRemoteToggle.setVisibility(com.eddyizm.tempus.lan.LanDevicePicker.isOffered() ? View.VISIBLE : View.GONE);
     }
 
     @Override

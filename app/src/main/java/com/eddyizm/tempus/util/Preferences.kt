@@ -12,6 +12,8 @@ import com.google.gson.reflect.TypeToken
 
 object Preferences {
     const val THEME = "theme"
+    const val UPNP_ENABLED = "upnp_enabled"
+    const val LAN_REMOTE_ENABLED = "lan_remote_enabled"
     private const val DARK_THEME_BLACK = "dark_theme_black"
     private const val COLOR_ACCENT = "color_accent"
     private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
@@ -22,6 +24,7 @@ object Preferences {
     private const val SALT = "salt"
     private const val LOW_SECURITY = "low_security"
     private const val CLIENT_CERT = "client_cert"
+    private const val CUSTOM_HEADERS = "custom_headers"
     private const val BATTERY_OPTIMIZATION = "battery_optimization"
     private const val SERVER_ID = "server_id"
     private const val OPEN_SUBSONIC = "open_subsonic"
@@ -106,6 +109,8 @@ object Preferences {
     private const val SELECTED_EQUALIZER = "selected_equalizer"
     private const val EQUALIZER_ENABLED = "equalizer_enabled"
     private const val EQUALIZER_BAND_LEVELS = "equalizer_band_levels"
+    private const val PARAMETRIC_EQ_PROFILE = "parametric_eq_profile"
+    private const val PARAMETRIC_EQ_NAME = "parametric_eq_name"
     private const val MINI_SHUFFLE_BUTTON_VISIBILITY = "mini_shuffle_button_visibility"
     private const val CUSTOM_COMMAND_FIRST_BUTTON = "custom_command_first_button"
     private const val CUSTOM_COMMAND_SECOND_BUTTON = "custom_command_second_button"
@@ -339,6 +344,16 @@ object Preferences {
     @JvmStatic
     fun setClientCert(clientCert: String?) {
         App.getInstance().preferences.edit().putString(CLIENT_CERT, clientCert).apply()
+    }
+
+    @JvmStatic
+    fun getCustomHeaders(): String? {
+        return App.getInstance().preferences.getString(CUSTOM_HEADERS, null)
+    }
+
+    @JvmStatic
+    fun setCustomHeaders(customHeaders: String?) {
+        App.getInstance().preferences.edit().putString(CUSTOM_HEADERS, customHeaders).apply()
     }
 
     @JvmStatic
@@ -971,6 +986,17 @@ object Preferences {
         App.getInstance().preferences.edit().putLong(NEXT_UPDATE_CHECK, System.currentTimeMillis()).apply()
     }
 
+    // Off until the user turns them on, so an update starts nothing on the local network by itself.
+    @JvmStatic
+    fun isUpnpEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(UPNP_ENABLED, false)
+    }
+
+    @JvmStatic
+    fun isLanRemoteEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(LAN_REMOTE_ENABLED, false)
+    }
+
     @JvmStatic
     fun isContinuousPlayEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(CONTINUOUS_PLAY, true)
@@ -1047,6 +1073,24 @@ object Preferences {
     @JvmStatic
     fun setSelectedEqualizer(selectedEqualizer: String) {
         App.getInstance().preferences.edit().putString(SELECTED_EQUALIZER, selectedEqualizer)
+            .apply()
+    }
+
+    @JvmStatic
+    fun getParametricEqProfile(): String? {
+        return App.getInstance().preferences.getString(PARAMETRIC_EQ_PROFILE, null)
+    }
+
+    @JvmStatic
+    fun getParametricEqName(): String? {
+        return App.getInstance().preferences.getString(PARAMETRIC_EQ_NAME, null)
+    }
+
+    @JvmStatic
+    fun setParametricEqProfile(profile: String, name: String) {
+        App.getInstance().preferences.edit()
+            .putString(PARAMETRIC_EQ_PROFILE, profile)
+            .putString(PARAMETRIC_EQ_NAME, name)
             .apply()
     }
 
