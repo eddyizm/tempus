@@ -243,6 +243,7 @@
     <string name="login_title">Subsonicサーバー</string>
     <string name="login_title_expanded">Subsonicサーバー</string>
     <string name="media_route_menu_title">キャスト</string>
+    <string name="menu_login_button">ログイン</string>
     <string name="menu_add_to_playlist_button">プレイリストに追加</string>
     <string name="playlist_added_to_queue">プレイリストをキューに追加しました</string>
     <string name="menu_go_to_playlist_button">再生</string>
@@ -305,6 +306,32 @@
     <string name="player_queue_save_queue_success">再生キューを保存しました</string>
     <string name="player_queue_save_to_playlist">キューをプレイリストに保存</string>
     <string name="player_queue_load_queue">キューを読み込み</string>
+    <string name="player_queue_playing_next">次に再生</string>
+    <string name="player_queue_clear">クリア</string>
+    <string name="player_queue_shuffle_upcoming">以降の曲をシャッフル</string>
+    <string name="player_queue_download_all">すべてダウンロード</string>
+    <string name="player_queue_empty">キューに曲がありません</string>
+    <string name="player_queue_reorder">並べ替え</string>
+    <string name="player_queue_remove">キューから削除</string>
+    <plurals name="player_queue_song_count">
+        <item quantity="other">%d 曲</item>
+    </plurals>
+    <plurals name="player_queue_duration_seconds">
+        <item quantity="other">%d 秒</item>
+    </plurals>
+    <plurals name="player_queue_duration_minutes">
+        <item quantity="other">%d 分</item>
+    </plurals>
+    <plurals name="player_queue_duration_hours">
+        <item quantity="other">%d 時間</item>
+    </plurals>
+    <string name="player_queue_starred">お気に入り</string>
+    <string name="player_queue_downloaded">ダウンロード済み</string>
+    <string name="player_queue_play">再生</string>
+    <string name="player_queue_pause">一時停止</string>
+    <string name="player_queue_all_downloaded">すべての曲がダウンロード済みです</string>
+    <string name="player_queue_loaded">キューを読み込みました</string>
+    <string name="player_queue_no_saved_queue">保存されたキューが見つかりません</string>
     <string name="player_lyrics_download_content_description">オフライン再生用に歌詞をダウンロード</string>
     <string name="player_lyrics_downloaded_content_description">オフライン再生用に歌詞をダウンロード済み</string>
     <string name="player_lyrics_download_success">歌詞をオフライン再生用に保存しました。</string>
@@ -558,6 +585,7 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">お気に入りアルバムのオフライン向け同期</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">有効にすると、お気に入りトラックがオフライン利用のためにダウンロードされます。</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">お気に入りトラックのオフライン向け同期</string>
+    <string name="settings_permissions">アプリの権限</string>
     <string name="settings_theme">テーマ</string>
     <string name="settings_dark_theme_style">ダークテーマのスタイル</string>
     <string name="settings_tile_size">タイルのサイズ</string>
@@ -775,7 +803,7 @@
     <string name="la_tab_themes">テーマ</string>
     <string name="la_tab_server">サーバー</string>
     <string name="la_appbar_greeter_title">アプリについて</string>
-    <string name="la_appbar_permission_title">権限の概要</string>
+    <string name="la_appbar_permission_title">権限の管理</string>
     <string name="la_appbar_themes_title">テーマエディター</string>
     <string name="la_appbar_server_title">サーバーエディター</string>
     <string name="la_greeting_description">Tempusへようこそ。TempusはAndroid向けネイティブアプリとして開発されたオープンソースのSubsonicクライアントです。</string>
@@ -805,6 +833,9 @@
     <string name="la_server_switch_plaintext_password">プレーンテキストパスワード（レガシーサーバー向け）</string>
     <string name="la_server_switch_local_url">ローカルURLを設定</string>
     <string name="la_server_switch_cert">クライアント証明書（mTLS）</string>
+    <string name="la_server_switch_headers">カスタムHTTPヘッダー</string>
+    <string name="la_server_field_server_headers">1行に1つずつ入力（例: CF-Access-Client-Id: value）</string>
+    <string name="error_custom_headers_invalid">%1$s 行目のヘッダーが正しくありません。「名前: 値」の形式で入力してください</string>
     <string name="la_theme_title">アクセントカラーの選択</string>
     <string name="la_theme_description">アプリの配色をカスタマイズできます。</string>
     <string name="la_theme_button_return">ホームへ</string>
@@ -820,6 +851,19 @@
     <string name="la_theme_card_teal_description">ティールのアクセントカラー</string>
     <string name="la_theme_card_slate_gray_description">スレートグレーのアクセントカラー</string>
     <string name="la_theme_dialog_color_picker_title">アクセントカラーを選ぶ</string>
+    <string name="la_perms_title">権限の許可</string>
+    <string name="la_perms_description">必要な権限とその用途を以下に表示します。</string>
+    <string name="la_perms_status_provided">許可済み</string>
+    <string name="la_perms_status_not_provided">許可する</string>
+    <string name="la_perms_internet_title">インターネット</string>
+    <string name="la_perms_internet_description">インターネット上の音楽サーバーにアクセスするために必要です。</string>
+    <string name="la_perms_notifications_title">通知</string>
+    <string name="la_perms_notifications_description">ダウンロード状況と再生コントロールを表示するために必要です。</string>
+    <string name="la_perms_access_local_network_title">ローカルネットワークへのアクセス</string>
+    <string name="la_perms_access_local_network_description">同じLAN上にある他のデバイスにアクセスするために必要です。</string>
+    <string name="la_perms_nearby_devices_title">付近のデバイス</string>
+    <string name="la_perms_nearby_devices_description">UPnPやChromecastで他のデバイスを検出するために必要です。</string>
     <string name="la_shortcut_label">はじめに</string>
+    <string name="la_button_advanced_editor">サーバーエディターを開く</string>
     <string name="hello_blank_fragment">空のフラグメント</string>
 </resources>
