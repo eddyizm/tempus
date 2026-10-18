@@ -169,7 +169,7 @@ private fun SongArtwork(
         return
     }
 
-    val dataSaving = Preferences.isDataSavingMode()
+    val dataSaving = rememberDataSavingMode()
 
     GlideImage(
         model = CustomGlideRequest.createUrl(coverArtId, Preferences.getImageSize()),

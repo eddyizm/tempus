@@ -54,6 +54,7 @@ import com.bumptech.glide.signature.ObjectKey
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.glide.CustomGlideRequest
 import com.eddyizm.tempus.subsonic.models.Child
+import com.eddyizm.tempus.ui.components.rememberDataSavingMode
 import com.eddyizm.tempus.util.DownloadUtil
 import com.eddyizm.tempus.util.ExternalAudioReader
 import com.eddyizm.tempus.util.FavoriteRegistry
@@ -334,7 +335,7 @@ private fun QueueArtwork(
         }
     }
     val placeholder = placeholder(placeholderContent)
-    val dataSaving = Preferences.isDataSavingMode()
+    val dataSaving = rememberDataSavingMode()
 
     Box(
         modifier = modifier
