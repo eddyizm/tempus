@@ -318,6 +318,44 @@
     <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
     <string name="player_queue_save_to_playlist">Zapisz kolejkę do playlisty</string>
     <string name="player_queue_load_queue">Wczytaj kolejkę</string>
+	<string name="player_queue_playing_next">Następne odtwarzane</string>
+    <string name="player_queue_clear">Wyczyść</string>
+    <string name="player_queue_shuffle_upcoming">Wymieszaj nadchodzące</string>
+    <string name="player_queue_download_all">Pobierz wszystkie</string>
+    <string name="player_queue_empty">Kolejka jest pusta</string>
+    <string name="player_queue_reorder">Zmień kolejność</string>
+    <string name="player_queue_remove">Usuń z kolejki</string>
+    <plurals name="player_queue_song_count">
+        <item quantity="one">%d piosenka</item>
+		<item quantity="few">%d piosenki</item>
+        <item quantity="many">%d piosenek</item>
+        <item quantity="other">%d piosenek</item>
+    </plurals>
+    <plurals name="player_queue_duration_seconds">
+        <item quantity="one">%d sekunda</item>
+		<item quantity="few">%d sekundy</item>
+        <item quantity="many">%d sekund</item>
+        <item quantity="other">%d sekundy</item>
+    </plurals>
+    <plurals name="player_queue_duration_minutes">
+        <item quantity="one">%d minuta</item>
+		<item quantity="few">%d minuty</item>
+        <item quantity="many">%d minut</item>
+        <item quantity="other">%d minuty</item>
+    </plurals>
+    <plurals name="player_queue_duration_hours">
+        <item quantity="one">%d godzina</item>
+		<item quantity="few">%d godziny</item>
+        <item quantity="many">%d godzin</item>
+        <item quantity="other">%d godziny</item>
+    </plurals>
+    <string name="player_queue_starred">Oznaczone gwiazdką</string>
+    <string name="player_queue_downloaded">Pobrane</string>
+    <string name="player_queue_play">Odtwarzaj</string>
+    <string name="player_queue_pause">Pauza</string>
+    <string name="player_queue_all_downloaded">Pobrano już wszystkie piosenki</string>
+    <string name="player_queue_loaded">Kolejka załadowana</string>
+    <string name="player_queue_no_saved_queue">Nie znaleziono zapisanej kolejki</string>
     <string name="player_lyrics_download_content_description">Pobierz teksty do odtwarzania offline</string>
     <string name="player_lyrics_downloaded_content_description">Teksty pobrane do odtwarzania offline</string>
     <string name="player_lyrics_download_success">Zapisano tekst do odtwarzania offline.</string>
@@ -571,6 +609,11 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronizuj albumy oznaczone gwiazdką do użycia offline</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
+	<string name="settings_permissions">Uprawnienia aplikacji</string>
+	<string name="settings_network_playback_title">Odtwarzanie sieciowe</string>
+    <string name="settings_upnp_title">Odtwarzacze UPnP / DLNA</string>
+    <string name="settings_upnp_summary">Znajdź i odtwarzaj na odtwarzaczach UPnP i DLNA w twojej sieci. Szuka tylko wtedy gdy, wybieranie urządzenia jest otwarte.</string>
+    <string name="settings_lan_remote_summary">Steruj aplikacją Tempus na innym urządzeniu, lub pozwól jej kontrolować to urządzenie. Nasłuchuje tylko gdy odbiornik jest włączony, i szuka tylko gdy ty szukasz urządzeń.</string>
     <string name="settings_theme">Motyw</string>
 	<string name="settings_dark_theme_style">Styl ciemnego motywu</string>
     <string name="settings_tile_size">Rozmiar kafelków</string>
@@ -738,6 +781,13 @@
     <string name="settings_title_equalizer">Equalizer</string>
     <string name="settings_equalizer_select">Wybierz equalizer do użycia</string>
     <string name="settings_equalizer_dialog_title">Equalizery</string>
+	<string name="settings_parametric_eq_import">Zaimportuj profil AutoEq</string>
+    <string name="settings_parametric_eq_import_summary">Wybierz plik ParametricEQ.txt z AutoEq</string>
+    <string name="settings_parametric_eq_summary">%1$s. Odtwarza %2$s dB ciszej. Nie ma efektu na wyjściu przesyłania. Dla słuchawek Bluetooth,wybierz profil dla ich trybu redukcji hałasu i pozostaw ich własny equalizer jako płaski.</string>
+    <string name="settings_parametric_eq_summary_louder">%1$s. Odtwarza %2$s dB głośniej. Nie ma efektu na wyjściu przesyłania. Dla słuchawek Bluetooth,wybierz profil dla ich trybu redukcji hałasu i pozostaw ich własny equalizer jako płaski.</string>
+    <string name="settings_parametric_eq_imported">Zaimportowano %1$s</string>
+    <string name="settings_parametric_eq_invalid">Nieprawidłowy plik AutoEq ParametricEQ</string>
+    <string name="settings_parametric_eq_per_ear">Profile z dwoma kanałami (na ucho) nie są jeszcze obsługiwane. Wyeksportuj ponownie z jednym kanałem.</string>
     <string name="settings_album_detail">Pokaż szczegóły albumu</string>
     <string name="settings_album_detail_summary">Jeżeli włączone, pokaż szczegóły albumu takie jak gatunek, ilość piosenek itp. na stronie albumu</string>
     <string name="settings_artist_sort_by_album_count">Sortuj wykonawców po ilości albumów</string>
@@ -846,7 +896,10 @@
     <string name="la_server_switch_plaintext_password">Hasło jako zwykły tekst (stare serwery)</string>
     <string name="la_server_switch_local_url">Ustaw lokalny adres URL</string>
     <string name="la_server_switch_cert">Certyfikat klienta (mTLS)</string>
-
+    <string name="la_server_switch_headers">Niestandardowe nagłówki HTTP</string>
+    <string name="la_server_field_server_headers">Jeden na linię, np. CF-Access-Client-Id: wartość</string>
+    <string name="error_custom_headers_invalid">Nieprawidłowy nagłówek na linii %1$s. Użyj Nazwa: wartość</string>
+	
 	<string name="la_theme_title">Wybierz kolor akcentu</string>
 	
     <string name="la_perms_title">Poproś o uprawnienia</string>
@@ -859,7 +912,7 @@
     <string name="la_perms_notifications_description">Wymagane do pokazywania statusu pobierania i sterowania odtwarzacza.</string>
     <string name="la_perms_access_local_network_title">Dostęp do sieci lokalnej</string>
     <string name="la_perms_access_local_network_description">Wymagany do uzyskania dostępu do innych urządzeń w tej samej sieci LAN co twoje aktualne urządzenie.</string>
-    <string name="la_perms_nearby_devices_title">Urządzenia w pobliżuNearby Devices</string>
+    <string name="la_perms_nearby_devices_title">Urządzenia w pobliżu</string>
     <string name="la_perms_nearby_devices_description">Wymagane do znajdowania urządzeń przez UPnP i Chromecast.</string>
 	
     <string name="la_theme_description">Styl dla palety dynamicznej twojej aplikacji.</string>

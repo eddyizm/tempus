@@ -1744,49 +1744,13 @@
             column="67"/>
     </issue>
 
-    <issue
-        id="UnsafeOptInUsageError"
-        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
-        errorLine1="            DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(holder.itemView.getContext());"
-        errorLine2="            ~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/adapter/PlayerSongQueueAdapter.java"
-            line="105"
-            column="13"/>
-    </issue>
 
-    <issue
-        id="UnsafeOptInUsageError"
-        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
-        errorLine1="            DownloaderManager downloaderManager = DownloadUtil.getDownloadTracker(holder.itemView.getContext());"
-        errorLine2="                                                               ~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/adapter/PlayerSongQueueAdapter.java"
-            line="105"
-            column="64"/>
-    </issue>
 
-    <issue
-        id="UnsafeOptInUsageError"
-        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
-        errorLine1="                isDownloaded = downloaderManager.isDownloaded(song.getId());"
-        errorLine2="                ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/adapter/PlayerSongQueueAdapter.java"
-            line="107"
-            column="17"/>
-    </issue>
 
-    <issue
-        id="UnsafeOptInUsageError"
-        message="This declaration is opt-in and its usage should be marked with `@androidx.media3.common.util.UnstableApi` or `@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)`"
-        errorLine1="                isDownloaded = downloaderManager.isDownloaded(song.getId());"
-        errorLine2="                                                 ~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/adapter/PlayerSongQueueAdapter.java"
-            line="107"
-            column="50"/>
-    </issue>
+
+
+
+
 
     <issue
         id="UnsafeOptInUsageError"
@@ -9510,60 +9474,15 @@
             column="9"/>
     </issue>
 
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="                viewHolder.getBindingAdapter().notifyDataSetChanged();"
-        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerQueueFragment.java"
-            line="240"
-            column="17"/>
-    </issue>
 
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="        playerSongQueueAdapter.notifyDataSetChanged();"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerQueueFragment.java"
-            line="246"
-            column="9"/>
-    </issue>
 
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="                        playerSongQueueAdapter.notifyDataSetChanged();"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerQueueFragment.java"
-            line="460"
-            column="25"/>
-    </issue>
 
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="                        playerSongQueueAdapter.notifyDataSetChanged();"
-        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/fragment/PlayerQueueFragment.java"
-            line="482"
-            column="25"/>
-    </issue>
 
-    <issue
-        id="NotifyDataSetChanged"
-        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort."
-        errorLine1="        notifyDataSetChanged();"
-        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/ui/adapter/PlayerSongQueueAdapter.java"
-            line="192"
-            column="9"/>
-    </issue>
+
+
+
+
+
 
     <issue
         id="NotifyDataSetChanged"
@@ -12367,16 +12286,7 @@
             column="33"/>
     </issue>
 
-    <issue
-        id="UseKtx"
-        message="Use the KTX extension function `ViewGroup.isNotEmpty` instead?"
-        errorLine1="    private val child: View? get() = if (childCount > 0) getChildAt(0) else null"
-        errorLine2="                                         ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/com/eddyizm/tempus/helper/recyclerview/NestedScrollableHost.kt"
-            line="30"
-            column="42"/>
-    </issue>
+
 
     <issue
         id="UseKtx"

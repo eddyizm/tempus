@@ -15,8 +15,8 @@ android {
         //noinspection OldTargetApi
         targetSdk = 37
 
-        versionCode 50
-        versionName '4.29.0'
+        versionCode 51
+        versionName '4.30.0'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         javaCompileOptions {
@@ -61,6 +61,11 @@ android {
             dimension = "default"
             applicationId = "com.eddyizm.degoogled.tempus"
         }
+
+        play {
+            dimension = "default"
+            applicationId = "com.eddyizm.play.tempus"
+        }
     }
 
     buildTypes {
@@ -86,6 +91,14 @@ android {
     lint {
         baseline = file("lint-baseline.xml")
         disable += "MissingTranslation"
+    }
+
+    sourceSets {
+        play {
+            java.srcDirs += ['src/tempus/java']
+            kotlin.srcDirs += ['src/tempus/java']
+            res.srcDirs += ['src/tempus/res']
+        }
     }
 }
 
@@ -116,6 +129,9 @@ dependencies {
     implementation libs.androidx.compose.ui.graphics
     implementation libs.androidx.compose.ui.tooling.preview
     implementation libs.androidx.compose.foundation
+    implementation libs.androidx.compose.material3
+    implementation libs.androidx.compose.runtime.livedata
+    implementation libs.reorderable
     debugImplementation libs.androidx.compose.ui.tooling
 
     // Android Material
@@ -124,6 +140,7 @@ dependencies {
     // Glide
     implementation libs.glide
     implementation libs.glide.annotations
+    implementation libs.glide.compose
     annotationProcessor libs.glide.compiler
 
     // Media3
@@ -134,6 +151,7 @@ dependencies {
     implementation libs.media3.exoplayer.hls
     implementation libs.media3.datasource.okhttp
     tempusImplementation libs.media3.cast
+    playImplementation libs.media3.cast
 
     // Route picker. Pulled in transitively by the Cast SDK for the tempus flavor
     // already; declared here at the same version so the degoogled flavor has it too.
