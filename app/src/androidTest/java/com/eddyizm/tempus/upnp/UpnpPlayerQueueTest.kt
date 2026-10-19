@@ -424,6 +424,22 @@ class UpnpPlayerQueueTest {
     }
 
     @Test
+    fun pausingAStationStopsTheRenderer() {
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        actions.clear()
+
+        onMain { player.playWhenReady = false }
+        SystemClock.sleep(1000)
+
+        assertTrue("a paused station was not stopped: $actions", actions.contains("Stop"))
+        assertFalse("a station was paused, which Kodi ignores: $actions", actions.contains("Pause"))
+    }
+
+    @Test
     fun aRefusedSeekTargetDoesNotAbandonTheTrack() = seekRefusedWith(711)
 
     @Test

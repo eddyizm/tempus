@@ -336,6 +336,11 @@ class UpnpPlayer(
         }
 
     private fun pauseOrStop() {
+        // A station has nothing to resume, and Kodi lists Pause for one but ignores it while answering OK.
+        if (isStation(currentEntry())) {
+            controlPoint.stop(device)
+            return
+        }
         val allowed = controlPoint.currentTransportActions(device)
         if (allowed.isEmpty() || allowed.any { it.equals("Pause", ignoreCase = true) }) {
             try {
