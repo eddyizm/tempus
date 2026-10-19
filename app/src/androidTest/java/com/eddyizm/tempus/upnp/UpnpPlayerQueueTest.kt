@@ -314,7 +314,11 @@ class UpnpPlayerQueueTest {
     fun aSeekOvertakenByATrackChangeDoesNotWriteItsPosition() {
         val gate = CountDownLatch(1)
         holdHandovers = gate
+        // From the start of the track, since the bar runs on from the renderer's reading while playing.
+        reportedRelTime = "00:00:00"
         onMain {
+            // Playing, since a paused queue hands nothing over for the seek to be overtaken by.
+            player.playWhenReady = true
             player.setMediaItems(listOf(itemAt(1), itemAt(2)), 0, 0L)
             player.seekTo(60_000L)
             player.seekToNextMediaItem()
@@ -360,7 +364,11 @@ class UpnpPlayerQueueTest {
     @Test
     fun aRendererThatCannotFetchTheStreamSaysWhy() {
         refuseCode = 716
-        onMain { player.setMediaItems(listOf(itemAt(1))) }
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)))
+            // Playing, since a paused load is only handed over on the Play.
+            player.playWhenReady = true
+        }
 
         val error = awaitError()
         assertNotNull("the failure never reached the player", error)
@@ -371,7 +379,11 @@ class UpnpPlayerQueueTest {
 
     @Test
     fun aRendererThatTakesTheUrlReportsNoError() {
-        onMain { player.setMediaItems(listOf(itemAt(1))) }
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)))
+            // Playing, since a paused load is only handed over on the Play.
+            player.playWhenReady = true
+        }
         SystemClock.sleep(1500)
 
         assertNull(onMainGet { player.playerError })
@@ -484,6 +496,25 @@ class UpnpPlayerQueueTest {
     }
 
     @Test
+    fun aQueueLoadedWhilePausedIsHandedOverOnThePlay() {
+        // Kodi starts a track it is handed even without a Play, so nothing goes out while paused.
+        onMain { player.setMediaItems(listOf(itemAt(1)), 0, 30_000L) }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(500)
+        assertTrue("a paused load was handed over: $actions", handovers.isEmpty())
+
+        onMain { player.playWhenReady = true }
+        SystemClock.sleep(1000)
+
+        assertEquals(listOf(urlAt(1)), handovers)
+        val uri = actions.indexOf("SetAVTransportURI")
+        val play = actions.indexOf("Play")
+        val seek = actions.indexOf("Seek")
+        assertTrue("the play did not follow the handover: $actions", play > uri)
+        assertTrue("the position was not applied after the play: $actions", seek > play)
+    }
+
+    @Test
     fun aPositionWaitsForTheRendererToReportPlaying() {
         stoppedPollsAfterHandover = 3
         onMain {
@@ -546,7 +577,11 @@ class UpnpPlayerQueueTest {
         handovers.clear()
         actions.clear()
 
-        onMain { player.prepare() }
+        onMain {
+            player.prepare()
+            // The stop left the queue paused, and a paused queue is handed over on the Play.
+            player.playWhenReady = true
+        }
         SystemClock.sleep(1000)
 
         assertEquals("a stopped renderer's track was not handed over: $actions", listOf(urlAt(1)), handovers)
@@ -594,7 +629,11 @@ class UpnpPlayerQueueTest {
     @Test
     fun aRefusedLoadStopsTheRenderer() {
         refuseCode = 716
-        onMain { player.setMediaItems(listOf(itemAt(1))) }
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)))
+            // Playing, since a paused load is only handed over on the Play.
+            player.playWhenReady = true
+        }
         awaitError()
 
         assertTrue("the renderer was left holding the refused track: $actions", actions.contains("Stop"))
@@ -603,7 +642,11 @@ class UpnpPlayerQueueTest {
     @Test
     fun aRefusalThatIsNotAboutTheStreamDoesNotBlameTheServer() {
         refuseCode = 501
-        onMain { player.setMediaItems(listOf(itemAt(1))) }
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)))
+            // Playing, since a paused load is only handed over on the Play.
+            player.playWhenReady = true
+        }
 
         val message = awaitError()?.message.orEmpty()
         assertTrue("the code was not named: $message", message.contains("501"))
@@ -1740,9 +1783,11 @@ class UpnpPlayerQueueTest {
     /** Runs [act] through a controller, the way the player screen sees it, until the renderer has started. */
     private fun playingShownThroughAController(act: (MediaController) -> Unit): List<Shown> =
         playingShownWhile { controller ->
+            // Each act hands a track over, and only that handover arms the stopped readings.
+            val handedOverBefore = handovers.size
             onMain { act(controller) }
             val deadline = SystemClock.elapsedRealtime() + 15_000
-            while (!(stoppedPolls.get() == 0 && onMainGet { controller.isPlaying }) &&
+            while (!(handovers.size > handedOverBefore && stoppedPolls.get() == 0 && onMainGet { controller.isPlaying }) &&
                 SystemClock.elapsedRealtime() < deadline
             ) {
                 SystemClock.sleep(100)

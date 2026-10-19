@@ -113,6 +113,9 @@ class UpnpPlayer(
     /** When a station was paused, until a reading says whether the renderer really did. */
     @Volatile private var stationPausedAt = 0L
 
+    // Kodi starts whatever it is handed, Play or not, so a load while paused waits for the Play.
+    @Volatile private var handoverOnPlay = false
+
     // Only reads that got nothing back count, since a fault is an answer.
     @Volatile private var failingSince = 0L
 
@@ -306,7 +309,12 @@ class UpnpPlayer(
     override fun handleSetPlayWhenReady(playWhenReady: Boolean): ListenableFuture<*> =
         worker.submit<Unit> {
             try {
-                if (playWhenReady) {
+                if (playWhenReady && handoverOnPlay) {
+                    stationPausedAt = 0L
+                    this.playWhenReady = true
+                    updateWakeLock()
+                    loadCurrent(seekToMs = positionMs)
+                } else if (playWhenReady) {
                     // A play while already playing would otherwise show a pause and step the bar back.
                     val alreadyPlaying = this.playWhenReady
                     stationPausedAt = 0L
@@ -545,6 +553,13 @@ class UpnpPlayer(
         invalidateLater()
 
         val restart = url == rendererUrl
+        handoverOnPlay = !restart && !playWhenReady
+        if (handoverOnPlay) {
+            positionMs = seekToMs
+            playbackState = Player.STATE_READY
+            invalidateLater()
+            return
+        }
 
         try {
             if (restart) {
@@ -724,6 +739,8 @@ class UpnpPlayer(
             failingSince = 0L
 
             if (loadedGeneration != loadGeneration) return
+            // Nothing is handed over yet, so the renderer still describes what it held before.
+            if (handoverOnPlay) return
             // Following the old track loads ours again, and each load queues another switch on Kodi.
             if (stillSwitching(position["TrackURI"])) return
 
