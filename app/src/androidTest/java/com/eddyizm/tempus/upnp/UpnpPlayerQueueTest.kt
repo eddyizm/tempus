@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -406,6 +407,20 @@ class UpnpPlayerQueueTest {
         assertTrue("never reached ready once the renderer switched", awaitState(Player.STATE_READY))
         assertEquals(listOf(urlAt(1)), handovers)
         assertNull(onMainGet { player.playerError })
+    }
+
+    @Test
+    fun aStationTakesNoLengthFromTheRenderer() {
+        // Kodi reports the length of the track before the station for about a second after the switch.
+        reportedDuration = "00:03:42"
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(2500)
+
+        assertEquals("a station took a length", C.TIME_UNSET, onMainGet { player.duration })
     }
 
     @Test

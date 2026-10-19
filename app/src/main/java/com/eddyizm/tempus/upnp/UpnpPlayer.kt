@@ -661,6 +661,13 @@ class UpnpPlayer(
         lengthMs > 0 && (playedMs >= lengthMs - POLL_INTERVAL_MS ||
             MediaManager.meetsScrobbleThreshold(playedMs, lengthMs))
 
+    // A station has no length, and Kodi reports the one of the track before it for a second after the switch.
+    private fun isStation(entry: Entry?): Boolean {
+        val item = entry?.item ?: return false
+        return item.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_RADIO ||
+            item.mediaId.startsWith("ir-")
+    }
+
     private fun serverLengthMs(): Long =
         (currentEntry()?.item?.mediaMetadata?.extras?.getInt("duration", 0) ?: 0).toLong() * 1000L
 
@@ -712,7 +719,8 @@ class UpnpPlayer(
             val endMs = if (durationUs > 0) minOf(lengthMs, durationUs / 1000) else lengthMs
 
             // A zero never overwrites a known length, since chunked streams and handovers answer zero.
-            asMillis(position["TrackDuration"])?.takeIf { it > 0 }?.let { durationUs = it * 1000 }
+            asMillis(position["TrackDuration"])?.takeIf { it > 0 && !isStation(currentEntry()) }
+                ?.let { durationUs = it * 1000 }
             asMillis(position["RelTime"])?.let { takeReading(it, sentAt, arrivedAt) }
             // A stopped LG C1 still reports its last URL, and following it replayed a finished track.
             if (transport["CurrentTransportState"] !in STOPPED_STATES) {
