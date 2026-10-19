@@ -211,12 +211,6 @@ public class DownloadRepository {
         DOWNLOAD_WRITE_EXECUTOR.execute(delete);
     }
 
-    public void deleteFailed(String id) {
-        DeleteFailedThreadSafe delete = new DeleteFailedThreadSafe(downloadDao, id);
-        Thread thread = new Thread(delete);
-        thread.start();
-    }
-
     public void delete(List<String> ids) {
         DeleteMultipleThreadSafe delete = new DeleteMultipleThreadSafe(downloadDao, ids);
         DOWNLOAD_WRITE_EXECUTOR.execute(delete);
