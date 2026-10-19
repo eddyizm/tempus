@@ -116,6 +116,9 @@ class UpnpPlayer(
     // Kodi starts whatever it is handed, Play or not, so a load while paused waits for the Play.
     @Volatile private var handoverOnPlay = false
 
+    // Only Kodi, deliberately since Kodi 21. Others load a track handed over while paused and show it.
+    private val startsWhenHandedOver = device.modelName.equals("Kodi", ignoreCase = true)
+
     // Only reads that got nothing back count, since a fault is an answer.
     @Volatile private var failingSince = 0L
 
@@ -301,6 +304,8 @@ class UpnpPlayer(
     override fun handlePrepare(): ListenableFuture<*> = when {
         error != null -> loadLater(seekToMs = positionMs)
         pendingLoads.get() > 0 -> Futures.immediateVoidFuture()
+        // The Play hands the track over, as when a cast starts: a load, Play, then prepare.
+        handoverOnPlay -> Futures.immediateVoidFuture()
         rendererUrl != null && rendererUrl == urlOf(currentEntry()) -> Futures.immediateVoidFuture()
         else -> loadLater(seekToMs = positionMs)
     }
@@ -313,7 +318,13 @@ class UpnpPlayer(
                     stationPausedAt = 0L
                     this.playWhenReady = true
                     updateWakeLock()
-                    loadCurrent(seekToMs = positionMs)
+                    // Counted as a load, or a prepare arriving while it runs hands the track over a second time.
+                    pendingLoads.incrementAndGet()
+                    try {
+                        loadCurrent(seekToMs = positionMs)
+                    } finally {
+                        pendingLoads.decrementAndGet()
+                    }
                 } else if (playWhenReady) {
                     // A play while already playing would otherwise show a pause and step the bar back.
                     val alreadyPlaying = this.playWhenReady
@@ -553,7 +564,7 @@ class UpnpPlayer(
         invalidateLater()
 
         val restart = url == rendererUrl
-        handoverOnPlay = !restart && !playWhenReady
+        handoverOnPlay = !restart && !playWhenReady && startsWhenHandedOver
         if (handoverOnPlay) {
             positionMs = seekToMs
             playbackState = Player.STATE_READY
@@ -740,7 +751,10 @@ class UpnpPlayer(
 
             if (loadedGeneration != loadGeneration) return
             // Nothing is handed over yet, so the renderer still describes what it held before.
-            if (handoverOnPlay) return
+            if (handoverOnPlay) {
+                followPlayFromTheRemote(transport["CurrentTransportState"])
+                return
+            }
             // Following the old track loads ours again, and each load queues another switch on Kodi.
             if (stillSwitching(position["TrackURI"])) return
 
@@ -817,6 +831,20 @@ class UpnpPlayer(
             return false
         }
         return true
+    }
+
+    // A Play on the renderer's own remote resumes the track it held, so the one picked here is handed over and played.
+    private fun followPlayFromTheRemote(state: String?) {
+        if (state != "PLAYING") {
+            outsidePlayPausePolls = 0
+            return
+        }
+        if (++outsidePlayPausePolls < OUTSIDE_PLAY_PAUSE_POLLS) return
+        outsidePlayPausePolls = 0
+        Log.d(TAG, "renderer started playing from outside while a handover waited, handing it over")
+        playWhenReady = true
+        updateWakeLock()
+        loadCurrent(seekToMs = positionMs)
     }
 
     /**
