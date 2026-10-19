@@ -424,7 +424,8 @@ class UpnpPlayerQueueTest {
     }
 
     @Test
-    fun pausingAStationStopsTheRenderer() {
+    fun aStationTheRendererKeepsPlayingAfterAPauseIsStopped() {
+        // Kodi's VideoPlayer answers Pause on a station with OK and plays on; the fake does the same.
         onMain {
             player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
             player.playWhenReady = true
@@ -433,10 +434,29 @@ class UpnpPlayerQueueTest {
         actions.clear()
 
         onMain { player.playWhenReady = false }
-        SystemClock.sleep(1000)
+        SystemClock.sleep(4000)
 
-        assertTrue("a paused station was not stopped: $actions", actions.contains("Stop"))
-        assertFalse("a station was paused, which Kodi ignores: $actions", actions.contains("Pause"))
+        val pause = actions.indexOf("Pause")
+        assertTrue("a station was not paused first: $actions", pause >= 0)
+        assertTrue("an ignored pause was not followed by a stop: $actions", actions.indexOf("Stop") > pause)
+        assertFalse("the ignored pause was taken for a Play from outside", onMainGet { player.playWhenReady })
+    }
+
+    @Test
+    fun aStationTheRendererPausesIsNotStopped() {
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        actions.clear()
+
+        reportedState = "PAUSED_PLAYBACK"
+        onMain { player.playWhenReady = false }
+        SystemClock.sleep(4000)
+
+        assertTrue("a station was not paused: $actions", actions.contains("Pause"))
+        assertFalse("a station the renderer paused was stopped, which costs a rebuffer: $actions", actions.contains("Stop"))
     }
 
     @Test

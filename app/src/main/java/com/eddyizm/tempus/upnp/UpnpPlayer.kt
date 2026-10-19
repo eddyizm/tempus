@@ -103,6 +103,9 @@ class UpnpPlayer(
     @Volatile private var handedOverUrl: String? = null
     @Volatile private var handedOverAt = 0L
 
+    // When a station was paused, until a reading says whether the renderer really did.
+    @Volatile private var stationPausedAt = 0L
+
     // Only reads that got nothing back count, since a fault is an answer.
     @Volatile private var failingSince = 0L
 
@@ -299,6 +302,7 @@ class UpnpPlayer(
                 if (playWhenReady) {
                     // A play while already playing would otherwise show a pause and step the bar back.
                     val alreadyPlaying = this.playWhenReady
+                    stationPausedAt = 0L
                     controlPoint.play(device)
                     this.playWhenReady = true
                     updateWakeLock()
@@ -318,6 +322,7 @@ class UpnpPlayer(
                     handler.post { startPolling() }
                 } else {
                     pauseOrStop()
+                    stationPausedAt = if (isStation(currentEntry())) SystemClock.elapsedRealtime() else 0L
                     positionMs = positionNow()
                     this.playWhenReady = false
                     updateWakeLock()
@@ -336,11 +341,6 @@ class UpnpPlayer(
         }
 
     private fun pauseOrStop() {
-        // A station has nothing to resume, and Kodi lists Pause for one but ignores it while answering OK.
-        if (isStation(currentEntry())) {
-            controlPoint.stop(device)
-            return
-        }
         val allowed = controlPoint.currentTransportActions(device)
         if (allowed.isEmpty() || allowed.any { it.equals("Pause", ignoreCase = true) }) {
             try {
@@ -736,6 +736,7 @@ class UpnpPlayer(
             // TRANSITIONING is also what a renderer answers while failing to fetch, so not started.
             when (transport["CurrentTransportState"]) {
                 "PLAYING", "PAUSED_PLAYBACK" -> {
+                    if (stopIfThePauseWasIgnored(transport["CurrentTransportState"], sentAt)) return
                     // Time spent buffering is not playback, and lands in the position otherwise.
                     if (playbackState != Player.STATE_READY) positionIsCurrentNow()
                     stoppedAtEndPolls = 0
@@ -785,6 +786,18 @@ class UpnpPlayer(
             handedOverUrl = null
             return false
         }
+        return true
+    }
+
+    // Kodi's VideoPlayer answers Pause on a station with OK and plays on, which would read as a Play from outside.
+    // Stop costs a rebuffer where Pause works, so only a reading taken after the pause settled decides.
+    private fun stopIfThePauseWasIgnored(state: String?, sentAt: Long): Boolean {
+        val pausedAt = stationPausedAt
+        if (pausedAt == 0L || playWhenReady || sentAt - pausedAt < PAUSE_SETTLE_MS) return false
+        stationPausedAt = 0L
+        if (state != "PLAYING") return false
+        Log.d(TAG, "renderer kept playing a station it was asked to pause, stopping it")
+        stopRenderer("after an ignored pause")
         return true
     }
 
@@ -963,6 +976,9 @@ class UpnpPlayer(
         private const val MAX_POLLS_AWAITING_HANDOVER = 3
 
         private const val OUTSIDE_PLAY_PAUSE_POLLS = 2
+
+        // Time for a renderer to take a pause, and shorter than the two readings a Play from outside waits for.
+        private const val PAUSE_SETTLE_MS = 1000L
 
         // Kodi on a Raspberry Pi 4 switches about a second after the load, so this only bounds a renderer that never does.
         private val HANDOVER_WAIT_MS = TimeUnit.SECONDS.toMillis(10)
