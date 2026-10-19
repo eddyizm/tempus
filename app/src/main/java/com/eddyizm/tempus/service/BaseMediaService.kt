@@ -742,6 +742,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 if (player.device != device) return
                 upnpPlayer = null
                 setPlayer(player, exoplayer)
+                // Paused, as when Bluetooth headphones drop, so ending the cast does not start the phone's speaker.
+                exoplayer.playWhenReady = false
                 player.release()
             }
         }
