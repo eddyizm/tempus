@@ -391,6 +391,24 @@ class UpnpPlayerQueueTest {
     }
 
     @Test
+    fun aRendererStillReportingTheTrackBeforeTheLoadIsNotHandedOursAgain() {
+        // Kodi acknowledges the load, then reports the track it played before for about a second.
+        reportedTrackUri = urlAt(9)
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)), 0, 0L)
+            player.playWhenReady = true
+        }
+        SystemClock.sleep(3000)
+
+        assertEquals("the stale track was answered with another load: $handovers", listOf(urlAt(1)), handovers)
+
+        reportedTrackUri = urlAt(1)
+        assertTrue("never reached ready once the renderer switched", awaitState(Player.STATE_READY))
+        assertEquals(listOf(urlAt(1)), handovers)
+        assertNull(onMainGet { player.playerError })
+    }
+
+    @Test
     fun aRefusedSeekTargetDoesNotAbandonTheTrack() = seekRefusedWith(711)
 
     @Test

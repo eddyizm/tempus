@@ -99,6 +99,10 @@ class UpnpPlayer(
     @Volatile private var rendererStarted = false
     @Volatile private var pollsBeforeStart = 0
 
+    // Kodi acknowledges a load before it switches, and until then reports the track before it.
+    @Volatile private var handedOverUrl: String? = null
+    @Volatile private var handedOverAt = 0L
+
     // Only reads that got nothing back count, since a fault is an answer.
     @Volatile private var failingSince = 0L
 
@@ -536,6 +540,8 @@ class UpnpPlayer(
             } else {
                 controlPoint.setAvTransportUri(device, url, metadataFor(entry.item, url))
                 rendererUrl = url
+                handedOverUrl = url
+                handedOverAt = SystemClock.elapsedRealtime()
             }
             if (playWhenReady) controlPoint.play(device)
         } catch (e: Exception) {
@@ -696,6 +702,8 @@ class UpnpPlayer(
             failingSince = 0L
 
             if (loadedGeneration != loadGeneration) return
+            // Following the old track loads ours again, and each load queues another switch on Kodi.
+            if (stillSwitching(position["TrackURI"])) return
 
             // Read before this poll's reading, since the reply that catches a handover describes the next track.
             val barMs = positionNow()
@@ -753,6 +761,18 @@ class UpnpPlayer(
             }
         }
         invalidateLater()
+    }
+
+    // A renderer that names no URL says nothing about the switch, so only a different one is waited out.
+    private fun stillSwitching(trackUri: String?): Boolean {
+        val awaited = handedOverUrl ?: return false
+        if (trackUri.isNullOrBlank() || trackUri == awaited ||
+            SystemClock.elapsedRealtime() - handedOverAt > HANDOVER_WAIT_MS
+        ) {
+            handedOverUrl = null
+            return false
+        }
+        return true
     }
 
     // Only a stop while playing, on a renderer seen playing, can end a track.
@@ -930,6 +950,9 @@ class UpnpPlayer(
         private const val MAX_POLLS_AWAITING_HANDOVER = 3
 
         private const val OUTSIDE_PLAY_PAUSE_POLLS = 2
+
+        // Kodi on a Raspberry Pi 4 switches about a second after the load, so this only bounds a renderer that never does.
+        private val HANDOVER_WAIT_MS = TimeUnit.SECONDS.toMillis(10)
 
         // A stop this close to a track's end is the track ending, and anything earlier came from outside.
         private val END_WINDOW_MS = TimeUnit.SECONDS.toMillis(10)
