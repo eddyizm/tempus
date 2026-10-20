@@ -99,11 +99,18 @@ class UpnpPlayer(
     @Volatile private var rendererStarted = false
     @Volatile private var pollsBeforeStart = 0
 
-    // Kodi acknowledges a load before it switches, and until then reports the track before it.
+    /**
+     * The URL last handed to the renderer with SetAVTransportURI, and when.
+     *
+     * Kodi acknowledges a load before it switches, and for about a second it still reports the
+     * track before it. Readings are ignored until the renderer names [handedOverUrl], so the player
+     * does not follow the old track and hand ours over again. [HANDOVER_WAIT_MS] bounds the wait
+     * for a renderer that never names it.
+     */
     @Volatile private var handedOverUrl: String? = null
     @Volatile private var handedOverAt = 0L
 
-    // When a station was paused, until a reading says whether the renderer really did.
+    /** When a station was paused, until a reading says whether the renderer really did. */
     @Volatile private var stationPausedAt = 0L
 
     // Only reads that got nothing back count, since a fault is an answer.
@@ -666,7 +673,10 @@ class UpnpPlayer(
         lengthMs > 0 && (playedMs >= lengthMs - POLL_INTERVAL_MS ||
             MediaManager.meetsScrobbleThreshold(playedMs, lengthMs))
 
-    // A station has no length, and Kodi reports the one of the track before it for a second after the switch.
+    /**
+     * A live stream, which has no length. Kodi reports the length of the track before it for about
+     * a second after the switch, so a station takes none from the renderer.
+     */
     private fun isStation(entry: Entry?): Boolean {
         val item = entry?.item ?: return false
         return item.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_RADIO ||
@@ -777,7 +787,10 @@ class UpnpPlayer(
         invalidateLater()
     }
 
-    // A renderer that names no URL says nothing about the switch, so only a different one is waited out.
+    /**
+     * True while the renderer still reports a URL other than [handedOverUrl]. A renderer that names
+     * no URL says nothing about the switch, so only a different one is waited out.
+     */
     private fun stillSwitching(trackUri: String?): Boolean {
         val awaited = handedOverUrl ?: return false
         if (trackUri.isNullOrBlank() || trackUri == awaited ||
@@ -789,8 +802,14 @@ class UpnpPlayer(
         return true
     }
 
-    // Kodi's VideoPlayer answers Pause on a station with OK and plays on, which would read as a Play from outside.
-    // Stop costs a rebuffer where Pause works, so only a reading taken after the pause settled decides.
+    /**
+     * Stops a station the renderer kept playing after a Pause, and returns whether it did.
+     *
+     * Kodi's VideoPlayer answers Pause on a station with OK and plays on, which would read as a
+     * Play from outside. Stop costs a rebuffer on a renderer where Pause works, so only a reading
+     * taken [PAUSE_SETTLE_MS] or more after the pause decides. That is shorter than the two
+     * readings a Play from outside waits for.
+     */
     private fun stopIfThePauseWasIgnored(state: String?, sentAt: Long): Boolean {
         val pausedAt = stationPausedAt
         if (pausedAt == 0L || playWhenReady || sentAt - pausedAt < PAUSE_SETTLE_MS) return false
@@ -977,10 +996,8 @@ class UpnpPlayer(
 
         private const val OUTSIDE_PLAY_PAUSE_POLLS = 2
 
-        // Time for a renderer to take a pause, and shorter than the two readings a Play from outside waits for.
         private const val PAUSE_SETTLE_MS = 1000L
 
-        // Kodi on a Raspberry Pi 4 switches about a second after the load, so this only bounds a renderer that never does.
         private val HANDOVER_WAIT_MS = TimeUnit.SECONDS.toMillis(10)
 
         // A stop this close to a track's end is the track ending, and anything earlier came from outside.
