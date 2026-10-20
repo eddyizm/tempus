@@ -368,15 +368,9 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                                 bind.playlistPagePlayButton.setOnClickListener(v -> playAll(songs));
                                 bind.playlistPageShuffleButton.setOnClickListener(v -> shuffleAll(songs));
 
-                                // Opened from a launcher shortcut that plays: start once, so a
-                                // rotation or coming back to the page does not start it again.
-                                Bundle args = getArguments();
-                                String playMode = args != null ? args.getString(Constants.AUTO_PLAY) : null;
-                                if (!songs.isEmpty() && playMode != null) {
-                                    args.remove(Constants.AUTO_PLAY);
-                                    if (Preferences.SHORTCUTS_PLAY_MODE_PLAY.equals(playMode)) playAll(songs);
-                                    else if (Preferences.SHORTCUTS_PLAY_MODE_SHUFFLE.equals(playMode)) shuffleAll(songs);
-                                }
+                                String playMode = songs.isEmpty() ? null : AppShortcuts.takePlayMode(getArguments());
+                                if (Preferences.SHORTCUTS_PLAY_MODE_PLAY.equals(playMode)) playAll(songs);
+                                else if (Preferences.SHORTCUTS_PLAY_MODE_SHUFFLE.equals(playMode)) shuffleAll(songs);
                             }
                         });
     }

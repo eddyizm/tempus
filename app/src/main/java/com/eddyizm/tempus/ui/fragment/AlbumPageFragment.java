@@ -392,17 +392,11 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                     activity.setBottomSheetInPeek(true);
                 });
 
-                // Opened from a launcher shortcut that plays: start once, so a rotation or
-                // coming back to the page does not start it again.
-                Bundle args = getArguments();
-                String playMode = args != null ? args.getString(Constants.AUTO_PLAY) : null;
-                if (playMode != null) {
-                    args.remove(Constants.AUTO_PLAY);
-                    if (Preferences.SHORTCUTS_PLAY_MODE_PLAY.equals(playMode)) {
-                        bind.albumPagePlayButton.performClick();
-                    } else if (Preferences.SHORTCUTS_PLAY_MODE_SHUFFLE.equals(playMode)) {
-                        bind.albumPageShuffleButton.performClick();
-                    }
+                String playMode = AppShortcuts.takePlayMode(getArguments());
+                if (Preferences.SHORTCUTS_PLAY_MODE_PLAY.equals(playMode)) {
+                    bind.albumPagePlayButton.performClick();
+                } else if (Preferences.SHORTCUTS_PLAY_MODE_SHUFFLE.equals(playMode)) {
+                    bind.albumPageShuffleButton.performClick();
                 }
             }
 

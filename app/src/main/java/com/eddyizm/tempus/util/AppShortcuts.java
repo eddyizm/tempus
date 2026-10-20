@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -31,28 +32,27 @@ import java.util.concurrent.Executors;
 /**
  * The shortcuts a launcher shows when the app icon is long-pressed: the items the user added
  * from a playlist's or album's menu first, then the playlists played last, then the
- * introduction. A shortcut opens its item through an asset link, which {@link ShortcutActivity}
- * stamps with the time of the tap in {@link #QUERY_SHORTCUT}. Whether it also starts playing is
- * read from the settings when the shortcut is used, so changing the setting needs no new
- * shortcuts.
+ * introduction. Launchers show four entries, so there are {@link #MAX_ITEMS} besides the
+ * introduction.
+ *
+ * A shortcut opens its item through an asset link, which {@link ShortcutActivity} stamps with the
+ * time of the tap in {@link #QUERY_SHORTCUT}, and only a tap from the last
+ * {@link #PLAY_WINDOW_MS} may start playing. Whether it does is read from the settings when the
+ * shortcut is used, so changing the setting needs no new shortcuts.
  */
 public final class AppShortcuts {
     private static final String TAG = "AppShortcuts";
 
-    public static final String QUERY_SHORTCUT = "shortcut";
+    private static final String QUERY_SHORTCUT = "shortcut";
 
-    // A shortcut plays only when its tap is this recent, see ShortcutActivity.
     private static final long PLAY_WINDOW_MS = 10_000;
 
-    // Launchers show four or five entries; the introduction takes one of them.
     public static final int MAX_ITEMS = 3;
 
     private static final String ID_INTRODUCTION = "login_activity_shortcut";
-    // An adaptive icon is 108dp, of which the launcher shows the middle 72dp.
     private static final int ICON_SIZE = 324;
     private static final int ICON_VISIBLE_SIZE = ICON_SIZE * 72 / 108;
 
-    // One thread, so two publishes never race and the last one wins.
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private AppShortcuts() {
@@ -141,6 +141,17 @@ public final class AppShortcuts {
         return Preferences.getShortcutsPlayMode();
     }
 
+    /**
+     * The play mode a shortcut asked for, taken out of a page's arguments so that a rotation or
+     * coming back to the page does not start it again. Null when there is none.
+     */
+    @Nullable
+    public static String takePlayMode(@Nullable Bundle args) {
+        String playMode = args != null ? args.getString(Constants.AUTO_PLAY) : null;
+        if (playMode != null) args.remove(Constants.AUTO_PLAY);
+        return playMode;
+    }
+
     /** The shortcut's link with the time of the tap, which {@link #playMode} checks. */
     @NonNull
     public static Uri stamp(@NonNull Uri uri) {
@@ -151,7 +162,10 @@ public final class AppShortcuts {
         return builder.appendQueryParameter(QUERY_SHORTCUT, String.valueOf(System.currentTimeMillis())).build();
     }
 
-    /** Hands the launcher the current list. Cover art is loaded off the main thread. */
+    /**
+     * Hands the launcher the current list. Cover art is loaded off the main thread, on one thread
+     * for every publish, so two publishes never race and the last one wins.
+     */
     public static void publish(@NonNull Context context) {
         publish(context, Preferences.isShortcutsRecentPlaylistsEnabled());
     }
@@ -220,6 +234,8 @@ public final class AppShortcuts {
                 Bitmap cover = Glide.with(context)
                         .asBitmap()
                         .load(CustomGlideRequest.createUrl(item.getCoverArtId(), ICON_VISIBLE_SIZE))
+                        .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
+                        .onlyRetrieveFromCache(Preferences.isDataSavingMode())
                         .centerCrop()
                         .submit(ICON_VISIBLE_SIZE, ICON_VISIBLE_SIZE)
                         .get();
@@ -233,8 +249,9 @@ public final class AppShortcuts {
 
     /**
      * The cover laid out for an adaptive icon, so the launcher shapes it like other icons instead
-     * of shrinking it onto a white disc: the whole cover in the visible middle, and the cover
-     * stretched under it for the margin that only shows while the launcher animates the icon.
+     * of shrinking it onto a white disc. An adaptive icon is 108dp, of which the launcher shows
+     * the middle 72dp: the whole cover goes there, and the cover stretched under it fills the
+     * margin that only shows while the launcher animates the icon.
      */
     @NonNull
     private static Bitmap toAdaptive(@NonNull Bitmap cover) {
