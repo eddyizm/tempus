@@ -110,14 +110,22 @@ class UpnpPlayer(
     @Volatile private var handedOverUrl: String? = null
     @Volatile private var handedOverAt = 0L
 
+    /**
+     * Whether the current track waits to be handed over until Play, which only Kodi needs.
+     *
+     * Kodi starts a track it is handed with SetAVTransportURI, Play or not (deliberately since
+     * Kodi 21), so for Kodi a load while paused only keeps the track and its position, and Play
+     * hands it over. Other renderers are handed the track while paused and show it until Play.
+     *
+     * Until then a prepare does nothing. Like one arriving while [pendingLoads] is above zero, it
+     * would hand the track over a second time: there a load already running hands it over, here
+     * the Play will, as when a cast starts with a load, Play and then a prepare.
+     */
+    @Volatile private var handoverOnPlay = false
+    private val isKodi = device.modelName.equals("Kodi", ignoreCase = true)
+
     /** When a station was paused, until a reading says whether the renderer really did. */
     @Volatile private var stationPausedAt = 0L
-
-    // Kodi starts whatever it is handed, Play or not, so a load while paused waits for the Play.
-    @Volatile private var handoverOnPlay = false
-
-    // Only Kodi, deliberately since Kodi 21. Others load a track handed over while paused and show it.
-    private val startsWhenHandedOver = device.modelName.equals("Kodi", ignoreCase = true)
 
     // Only reads that got nothing back count, since a fault is an answer.
     @Volatile private var failingSince = 0L
@@ -304,7 +312,6 @@ class UpnpPlayer(
     override fun handlePrepare(): ListenableFuture<*> = when {
         error != null -> loadLater(seekToMs = positionMs)
         pendingLoads.get() > 0 -> Futures.immediateVoidFuture()
-        // The Play hands the track over, as when a cast starts: a load, Play, then prepare.
         handoverOnPlay -> Futures.immediateVoidFuture()
         rendererUrl != null && rendererUrl == urlOf(currentEntry()) -> Futures.immediateVoidFuture()
         else -> loadLater(seekToMs = positionMs)
@@ -564,7 +571,7 @@ class UpnpPlayer(
         invalidateLater()
 
         val restart = url == rendererUrl
-        handoverOnPlay = !restart && !playWhenReady && startsWhenHandedOver
+        handoverOnPlay = !restart && !playWhenReady && isKodi
         if (handoverOnPlay) {
             positionMs = seekToMs
             playbackState = Player.STATE_READY
@@ -749,14 +756,16 @@ class UpnpPlayer(
             val transport = controlPoint.transportInfo(device)
             failingSince = 0L
 
-            if (loadedGeneration != loadGeneration) return
-            // Nothing is handed over yet, so the renderer still describes what it held before.
-            if (handoverOnPlay) {
-                followPlayFromTheRemote(transport["CurrentTransportState"])
-                return
+            when {
+                loadedGeneration != loadGeneration -> return
+                // Nothing is handed over yet, so the renderer still describes what it held before.
+                handoverOnPlay -> {
+                    followPlayFromTheRemote(transport["CurrentTransportState"])
+                    return
+                }
+                // Following the old track loads ours again, and each load queues another switch on Kodi.
+                stillSwitching(position["TrackURI"]) -> return
             }
-            // Following the old track loads ours again, and each load queues another switch on Kodi.
-            if (stillSwitching(position["TrackURI"])) return
 
             // Read before this poll's reading, since the reply that catches a handover describes the next track.
             val barMs = positionNow()
@@ -833,7 +842,12 @@ class UpnpPlayer(
         return true
     }
 
-    // A Play on the renderer's own remote resumes the track it held, so the one picked here is handed over and played.
+    /**
+     * Follows a Play on the renderer's own remote while [handoverOnPlay] waits.
+     *
+     * The remote resumes the track the renderer held before, so after [OUTSIDE_PLAY_PAUSE_POLLS]
+     * readings in a row say PLAYING, the track picked in the app is handed over and played.
+     */
     private fun followPlayFromTheRemote(state: String?) {
         if (state != "PLAYING") {
             outsidePlayPausePolls = 0

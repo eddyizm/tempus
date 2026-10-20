@@ -502,9 +502,9 @@ class UpnpPlayerQueueTest {
         assertTrue("the position was not applied after the play: $actions", seek > play)
     }
 
+    /** A renderer other than Kodi gets the track while paused, so it can show it until Play. */
     @Test
     fun aRendererOtherThanKodiIsHandedTheTrackWhilePaused() {
-        // So it can show the track picked while paused, as before.
         onMain { player.setMediaItems(listOf(itemAt(1)), 0, 0L) }
         assertTrue("never reached ready", awaitState(Player.STATE_READY))
         SystemClock.sleep(500)
@@ -513,7 +513,7 @@ class UpnpPlayerQueueTest {
         assertFalse("a paused load was played: $actions", actions.contains("Play"))
     }
 
-    // From review, with the fake renderer as Kodi: a cast starting (load, Play, prepare) plays once.
+    /** A cast starting on Kodi (a load, Play, then a prepare) hands the track over and plays it once. */
     @Test
     fun castWhilePlayingPlaysOnce() {
         actAsKodi()
@@ -531,7 +531,7 @@ class UpnpPlayerQueueTest {
         assertEquals("seeks: $sent", 1, sent.count { it == "Seek" })
     }
 
-    // From review, with the fake renderer as Kodi: a Play on Kodi's remote after a track change while paused.
+    /** A Play on Kodi's remote after a track change while paused plays the track picked in the app. */
     @Test
     fun remotePlayAfterTrackChangeWhilePausedIsFollowed() {
         actAsKodi()
