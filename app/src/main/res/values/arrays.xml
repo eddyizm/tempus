@@ -272,6 +272,16 @@
         <item>@string/playlist_sort_last_updated</item>
         <item>@string/playlist_sort_both</item>
     </string-array>
+    <string-array name="shortcuts_play_mode_titles">
+        <item>@string/settings_shortcuts_play_mode_open</item>
+        <item>@string/settings_shortcuts_play_mode_play</item>
+        <item>@string/settings_shortcuts_play_mode_shuffle</item>
+    </string-array>
+    <string-array name="shortcuts_play_mode_values" translatable="false">
+        <item>open</item>
+        <item>play</item>
+        <item>shuffle</item>
+    </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>
         <item>ORDER_BY_RANDOM</item>

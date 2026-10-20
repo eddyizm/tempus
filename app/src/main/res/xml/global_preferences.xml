@@ -327,6 +327,22 @@
             app:key="home_sort_playlists"
             app:title="@string/settings_playlist_sort"
             app:useSimpleSummaryProvider="true" />
+        <SwitchPreference
+            android:title="@string/settings_shortcuts_recent_playlists"
+            android:defaultValue="true"
+            android:summary="@string/settings_shortcuts_recent_playlists_summary"
+            android:key="shortcuts_recent_playlists" />
+        <Preference
+            android:title="@string/settings_shortcuts_manage"
+            android:key="shortcuts_manage" />
+        <ListPreference
+            app:defaultValue="open"
+            app:dialogTitle="@string/settings_shortcuts_play_mode"
+            app:entries="@array/shortcuts_play_mode_titles"
+            app:entryValues="@array/shortcuts_play_mode_values"
+            app:key="shortcuts_play_mode"
+            app:title="@string/settings_shortcuts_play_mode"
+            app:useSimpleSummaryProvider="true" />
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
     <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_data">

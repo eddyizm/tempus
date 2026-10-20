@@ -40,8 +40,11 @@ import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
+import com.eddyizm.tempus.ui.dialog.AppShortcutDialogs;
 import com.eddyizm.tempus.ui.dialog.PlaylistChooserDialog;
 import com.eddyizm.tempus.ui.dialog.RatingDialog;
+import com.eddyizm.tempus.util.AssetLinkUtil;
+import com.eddyizm.tempus.util.AppShortcuts;
 import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
@@ -83,6 +86,12 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.album_page_menu, menu);
+
+        AlbumID3 album = getArguments() != null ? getArguments().getParcelable(Constants.ALBUM_OBJECT) : null;
+        boolean shortcut = album != null && album.getId() != null
+                && AppShortcuts.isFixed(AssetLinkUtil.TYPE_ALBUM, album.getId());
+        menu.findItem(R.id.action_add_shortcut).setVisible(album != null && album.getId() != null && !shortcut);
+        menu.findItem(R.id.action_remove_shortcut).setVisible(shortcut);
     }
 
     @Override
@@ -158,6 +167,18 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
         /** @noinspection deprecation*/
         @Override
         public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+            if (item.getItemId() == R.id.action_add_shortcut || item.getItemId() == R.id.action_remove_shortcut) {
+                AlbumID3 album = getArguments() != null ? getArguments().getParcelable(Constants.ALBUM_OBJECT) : null;
+                if (album == null || album.getId() == null) return true;
+                if (item.getItemId() == R.id.action_remove_shortcut) {
+                    AppShortcuts.removeFixed(requireContext(), AssetLinkUtil.TYPE_ALBUM, album.getId());
+                    requireActivity().invalidateOptionsMenu();
+                } else {
+                    AppShortcutDialogs.add(requireActivity(), AppShortcuts.itemOf(album),
+                            () -> requireActivity().invalidateOptionsMenu());
+                }
+                return true;
+            }
             if (item.getItemId() == R.id.action_rate_album) {
                 Bundle bundle = new Bundle();
                 AlbumID3 album = albumPageViewModel.getAlbum().getValue();
@@ -370,6 +391,19 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                     MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
                     activity.setBottomSheetInPeek(true);
                 });
+
+                // Opened from a launcher shortcut that plays: start once, so a rotation or
+                // coming back to the page does not start it again.
+                Bundle args = getArguments();
+                String playMode = args != null ? args.getString(Constants.AUTO_PLAY) : null;
+                if (playMode != null) {
+                    args.remove(Constants.AUTO_PLAY);
+                    if (Preferences.SHORTCUTS_PLAY_MODE_PLAY.equals(playMode)) {
+                        bind.albumPagePlayButton.performClick();
+                    } else if (Preferences.SHORTCUTS_PLAY_MODE_SHUFFLE.equals(playMode)) {
+                        bind.albumPageShuffleButton.performClick();
+                    }
+                }
             }
 
             if (bind != null && (songs == null || songs.isEmpty())) {
