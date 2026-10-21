@@ -72,14 +72,12 @@ fun PlayerQueueList(
         }
     }
 
-    val cornerRadius = remember {
-        if (Preferences.isCornerRoundingEnabled()) {
-            Preferences.getRoundedCornerSize().dp
-        } else {
-            8.dp
-        }
+    val cornerRadius = if (Preferences.isCornerRoundingEnabled()) {
+        Preferences.getRoundedCornerSize().dp
+    } else {
+        0.dp
     }
-    val showRating = remember { Preferences.showItemRating() }
+    val showRating = Preferences.showItemRating()
 
     if (items.isEmpty()) {
         Box(
