@@ -83,7 +83,7 @@ fun PlayerQueueList(
             }
         }
     }
-    val showRating = remember { Preferences.showItemRating() }
+    val showRating = Preferences.showItemRating()
 
     if (items.isEmpty()) {
         Box(
