@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -72,10 +73,15 @@ fun PlayerQueueList(
         }
     }
 
-    val cornerRadius = if (Preferences.isCornerRoundingEnabled()) {
-        Preferences.getRoundedCornerSize().dp
-    } else {
-        0.dp
+    val density = LocalDensity.current
+    val cornerRadius = remember(density) {
+        with(density) {
+            if (Preferences.isCornerRoundingEnabled()) {
+                Preferences.getRoundedCornerSize().toDp()
+            } else {
+                1.toDp()
+            }
+        }
     }
     val showRating = Preferences.showItemRating()
 
