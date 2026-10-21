@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -388,6 +389,74 @@ class UpnpPlayerQueueTest {
 
         assertEquals("the app never followed the renderer", 1, moved)
         assertEquals("track-2", onMainGet { player.currentMediaItem?.mediaId })
+    }
+
+    @Test
+    fun aRendererStillReportingTheTrackBeforeTheLoadIsNotHandedOursAgain() {
+        // Kodi acknowledges the load, then reports the track it played before for about a second.
+        reportedTrackUri = urlAt(9)
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)), 0, 0L)
+            player.playWhenReady = true
+        }
+        SystemClock.sleep(3000)
+
+        assertEquals("the stale track was answered with another load: $handovers", listOf(urlAt(1)), handovers)
+
+        reportedTrackUri = urlAt(1)
+        assertTrue("never reached ready once the renderer switched", awaitState(Player.STATE_READY))
+        assertEquals(listOf(urlAt(1)), handovers)
+        assertNull(onMainGet { player.playerError })
+    }
+
+    @Test
+    fun aStationTakesNoLengthFromTheRenderer() {
+        // Kodi reports the length of the track before the station for about a second after the switch.
+        reportedDuration = "00:03:42"
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(2500)
+
+        assertEquals("a station took a length", C.TIME_UNSET, onMainGet { player.duration })
+    }
+
+    @Test
+    fun aStationTheRendererKeepsPlayingAfterAPauseIsStopped() {
+        // Kodi's VideoPlayer answers Pause on a station with OK and plays on; the fake does the same.
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        actions.clear()
+
+        onMain { player.playWhenReady = false }
+        SystemClock.sleep(4000)
+
+        val pause = actions.indexOf("Pause")
+        assertTrue("a station was not paused first: $actions", pause >= 0)
+        assertTrue("an ignored pause was not followed by a stop: $actions", actions.indexOf("Stop") > pause)
+        assertFalse("the ignored pause was taken for a Play from outside", onMainGet { player.playWhenReady })
+    }
+
+    @Test
+    fun aStationTheRendererPausesIsNotStopped() {
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        actions.clear()
+
+        reportedState = "PAUSED_PLAYBACK"
+        onMain { player.playWhenReady = false }
+        SystemClock.sleep(4000)
+
+        assertTrue("a station was not paused: $actions", actions.contains("Pause"))
+        assertFalse("a station the renderer paused was stopped, which costs a rebuffer: $actions", actions.contains("Stop"))
     }
 
     @Test
