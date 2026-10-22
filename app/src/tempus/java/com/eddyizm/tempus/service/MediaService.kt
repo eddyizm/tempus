@@ -55,6 +55,7 @@ class MediaService : BaseMediaService(), SessionAvailabilityListener {
     }
 
     override fun onCastSessionAvailable() {
+        if (exoplayer.playWhenReady) castPlayer.playWhenReady = true
         setPlayer(exoplayer, castPlayer)
     }
 
