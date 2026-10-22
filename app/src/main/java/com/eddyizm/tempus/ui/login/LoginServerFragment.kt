@@ -295,7 +295,8 @@ class LoginServerFragment : Fragment() {
 
         val s: Server = serverList[selectedServerPosition]
 
-        val server: String = s.serverName
+        val serverId: String = s.serverId
+        val server: String = s.address
         val user: String = s.username
         val password: String = s.password
         val address: String = s.address
@@ -303,6 +304,7 @@ class LoginServerFragment : Fragment() {
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
 
+        App.getInstance().preferences.edit { putString("server_id", serverId) }
         App.getInstance().preferences.edit { putString("server", server) }
         App.getInstance().preferences.edit { putString("user", user) }
         App.getInstance().preferences.edit { putString("password", password) }
