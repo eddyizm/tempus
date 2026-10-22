@@ -212,7 +212,8 @@ public class ExternalAudioWriter {
                     extension = name.substring(dot + 1);
                 }
             }
-            if (extension == null || extension.isEmpty()) {
+            boolean extensionDetected = extension != null && !extension.isEmpty();
+            if (!extensionDetected) {
                 String suffix = child.getSuffix();
                 if (suffix != null && !suffix.isEmpty()) {
                     extension = suffix;
@@ -238,7 +239,7 @@ public class ExternalAudioWriter {
                 }
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
-                    recordDownload(child, existingFile.getUri(), playlistId, playlistName, mimeType, extension, mediaUri != null ? mediaUri.toString() : null);
+                    recordDownload(child, existingFile.getUri(), playlistId, playlistName, mimeType, extensionDetected ? extension : null, mediaUri != null ? mediaUri.toString() : null);
                     ExternalAudioReader.refreshCacheAsync();
                     DownloadProgressState.getInstance().onSkipped(context);
                     return;
@@ -295,7 +296,7 @@ public class ExternalAudioWriter {
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
-                recordDownload(child, targetUri, playlistId, playlistName, mimeType, extension, mediaUri != null ? mediaUri.toString() : null);
+                recordDownload(child, targetUri, playlistId, playlistName, mimeType, extensionDetected ? extension : null, mediaUri != null ? mediaUri.toString() : null);
                 DownloadProgressState.getInstance().onSuccess(context);
                 ExternalAudioReader.refreshCacheAsync();
             }
@@ -362,8 +363,16 @@ public class ExternalAudioWriter {
             if (actualMimeType != null && !actualMimeType.equals("application/octet-stream")) {
                 download.setContentType(actualMimeType);
             }
-            download.setSamplingRate(null);
-            download.setBitDepth(null);
+            String sourceSuffix = child.getSuffix();
+            boolean formatChanged = sourceSuffix == null
+                    || !actualExtension.equalsIgnoreCase(sourceSuffix);
+            if (formatChanged) {
+                download.setSamplingRate(null);
+                download.setBitDepth(null);
+            }
+            if (downloadUri != null) {
+                MusicUtil.applyBitrateFromUri(download, downloadUri);
+            }
         } else {
             if (downloadUri != null) {
                 MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);

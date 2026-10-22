@@ -443,6 +443,22 @@ public class MusicUtil {
         applyTranscodeMetadata(download, format, maxBitRate);
     }
 
+    public static void applyBitrateFromUri(Download download, String downloadUri) {
+        if (download == null || downloadUri == null) return;
+
+        Matcher bitrateMatcher = QUERY_BITRATE_PATTERN.matcher(downloadUri);
+        if (bitrateMatcher.find()) {
+            String maxBitRate = bitrateMatcher.group(1);
+            try {
+                int parsed = Integer.parseInt(maxBitRate);
+                if (parsed > 0) {
+                    download.setBitrate(parsed);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+    }
+
     // The same rewrite, for a caller that knows the format and ceiling a file was actually fetched
     // with rather than the ones configured now.
     public static void applyTranscodeMetadata(Download download, String format, String maxBitRate) {
