@@ -516,7 +516,6 @@
     <string name="settings_album_year_summary">Wenn aktiviert, wird das Jahr jedes Albums auf der Interpretenseite angezeigt.</string>
     <string name="settings_item_rating">Bewertung zeigen</string>
     <string name="settings_item_rating_summary">Zeigt die Sterne-Bewertung und Favorit-Markierung neben Titeln an</string>
-    <string name="settings_queue_syncing_countdown">Abgleich alle</string>
     <string name="settings_queue_syncing_summary">Speichert die aktuelle Warteschlange auf dem Server, um sie nach einem Neustart der App wiederherzustellen</string>
     <string name="settings_queue_syncing_title">Warteschlange synchronisieren [Nicht ganz ausgereift]</string>
     <string name="settings_show_mini_shuffle_button">Zufallswiedergabe zeigen</string>

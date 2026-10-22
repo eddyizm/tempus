@@ -344,7 +344,6 @@
     <string name="settings_song_rating_summary">Se abilitato, mostra la valutazione a 5 stelle per la traccia nella pagina della canzone\n\n*Richiede il riavvio dell\'app</string>
     <string name="settings_item_rating">Mostra valutazione</string>
     <string name="settings_item_rating_summary">Se abilitato, verrà mostrata la valutazione dell\'elemento e se è contrassegnato come preferito.</string>
-    <string name="settings_queue_syncing_countdown">Timer sincronizzazione</string>
     <string name="settings_queue_syncing_summary">Se abilitato, l\'utente avrà la possibilità di salvare la propria coda di riproduzione e potrà caricare lo stato all\'apertura dell\'applicazione.</string>
     <string name="settings_queue_syncing_title">Sincronizza coda di riproduzione per questo utente [Not Fully Baked]</string>
     <string name="settings_show_mini_shuffle_button">Mostra il pulsante di riproduzione casuale</string>

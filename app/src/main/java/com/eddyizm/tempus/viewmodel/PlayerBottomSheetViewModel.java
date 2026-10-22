@@ -289,6 +289,9 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     }
 
     public boolean savePlayQueue() {
+        return savePlayQueue(-1);
+    }
+    public boolean savePlayQueue(long positionOverrideMs) {
         if (com.eddyizm.tempus.lan.LanRemoteSession.isActive()) {
             com.eddyizm.tempus.lan.LanRemoteState state = com.eddyizm.tempus.lan.LanRemoteSession.current();
             if (!com.eddyizm.tempus.lan.LanRemoteSession.queueIsCurrent() || state.getMediaId().isEmpty()) return false;
@@ -301,7 +304,9 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         List<String> ids = queue.stream().map(Child::getId).collect(Collectors.toList());
 
         if (media != null) {
-            long position = Preferences.getResumePoint(media.getId());
+            long position = positionOverrideMs >= 0
+                    ? positionOverrideMs
+                    : Preferences.getResumePoint(media.getId());
             Log.d(TAG, "Saving play queue - Current: " + media.getId() + ", Items: " + ids.size() + ", Position: " + position);
             queueRepository.savePlayQueue(ids, media.getId(), position);
             return true;

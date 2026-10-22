@@ -279,6 +279,7 @@ class PlayerQueueBridge @JvmOverloads constructor(
                     },
                     onSaveToPlaylist = ::saveToPlaylist,
                     onDownloadAll = ::downloadAll,
+                    onSaveQueue = ::saveQueue,
                     onLoadSavedQueue = ::loadSavedQueue,
                     onSheetReady = { sheetHide = it }
                 )
@@ -399,6 +400,23 @@ class PlayerQueueBridge @JvmOverloads constructor(
             }
         }
     }
+    private fun saveQueue() {
+        if (!Preferences.isSyncronizationEnabled()) return
+        val context = fragment.context ?: return
+        val future = fragment.mediaBrowserListenableFuture ?: return
+
+        future.addListener({
+            val controller = try { future.get() } catch (e: Exception) { null }
+            val positionMs = controller?.currentPosition ?: -1L
+
+            val saved = playerBottomSheetViewModel.savePlayQueue(positionMs)
+            Toast.makeText(
+                context,
+                if (saved) R.string.player_queue_saved else R.string.player_queue_save_failed,
+                Toast.LENGTH_SHORT
+            ).show()
+        }, ContextCompat.getMainExecutor(context))
+    }
 
     private fun loadSavedQueue() {
         if (!Preferences.isSyncronizationEnabled()) return
@@ -411,7 +429,8 @@ class PlayerQueueBridge @JvmOverloads constructor(
                 if (!entries.isNullOrEmpty()) {
                     val currentId = value?.current
                     val targetIndex = entries.indexOfFirst { it.id == currentId }.coerceAtLeast(0)
-                    MediaManager.startQueue(fragment.mediaBrowserListenableFuture, entries, targetIndex)
+                    val startPositionMs = value?.position ?: 0L
+                    MediaManager.startQueue(fragment.mediaBrowserListenableFuture, entries, targetIndex, startPositionMs)
                     Toast.makeText(context, R.string.player_queue_loaded, Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, R.string.player_queue_no_saved_queue, Toast.LENGTH_SHORT).show()

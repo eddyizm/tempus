@@ -542,7 +542,7 @@ public class PlayerBottomSheetFragment extends Fragment {
             new Handler().postDelayed(() -> {
                 if (bind != null)
                     bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.GONE);
-            }, Preferences.getSyncCountdownTimer() * 1000L);
+            }, Constants.QUEUE_SYNC_DELAY_MS);
         }
     }
 }

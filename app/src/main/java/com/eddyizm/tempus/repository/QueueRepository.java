@@ -124,6 +124,8 @@ public class QueueRepository {
      * resume point is always current without a UI button press.
      */
     public void savePlayQueueToServer(String current, long position) {
+        if (!Preferences.isSyncronizationEnabled() || Preferences.isQueueSyncManualOnly()) return;
+
         dbExecutor.execute(() -> {
             List<String> ids = queueDao.getAllSimple().stream()
                     .map(Queue::getId)
