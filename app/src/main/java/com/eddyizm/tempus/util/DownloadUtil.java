@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
+import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.database.DatabaseProvider;
 import androidx.media3.database.StandaloneDatabaseProvider;
@@ -35,6 +36,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +47,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 @UnstableApi
 public final class DownloadUtil {
@@ -102,9 +105,16 @@ public final class DownloadUtil {
     /**
      * The OkHttp client behind {@link CustomHeadersDataSource}, with the same timeouts as
      * {@link DefaultHttpDataSource} and the client certificate, if one is set up.
+     *
+     * <p>It speaks HTTP/1.1 only, as {@link DefaultHttpDataSource} does. Over HTTP/2 every request
+     * to the server shares one connection, so when {@link StallDetectingDataSource} gives up on a
+     * stuck connection, the new request would go over that same connection. Over HTTP/1.1 a
+     * response closed before its end takes its connection with it.
      */
-    private static OkHttpClient buildCustomHeadersHttpClient() {
+    @VisibleForTesting
+    static OkHttpClient buildCustomHeadersHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(ServerHeaders.createInterceptor());
