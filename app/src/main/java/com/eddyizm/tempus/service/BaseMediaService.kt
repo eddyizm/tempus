@@ -321,6 +321,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private val playerErrorRecoveryThrottleMs = 5_000L
 
     internal var stoppedSinceError = false
+    private var restartableUntilMs = 0L
+    private val restartAfterErrorWindowMs = 60_000L
 
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
@@ -338,10 +340,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> true
                     else -> false
                 }
+                val now = android.os.SystemClock.elapsedRealtime()
+                restartableUntilMs = now + restartAfterErrorWindowMs
                 if (!recoverable) return
                 networkCallback.recheckAfterPlayerError()
 
-                val now = android.os.SystemClock.elapsedRealtime()
                 if (!stoppedSinceError && now - lastPlayerErrorRecoveryMs >= playerErrorRecoveryThrottleMs) {
                     lastPlayerErrorRecoveryMs = now
                     player.prepare()
@@ -1230,7 +1233,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
             val player = mediaLibrarySession.player
             if (player === exoplayer && player.playbackState == Player.STATE_IDLE && player.playerError != null && !stoppedSinceError) {
-                player.prepare()
+                if (SystemClock.elapsedRealtime() < restartableUntilMs) player.prepare()
+                else Log.d(TAG, "Player error is too old to restart")
             }
         }
 
