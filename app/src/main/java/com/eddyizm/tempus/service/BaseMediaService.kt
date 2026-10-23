@@ -1006,7 +1006,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     private fun scheduleQueueSync() {
         queueSyncHandler.removeCallbacks(queueSyncRunnable)
-        val blocked = !Preferences.isSyncronizationEnabled() || Preferences.isQueueSyncManualOnly()
+        val blocked = !Preferences.isSyncronizationEnabled()
         if (blocked) return
         queueSyncHandler.postDelayed(queueSyncRunnable, QUEUE_SYNC_DEBOUNCE_MS)
     }

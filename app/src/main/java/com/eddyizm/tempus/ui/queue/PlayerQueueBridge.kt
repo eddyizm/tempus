@@ -279,7 +279,6 @@ class PlayerQueueBridge @JvmOverloads constructor(
                     },
                     onSaveToPlaylist = ::saveToPlaylist,
                     onDownloadAll = ::downloadAll,
-                    onSaveQueue = ::saveQueue,
                     onLoadSavedQueue = ::loadSavedQueue,
                     onSheetReady = { sheetHide = it }
                 )
@@ -399,23 +398,6 @@ class PlayerQueueBridge @JvmOverloads constructor(
                 Toast.makeText(currentContext, msg, Toast.LENGTH_SHORT).show()
             }
         }
-    }
-    private fun saveQueue() {
-        if (!Preferences.isSyncronizationEnabled()) return
-        val context = fragment.context ?: return
-        val future = fragment.mediaBrowserListenableFuture ?: return
-
-        future.addListener({
-            val controller = try { future.get() } catch (e: Exception) { null }
-            val positionMs = controller?.currentPosition ?: -1L
-
-            val saved = playerBottomSheetViewModel.savePlayQueue(positionMs)
-            Toast.makeText(
-                context,
-                if (saved) R.string.player_queue_saved else R.string.player_queue_save_failed,
-                Toast.LENGTH_SHORT
-            ).show()
-        }, ContextCompat.getMainExecutor(context))
     }
 
     private fun loadSavedQueue() {

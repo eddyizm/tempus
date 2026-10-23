@@ -119,7 +119,6 @@ fun PlayerQueueSheet(
     onShuffleUpcoming: (List<Child>, Int) -> Unit,
     onSaveToPlaylist: (List<Child>) -> Unit,
     onDownloadAll: (List<Child>) -> Unit,
-    onSaveQueue: () -> Unit,
     onLoadSavedQueue: () -> Unit,
     modifier: Modifier = Modifier,
     currentSongId: String? = null,
@@ -252,7 +251,6 @@ fun PlayerQueueSheet(
                     onShuffleUpcoming = { onShuffleUpcoming(currentRawSongs, effectiveCurrentIndex) },
                     onSaveToPlaylist = { onSaveToPlaylist(currentSongs.map { it.song }) },
                     onDownloadAll = { onDownloadAll(currentSongs.map { it.song }) },
-                    onSaveQueue = onSaveQueue,
                     onLoadSavedQueue = onLoadSavedQueue
                 )
 

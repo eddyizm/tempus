@@ -549,13 +549,6 @@
                 android:defaultValue="false"
                 android:summary="@string/settings_queue_syncing_summary"
                 android:key="queue_syncing" />
-
-            <SwitchPreference
-                android:title="@string/settings_queue_manual_only_syncing"
-                android:defaultValue="false"
-                android:summary="@string/settings_queue_manual_only_syncing_summary"
-                android:key="manual_only_syncing"
-                app:dependency="queue_syncing" />
         </PreferenceCategory>
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 

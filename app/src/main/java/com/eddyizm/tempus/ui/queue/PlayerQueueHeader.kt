@@ -43,7 +43,6 @@ fun PlayerQueueHeader(
     onShuffleUpcoming: () -> Unit,
     onSaveToPlaylist: () -> Unit,
     onDownloadAll: () -> Unit,
-    onSaveQueue: () -> Unit,
     onLoadSavedQueue: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -189,21 +188,6 @@ fun PlayerQueueHeader(
                             },
                             enabled = songCount > 0
                         )
-                        if (isSyncEnabled) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.player_queue_save_queue)) },
-                                leadingIcon = {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_save_sync),
-                                        contentDescription = null
-                                    )
-                                },
-                                onClick = {
-                                    menuExpanded = false
-                                    onSaveQueue()
-                                }
-                            )
-                        }
                         if (isSyncEnabled) {
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.player_queue_load_queue)) },

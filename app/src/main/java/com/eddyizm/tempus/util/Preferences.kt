@@ -66,7 +66,6 @@ object Preferences {
     private const val SYNC_STARRED_ALBUMS_FOR_OFFLINE_USE = "sync_starred_albums_for_offline_use"
     private const val SYNC_STARRED_TRACKS_FOR_OFFLINE_USE = "sync_starred_tracks_for_offline_use"
     private const val QUEUE_SYNCING = "queue_syncing"
-    private const val MANUAL_ONLY_SYNCING = "manual_only_syncing"
     private const val ROUNDED_CORNER = "rounded_corner"
     private const val ROUNDED_CORNER_SIZE = "rounded_corner_size"
     private const val PODCAST_SECTION_VISIBILITY = "podcast_section_visibility"
@@ -765,10 +764,6 @@ object Preferences {
     @JvmStatic
     fun isSyncronizationEnabled(): Boolean {
         return App.getInstance().preferences.getBoolean(QUEUE_SYNCING, false)
-    }
-    @JvmStatic
-    fun isQueueSyncManualOnly(): Boolean {
-        return App.getInstance().preferences.getBoolean(MANUAL_ONLY_SYNCING, false)
     }
 
     @JvmStatic
