@@ -22,5 +22,6 @@ graphify-out/
 tempus-release-key.jks
 app/tempus/
 app/degoogled/
+app/play/
 .agents/
 .kotlin
