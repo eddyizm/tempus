@@ -117,6 +117,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     }
 
     private val queueSyncHandler = Handler(Looper.getMainLooper())
+    private var hasPlayedSinceRestore = false
     private val queueSyncRunnable = object : Runnable {
         override fun run() {
             if (serviceDestroyed) return
@@ -562,6 +563,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex + " isPlaying=" + isPlaying)
+                if (isPlaying) hasPlayedSinceRestore = true
                 if (!isPlaying) {
                     MediaManager.setResumePoint(
                         player.currentMediaItem,
@@ -1008,6 +1010,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         queueSyncHandler.removeCallbacks(queueSyncRunnable)
         val blocked = !Preferences.isSyncronizationEnabled()
         if (blocked) return
+        if (!hasPlayedSinceRestore) return
         queueSyncHandler.postDelayed(queueSyncRunnable, QUEUE_SYNC_DEBOUNCE_MS)
     }
 
