@@ -212,7 +212,8 @@ public class ExternalAudioWriter {
                     extension = name.substring(dot + 1);
                 }
             }
-            if (extension == null || extension.isEmpty()) {
+            boolean extensionDetected = extension != null && !extension.isEmpty();
+            if (!extensionDetected) {
                 String suffix = child.getSuffix();
                 if (suffix != null && !suffix.isEmpty()) {
                     extension = suffix;
@@ -238,9 +239,8 @@ public class ExternalAudioWriter {
                 }
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
-                    recordDownload(child, existingFile.getUri(), playlistId, playlistName);
+                    recordDownload(child, existingFile.getUri(), playlistId, playlistName, mimeType, extensionDetected ? extension : null, mediaUri != null ? mediaUri.toString() : null);
                     ExternalAudioReader.refreshCacheAsync();
-                    // Already exists — count as a quiet skip so progress resolves correctly
                     DownloadProgressState.getInstance().onSkipped(context);
                     return;
                 } else {
@@ -296,7 +296,7 @@ public class ExternalAudioWriter {
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
-                recordDownload(child, targetUri, playlistId, playlistName);
+                recordDownload(child, targetUri, playlistId, playlistName, mimeType, extensionDetected ? extension : null, mediaUri != null ? mediaUri.toString() : null);
                 DownloadProgressState.getInstance().onSuccess(context);
                 ExternalAudioReader.refreshCacheAsync();
             }
@@ -353,11 +353,33 @@ public class ExternalAudioWriter {
         manager.notify(FOLDER_ERROR_NOTIFICATION_ID, builder.build());
     }
 
-    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName) {
+    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName,
+                                       String actualMimeType, String actualExtension, String downloadUri) {
         if (child == null) return;
 
         Download download = new Download(child);
-        MusicUtil.applyTranscodedDownloadMetadata(download);
+        if (actualExtension != null && !actualExtension.isEmpty() && !"bin".equals(actualExtension)) {
+            download.setSuffix(actualExtension);
+            if (actualMimeType != null && !actualMimeType.equals("application/octet-stream")) {
+                download.setContentType(actualMimeType);
+            }
+            String sourceSuffix = child.getSuffix();
+            boolean formatChanged = sourceSuffix == null
+                    || !actualExtension.equalsIgnoreCase(sourceSuffix);
+            if (formatChanged) {
+                download.setSamplingRate(null);
+                download.setBitDepth(null);
+            }
+            if (downloadUri != null) {
+                MusicUtil.applyBitrateFromUri(download, downloadUri);
+            }
+        } else {
+            if (downloadUri != null) {
+                MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);
+            } else {
+                MusicUtil.applyTranscodedDownloadMetadata(download);
+            }
+        }
         download.setDownloadState(1);
         download.setPlaylistId(playlistId);
         download.setPlaylistName(playlistName);
