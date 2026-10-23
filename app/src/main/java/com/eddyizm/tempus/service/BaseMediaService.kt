@@ -123,7 +123,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             if (serviceDestroyed) return
             saveQueueNow()
             if (mediaLibrarySession.player.isPlaying) {
-                queueSyncHandler.postDelayed(this, Constants.QUEUE_SYNC_DELAY_MS)
+                queueSyncHandler.postDelayed(this, Constants.QUEUE_SYNC_INTERVAL_MS)
             }
         }
     }
