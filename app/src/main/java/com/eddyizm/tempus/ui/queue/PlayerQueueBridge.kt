@@ -410,8 +410,10 @@ class PlayerQueueBridge @JvmOverloads constructor(
                 val entries = value?.entries
                 if (!entries.isNullOrEmpty()) {
                     val currentId = value?.current
-                    val targetIndex = entries.indexOfFirst { it.id == currentId }.coerceAtLeast(0)
-                    MediaManager.startQueue(fragment.mediaBrowserListenableFuture, entries, targetIndex)
+                    val matchIndex = entries.indexOfFirst { it.id == currentId }
+                    val targetIndex = matchIndex.coerceAtLeast(0)
+                    val startPositionMs = if (matchIndex >= 0) (value?.position ?: 0L) else 0L
+                    MediaManager.startQueue(fragment.mediaBrowserListenableFuture, entries, targetIndex, startPositionMs)
                     Toast.makeText(context, R.string.player_queue_loaded, Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, R.string.player_queue_no_saved_queue, Toast.LENGTH_SHORT).show()

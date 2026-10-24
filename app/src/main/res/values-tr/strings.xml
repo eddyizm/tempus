@@ -304,7 +304,6 @@
     <string name="settings_song_rating_summary">" "</string>
     <string name="settings_item_rating">Öğe değerlemesini göster</string>
     <string name="settings_item_rating_summary">Etkinleştirildiğinde, öğenin puanı ve favori olarak işaretlenip işaretlenmediği görüntülenir.</string>
-    <string name="settings_queue_syncing_countdown">Eşitleme zamanlayıcısı</string>
     <string name="settings_queue_syncing_summary">Etkinleştirildiğinde, kullanıcı çalma sırasını kaydedebilir ve uygulamayı açtığında bu durumu yükleyebilir.</string>
     <string name="settings_queue_syncing_title">Bu kullanıcı için çalma sırasını eşitle</string>
     <string name="settings_radio">Radyoyu göster</string>

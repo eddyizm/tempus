@@ -550,7 +550,6 @@
     <string name="settings_album_year_summary">If enabled, shows the year of each album on the artist page.</string>
     <string name="settings_item_rating">Show item rating</string>
     <string name="settings_item_rating_summary">If enabled, the item\'s rating and whether it is marked as a favorite will be displayed.</string>
-    <string name="settings_queue_syncing_countdown">Sync timer</string>
     <string name="settings_queue_syncing_summary">If enabled, the user will have the ability to save their play queue and will have the ability to load state when opening the application.</string>
     <string name="settings_queue_syncing_title">Sync play queue for this user [Not Fully Baked]</string>
     <string name="settings_show_mini_shuffle_button">Show Shuffle button</string>

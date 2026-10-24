@@ -17,6 +17,7 @@
     - [Folder or index playback](#folder-or-index-playback)
     - [Now Playing Screen](#now-playing-screen)
     - [Podcasts](#podcasts)
+    - [Syncing the play queue](#syncing-the-play-queue)
     - [Radio Stations](#radio-stations)
     - [Downloads](#downloads)
     - [Continue listening](#continue-listening)
@@ -220,6 +221,19 @@ The ⋮ menu next to the heart has **Play on…** and **Add to playlist**, plus 
 The player's format and bitrate label gives what was actually decoded, not the transcode Tempus asked for. If your server ignored the request, or had no rule matching the track, the label shows what it really sent. A track the server did transcode reads as the new format followed by "(Transcoding)".
 
 Downloaded tracks show the format on disk. When Tempus transcodes a download, the row and the track info dialog carry the transcoded format and bitrate instead of the source values.
+
+### Syncing the play queue
+
+With **Sync play queue for this user** turned on under Settings → Miscellaneous, Tempus keeps your play queue and your position in the current track on your server, so you can continue where you stopped, also on another device.
+
+Tempus saves automatically when you pause, switch to another track or seek, and every 5 seconds while playing. In the menu of the queue:
+
+- **Save Queue** saves the queue and the position right now.
+- **Load Queue** replaces the queue with the saved one and starts at the saved position.
+
+Both items only show while syncing is on.
+
+Turn on **Manual only syncing** (right below the sync switch) to stop the automatic saving. The queue is then only saved when you tap **Save Queue**, which is handy if you want to keep one saved queue as a bookmark. Loading it works as before.
 
 ### Podcasts  
 If your server supports it - add a podcast rss feed

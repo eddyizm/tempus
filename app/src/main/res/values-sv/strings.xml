@@ -516,7 +516,6 @@
     <string name="settings_album_year_summary">Visa årtalet för varje album på artistsidan.</string>
     <string name="settings_item_rating">Visa objektets betyg</string>
     <string name="settings_item_rating_summary">Visa objektets betyg och om det är markerat som favorit.</string>
-    <string name="settings_queue_syncing_countdown">Synkroniseringsintervall</string>
     <string name="settings_queue_syncing_summary">Gör det möjligt att spara uppspelningskön och återställa den när appen öppnas.</string>
     <string name="settings_queue_syncing_title">Synkronisera användarens uppspelningskö [Under utveckling]</string>
     <string name="settings_show_mini_shuffle_button">Visa blandningsknapp</string>
