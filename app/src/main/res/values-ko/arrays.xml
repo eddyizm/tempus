@@ -166,17 +166,6 @@
         <item>flac</item>
     </string-array>
 
-    <string-array name="queue_syncing_countdown_titles">
-        <item>10초</item>
-        <item>5초</item>
-        <item>2초</item>
-    </string-array>
-    <string-array name="queue_syncing_countdown_values">
-        <item>10</item>
-        <item>5</item>
-        <item>2</item>
-    </string-array>
-
     <string-array name="rounded_corner_size_titles">
         <item>높음</item>
         <item>중간</item>

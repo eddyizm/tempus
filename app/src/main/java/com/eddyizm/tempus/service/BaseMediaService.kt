@@ -121,6 +121,17 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         checkRadioHttpHeaders()
     }
 
+    private val queueSyncHandler = Handler(Looper.getMainLooper())
+    private var hasPlayedSinceRestore = false
+    private val queueSyncRunnable = object : Runnable {
+        override fun run() {
+            if (serviceDestroyed) return
+            saveQueueNow()
+            if (mediaLibrarySession.player.isPlaying) {
+                queueSyncHandler.postDelayed(this, Constants.QUEUE_SYNC_INTERVAL_MS)
+            }
+        }
+    }
     private val binder = LocalBinder()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -354,6 +365,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO ||
+                    reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK) {
+                    scheduleQueueSync()
+                }
                 ReplayGainUtil.applyGain(player, mediaItem)
 
                 // --- Add for AA : Constants.AA_START_INDEX if présent ---
@@ -554,7 +569,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex)
+                Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex + " isPlaying=" + isPlaying)
+                if (isPlaying) hasPlayedSinceRestore = true
                 if (!isPlaying) {
                     MediaManager.setResumePoint(
                         player.currentMediaItem,
@@ -571,9 +587,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 if (isPlaying) {
                     scheduleWidgetUpdates()
                     scheduleRadioHeaderChecks()
+                    scheduleQueueSync()
                 } else {
                     stopWidgetUpdates()
                     stopRadioHeaderChecks()
+                    queueSyncHandler.removeCallbacks(queueSyncRunnable)
                 }
                 updateWidget(player)
             }
@@ -601,7 +619,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             ) {
                 Log.d(TAG, "onPositionDiscontinuity reason=$reason old=${oldPosition.mediaItemIndex} new=${newPosition.mediaItemIndex}")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-
+                if (reason == Player.DISCONTINUITY_REASON_SEEK) scheduleQueueSync()
                 // Save the resume point of the track we're leaving whenever we move to a
                 // different track, so coming back to it later resumes where it was. (Pause
                 // is handled separately in onIsPlayingChanged; this covers switching tracks
@@ -841,6 +859,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
         stopWidgetUpdates()
+        queueSyncHandler.removeCallbacks(queueSyncRunnable)
         stopRadioHeaderChecks()
         SleepTimerManager.getInstance().stopEndOfTrackPoller()
         SleepTimerManager.getInstance().setServiceActionListener(null)
@@ -993,6 +1012,21 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             albumLink,
             artistLink
         )
+    }
+
+    private fun scheduleQueueSync() {
+        queueSyncHandler.removeCallbacks(queueSyncRunnable)
+        val blocked = !Preferences.isSyncronizationEnabled()
+        if (blocked) return
+        if (!hasPlayedSinceRestore) return
+        queueSyncHandler.postDelayed(queueSyncRunnable, QUEUE_SYNC_DEBOUNCE_MS)
+    }
+
+    private fun saveQueueNow() {
+        val player = mediaLibrarySession.player
+        player.currentMediaItem?.mediaId?.let { id ->
+            QueueRepository().savePlayQueueToServer(id, player.currentPosition)
+        }
     }
 
     private fun scheduleWidgetUpdates() {
@@ -1279,7 +1313,9 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         }
     }
 }
-
+private const val QUEUE_SYNC_DEBOUNCE_MS = 2000L
+// Delay after the last skip/seek/play before saving; each new trigger restarts it,
+// so skipping several songs in quick succession causes only one save.
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
 // How often to re-persist the resume point (and server bookmark) during playback, so a
 // force-close or stop mid-playback still lands within a few seconds of where you were.

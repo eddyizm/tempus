@@ -539,7 +539,6 @@
     <string name="settings_album_year_summary">有効にすると、アーティストページで各アルバムの年が表示されます。</string>
     <string name="settings_item_rating">評価を表示</string>
     <string name="settings_item_rating_summary">有効にすると、アイテムの評価とお気に入りに登録されているかどうかが表示されます。</string>
-    <string name="settings_queue_syncing_countdown">同期タイマー</string>
     <string name="settings_queue_syncing_summary">有効にすると、再生キューを保存し、アプリ起動時に状態を復元できるようになります。</string>
     <string name="settings_queue_syncing_title">再生キューの同期 [未完成の機能]</string>
     <string name="settings_show_mini_shuffle_button">シャッフルボタンを表示</string>

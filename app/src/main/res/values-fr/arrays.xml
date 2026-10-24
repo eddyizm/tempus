@@ -185,17 +185,6 @@
         <item>flac</item>
     </string-array>
 
-    <string-array name="queue_syncing_countdown_titles">
-        <item>Dix secondes</item>
-        <item>Cinq secondes</item>
-        <item>Deux secondes</item>
-    </string-array>
-    <string-array name="queue_syncing_countdown_values">
-        <item>10</item>
-        <item>5</item>
-        <item>2</item>
-    </string-array>
-
     <string-array name="rounded_corner_size_titles">
         <item>Grand</item>
         <item>Moyen</item>

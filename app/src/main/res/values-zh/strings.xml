@@ -382,7 +382,6 @@
     <string name="settings_music_directory_summary">启用后则显示音乐目录部分。 请注意，要使文件夹导航正常工作，服务器必须支持此功能。</string>
     <string name="settings_podcast">显示播客</string>
     <string name="settings_podcast_summary">启用后则显示播客部分。</string>
-    <string name="settings_queue_syncing_countdown">同步定时器</string>
     <string name="settings_queue_syncing_summary">启用后将允许当前用户保存其播放队列，并能够在打开应用程序时加载保存状态。</string>
     <string name="settings_queue_syncing_title">同步当前用户的播放队列</string>
     <string name="settings_radio">显示电台</string>
