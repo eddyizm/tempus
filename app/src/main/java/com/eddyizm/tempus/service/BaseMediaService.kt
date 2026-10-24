@@ -9,12 +9,14 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
 import android.util.Log
 import androidx.media3.common.*
 import androidx.media3.common.audio.AudioProcessor
@@ -49,6 +51,7 @@ import com.eddyizm.tempus.upnp.UpnpPlayer
 import com.eddyizm.tempus.upnp.UpnpRouteProvider
 import com.eddyizm.tempus.upnp.UpnpRoutesGate
 import com.eddyizm.tempus.ui.activity.MainActivity
+import com.eddyizm.tempus.provider.AlbumArtContentProvider
 import com.eddyizm.tempus.util.*
 import com.eddyizm.tempus.util.SleepTimerManager
 import com.eddyizm.tempus.widget.WidgetUpdateManager
@@ -114,6 +117,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         }
     }
 
+    private val radioCoverExecutor = Executors.newSingleThreadExecutor()
     private val radioHeaderCheckExecutor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
     private var radioHeaderCheckScheduled = false
     private var radioHeaderCheckFuture: ScheduledFuture<*>? = null
@@ -560,12 +564,20 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     metadataBuilder.setArtist(stationName)
                 }
 
+                // A new song never keeps the previous song cover: go back to the station cover ("" = none)
+                val stationArtwork = extras?.getString("stationArtworkUri")
+                    ?: currentItem.mediaMetadata.artworkUri?.toString().orEmpty()
+                newExtras.putString("stationArtworkUri", stationArtwork)
+                metadataBuilder.setArtworkUri(stationArtwork.takeIf { it.isNotEmpty() }?.let(Uri::parse))
+
                 (player as? ExoPlayer)?.let { exo ->
                     exo.replaceMediaItem(currentIndex, currentItem.buildUpon()
                         .setMediaMetadata(metadataBuilder.setExtras(newExtras).build())
                         .build())
                     updateWidget(exo)
                 }
+
+                fetchRadioTrackCover(player, artist, title)
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -864,6 +876,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         SleepTimerManager.getInstance().stopEndOfTrackPoller()
         SleepTimerManager.getInstance().setServiceActionListener(null)
         radioHeaderCheckExecutor.shutdown()
+        radioCoverExecutor.shutdownNow()
         if (::bitmapLoader.isInitialized) bitmapLoader.shutdown()
         App.getInstance().preferences.unregisterOnSharedPreferenceChangeListener(upnpSwitchListener)
         releaseUpnpRoutes()
@@ -1039,6 +1052,31 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         if (!widgetUpdateScheduled) return
         widgetUpdateHandler.removeCallbacks(widgetUpdateRunnable)
         widgetUpdateScheduled = false
+    }
+
+    private fun fetchRadioTrackCover(player: Player, artist: String?, title: String?) {
+        if (artist.isNullOrBlank() || title.isNullOrBlank()) return
+        if (!Preferences.isRadioTrackCoversEnabled() || Preferences.isDataSavingMode()) return
+
+        radioCoverExecutor.execute {
+            val coverUrl = RadioTrackCoverResolver.instance.resolve(artist, title) ?: return@execute
+            Handler(player.applicationLooper).post {
+                val item = player.currentMediaItem ?: return@post
+                // The song may have changed while the lookup ran
+                if (lastRadioArtist != artist || lastRadioTitle != title) return@post
+                val artworkId = "ir_" + Base64.encodeToString(coverUrl.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
+                player.replaceMediaItem(
+                    player.currentMediaItemIndex,
+                    item.buildUpon()
+                        .setMediaMetadata(
+                            item.mediaMetadata.buildUpon()
+                                .setArtworkUri(AlbumArtContentProvider.contentUri(artworkId))
+                                .build()
+                        )
+                        .build()
+                )
+            }
+        }
     }
 
     private fun scheduleRadioHeaderChecks() {
