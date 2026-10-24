@@ -47,4 +47,60 @@ class RadioStreamTitleTest {
     fun `blank input gives nothing`() {
         assertEquals(null to null, parseStreamTitle("   "))
     }
+
+    // ---- real strings from a scan of 156 rock/metal/prog stations in 40 countries ----
+
+    @Test
+    fun `station name before the dash is a slogan, not an artist`() {
+        assertEquals(null to "Style Rock", parseStreamTitle("Virgin Radio - Style Rock", "Virgin Radio Italia"))
+        assertEquals(null to "PLAY_8_NEW", parseStreamTitle("50s 60s RETRO HITS - PLAY_8_NEW", " 50s 60s RETRO HITS"))
+        assertEquals(
+            null to "Comedy Of Errors / The Answer",
+            parseStreamTitle("Progressive Rock - Comedy Of Errors / The Answer", "Purple Piper - Progressive Rock")
+        )
+    }
+
+    @Test
+    fun `station name prefix is dropped and the rest is parsed`() {
+        assertEquals("JACE EVERETT" to "BAD THINGS", parseStreamTitle("RockFM - JACE EVERETT - BAD THINGS", "RockFM"))
+    }
+
+    @Test
+    fun `title artist title repeats the title at the end`() {
+        val raw = "Opus Interstellar (ANGEMI Remix) - Eric Prydz, Hans Zimmer - Opus Interstellar (ANGEMI Remix)"
+        assertEquals(
+            "Eric Prydz, Hans Zimmer" to "Opus Interstellar (ANGEMI Remix)",
+            parseStreamTitle(raw, "TotalRock Radio")
+        )
+    }
+
+    @Test
+    fun `an artist unrelated to the station is kept`() {
+        assertEquals("Motorhead" to "Back At The Funny Farm", parseStreamTitle("Motorhead - Back At The Funny Farm", "Radio Furgoncino"))
+    }
+
+    @Test
+    fun `a very short name inside the station name is not a slogan`() {
+        assertEquals("U2" to "One", parseStreamTitle("U2 - One", "U2 Radio"))
+    }
+
+    @Test
+    fun `without a station name a slogan cannot be told from an artist`() {
+        assertEquals("Virgin Radio" to "Style Rock", parseStreamTitle("Virgin Radio - Style Rock"))
+    }
+
+    @Test
+    fun `em dash separates like a hyphen`() {
+        assertEquals("Artist" to "Title", parseStreamTitle("Artist \u2014 Title"))
+        assertEquals("Artist" to "Title", parseStreamTitle("Artist \u2013 Title"))
+        assertEquals(
+            null to "Guns N' Roses \"You Can't Put Your Arms Around A Memory\"",
+            parseStreamTitle("Deecibel Rock Radio  \u2014  Guns N' Roses \"You Can't Put Your Arms Around A Memory\"", "Deecibel Rock Radio")
+        )
+    }
+
+    @Test
+    fun `extra spaces around the dash are ignored`() {
+        assertEquals("Tool" to "Vicarious", parseStreamTitle("Tool   - Vicarious "))
+    }
 }
