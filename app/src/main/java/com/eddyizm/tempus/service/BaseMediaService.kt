@@ -488,6 +488,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 val extras = currentItem.mediaMetadata.extras
                 if (extras?.getString("type") != Constants.MEDIA_TYPE_RADIO) return
 
+                // Get station name (preserve if already set)
+                val stationName = extras?.getString("stationName")
+                    ?: currentItem.mediaMetadata.title?.toString()
+                    ?: ""
+
                 var artist: String? = null
                 var title: String? = null
 
@@ -496,7 +501,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     when (val entry = metadata[i]) {
                         is IcyInfo -> {
                             entry.title?.let { icyTitle ->
-                                val (parsedArtist, parsedTitle) = parseStreamTitle(icyTitle)
+                                val (parsedArtist, parsedTitle) = parseStreamTitle(icyTitle, stationName)
                                 artist = parsedArtist
                                 title = parsedTitle
                             }
@@ -539,10 +544,6 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 artist?.let { newExtras.putString("radioArtist", it) }
                 title?.let { newExtras.putString("radioTitle", it) }
 
-                // Get station name (preserve if already set)
-                val stationName = extras?.getString("stationName")
-                    ?: currentItem.mediaMetadata.title?.toString()
-                    ?: ""
                 if (stationName.isNotBlank()) {
                     newExtras.putString("stationName", stationName)
                 }
