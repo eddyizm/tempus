@@ -7,6 +7,7 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
+import java.text.Normalizer
 
 private const val TAG = "RadioTrackCoverResolver"
 private const val MAX_ARCHIVE_ATTEMPTS = 5
@@ -25,17 +26,43 @@ internal fun cleanTitle(raw: String): String =
 
 internal fun luceneEscape(s: String): String = s.replace("\\", " ").replace("\"", " ")
 
+private val accents = Regex("\\p{M}+")
+private val leadingThe = Regex("^the\\s+")
+private val artistSeparator = Regex("""\s*(,|&|;|\+|\[\+]|\band\b|\bfeat\.?|\bft\.?|\bfeaturing\b)\s*""", RegexOption.IGNORE_CASE)
+
+// Compares text ignoring case, accents, punctuation and typographic apostrophes.
+internal fun normalizeText(s: String): String =
+    Normalizer.normalize(s, Normalizer.Form.NFD).replace(accents, "").lowercase().replace("&", "and").filter { it.isLetterOrDigit() }
+
+// "The Beatles" and "BEATLES" are the same artist for us.
+internal fun normalizeArtist(s: String): String =
+    normalizeText(Normalizer.normalize(s, Normalizer.Form.NFD).replace(accents, "").lowercase().trim().replace(leadingThe, ""))
+
+// "Eric Prydz, Hans Zimmer" -> "Eric Prydz". "AC/DC" has no separator and stays whole.
+internal fun primaryArtist(s: String): String = s.split(artistSeparator, limit = 2).first().trim().ifEmpty { s.trim() }
+
+private fun wantedArtists(artist: String) = setOf(normalizeArtist(artist), normalizeArtist(primaryArtist(artist)))
+
+// A hit from Deezer or iTunes is accepted only for the same artist and the same song.
+private fun isSameSong(foundArtist: String, foundTitle: String, artist: String, title: String): Boolean {
+    if (normalizeArtist(foundArtist) !in wantedArtists(artist)) return false
+    val found = normalizeText(foundTitle)
+    val wanted = normalizeText(title)
+    return wanted.isNotEmpty() && found.isNotEmpty() && (found.contains(wanted) || wanted.contains(found))
+}
+
 private const val MIN_MUSICBRAINZ_SCORE = 90
 
 // The search is a phrase match ("Eagles" also finds "Eagles of Death Metal"), so keep only
-// recordings whose title and artist credit are equal to the ones asked for.
+// recordings whose title and artist credit are the ones asked for (see normalizeText, primaryArtist).
 private fun JSONObject.isRecordingOf(artist: String, title: String): Boolean {
-    if (optInt("score") < MIN_MUSICBRAINZ_SCORE || !optString("title").equals(title, ignoreCase = true)) return false
+    if (optInt("score") < MIN_MUSICBRAINZ_SCORE || normalizeText(optString("title")) != normalizeText(title)) return false
     val credits = optJSONArray("artist-credit") ?: return false
+    val wanted = wantedArtists(artist)
     return (0 until credits.length()).any { i ->
         val credit = credits.getJSONObject(i)
-        credit.optString("name").equals(artist, ignoreCase = true) ||
-            credit.optJSONObject("artist")?.optString("name").equals(artist, ignoreCase = true)
+        normalizeArtist(credit.optString("name")) in wanted ||
+            normalizeArtist(credit.optJSONObject("artist")?.optString("name").orEmpty()) in wanted
     }
 }
 
@@ -72,11 +99,11 @@ internal fun isSameRadioSong(
     title: String,
 ): Boolean = currentMediaId == startedMediaId && isRadio && radioArtist == artist && radioTitle == title
 
-internal fun deezerCover(json: String, artist: String): String? {
+internal fun deezerCover(json: String, artist: String, title: String): String? {
     val data = JSONObject(json).optJSONArray("data") ?: return null
     for (i in 0 until data.length()) {
         val track = data.getJSONObject(i)
-        if (track.getJSONObject("artist").optString("name").equals(artist, ignoreCase = true)) {
+        if (isSameSong(track.getJSONObject("artist").optString("name"), track.optString("title"), artist, title)) {
             val url = track.getJSONObject("album").optString("cover_xl")
             if (url.isNotEmpty()) return url
         }
@@ -84,11 +111,11 @@ internal fun deezerCover(json: String, artist: String): String? {
     return null
 }
 
-internal fun itunesCover(json: String, artist: String): String? {
+internal fun itunesCover(json: String, artist: String, title: String): String? {
     val results = JSONObject(json).optJSONArray("results") ?: return null
     for (i in 0 until results.length()) {
         val track = results.getJSONObject(i)
-        if (track.optString("artistName").equals(artist, ignoreCase = true)) {
+        if (isSameSong(track.optString("artistName"), track.optString("trackName"), artist, title)) {
             val url = track.optString("artworkUrl100").replace("100x100bb", "600x600bb")
             if (url.isNotEmpty()) return url
         }
@@ -134,7 +161,7 @@ class RadioTrackCoverResolver(
     private fun body(url: String): String = get(url) ?: throw IOException("No answer from $url")
 
     private fun fromMusicBrainz(artist: String, title: String): String? {
-        val query = "recording:\"${luceneEscape(title)}\" AND artist:\"${luceneEscape(artist)}\"" +
+        val query = "recording:\"${luceneEscape(title.replace('\u2019', '\''))}\" AND artist:\"${luceneEscape(primaryArtist(artist))}\"" +
             " AND status:official AND NOT comment:live"
         val ids = musicBrainzReleaseIds(body("https://musicbrainz.org/ws/2/recording/?fmt=json&limit=25&query=${enc(query)}"), artist, title)
         return ids.take(MAX_ARCHIVE_ATTEMPTS)
@@ -143,10 +170,10 @@ class RadioTrackCoverResolver(
     }
 
     private fun fromDeezer(artist: String, title: String): String? =
-        deezerCover(body("https://api.deezer.com/search?limit=5&q=${enc("$artist $title")}"), artist)
+        deezerCover(body("https://api.deezer.com/search?limit=5&q=${enc("${primaryArtist(artist)} $title")}"), artist, title)
 
     private fun fromItunes(artist: String, title: String): String? =
-        itunesCover(body("https://itunes.apple.com/search?entity=song&limit=5&term=${enc("$artist $title")}"), artist)
+        itunesCover(body("https://itunes.apple.com/search?entity=song&limit=5&term=${enc("${primaryArtist(artist)} $title")}"), artist, title)
 
     companion object {
         val instance = RadioTrackCoverResolver()

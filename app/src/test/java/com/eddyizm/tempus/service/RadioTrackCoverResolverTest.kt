@@ -2,6 +2,7 @@ package com.eddyizm.tempus.service
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -69,6 +70,45 @@ class RadioTrackCoverResolverTest {
     }
 
     @Test
+    fun `normalizeArtist ignores case accents and a leading the`() {
+        assertEquals(normalizeArtist("The Beatles"), normalizeArtist("BEATLES"))
+        assertEquals(normalizeArtist("The Doors"), normalizeArtist("DOORS"))
+        assertEquals(normalizeArtist("Queensr\u00ffche"), normalizeArtist("Queensryche"))
+        assertEquals(normalizeArtist("A\$AP Rocky"), normalizeArtist("a\$ap rocky"))
+        assertNotEquals(normalizeArtist("Therapy?"), normalizeArtist("Rapy?"))
+    }
+
+    @Test
+    fun `primaryArtist takes the first artist of a collaboration`() {
+        assertEquals("Eric Prydz", primaryArtist("Eric Prydz, Hans Zimmer"))
+        assertEquals("Machine Head", primaryArtist("Machine Head, In Flames & Lacuna Coil"))
+        assertEquals("Artist", primaryArtist("Artist feat. Someone"))
+        assertEquals("TAME IMPALA", primaryArtist("TAME IMPALA [+] JENNIE"))
+        assertEquals("AC/DC", primaryArtist("AC/DC"))
+        assertEquals("Dance with the Dead", primaryArtist("Dance with the Dead"))
+    }
+
+    @Test
+    fun `musicBrainzReleaseIds accepts the same artist written differently`() {
+        val beatles = """{"recordings":[""" + recording(100, "Don't Let Me Down", "The Beatles", "b1") + "]}"
+        assertEquals(listOf("b1"), musicBrainzReleaseIds(beatles, "BEATLES", "DON\u2019T LET ME DOWN"))
+        val queensryche = """{"recordings":[""" + recording(100, "Silent Lucidity", "Queensr\u00ffche", "q1") + "]}"
+        assertEquals(listOf("q1"), musicBrainzReleaseIds(queensryche, "Queensryche", "Silent Lucidity"))
+    }
+
+    @Test
+    fun `musicBrainzReleaseIds accepts a collaboration by its first artist`() {
+        val json = """{"recordings":[""" + recording(100, "Opus", "Eric Prydz", "p1") + "]}"
+        assertEquals(listOf("p1"), musicBrainzReleaseIds(json, "Eric Prydz, Hans Zimmer", "Opus"))
+    }
+
+    @Test
+    fun `musicBrainzReleaseIds still rejects a different artist`() {
+        val json = """{"recordings":[""" + recording(100, "Opus", "Eric Prydz of Nothing", "p1") + "]}"
+        assertTrue(musicBrainzReleaseIds(json, "Eric Prydz, Hans Zimmer", "Opus").isEmpty())
+    }
+
+    @Test
     fun `musicBrainzReleaseIds returns empty for error json`() {
         val json = """{"error":"The MusicBrainz web server is currently busy. Please try again later."}"""
         assertTrue(musicBrainzReleaseIds(json, "Dream Theater", "Pull Me Under").isEmpty())
@@ -76,22 +116,34 @@ class RadioTrackCoverResolverTest {
 
     @Test
     fun `deezerCover rejects other artist`() {
-        val other = """{"data":[{"artist":{"name":"Other"},"album":{"cover_xl":"https://x/other.jpg"}}]}"""
-        assertNull(deezerCover(other, "Dream Theater"))
+        val other = """{"data":[{"title":"Pull Me Under","artist":{"name":"Other"},"album":{"cover_xl":"https://x/other.jpg"}}]}"""
+        assertNull(deezerCover(other, "Dream Theater", "Pull Me Under"))
         val second = """{"data":[
-            {"artist":{"name":"Other"},"album":{"cover_xl":"https://x/other.jpg"}},
-            {"artist":{"name":"dream theater"},"album":{"cover_xl":"https://x/dt.jpg"}}]}"""
-        assertEquals("https://x/dt.jpg", deezerCover(second, "Dream Theater"))
+            {"title":"Pull Me Under","artist":{"name":"Other"},"album":{"cover_xl":"https://x/other.jpg"}},
+            {"title":"Pull Me Under","artist":{"name":"dream theater"},"album":{"cover_xl":"https://x/dt.jpg"}}]}"""
+        assertEquals("https://x/dt.jpg", deezerCover(second, "Dream Theater", "Pull Me Under"))
+    }
+
+    @Test
+    fun `deezerCover rejects another song by the same artist`() {
+        val json = """{"data":[{"title":"Another Day","artist":{"name":"Dream Theater"},"album":{"cover_xl":"https://x/other.jpg"}}]}"""
+        assertNull(deezerCover(json, "Dream Theater", "Pull Me Under"))
+    }
+
+    @Test
+    fun `deezerCover accepts a typographic apostrophe and the leading the`() {
+        val json = """{"data":[{"title":"Don\u2019t Let Me Down","artist":{"name":"The Beatles"},"album":{"cover_xl":"https://x/b.jpg"}}]}"""
+        assertEquals("https://x/b.jpg", deezerCover(json, "BEATLES", "DON'T LET ME DOWN"))
     }
 
     @Test
     fun `itunesCover upsizes artwork and rejects other artist`() {
         val json = """{"results":[
-            {"artistName":"Other","artworkUrl100":"https://x/o/100x100bb.jpg"},
-            {"artistName":"Dream Theater","artworkUrl100":"https://x/dt/100x100bb.jpg"}]}"""
-        assertEquals("https://x/dt/600x600bb.jpg", itunesCover(json, "Dream Theater"))
-        val onlyOther = """{"results":[{"artistName":"Other","artworkUrl100":"https://x/o/100x100bb.jpg"}]}"""
-        assertNull(itunesCover(onlyOther, "Dream Theater"))
+            {"trackName":"Pull Me Under","artistName":"Other","artworkUrl100":"https://x/o/100x100bb.jpg"},
+            {"trackName":"Pull Me Under","artistName":"Dream Theater","artworkUrl100":"https://x/dt/100x100bb.jpg"}]}"""
+        assertEquals("https://x/dt/600x600bb.jpg", itunesCover(json, "Dream Theater", "Pull Me Under"))
+        val onlyOther = """{"results":[{"trackName":"Pull Me Under","artistName":"Other","artworkUrl100":"https://x/o/100x100bb.jpg"}]}"""
+        assertNull(itunesCover(onlyOther, "Dream Theater", "Pull Me Under"))
     }
 
     @Test
@@ -114,9 +166,9 @@ class RadioTrackCoverResolverTest {
 
     private val noMusicBrainz = """{"recordings":[]}"""
     private fun deezerJson(artist: String, cover: String) =
-        """{"data":[{"artist":{"name":"$artist"},"album":{"cover_xl":"$cover"}}]}"""
+        """{"data":[{"title":"Pull Me Under","artist":{"name":"$artist"},"album":{"cover_xl":"$cover"}}]}"""
     private fun itunesJson(artist: String, cover: String) =
-        """{"results":[{"artistName":"$artist","artworkUrl100":"$cover"}]}"""
+        """{"results":[{"trackName":"Pull Me Under","artistName":"$artist","artworkUrl100":"$cover"}]}"""
 
     private class Fake(
         val musicBrainz: String? = null,
