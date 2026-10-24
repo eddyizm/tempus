@@ -40,7 +40,6 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.BuildConfig;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.broadcast.receiver.ConnectivityStatusBroadcastReceiver;
@@ -83,8 +82,6 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivityLogs";
 
-    // The probe whose answer is still wanted, identified by the request itself. A flag shared by
-    // every probe cannot tell a held answer from a fresh one, since a held one arrives later.
     private LiveData<SubsonicResponse> outstandingProbe = null;
 
     public ActivityMainBinding bind;
@@ -195,7 +192,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
-        // Abandon the probe, since its answer would be applied on whatever network we come back to.
         outstandingProbe = null;
         super.onStop();
     }
@@ -617,20 +613,17 @@ public class MainActivity extends BaseActivity {
         if (Preferences.isInUseServerAddressLocal()) {
             mainViewModel.ping().observe(this, subsonicResponse -> {
                 if (subsonicResponse == null) {
-                    // onStart and onResume each ping, so two failures arrive for one unreachable
-                    // address, and the toggle below would put the second one straight back on it.
                     ConnectionUtil.markPingAnswered();
                     if (!Preferences.isInUseServerAddressLocal()) return;
 
                     // Switching only helps when remote and local are different addresses. When
-                    // they're equal (issue #242) switchInUseServerAddress() is a no-op, so we'd
+                    // they're equal (issue #242) the switch is a no-op, so we'd
                     // re-enter this branch forever (ping/refresh/resetView loop). Treat that case
                     // like an unreachable server instead of looping.
                     String server = Preferences.getServer();
                     if (server != null && !server.equals(Preferences.getLocalAddress())) {
                         Preferences.setServerSwitchableTimer();
-                        Preferences.switchInUseServerAddress();
-                        App.refreshSubsonicClient();
+                        ConnectionUtil.useServerAddress(server);
                         pingServer();
                         resetView();
                     } else if (Preferences.showServerUnreachableDialog()) {
@@ -644,7 +637,6 @@ public class MainActivity extends BaseActivity {
             });
         } else {
             if (outstandingProbe != null) {
-                // A probe is deciding the address, and it falls back to this ping when none answers.
                 ConnectionUtil.markPingAnswered();
             } else if (Preferences.isServerSwitchable()) {
                 probeLocalAddress();
@@ -652,8 +644,6 @@ public class MainActivity extends BaseActivity {
                 mainViewModel.ping().observe(this, subsonicResponse -> {
                     ConnectionUtil.markPingAnswered();
                     if (subsonicResponse == null) {
-                        // A local address answered since, so this failure is stale. It matters
-                        // because one of the dialog's buttons clears the session and the queue.
                         if (Preferences.isInUseServerAddressLocal() || outstandingProbe != null) return;
 
                         if (Preferences.showServerUnreachableDialog()) {
@@ -668,28 +658,20 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    // Probed on a client of its own, so the app is never moved onto an address that has not
-    // answered. A probe that fails changes nothing.
     private void probeLocalAddress() {
-        // Not stamped here on purpose. The window outlives the activity and the probe does not, so
-        // stamping at send left a recreated activity unable to probe for fifteen seconds.
         String probedAddress = Preferences.getLocalAddress();
         LiveData<SubsonicResponse> probe = mainViewModel.pingLocalAddress();
         outstandingProbe = probe;
 
         probe.observe(this, subsonicResponse -> {
-            // A held answer is delivered after onStart has issued the next probe.
             boolean isCurrentProbe = probe == outstandingProbe;
             if (isCurrentProbe) outstandingProbe = null;
 
-            // A server change moves the local address, so a late answer would carry the wrong credentials.
             if (!isCurrentProbe
                     || subsonicResponse == null
                     || !probedAddress.equals(Preferences.getLocalAddress())) {
                 ConnectionUtil.markPingAnswered();
 
-                // No local address answered, so ask the public one. The window is stamped first, or
-                // a probe slower than the window sends this call into another probe.
                 if (isCurrentProbe && subsonicResponse == null) {
                     Preferences.setServerSwitchableTimer();
                     pingServer();
@@ -697,15 +679,10 @@ public class MainActivity extends BaseActivity {
                 return;
             }
 
-            Preferences.setInUseServerAddress(probedAddress);
-            App.refreshSubsonicClient();
+            ConnectionUtil.useServerAddress(probedAddress);
 
-            // Released only once the client points at the new address, or a mapping waking in
-            // between reads the new address and the old client.
             ConnectionUtil.markPingAnswered();
 
-            // The screens were built against the address just left, so they are built again. The
-            // old code did this on every switch, and this runs only when the probe succeeded.
             resetView();
         });
     }
