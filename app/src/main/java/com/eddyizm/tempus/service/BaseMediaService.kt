@@ -496,13 +496,9 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     when (val entry = metadata[i]) {
                         is IcyInfo -> {
                             entry.title?.let { icyTitle ->
-                                val parts = icyTitle.split(" - ", limit = 2)
-                                if (parts.size == 2) {
-                                    artist = parts[0].trim().ifEmpty { null }
-                                    title = parts[1].trim().ifEmpty { null }
-                                } else {
-                                    title = icyTitle.trim().ifEmpty { null }
-                                }
+                                val (parsedArtist, parsedTitle) = parseStreamTitle(icyTitle)
+                                artist = parsedArtist
+                                title = parsedTitle
                             }
                         }
                         is TextInformationFrame -> {
