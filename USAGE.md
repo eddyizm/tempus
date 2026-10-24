@@ -254,6 +254,12 @@ Under **Save to**, pick where the station is kept.
 
 Long press a station, or tap its ⋮, to edit or delete it. A saved station cannot be moved between Server and Local.
 
+#### Radio track covers
+
+Many stations send the artist and title of the song on air. Turn on **Radio track covers** in Settings and Tempus looks up the cover of that song while the station plays. It shows it in the player, the notification, the lock screen and Android Auto. When no cover is found, you see the cover of the station.
+
+The look-up asks [MusicBrainz and the Cover Art Archive](https://musicbrainz.org/) first, then Deezer, then Apple (iTunes). These services receive the artist and title of the song, so the setting is off by default. It does nothing when **Limit mobile data usage** is on, and only works with stations that send the title as "Artist - Title".
+
 ### Downloads
 
 The Download tab lists every track stored on the phone. Tap the filter button at the top right to list them by Track, Album, Artist, Genre, Playlist or Year. Tempus remembers the choice.
