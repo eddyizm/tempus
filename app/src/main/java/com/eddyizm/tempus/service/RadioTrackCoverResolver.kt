@@ -25,13 +25,29 @@ internal fun cleanTitle(raw: String): String =
 
 internal fun luceneEscape(s: String): String = s.replace("\\", " ").replace("\"", " ")
 
+private const val MIN_MUSICBRAINZ_SCORE = 90
+
+// The search is a phrase match ("Eagles" also finds "Eagles of Death Metal"), so keep only
+// recordings whose title and artist credit are equal to the ones asked for.
+private fun JSONObject.isRecordingOf(artist: String, title: String): Boolean {
+    if (optInt("score") < MIN_MUSICBRAINZ_SCORE || !optString("title").equals(title, ignoreCase = true)) return false
+    val credits = optJSONArray("artist-credit") ?: return false
+    return (0 until credits.length()).any { i ->
+        val credit = credits.getJSONObject(i)
+        credit.optString("name").equals(artist, ignoreCase = true) ||
+            credit.optJSONObject("artist")?.optString("name").equals(artist, ignoreCase = true)
+    }
+}
+
 // The studio recording is the one on the most clean releases (official, no live/compilation/demo).
 // Release order: Album, then Single, then the rest.
-internal fun musicBrainzReleaseIds(json: String): List<String> {
+internal fun musicBrainzReleaseIds(json: String, artist: String, title: String): List<String> {
     val recordings = JSONObject(json).optJSONArray("recordings") ?: return emptyList()
     var best = emptyList<Pair<String, String>>() // (primary type, release id)
     for (i in 0 until recordings.length()) {
-        val releases = recordings.getJSONObject(i).optJSONArray("releases") ?: continue
+        val recording = recordings.getJSONObject(i)
+        if (!recording.isRecordingOf(artist, title)) continue
+        val releases = recording.optJSONArray("releases") ?: continue
         val clean = (0 until releases.length()).mapNotNull { j ->
             val release = releases.getJSONObject(j)
             val group = release.optJSONObject("release-group") ?: return@mapNotNull null
@@ -44,6 +60,17 @@ internal fun musicBrainzReleaseIds(json: String): List<String> {
     }
     return best.sortedBy { (type, _) -> when (type) { "Album" -> 0; "Single" -> 1; else -> 2 } }.map { it.second }
 }
+
+// The lookup runs in the background: the user may have started another station or track meanwhile.
+internal fun isSameRadioSong(
+    currentMediaId: String?,
+    startedMediaId: String,
+    isRadio: Boolean,
+    radioArtist: String?,
+    radioTitle: String?,
+    artist: String,
+    title: String,
+): Boolean = currentMediaId == startedMediaId && isRadio && radioArtist == artist && radioTitle == title
 
 internal fun deezerCover(json: String, artist: String): String? {
     val data = JSONObject(json).optJSONArray("data") ?: return null
@@ -109,7 +136,7 @@ class RadioTrackCoverResolver(
     private fun fromMusicBrainz(artist: String, title: String): String? {
         val query = "recording:\"${luceneEscape(title)}\" AND artist:\"${luceneEscape(artist)}\"" +
             " AND status:official AND NOT comment:live"
-        val ids = musicBrainzReleaseIds(body("https://musicbrainz.org/ws/2/recording/?fmt=json&limit=25&query=${enc(query)}"))
+        val ids = musicBrainzReleaseIds(body("https://musicbrainz.org/ws/2/recording/?fmt=json&limit=25&query=${enc(query)}"), artist, title)
         return ids.take(MAX_ARCHIVE_ATTEMPTS)
             .map { "https://coverartarchive.org/release/$it/front-500" }
             .firstOrNull { exists(it) }

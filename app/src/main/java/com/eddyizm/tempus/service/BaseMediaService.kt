@@ -1058,12 +1058,19 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         if (artist.isNullOrBlank() || title.isNullOrBlank()) return
         if (!Preferences.isRadioTrackCoversEnabled() || Preferences.isDataSavingMode()) return
 
+        val startedMediaId = player.currentMediaItem?.mediaId ?: return
         radioCoverExecutor.execute {
             val coverUrl = RadioTrackCoverResolver.instance.resolve(artist, title) ?: return@execute
             Handler(player.applicationLooper).post {
                 val item = player.currentMediaItem ?: return@post
-                // The song may have changed while the lookup ran
-                if (lastRadioArtist != artist || lastRadioTitle != title) return@post
+                val itemExtras = item.mediaMetadata.extras
+                val sameSong = isSameRadioSong(
+                    item.mediaId, startedMediaId,
+                    itemExtras?.getString("type") == Constants.MEDIA_TYPE_RADIO,
+                    itemExtras?.getString("radioArtist"), itemExtras?.getString("radioTitle"),
+                    artist, title
+                )
+                if (!sameSong) return@post
                 val artworkId = "ir_" + Base64.encodeToString(coverUrl.toByteArray(), Base64.URL_SAFE or Base64.NO_WRAP)
                 player.replaceMediaItem(
                     player.currentMediaItemIndex,
