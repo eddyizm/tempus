@@ -67,4 +67,135 @@ class RadioTrackCoverResolverTest {
         val onlyOther = """{"results":[{"artistName":"Other","artworkUrl100":"https://x/o/100x100bb.jpg"}]}"""
         assertNull(itunesCover(onlyOther, "Dream Theater"))
     }
+
+    // ---- RadioTrackCoverResolver (fake network) ----
+
+    private fun mbJson(vararg ids: String) =
+        """{"recordings":[{"id":"rec","releases":[""" +
+            ids.joinToString(",") { """{"id":"$it","status":"Official","release-group":{"primary-type":"Album"}}""" } +
+            "]}]}"
+
+    private val noMusicBrainz = """{"recordings":[]}"""
+    private fun deezerJson(artist: String, cover: String) =
+        """{"data":[{"artist":{"name":"$artist"},"album":{"cover_xl":"$cover"}}]}"""
+    private fun itunesJson(artist: String, cover: String) =
+        """{"results":[{"artistName":"$artist","artworkUrl100":"$cover"}]}"""
+
+    private class Fake(
+        val musicBrainz: String? = null,
+        val deezer: String? = null,
+        val itunes: String? = null,
+        val archiveHits: Set<String> = emptySet(),
+        val failGet: Boolean = false,
+    ) {
+        val getCalls = mutableListOf<String>()
+        val existsCalls = mutableListOf<String>()
+
+        val get: (String) -> String? = { url ->
+            getCalls += url
+            if (failGet) throw RuntimeException("network down")
+            when {
+                "musicbrainz.org" in url -> musicBrainz
+                "api.deezer.com" in url -> deezer
+                "itunes.apple.com" in url -> itunes
+                else -> null
+            }
+        }
+        val exists: (String) -> Boolean = { url ->
+            existsCalls += url
+            archiveHits.any { url.contains("/$it/") }
+        }
+
+        fun resolver() = RadioTrackCoverResolver(get, exists)
+    }
+
+    @Test
+    fun `resolve returns first cover archive hit`() {
+        val fake = Fake(musicBrainz = mbJson("r1", "r2", "r3", "r4", "r5", "r6"), archiveHits = setOf("r2"))
+        assertEquals(
+            "https://coverartarchive.org/release/r2/front-500",
+            fake.resolver().resolve("Dream Theater", "Pull Me Under")
+        )
+        assertEquals(2, fake.existsCalls.size)
+    }
+
+    @Test
+    fun `resolve tries at most five archive releases then deezer`() {
+        val fake = Fake(
+            musicBrainz = mbJson("r1", "r2", "r3", "r4", "r5", "r6"),
+            deezer = deezerJson("Dream Theater", "https://x/dz.jpg")
+        )
+        assertEquals("https://x/dz.jpg", fake.resolver().resolve("Dream Theater", "Pull Me Under"))
+        assertEquals(5, fake.existsCalls.size)
+        assertTrue(fake.getCalls.any { "api.deezer.com" in it })
+    }
+
+    @Test
+    fun `resolve uses deezer and skips itunes when deezer hits`() {
+        val fake = Fake(
+            musicBrainz = noMusicBrainz,
+            deezer = deezerJson("Dream Theater", "https://x/dz.jpg"),
+            itunes = itunesJson("Dream Theater", "https://x/it/100x100bb.jpg")
+        )
+        assertEquals("https://x/dz.jpg", fake.resolver().resolve("Dream Theater", "Pull Me Under"))
+        assertTrue(fake.getCalls.none { "itunes.apple.com" in it })
+    }
+
+    @Test
+    fun `resolve falls back to itunes when deezer has another artist`() {
+        val fake = Fake(
+            musicBrainz = noMusicBrainz,
+            deezer = deezerJson("Other", "https://x/dz.jpg"),
+            itunes = itunesJson("Dream Theater", "https://x/it/100x100bb.jpg")
+        )
+        assertEquals("https://x/it/600x600bb.jpg", fake.resolver().resolve("Dream Theater", "Pull Me Under"))
+    }
+
+    @Test
+    fun `resolve survives non json from every service`() {
+        val busy = "<html>busy</html>"
+        val fake = Fake(musicBrainz = busy, deezer = busy, itunes = busy)
+        assertNull(fake.resolver().resolve("Dream Theater", "Pull Me Under"))
+    }
+
+    @Test
+    fun `resolve survives an error json from musicbrainz and uses deezer`() {
+        val fake = Fake(
+            musicBrainz = """{"error":"The MusicBrainz web server is currently busy."}""",
+            deezer = deezerJson("Dream Theater", "https://x/dz.jpg")
+        )
+        assertEquals("https://x/dz.jpg", fake.resolver().resolve("Dream Theater", "Pull Me Under"))
+    }
+
+    @Test
+    fun `resolve returns null when the network throws`() {
+        assertNull(Fake(failGet = true).resolver().resolve("Dream Theater", "Pull Me Under"))
+    }
+
+    @Test
+    fun `resolve does not cache a lookup that failed on the network`() {
+        val fake = Fake(failGet = true)
+        val resolver = fake.resolver()
+        assertNull(resolver.resolve("Dream Theater", "Pull Me Under"))
+        val callsAfterFirst = fake.getCalls.size
+        assertNull(resolver.resolve("Dream Theater", "Pull Me Under"))
+        assertTrue(fake.getCalls.size > callsAfterFirst)
+    }
+
+    @Test
+    fun `resolve caches found and not found`() {
+        val found = Fake(musicBrainz = mbJson("r1"), archiveHits = setOf("r1"))
+        val foundResolver = found.resolver()
+        val first = foundResolver.resolve("Dream Theater", "Pull Me Under")
+        val callsAfterFirst = found.getCalls.size + found.existsCalls.size
+        assertEquals(first, foundResolver.resolve("DREAM THEATER", "pull me under"))
+        assertEquals(callsAfterFirst, found.getCalls.size + found.existsCalls.size)
+
+        val missing = Fake(musicBrainz = noMusicBrainz, deezer = """{"data":[]}""", itunes = """{"results":[]}""")
+        val missingResolver = missing.resolver()
+        assertNull(missingResolver.resolve("Nobody", "Nothing"))
+        val missingCalls = missing.getCalls.size
+        assertNull(missingResolver.resolve("Nobody", "Nothing"))
+        assertEquals(missingCalls, missing.getCalls.size)
+    }
 }
