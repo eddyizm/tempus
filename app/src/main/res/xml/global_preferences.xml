@@ -549,15 +549,6 @@
                 android:defaultValue="false"
                 android:summary="@string/settings_queue_syncing_summary"
                 android:key="queue_syncing" />
-
-            <ListPreference
-                app:defaultValue="5"
-                app:dialogTitle="@string/settings_queue_syncing_countdown"
-                app:entries="@array/queue_syncing_countdown_titles"
-                app:entryValues="@array/queue_syncing_countdown_values"
-                app:key="queue_syncing_countdown"
-                app:title="@string/settings_queue_syncing_countdown"
-                app:useSimpleSummaryProvider="true" />
         </PreferenceCategory>
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 

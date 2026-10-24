@@ -405,7 +405,6 @@
     <string name="undraw_url">https://undraw.co/</string>
     <string name="track_info_track_number">Número de pista</string>
     <string name="settings_item_rating_summary">Si se habilita, se mostrará la valoración del elemento y si está marcado como favorito.</string>
-    <string name="settings_queue_syncing_countdown">Temporizador de sincronización</string>
     <string name="settings_queue_syncing_summary">Si se habilita, el usuario podrá guardar la cola de reproducción y restaurarla cuando abra la aplicación.</string>
     <string name="settings_radio_summary">Si se habilita, se mostrará la sección de emisoras de radio. Reinicia la app para que los cambios surtan efecto.</string>
     <string name="settings_rounded_corner_size_summary">Establece la proporción del ángulo de curvatura.</string>

@@ -41,6 +41,8 @@ import com.eddyizm.tempus.equalizer.ParametricBackend
 import com.eddyizm.tempus.equalizer.ParametricEqAudioProcessor
 import androidx.mediarouter.media.MediaRouter
 import com.eddyizm.tempus.repository.QueueRepository
+import com.eddyizm.tempus.subsonic.base.ApiResponse
+import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.upnp.UpnpControlPoint
 import com.eddyizm.tempus.upnp.UpnpDevice
 import com.eddyizm.tempus.upnp.UpnpPlayer
@@ -62,6 +64,9 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 private const val TAG = "BaseMediaService"
 
@@ -116,6 +121,17 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         checkRadioHttpHeaders()
     }
 
+    private val queueSyncHandler = Handler(Looper.getMainLooper())
+    private var hasPlayedSinceRestore = false
+    private val queueSyncRunnable = object : Runnable {
+        override fun run() {
+            if (serviceDestroyed) return
+            saveQueueNow()
+            if (mediaLibrarySession.player.isPlaying) {
+                queueSyncHandler.postDelayed(this, Constants.QUEUE_SYNC_INTERVAL_MS)
+            }
+        }
+    }
     private val binder = LocalBinder()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -261,11 +277,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
         // Map off the main thread: mapMediaItems does a blocking lookup per song, so a
         // large saved queue froze the UI on launch (#600).
-        //
-        // Every URL carries the address in force when the mapping ran, so the address is checked
-        // again on the main thread, immediately before the install, and a move starts it over.
         Thread {
-            // Nothing needs the queue until playback starts, so it waits for a tested address.
             while (ConnectionUtil.pingsOutstanding()) {
                 if (serviceDestroyed) return@Thread
                 Thread.sleep(25)
@@ -319,6 +331,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private var lastPlayerErrorRecoveryMs = 0L
     private val playerErrorRecoveryThrottleMs = 5_000L
 
+    internal var stoppedSinceError = false
+    private var restartableUntilMs = 0L
+    private val restartAfterErrorWindowMs = 60_000L
+
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
@@ -335,10 +351,12 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> true
                     else -> false
                 }
-                if (!recoverable) return
-
                 val now = android.os.SystemClock.elapsedRealtime()
-                if (now - lastPlayerErrorRecoveryMs >= playerErrorRecoveryThrottleMs) {
+                restartableUntilMs = now + restartAfterErrorWindowMs
+                if (!recoverable) return
+                networkCallback.recheckAfterPlayerError()
+
+                if (!stoppedSinceError && now - lastPlayerErrorRecoveryMs >= playerErrorRecoveryThrottleMs) {
                     lastPlayerErrorRecoveryMs = now
                     player.prepare()
                 }
@@ -347,6 +365,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 Log.d(TAG, "onMediaItemTransition" + player.currentMediaItemIndex)
                 if (mediaItem == null) return
+                if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO ||
+                    reason == Player.MEDIA_ITEM_TRANSITION_REASON_SEEK) {
+                    scheduleQueueSync()
+                }
                 ReplayGainUtil.applyGain(player, mediaItem)
 
                 // --- Add for AA : Constants.AA_START_INDEX if présent ---
@@ -547,7 +569,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex)
+                Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex + " isPlaying=" + isPlaying)
+                if (isPlaying) hasPlayedSinceRestore = true
                 if (!isPlaying) {
                     MediaManager.setResumePoint(
                         player.currentMediaItem,
@@ -564,9 +587,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 if (isPlaying) {
                     scheduleWidgetUpdates()
                     scheduleRadioHeaderChecks()
+                    scheduleQueueSync()
                 } else {
                     stopWidgetUpdates()
                     stopRadioHeaderChecks()
+                    queueSyncHandler.removeCallbacks(queueSyncRunnable)
                 }
                 updateWidget(player)
             }
@@ -574,6 +599,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 Log.d(TAG, "onPlaybackStateChanged")
                 super.onPlaybackStateChanged(playbackState)
+                if (playbackState != Player.STATE_IDLE) stoppedSinceError = false
                 if (!player.hasNextMediaItem() &&
                     playbackState == Player.STATE_ENDED &&
                     player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC
@@ -593,7 +619,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             ) {
                 Log.d(TAG, "onPositionDiscontinuity reason=$reason old=${oldPosition.mediaItemIndex} new=${newPosition.mediaItemIndex}")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-
+                if (reason == Player.DISCONTINUITY_REASON_SEEK) scheduleQueueSync()
                 // Save the resume point of the track we're leaving whenever we move to a
                 // different track, so coming back to it later resumes where it was. (Pause
                 // is handled separately in onIsPlayingChanged; this covers switching tracks
@@ -742,6 +768,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 if (player.device != device) return
                 upnpPlayer = null
                 setPlayer(player, exoplayer)
+                // Paused, as when Bluetooth headphones drop, so ending the cast does not start the phone's speaker.
+                exoplayer.playWhenReady = false
                 player.release()
             }
         }
@@ -831,6 +859,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         equalizerManager.release(exoplayer.audioSessionId)
         ReplayGainUtil.release()
         stopWidgetUpdates()
+        queueSyncHandler.removeCallbacks(queueSyncRunnable)
         stopRadioHeaderChecks()
         SleepTimerManager.getInstance().stopEndOfTrackPoller()
         SleepTimerManager.getInstance().setServiceActionListener(null)
@@ -983,6 +1012,21 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             albumLink,
             artistLink
         )
+    }
+
+    private fun scheduleQueueSync() {
+        queueSyncHandler.removeCallbacks(queueSyncRunnable)
+        val blocked = !Preferences.isSyncronizationEnabled()
+        if (blocked) return
+        if (!hasPlayedSinceRestore) return
+        queueSyncHandler.postDelayed(queueSyncRunnable, QUEUE_SYNC_DEBOUNCE_MS)
+    }
+
+    private fun saveQueueNow() {
+        val player = mediaLibrarySession.player
+        player.currentMediaItem?.mediaId?.let { id ->
+            QueueRepository().savePlayQueueToServer(id, player.currentPosition)
+        }
     }
 
     private fun scheduleWidgetUpdates() {
@@ -1167,20 +1211,82 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private fun getMediaSourceFactory(): MediaSource.Factory = DynamicMediaSourceFactory(this)
 
     private inner class CustomNetworkCallback : ConnectivityManager.NetworkCallback() {
-        // The transport the queue's stream URLs were last resolved for. Tracked as the transport
-        // rather than as a wifi flag, which cannot separate a handover gap from cellular. Issue 198.
+        @Volatile
         private var lastTransport = MusicUtil.getActiveTransport()
+
+        @Volatile
+        private var lastNetwork: Network? = null
+
+        private fun recheckAddress(network: Network, transport: Int, networkChanged: Boolean) {
+            val server = Preferences.getServer()
+            val local = Preferences.getLocalAddress()
+            if (server.isNullOrEmpty() || local.isNullOrEmpty() || server == local || ConnectionUtil.isPingDeferred()) return
+
+            val onLocal = Preferences.isInUseServerAddressLocal()
+            App.getSubsonicClientInstance(local).systemClient.ping().enqueue(object : Callback<ApiResponse> {
+                override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
+                    onPinged(response.isSuccessful && response.body() != null)
+                }
+
+                override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
+                    onPinged(false)
+                }
+
+                private fun onPinged(answered: Boolean) {
+                    val needsSwitch = answered != onLocal
+                    if (needsSwitch || networkChanged) switchAddress(network, transport, onLocal, server, local, needsSwitch)
+                }
+            })
+        }
+
+        fun recheckAfterPlayerError() {
+            val network = lastNetwork ?: return
+            recheckAddress(network, lastTransport, false)
+        }
+
+        private fun switchAddress(network: Network, transport: Int, fromLocal: Boolean, server: String, local: String, needsSwitch: Boolean) {
+            widgetUpdateHandler.post {
+                if (serviceDestroyed || network != lastNetwork || transport != lastTransport ||
+                    !CacheUtil.isConnected() || ConnectionUtil.isPingDeferred() ||
+                    Preferences.getServer() != server || Preferences.getLocalAddress() != local) return@post
+
+                if (needsSwitch && Preferences.isInUseServerAddressLocal() == fromLocal) {
+                    if (fromLocal) {
+                        Log.d(TAG, "Local server address unreachable, switching")
+                        Preferences.setServerSwitchableTimer()
+                        ConnectionUtil.useServerAddress(server)
+                    } else {
+                        Log.d(TAG, "Local server address answered, switching")
+                        ConnectionUtil.useServerAddress(local)
+                    }
+                }
+                restartIfFailed()
+            }
+        }
+
+        private fun restartIfFailed() {
+            lastPlayerErrorRecoveryMs = 0L
+
+            val player = mediaLibrarySession.player
+            if (player === exoplayer && player.playbackState == Player.STATE_IDLE && player.playerError != null && !stoppedSinceError) {
+                if (SystemClock.elapsedRealtime() < restartableUntilMs) player.prepare()
+                else Log.d(TAG, "Player error is too old to restart")
+            }
+        }
 
         override fun onCapabilitiesChanged(
             network: Network,
             networkCapabilities: NetworkCapabilities
         ) {
             val transport = MusicUtil.transportOf(networkCapabilities)
-            if (transport == lastTransport) return
+            val transportChanged = transport != lastTransport
+            if (network == lastNetwork && !transportChanged) return
+            lastNetwork = network
             lastTransport = transport
 
-            // Only wifi and cellular have bitrate and format settings of their own. Anything else
-            // is left alone, so a handover cannot resolve the queue against the network it leaves.
+            recheckAddress(network, transport, true)
+            if (!transportChanged) return
+
             val resolvable = transport == NetworkCapabilities.TRANSPORT_WIFI ||
                     transport == NetworkCapabilities.TRANSPORT_CELLULAR
             if (resolvable) MusicUtil.primeActiveTransport(transport)
@@ -1188,8 +1294,6 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             widgetUpdateHandler.post {
                 if (serviceDestroyed) return@post
                 if (resolvable) updateMediaItems(mediaLibrarySession.player)
-                // preload() evaluates the network itself, and runs on every transport change,
-                // including one the queue is not resolved against, since it gates on metered.
                 QueuePreloader.preload(this@BaseMediaService, mediaLibrarySession.player)
             }
         }
@@ -1209,7 +1313,9 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         }
     }
 }
-
+private const val QUEUE_SYNC_DEBOUNCE_MS = 2000L
+// Delay after the last skip/seek/play before saving; each new trigger restarts it,
+// so skipping several songs in quick succession causes only one save.
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
 // How often to re-persist the resume point (and server bookmark) during playback, so a
 // force-close or stop mid-playback still lands within a few seconds of where you were.

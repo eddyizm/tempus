@@ -54,6 +54,7 @@ import com.bumptech.glide.signature.ObjectKey
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.glide.CustomGlideRequest
 import com.eddyizm.tempus.subsonic.models.Child
+import com.eddyizm.tempus.ui.components.rememberDataSavingMode
 import com.eddyizm.tempus.util.DownloadUtil
 import com.eddyizm.tempus.util.ExternalAudioReader
 import com.eddyizm.tempus.util.FavoriteRegistry
@@ -318,7 +319,7 @@ private fun QueueArtwork(
     modifier: Modifier = Modifier,
     artworkUri: Uri? = null,
     size: Int = 160,
-    cornerRadius: Dp = 8.dp,
+    cornerRadius: Dp = 0.dp,
     contentDescription: String? = null,
     @DrawableRes placeholderRes: Int = R.drawable.ic_placeholder_song,
     overlayContent: (@Composable () -> Unit)? = null
@@ -334,6 +335,7 @@ private fun QueueArtwork(
         }
     }
     val placeholder = placeholder(placeholderContent)
+    val dataSaving = rememberDataSavingMode()
 
     Box(
         modifier = modifier
@@ -353,7 +355,7 @@ private fun QueueArtwork(
                     var transformed = request
                         .signature(ObjectKey(coverArtId ?: artworkUri.toString()))
                         .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
-                    if (Preferences.isDataSavingMode()) {
+                    if (dataSaving) {
                         transformed = transformed.onlyRetrieveFromCache(true)
                     }
                     if (artworkUri != null) {

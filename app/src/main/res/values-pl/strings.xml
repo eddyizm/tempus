@@ -563,7 +563,6 @@
     <string name="settings_album_year_summary">Jeżeli włączone, pokazuje rok każdego albumu na stronie wykonawcy.</string>
     <string name="settings_item_rating">Pokaż oceny elementów</string>
     <string name="settings_item_rating_summary">Jeżeli włączone, ocena elementów oraz czy jest oznaczony jako ulubiony będą pokazywane.</string>
-    <string name="settings_queue_syncing_countdown">Timer synchronizacji</string>
     <string name="settings_queue_syncing_summary">Jeżeli włączone, użytkownik będzie miał możliwość zapisania kolejki i będzie miał możliwość załadowania jej stanu przy otwarciu aplikacji.</string>
     <string name="settings_queue_syncing_title">Synchronizuj kolejkę odtwarzania dla tego użytkownika [Niedokończone]</string>
     <string name="settings_show_mini_shuffle_button">Pokaż przycisk odtwarzania losowego</string>

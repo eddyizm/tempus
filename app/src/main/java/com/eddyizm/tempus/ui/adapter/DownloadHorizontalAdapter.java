@@ -92,7 +92,13 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         this.filterValue = filterValue;
 
         this.songs = songs;
-        this.grouped = sortByDisplayLabel(groupSong(songs));
+
+        List<Child> result = groupSong(songs);
+        if (!Constants.DOWNLOAD_TYPE_TRACK.equals(this.view)) {
+            sortByDisplayLabel(result);
+        }
+        this.grouped = result;
+
         this.shuffling = shufflingSong(new ArrayList<>(songs));
 
         notifyDataSetChanged();
@@ -101,7 +107,11 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
     private List<Child> sortByDisplayLabel(List<Child> items) {
         Collator collator = Collator.getInstance();
         collator.setStrength(Collator.PRIMARY);
-        items.sort(Comparator.comparing(this::getDisplayLabel, Comparator.nullsLast(collator)));
+        Comparator<Child> comparator = Comparator.comparing(this::getDisplayLabel, Comparator.nullsLast(collator));
+        if (Constants.DOWNLOAD_TYPE_ALBUM.equals(this.view)) {
+            comparator = comparator.thenComparing(Child::getAlbum, Comparator.nullsLast(collator));
+        }
+        items.sort(comparator);
         return items;
     }
 
@@ -111,10 +121,15 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         String label;
         switch (view) {
             case Constants.DOWNLOAD_TYPE_TRACK:
-                label = item.getTitle();
+                String trackAlbumArtist = albumArtistOrNull(item);
+                label = trackAlbumArtist != null ? trackAlbumArtist : item.getAlbum();
+                if (label == null || label.trim().isEmpty()) {
+                    label = item.getTitle();
+                }
                 break;
             case Constants.DOWNLOAD_TYPE_ALBUM:
-                label = item.getAlbum();
+                String albumArtist = albumArtistOrNull(item);
+                label = albumArtist != null ? albumArtist : item.getAlbum();
                 break;
             case Constants.DOWNLOAD_TYPE_ARTIST:
                 label = item.getArtist();
@@ -280,8 +295,9 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
     }
 
     private static String albumArtistOrNull(Child song) {
+        if (song == null) return null;
         String albumArtist = song.getAlbumArtist();
-        return albumArtist != null && !albumArtist.isEmpty() ? albumArtist : null;
+        return albumArtist != null && !albumArtist.trim().isEmpty() ? albumArtist.trim() : null;
     }
 
     private static String albumArtistOrArtist(Child song) {

@@ -195,17 +195,6 @@
         <item>flac</item>
     </string-array>
 
-    <string-array name="queue_syncing_countdown_titles">
-        <item>On saniyə</item>
-        <item>Beş saniyə</item>
-        <item>İki saniyə</item>
-    </string-array>
-    <string-array name="queue_syncing_countdown_values">
-        <item>10</item>
-        <item>5</item>
-        <item>2</item>
-    </string-array>
-
     <string-array name="rounded_corner_size_titles">
         <item>Yüksək</item>
         <item>Orta</item>

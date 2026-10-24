@@ -90,10 +90,11 @@ public final class DownloadUtil {
                     .setAllowCrossProtocolRedirects(true);
             // Requests to the signed-in server that need its custom headers go through OkHttp,
             // which re-checks the host on every redirect; see CustomHeadersDataSource.
-            httpDataSourceFactory = new CustomHeadersDataSource.Factory(
+            DataSource.Factory headersFactory = new CustomHeadersDataSource.Factory(
                     serverHttpFactory,
                     new OkHttpDataSource.Factory(buildCustomHeadersHttpClient()),
                     url -> !ServerHeaders.getHeadersForActiveServer(url).isEmpty());
+            httpDataSourceFactory = new ResolvingDataSource.Factory(headersFactory, ConnectionUtil::moveStreamToAddressInUse);
         }
 
         return httpDataSourceFactory;
