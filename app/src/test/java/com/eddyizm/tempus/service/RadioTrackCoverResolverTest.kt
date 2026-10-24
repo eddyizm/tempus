@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.service
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -27,25 +28,50 @@ class RadioTrackCoverResolverTest {
     fun `musicBrainzReleaseIds picks studio recording and orders album first`() {
         val json = """
             {"recordings":[
-              {"id":"live","releases":[
+              {"id":"live","score":100,"title":"Pull Me Under","artist-credit":[{"name":"Dream Theater"}],"releases":[
                 {"id":"l1","status":"Official","release-group":{"primary-type":"Album","secondary-types":["Live"]}}]},
-              {"id":"demo","releases":[
+              {"id":"demo","score":100,"title":"Pull Me Under","artist-credit":[{"name":"Dream Theater"}],"releases":[
                 {"id":"d1","status":"Official","release-group":{"primary-type":"Album","secondary-types":["Demo"]}},
                 {"id":"d2","status":"Official","release-group":{"primary-type":"Album","secondary-types":["Demo"]}}]},
-              {"id":"studio","releases":[
+              {"id":"studio","score":100,"title":"Pull Me Under","artist-credit":[{"name":"Dream Theater"}],"releases":[
                 {"id":"s1","status":"Official","release-group":{"primary-type":"Single"}},
                 {"id":"a1","status":"Official","release-group":{"primary-type":"Album"}},
                 {"id":"b1","status":"Bootleg","release-group":{"primary-type":"Album"}},
                 {"id":"c1","status":"Official","release-group":{"primary-type":"Album","secondary-types":["Compilation"]}}]}
             ]}
         """.trimIndent()
-        assertEquals(listOf("a1", "s1"), musicBrainzReleaseIds(json))
+        assertEquals(listOf("a1", "s1"), musicBrainzReleaseIds(json, "Dream Theater", "Pull Me Under"))
+    }
+
+    private fun recording(score: Int, title: String, credit: String, vararg releaseIds: String) =
+        """{"id":"r-$title-$credit","score":$score,"title":"$title","artist-credit":[{"name":"$credit"}],"releases":[""" +
+            releaseIds.joinToString(",") { """{"id":"$it","status":"Official","release-group":{"primary-type":"Album"}}""" } +
+            "]}"
+
+    @Test
+    fun `musicBrainzReleaseIds ignores a similarly named artist`() {
+        val json = """{"recordings":[""" +
+            recording(100, "Hotel California", "Eagles of Death Metal", "x1", "x2", "x3") + "," +
+            recording(100, "Hotel California", "Eagles", "e1") + "]}"
+        assertEquals(listOf("e1"), musicBrainzReleaseIds(json, "Eagles", "Hotel California"))
+    }
+
+    @Test
+    fun `musicBrainzReleaseIds ignores a recording with another title`() {
+        val json = """{"recordings":[""" + recording(100, "Hotel California (Live)", "Eagles", "l1") + "]}"
+        assertTrue(musicBrainzReleaseIds(json, "Eagles", "Hotel California").isEmpty())
+    }
+
+    @Test
+    fun `musicBrainzReleaseIds ignores a low score recording`() {
+        val json = """{"recordings":[""" + recording(60, "Hotel California", "Eagles", "e1") + "]}"
+        assertTrue(musicBrainzReleaseIds(json, "Eagles", "Hotel California").isEmpty())
     }
 
     @Test
     fun `musicBrainzReleaseIds returns empty for error json`() {
         val json = """{"error":"The MusicBrainz web server is currently busy. Please try again later."}"""
-        assertTrue(musicBrainzReleaseIds(json).isEmpty())
+        assertTrue(musicBrainzReleaseIds(json, "Dream Theater", "Pull Me Under").isEmpty())
     }
 
     @Test
@@ -68,10 +94,21 @@ class RadioTrackCoverResolverTest {
         assertNull(itunesCover(onlyOther, "Dream Theater"))
     }
 
+    @Test
+    fun `isSameRadioSong is true only for the same radio item and song`() {
+        assertTrue(isSameRadioSong("st1", "st1", true, "Marillion", "Incubus", "Marillion", "Incubus"))
+        // user started another station while the lookup ran
+        assertFalse(isSameRadioSong("st2", "st1", true, "Marillion", "Incubus", "Marillion", "Incubus"))
+        // user started a normal track
+        assertFalse(isSameRadioSong("track9", "st1", false, null, null, "Marillion", "Incubus"))
+        // the song changed
+        assertFalse(isSameRadioSong("st1", "st1", true, "Marillion", "Fugazi", "Marillion", "Incubus"))
+    }
+
     // ---- RadioTrackCoverResolver (fake network) ----
 
     private fun mbJson(vararg ids: String) =
-        """{"recordings":[{"id":"rec","releases":[""" +
+        """{"recordings":[{"id":"rec","score":100,"title":"Pull Me Under","artist-credit":[{"name":"Dream Theater"}],"releases":[""" +
             ids.joinToString(",") { """{"id":"$it","status":"Official","release-group":{"primary-type":"Album"}}""" } +
             "]}]}"
 
