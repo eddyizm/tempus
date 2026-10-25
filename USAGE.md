@@ -368,9 +368,11 @@ Connections use mutual TLS, and each phone is approved by hand. There is no unen
 
 Open a playlist and pick Edit playlist from its menu to rename it, drag tracks into a new order, or remove tracks. Saving writes the list exactly as it stands on screen, so a removal or a reorder takes effect on the server instead of being added on top of the tracks already there.
 
-Two things to know:
+Things to know:
 - A playlist has to keep at least one track. A save that would leave it empty is refused and the editor says so, use Delete if you want the playlist gone.
-- Saving needs the server. The editor will not save from the offline cache, because writing that older copy back would drop anything added to the playlist since it was cached.
+- Editing works offline for any playlist this phone has opened online before. The changes are kept on the phone, the playlist shows "waiting to sync", and Tempus sends them the next time it can reach the server while the app is open.
+- Before sending, Tempus reads the playlist from the server again and combines both sides: your order wins, tracks removed elsewhere stay removed, and tracks added elsewhere stay in, next to the tracks they followed. A sync that would empty the playlist is not sent.
+- If the server refuses the changes, the playlist says so. Use Retry sync or Discard phone changes from its menu.
 
 ### Sorting playlists
 

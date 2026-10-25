@@ -41,4 +41,14 @@
         android:checkable="true"
         android:title="@string/menu_keep_synced_button"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_retry_sync"
+        android:title="@string/menu_retry_sync"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_discard_offline_edits"
+        android:title="@string/menu_discard_offline_edits"
+        android:visible="false"
+        app:showAsAction="never" />
 </menu>

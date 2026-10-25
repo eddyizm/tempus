@@ -4,8 +4,10 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.database.dao.PendingPlaylistEditDao;
@@ -29,6 +31,7 @@ import java.util.concurrent.Executors;
  * playlist and server, until {@link PlaylistFlush} merges it onto the server's list. The cached
  * playlist is rewritten at once, so the app shows the change before it is synced.
  */
+@OptIn(markerClass = UnstableApi.class)
 public class PendingPlaylistEditRepository {
     // One writer, so two quick edits fold in the order they were made.
     static final ExecutorService WRITES = Executors.newSingleThreadExecutor();

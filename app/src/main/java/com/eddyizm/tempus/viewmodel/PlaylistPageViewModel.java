@@ -10,7 +10,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
+import com.eddyizm.tempus.model.PendingPlaylistEdit;
 import com.eddyizm.tempus.model.PinnedPlaylist;
+import com.eddyizm.tempus.repository.PendingPlaylistEditRepository;
 import com.eddyizm.tempus.repository.PlaylistFlush;
 import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.subsonic.models.Child;
@@ -211,6 +213,20 @@ public class PlaylistPageViewModel extends AndroidViewModel {
                 });
             }
         });
+    }
+
+    /** The phone's unsynced changes to this playlist, null when there are none. */
+    public LiveData<PendingPlaylistEdit> pendingEdit() {
+        if (playlist == null) return new MutableLiveData<>(null);
+        return new PendingPlaylistEditRepository().observe(playlist.getId());
+    }
+
+    public void retrySync() {
+        if (playlist != null) PlaylistFlush.retry(playlist.getId());
+    }
+
+    public void discardOfflineEdits() {
+        if (playlist != null) PlaylistFlush.discard(playlist.getId());
     }
 
     public boolean isWriting() {
