@@ -191,7 +191,11 @@ public class PlayerBottomSheetFragment extends Fragment {
         setHeaderMediaController();
         setHeaderNextButtonState(mediaBrowser.hasNextMediaItem());
 
-        mediaBrowser.addListener(new Player.Listener() {
+        mediaBrowser.addListener(createMediaControllerListener(mediaBrowser));
+    }
+
+    Player.Listener createMediaControllerListener(MediaBrowser mediaBrowser) {
+        return new Player.Listener() {
             @Override
             public void onMediaItemTransition(@Nullable MediaItem mediaItem, int reason) {
                 setMediaControllerUI(mediaBrowser);
@@ -202,7 +206,6 @@ public class PlayerBottomSheetFragment extends Fragment {
             @Override
             public void onPositionDiscontinuity(@NonNull Player.PositionInfo oldPosition, @NonNull Player.PositionInfo newPosition, int reason) {
                 setMediaControllerUI(mediaBrowser);
-                setMetadata(mediaBrowser.getMediaMetadata());
                 setContentDuration(mediaBrowser.getContentDuration());
             }
 
@@ -237,7 +240,7 @@ public class PlayerBottomSheetFragment extends Fragment {
             public void onRepeatModeChanged(int repeatMode) {
                 Preferences.setRepeatMode(repeatMode);
             }
-        });
+        };
     }
 
     private void setMetadata(MediaMetadata mediaMetadata) {

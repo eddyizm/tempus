@@ -204,7 +204,7 @@ Tap the artwork to show four buttons over it, and tap again to hide them.
 Below the playback controls is a row of three buttons.
 
 - **Sleep timer** stops playback after 5 to 60 minutes, after a number of minutes you type in, or at the end of the current track. The volume fades out before playback pauses. While a timer is set, the time left shows under the button, and tapping it again lets you cancel.
-- **Lyrics** slides over to the lyrics. Tap it again or swipe back to return.
+- **Lyrics** slides over to the lyrics. Tap it again or swipe back to return. Seeking within a track keeps the lyrics visible while enabled synchronization follows the new playback position.
 - **Queue** opens the queue.
 
 Long press the format label above the artwork, "flac" for example, to hide this row, and long press it again to bring it back. A short tap on the label shows or hides the bitrate.
