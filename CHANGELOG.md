@@ -1,5 +1,28 @@
 # Changelog
 
+## [4.31.0](https://github.com/eddyizm/tempus/releases/tag/v4.31.0) (2026-10-25)
+## What's Changed
+* feat: first pass at generating a aab google play bundle release by @eddyizm in https://github.com/eddyizm/tempus/pull/1056
+* chore(i18n): Update Japanese translation by @kou029w in https://github.com/eddyizm/tempus/pull/1216
+* chore(i18n): complete Basque (eu) and Spanish (es-ES) translations by @planetryan in https://github.com/eddyizm/tempus/pull/1217
+* chore(i18n): Update Polish translation by @skajmer in https://github.com/eddyizm/tempus/pull/1219
+* chore: Update CONTRIBUTING.md by @tvillega in https://github.com/eddyizm/tempus/pull/1227
+* fix: internet radio when casting to Kodi over UPnP by @pLum0 in https://github.com/eddyizm/tempus/pull/1233
+* feat: migrate artwork pager to glide-compose with adjacent preload by @sungoldsv in https://github.com/eddyizm/tempus/pull/1204
+* fix: hand nothing to a UPnP renderer while paused by @pLum0 in https://github.com/eddyizm/tempus/pull/1235
+* fix: arrive paused on the phone when casting to a UPnP renderer stops by @pLum0 in https://github.com/eddyizm/tempus/pull/1240
+* fix: adjust album art corner radius in queue list by @jaime-grj in https://github.com/eddyizm/tempus/pull/1241
+* fix: long-press sign-in stores the server address and id by @karan in https://github.com/eddyizm/tempus/pull/1176
+* fix: move playback onto the reachable server address when the network changes by @herrerad85 in https://github.com/eddyizm/tempus/pull/1245
+* feat: save queue by @MisterrChicken in https://github.com/eddyizm/tempus/pull/1248
+* fix: casting while playing sends the track paused by @herrerad85 in https://github.com/eddyizm/tempus/pull/1251
+* fix: Download sorting borked by @eddyizm in https://github.com/eddyizm/tempus/pull/1253
+
+## New Contributors
+* @MisterrChicken made their first contribution in https://github.com/eddyizm/tempus/pull/1248
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.30.0...v4.31.0
+
 ## [4.30.0](https://github.com/eddyizm/tempus/releases/tag/v4.30.0) (2026-10-16)
 ## What's Changed
 * feat: custom HTTP headers per server by @karan in https://github.com/eddyizm/tempus/pull/1169
