@@ -109,6 +109,8 @@ public class PlaylistRepository {
                             allPlaylistsLiveData.postValue(playlists);
                             // cache all playlists
                             cacheAllPlaylists(playlists);
+                            // The server answers, so edits kept on the phone can go out.
+                            PlaylistFlush.kickThrottled();
                         }
                     }
 
@@ -509,7 +511,7 @@ public class PlaylistRepository {
      * full playlist list refreshes on every load. Reading it here keeps the screens out of it and
      * costs no extra request. It touches the database, so callers have to be off the main thread.
      */
-    private Boolean visibilityToSend(String playlistId) {
+    Boolean visibilityToSend(String playlistId) {
         return Boolean.TRUE.equals(playlistDao.isPlaylistPublic(playlistId)) ? Boolean.TRUE : null;
     }
 

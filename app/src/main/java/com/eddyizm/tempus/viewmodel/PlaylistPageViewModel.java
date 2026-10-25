@@ -11,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.model.PinnedPlaylist;
+import com.eddyizm.tempus.repository.PlaylistFlush;
 import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Playlist;
@@ -287,6 +288,8 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         if (isDifferentPlaylist) {
             this.songLiveList.setValue(null); // Clear old data immediately
             playlistMissingEvent.setValue(false);
+            // Edits kept on the phone go out first, so the page lands on the merged list.
+            PlaylistFlush.kick(playlist.getId());
         }
     }
 

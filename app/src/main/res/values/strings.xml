@@ -380,6 +380,9 @@
     <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
     <string name="playlist_editor_dialog_action_save_empty">A playlist has to keep at least one track</string>
     <string name="playlist_editor_dialog_action_save_queued">Saved on this phone, it will sync when the server is reachable</string>
+    <string name="playlist_offline_sync_deleted">%1$s was deleted on the server, the changes made on this phone were dropped</string>
+    <string name="playlist_offline_sync_failed">The server refused the changes made on this phone to %1$s</string>
+    <string name="playlist_offline_sync_empty">Syncing %1$s would leave it empty, so the changes made on this phone were kept and not sent</string>
     <string name="playlist_offline_edit_refused">This playlist has not been loaded online on this phone yet, so it cannot be edited offline</string>
     <string name="playlist_editor_hint">Drag the handle to reorder, tap the trash to remove. Nothing is sent until Save.</string>
     <string name="playlist_editor_remove_track">Remove track</string>
