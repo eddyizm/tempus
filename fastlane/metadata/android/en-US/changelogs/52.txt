@@ -1,0 +1,11 @@
+feat: 
+* migrate artwork pager to glide-compose with adjacent preload
+* save queue sync cleaned up
+fix: 
+* internet radio when casting to Kodi over UPnP
+* hand nothing to a UPnP renderer while paused
+* arrive paused on the phone when casting to a UPnP renderer stops
+* adjust album art corner radius in queue list
+* long-press sign-in stores the server address and id
+* move playback onto the reachable server address when the network changes
+* Download sorting fixed
