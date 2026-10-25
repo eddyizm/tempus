@@ -123,7 +123,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         Child removed = shorter.remove(index);
         songLiveList.setValue(shorter);
 
-        playlistRepository.removeSongFromPlaylist(playlistId, index, new PlaylistRepository.AddToPlaylistCallback() {
+        playlistRepository.removeSongFromPlaylist(playlistId, index, removed.getId(), new PlaylistRepository.AddToPlaylistCallback() {
             @Override
             public void onSuccess() {
                 // A read issued meanwhile can have replaced the list with one from before the
@@ -178,11 +178,12 @@ public class PlaylistPageViewModel extends AndroidViewModel {
 
         writingPlaylistId = playlistId;
         invalidateFetches(playlistId);
-        LiveData<List<Child>> current = playlistRepository.getPlaylistSongsForEdit(playlistId, () -> playlistMissing(playlistId));
-        current.observeForever(new androidx.lifecycle.Observer<List<Child>>() {
+        LiveData<PlaylistRepository.EditableSongs> current = playlistRepository.getPlaylistSongsForEdit(playlistId, () -> playlistMissing(playlistId));
+        current.observeForever(new androidx.lifecycle.Observer<PlaylistRepository.EditableSongs>() {
             @Override
-            public void onChanged(List<Child> songs) {
+            public void onChanged(PlaylistRepository.EditableSongs loaded) {
                 current.removeObserver(this);
+                List<Child> songs = loaded != null ? loaded.songs : null;
                 if (songs == null) {
                     writingPlaylistId = null;
                     callback.onFailure();
@@ -192,7 +193,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
                 restored.add(Math.min(index, restored.size()), song);
                 ArrayList<String> ids = new ArrayList<>(restored.size());
                 for (Child each : restored) ids.add(each.getId());
-                playlistRepository.createPlaylist(playlistId, null, ids, new PlaylistRepository.PlaylistActionCallback() {
+                playlistRepository.replaceEditedPlaylist(playlistId, ids, restored, loaded, new PlaylistRepository.PlaylistActionCallback() {
                     @Override
                     public void onSuccess() {
                         writingPlaylistId = null;

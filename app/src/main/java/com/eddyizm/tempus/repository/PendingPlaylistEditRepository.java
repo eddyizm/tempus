@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 /**
  * Keeps playlist changes made while the server could not be reached, one pending edit per
@@ -44,42 +45,60 @@ public class PendingPlaylistEditRepository {
     public interface QueueResult {
         void onQueued();
 
+        /** There is no known order of the playlist to start an edit from. */
         void onRefused();
 
         void onEmptied();
+
+        /** The edit no longer applies to the list, such as a remove of a track that is gone. */
+        void onFailed();
     }
 
     /**
-     * Stores localIds as the phone's version of the playlist. knownSongs supplies track details
-     * for the cache, so tracks added offline show their names. A name equal to the cached one is
-     * not a rename, so an unchanged name never overwrites a rename made elsewhere. Results arrive
-     * on the main thread.
+     * Applies edit to the phone's current version of the playlist and keeps the result. The current
+     * version is the pending edit's list, or for a playlist without one, baseIfNew when the caller
+     * loaded the list it edited, otherwise the server's last known order. It is read on the writer,
+     * so a sync settling meanwhile cannot slip between the read and the write. knownSongs supplies
+     * track details for the cache, so tracks added offline show their names. A name equal to the
+     * cached one is not a rename, so an unchanged name never overwrites a rename made elsewhere.
+     * Results arrive on the main thread.
      */
-    public void queueReplace(String playlistId, List<String> localIds, @Nullable List<Child> knownSongs, @Nullable String newName, QueueResult result) {
+    public void queueReplace(String playlistId, Function<List<String>, List<String>> edit, @Nullable List<String> baseIfNew, @Nullable List<Child> knownSongs, @Nullable String newName, QueueResult result) {
         WRITES.execute(() -> {
             String server = Preferences.getServer();
             if (server == null) {
-                post(result::onRefused);
+                post(result::onFailed);
                 return;
             }
 
             PendingPlaylistEdit existing = pendingDao.get(playlistId, server);
             PlaylistSnapshot snapshot = snapshotDao.get(playlistId, server);
-            List<String> base = existing != null ? existing.getBaseIds() : snapshot != null ? snapshot.getSongIds() : null;
+            List<String> startFrom = baseIfNew != null ? baseIfNew : snapshot != null ? snapshot.getSongIds() : null;
+            List<String> base = existing != null ? existing.getBaseIds() : startFrom;
+            List<String> current = existing != null ? existing.getLocalIds() : startFrom;
+            if (current == null) {
+                post(result::onRefused);
+                return;
+            }
 
+            List<String> localIds = edit.apply(current);
+            if (localIds == null) {
+                post(result::onFailed);
+                return;
+            }
             if (localIds.isEmpty() && base != null && !base.isEmpty()) {
                 post(result::onEmptied);
                 return;
             }
 
             String rename = newName != null && !newName.equals(playlistDao.getName(playlistId)) ? newName : null;
-            PendingPlaylistEdit edit = PendingEditFold.fold(existing, snapshot != null ? snapshot.getSongIds() : null, playlistId, server, localIds, rename, System.currentTimeMillis());
-            if (edit == null) {
+            PendingPlaylistEdit folded = PendingEditFold.fold(existing, startFrom, playlistId, server, localIds, rename, System.currentTimeMillis());
+            if (folded == null) {
                 post(result::onRefused);
                 return;
             }
 
-            pendingDao.upsert(edit);
+            pendingDao.upsert(folded);
             cacheSongs(playlistId, knownSongs);
             if (rename != null) playlistDao.updateName(playlistId, rename);
 

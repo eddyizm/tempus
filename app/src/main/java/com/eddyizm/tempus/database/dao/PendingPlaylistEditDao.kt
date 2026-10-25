@@ -26,7 +26,4 @@ interface PendingPlaylistEditDao {
 
     @Query("DELETE FROM pending_playlist_edit WHERE playlistId = :id AND serverId = :server")
     fun remove(id: String, server: String)
-
-    @Query("DELETE FROM pending_playlist_edit WHERE playlistId = :id")
-    fun removeAllFor(id: String)
 }

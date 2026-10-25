@@ -41,6 +41,18 @@ public class PlaylistClient {
         return playlistService.updatePlaylist(subsonic.getParams(), playlistId, name, isPublic, songIdToAdd, songIndexToRemove);
     }
 
+    public Call<ApiResponse> getPlaylistFresh(String id) {
+        return playlistService.getPlaylistFresh(subsonic.getParams(), id);
+    }
+
+    public Call<ApiResponse> createPlaylistFresh(String playlistId, ArrayList<String> songsId) {
+        return playlistService.createPlaylistFresh(subsonic.getParams(), playlistId, null, songsId);
+    }
+
+    public Call<ApiResponse> renamePlaylistFresh(String playlistId, String name, Boolean isPublic) {
+        return playlistService.updatePlaylistFresh(subsonic.getParams(), playlistId, name, isPublic, null, null);
+    }
+
     public Call<ApiResponse> deletePlaylist(String id) {
         Log.d(TAG, "deletePlaylist()");
         return playlistService.deletePlaylist(subsonic.getParams(), id);

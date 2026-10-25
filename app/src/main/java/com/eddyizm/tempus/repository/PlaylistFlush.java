@@ -20,6 +20,7 @@ import com.eddyizm.tempus.subsonic.api.playlist.PlaylistClient;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.PlaylistWithSongs;
 import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
+import com.eddyizm.tempus.subsonic.utils.CacheUtil;
 import com.eddyizm.tempus.util.DownloadRepair;
 import com.eddyizm.tempus.util.FlushDecision;
 import com.eddyizm.tempus.util.PlaylistMerge;
@@ -125,7 +126,7 @@ public final class PlaylistFlush {
 
     private static void pass(String onlyPlaylistId) {
         String server = Preferences.getServer();
-        if (server == null || !DownloadRepair.isUserAuthenticated()) return;
+        if (server == null || !DownloadRepair.isUserAuthenticated() || !CacheUtil.isConnected()) return;
 
         List<PendingPlaylistEdit> edits;
         if (onlyPlaylistId != null) {
@@ -145,17 +146,27 @@ public final class PlaylistFlush {
         }
     }
 
+    /**
+     * Whether a request got an answer from the server itself. One served from the HTTP cache, or an
+     * HTTP error such as a proxy's 502 while the server is down, means the server was not reached,
+     * and the edit stays pending instead of being marked failed.
+     */
+    static boolean serverAnswered(Response<ApiResponse> response) {
+        return PlaylistRepository.reachedServer(response) && response.isSuccessful();
+    }
+
     /** @return false when the server could not be reached and the pass should stop. */
     private static boolean flushOne(PendingPlaylistEdit edit, String server) throws IOException {
         String playlistId = edit.getPlaylistId();
         PlaylistClient client = App.getSubsonicClientInstance(false).getPlaylistClient();
 
-        Response<ApiResponse> read = client.getPlaylist(playlistId).execute();
+        Response<ApiResponse> read = client.getPlaylistFresh(playlistId).execute();
+        if (!serverAnswered(read)) return false;
         SubsonicResponse readBody = read.body() != null ? read.body().getSubsonicResponse() : null;
         if (!PlaylistRepository.isAccepted(read) || readBody == null || readBody.getPlaylist() == null) {
             if (readBody != null && readBody.getError() != null && Integer.valueOf(70).equals(readBody.getError().getCode())) {
                 String name = nameOf(playlistId);
-                pending().remove(playlistId, server);
+                onWriter(() -> pending().remove(playlistId, server));
                 toast(R.string.playlist_offline_sync_deleted, name);
                 // Lets the repository clear the playlist's local rows the way it does for any gone playlist.
                 MAIN.post(() -> new PlaylistRepository().getPlaylistSongs(playlistId, false));
@@ -176,15 +187,20 @@ public final class PlaylistFlush {
 
         if (decision.kind == FlushDecision.Kind.WRITE) {
             if (decision.name != null) {
+                // Discarded or edited again while the read was out, then this write is stale.
+                if (!stillCurrent(edit, server)) return true;
                 Boolean isPublic = new PlaylistRepository().visibilityToSend(playlistId);
-                Response<ApiResponse> renamed = client.updatePlaylist(playlistId, decision.name, isPublic, null, null).execute();
+                Response<ApiResponse> renamed = client.renamePlaylistFresh(playlistId, decision.name, isPublic).execute();
+                if (!serverAnswered(renamed)) return false;
                 if (!PlaylistRepository.isAccepted(renamed)) {
                     fail(edit, server, errorOf(renamed, renamed.body() != null ? renamed.body().getSubsonicResponse() : null), R.string.playlist_offline_sync_failed);
                     return true;
                 }
             }
             if (decision.songs != null) {
-                Response<ApiResponse> replaced = client.createPlaylist(playlistId, null, new ArrayList<>(decision.songs)).execute();
+                if (!stillCurrent(edit, server)) return true;
+                Response<ApiResponse> replaced = client.createPlaylistFresh(playlistId, new ArrayList<>(decision.songs)).execute();
+                if (!serverAnswered(replaced)) return false;
                 if (!PlaylistRepository.isAccepted(replaced)) {
                     fail(edit, server, errorOf(replaced, replaced.body() != null ? replaced.body().getSubsonicResponse() : null), R.string.playlist_offline_sync_failed);
                     return true;
@@ -197,6 +213,21 @@ public final class PlaylistFlush {
         settle(edit, server, written, writtenName);
         MAIN.post(() -> new PlaylistRepository().notifyPlaylistChanged());
         return true;
+    }
+
+    /**
+     * Whether the edit read at the start of this sync is still the one stored. A discard removes
+     * it and a new phone edit replaces it; either way the merge made from it must not be written,
+     * and a replaced edit goes out on the next pass.
+     */
+    private static boolean stillCurrent(PendingPlaylistEdit edit, String server) {
+        boolean[] current = {false};
+        onWriter(() -> {
+            PendingPlaylistEdit now = pending().get(edit.getPlaylistId(), server);
+            current[0] = now != null && now.getUpdatedAt() == edit.getUpdatedAt() && PendingPlaylistEdit.PENDING.equals(now.getState());
+        });
+        if (!current[0]) kick(edit.getPlaylistId());
+        return current[0];
     }
 
     /**

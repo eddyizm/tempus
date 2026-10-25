@@ -14,6 +14,6 @@ interface PlaylistSnapshotDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upsert(snapshot: PlaylistSnapshot)
 
-    @Query("DELETE FROM playlist_snapshot WHERE playlistId = :id")
-    fun removeAllFor(id: String)
+    @Query("DELETE FROM playlist_snapshot WHERE playlistId = :id AND serverId = :server")
+    fun remove(id: String, server: String)
 }
