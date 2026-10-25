@@ -87,6 +87,7 @@ public class PlaylistRepository {
     private static final java.util.concurrent.ExecutorService SYNCED_WRITES = java.util.concurrent.Executors.newSingleThreadExecutor();
     private static volatile String keptSyncRanFor;
     private static final MutableLiveData<List<Playlist>> allPlaylistsLiveData = new MutableLiveData<>();
+    private final PendingPlaylistEditRepository pendingEdits = new PendingPlaylistEditRepository();
 
     public LiveData<List<Playlist>> getAllPlaylists(LifecycleOwner owner) {
         refreshAllPlaylists();
@@ -212,8 +213,40 @@ public class PlaylistRepository {
      *                  there is none.
      */
     public MutableLiveData<List<Child>> getPlaylistSongs(String id, boolean allowCache, Runnable onMissing) {
+        return getPlaylistSongs(id, allowCache ? CacheFallback.ANY : CacheFallback.NONE, onMissing);
+    }
+
+    /**
+     * For a caller that writes the list back. While the server answers this is the server's list,
+     * and when it cannot be reached it is the cached list, but only when the server's order for it
+     * is known, since an edit made on top of it is merged against that order later.
+     */
+    public MutableLiveData<List<Child>> getPlaylistSongsForEdit(String id, Runnable onMissing) {
+        return getPlaylistSongs(id, CacheFallback.ORDERED, onMissing);
+    }
+
+    private enum CacheFallback { NONE, ANY, ORDERED }
+
+    /**
+     * A playlist with changes made on this phone that are not synced yet is answered from the
+     * cache, which holds those changes. The server's list would not show them, and an index into
+     * it would point at the wrong track once the changes are merged.
+     */
+    private MutableLiveData<List<Child>> getPlaylistSongs(String id, CacheFallback fallback, Runnable onMissing) {
         MutableLiveData<List<Child>> listLivePlaylistSongs = new MutableLiveData<>();
 
+        new Thread(() -> {
+            if (pendingEdits.hasRow(id)) {
+                listLivePlaylistSongs.postValue(cachedPlaylistSongs(id));
+                return;
+            }
+            fetchPlaylistSongs(id, fallback, onMissing, listLivePlaylistSongs);
+        }).start();
+
+        return listLivePlaylistSongs;
+    }
+
+    private void fetchPlaylistSongs(String id, CacheFallback fallback, Runnable onMissing, MutableLiveData<List<Child>> listLivePlaylistSongs) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .getPlaylist(id)
@@ -245,15 +278,15 @@ public class PlaylistRepository {
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        if (allowCache) {
+                        if (fallback == CacheFallback.ANY) {
                             fetchCachedPlaylistSongs(id, listLivePlaylistSongs);
+                        } else if (fallback == CacheFallback.ORDERED) {
+                            new Thread(() -> listLivePlaylistSongs.postValue(cachedOrder(id) != null ? cachedPlaylistSongs(id) : null)).start();
                         } else {
                             listLivePlaylistSongs.setValue(null);
                         }
                     }
                 });
-
-        return listLivePlaylistSongs;
     }
 
     private void cachePlaylistSongs(Playlist playlist, List<Child> songs) {
@@ -392,6 +425,11 @@ public class PlaylistRepository {
         void onSuccess();
         void onFailure();
         void onAllSkipped();
+
+        /** The change was kept on this phone, to be synced when the server can be reached. */
+        default void onQueued() {
+            onSuccess();
+        }
     }
 
     /**
@@ -402,12 +440,21 @@ public class PlaylistRepository {
      *                                   send.
      */
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic, AddToPlaylistCallback callback) {
+        addSongToPlaylist(playlistId, songsId, null, playlistVisibilityIsPublic, callback);
+    }
+
+    /** @param songs details of the added tracks, kept in the cache when the add has to wait. */
+    public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, List<Child> songs, Boolean playlistVisibilityIsPublic, AddToPlaylistCallback callback) {
         android.util.Log.d("PlaylistRepository", "addSongToPlaylist: id=" + playlistId + ", songs=" + songsId);
         if (songsId.isEmpty()) {
             if (callback != null) callback.onAllSkipped();
             return;
         }
         new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueAdd(playlistId, songsId, songs, callback);
+                return;
+            }
             Boolean isPublic = Boolean.TRUE.equals(playlistVisibilityIsPublic)
                     ? Boolean.TRUE
                     : visibilityToSend(playlistId);
@@ -426,10 +473,25 @@ public class PlaylistRepository {
 
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                            if (callback != null) callback.onFailure();
+                            new Thread(() -> queueAdd(playlistId, songsId, songs, callback)).start();
                         }
                     });
         }).start();
+    }
+
+    /** Off the main thread. */
+    private void queueAdd(String playlistId, List<String> songsId, List<Child> songs, AddToPlaylistCallback callback) {
+        List<String> current = cachedOrder(playlistId);
+        if (current == null) {
+            refusedOffline(callback != null ? callback::onFailure : null);
+            return;
+        }
+        List<String> local = new ArrayList<>(current);
+        local.addAll(songsId);
+        queue(playlistId, local, songs, null,
+                callback != null ? callback::onQueued : null,
+                callback != null ? callback::onFailure : null,
+                callback != null ? callback::onFailure : null);
     }
 
     /**
@@ -455,6 +517,10 @@ public class PlaylistRepository {
         ArrayList<Integer> indexes = new ArrayList<>();
         indexes.add(index);
         new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueRemove(playlistId, index, callback);
+                return;
+            }
             App.getSubsonicClientInstance(false)
                     .getPlaylistClient()
                     .updatePlaylist(playlistId, null, visibilityToSend(playlistId), null, indexes)
@@ -470,25 +536,69 @@ public class PlaylistRepository {
 
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                            if (callback != null) callback.onFailure();
+                            new Thread(() -> queueRemove(playlistId, index, callback)).start();
                         }
                     });
         }).start();
+    }
+
+    /** Off the main thread. The index is into the list the page shows, which is this same list. */
+    private void queueRemove(String playlistId, int index, AddToPlaylistCallback callback) {
+        List<String> current = cachedOrder(playlistId);
+        if (current == null || index < 0 || index >= current.size()) {
+            refusedOffline(callback != null ? callback::onFailure : null);
+            return;
+        }
+        List<String> local = new ArrayList<>(current);
+        local.remove(index);
+        queue(playlistId, local, null, null,
+                callback != null ? callback::onQueued : null,
+                callback != null ? callback::onFailure : null,
+                callback != null ? callback::onFailure : null);
     }
 
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic) {
         addSongToPlaylist(playlistId, songsId, playlistVisibilityIsPublic, null);
     }
 
+    /**
+     * With a playlistId this replaces that playlist's tracks, and such a replace waits on the phone
+     * like any other edit when the server cannot be reached. A new playlist is never made offline.
+     */
     public void createPlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
-        App.getSubsonicClientInstance(false)
-                .getPlaylistClient()
-                .createPlaylist(playlistId, name, songsId)
-                .enqueue(resultHandler(callback));
+        if (playlistId == null) {
+            App.getSubsonicClientInstance(false)
+                    .getPlaylistClient()
+                    .createPlaylist(null, name, songsId)
+                    .enqueue(resultHandler(callback));
+            return;
+        }
+        new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueReplace(playlistId, songsId, null, name, callback);
+                return;
+            }
+            App.getSubsonicClientInstance(false)
+                    .getPlaylistClient()
+                    .createPlaylist(playlistId, name, songsId)
+                    .enqueue(replaceHandler(playlistId, songsId, null, name, callback));
+        }).start();
     }
 
     public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
+        updatePlaylist(playlistId, name, songsId, null, callback);
+    }
+
+    /**
+     * @param songsId the full list to write, or null to rename only.
+     * @param songs   details of the tracks, kept in the cache when the save has to wait.
+     */
+    public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, List<Child> songs, PlaylistActionCallback callback) {
         new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueReplace(playlistId, songsId, songs, name, callback);
+                return;
+            }
             App.getSubsonicClientInstance(false)
                     .getPlaylistClient()
                     .updatePlaylist(playlistId, name, visibilityToSend(playlistId), null, null)
@@ -497,7 +607,7 @@ public class PlaylistRepository {
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                             if (isAccepted(response)) {
                                 updateLocalPlaylistName(playlistId, name);
-                                replacePlaylistSongs(playlistId, songsId, callback);
+                                replacePlaylistSongs(playlistId, songsId, songs, callback);
                             } else {
                                 if (callback != null) callback.onFailure();
                             }
@@ -505,10 +615,50 @@ public class PlaylistRepository {
 
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                            if (callback != null) callback.onFailure();
+                            new Thread(() -> queueReplace(playlistId, songsId, songs, name, callback)).start();
                         }
                     });
         }).start();
+    }
+
+    /** Off the main thread. A null song list keeps the phone's current list, for a rename. */
+    private void queueReplace(String playlistId, List<String> songsId, List<Child> songs, String name, PlaylistActionCallback callback) {
+        List<String> local = songsId != null ? songsId : cachedOrder(playlistId);
+        if (local == null) {
+            refusedOffline(callback != null ? callback::onFailure : null);
+            return;
+        }
+        queue(playlistId, local, songs, name,
+                callback != null ? callback::onQueued : null,
+                callback != null ? callback::onFailure : null,
+                callback != null ? callback::onEmptied : null);
+    }
+
+    private void queue(String playlistId, List<String> local, List<Child> songs, String name, Runnable onQueued, Runnable onFailure, Runnable onEmptied) {
+        pendingEdits.queueReplace(playlistId, local, songs, name, new PendingPlaylistEditRepository.QueueResult() {
+            @Override
+            public void onQueued() {
+                notifyPlaylistChanged();
+                if (onQueued != null) onQueued.run();
+            }
+
+            @Override
+            public void onRefused() {
+                refusedOffline(onFailure);
+            }
+
+            @Override
+            public void onEmptied() {
+                if (onEmptied != null) onEmptied.run();
+            }
+        });
+    }
+
+    private static void refusedOffline(Runnable onFailure) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            Toast.makeText(App.getContext(), R.string.playlist_offline_edit_refused, Toast.LENGTH_SHORT).show();
+            if (onFailure != null) onFailure.run();
+        });
     }
 
     /**
@@ -552,7 +702,7 @@ public class PlaylistRepository {
      * can itself come back as an HTTP error, which this app reports as the playlist being gone and
      * closes the page. The success paths do refresh.
      */
-    private void replacePlaylistSongs(String playlistId, ArrayList<String> songsId, PlaylistActionCallback callback) {
+    private void replacePlaylistSongs(String playlistId, ArrayList<String> songsId, List<Child> songs, PlaylistActionCallback callback) {
         if (songsId == null || songsId.isEmpty()) {
             notifyPlaylistChanged();
             if (callback != null) callback.onSuccess();
@@ -562,7 +712,23 @@ public class PlaylistRepository {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .createPlaylist(playlistId, null, songsId)
-                .enqueue(resultHandler(callback));
+                .enqueue(replaceHandler(playlistId, songsId, songs, null, callback));
+    }
+
+    /** Like resultHandler, except that a replace the server never received waits on the phone. */
+    private Callback<ApiResponse> replaceHandler(String playlistId, ArrayList<String> songsId, List<Child> songs, String name, PlaylistActionCallback callback) {
+        Callback<ApiResponse> sent = resultHandler(callback);
+        return new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                sent.onResponse(call, response);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                new Thread(() -> queueReplace(playlistId, songsId, songs, name, callback)).start();
+            }
+        };
     }
 
     @OptIn(markerClass = UnstableApi.class)
@@ -659,6 +825,11 @@ public class PlaylistRepository {
 
         default void onEmptied() {
             onFailure();
+        }
+
+        /** The change was kept on this phone, to be synced when the server can be reached. */
+        default void onQueued() {
+            onSuccess();
         }
     }
 

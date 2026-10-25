@@ -62,7 +62,7 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
     public void addSongsToPlaylist(LifecycleOwner owner, Dialog dialog, String playlistId) {
         List<String> songIds = Lists.transform(toAdd, Child::getId);
         if (Preferences.allowPlaylistDuplicates()) {
-            playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), getIsPlaylistPublic());
+            playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), toAdd, getIsPlaylistPublic(), null);
             dialog.dismiss();
         } else {
             playlistRepository.getPlaylistSongs(playlistId).observe(owner, playlistSongs -> {
@@ -70,7 +70,7 @@ public class PlaylistChooserViewModel extends AndroidViewModel {
                     List<String> playlistSongIds = Lists.transform(playlistSongs, Child::getId);
                     songIds.removeAll(playlistSongIds);
                 }
-                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), getIsPlaylistPublic());
+                playlistRepository.addSongToPlaylist(playlistId, new ArrayList<>(songIds), toAdd, getIsPlaylistPublic(), null);
                 dialog.dismiss();
             });
         }

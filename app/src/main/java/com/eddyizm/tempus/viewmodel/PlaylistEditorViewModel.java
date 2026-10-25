@@ -63,7 +63,7 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
             return;
         }
 
-        playlistRepository.updatePlaylist(toEdit.getId(), name, songsId, callback);
+        playlistRepository.updatePlaylist(toEdit.getId(), name, songsId, songLiveList.getValue(), callback);
     }
 
     /**
@@ -101,7 +101,7 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
         loadedSongCount = null;
 
         if (playlist != null) {
-            this.songLiveList = playlistRepository.getPlaylistSongs(toEdit.getId(), false);
+            this.songLiveList = playlistRepository.getPlaylistSongsForEdit(toEdit.getId(), null);
             attachLoadedCountObserver();
         } else {
             this.songLiveList = new MutableLiveData<>();
@@ -182,6 +182,11 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
             @Override
             public void onEmptied() {
                 saveResult.postValue(R.string.playlist_editor_dialog_action_save_empty);
+            }
+
+            @Override
+            public void onQueued() {
+                saveResult.postValue(R.string.playlist_editor_dialog_action_save_queued);
             }
         });
     }

@@ -175,7 +175,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
 
         writingPlaylistId = playlistId;
         invalidateFetches(playlistId);
-        LiveData<List<Child>> current = playlistRepository.getPlaylistSongs(playlistId, false, () -> playlistMissing(playlistId));
+        LiveData<List<Child>> current = playlistRepository.getPlaylistSongsForEdit(playlistId, () -> playlistMissing(playlistId));
         current.observeForever(new androidx.lifecycle.Observer<List<Child>>() {
             @Override
             public void onChanged(List<Child> songs) {
