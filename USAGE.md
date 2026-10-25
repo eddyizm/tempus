@@ -200,7 +200,7 @@ Tap the artwork to show four buttons over it, and tap again to hide them.
 1. Downloads the track.
 2. Adds the track to a playlist.
 3. Adds this track again, followed by songs similar to it, right after the current track (Instant Mix). It uses [getSimilarSongs](https://opensubsonic.netlify.app/docs/endpoints/getsimilarsongs/) of the OpenSubsonic API, so which songs you get depends on your server. For example, Navidrome gets 15 similar artists from Last.fm, then 20 top songs from each.
-4. With **Sync play queue for this user** turned on under Settings → Miscellaneous, saves the play queue. With it off, this button opens the lyrics instead.
+4. Opens the lyrics.
 
 Below the playback controls is a row of three buttons.
 
@@ -226,14 +226,11 @@ Downloaded tracks show the format on disk. When Tempus transcodes a download, th
 
 With **Sync play queue for this user** turned on under Settings → Miscellaneous, Tempus keeps your play queue and your position in the current track on your server, so you can continue where you stopped, also on another device.
 
-Tempus saves automatically when you pause, switch to another track or seek, and every 5 seconds while playing. In the menu of the queue:
+Tempus saves automatically when you pause, switch to another track or seek, and every 30 seconds while playing. In the menu of the queue:
 
-- **Save Queue** saves the queue and the position right now.
 - **Load Queue** replaces the queue with the saved one and starts at the saved position.
 
-Both items only show while syncing is on.
-
-Turn on **Manual only syncing** (right below the sync switch) to stop the automatic saving. The queue is then only saved when you tap **Save Queue**, which is handy if you want to keep one saved queue as a bookmark. Loading it works as before.
+This item only shows while syncing is on.
 
 ### Podcasts  
 If your server supports it - add a podcast rss feed

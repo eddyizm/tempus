@@ -24,7 +24,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaBrowser
 import androidx.media3.session.SessionToken
-import com.eddyizm.tempus.R
 import com.eddyizm.tempus.databinding.InnerFragmentPlayerCoverBinding
 import com.eddyizm.tempus.model.Download
 import com.eddyizm.tempus.service.MediaManager
@@ -39,7 +38,6 @@ import com.eddyizm.tempus.util.ExternalAudioWriter
 import com.eddyizm.tempus.util.MappingUtil
 import com.eddyizm.tempus.util.Preferences
 import com.eddyizm.tempus.viewmodel.PlayerBottomSheetViewModel
-import com.google.android.material.snackbar.Snackbar
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import java.util.ArrayList
@@ -186,9 +184,6 @@ class PlayerCoverFragment : Fragment() {
         binding.nowPlayingSongCoverButtonGroup.visibility = if (isVisible) View.VISIBLE else View.GONE
         binding.nowPlayingTapButton.visibility = if (isVisible) View.GONE else View.VISIBLE
 
-        binding.innerButtonBottomRight.visibility = if (Preferences.isSyncronizationEnabled()) View.VISIBLE else View.GONE
-        binding.innerButtonBottomRightAlternative.visibility = if (Preferences.isSyncronizationEnabled()) View.GONE else View.VISIBLE
-
         if (!isVisible) {
             initTapButtonHideTransition()
         }
@@ -230,12 +225,6 @@ class PlayerCoverFragment : Fragment() {
                 }
 
                 binding.innerButtonBottomRight.setOnClickListener {
-                    if (playerBottomSheetViewModel.savePlayQueue()) {
-                        Snackbar.make(requireView(), R.string.player_queue_save_queue_success, Snackbar.LENGTH_LONG).show()
-                    }
-                }
-
-                binding.innerButtonBottomRightAlternative.setOnClickListener {
                     val playerBottomSheetFragment = requireActivity().supportFragmentManager
                         .findFragmentByTag("PlayerBottomSheet") as? PlayerBottomSheetFragment
                     playerBottomSheetFragment?.goToLyricsPage()
