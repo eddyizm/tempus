@@ -16,10 +16,14 @@ import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.database.dao.PlaylistDao;
+import com.eddyizm.tempus.database.dao.PendingPlaylistEditDao;
 import com.eddyizm.tempus.database.dao.PinnedPlaylistDao;
+import com.eddyizm.tempus.database.dao.PlaylistSnapshotDao;
 import com.eddyizm.tempus.database.dao.PlaylistSongDao;
 import com.eddyizm.tempus.database.dao.SyncedPlaylistDao;
+import com.eddyizm.tempus.model.PendingPlaylistEdit;
 import com.eddyizm.tempus.model.PinnedPlaylist;
+import com.eddyizm.tempus.model.PlaylistSnapshot;
 import com.eddyizm.tempus.model.PlaylistSong;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.Child;
@@ -28,12 +32,15 @@ import com.eddyizm.tempus.subsonic.models.ResponseStatus;
 import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
 import com.eddyizm.tempus.util.DownloadRepair;
 import com.eddyizm.tempus.util.DownloadUtil;
+import com.eddyizm.tempus.util.OfflinePlaylistOrder;
 import com.eddyizm.tempus.util.Preferences;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -60,6 +67,7 @@ public class PlaylistRepository {
             pinnedPlaylistDao.unpin(id);
             String server = Preferences.getServer();
             if (server != null) syncedPlaylistDao.remove(id, server);
+            forgetOrderAndEdits(id);
             playlistDao.deleteById(id);
             
             if (onMissing != null) {
@@ -74,6 +82,8 @@ public class PlaylistRepository {
     private final PlaylistDao playlistDao = AppDatabase.getInstance().playlistDao();
     private final PlaylistSongDao playlistSongDao = AppDatabase.getInstance().playlistSongDao();
     private final SyncedPlaylistDao syncedPlaylistDao = AppDatabase.getInstance().syncedPlaylistDao();
+    private final PendingPlaylistEditDao pendingPlaylistEditDao = AppDatabase.getInstance().pendingPlaylistEditDao();
+    private final PlaylistSnapshotDao playlistSnapshotDao = AppDatabase.getInstance().playlistSnapshotDao();
     private static final java.util.concurrent.ExecutorService SYNCED_WRITES = java.util.concurrent.Executors.newSingleThreadExecutor();
     private static volatile String keptSyncRanFor;
     private static final MutableLiveData<List<Playlist>> allPlaylistsLiveData = new MutableLiveData<>();
@@ -125,6 +135,7 @@ public class PlaylistRepository {
                         playlistSongDao.deleteForPlaylist(cached.getId());
                         pinnedPlaylistDao.unpin(cached.getId());
                         if (server != null) syncedPlaylistDao.remove(cached.getId(), server);
+                        forgetOrderAndEdits(cached.getId());
                         playlistDao.delete(cached);
                         android.util.Log.d("PlaylistRepository", "Removed orphaned playlist " + cached.getId() + " from local DB.");
                     }
@@ -259,6 +270,10 @@ public class PlaylistRepository {
             // thrown away whenever the row already exists. The write paths read this column, so
             // the value this response carried is written back on its own.
             playlistDao.updateVisibility(playlistId, playlist.isUniversal());
+            // Written on every read, before the size check below can skip the song rows, since a
+            // reorder keeps the size and the offline editor needs the order.
+            String server = Preferences.getServer();
+            if (server != null) playlistSnapshotDao.upsert(new PlaylistSnapshot(playlistId, server, idsOf(songs)));
             List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
             if (songs == null || songs.isEmpty()) {
                 if (cached != null && !cached.isEmpty()) {
@@ -288,24 +303,55 @@ public class PlaylistRepository {
 
     private void fetchCachedPlaylistSongs(String playlistId, MutableLiveData<List<Child>> liveData) {
         new Thread(() -> {
-            List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
-            if (cached != null && !cached.isEmpty()) {
-                List<Child> songs = new ArrayList<>();
-                for (PlaylistSong ps : cached) {
-                    Child child = new Child(ps.getId());
-                    child.setTitle(ps.getTitle());
-                    child.setArtist(ps.getArtist());
-                    child.setAlbum(ps.getAlbum());
-                    child.setTrack(ps.getTrack());
-                    child.setCoverArtId(ps.getCoverArtId());
-                    child.setDuration(ps.getDuration());
-                    child.setAlbumId(ps.getAlbumId());
-                    child.setArtistId(ps.getArtistId());
-                    songs.add(child);
-                }
-                liveData.postValue(songs);
-            }
+            List<Child> songs = cachedPlaylistSongs(playlistId);
+            if (songs != null && !songs.isEmpty()) liveData.postValue(songs);
         }).start();
+    }
+
+    /**
+     * The playlist as this phone knows it, from the cache: the pending edit's list when there is
+     * one, otherwise the server's last known order, otherwise the cached rows in whatever order
+     * the table returns them. Null when nothing is cached. Touches the database, so callers have
+     * to be off the main thread.
+     */
+    List<Child> cachedPlaylistSongs(String playlistId) {
+        List<String> order = cachedOrder(playlistId);
+        List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
+        if (cached == null) cached = new ArrayList<>();
+
+        if (order != null) {
+            Map<String, PlaylistSong> byId = new HashMap<>();
+            for (PlaylistSong song : cached) byId.put(song.getId(), song);
+            return OfflinePlaylistOrder.order(order, byId);
+        }
+
+        if (cached.isEmpty()) return null;
+        List<Child> songs = new ArrayList<>();
+        for (PlaylistSong song : cached) songs.add(OfflinePlaylistOrder.toChild(song));
+        return songs;
+    }
+
+    private List<String> cachedOrder(String playlistId) {
+        String server = Preferences.getServer();
+        if (server == null) return null;
+
+        PendingPlaylistEdit pending = pendingPlaylistEditDao.get(playlistId, server);
+        if (pending != null) return pending.getLocalIds();
+
+        PlaylistSnapshot snapshot = playlistSnapshotDao.get(playlistId, server);
+        return snapshot != null ? snapshot.getSongIds() : null;
+    }
+
+    private void forgetOrderAndEdits(String playlistId) {
+        playlistSnapshotDao.removeAllFor(playlistId);
+        pendingPlaylistEditDao.removeAllFor(playlistId);
+    }
+
+    static ArrayList<String> idsOf(List<Child> songs) {
+        ArrayList<String> ids = new ArrayList<>();
+        if (songs == null) return ids;
+        for (Child song : songs) ids.add(song.getId());
+        return ids;
     }
 
     public MutableLiveData<Playlist> getPlaylist(String id) {
@@ -628,6 +674,7 @@ public class PlaylistRepository {
                             new Thread(() -> {
                                 playlistSongDao.deleteForPlaylist(playlistId);
                                 if (server != null) syncedPlaylistDao.remove(playlistId, server);
+                                forgetOrderAndEdits(playlistId);
                                 playlistDao.deleteById(playlistId);
                                 android.util.Log.d("PlaylistRepository", "Deleted playlist " + playlistId + " and its songs from local DB.");
                             }).start();
