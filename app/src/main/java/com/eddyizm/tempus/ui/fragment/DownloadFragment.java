@@ -40,6 +40,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -56,6 +57,8 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     private DownloadViewModel downloadViewModel;
 
     private DownloadHorizontalAdapter downloadHorizontalAdapter;
+    private List<Child> downloadedSongs;
+    private OnBackPressedCallback backCallback;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -114,6 +117,7 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
     private void initDownloadedView() {
         bind.downloadedRecyclerView.setHasFixedSize(true);
+        bind.downloadedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         downloadHorizontalAdapter = new DownloadHorizontalAdapter(this);
         bind.downloadedRecyclerView.setAdapter(downloadHorizontalAdapter);
@@ -129,13 +133,15 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                         bind.downloadedGroupByImageView.setVisibility(View.GONE);
                         bind.downloadFastScrollbar.setVisibility(View.GONE);
                     }
+                    if (backCallback != null) backCallback.setEnabled(false);
                 } else {
                     if (bind != null) {
                         bind.emptyDownloadLayout.setVisibility(View.GONE);
                         bind.downloadDownloadedSector.setVisibility(View.VISIBLE);
                         bind.downloadedGroupByImageView.setVisibility(View.VISIBLE);
 
-                        finishDownloadView(songs);
+                        downloadedSongs = songs;
+                        showDownloads(false);
                     }
                 }
 
@@ -164,41 +170,50 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         bind.downloadedGroupByImageView.setOnClickListener(view -> showPopupMenu(view, R.menu.download_popup_menu));
         bind.downloadedGoBackImageView.setOnClickListener(view -> downloadViewModel.popViewStack());
         bind.downloadedRefreshImageView.setOnClickListener(view -> downloadViewModel.refreshExternalDownloads());
+
+        // Observed once here rather than on every song list, which stacked one more observer,
+        // layout manager and back callback each time the download table changed.
+        downloadViewModel.getViewStack().observe(getViewLifecycleOwner(), stack -> showDownloads(true));
+
+        setupBackPressing();
+        setupShuffleButton();
     }
 
-    private void finishDownloadView(List<Child> songs) {
-        downloadViewModel.getViewStack().observe(getViewLifecycleOwner(), stack -> {
-            bind.downloadedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+    // A new level starts at the top. A song list changing under the same level keeps the scroll
+    // position, which a fresh layout manager on every change used to throw away.
+    private void showDownloads(boolean levelChanged) {
+        ArrayList<DownloadStack> stack = downloadViewModel.getViewStack().getValue();
+        if (bind == null || downloadedSongs == null || downloadedSongs.isEmpty() || stack == null || stack.isEmpty()) return;
 
-            DownloadStack lastLevel = stack.get(stack.size() - 1);
+        List<Child> songs = downloadedSongs;
+        DownloadStack lastLevel = stack.get(stack.size() - 1);
 
-            switch (lastLevel.getId()) {
-                case Constants.DOWNLOAD_TYPE_TRACK:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_ALBUM:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_ARTIST:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_GENRE:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_YEAR:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_PLAYLIST:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-            }
+        switch (lastLevel.getId()) {
+            case Constants.DOWNLOAD_TYPE_TRACK:
+                downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
+                break;
+            case Constants.DOWNLOAD_TYPE_ALBUM:
+                downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
+                break;
+            case Constants.DOWNLOAD_TYPE_ARTIST:
+                downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, lastLevel.getId(), lastLevel.getView(), songs);
+                break;
+            case Constants.DOWNLOAD_TYPE_GENRE:
+                downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
+                break;
+            case Constants.DOWNLOAD_TYPE_YEAR:
+                downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
+                break;
+            case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
+                break;
+        }
 
-            bind.downloadFastScrollbar.setVisibility(downloadHorizontalAdapter.getItemCount() > 1 ? View.VISIBLE : View.GONE);
-            bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
+        if (levelChanged) bind.downloadedRecyclerView.scrollToPosition(0);
 
-            setupBackPressing(stack.size());
-            setupShuffleButton();
-        });
+        bind.downloadFastScrollbar.setVisibility(downloadHorizontalAdapter.getItemCount() > 1 ? View.VISIBLE : View.GONE);
+        bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
+        backCallback.setEnabled(true);
     }
 
     private void setupShuffleButton() {
@@ -213,19 +228,23 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         });
     }
 
-    private void setupBackPressing(int stackSize) {
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+    // Enabled only while a list is shown, as before: an empty screen leaves back to the system.
+    private void setupBackPressing() {
+        backCallback = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
-                if (stackSize > 1) {
-                    downloadViewModel.popViewStack();
-                } else {
-                    activity.navController.navigateUp();
-                }
+                ArrayList<DownloadStack> stack = downloadViewModel.getViewStack().getValue();
 
-                remove();
+                if (stack != null && stack.size() > 1) {
+                    downloadViewModel.popViewStack();
+                } else if (!activity.navController.navigateUp()) {
+                    // Nothing to go up to: hand this press to the system.
+                    setEnabled(false);
+                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
+                }
             }
-        });
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), backCallback);
     }
 
     private void showPopupMenu(View view, int menuResource) {
