@@ -3,10 +3,10 @@ package com.eddyizm.tempus.util;
 import android.content.ContentResolver;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.media3.common.MediaItem;
@@ -14,8 +14,10 @@ import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.MimeTypes;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.HeartRating;
+import androidx.room.InvalidationTracker;
 
 import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.provider.AlbumArtContentProvider;
@@ -28,10 +30,16 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.nio.charset.StandardCharsets;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -485,42 +493,67 @@ public class MappingUtil {
         return child;
     }
 
-    // One second memo of the download table so a mapping burst does one query instead of
-    // a Thread spawn and join per song. A download finishing inside the window streams for it.
-    private static final long DOWNLOAD_CACHE_TTL_MS = 1000;
+    // The completed downloads by song id, for binding rows and mapping queues without touching the
+    // database. Reloaded off the main thread each time the download table changes; until a reload
+    // lands, a download that just finished streams and one just deleted still reads as local.
+    private static final Object DOWNLOAD_CACHE_LOCK = new Object();
+    private static final ExecutorService DOWNLOAD_CACHE_EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final AtomicBoolean downloadCacheReloadQueued = new AtomicBoolean(false);
     private static volatile Map<String, Download> cachedDownloads;
-    private static volatile long cachedDownloadsAt = -1;
 
     public static Map<String, Download> getCachedDownloads() {
         Map<String, Download> cache = cachedDownloads;
-        long now = SystemClock.elapsedRealtime();
-        if (cache != null && cachedDownloadsAt >= 0 && now - cachedDownloadsAt < DOWNLOAD_CACHE_TTL_MS)
-            return cache;
+        if (cache != null) return cache;
 
+        synchronized (DOWNLOAD_CACHE_LOCK) {
+            if (cachedDownloads == null) {
+                // Once per process. Callers need the real answer the first time (a queue restored
+                // offline must map to local files), so this one load is waited for.
+                try {
+                    cachedDownloads = DOWNLOAD_CACHE_EXECUTOR.submit(() -> {
+                        // Registered before the load, so a write landing during it is not missed.
+                        AppDatabase.getInstance().getInvalidationTracker().addObserver(
+                                new InvalidationTracker.Observer("download") {
+                                    @Override
+                                    public void onInvalidated(@NonNull Set<String> tables) {
+                                        reloadCachedDownloads();
+                                    }
+                                });
+                        return loadDownloads();
+                    }).get();
+                } catch (ExecutionException | InterruptedException exception) {
+                    Log.w(TAG, "Failed to load the downloads", exception);
+                    if (exception instanceof InterruptedException) Thread.currentThread().interrupt();
+                    return Collections.emptyMap();
+                }
+            }
+            return cachedDownloads;
+        }
+    }
+
+    // A batch of downloads finishing fires one invalidation each; those arriving while a reload is
+    // queued fold into it. The flag drops before the query, so a write during it queues another.
+    private static void reloadCachedDownloads() {
+        if (!downloadCacheReloadQueued.compareAndSet(false, true)) return;
+        DOWNLOAD_CACHE_EXECUTOR.execute(() -> {
+            downloadCacheReloadQueued.set(false);
+            cachedDownloads = loadDownloads();
+        });
+    }
+
+    private static Map<String, Download> loadDownloads() {
         Map<String, Download> map = new HashMap<>();
-        for (Download download : new DownloadRepository().getAllDownloads()) {
+        for (Download download : AppDatabase.getInstance().downloadDao().getAllSync()) {
             if (download.getId() != null)
                 map.put(download.getId(), download);
         }
-        cachedDownloads = map;
-        cachedDownloadsAt = now;
-        return map;
-    }
-
-    private static Map<String, String> getDownloadUris() {
-        Map<String, Download> downloads = getCachedDownloads();
-        Map<String, String> uris = new HashMap<>();
-        for (Map.Entry<String, Download> entry : downloads.entrySet()) {
-            if (entry.getValue().getDownloadUri() != null && !entry.getValue().getDownloadUri().isEmpty()) {
-                uris.put(entry.getKey(), entry.getValue().getDownloadUri());
-            }
-        }
-        return uris;
+        return Collections.unmodifiableMap(map);
     }
 
     private static Uri getUri(Child media) {
-        String localUri = getDownloadUris().get(media.getId());
-        if (localUri != null) {
+        Download download = getCachedDownloads().get(media.getId());
+        String localUri = download != null ? download.getDownloadUri() : null;
+        if (localUri != null && !localUri.isEmpty()) {
             return Uri.parse(localUri);
         }
 
