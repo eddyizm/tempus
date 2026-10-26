@@ -1,12 +1,15 @@
 package com.eddyizm.tempus.repository;
 
+import androidx.annotation.OptIn;
 import androidx.lifecycle.LiveData;
+import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.database.dao.DownloadDao;
 import com.eddyizm.tempus.database.dao.FavoriteDao;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.Favorite;
+import com.eddyizm.tempus.service.DownloadReconciler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class DownloadRepository {
     private static final ExecutorService DOWNLOAD_WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
@@ -31,9 +37,8 @@ public class DownloadRepository {
     public Map<String, Download> getDownloads(List<String> ids) {
         Map<String, Download> rows = new HashMap<>();
         Thread thread = new Thread(() -> {
-            // SQLite before 3.32 (Android 10 and lower) refuses more than 999 bound arguments.
-            for (int from = 0; from < ids.size(); from += 500) {
-                for (Download row : downloadDao.getByIds(ids.subList(from, Math.min(from + 500, ids.size())))) {
+            for (int from = 0; from < ids.size(); from += DownloadDao.MAX_IDS_PER_QUERY) {
+                for (Download row : downloadDao.getByIds(ids.subList(from, Math.min(from + DownloadDao.MAX_IDS_PER_QUERY, ids.size())))) {
                     rows.put(row.getId(), row);
                 }
             }
@@ -80,20 +85,6 @@ public class DownloadRepository {
         return download;
     }
 
-    public List<Download> getFailedDownloads() {
-        GetFailedDownloadsThreadSafe getDownloads = new GetFailedDownloadsThreadSafe(downloadDao);
-        Thread thread = new Thread(getDownloads);
-        thread.start();
-
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return getDownloads.getDownloads();
-    }
-
     private static class GetAllDownloadsThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private List<Download> downloads;
@@ -132,24 +123,6 @@ public class DownloadRepository {
         }
     }
 
-    private static class GetFailedDownloadsThreadSafe implements Runnable {
-        private final DownloadDao downloadDao;
-        private List<Download> downloads;
-
-        public GetFailedDownloadsThreadSafe(DownloadDao downloadDao) {
-            this.downloadDao = downloadDao;
-        }
-
-        @Override
-        public void run() {
-            downloads = downloadDao.getFailedSync();
-        }
-
-        public List<Download> getDownloads() {
-            return downloads;
-        }
-    }
-
     public void insert(Download download) {
         InsertThreadSafe insert = new InsertThreadSafe(downloadDao, download);
         DOWNLOAD_WRITE_EXECUTOR.execute(insert);
@@ -166,7 +139,7 @@ public class DownloadRepository {
 
         @Override
         public void run() {
-            downloadDao.insert(download);
+            downloadDao.insertKeepingCompleted(download);
         }
     }
 
@@ -284,7 +257,26 @@ public class DownloadRepository {
 
         @Override
         public void run() {
-            downloadDao.deleteByIds(ids);
+            downloadDao.deleteByIdsInChunks(ids);
         }
+    }
+
+    /**
+     * Settles the rows left at state 0 against the Media3 index, see {@link DownloadReconciler}.
+     * Runs on the write executor, so it sees every insert queued before it, and hands what Media3
+     * itself must forget to {@code removeFromIndex} once the rows are written.
+     */
+    @OptIn(markerClass = UnstableApi.class)
+    public void reconcile(Function<String, Integer> indexState,
+                          Predicate<String> isRequested,
+                          Consumer<List<String>> removeFromIndex) {
+        DOWNLOAD_WRITE_EXECUTOR.execute(() -> {
+            DownloadReconciler.Plan plan = DownloadReconciler.plan(downloadDao.getPendingIds(), indexState, isRequested);
+            if (plan.isEmpty()) return;
+
+            downloadDao.updateByIdsInChunks(plan.markCompleted);
+            downloadDao.deleteByIdsInChunks(plan.deleteRows);
+            if (!plan.removeFromIndex.isEmpty()) removeFromIndex.accept(plan.removeFromIndex);
+        });
     }
 }
