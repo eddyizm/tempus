@@ -291,6 +291,24 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         return counts;
     }
 
+    /** What a row stands for (a song id, or the album id, artist id, ... it groups by), to find it again after the list changes. */
+    public Object getRowKey(int position) {
+        if (position < 0 || position >= grouped.size()) return null;
+
+        Function<Child, Object> key = groupKey(view);
+        Child row = grouped.get(position);
+        return key != null ? key.apply(row) : row.getId();
+    }
+
+    public int indexOfRowKey(Object rowKey) {
+        if (rowKey == null) return RecyclerView.NO_POSITION;
+
+        for (int position = 0; position < grouped.size(); position++) {
+            if (rowKey.equals(getRowKey(position))) return position;
+        }
+        return RecyclerView.NO_POSITION;
+    }
+
     @VisibleForTesting
     int getGroupCount(int position) {
         Function<Child, Object> key = groupKey(view);

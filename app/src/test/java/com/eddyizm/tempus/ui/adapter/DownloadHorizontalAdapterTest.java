@@ -178,6 +178,37 @@ public class DownloadHorizontalAdapterTest {
         assertEquals(0, adapter.getGroupCount(0));
     }
 
+    @Test
+    public void aRowIsFoundAgainAfterSongsAreAddedAboveIt() {
+        Child kept = child("2", "Kept", "Album", "Artist", "Rock", 1999);
+        adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_TRACK, null,
+                new ArrayList<>(Arrays.asList(kept)));
+        Object key = adapter.getRowKey(0);
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_TRACK, null, new ArrayList<>(Arrays.asList(
+                child("0", "New", "Album", "Artist", "Rock", 1999),
+                child("1", "Newer", "Album", "Artist", "Rock", 1999),
+                kept)));
+
+        assertEquals(2, adapter.indexOfRowKey(key));
+    }
+
+    @Test
+    public void groupedRowsAreFoundByTheirGroup() {
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, Constants.DOWNLOAD_TYPE_ALBUM, null, new ArrayList<>(Arrays.asList(
+                child("1", "One", "Beta Album", "Artist", "Rock", 1999))));
+        Object key = adapter.getRowKey(0);
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, Constants.DOWNLOAD_TYPE_ALBUM, null, new ArrayList<>(Arrays.asList(
+                child("1", "One", "Beta Album", "Artist", "Rock", 1999),
+                child("2", "Two", "Alpha Album", "Artist", "Rock", 1999))));
+
+        assertEquals("Beta Album", key);
+        assertEquals(1, adapter.indexOfRowKey(key));
+        assertEquals(-1, adapter.indexOfRowKey("Gone Album"));
+        assertNull(adapter.getRowKey(-1));
+    }
+
     // Album rows in order, each followed by its expected count.
     private void assertCounts(Object... albumsAndCounts) {
         assertEquals(albumsAndCounts.length / 2, adapter.getItemCount());
