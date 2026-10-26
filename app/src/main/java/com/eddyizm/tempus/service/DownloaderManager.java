@@ -10,6 +10,7 @@ import androidx.media3.common.util.Log;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.common.util.Util;
 import androidx.media3.datasource.DataSource;
+import androidx.media3.exoplayer.RenderersFactory;
 import androidx.media3.exoplayer.offline.Download;
 import androidx.media3.exoplayer.offline.DownloadCursor;
 import androidx.media3.exoplayer.offline.DownloadHelper;
@@ -50,15 +51,18 @@ public class DownloaderManager {
         loadDownloads();
     }
 
+    // No renderers factory: every download here is a progressive file, which needs no track
+    // selection, while a factory made the helper build a whole renderer set (FFmpeg included) for
+    // each song, which is most of the cost of queueing a large batch.
     private DownloadRequest buildDownloadRequest(MediaItem mediaItem) {
-        return DownloadHelper
-                .forMediaItem(
-                        context,
-                        mediaItem,
-                        DownloadUtil.buildRenderersFactory(context, false),
-                        dataSourceFactory)
-                .getDownloadRequest(Util.getUtf8Bytes(checkNotNull(mediaItem.mediaId)))
-                .copyWithId(mediaItem.mediaId);
+        DownloadHelper helper = DownloadHelper.forMediaItem(context, mediaItem, (RenderersFactory) null, dataSourceFactory);
+        try {
+            return helper
+                    .getDownloadRequest(Util.getUtf8Bytes(checkNotNull(mediaItem.mediaId)))
+                    .copyWithId(mediaItem.mediaId);
+        } finally {
+            helper.release();
+        }
     }
 
     public boolean isDownloaded(String mediaId) {
