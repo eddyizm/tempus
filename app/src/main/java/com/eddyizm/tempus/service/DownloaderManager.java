@@ -3,6 +3,7 @@ package com.eddyizm.tempus.service;
 import static androidx.media3.common.util.Assertions.checkNotNull;
 
 import android.content.Context;
+import android.os.Handler;
 
 import androidx.annotation.Nullable;
 import androidx.media3.common.MediaItem;
@@ -24,6 +25,8 @@ import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.MusicUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -82,13 +85,31 @@ public class DownloaderManager {
         return requested.contains(mediaId);
     }
 
-    public boolean download(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
+    /**
+     * Marks songs as asked for ahead of {@link #download(List, List)}, for a caller that filters on
+     * {@link #isRequested(String)} and then queues off the main thread: a second request arriving in
+     * between must not pick the same songs again. A batch that never reaches the service unmarks them.
+     */
+    public void markRequested(Collection<String> mediaIds) {
+        requested.addAll(mediaIds);
+    }
+
+    public void unmarkRequested(Collection<String> mediaIds) {
+        requested.removeAll(mediaIds);
+    }
+
+    private DownloadRequest prepare(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
         MusicUtil.applyTranscodedDownloadMetadata(download);
         download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
         // Marked before the send so a completion racing this call cannot leave the id behind.
         DownloadRequest request = buildDownloadRequest(mediaItem);
         requested.add(mediaItem.mediaId);
         insertDatabase(download);
+        return request;
+    }
+
+    public boolean download(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
+        DownloadRequest request = prepare(mediaItem, download);
         try {
             DownloadService.sendAddDownload(context, DownloaderService.class, request, false);
         } catch (IllegalStateException e) {
@@ -100,12 +121,34 @@ public class DownloaderManager {
         return true;
     }
 
+    /**
+     * Queues a batch with a single service start. The first song goes through the service, which
+     * starts it if needed; the rest go straight to the DownloadManager the service hands them to
+     * anyway. A start intent per song meant one onStartCommand per song on the main thread. Returns
+     * how many were queued: all of them, or none when the service could not be started.
+     */
     public int download(List<MediaItem> mediaItems, List<com.eddyizm.tempus.model.Download> downloads) {
-        int sent = 0;
-        for (int counter = 0; counter < mediaItems.size(); counter++) {
-            if (download(mediaItems.get(counter), downloads.get(counter))) sent++;
+        if (mediaItems.isEmpty()) return 0;
+
+        if (!download(mediaItems.get(0), downloads.get(0))) {
+            for (MediaItem mediaItem : mediaItems) requested.remove(mediaItem.mediaId);
+            return 0;
         }
-        return sent;
+
+        List<DownloadRequest> requests = new ArrayList<>();
+        for (int counter = 1; counter < mediaItems.size(); counter++) {
+            requests.add(prepare(mediaItems.get(counter), downloads.get(counter)));
+        }
+
+        if (!requests.isEmpty()) {
+            // DownloadManager is only safe to call on its application thread.
+            DownloadManager downloadManager = DownloadUtil.getDownloadManager(context);
+            new Handler(downloadManager.getApplicationLooper()).post(() -> {
+                for (DownloadRequest request : requests) downloadManager.addDownload(request);
+            });
+        }
+
+        return mediaItems.size();
     }
 
     public void remove(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
