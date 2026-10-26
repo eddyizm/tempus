@@ -8,11 +8,11 @@
 ## Build & Development
 
 ### Toolchain
-- **Gradle**: 9.4.1 (wrapper)
+- **Gradle**: 9.8.0 (wrapper)
 - **AGP**: 9.2.1
-- **Kotlin**: 2.2.10
+- **Kotlin**: 2.2.20
 - **Java**: 21 (via Foojay toolchain resolver in `settings.gradle`)
-- **compileSdk/targetSdk**: 36
+- **compileSdk/targetSdk**: 37
 - **minSdk**: 24
 
 ### Key Commands
@@ -53,6 +53,29 @@
 - Generates **universal APKs** (all ABIs in one APK) via `splits.abi`
 - Room schema export to `app/schemas/`
 - Mapping files generated for release builds (used for crash deobfuscation)
+
+### Nix
+`flake.nix` provides a devshell (JDK 21, Android SDK, `ANDROID_HOME`, NixOS-runnable `aapt2`), loaded by direnv via `.envrc` or with `nix develop`.
+
+```bash
+# Devshell commands (./gradlew under the hood; flavor defaults to tempus)
+build-debug [tempus|degoogled]
+build-release [tempus|degoogled]
+emulator-run                                # boot an emulator, install + launch the tempus debug APK
+install-release <tempus|degoogled> <serial> # sign release APK with ~/.android/debug.keystore, adb install
+install-debug <tempus|degoogled> <serial>   # build + install the debug APK (.debug app ID, sits next to the official app)
+update-deps                                 # regenerate deps.json
+
+# Flake outputs (offline, sandboxed builds)
+nix build                                   # unsigned release APKs, both flavors
+nix build .#debug                           # tempus debug APK
+nix flake check                             # unit tests, both flavors
+nix run .#emulator
+nix run .#install-release -- degoogled <serial>
+```
+
+- **`deps.json`** locks every Maven artifact for the Nix builds. Run `update-deps` after any change to Gradle dependencies, plugins, or the tasks the flake runs, or the Nix builds fail offline.
+- `install-release` and `install-debug` require the flavor and the target device serial (see `adb devices`), and stop if that device isn't connected and authorized. Debug-key-signed builds can't update over an official GitHub/F-Droid install.
 
 ## Architecture
 - **Language**: Kotlin (primary), some Java
