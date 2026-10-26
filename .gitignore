@@ -25,3 +25,6 @@ app/degoogled/
 app/play/
 .agents/
 .kotlin
+
+.direnv/
+result*
