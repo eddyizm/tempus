@@ -5,6 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.App;
@@ -28,7 +29,8 @@ import retrofit2.Response;
 
 /**
  * Downloads what is starred on the server and not on the device yet: the starred songs, or every
- * song of the starred albums or artists. Shared by the settings dialogs and the home screen cards.
+ * song of the starred albums or artists. Shared by the settings dialogs, the home screen cards
+ * and starring an album or artist while its sync is on.
  *
  * It waits for the server's answer rather than observing a LiveData, whose first value is a
  * placeholder empty list: the dialogs used to take that placeholder, close, and either queue
@@ -38,7 +40,7 @@ import retrofit2.Response;
  *
  * Call on the main thread.
  */
-@UnstableApi
+@OptIn(markerClass = UnstableApi.class)
 public final class StarredSync {
     private static final String TAG = "StarredSync";
 
@@ -62,6 +64,18 @@ public final class StarredSync {
         ArtistRepository artistRepository = new ArtistRepository();
         fetchStarred(starred -> collect(appContext, starred.getArtists(),
                 (artist, onSongs) -> artistRepository.getArtistAllSongs(artist.getId(), onSongs::accept)));
+    }
+
+    /** One album just starred, while album sync is on. */
+    public static void syncAlbum(Context context, String albumId) {
+        Context appContext = context.getApplicationContext();
+        new AlbumRepository().getAlbumTracks(albumId, songs -> queue(appContext, songs));
+    }
+
+    /** One artist just starred, while artist sync is on. */
+    public static void syncArtist(Context context, String artistId) {
+        Context appContext = context.getApplicationContext();
+        new ArtistRepository().getArtistAllSongs(artistId, songs -> queue(appContext, songs));
     }
 
     // Both repositories always answer, with an empty list when a request fails, so the count reaches zero.

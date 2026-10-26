@@ -4,15 +4,11 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.media3.common.util.UnstableApi;
 
-import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.interfaces.StarCallback;
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
@@ -22,16 +18,14 @@ import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Share;
-import com.eddyizm.tempus.util.DownloadUtil;
-import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.NetworkUtil;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.StarredSync;
 import com.eddyizm.tempus.util.FavoriteRegistry;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AlbumBottomSheetViewModel extends AndroidViewModel {
     private final AlbumRepository albumRepository;
@@ -117,23 +111,8 @@ public class AlbumBottomSheetViewModel extends AndroidViewModel {
 
         album.setStarred(new Date());
         if (Preferences.isStarredAlbumsSyncEnabled()) {
-                AlbumRepository albumRepository = new AlbumRepository();
-                MutableLiveData<List<Child>> tracksLiveData = albumRepository.getAlbumTracks(album.getId());
-                
-                tracksLiveData.observeForever(new Observer<List<Child>>() {
-                    @OptIn(markerClass = UnstableApi.class)
-                    @Override
-                    public void onChanged(List<Child> songs) {
-                        if (songs != null && !songs.isEmpty()) {
-                            DownloadUtil.getDownloadTracker(context).download(
-                                    MappingUtil.mapDownloads(songs),
-                                    songs.stream().map(Download::new).collect(Collectors.toList())
-                            );
-                        }
-                        tracksLiveData.removeObserver(this);
-                    }
-                });
-            }
+            StarredSync.syncAlbum(context, album.getId());
+        }
     }
 
     public LiveData<List<Child>> getAlbumInstantMix(LifecycleOwner owner, AlbumID3 album) {
