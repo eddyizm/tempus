@@ -17,6 +17,7 @@ import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentDownloadBinding;
@@ -179,14 +180,21 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         setupShuffleButton();
     }
 
-    // A new level starts at the top. A song list changing under the same level keeps the scroll
-    // position, which a fresh layout manager on every change used to throw away.
+    // A new level starts at the top. A song list changing under the same level keeps the row the
+    // user was looking at in place, wherever the change put it in the list.
     private void showDownloads(boolean levelChanged) {
         ArrayList<DownloadStack> stack = downloadViewModel.getViewStack().getValue();
         if (bind == null || downloadedSongs == null || downloadedSongs.isEmpty() || stack == null || stack.isEmpty()) return;
 
         List<Child> songs = downloadedSongs;
         DownloadStack lastLevel = stack.get(stack.size() - 1);
+
+        // Remember the row at the top, so songs added above it do not push it down the screen.
+        LinearLayoutManager layoutManager = (LinearLayoutManager) bind.downloadedRecyclerView.getLayoutManager();
+        int firstVisible = layoutManager.findFirstVisibleItemPosition();
+        Object anchorKey = levelChanged ? null : downloadHorizontalAdapter.getRowKey(firstVisible);
+        View anchorView = layoutManager.findViewByPosition(firstVisible);
+        int anchorOffset = anchorView != null ? anchorView.getTop() - bind.downloadedRecyclerView.getPaddingTop() : 0;
 
         switch (lastLevel.getId()) {
             case Constants.DOWNLOAD_TYPE_TRACK:
@@ -209,7 +217,12 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                 break;
         }
 
-        if (levelChanged) bind.downloadedRecyclerView.scrollToPosition(0);
+        if (levelChanged) {
+            bind.downloadedRecyclerView.scrollToPosition(0);
+        } else {
+            int anchorPosition = downloadHorizontalAdapter.indexOfRowKey(anchorKey);
+            if (anchorPosition != RecyclerView.NO_POSITION) layoutManager.scrollToPositionWithOffset(anchorPosition, anchorOffset);
+        }
 
         bind.downloadFastScrollbar.setVisibility(downloadHorizontalAdapter.getItemCount() > 1 ? View.VISIBLE : View.GONE);
         bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
