@@ -18,11 +18,13 @@ import com.eddyizm.tempus.R
 import com.eddyizm.tempus.databinding.FragmentLoginServerBinding
 import com.eddyizm.tempus.interfaces.SystemCallback
 import com.eddyizm.tempus.model.Server
+import com.eddyizm.tempus.model.ServerContext
 import com.eddyizm.tempus.repository.PlaylistRepository
 import com.eddyizm.tempus.repository.SystemRepository
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.CustomHeaders
+import com.eddyizm.tempus.util.ServerHeaders
 import com.eddyizm.tempus.viewmodel.ServerViewModel
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
@@ -59,6 +61,7 @@ class LoginServerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        ServerHeaders.setTestServer(null)
         _binding = null // release from memory
     }
 
@@ -412,6 +415,15 @@ class LoginServerFragment : Fragment() {
     }
 
     private fun testConnection() {
+        if (binding.serverHeadersSwitch.isChecked) {
+            val invalidLines = CustomHeaders.invalidLineNumbers(binding.serverHeadersField.text.toString())
+            if (invalidLines.isNotEmpty()) {
+                binding.serverHeadersField.error =
+                    getString(R.string.error_custom_headers_invalid, invalidLines.first().toString())
+                return
+            }
+        }
+
         binding.testButton.isEnabled = false
         Toast.makeText(
             context,
@@ -419,8 +431,21 @@ class LoginServerFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
 
+        val server = serverList[selectedServerPosition]
+        val customHeaders = if (binding.serverHeadersSwitch.isChecked) {
+            binding.serverHeadersField.text.toString().trim().ifEmpty { null }
+        } else {
+            null
+        }
+        ServerHeaders.setTestServer(
+            ServerContext(
+                addresses = listOf(server.address, server.localAddress),
+                customHeaders = customHeaders
+            )
+        )
+
         SystemRepository().checkUserCredential(
-            App.getSubsonicClientInstance(serverList[selectedServerPosition]),
+            App.getSubsonicClientInstance(server),
             object : SystemCallback {
                 override fun onNetworkFailure(exception: Exception) {
                     showTestResult(
@@ -456,6 +481,7 @@ class LoginServerFragment : Fragment() {
     // The answer can arrive after the screen is gone. The text is resolved past the guard because
     // getString reaches requireContext, which throws once the fragment is detached.
     private fun showTestResult(messageId: Int, detail: String?, duration: Int) {
+        ServerHeaders.setTestServer(null)
         val binding = _binding ?: return
         binding.testButton.isEnabled = true
 

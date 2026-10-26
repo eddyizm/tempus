@@ -136,8 +136,6 @@ The local address gets the headers too, like it already gets your Subsonic crede
 
 After editing the headers of the server you are signed in to, sign out and back in for them to take effect.
 
-**Test** in the server editor sends the headers only for the server you are signed in to. For a new server behind a proxy that requires them, Test fails; sign in to the server instead.
-
 Devices that fetch the music themselves cannot send them:
 
 - Chromecast and UPnP/DLNA renderers (see [Playing on another device](#playing-on-another-device)) get a plain stream URL, so they will be refused by a proxy that requires the headers.

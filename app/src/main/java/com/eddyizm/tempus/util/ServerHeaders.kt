@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.util
 
 import android.util.Log
+import com.eddyizm.tempus.App
 import com.eddyizm.tempus.model.ServerContext
 import okhttp3.Response
 import java.io.IOException
@@ -46,6 +47,9 @@ object ServerHeaders {
 
     private val sources = CopyOnWriteArrayList<HeaderSource>()
 
+    @Volatile
+    private var testServer: ServerContext? = null
+
     @JvmStatic
     fun register(source: HeaderSource) {
         sources.addIfAbsent(source)
@@ -54,6 +58,15 @@ object ServerHeaders {
     @JvmStatic
     fun unregister(source: HeaderSource) {
         sources.remove(source)
+    }
+
+    /**
+     * Temporarily supplies [server]'s headers to [getHeadersForActiveServer] while a connection
+     * test is in flight, before the server is signed in to. Pass `null` when the test finishes.
+     */
+    @JvmStatic
+    fun setTestServer(server: ServerContext?) {
+        testServer = server
     }
 
     /** Merged headers for [url] if it belongs to [server], otherwise empty. */
@@ -83,9 +96,14 @@ object ServerHeaders {
         return merged
     }
 
-    /** Headers of the signed-in server if [url] points at it, otherwise empty. */
+    /** Headers of the signed-in server (or the server under [setTestServer]) if [url] points at it, otherwise empty. */
     @JvmStatic
     fun getHeadersForActiveServer(url: String?): Map<String, String> {
+        val test = testServer
+        if (test != null && CustomHeaders.isServerOrigin(url, test.addresses)) {
+            return getHeadersForUrl(url, test)
+        }
+        if (App.getInstance() == null) return emptyMap()
         val raw = Preferences.getCustomHeaders()
         if (sources.isEmpty() && raw.isNullOrBlank()) return emptyMap()
         return getHeadersForUrl(

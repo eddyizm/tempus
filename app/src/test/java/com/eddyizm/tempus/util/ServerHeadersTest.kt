@@ -27,6 +27,7 @@ class ServerHeadersTest {
     @After
     fun tearDown() {
         registered.forEach { ServerHeaders.unregister(it) }
+        ServerHeaders.setTestServer(null)
     }
 
     @Test
@@ -184,5 +185,27 @@ class ServerHeadersTest {
     fun interceptor_replacesExistingValueOfSameName() {
         val request = run("https://music.example.com/x", mapOf("X-Tempus-Test" to "old"))
         assertEquals(listOf("letmein"), request.headers("X-Tempus-Test"))
+    }
+
+    @Test
+    fun setTestServer_suppliesHeadersForTestOriginUntilCleared() {
+        ServerHeaders.setTestServer(interceptorServer)
+        val activeInterceptor = ServerHeaders.createInterceptor()
+
+        val pingChain = RecordingChain(Request.Builder().url("https://music.example.com/rest/ping.view").build())
+        activeInterceptor.intercept(pingChain)
+        assertEquals("letmein", pingChain.proceeded!!.header("X-Tempus-Test"))
+        assertEquals("abc", pingChain.proceeded!!.header("CF-Access-Client-Id"))
+
+        // Other origins get nothing while the test is in flight.
+        val otherChain = RecordingChain(Request.Builder().url("https://other.example.com/rest/ping.view").build())
+        activeInterceptor.intercept(otherChain)
+        assertNull(otherChain.proceeded!!.header("X-Tempus-Test"))
+
+        // Clearing testServer stops sending the headers.
+        ServerHeaders.setTestServer(null)
+        val afterClearChain = RecordingChain(Request.Builder().url("https://music.example.com/rest/ping.view").build())
+        activeInterceptor.intercept(afterClearChain)
+        assertNull(afterClearChain.proceeded!!.header("X-Tempus-Test"))
     }
 }
