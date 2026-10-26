@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -43,7 +44,27 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
         if (!handles(model)) {
             return null;
         }
-        return new LoadData<>(new ObjectKey(model), new IPv6StreamFetcher(client, model));
+        return new LoadData<>(new ObjectKey(cacheKey(model)), new IPv6StreamFetcher(client, model));
+    }
+
+    /**
+     * The URL without the Subsonic auth parameters, as the key Glide caches the image under.
+     *
+     * With a password login the salt is a new random value each time the client is built, at every
+     * launch and every switch between the local and remote address. Keyed on the full URL, every
+     * cover missed the disk cache after a restart, was fetched again, and showed a placeholder
+     * when the server could not be reached. Leaving the password out also keeps it out of the key.
+     */
+    static String cacheKey(String model) {
+        HttpUrl url = HttpUrl.parse(model);
+        if (url == null) return model;
+
+        return url.newBuilder()
+                .removeAllQueryParameters("s")
+                .removeAllQueryParameters("t")
+                .removeAllQueryParameters("p")
+                .build()
+                .toString();
     }
 
     private static class IPv6StreamFetcher implements DataFetcher<InputStream> {
