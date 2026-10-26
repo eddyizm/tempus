@@ -3,6 +3,7 @@ package com.eddyizm.tempus.service;
 import static androidx.media3.common.util.Assertions.checkNotNull;
 
 import android.content.Context;
+import android.os.Handler;
 
 import androidx.annotation.Nullable;
 import androidx.media3.common.MediaItem;
@@ -23,8 +24,8 @@ import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.MusicUtil;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,8 +36,10 @@ public class DownloaderManager {
     private final Context context;
     private final DataSource.Factory dataSourceFactory;
     private final DownloadIndex downloadIndex;
+    private final DownloadManager downloadManager;
 
-    private static HashMap<String, Download> downloads;
+    // Read off the main thread too, by the startup reconciliation.
+    private static final Map<String, Download> downloads = new ConcurrentHashMap<>();
     // Handed to the service and not yet finished, the map above only learns of a download once it completes.
     private static final Set<String> requested = ConcurrentHashMap.newKeySet();
 
@@ -44,7 +47,7 @@ public class DownloaderManager {
         this.context = context.getApplicationContext();
         this.dataSourceFactory = dataSourceFactory;
 
-        downloads = new HashMap<>();
+        this.downloadManager = downloadManager;
         downloadIndex = downloadManager.getDownloadIndex();
 
         loadDownloads();
@@ -133,11 +136,27 @@ public class DownloaderManager {
             return;
         }
 
-        for (com.eddyizm.tempus.model.Download orphan : getDownloadRepository().getFailedDownloads()) {
-            if (!downloads.containsKey(orphan.getId()) && !requested.contains(orphan.getId())) {
-                getDownloadRepository().deleteFailed(orphan.getId());
+        // The lookups read the live map, so a download that completes before this runs still counts.
+        getDownloadRepository().reconcile(
+                id -> {
+                    @Nullable Download download = downloads.get(id);
+                    return download != null ? download.state : null;
+                },
+                requested::contains,
+                this::removeFromIndex);
+    }
+
+    // DownloadManager is only safe to call on its application thread.
+    private void removeFromIndex(List<String> ids) {
+        Log.i(TAG, "Dropping " + ids.size() + " failed downloads from the index");
+        new Handler(downloadManager.getApplicationLooper()).post(() -> {
+            for (String id : ids) {
+                // Asked for again since the plan was made.
+                if (requested.contains(id)) continue;
+                downloads.remove(id);
+                downloadManager.removeDownload(id);
             }
-        }
+        });
     }
 
     public static String getDownloadNotificationMessage(String id) {
