@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.media3.common.util.UnstableApi;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.IntConsumer;
 import java.util.stream.Collectors;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +48,6 @@ import okhttp3.OkHttpClient;
 
 @UnstableApi
 public final class DownloadUtil {
-    private static final String TAG = "DownloadUtil";
 
     public static final String DOWNLOAD_NOTIFICATION_CHANNEL_ID = "download_channel";
     public static final String DOWNLOAD_NOTIFICATION_SUCCESSFUL_GROUP = "com.eddyizm.tempus.SuccessfulDownload";
@@ -336,9 +333,6 @@ public final class DownloadUtil {
         return getStreamingCache(context).getCacheSpace();
     }
 
-    // Mapping a song looks it up in the database, and a starred sync can be thousands of songs.
-    private static final ExecutorService DOWNLOAD_QUEUE_EXECUTOR = Executors.newSingleThreadExecutor();
-
     /**
      * Queues the tracks neither on the device nor already asked for. Reports on the main thread how
      * many reached the download service, or a negative number when every start was refused. Call on the main thread.
@@ -355,34 +349,18 @@ public final class DownloadUtil {
             List<Child> missing = byId.values().stream()
                     .filter(song -> !manager.isDownloaded(song.getId()) && !manager.isRequested(song.getId()))
                     .collect(Collectors.toList());
-            if (missing.isEmpty()) {
-                onQueued.accept(0);
-                return;
-            }
-
-            List<String> missingIds = missing.stream().map(Child::getId).collect(Collectors.toList());
-            manager.markRequested(missingIds);
-
-            DOWNLOAD_QUEUE_EXECUTOR.execute(() -> {
-                int sent;
-                try {
-                    sent = manager.download(
-                            MappingUtil.mapDownloads(missing),
-                            missing.stream().map(child -> {
-                                Download toDownload = new Download(child);
-                                toDownload.setPlaylistId(playlistId);
-                                toDownload.setPlaylistName(playlistName);
-                                return toDownload;
-                            }).collect(Collectors.toList())
-                    );
-                } catch (RuntimeException exception) {
-                    Log.w(TAG, "Failed to queue " + missing.size() + " downloads", exception);
-                    manager.unmarkRequested(missingIds);
-                    sent = 0;
-                }
-                int reported = sent == 0 ? -1 : sent;
-                main.post(() -> onQueued.accept(reported));
-            });
+            // Queued right here, while the app is on screen: the download service has to come to the
+            // foreground now, and Android refuses that a few seconds after the app leaves the screen.
+            int sent = manager.download(
+                    MappingUtil.mapDownloads(missing),
+                    missing.stream().map(child -> {
+                        Download toDownload = new Download(child);
+                        toDownload.setPlaylistId(playlistId);
+                        toDownload.setPlaylistName(playlistName);
+                        return toDownload;
+                    }).collect(Collectors.toList())
+            );
+            onQueued.accept(sent == 0 && !missing.isEmpty() ? -1 : sent);
         } else {
             // The folder index only builds off main. While a rebuild runs it is empty and every track reads as
             // missing, and the writer's own size check is what keeps a file already there from being written again.

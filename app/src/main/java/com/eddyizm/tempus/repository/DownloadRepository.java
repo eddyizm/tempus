@@ -9,7 +9,9 @@ import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.Favorite;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -20,6 +22,31 @@ public class DownloadRepository {
 
     public LiveData<List<Download>> getLiveDownload() {
         return downloadDao.getAll();
+    }
+
+    /**
+     * The rows of these songs, in any state, keyed by id: one thread for the whole list rather
+     * than {@link #getDownload(String)}'s thread per song.
+     */
+    public Map<String, Download> getDownloads(List<String> ids) {
+        Map<String, Download> rows = new HashMap<>();
+        Thread thread = new Thread(() -> {
+            // SQLite before 3.32 (Android 10 and lower) refuses more than 999 bound arguments.
+            for (int from = 0; from < ids.size(); from += 500) {
+                for (Download row : downloadDao.getByIds(ids.subList(from, Math.min(from + 500, ids.size())))) {
+                    rows.put(row.getId(), row);
+                }
+            }
+        });
+        thread.start();
+
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return rows;
     }
 
     public List<Download> getAllDownloads() {
