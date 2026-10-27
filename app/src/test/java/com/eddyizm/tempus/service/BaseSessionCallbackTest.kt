@@ -91,6 +91,53 @@ class BaseSessionCallbackTest {
     }
 
     @Test
+    fun onConnect_legacyControllersDoNotReceiveTimelineCommand() {
+        val context = mock<Context>()
+        val service = mock<BaseMediaService>()
+        val session = mock<MediaSession>()
+        val controller = mock<ControllerInfo>()
+        val player = mock<Player>()
+
+        whenever(context.getString(anyInt())).thenReturn("mock_string")
+        whenever(session.player).thenReturn(player)
+        whenever(session.isMediaNotificationController(any())).thenReturn(false)
+        whenever(session.isAutomotiveController(any())).thenReturn(false)
+        whenever(session.isAutoCompanionController(any())).thenReturn(false)
+        whenever(controller.controllerVersion)
+            .thenReturn(ControllerInfo.LEGACY_CONTROLLER_VERSION)
+
+        mockConstruction(SessionCommand::class.java).use {
+            val callback = BaseSessionCallback(context, service)
+            val result = callback.onConnect(session, controller)
+            assertEquals(callback.legacyPlayerCommands, result.availablePlayerCommands)
+        }
+    }
+
+    @Test
+    fun onConnect_modernControllersKeepTimelineCommand() {
+        val context = mock<Context>()
+        val service = mock<BaseMediaService>()
+        val session = mock<MediaSession>()
+        val controller = mock<ControllerInfo>()
+        val player = mock<Player>()
+
+        whenever(context.getString(anyInt())).thenReturn("mock_string")
+        whenever(session.player).thenReturn(player)
+        whenever(session.isMediaNotificationController(any())).thenReturn(false)
+        whenever(session.isAutomotiveController(any())).thenReturn(false)
+        whenever(session.isAutoCompanionController(any())).thenReturn(false)
+        whenever(controller.controllerVersion).thenReturn(Int.MAX_VALUE)
+
+        mockConstruction(SessionCommand::class.java).use {
+            val result = BaseSessionCallback(context, service).onConnect(session, controller)
+            assertEquals(
+                MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS,
+                result.availablePlayerCommands
+            )
+        }
+    }
+
+    @Test
     fun handlePlayerChanged_beforeOnConnect_doesNotRegisterListener() {
         val context = mock<Context>()
         val service = mock<BaseMediaService>()
