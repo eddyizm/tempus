@@ -12,6 +12,7 @@ import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
+import com.eddyizm.tempus.service.DownloaderManager;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
@@ -36,7 +37,9 @@ import retrofit2.Response;
  * placeholder empty list: the dialogs used to take that placeholder, close, and either queue
  * nothing or queue the whole list later from an observer left on the activity. The work holds only
  * the application context, so it finishes after the dialog or card that started it is gone, and
- * DownloadUtil.downloadMissing skips what is already downloaded or already asked for.
+ * DownloadUtil.downloadMissing skips what is already downloaded or already asked for. A sync that
+ * is still waiting on the server when every download is removed queues nothing (see
+ * DownloaderManager.getRemovalGeneration).
  *
  * Call on the main thread.
  */
@@ -49,37 +52,42 @@ public final class StarredSync {
 
     public static void syncSongs(Context context) {
         Context appContext = context.getApplicationContext();
-        fetchStarred(starred -> queue(appContext, starred.getSongs()));
+        int generation = DownloaderManager.getRemovalGeneration();
+        fetchStarred(starred -> queue(appContext, starred.getSongs(), generation));
     }
 
     public static void syncAlbums(Context context) {
         Context appContext = context.getApplicationContext();
         AlbumRepository albumRepository = new AlbumRepository();
-        fetchStarred(starred -> collect(appContext, starred.getAlbums(),
+        int generation = DownloaderManager.getRemovalGeneration();
+        fetchStarred(starred -> collect(appContext, starred.getAlbums(), generation,
                 (album, onSongs) -> albumRepository.getAlbumTracks(album.getId(), onSongs::accept)));
     }
 
     public static void syncArtists(Context context) {
         Context appContext = context.getApplicationContext();
         ArtistRepository artistRepository = new ArtistRepository();
-        fetchStarred(starred -> collect(appContext, starred.getArtists(),
+        int generation = DownloaderManager.getRemovalGeneration();
+        fetchStarred(starred -> collect(appContext, starred.getArtists(), generation,
                 (artist, onSongs) -> artistRepository.getArtistAllSongs(artist.getId(), onSongs::accept)));
     }
 
     /** One album just starred, while album sync is on. */
     public static void syncAlbum(Context context, String albumId) {
         Context appContext = context.getApplicationContext();
-        new AlbumRepository().getAlbumTracks(albumId, songs -> queue(appContext, songs));
+        int generation = DownloaderManager.getRemovalGeneration();
+        new AlbumRepository().getAlbumTracks(albumId, songs -> queue(appContext, songs, generation));
     }
 
     /** One artist just starred, while artist sync is on. */
     public static void syncArtist(Context context, String artistId) {
         Context appContext = context.getApplicationContext();
-        new ArtistRepository().getArtistAllSongs(artistId, songs -> queue(appContext, songs));
+        int generation = DownloaderManager.getRemovalGeneration();
+        new ArtistRepository().getArtistAllSongs(artistId, songs -> queue(appContext, songs, generation));
     }
 
     // Both repositories always answer, with an empty list when a request fails, so the count reaches zero.
-    private static <T> void collect(Context context, List<T> items, BiConsumer<T, Consumer<List<Child>>> songsOf) {
+    private static <T> void collect(Context context, List<T> items, int generation, BiConsumer<T, Consumer<List<Child>>> songsOf) {
         if (items == null || items.isEmpty()) return;
 
         List<Child> songs = new ArrayList<>();
@@ -87,7 +95,7 @@ public final class StarredSync {
         for (T item : items) {
             songsOf.accept(item, itemSongs -> {
                 if (itemSongs != null) songs.addAll(itemSongs);
-                if (--remaining[0] == 0) queue(context, songs);
+                if (--remaining[0] == 0) queue(context, songs, generation);
             });
         }
     }
@@ -117,8 +125,13 @@ public final class StarredSync {
                 });
     }
 
-    private static void queue(Context context, List<Child> songs) {
+    /** @param generation {@link DownloaderManager#getRemovalGeneration()} when the sync started. */
+    private static void queue(Context context, List<Child> songs, int generation) {
         if (songs == null || songs.isEmpty()) return;
+        if (generation != DownloaderManager.getRemovalGeneration()) {
+            Log.i(TAG, "Every download was removed during the sync; not queueing " + songs.size() + " songs");
+            return;
+        }
 
         DownloadUtil.downloadMissing(context, songs, null, null, queued -> {
             if (queued <= 0) return;

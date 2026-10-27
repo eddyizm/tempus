@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @UnstableApi
 public class DownloaderManager {
@@ -43,6 +44,7 @@ public class DownloaderManager {
     private static HashMap<String, Download> downloads;
     // Handed to the service and not yet finished, the map above only learns of a download once it completes.
     private static final Set<String> requested = ConcurrentHashMap.newKeySet();
+    private static final AtomicInteger removalGeneration = new AtomicInteger();
 
     public DownloaderManager(Context context, DataSource.Factory dataSourceFactory, DownloadManager downloadManager) {
         this.context = context.getApplicationContext();
@@ -152,7 +154,18 @@ public class DownloaderManager {
         }
     }
 
+    /**
+     * Changes every time every download is removed. A caller that waits on the server before
+     * queueing reads it first and queues nothing if it changed meanwhile, so a sync started before
+     * "Delete saved items" cannot download everything again after it.
+     */
+    public static int getRemovalGeneration() {
+        return removalGeneration.get();
+    }
+
     public void removeAll() {
+        removalGeneration.incrementAndGet();
+        requested.clear();
         DownloadService.sendRemoveAllDownloads(context, DownloaderService.class, false);
         deleteAllDatabase();
         DownloadUtil.eraseDownloadFolder(context);
