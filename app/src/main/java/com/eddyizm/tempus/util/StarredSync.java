@@ -33,13 +33,10 @@ import retrofit2.Response;
  * song of the starred albums or artists. Shared by the settings dialogs, the home screen cards
  * and starring an album or artist while its sync is on.
  *
- * It waits for the server's answer rather than observing a LiveData, whose first value is a
- * placeholder empty list: the dialogs used to take that placeholder, close, and either queue
- * nothing or queue the whole list later from an observer left on the activity. The work holds only
- * the application context, so it finishes after the dialog or card that started it is gone, and
- * DownloadUtil.downloadMissing skips what is already downloaded or already asked for. A sync that
- * is still waiting on the server when every download is removed queues nothing (see
- * DownloaderManager.getRemovalGeneration).
+ * The work holds only the application context, so it finishes after the dialog or card that
+ * started it is gone, and DownloadUtil.downloadMissing skips what is already downloaded or already
+ * asked for. A sync that is still waiting on the server when every download is removed queues
+ * nothing (see DownloaderManager.getRemovalGeneration).
  *
  * Call on the main thread.
  */
@@ -86,7 +83,12 @@ public final class StarredSync {
         new ArtistRepository().getArtistAllSongs(artistId, songs -> queue(appContext, songs, generation));
     }
 
-    // Both repositories always answer, with an empty list when a request fails, so the count reaches zero.
+    /**
+     * Gathers the songs of every album or artist, then queues them all at once.
+     *
+     * @param songsOf fetches one item's songs. Both repositories always answer, with an empty list
+     *                when a request fails, so the count of pending items always reaches zero.
+     */
     private static <T> void collect(Context context, List<T> items, int generation, BiConsumer<T, Consumer<List<Child>>> songsOf) {
         if (items == null || items.isEmpty()) return;
 

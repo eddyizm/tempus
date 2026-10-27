@@ -372,7 +372,6 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             }
         });
 
-        // One call per tap: an observer per tap used to stay on the list and queue it again on every later emission.
         bind.homeSyncStarredDownload.setOnClickListener(v -> {
             StarredSync.syncSongs(requireContext());
             bind.homeSyncStarredCard.setVisibility(View.GONE);

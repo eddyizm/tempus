@@ -56,9 +56,11 @@ public class DownloaderManager {
         loadDownloads();
     }
 
-    // No renderers factory: every download here is a progressive file, which needs no track
-    // selection, while a factory made the helper build a whole renderer set (FFmpeg included) for
-    // each song, which is most of the cost of queueing a large batch.
+    /**
+     * Builds the request without a renderers factory: every download here is a progressive file,
+     * which needs no track selection, while a factory made the helper build a whole renderer set
+     * (FFmpeg included) for each song.
+     */
     private DownloadRequest buildDownloadRequest(MediaItem mediaItem) {
         DownloadHelper helper = DownloadHelper.forMediaItem(context, mediaItem, (RenderersFactory) null, dataSourceFactory);
         try {
@@ -120,7 +122,8 @@ public class DownloaderManager {
      * Queues a batch with a single service start. The first song goes through the service, which
      * starts it if needed; the rest go straight to the DownloadManager the service hands them to
      * anyway. A start intent per song meant one onStartCommand per song on the main thread. Returns
-     * how many were queued: all of them, or none when the service could not be started.
+     * how many were queued, or none when the service could not be started. A song that cannot be
+     * prepared is left out without stopping the others.
      */
     public int download(List<MediaItem> mediaItems, List<com.eddyizm.tempus.model.Download> downloads) {
         if (mediaItems.isEmpty()) return 0;
@@ -129,7 +132,13 @@ public class DownloaderManager {
 
         List<DownloadRequest> requests = new ArrayList<>();
         for (int counter = 1; counter < mediaItems.size(); counter++) {
-            requests.add(prepare(mediaItems.get(counter), downloads.get(counter)));
+            MediaItem mediaItem = mediaItems.get(counter);
+            try {
+                requests.add(prepare(mediaItem, downloads.get(counter)));
+            } catch (RuntimeException e) {
+                requested.remove(mediaItem.mediaId);
+                Log.w(TAG, "Download not queued for " + mediaItem.mediaId, e);
+            }
         }
 
         if (!requests.isEmpty()) {
@@ -145,7 +154,7 @@ public class DownloaderManager {
             }
         }
 
-        return mediaItems.size();
+        return 1 + requests.size();
     }
 
     public void remove(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
