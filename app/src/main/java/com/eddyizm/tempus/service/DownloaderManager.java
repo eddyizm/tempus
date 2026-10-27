@@ -97,10 +97,16 @@ public class DownloaderManager {
         return request;
     }
 
+    /**
+     * Starts the service in the foreground right away. Android refuses that from the background
+     * unless the app is exempt (for instance with battery optimization off), and the refusal then
+     * comes here, where it is caught. Started in the background, the service promoted itself to the
+     * foreground later, where the same refusal crashed the app.
+     */
     public boolean download(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
         DownloadRequest request = prepare(mediaItem, download);
         try {
-            DownloadService.sendAddDownload(context, DownloaderService.class, request, false);
+            DownloadService.sendAddDownload(context, DownloaderService.class, request, true);
         } catch (IllegalStateException e) {
             requested.remove(mediaItem.mediaId);
             deleteDatabase(mediaItem.mediaId);

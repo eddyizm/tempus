@@ -333,9 +333,26 @@ public final class DownloadUtil {
         return getStreamingCache(context).getCacheSpace();
     }
 
+    // Batches the download service could not be started for. Main thread only.
+    private static final List<Runnable> deferredBatches = new ArrayList<>();
+
     /**
-     * Queues the tracks neither on the device nor already asked for. Reports on the main thread how
-     * many reached the download service, or a negative number when every start was refused. Call on the main thread.
+     * Queues the batches {@link #downloadMissing} kept because Android refused to start the
+     * download service. Call when the app is back on screen. A batch is dropped if every download
+     * was removed since it was kept.
+     */
+    public static void queueDeferredDownloads() {
+        if (deferredBatches.isEmpty()) return;
+
+        List<Runnable> batches = new ArrayList<>(deferredBatches);
+        deferredBatches.clear();
+        batches.forEach(Runnable::run);
+    }
+
+    /**
+     * Queues the tracks neither on the device nor already asked for, and reports on the main thread
+     * how many reached the download service. When Android refuses to start the service, the batch is
+     * kept for {@link #queueDeferredDownloads()} and reported then. Call on the main thread.
      */
     public static void downloadMissing(Context context, List<Child> songs, String playlistId, String playlistName, IntConsumer onQueued) {
         // A playlist can list the same track twice.
@@ -360,7 +377,17 @@ public final class DownloadUtil {
                         return toDownload;
                     }).collect(Collectors.toList())
             );
-            onQueued.accept(sent == 0 && !missing.isEmpty() ? -1 : sent);
+            if (sent == 0 && !missing.isEmpty()) {
+                // Android refused to start the service, as it does while the app is in the background.
+                int generation = DownloaderManager.getRemovalGeneration();
+                deferredBatches.add(() -> {
+                    if (generation == DownloaderManager.getRemovalGeneration()) {
+                        downloadMissing(appContext, songs, playlistId, playlistName, onQueued);
+                    }
+                });
+                return;
+            }
+            onQueued.accept(sent);
         } else {
             // The folder index only builds off main. While a rebuild runs it is empty and every track reads as
             // missing, and the writer's own size check is what keeps a file already there from being written again.
