@@ -371,6 +371,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     scheduleQueueSync()
                 }
                 ReplayGainUtil.applyGain(player, mediaItem)
+                try {
+                    ReplayGainUtil.prefetchQueueGains(player)
+                } catch (t: Throwable) {
+                    Log.w(TAG, "prefetchQueueGains failed: $t")
+                }
 
                 // --- Add for AA : Constants.AA_START_INDEX if présent ---
                 val extras = mediaItem.mediaMetadata.extras
