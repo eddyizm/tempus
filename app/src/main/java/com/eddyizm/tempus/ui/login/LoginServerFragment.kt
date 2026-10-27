@@ -40,6 +40,7 @@ class LoginServerFragment : Fragment() {
     private lateinit var serverList: List<Server>
     private var selectedServerPosition: Int = 0
     private var isInitialSyncDone = false
+    private var currentTestId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +62,7 @@ class LoginServerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        currentTestId++
         ServerHeaders.setTestServer(null)
         _binding = null // release from memory
     }
@@ -333,18 +335,7 @@ class LoginServerFragment : Fragment() {
                 serverId = serverList[selectedServerPosition].serverId
             }
 
-            val newServer = Server(
-                serverId = serverId,
-                serverName = binding.serverNameField.text.toString(),
-                username = binding.serverUserField.text.toString(),
-                password = binding.serverPasswordField.text.toString(),
-                address = binding.serverPublicUrlField.text.toString(),
-                localAddress = binding.serverLocalUrlField.text.toString(),
-                timestamp = System.currentTimeMillis(),
-                isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
-                clientCert = binding.serverCertField.text.toString(),
-                customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null }
-            )
+            val newServer = serverFromForm(serverId)
 
             if (selectedServerPosition == 0) {
                 serverViewModel.insertServer(newServer)
@@ -414,15 +405,25 @@ class LoginServerFragment : Fragment() {
         return true
     }
 
+    private fun serverFromForm(serverId: String): Server = Server(
+        serverId = serverId,
+        serverName = binding.serverNameField.text.toString(),
+        username = binding.serverUserField.text.toString(),
+        password = binding.serverPasswordField.text.toString(),
+        address = binding.serverPublicUrlField.text.toString(),
+        localAddress = binding.serverLocalUrlField.text.toString(),
+        timestamp = System.currentTimeMillis(),
+        isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
+        clientCert = binding.serverCertField.text.toString(),
+        customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null }
+    )
+
+    // TODO: Test is only enabled for a saved server. It reads the form, so it could also run for
+    //  "Add new server" before the first save.
+    // TODO: The test client does not use the form's client certificate; TLS uses the certificate
+    //  already loaded by ClientCertManager.
     private fun testConnection() {
-        if (binding.serverHeadersSwitch.isChecked) {
-            val invalidLines = CustomHeaders.invalidLineNumbers(binding.serverHeadersField.text.toString())
-            if (invalidLines.isNotEmpty()) {
-                binding.serverHeadersField.error =
-                    getString(R.string.error_custom_headers_invalid, invalidLines.first().toString())
-                return
-            }
-        }
+        if (!inputSanitization()) return
 
         binding.testButton.isEnabled = false
         Toast.makeText(
@@ -431,24 +432,21 @@ class LoginServerFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
 
-        val server = serverList[selectedServerPosition]
-        val customHeaders = if (binding.serverHeadersSwitch.isChecked) {
-            binding.serverHeadersField.text.toString().trim().ifEmpty { null }
-        } else {
-            null
-        }
-        ServerHeaders.setTestServer(
-            ServerContext(
-                addresses = listOf(server.address, server.localAddress),
-                customHeaders = customHeaders
-            )
+        val server = serverFromForm(serverList[selectedServerPosition].serverId)
+        val testServer = ServerContext(
+            addresses = listOf(server.address, server.localAddress),
+            customHeaders = server.customHeaders
         )
+        val testId = ++currentTestId
+        ServerHeaders.setTestServer(testServer)
 
         SystemRepository().checkUserCredential(
             App.getSubsonicClientInstance(server),
             object : SystemCallback {
                 override fun onNetworkFailure(exception: Exception) {
                     showTestResult(
+                        testId,
+                        testServer,
                         R.string.la_server_toast_connection_error,
                         exception.message,
                         Toast.LENGTH_LONG
@@ -464,11 +462,13 @@ class LoginServerFragment : Fragment() {
                     else
                         R.string.la_server_toast_connection_error
 
-                    showTestResult(messageId, exception.message, Toast.LENGTH_LONG)
+                    showTestResult(testId, testServer, messageId, exception.message, Toast.LENGTH_LONG)
                 }
 
                 override fun onSuccess(password: String?, token: String?, salt: String?) {
                     showTestResult(
+                        testId,
+                        testServer,
                         R.string.la_server_toast_connection_success,
                         null,
                         Toast.LENGTH_SHORT
@@ -478,10 +478,18 @@ class LoginServerFragment : Fragment() {
         )
     }
 
-    // The answer can arrive after the screen is gone. The text is resolved past the guard because
-    // getString reaches requireContext, which throws once the fragment is detached.
-    private fun showTestResult(messageId: Int, detail: String?, duration: Int) {
-        ServerHeaders.setTestServer(null)
+    // The answer can arrive after the screen is gone, or after a newer test started. The text is
+    // resolved past the guard because getString reaches requireContext, which throws once the
+    // fragment is detached.
+    private fun showTestResult(
+        testId: Int,
+        testServer: ServerContext,
+        messageId: Int,
+        detail: String?,
+        duration: Int
+    ) {
+        ServerHeaders.clearTestServer(testServer)
+        if (testId != currentTestId) return
         val binding = _binding ?: return
         binding.testButton.isEnabled = true
 

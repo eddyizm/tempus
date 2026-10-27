@@ -1,7 +1,6 @@
 package com.eddyizm.tempus.util
 
 import android.util.Log
-import com.eddyizm.tempus.App
 import com.eddyizm.tempus.model.ServerContext
 import okhttp3.Response
 import java.io.IOException
@@ -62,11 +61,18 @@ object ServerHeaders {
 
     /**
      * Temporarily supplies [server]'s headers to [getHeadersForActiveServer] while a connection
-     * test is in flight, before the server is signed in to. Pass `null` when the test finishes.
+     * test is in flight, before the server is signed in to. Clear it with [clearTestServer].
      */
     @JvmStatic
     fun setTestServer(server: ServerContext?) {
         testServer = server
+    }
+
+    /** Clears the test server, but only if it is still [server], so a late result can't clear a newer test. */
+    @JvmStatic
+    @Synchronized
+    fun clearTestServer(server: ServerContext) {
+        if (testServer === server) testServer = null
     }
 
     /** Merged headers for [url] if it belongs to [server], otherwise empty. */
@@ -98,30 +104,39 @@ object ServerHeaders {
 
     /** Headers of the signed-in server (or the server under [setTestServer]) if [url] points at it, otherwise empty. */
     @JvmStatic
-    fun getHeadersForActiveServer(url: String?): Map<String, String> {
+    fun getHeadersForActiveServer(url: String?): Map<String, String> =
+        getHeadersForActiveServer(url) { signedInServer() }
+
+    /** [getHeadersForActiveServer] with the signed-in server supplied by [signedInServer]. */
+    internal fun getHeadersForActiveServer(
+        url: String?,
+        signedInServer: () -> ServerContext?
+    ): Map<String, String> {
         val test = testServer
         if (test != null && CustomHeaders.isServerOrigin(url, test.addresses)) {
             return getHeadersForUrl(url, test)
         }
-        if (App.getInstance() == null) return emptyMap()
+        val server = signedInServer() ?: return emptyMap()
+        return getHeadersForUrl(url, server)
+    }
+
+    /** The signed-in server from the app preferences, or null when it has nothing to add. */
+    private fun signedInServer(): ServerContext? {
         val raw = Preferences.getCustomHeaders()
-        if (sources.isEmpty() && raw.isNullOrBlank()) return emptyMap()
-        return getHeadersForUrl(
-            url,
-            ServerContext(
-                addresses = listOf(
-                    Preferences.getInUseServerAddress(),
-                    Preferences.getServer(),
-                    Preferences.getLocalAddress()
-                ),
-                customHeaders = raw
-            )
+        if (sources.isEmpty() && raw.isNullOrBlank()) return null
+        return ServerContext(
+            addresses = listOf(
+                Preferences.getInUseServerAddress(),
+                Preferences.getServer(),
+                Preferences.getLocalAddress()
+            ),
+            customHeaders = raw
         )
     }
 
     /** OkHttp interceptor adding the signed-in server's headers, looked up on every request. */
     @JvmStatic
-    fun createInterceptor(): Interceptor = Interceptor(::getHeadersForActiveServer)
+    fun createInterceptor(): Interceptor = Interceptor { url -> getHeadersForActiveServer(url) }
 
     /**
      * Opens [url] with the signed-in server's headers when it points at that server.

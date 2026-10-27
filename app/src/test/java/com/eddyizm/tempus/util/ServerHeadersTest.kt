@@ -187,25 +187,48 @@ class ServerHeadersTest {
         assertEquals(listOf("letmein"), request.headers("X-Tempus-Test"))
     }
 
+    private fun runActive(url: String, signedIn: ServerContext? = null): Request {
+        val activeInterceptor = ServerHeaders.Interceptor { ServerHeaders.getHeadersForActiveServer(it) { signedIn } }
+        val chain = RecordingChain(Request.Builder().url(url).build())
+        activeInterceptor.intercept(chain)
+        return chain.proceeded!!
+    }
+
     @Test
     fun setTestServer_suppliesHeadersForTestOriginUntilCleared() {
         ServerHeaders.setTestServer(interceptorServer)
-        val activeInterceptor = ServerHeaders.createInterceptor()
 
-        val pingChain = RecordingChain(Request.Builder().url("https://music.example.com/rest/ping.view").build())
-        activeInterceptor.intercept(pingChain)
-        assertEquals("letmein", pingChain.proceeded!!.header("X-Tempus-Test"))
-        assertEquals("abc", pingChain.proceeded!!.header("CF-Access-Client-Id"))
+        val ping = runActive("https://music.example.com/rest/ping.view")
+        assertEquals("letmein", ping.header("X-Tempus-Test"))
+        assertEquals("abc", ping.header("CF-Access-Client-Id"))
 
         // Other origins get nothing while the test is in flight.
-        val otherChain = RecordingChain(Request.Builder().url("https://other.example.com/rest/ping.view").build())
-        activeInterceptor.intercept(otherChain)
-        assertNull(otherChain.proceeded!!.header("X-Tempus-Test"))
+        assertNull(runActive("https://other.example.com/rest/ping.view").header("X-Tempus-Test"))
 
-        // Clearing testServer stops sending the headers.
-        ServerHeaders.setTestServer(null)
-        val afterClearChain = RecordingChain(Request.Builder().url("https://music.example.com/rest/ping.view").build())
-        activeInterceptor.intercept(afterClearChain)
-        assertNull(afterClearChain.proceeded!!.header("X-Tempus-Test"))
+        ServerHeaders.clearTestServer(interceptorServer)
+        assertNull(runActive("https://music.example.com/rest/ping.view").header("X-Tempus-Test"))
+    }
+
+    @Test
+    fun setTestServer_otherOriginsFallBackToSignedInServer() {
+        ServerHeaders.setTestServer(interceptorServer)
+        val signedIn = ServerContext(addresses = listOf("https://signed-in.example.com"), customHeaders = "X-Session: 1")
+
+        assertEquals("1", runActive("https://signed-in.example.com/rest/ping.view", signedIn).header("X-Session"))
+        assertNull(runActive("https://music.example.com/rest/ping.view", signedIn).header("X-Session"))
+    }
+
+    @Test
+    fun clearTestServer_ignoresAnOlderTest() {
+        val older = ServerContext(addresses = listOf("https://music.example.com"), customHeaders = "X-Test: old")
+        val newer = ServerContext(addresses = listOf("https://music.example.com"), customHeaders = "X-Test: new")
+        ServerHeaders.setTestServer(older)
+        ServerHeaders.setTestServer(newer)
+
+        ServerHeaders.clearTestServer(older)
+        assertEquals("new", runActive("https://music.example.com/rest/ping.view").header("X-Test"))
+
+        ServerHeaders.clearTestServer(newer)
+        assertNull(runActive("https://music.example.com/rest/ping.view").header("X-Test"))
     }
 }
