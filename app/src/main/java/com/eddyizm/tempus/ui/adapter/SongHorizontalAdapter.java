@@ -90,8 +90,6 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
                 }
             }
 
-            // Re-apply the user's chosen order: setItems() and searching both rebuild the list
-            // from songsFull, which used to silently drop a sort picked from the menu.
             applySort(filteredList, currentSortOrder);
 
             FilterResults results = new FilterResults();
