@@ -37,6 +37,7 @@
     - [Sound](#sound)
     - [Buffering and cache](#buffering-and-cache)
     - [Scrobbling](#scrobbling)
+    - [Backing up settings](#backing-up-settings)
 - [Android Auto](#android-auto)
     - [Enabling on your head unit](#enabling-on-your-head-unit)
     - [Tabs](#tabs)
@@ -451,6 +452,10 @@ These are under **Settings → Data**.
 **Enable music scrobbling**, under **Settings → Miscellaneous**, is on by default. It tells your server what you are playing and which tracks you played. Tempus sends this only to your server, which may pass it on to a service such as Last.fm if it is set up to.
 
 A track counts as played when it plays to the end. When you skip to another track in the queue, the one you left counts if it played past its halfway point or 4 minutes, whichever comes first, unless it is 30 seconds or shorter. Only music counts, not podcasts or radio. A play that does not reach the server is not sent again later.
+
+### Backing up settings
+
+**Export settings**, under **Settings → General**, saves the options on the Settings screen to a JSON file you choose. **Import settings** restores them from that file and reloads the app. Server logins, the music library choice and storage locations are not included, so after a reinstall you sign in again first and then import.
 
 [Back to top](#table-of-contents)
 
