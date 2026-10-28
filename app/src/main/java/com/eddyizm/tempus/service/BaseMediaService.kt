@@ -95,6 +95,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     // swiped away during launch), that post must not touch the now released player.
     @Volatile private var serviceDestroyed = false
     private var lastResumeSaveAt = 0L
+    private var finishedMediaId: String? = null
     private val widgetUpdateRunnable = object : Runnable {
         override fun run() {
             val player = mediaLibrarySession.player
@@ -570,11 +571,14 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex + " isPlaying=" + isPlaying)
-                if (isPlaying) hasPlayedSinceRestore = true
+                if (isPlaying) {
+                    hasPlayedSinceRestore = true
+                    finishedMediaId = null
+                }
                 if (!isPlaying) {
                     MediaManager.setResumePoint(
                         player.currentMediaItem,
-                        player.currentPosition
+                        if (player.playbackState == Player.STATE_ENDED) 0L else player.currentPosition
                     )
                     // Auto-push the queue + position to the server so resume works
                     // without a manual button press.
@@ -600,14 +604,14 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 Log.d(TAG, "onPlaybackStateChanged")
                 super.onPlaybackStateChanged(playbackState)
                 if (playbackState != Player.STATE_IDLE) stoppedSinceError = false
-                if (!player.hasNextMediaItem() &&
-                    playbackState == Player.STATE_ENDED &&
-                    player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC
-                ) {
-                    MediaManager.scrobble(player.currentMediaItem, true)
-                    MediaManager.saveChronology(player.currentMediaItem)
+                if (!player.hasNextMediaItem() && playbackState == Player.STATE_ENDED) {
+                    if (player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
+                        MediaManager.scrobble(player.currentMediaItem, true)
+                        MediaManager.saveChronology(player.currentMediaItem)
+                    }
                     // Last track played to completion - drop it from Continue listening.
                     MediaManager.deleteResumePoint(player.currentMediaItem)
+                    finishedMediaId = player.currentMediaItem?.mediaId
                 }
                 updateWidget(player)
             }
@@ -629,9 +633,12 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 if (oldPosition.mediaItemIndex != newPosition.mediaItemIndex &&
                     reason != Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
                     oldPosition.mediaItem?.let {
-                        MediaManager.setResumePoint(it, oldPosition.positionMs)
+                        if (it.mediaId != finishedMediaId) {
+                            MediaManager.setResumePoint(it, oldPosition.positionMs)
+                        }
                     }
                 }
+                finishedMediaId = null
 
                 // Re-apply gain whenever we stay on the same track for any reason
                 // except an automatic transition to the next track.
@@ -827,7 +834,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         if (!player.playWhenReady || player.mediaItemCount == 0) {
             // App swiped away while paused - write the final position so the resume
             // point (and server bookmark) reflect exactly where the user stopped.
-            if (player.currentMediaItem != null && player.currentPosition > 0) {
+            if (player.currentMediaItem != null && player.currentPosition > 0 &&
+                player.playbackState != Player.STATE_ENDED) {
                 MediaManager.setResumePoint(player.currentMediaItem, player.currentPosition)
             }
             stopSelf()
