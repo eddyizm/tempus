@@ -16,10 +16,14 @@ import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.database.dao.PlaylistDao;
+import com.eddyizm.tempus.database.dao.PendingPlaylistEditDao;
 import com.eddyizm.tempus.database.dao.PinnedPlaylistDao;
+import com.eddyizm.tempus.database.dao.PlaylistSnapshotDao;
 import com.eddyizm.tempus.database.dao.PlaylistSongDao;
 import com.eddyizm.tempus.database.dao.SyncedPlaylistDao;
+import com.eddyizm.tempus.model.PendingPlaylistEdit;
 import com.eddyizm.tempus.model.PinnedPlaylist;
+import com.eddyizm.tempus.model.PlaylistSnapshot;
 import com.eddyizm.tempus.model.PlaylistSong;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.Child;
@@ -28,13 +32,19 @@ import com.eddyizm.tempus.subsonic.models.ResponseStatus;
 import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
 import com.eddyizm.tempus.util.DownloadRepair;
 import com.eddyizm.tempus.util.DownloadUtil;
+import com.eddyizm.tempus.util.OfflinePlaylistOrder;
+import com.eddyizm.tempus.util.PendingEditOps;
 import com.eddyizm.tempus.util.Preferences;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,6 +70,7 @@ public class PlaylistRepository {
             pinnedPlaylistDao.unpin(id);
             String server = Preferences.getServer();
             if (server != null) syncedPlaylistDao.remove(id, server);
+            forgetOrderAndEdits(id);
             playlistDao.deleteById(id);
             
             if (onMissing != null) {
@@ -74,9 +85,12 @@ public class PlaylistRepository {
     private final PlaylistDao playlistDao = AppDatabase.getInstance().playlistDao();
     private final PlaylistSongDao playlistSongDao = AppDatabase.getInstance().playlistSongDao();
     private final SyncedPlaylistDao syncedPlaylistDao = AppDatabase.getInstance().syncedPlaylistDao();
+    private final PendingPlaylistEditDao pendingPlaylistEditDao = AppDatabase.getInstance().pendingPlaylistEditDao();
+    private final PlaylistSnapshotDao playlistSnapshotDao = AppDatabase.getInstance().playlistSnapshotDao();
     private static final java.util.concurrent.ExecutorService SYNCED_WRITES = java.util.concurrent.Executors.newSingleThreadExecutor();
     private static volatile String keptSyncRanFor;
     private static final MutableLiveData<List<Playlist>> allPlaylistsLiveData = new MutableLiveData<>();
+    private final PendingPlaylistEditRepository pendingEdits = new PendingPlaylistEditRepository();
 
     public LiveData<List<Playlist>> getAllPlaylists(LifecycleOwner owner) {
         refreshAllPlaylists();
@@ -98,6 +112,8 @@ public class PlaylistRepository {
                             allPlaylistsLiveData.postValue(playlists);
                             // cache all playlists
                             cacheAllPlaylists(playlists);
+                            // The server answers, so edits kept on the phone can go out.
+                            PlaylistFlush.kickThrottled();
                         }
                     }
 
@@ -125,6 +141,7 @@ public class PlaylistRepository {
                         playlistSongDao.deleteForPlaylist(cached.getId());
                         pinnedPlaylistDao.unpin(cached.getId());
                         if (server != null) syncedPlaylistDao.remove(cached.getId(), server);
+                        forgetOrderAndEdits(cached.getId());
                         playlistDao.delete(cached);
                         android.util.Log.d("PlaylistRepository", "Removed orphaned playlist " + cached.getId() + " from local DB.");
                     }
@@ -201,14 +218,88 @@ public class PlaylistRepository {
      *                  there is none.
      */
     public MutableLiveData<List<Child>> getPlaylistSongs(String id, boolean allowCache, Runnable onMissing) {
-        MutableLiveData<List<Child>> listLivePlaylistSongs = new MutableLiveData<>();
+        return getPlaylistSongs(id, allowCache ? CacheFallback.ANY : CacheFallback.NONE, onMissing);
+    }
 
+    /**
+     * A playlist loaded to be edited and written back. fromPhone says the list came from this
+     * phone, its unsynced edit or the server's last known order, not from the server just now, and
+     * loadedIds keeps the order as loaded, since the editor edits songs in place.
+     */
+    public static final class EditableSongs {
+        public final List<Child> songs;
+        public final boolean fromPhone;
+        private final List<String> loadedIds;
+
+        EditableSongs(List<Child> songs, boolean fromPhone) {
+            this.songs = songs;
+            this.fromPhone = fromPhone;
+            this.loadedIds = idsOf(songs);
+        }
+
+        List<String> ids() {
+            return loadedIds;
+        }
+    }
+
+    /**
+     * For a caller that writes the list back. While the server answers this is the server's list,
+     * and when it cannot be reached it is the cached list, but only when the server's order for it
+     * is known, since an edit made on top of it is merged against that order later. Null when
+     * there is nothing to edit.
+     */
+    public MutableLiveData<EditableSongs> getPlaylistSongsForEdit(String id, Runnable onMissing) {
+        MutableLiveData<EditableSongs> editable = new MutableLiveData<>();
+        loadPlaylistSongs(id, CacheFallback.ORDERED, onMissing, (songs, fromPhone) -> publish(editable, songs != null ? new EditableSongs(songs, fromPhone) : null));
+        return editable;
+    }
+
+    private enum CacheFallback { NONE, ANY, ORDERED }
+
+    private interface SongsSink {
+        void accept(List<Child> songs, boolean fromPhone);
+    }
+
+    private MutableLiveData<List<Child>> getPlaylistSongs(String id, CacheFallback fallback, Runnable onMissing) {
+        MutableLiveData<List<Child>> listLivePlaylistSongs = new MutableLiveData<>();
+        loadPlaylistSongs(id, fallback, onMissing, (songs, fromPhone) -> publish(listLivePlaylistSongs, songs));
+        return listLivePlaylistSongs;
+    }
+
+    // Main thread callers keep the synchronous setValue the server answer always had.
+    private static <T> void publish(MutableLiveData<T> live, T value) {
+        if (Looper.myLooper() == Looper.getMainLooper()) live.setValue(value);
+        else live.postValue(value);
+    }
+
+    /**
+     * A playlist with changes made on this phone that are not synced yet is answered from the
+     * cache, which holds those changes. The server's list would not show them, and an index into
+     * it would point at the wrong track once the changes are merged.
+     */
+    private void loadPlaylistSongs(String id, CacheFallback fallback, Runnable onMissing, SongsSink sink) {
+        new Thread(() -> {
+            if (pendingEdits.hasRow(id)) {
+                sink.accept(cachedPlaylistSongs(id), true);
+                return;
+            }
+            fetchPlaylistSongs(id, fallback, onMissing, sink);
+        }).start();
+    }
+
+    private void fetchPlaylistSongs(String id, CacheFallback fallback, Runnable onMissing, SongsSink sink) {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .getPlaylist(id)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        // Without a network the HTTP cache answers. A stored copy is no base to
+                        // edit on, and its made-up 504 should not read as the playlist failing.
+                        if (!reachedServer(response) && (fallback == CacheFallback.ORDERED || !response.isSuccessful())) {
+                            onFailure(call, new IOException("Answered from the cache"));
+                            return;
+                        }
                         if (response.isSuccessful() && response.body() != null) {
                             SubsonicResponse sr = response.body().getSubsonicResponse();
                             if (sr.getPlaylist() != null) {
@@ -216,33 +307,36 @@ public class PlaylistRepository {
                                 if (songs == null) {
                                     songs = new ArrayList<>();
                                 }
-                                listLivePlaylistSongs.setValue(songs);
+                                sink.accept(songs, false);
                                 // The cache thread iterates its list while the editor may be
                                 // removing from the one just published, so it gets a copy.
                                 cachePlaylistSongs(sr.getPlaylist(), new ArrayList<>(songs));
                             } else if (sr.getError() != null && sr.getError().getCode() != null && sr.getError().getCode() == 70) {
                                 // Subsonic Standard Error Code 70: The requested data was not found.
                                 handleMissingPlaylist(id, onMissing);
-                                listLivePlaylistSongs.setValue(null);
+                                sink.accept(null, false);
                             } else {
-                                listLivePlaylistSongs.setValue(null);
+                                sink.accept(null, false);
                             }
                         } else {
-                            listLivePlaylistSongs.setValue(null);
+                            sink.accept(null, false);
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        if (allowCache) {
-                            fetchCachedPlaylistSongs(id, listLivePlaylistSongs);
+                        if (fallback == CacheFallback.ANY) {
+                            new Thread(() -> {
+                                List<Child> songs = cachedPlaylistSongs(id);
+                                if (songs != null && !songs.isEmpty()) sink.accept(songs, true);
+                            }).start();
+                        } else if (fallback == CacheFallback.ORDERED) {
+                            new Thread(() -> sink.accept(cachedOrder(id) != null ? cachedPlaylistSongs(id) : null, true)).start();
                         } else {
-                            listLivePlaylistSongs.setValue(null);
+                            sink.accept(null, false);
                         }
                     }
                 });
-
-        return listLivePlaylistSongs;
     }
 
     private void cachePlaylistSongs(Playlist playlist, List<Child> songs) {
@@ -259,6 +353,10 @@ public class PlaylistRepository {
             // thrown away whenever the row already exists. The write paths read this column, so
             // the value this response carried is written back on its own.
             playlistDao.updateVisibility(playlistId, playlist.isUniversal());
+            // Written on every read, before the size check below can skip the song rows, since a
+            // reorder keeps the size and the offline editor needs the order.
+            String server = Preferences.getServer();
+            if (server != null) playlistSnapshotDao.upsert(new PlaylistSnapshot(playlistId, server, idsOf(songs)));
             List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
             if (songs == null || songs.isEmpty()) {
                 if (cached != null && !cached.isEmpty()) {
@@ -268,11 +366,10 @@ public class PlaylistRepository {
                 return;
             }
 
-            // Simple check: compare sizes
-            if (cached != null && cached.size() == songs.size()) {
-                // If sizes match, assume no change for now to avoid expensive deep equality check
-                // TODO it would be better to check update/create dates if possible then do actual song id comparison
-                android.util.Log.d("PlaylistRepository", "Songs for playlist " + playlistId + " already cached (size match).");
+            // The offline view shows tracks from these rows, so a track swapped for another has to
+            // land here even when the count stays the same.
+            if (sameSongIds(cached, songs)) {
+                android.util.Log.d("PlaylistRepository", "Songs for playlist " + playlistId + " already cached.");
                 return;
             }
 
@@ -286,26 +383,53 @@ public class PlaylistRepository {
         }).start();
     }
 
-    private void fetchCachedPlaylistSongs(String playlistId, MutableLiveData<List<Child>> liveData) {
-        new Thread(() -> {
-            List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
-            if (cached != null && !cached.isEmpty()) {
-                List<Child> songs = new ArrayList<>();
-                for (PlaylistSong ps : cached) {
-                    Child child = new Child(ps.getId());
-                    child.setTitle(ps.getTitle());
-                    child.setArtist(ps.getArtist());
-                    child.setAlbum(ps.getAlbum());
-                    child.setTrack(ps.getTrack());
-                    child.setCoverArtId(ps.getCoverArtId());
-                    child.setDuration(ps.getDuration());
-                    child.setAlbumId(ps.getAlbumId());
-                    child.setArtistId(ps.getArtistId());
-                    songs.add(child);
-                }
-                liveData.postValue(songs);
-            }
-        }).start();
+    /**
+     * The playlist as this phone knows it, from the cache: the pending edit's list when there is
+     * one, otherwise the server's last known order, otherwise the cached rows in whatever order
+     * the table returns them. Null when nothing is cached. Touches the database, so callers have
+     * to be off the main thread.
+     */
+    List<Child> cachedPlaylistSongs(String playlistId) {
+        List<String> order = cachedOrder(playlistId);
+        List<PlaylistSong> cached = playlistSongDao.getSongsForPlaylistSync(playlistId);
+        if (cached == null) cached = new ArrayList<>();
+
+        if (order != null) {
+            Map<String, PlaylistSong> byId = new HashMap<>();
+            for (PlaylistSong song : cached) byId.put(song.getId(), song);
+            return OfflinePlaylistOrder.order(order, byId);
+        }
+
+        if (cached.isEmpty()) return null;
+        List<Child> songs = new ArrayList<>();
+        for (PlaylistSong song : cached) songs.add(OfflinePlaylistOrder.toChild(song));
+        return songs;
+    }
+
+    private List<String> cachedOrder(String playlistId) {
+        String server = Preferences.getServer();
+        if (server == null) return null;
+
+        PendingPlaylistEdit pending = pendingPlaylistEditDao.get(playlistId, server);
+        if (pending != null) return pending.getLocalIds();
+
+        PlaylistSnapshot snapshot = playlistSnapshotDao.get(playlistId, server);
+        return snapshot != null ? snapshot.getSongIds() : null;
+    }
+
+    // Only for the server in use, the playlist table is shared by every server.
+    private void forgetOrderAndEdits(String playlistId) {
+        String server = Preferences.getServer();
+        if (server == null) return;
+        playlistSnapshotDao.remove(playlistId, server);
+        pendingPlaylistEditDao.remove(playlistId, server);
+    }
+
+    static ArrayList<String> idsOf(List<Child> songs) {
+        ArrayList<String> ids = new ArrayList<>();
+        if (songs == null) return ids;
+        for (Child song : songs) ids.add(song.getId());
+        return ids;
     }
 
     public MutableLiveData<Playlist> getPlaylist(String id) {
@@ -346,6 +470,11 @@ public class PlaylistRepository {
         void onSuccess();
         void onFailure();
         void onAllSkipped();
+
+        /** The change was kept on this phone, to be synced when the server can be reached. */
+        default void onQueued() {
+            onSuccess();
+        }
     }
 
     /**
@@ -356,12 +485,21 @@ public class PlaylistRepository {
      *                                   send.
      */
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic, AddToPlaylistCallback callback) {
+        addSongToPlaylist(playlistId, songsId, null, playlistVisibilityIsPublic, callback);
+    }
+
+    /** @param songs details of the added tracks, kept in the cache when the add has to wait. */
+    public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, List<Child> songs, Boolean playlistVisibilityIsPublic, AddToPlaylistCallback callback) {
         android.util.Log.d("PlaylistRepository", "addSongToPlaylist: id=" + playlistId + ", songs=" + songsId);
         if (songsId.isEmpty()) {
             if (callback != null) callback.onAllSkipped();
             return;
         }
         new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueAdd(playlistId, songsId, songs, callback);
+                return;
+            }
             Boolean isPublic = Boolean.TRUE.equals(playlistVisibilityIsPublic)
                     ? Boolean.TRUE
                     : visibilityToSend(playlistId);
@@ -371,6 +509,10 @@ public class PlaylistRepository {
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                            if (!reachedServer(response)) {
+                                onFailure(call, new IOException("Answered from the cache"));
+                                return;
+                            }
                             if (isAccepted(response)) notifyPlaylistChanged();
                             if (callback != null) {
                                 if (isAccepted(response)) callback.onSuccess();
@@ -380,10 +522,17 @@ public class PlaylistRepository {
 
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                            if (callback != null) callback.onFailure();
+                            queueAdd(playlistId, songsId, songs, callback);
                         }
                     });
         }).start();
+    }
+
+    private void queueAdd(String playlistId, List<String> songsId, List<Child> songs, AddToPlaylistCallback callback) {
+        queue(playlistId, current -> PendingEditOps.append(current, songsId), null, songs, null,
+                callback != null ? callback::onQueued : null,
+                callback != null ? callback::onFailure : null,
+                callback != null ? callback::onFailure : null);
     }
 
     /**
@@ -401,20 +550,36 @@ public class PlaylistRepository {
      * full playlist list refreshes on every load. Reading it here keeps the screens out of it and
      * costs no extra request. It touches the database, so callers have to be off the main thread.
      */
-    private Boolean visibilityToSend(String playlistId) {
+    Boolean visibilityToSend(String playlistId) {
         return Boolean.TRUE.equals(playlistDao.isPlaylistPublic(playlistId)) ? Boolean.TRUE : null;
     }
 
     public void removeSongFromPlaylist(String playlistId, int index, AddToPlaylistCallback callback) {
+        removeSongFromPlaylist(playlistId, index, null, callback);
+    }
+
+    /**
+     * @param songId the track the page showed at index. When the remove has to wait on the phone,
+     *               the phone's list can differ from the page's, so the track is found by id.
+     */
+    public void removeSongFromPlaylist(String playlistId, int index, String songId, AddToPlaylistCallback callback) {
         ArrayList<Integer> indexes = new ArrayList<>();
         indexes.add(index);
         new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueRemove(playlistId, index, songId, callback);
+                return;
+            }
             App.getSubsonicClientInstance(false)
                     .getPlaylistClient()
                     .updatePlaylist(playlistId, null, visibilityToSend(playlistId), null, indexes)
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                            if (!reachedServer(response)) {
+                                onFailure(call, new IOException("Answered from the cache"));
+                                return;
+                            }
                             if (isAccepted(response)) notifyPlaylistChanged();
                             if (callback != null) {
                                 if (isAccepted(response)) callback.onSuccess();
@@ -424,34 +589,80 @@ public class PlaylistRepository {
 
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                            if (callback != null) callback.onFailure();
+                            queueRemove(playlistId, index, songId, callback);
                         }
                     });
         }).start();
+    }
+
+    private void queueRemove(String playlistId, int index, String songId, AddToPlaylistCallback callback) {
+        queue(playlistId, current -> {
+                    if (songId != null) return PendingEditOps.removeAt(current, index, songId);
+                    if (index < 0 || index >= current.size()) return null;
+                    List<String> next = new ArrayList<>(current);
+                    next.remove(index);
+                    return next;
+                }, null, null, null,
+                callback != null ? callback::onQueued : null,
+                callback != null ? callback::onFailure : null,
+                callback != null ? callback::onFailure : null);
     }
 
     public void addSongToPlaylist(String playlistId, ArrayList<String> songsId, Boolean playlistVisibilityIsPublic) {
         addSongToPlaylist(playlistId, songsId, playlistVisibilityIsPublic, null);
     }
 
+    /**
+     * With a playlistId this replaces that playlist's tracks, and such a replace waits on the phone
+     * like any other edit when the server cannot be reached. A new playlist is never made offline.
+     */
     public void createPlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
-        App.getSubsonicClientInstance(false)
-                .getPlaylistClient()
-                .createPlaylist(playlistId, name, songsId)
-                .enqueue(resultHandler(callback));
+        if (playlistId == null) {
+            App.getSubsonicClientInstance(false)
+                    .getPlaylistClient()
+                    .createPlaylist(null, name, songsId)
+                    .enqueue(resultHandler(callback));
+            return;
+        }
+        new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueReplace(playlistId, songsId, null, name, null, callback);
+                return;
+            }
+            App.getSubsonicClientInstance(false)
+                    .getPlaylistClient()
+                    .createPlaylist(playlistId, name, songsId)
+                    .enqueue(replaceHandler(playlistId, songsId, null, name, callback));
+        }).start();
     }
 
     public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, PlaylistActionCallback callback) {
+        updatePlaylist(playlistId, name, songsId, null, callback);
+    }
+
+    /**
+     * @param songsId the full list to write, or null to rename only.
+     * @param songs   details of the tracks, kept in the cache when the save has to wait.
+     */
+    public void updatePlaylist(String playlistId, String name, ArrayList<String> songsId, List<Child> songs, PlaylistActionCallback callback) {
         new Thread(() -> {
+            if (pendingEdits.hasRow(playlistId)) {
+                queueReplace(playlistId, songsId, songs, name, null, callback);
+                return;
+            }
             App.getSubsonicClientInstance(false)
                     .getPlaylistClient()
                     .updatePlaylist(playlistId, name, visibilityToSend(playlistId), null, null)
                     .enqueue(new Callback<ApiResponse>() {
                         @Override
                         public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                            if (!reachedServer(response)) {
+                                onFailure(call, new IOException("Answered from the cache"));
+                                return;
+                            }
                             if (isAccepted(response)) {
                                 updateLocalPlaylistName(playlistId, name);
-                                replacePlaylistSongs(playlistId, songsId, callback);
+                                replacePlaylistSongs(playlistId, songsId, songs, callback);
                             } else {
                                 if (callback != null) callback.onFailure();
                             }
@@ -459,10 +670,86 @@ public class PlaylistRepository {
 
                         @Override
                         public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                            if (callback != null) callback.onFailure();
+                            queueReplace(playlistId, songsId, songs, name, null, callback);
                         }
                     });
         }).start();
+    }
+
+    /**
+     * Saves a list the user edited on top of loaded. A list that came from the phone, not from the
+     * server, always waits on the phone with the loaded list as its base, even when the server can
+     * be reached by now, because writing it straight back would drop whatever the server gained
+     * since. The sync then merges it onto the server's list.
+     */
+    public void saveEditedPlaylist(String playlistId, String name, ArrayList<String> songsId, List<Child> songs, EditableSongs loaded, PlaylistActionCallback callback) {
+        if (loaded != null && loaded.fromPhone) {
+            queueReplace(playlistId, songsId, songs, name, loaded.ids(), callback);
+        } else {
+            updatePlaylist(playlistId, name, songsId, songs, callback);
+        }
+    }
+
+    /** As {@link #saveEditedPlaylist}, for a replace of the tracks alone. */
+    public void replaceEditedPlaylist(String playlistId, ArrayList<String> songsId, List<Child> songs, EditableSongs loaded, PlaylistActionCallback callback) {
+        if (loaded != null && loaded.fromPhone) {
+            queueReplace(playlistId, songsId, songs, null, loaded.ids(), callback);
+        } else {
+            createPlaylist(playlistId, null, songsId, callback);
+        }
+    }
+
+    /** A null song list keeps the phone's current list, for a rename. */
+    private void queueReplace(String playlistId, List<String> songsId, List<Child> songs, String name, List<String> baseIfNew, PlaylistActionCallback callback) {
+        queue(playlistId, current -> songsId != null ? new ArrayList<>(songsId) : current, baseIfNew, songs, name,
+                callback != null ? callback::onQueued : null,
+                callback != null ? callback::onFailure : null,
+                callback != null ? callback::onEmptied : null);
+    }
+
+    private void queue(String playlistId, Function<List<String>, List<String>> edit, List<String> baseIfNew, List<Child> songs, String name, Runnable onQueued, Runnable onFailure, Runnable onEmptied) {
+        pendingEdits.queueReplace(playlistId, edit, baseIfNew, songs, name, new PendingPlaylistEditRepository.QueueResult() {
+            @Override
+            public void onQueued() {
+                notifyPlaylistChanged();
+                if (onQueued != null) onQueued.run();
+            }
+
+            @Override
+            public void onRefused() {
+                Toast.makeText(App.getContext(), R.string.playlist_offline_edit_refused, Toast.LENGTH_SHORT).show();
+                if (onFailure != null) onFailure.run();
+            }
+
+            @Override
+            public void onEmptied() {
+                if (onEmptied != null) onEmptied.run();
+            }
+
+            @Override
+            public void onFailed() {
+                if (onFailure != null) onFailure.run();
+            }
+        });
+    }
+
+    /**
+     * Whether the answer came over the network. With no network the HTTP cache answers instead, a
+     * stored copy of an earlier answer or a made-up 504, and neither says anything about the
+     * server, so a write answered that way has to wait on the phone.
+     */
+    static boolean reachedServer(Response<?> response) {
+        return response.raw().networkResponse() != null;
+    }
+
+    static boolean sameSongIds(List<PlaylistSong> cached, List<Child> songs) {
+        if (cached == null || cached.size() != songs.size()) return false;
+        Set<String> cachedIds = new HashSet<>();
+        for (PlaylistSong song : cached) cachedIds.add(song.getId());
+        for (Child song : songs) {
+            if (!cachedIds.contains(song.getId())) return false;
+        }
+        return true;
     }
 
     /**
@@ -506,7 +793,7 @@ public class PlaylistRepository {
      * can itself come back as an HTTP error, which this app reports as the playlist being gone and
      * closes the page. The success paths do refresh.
      */
-    private void replacePlaylistSongs(String playlistId, ArrayList<String> songsId, PlaylistActionCallback callback) {
+    private void replacePlaylistSongs(String playlistId, ArrayList<String> songsId, List<Child> songs, PlaylistActionCallback callback) {
         if (songsId == null || songsId.isEmpty()) {
             notifyPlaylistChanged();
             if (callback != null) callback.onSuccess();
@@ -516,7 +803,27 @@ public class PlaylistRepository {
         App.getSubsonicClientInstance(false)
                 .getPlaylistClient()
                 .createPlaylist(playlistId, null, songsId)
-                .enqueue(resultHandler(callback));
+                .enqueue(replaceHandler(playlistId, songsId, songs, null, callback));
+    }
+
+    /** Like resultHandler, except that a replace the server never received waits on the phone. */
+    private Callback<ApiResponse> replaceHandler(String playlistId, ArrayList<String> songsId, List<Child> songs, String name, PlaylistActionCallback callback) {
+        Callback<ApiResponse> sent = resultHandler(callback);
+        return new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                if (!reachedServer(response)) {
+                    onFailure(call, new IOException("Answered from the cache"));
+                    return;
+                }
+                sent.onResponse(call, response);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                queueReplace(playlistId, songsId, songs, name, null, callback);
+            }
+        };
     }
 
     @OptIn(markerClass = UnstableApi.class)
@@ -614,6 +921,11 @@ public class PlaylistRepository {
         default void onEmptied() {
             onFailure();
         }
+
+        /** The change was kept on this phone, to be synced when the server can be reached. */
+        default void onQueued() {
+            onSuccess();
+        }
     }
 
     public void deletePlaylist(String playlistId, PlaylistActionCallback callback) {
@@ -628,6 +940,7 @@ public class PlaylistRepository {
                             new Thread(() -> {
                                 playlistSongDao.deleteForPlaylist(playlistId);
                                 if (server != null) syncedPlaylistDao.remove(playlistId, server);
+                                forgetOrderAndEdits(playlistId);
                                 playlistDao.deleteById(playlistId);
                                 android.util.Log.d("PlaylistRepository", "Deleted playlist " + playlistId + " and its songs from local DB.");
                             }).start();

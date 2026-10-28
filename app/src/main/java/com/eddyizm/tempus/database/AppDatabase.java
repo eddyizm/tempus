@@ -15,9 +15,11 @@ import com.eddyizm.tempus.database.dao.DownloadDao;
 import com.eddyizm.tempus.database.dao.FavoriteDao;
 import com.eddyizm.tempus.database.dao.InternetRadioStationDao;
 import com.eddyizm.tempus.database.dao.LyricsDao;
+import com.eddyizm.tempus.database.dao.PendingPlaylistEditDao;
 import com.eddyizm.tempus.database.dao.PinnedPlaylistDao;
 import com.eddyizm.tempus.database.dao.SyncedPlaylistDao;
 import com.eddyizm.tempus.database.dao.PlaylistDao;
+import com.eddyizm.tempus.database.dao.PlaylistSnapshotDao;
 import com.eddyizm.tempus.database.dao.PlaylistSongDao;
 import com.eddyizm.tempus.database.dao.QueueDao;
 import com.eddyizm.tempus.database.dao.RecentSearchDao;
@@ -28,7 +30,9 @@ import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.Favorite;
 import com.eddyizm.tempus.model.InternetRadioStationCache;
 import com.eddyizm.tempus.model.LyricsCache;
+import com.eddyizm.tempus.model.PendingPlaylistEdit;
 import com.eddyizm.tempus.model.PinnedPlaylist;
+import com.eddyizm.tempus.model.PlaylistSnapshot;
 import com.eddyizm.tempus.model.PlaylistSong;
 import com.eddyizm.tempus.model.Queue;
 import com.eddyizm.tempus.model.RecentSearch;
@@ -39,7 +43,7 @@ import com.eddyizm.tempus.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 24,
+        version = 25,
         entities = {
             Queue.class,
             Server.class,
@@ -54,6 +58,8 @@ import com.eddyizm.tempus.subsonic.models.Playlist;
             InternetRadioStationCache.class,
             PlaylistSong.class,
             SyncedPlaylist.class,
+            PendingPlaylistEdit.class,
+            PlaylistSnapshot.class,
         },
         autoMigrations = {
                 @AutoMigration(from = 10, to = 11),
@@ -70,6 +76,7 @@ import com.eddyizm.tempus.subsonic.models.Playlist;
                 @AutoMigration(from = 21, to = 22),
                 @AutoMigration(from = 22, to = 23),
                 @AutoMigration(from = 23, to = 24),
+                @AutoMigration(from = 24, to = 25),
         }
 )
 @TypeConverters({DateConverters.class, StringListConverter.class})
@@ -108,6 +115,10 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract SyncedPlaylistDao syncedPlaylistDao();
 
     public abstract PlaylistSongDao playlistSongDao();
+
+    public abstract PendingPlaylistEditDao pendingPlaylistEditDao();
+
+    public abstract PlaylistSnapshotDao playlistSnapshotDao();
 
     public abstract LyricsDao lyricsDao();
 
