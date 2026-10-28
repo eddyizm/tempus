@@ -1144,6 +1144,17 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         }
         Toast.makeText(requireContext(), getString(R.string.settings_imported, count), Toast.LENGTH_SHORT).show();
 
+        // Written directly, so the effects the preference listeners would have had are applied here.
+        if (!Preferences.isLanRemoteEnabled()) {
+            com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
+            com.eddyizm.tempus.lan.LanReceiverService.Companion.closePairing();
+            requireContext().stopService(new Intent(requireContext(), com.eddyizm.tempus.lan.LanReceiverService.class));
+        }
+        DownloadService.sendSetRequirements(requireContext(), DownloaderService.class,
+                Preferences.isDownloadWifiOnly()
+                        ? new Requirements(Requirements.NETWORK_UNMETERED)
+                        : new Requirements(0), false);
+
         ThemeHelper.applyTheme(prefs.getString(Preferences.THEME, ThemeHelper.DEFAULT_MODE));
         String language = prefs.getString("language", "default");
         if (language.equals(oldLanguage)) {
