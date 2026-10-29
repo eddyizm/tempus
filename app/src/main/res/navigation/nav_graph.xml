@@ -145,6 +145,11 @@
             app:destination="@id/playlistCatalogueFragment" />
     </fragment>
     <fragment
+        android:id="@+id/likedFragment"
+        android:name="com.eddyizm.tempus.ui.fragment.LikedFragment"
+        android:label="LikedFragment"
+        tools:layout="@layout/fragment_liked" />
+    <fragment
         android:id="@+id/settingsFragment"
         android:name="com.eddyizm.tempus.ui.fragment.SettingsFragment"
         android:label="SettingsFragment"

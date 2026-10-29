@@ -39,6 +39,7 @@ import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import android.view.MenuItem;
 
 import com.eddyizm.tempus.BuildConfig;
 import com.eddyizm.tempus.R;
@@ -263,6 +264,17 @@ public class MainActivity extends BaseActivity {
         // Controller
         navigationController = new NavigationController(navigationHelper);
         navigationController.syncWithBottomSheetBehavior(bottomSheetBehavior, navController);
+        
+        // Show/hide favorites tab based on preference
+        toggleFavoritesTab();
+    }
+
+    private void toggleFavoritesTab() {
+        boolean showFavorites = Preferences.getBottomNavFavorites();
+        MenuItem favoritesItem = bind.bottomNavigation.getMenu().findItem(R.id.likedFragment);
+        if (favoritesItem != null) {
+            favoritesItem.setVisible(showFavorites);
+        }
     }
 
     public NavigationController getNavigationController() {
