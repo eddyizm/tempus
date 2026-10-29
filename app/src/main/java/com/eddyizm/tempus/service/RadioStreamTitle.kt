@@ -8,6 +8,9 @@ private const val MIN_SLOGAN_LENGTH = 4
 
 private val dashSeparator = Regex("""\s+[-\u2013\u2014]\s+""")
 
+// "Artist - Title - 1978": the year is not part of the title. With two parts "Prince - 1999" is a title.
+private val trailingYear = Regex("""(19|20)\d{2}""")
+
 private fun normalized(s: String) = s.lowercase().filter { it.isLetterOrDigit() }
 
 // Stations often send their own name or slogan as the first part ("Virgin Radio - Style Rock").
@@ -20,6 +23,7 @@ private fun isStationName(part: String, stationName: String?): Boolean {
  * Splits the song text a radio station sends (ICY StreamTitle) into (artist, title).
  * Known formats:
  * - "Artist - Title" (hyphen, en dash or em dash), also "Title - Artist - Title"
+ * - "Artist - Title - Year": the year is dropped
  * - "Title~Artist~~Year~~..." (Virgin Radio)
  * A first part equal to the station name is dropped. Anything else is a title with no artist.
  */
@@ -35,6 +39,7 @@ internal fun parseStreamTitle(raw: String, stationName: String? = null): Pair<St
     var parts = text.split(dashSeparator).map { it.trim() }.filter { it.isNotEmpty() }
     if (parts.isEmpty()) return null to text
     if (parts.size > 1 && isStationName(parts[0], stationName)) parts = parts.drop(1)
+    if (parts.size >= 3 && trailingYear.matches(parts.last())) parts = parts.dropLast(1)
 
     return when {
         parts.size == 1 -> null to parts[0]
