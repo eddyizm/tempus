@@ -1,7 +1,6 @@
 package com.eddyizm.tempus.ui.fragment.bottomsheetdialog;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,7 @@ import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.dialog.PlaylistChooserDialog;
 import java.util.ArrayList;
 import com.eddyizm.tempus.util.Constants;
-import com.eddyizm.tempus.util.DownloadUtil;
+import com.eddyizm.tempus.util.ArtistDownload;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.viewmodel.ArtistBottomSheetViewModel;
 import com.eddyizm.tempus.util.FavoriteRegistry;
@@ -248,22 +247,7 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
 
         TextView downloadAll = view.findViewById(R.id.download_all_text_view);
         downloadAll.setOnClickListener(v -> {
-            // The application context, so the download is queued even after the sheet has closed.
-            Context appContext = requireContext().getApplicationContext();
-            Toast.makeText(appContext, R.string.artist_bottom_sheet_loading_tracks, Toast.LENGTH_SHORT).show();
-
-            // The same songs as play next and artist sync: the artist's own tracks across its albums.
-            // downloadMissing skips what is downloaded or already requested and honours a custom download folder.
-            new ArtistRepository().getArtistAllSongs(artist.getId(), songs -> {
-                if (songs == null || songs.isEmpty()) return;
-                DownloadUtil.downloadMissing(appContext, songs, null, null, queued -> {
-                    if (queued <= 0) return;
-                    Toast.makeText(appContext,
-                            appContext.getResources().getQuantityString(R.plurals.songs_download_started, queued, queued),
-                            Toast.LENGTH_SHORT).show();
-                });
-            });
-
+            ArtistDownload.start(requireContext(), artist.getId());
             dismissBottomSheet();
         });
     }
