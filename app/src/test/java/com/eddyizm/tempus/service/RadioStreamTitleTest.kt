@@ -100,6 +100,19 @@ class RadioStreamTitleTest {
     }
 
     @Test
+    fun `a trailing year is not part of the title`() {
+        assertEquals(
+            "John Travolta" to "Greased lightnin'",
+            parseStreamTitle("John Travolta - Greased lightnin' - 1978", "70 80 Hits HQ")
+        )
+    }
+
+    @Test
+    fun `a title that is a year is kept`() {
+        assertEquals("Prince" to "1999", parseStreamTitle("Prince - 1999"))
+    }
+
+    @Test
     fun `extra spaces around the dash are ignored`() {
         assertEquals("Tool" to "Vicarious", parseStreamTitle("Tool   - Vicarious "))
     }
