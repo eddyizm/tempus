@@ -160,13 +160,13 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         // clearMediaItems() + setMediaItems() over the live player, which discards the
         // active item's forward buffer and forces a re-prepare on every WiFi<->cellular
         // switch — an audible ~0.5s gap (and, on some devices, the failed re-prepare that
-        // #682 recovers from). Instead, replace only the non-current items, and only when
-        // the resolved URI actually changed, so the active item is never touched while
+        // #682 recovers from). Instead, replace only items after the current one, from the
+        // first to the last whose resolved URI changed, so the active item is never touched while
         // upcoming tracks still pick up the new network's transcoding settings.
 
         // Threading: the heavy computation (MappingUtil + isDownloaded) runs on a background
         // thread to avoid blocking the main thread. Only items from current+1 onward are
-        // processed — already-played items are skipped. replaceMediaItem() is dispatched back
+        // processed — already-played items are skipped. replaceMediaItems() is dispatched back
         // to the main thread via widgetUpdateHandler. The guard i < player.mediaItemCount protects
         // against queue changes during the background computation.
 
@@ -194,15 +194,21 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         Futures.addCallback(future, object : FutureCallback<List<Pair<Int, MediaItem>>> {
             override fun onSuccess(updates: List<Pair<Int, MediaItem>>) {
                 widgetUpdateHandler.post {
-                    // Same hazard as restorePlayerFromQueue: the mapping runs on a background
-                    // thread, so this post can land after onDestroy released the player.
                     if (serviceDestroyed) return@post
-                    updates.forEach { (i, mapped) ->
-                        if (i > player.currentMediaItemIndex
+                    val valid = updates.filter { (i, mapped) ->
+                        i > player.currentMediaItemIndex
                             && i < player.mediaItemCount
-                            && player.getMediaItemAt(i).mediaId == mapped.mediaId) {
-                            player.replaceMediaItem(i, mapped)
-                        }
+                            && player.getMediaItemAt(i).mediaId == mapped.mediaId
+                    }
+                    if (valid.isEmpty()) return@post
+                    val byIndex = valid.toMap()
+                    val from = valid.first().first
+                    val to = valid.last().first + 1
+                    val items = (from until to).map { byIndex[it] ?: player.getMediaItemAt(it) }
+                    if (items.all { it.localConfiguration != null }) {
+                        player.replaceMediaItems(from, to, items)
+                    } else {
+                        valid.forEach { (i, mapped) -> player.replaceMediaItem(i, mapped) }
                     }
                 }
             }
