@@ -1,15 +1,19 @@
 package com.eddyizm.tempus.ui.adapter;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.util.UnstableApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eddyizm.tempus.R;
+import com.eddyizm.tempus.database.AppDatabase;
 import com.eddyizm.tempus.databinding.ItemHorizontalDownloadBinding;
 import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.helper.recyclerview.FastScrollbar;
@@ -24,13 +28,22 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @UnstableApi
 public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHorizontalAdapter.ViewHolder> implements StandardViewTypeAdapter, FastScrollbar.BubbleTextGetter {
+    private static final ExecutorService PLAYLIST_COVER_EXECUTOR = Executors.newSingleThreadExecutor();
+
     private final ClickCallback click;
 
     private String view;
@@ -40,8 +53,13 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
     private List<Child> songs;
     private List<Child> shuffling;
     private List<Child> grouped;
+    // Songs per row of the current view, by the row's group key. Counted once per list rather than
+    // with a scan of every song on each bind.
+    private Map<Object, Integer> groupCounts = Collections.emptyMap();
 
-    private final java.util.Map<String, String> playlistCoverCache = new java.util.HashMap<>();
+    // Main thread only. An empty string means the playlist has no cover of its own.
+    private final Map<String, String> playlistCoverCache = new HashMap<>();
+    private final Set<String> playlistCoverLookups = new HashSet<>();
 
     public DownloadHorizontalAdapter(ClickCallback click) {
         this.click = click;
@@ -98,6 +116,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
             sortByDisplayLabel(result);
         }
         this.grouped = result;
+        this.groupCounts = countByGroup(songs);
 
         this.shuffling = shufflingSong(new ArrayList<>(songs));
 
@@ -242,25 +261,61 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         }
     }
 
-    private String countSong(String filterKey, String filterValue, List<Child> songs) {
-        if (filterValue != null) {
-            switch (filterKey) {
-                case Constants.DOWNLOAD_TYPE_TRACK:
-                    return String.valueOf(songs.stream().filter(child -> child.getId().equals(filterValue)).count());
-                case Constants.DOWNLOAD_TYPE_ALBUM:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getAlbumId(), filterValue)).count());
-                case Constants.DOWNLOAD_TYPE_GENRE:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getGenre(), filterValue)).count());
-                case Constants.DOWNLOAD_TYPE_YEAR:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getYear(), Integer.valueOf(filterValue))).count());
-                case Constants.DOWNLOAD_TYPE_ARTIST:
-                    return String.valueOf(songs.stream().filter(child -> Objects.equals(child.getArtistId(), filterValue)).count());
-                case Constants.DOWNLOAD_TYPE_PLAYLIST:
-                    return String.valueOf(songs.stream().filter(child -> child instanceof Download && Objects.equals(((Download) child).getPlaylistId(), filterValue)).count());
-            }
+    // The key a row of the given view groups its songs by, or null for a view of single songs.
+    private static Function<Child, Object> groupKey(String view) {
+        switch (view) {
+            case Constants.DOWNLOAD_TYPE_ALBUM:
+                return Child::getAlbumId;
+            case Constants.DOWNLOAD_TYPE_ARTIST:
+                return Child::getArtistId;
+            case Constants.DOWNLOAD_TYPE_GENRE:
+                return Child::getGenre;
+            case Constants.DOWNLOAD_TYPE_YEAR:
+                return Child::getYear;
+            case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                return song -> song instanceof Download ? ((Download) song).getPlaylistId() : null;
+            default:
+                return null;
         }
+    }
 
-        return "0";
+    private Map<Object, Integer> countByGroup(List<Child> songs) {
+        Function<Child, Object> key = groupKey(view);
+        if (key == null) return Collections.emptyMap();
+
+        Map<Object, Integer> counts = new HashMap<>();
+        for (Child song : songs) {
+            Object value = key.apply(song);
+            if (value != null) counts.merge(value, 1, Integer::sum);
+        }
+        return counts;
+    }
+
+    /** What a row stands for (a song id, or the album id, artist id, ... it groups by), to find it again after the list changes. */
+    public Object getRowKey(int position) {
+        if (position < 0 || position >= grouped.size()) return null;
+
+        Function<Child, Object> key = groupKey(view);
+        Child row = grouped.get(position);
+        return key != null ? key.apply(row) : row.getId();
+    }
+
+    public int indexOfRowKey(Object rowKey) {
+        if (rowKey == null) return RecyclerView.NO_POSITION;
+
+        for (int position = 0; position < grouped.size(); position++) {
+            if (rowKey.equals(getRowKey(position))) return position;
+        }
+        return RecyclerView.NO_POSITION;
+    }
+
+    @VisibleForTesting
+    int getGroupCount(int position) {
+        Function<Child, Object> key = groupKey(view);
+        if (key == null) return 0;
+
+        Integer count = groupCounts.get(key.apply(grouped.get(position)));
+        return count != null ? count : 0;
     }
 
     private void initTrackLayout(ViewHolder holder, int position) {
@@ -330,7 +385,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(song.getAlbum());
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_ALBUM, song.getAlbumId(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, String.valueOf(getGroupCount(position))));
         holder.item.downloadedItemPreTextView.setText(albumArtistOrArtist(song));
 
         CustomGlideRequest.Builder
@@ -353,7 +408,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(song.getArtist());
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_ARTIST, song.getArtistId(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, String.valueOf(getGroupCount(position))));
 
         CustomGlideRequest.Builder
                 .from(holder.itemView.getContext(), song.getCoverArtId(), CustomGlideRequest.ResourceType.Song)
@@ -369,7 +424,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(song.getGenre());
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_GENRE, song.getGenre(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, String.valueOf(getGroupCount(position))));
 
         holder.item.itemCoverImageView.setVisibility(View.GONE);
         holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
@@ -380,7 +435,7 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         Child song = grouped.get(position);
 
         holder.item.downloadedItemTitleTextView.setText(String.valueOf(song.getYear()));
-        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_YEAR, song.getYear().toString(), songs)));
+        holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, String.valueOf(getGroupCount(position))));
 
         holder.item.itemCoverImageView.setVisibility(View.GONE);
         holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
@@ -392,23 +447,16 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         if (song instanceof Download) {
             Download download = (Download) song;
             holder.item.downloadedItemTitleTextView.setText(download.getPlaylistName());
-            holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, countSong(Constants.DOWNLOAD_TYPE_PLAYLIST, download.getPlaylistId(), songs)));
+            holder.item.downloadedItemSubtitleTextView.setText(holder.itemView.getContext().getString(R.string.download_item_single_subtitle_formatter, String.valueOf(getGroupCount(position))));
 
             String playlistId = download.getPlaylistId();
             String coverArtId = playlistCoverCache.get(playlistId);
 
             if (coverArtId == null) {
-                // Async lookup from local playlist cache
-                new Thread(() -> {
-                    String cachedCover = com.eddyizm.tempus.database.AppDatabase.getInstance().playlistDao().getPlaylistCoverArtId(playlistId);
-                    if (cachedCover != null) {
-                        playlistCoverCache.put(playlistId, cachedCover);
-                        if (holder.itemView.getContext() instanceof android.app.Activity) {
-                            ((android.app.Activity) holder.itemView.getContext()).runOnUiThread(() -> notifyItemChanged(position));
-                        }
-                    }
-                }).start();
-                // Fallback to track cover art while loading
+                lookUpPlaylistCover(playlistId);
+            }
+            if (coverArtId == null || coverArtId.isEmpty()) {
+                // The cover of the song itself, until or unless the playlist has one.
                 coverArtId = download.getCoverArtId();
             }
 
@@ -421,6 +469,29 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
             holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
             holder.item.divider.setVisibility(View.GONE);
         }
+    }
+
+    // Once per playlist, on one shared thread. A raw thread per bind used to start again on every
+    // scroll past a playlist without a cover, as nothing recorded that the answer was none.
+    private void lookUpPlaylistCover(String playlistId) {
+        if (!playlistCoverLookups.add(playlistId)) return;
+
+        Handler main = new Handler(Looper.getMainLooper());
+        PLAYLIST_COVER_EXECUTOR.execute(() -> {
+            String cover = AppDatabase.getInstance().playlistDao().getPlaylistCoverArtId(playlistId);
+            main.post(() -> {
+                playlistCoverCache.put(playlistId, cover != null ? cover : "");
+                if (cover == null || !Constants.DOWNLOAD_TYPE_PLAYLIST.equals(view)) return;
+
+                // Positions may have moved since the lookup started.
+                for (int position = 0; position < grouped.size(); position++) {
+                    Child row = grouped.get(position);
+                    if (row instanceof Download && playlistId.equals(((Download) row).getPlaylistId())) {
+                        notifyItemChanged(position);
+                    }
+                }
+            });
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
