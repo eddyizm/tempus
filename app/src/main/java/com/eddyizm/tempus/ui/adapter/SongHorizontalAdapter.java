@@ -64,6 +64,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     });
 
     private String currentFilter;
+    private String currentSortOrder;
 
     private String currentPlayingId;
     private boolean isPlaying;
@@ -76,6 +77,7 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
             List<Child> filteredList = new ArrayList<>();
 
             if (constraint == null || constraint.length() == 0) {
+                currentFilter = "";
                 filteredList.addAll(songsFull);
             } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
@@ -87,6 +89,8 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
                     }
                 }
             }
+
+            applySort(filteredList, currentSortOrder);
 
             FilterResults results = new FilterResults();
             results.values = filteredList;
@@ -395,20 +399,23 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
     }
 
     public void sort(String order) {
-        List<Child> sortedList = new ArrayList<>(differ.getCurrentList());
+        currentSortOrder = order;
+        filtering.filter(currentFilter);
+    }
+
+    private static void applySort(List<Child> list, String order) {
+        if (order == null) return;
         switch (order) {
             case Constants.MEDIA_BY_TITLE:
-                sortedList.sort(Comparator.comparing(Child::getTitle));
+                list.sort(Comparator.comparing(Child::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
                 break;
             case Constants.MEDIA_MOST_RECENTLY_STARRED:
-                sortedList.sort(Comparator.comparing(Child::getStarred, Comparator.nullsLast(Comparator.reverseOrder())));
+                list.sort(Comparator.comparing(Child::getStarred, Comparator.nullsLast(Comparator.reverseOrder())));
                 break;
             case Constants.MEDIA_LEAST_RECENTLY_STARRED:
-                sortedList.sort(Comparator.comparing(Child::getStarred, Comparator.nullsLast(Comparator.naturalOrder())));
+                list.sort(Comparator.comparing(Child::getStarred, Comparator.nullsLast(Comparator.naturalOrder())));
                 break;
         }
-
-        differ.submitList(sortedList);
     }
 
     public void setMediaBrowserListenableFuture(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture) {
