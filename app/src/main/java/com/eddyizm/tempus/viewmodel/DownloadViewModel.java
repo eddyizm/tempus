@@ -30,6 +30,7 @@ public class DownloadViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Child>> downloadedTrackSample = new MutableLiveData<>(null);
     private final MutableLiveData<ArrayList<DownloadStack>> viewStack = new MutableLiveData<>(null);
     private final MutableLiveData<Integer> refreshResult = new MutableLiveData<>();
+    private final MutableLiveData<String> starOrder = new MutableLiveData<>(Preferences.getDefaultDownloadStarOrder());
 
     public DownloadViewModel(@NonNull Application application) {
         super(application);
@@ -50,6 +51,15 @@ public class DownloadViewModel extends AndroidViewModel {
 
     public LiveData<Integer> getRefreshResult() {
         return refreshResult;
+    }
+
+    public LiveData<String> getStarOrder() {
+        return starOrder;
+    }
+
+    public void setStarOrder(String order) {
+        starOrder.setValue(order);
+        Preferences.setDefaultDownloadStarOrder(order);
     }
 
     public void initViewStack(DownloadStack level) {

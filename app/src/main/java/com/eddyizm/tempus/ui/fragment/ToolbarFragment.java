@@ -166,15 +166,16 @@ public class ToolbarFragment extends Fragment {
     }
 
     /**
-     * Downloads are local files that no library filter reaches, so a line naming one there would
-     * describe something other than what is on the screen.
+     * Downloads and favorites are local files that no library filter reaches, so a line naming one
+     * there would describe something other than what is on the screen.
      *
      * Asked of the host fragment, not the NavController: a dialog destination becomes the current
      * destination without destroying this view, so consulting the graph made Downloads answer yes
      * while a bottom sheet was open.
      */
     private boolean isLibraryScopedScreen() {
-        return !(getParentFragment() instanceof DownloadFragment);
+        Fragment parent = getParentFragment();
+        return !(parent instanceof DownloadFragment) && !(parent instanceof LikedFragment);
     }
 
     private void updateMusicLibraryIndicator() {

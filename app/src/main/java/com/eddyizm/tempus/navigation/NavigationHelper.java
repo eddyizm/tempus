@@ -2,6 +2,7 @@ package com.eddyizm.tempus.navigation;
 
 import android.content.res.Configuration;
 import android.os.Build;
+import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -81,6 +82,7 @@ public class NavigationHelper {
         return destId == R.id.homeFragment ||
                 destId == R.id.libraryFragment ||
                 destId == R.id.downloadFragment ||
+                destId == R.id.likedFragment ||
                 destId == R.id.albumCatalogueFragment ||
                 destId == R.id.artistCatalogueFragment ||
                 destId == R.id.genreCatalogueFragment ||
@@ -98,6 +100,20 @@ public class NavigationHelper {
                 : View.GONE;
         bottomNavigationView.setVisibility(visibility);
         bottomNavigationViewFrame.setVisibility(visibility);
+    }
+
+    // The favorites tab is optional, so the bar carries it only while the setting is on. Adding it
+    // in code, after the bar was built from its menu, keeps NavigationUI matching the destination.
+    public void updateBottomNavLikedItem() {
+        Menu menu = bottomNavigationView.getMenu();
+        boolean enabled = Preferences.isBottomNavLikedEnabled();
+
+        if (enabled && menu.findItem(R.id.likedFragment) == null) {
+            menu.add(Menu.NONE, R.id.likedFragment, Menu.NONE, R.string.menu_liked_label)
+                    .setIcon(R.drawable.ic_favorites_outlined);
+        } else if (!enabled && menu.findItem(R.id.likedFragment) != null) {
+            menu.removeItem(R.id.likedFragment);
+        }
     }
 
     public void setNavigationDrawerLock(boolean locked) {

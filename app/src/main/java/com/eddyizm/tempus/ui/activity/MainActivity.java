@@ -5,6 +5,7 @@ import static com.eddyizm.tempus.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
@@ -105,6 +106,14 @@ public class MainActivity extends BaseActivity {
     private Intent pendingDownloadPlaybackIntent;
     private boolean pendingOpenNowPlaying = false;
 
+    // Held by the activity on purpose, since SharedPreferences keeps its listeners through a weak
+    // reference. The favorites tab is the only setting the bottom bar reacts to as it changes.
+    private final SharedPreferences.OnSharedPreferenceChangeListener bottomNavLikedListener = (preferences, key) -> {
+        if (Preferences.BOTTOM_NAV_LIKED.equals(key) && navigationController != null) {
+            navigationController.updateBottomNavLikedItem();
+        }
+    };
+
     public ActivityMainBinding getBinding() {
         return bind;
     }
@@ -177,6 +186,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        Preferences.registerListener(bottomNavLikedListener);
         pingServer();
         initService();
         consumePendingPlaybackIntent();
@@ -192,6 +202,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
+        Preferences.unregisterListener(bottomNavLikedListener);
         outstandingProbe = null;
         super.onStop();
     }
@@ -262,6 +273,7 @@ public class MainActivity extends BaseActivity {
 
         // Controller
         navigationController = new NavigationController(navigationHelper);
+        navigationController.updateBottomNavLikedItem();
         navigationController.syncWithBottomSheetBehavior(bottomSheetBehavior, navController);
     }
 

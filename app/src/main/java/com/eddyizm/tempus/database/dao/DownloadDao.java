@@ -8,12 +8,18 @@ import androidx.room.Query;
 
 import com.eddyizm.tempus.model.Download;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
 public interface DownloadDao {
     @Query("SELECT * FROM download WHERE download_state = 1 ORDER BY IFNULL(NULLIF(album_artist, ''), album), album, album_id, disc_number, track ASC")
     LiveData<List<Download>> getAll();
+
+    // Favorites are the liked tracks in the order they were liked, newest like first, which is the
+    // order the downloaded list filters by.
+    @Query("SELECT * FROM download WHERE download_state = 1 AND starred IS NOT NULL ORDER BY starred DESC")
+    LiveData<List<Download>> getLiked();
 
     @Query("SELECT * FROM download WHERE download_state = 1 ORDER BY IFNULL(NULLIF(album_artist, ''), album), album, album_id, disc_number, track ASC")
     List<Download> getAllSync();
@@ -37,6 +43,14 @@ public interface DownloadDao {
     // skipping it would leave it to finish later and sort away from its own album.
     @Query("UPDATE download SET album_artist = :albumArtist WHERE album_id = :albumId AND album = :albumTitle AND NULLIF(album_artist, '') IS NULL")
     int setAlbumArtist(String albumId, String albumTitle, String albumArtist);
+
+    // The like date lives in the row so the downloaded list can be filtered by the order tracks
+    // were starred. Starred from the server only reaches this table when the row is written.
+    @Query("UPDATE download SET starred = :starred WHERE id = :id")
+    void setStarred(String id, Date starred);
+
+    @Query("UPDATE download SET starred = NULL WHERE id = :id")
+    void clearStarred(String id);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Download download);

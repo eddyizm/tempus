@@ -15,6 +15,7 @@ import com.eddyizm.tempus.interfaces.StarCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
+import com.eddyizm.tempus.repository.DownloadRepository;
 import com.eddyizm.tempus.repository.FavoriteRepository;
 import com.eddyizm.tempus.repository.SharingRepository;
 import com.eddyizm.tempus.repository.SongRepository;
@@ -39,6 +40,7 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
     private final FavoriteRepository favoriteRepository;
+    private final DownloadRepository downloadRepository;
     private final SharingRepository sharingRepository;
 
     private Child song;
@@ -52,6 +54,7 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         albumRepository = new AlbumRepository();
         artistRepository = new ArtistRepository();
         favoriteRepository = new FavoriteRepository();
+        downloadRepository = new DownloadRepository();
         sharingRepository = new SharingRepository();
     }
 
@@ -82,6 +85,7 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
     private void removeFavoriteOffline(Child media) {
         favoriteRepository.starLater(media.getId(), null, null, false);
         media.setStarred(null);
+        downloadRepository.clearStarred(media.getId());
     }
 
     private void removeFavoriteOnline(Child media) {
@@ -93,11 +97,13 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         });
 
         media.setStarred(null);
+        downloadRepository.clearStarred(media.getId());
     }
 
     private void setFavoriteOffline(Child media) {
         favoriteRepository.starLater(media.getId(), null, null, true);
         media.setStarred(new Date());
+        downloadRepository.setStarred(media.getId(), media.getStarred());
     }
 
     private void setFavoriteOnline(Context context, Child media) {
@@ -109,6 +115,7 @@ public class SongBottomSheetViewModel extends AndroidViewModel {
         });
 
         media.setStarred(new Date());
+        downloadRepository.setStarred(media.getId(), media.getStarred());
 
         if (Preferences.isStarredSyncEnabled() && Preferences.getDownloadDirectoryUri() == null) {
             DownloadUtil.getDownloadTracker(context).download(

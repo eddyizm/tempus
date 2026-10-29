@@ -260,6 +260,10 @@ The Download tab lists every track stored on the phone. Tap the filter button at
 
 The Track and Album lists are sorted by album artist, then album, then disc and track number, so a compilation with a different artist on each track stays together in track order and is listed under its album artist. An album whose server reports no album artist sorts under its own title.
 
+The same menu also filters the list down to the tracks you have liked, newest like first. Tap the item again to remove the filter. The date comes from your server, and liking a track inside Tempus updates it for a track already on the phone. Under Album, Artist, Genre, Year or Playlist a group is kept once something inside it is liked, and takes the place of its newest like. Shuffle plays the filtered tracks only, and Tempus remembers the filter.
+
+Each row of the list carries a download indicator when the track is on the phone, so a favorite that was liked while offline still shows up marked, and a favorite that only exists on the server does not.
+
 **Playlist** lists the tracks you downloaded from a playlist, under the playlist's name. Each download remembers one playlist only, so a track that is in two playlists, or was downloaded from an album first, may not show under the playlist you expect.
 
 **Keeping a playlist downloaded**
@@ -284,6 +288,11 @@ The spot is also saved as a bookmark on your server, if the server supports book
 - **Home**: Recently played and server recommendations
 - **Library**: Your server's complete music collection
 - **Download**: Locally downloaded files from server 
+- **Favorites**: The tracks you have liked, newest like first
+
+The Favorites tab is off by default. Turn it on under **Settings → UI → Favorites tab on the bottom bar**, and the bar takes the tab on or off at once, without a restart.
+
+It lists what is on the phone, so it works without connectivity and holds only the liked tracks that are downloaded. Each row shows the cover, the title and the length, with no album line, and with a download marker for the tracks that are on the phone. Tapping a track plays the whole list in that order, newest like first. The same list is behind the **Давно в избранном** filter of the Download tab, and the same order.
 
 [Back to top](#table-of-contents)
 

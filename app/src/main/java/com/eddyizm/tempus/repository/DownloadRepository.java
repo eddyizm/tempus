@@ -9,6 +9,7 @@ import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.Favorite;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,6 +21,10 @@ public class DownloadRepository {
 
     public LiveData<List<Download>> getLiveDownload() {
         return downloadDao.getAll();
+    }
+
+    public LiveData<List<Download>> getLiveLiked() {
+        return downloadDao.getLiked();
     }
 
     public List<Download> getAllDownloads() {
@@ -160,6 +165,34 @@ public class DownloadRepository {
         @Override
         public void run() {
             downloadDao.update(id);
+        }
+    }
+
+    // Starring a track that is already downloaded has to reach the table, since the downloaded list
+    // is filtered and ordered by the date in this column.
+    public void setStarred(String id, Date starred) {
+        DOWNLOAD_WRITE_EXECUTOR.execute(new SetStarredThreadSafe(downloadDao, id, starred));
+    }
+
+    public void clearStarred(String id) {
+        DOWNLOAD_WRITE_EXECUTOR.execute(new SetStarredThreadSafe(downloadDao, id, null));
+    }
+
+    private static class SetStarredThreadSafe implements Runnable {
+        private final DownloadDao downloadDao;
+        private final String id;
+        private final Date starred;
+
+        public SetStarredThreadSafe(DownloadDao downloadDao, String id, Date starred) {
+            this.downloadDao = downloadDao;
+            this.id = id;
+            this.starred = starred;
+        }
+
+        @Override
+        public void run() {
+            if (starred == null) downloadDao.clearStarred(id);
+            else downloadDao.setStarred(id, starred);
         }
     }
 

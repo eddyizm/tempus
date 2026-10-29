@@ -40,6 +40,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -56,6 +57,8 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     private DownloadViewModel downloadViewModel;
 
     private DownloadHorizontalAdapter downloadHorizontalAdapter;
+
+    private List<Child> lastSongs;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
@@ -80,6 +83,8 @@ public class DownloadFragment extends Fragment implements ClickCallback {
 
         initAppBar();
         initDownloadedView();
+        setupShuffleButton();
+        setupBackPressing();
     }
 
     @Override
@@ -121,27 +126,42 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         bind.downloadFastScrollbar.setRecyclerView(bind.downloadedRecyclerView);
 
         downloadViewModel.getDownloadedTracks(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), songs -> {
-            if (songs != null) {
-                if (songs.isEmpty()) {
-                    if (bind != null) {
-                        bind.emptyDownloadLayout.setVisibility(View.VISIBLE);
-                        bind.downloadDownloadedSector.setVisibility(View.GONE);
-                        bind.downloadedGroupByImageView.setVisibility(View.GONE);
-                        bind.downloadFastScrollbar.setVisibility(View.GONE);
-                    }
-                } else {
-                    if (bind != null) {
-                        bind.emptyDownloadLayout.setVisibility(View.GONE);
-                        bind.downloadDownloadedSector.setVisibility(View.VISIBLE);
-                        bind.downloadedGroupByImageView.setVisibility(View.VISIBLE);
-
-                        finishDownloadView(songs);
-                    }
-                }
-
-                if (bind != null) bind.loadingProgressBar.setVisibility(View.GONE);
+            if (songs == null || bind == null) {
+                return;
             }
+
+            lastSongs = songs;
+
+            // An empty list means an empty library. With the like filter on the list can also come
+            // out empty because nothing matched, and the section has to stay up so the filter can
+            // be lifted again.
+            if (songs.isEmpty() && !downloadHorizontalAdapter.isStarFilterActive()) {
+                bind.emptyDownloadLayout.setVisibility(View.VISIBLE);
+                bind.downloadDownloadedSector.setVisibility(View.GONE);
+                bind.downloadedGroupByImageView.setVisibility(View.GONE);
+                bind.downloadFastScrollbar.setVisibility(View.GONE);
+            } else {
+                bind.emptyDownloadLayout.setVisibility(View.GONE);
+                bind.downloadDownloadedSector.setVisibility(View.VISIBLE);
+                bind.downloadedGroupByImageView.setVisibility(View.VISIBLE);
+
+                renderDownloadView();
+            }
+
+            bind.loadingProgressBar.setVisibility(View.GONE);
         });
+
+        downloadViewModel.getStarOrder().observe(getViewLifecycleOwner(), starOrder -> {
+            if (bind == null) {
+                return;
+            }
+
+            // A null order is the filter being off, and still has to reach the adapter.
+            downloadHorizontalAdapter.setStarOrder(starOrder);
+            renderDownloadView();
+        });
+
+        downloadViewModel.getViewStack().observe(getViewLifecycleOwner(), stack -> renderDownloadView());
 
         downloadViewModel.getRefreshResult().observe(getViewLifecycleOwner(), count -> {
             if (count == null || bind == null) {
@@ -166,39 +186,34 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         bind.downloadedRefreshImageView.setOnClickListener(view -> downloadViewModel.refreshExternalDownloads());
     }
 
-    private void finishDownloadView(List<Child> songs) {
-        downloadViewModel.getViewStack().observe(getViewLifecycleOwner(), stack -> {
-            bind.downloadedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+    private void renderDownloadView() {
+        if (bind == null || lastSongs == null) {
+            return;
+        }
 
-            DownloadStack lastLevel = stack.get(stack.size() - 1);
+        ArrayList<DownloadStack> stack = downloadViewModel.getViewStack().getValue();
+        if (stack == null || stack.isEmpty()) {
+            return;
+        }
 
-            switch (lastLevel.getId()) {
-                case Constants.DOWNLOAD_TYPE_TRACK:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_ALBUM:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_ARTIST:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_GENRE:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_YEAR:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-                case Constants.DOWNLOAD_TYPE_PLAYLIST:
-                    downloadHorizontalAdapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, lastLevel.getId(), lastLevel.getView(), songs);
-                    break;
-            }
+        bind.downloadedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-            bind.downloadFastScrollbar.setVisibility(downloadHorizontalAdapter.getItemCount() > 1 ? View.VISIBLE : View.GONE);
-            bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
+        DownloadStack lastLevel = stack.get(stack.size() - 1);
 
-            setupBackPressing(stack.size());
-            setupShuffleButton();
-        });
+        // The artist level is a list of albums, every other level is a list of tracks.
+        String viewType = Constants.DOWNLOAD_TYPE_ARTIST.equals(lastLevel.getId())
+                ? Constants.DOWNLOAD_TYPE_ALBUM
+                : Constants.DOWNLOAD_TYPE_TRACK;
+
+        downloadHorizontalAdapter.setItems(viewType, lastLevel.getId(), lastLevel.getView(), lastSongs);
+
+        // The like filter orders by date, where the letter bubble of the fast scrollbar would lie.
+        bind.downloadFastScrollbar.setVisibility(
+                !downloadHorizontalAdapter.isStarFilterActive() && downloadHorizontalAdapter.getItemCount() > 1
+                        ? View.VISIBLE
+                        : View.GONE
+        );
+        bind.downloadedGoBackImageView.setVisibility(stack.size() > 1 ? View.VISIBLE : View.GONE);
     }
 
     private void setupShuffleButton() {
@@ -213,17 +228,19 @@ public class DownloadFragment extends Fragment implements ClickCallback {
         });
     }
 
-    private void setupBackPressing(int stackSize) {
+    // Registered once and left in place, so back keeps stepping out of the levels the user drilled
+    // into instead of leaving after the first press.
+    private void setupBackPressing() {
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (stackSize > 1) {
+                ArrayList<DownloadStack> stack = downloadViewModel.getViewStack().getValue();
+
+                if (stack != null && stack.size() > 1) {
                     downloadViewModel.popViewStack();
                 } else {
                     activity.navController.navigateUp();
                 }
-
-                remove();
             }
         });
     }
@@ -257,6 +274,10 @@ public class DownloadFragment extends Fragment implements ClickCallback {
                 return setDownloadViewModel(Constants.DOWNLOAD_TYPE_PLAYLIST);
             }
 
+            if (menuItem.getItemId() == R.id.menu_download_liked_least_recent) {
+                return toggleStarOrder();
+            }
+
             if (menuItem.getItemId() == R.id.menu_download_set_directory) {
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
                 startActivityForResult(intent, REQUEST_CODE_PICK_DIRECTORY);
@@ -271,6 +292,16 @@ public class DownloadFragment extends Fragment implements ClickCallback {
     private boolean setDownloadViewModel(String downloadType) {
         downloadViewModel.initViewStack(new DownloadStack(downloadType, null));
         Preferences.setDefaultDownloadViewType(downloadType);
+        return true;
+    }
+
+    // The menu holds the filter as a single item, so tapping it again lifts the filter.
+    private boolean toggleStarOrder() {
+        String current = downloadViewModel.getStarOrder().getValue();
+
+        downloadViewModel.setStarOrder(
+                current == null ? Constants.DOWNLOAD_STAR_ORDER_LEAST_RECENT : null
+        );
         return true;
     }
 

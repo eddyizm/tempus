@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.util
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
 import androidx.media3.common.Player
@@ -14,6 +15,8 @@ object Preferences {
     const val THEME = "theme"
     const val UPNP_ENABLED = "upnp_enabled"
     const val LAN_REMOTE_ENABLED = "lan_remote_enabled"
+    // Public: the activity watches this key to put the favorites tab on or off the bottom bar.
+    const val BOTTOM_NAV_LIKED = "bottom_nav_liked"
     private const val DARK_THEME_BLACK = "dark_theme_black"
     private const val COLOR_ACCENT = "color_accent"
     private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
@@ -80,6 +83,7 @@ object Preferences {
     private const val DOWNLOAD_STORAGE = "download_storage"
     private const val DOWNLOAD_DIRECTORY_URI = "download_directory_uri"
     private const val DEFAULT_DOWNLOAD_VIEW_TYPE = "default_download_view_type"
+    private const val DEFAULT_DOWNLOAD_STAR_ORDER = "default_download_star_order"
     private const val AUDIO_TRANSCODE_DOWNLOAD = "audio_transcode_download"
     private const val AUDIO_TRANSCODE_DOWNLOAD_PRIORITY = "audio_transcode_download_priority"
     private const val MAX_BITRATE_DOWNLOAD = "max_bitrate_download"
@@ -880,6 +884,40 @@ object Preferences {
                 DEFAULT_DOWNLOAD_VIEW_TYPE,
                 viewType
         ).apply()
+    }
+
+    @JvmStatic
+    fun getDefaultDownloadStarOrder(): String? {
+        return App.getInstance().preferences.getString(
+                DEFAULT_DOWNLOAD_STAR_ORDER,
+                null
+        )
+    }
+
+    // A null order is the filter being off, and removes the stored value.
+    @JvmStatic
+    fun setDefaultDownloadStarOrder(starOrder: String?) {
+        return App.getInstance().preferences.edit().putString(
+                DEFAULT_DOWNLOAD_STAR_ORDER,
+                starOrder
+        ).apply()
+    }
+
+    @JvmStatic
+    fun isBottomNavLikedEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(BOTTOM_NAV_LIKED, false)
+    }
+
+    // The bar reacts to this setting while the app is running, and the listener has to be held by
+    // whoever registers it, since SharedPreferences keeps only a weak reference.
+    @JvmStatic
+    fun registerListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        App.getInstance().preferences.registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    @JvmStatic
+    fun unregisterListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        App.getInstance().preferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
     @JvmStatic

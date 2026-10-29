@@ -27,6 +27,10 @@ public class NavigationController {
         helper.setBottomNavigationBarVisibility(visibility);
     }
 
+    public void updateBottomNavLikedItem() {
+        helper.updateBottomNavLikedItem();
+    }
+
     public void setDrawerLock(boolean visibility) {
         helper.setNavigationDrawerLock(visibility);
     }

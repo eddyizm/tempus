@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.ui.adapter;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,15 +18,21 @@ import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.util.DownloadUtil;
+import com.eddyizm.tempus.util.ExternalAudioReader;
 import com.eddyizm.tempus.util.MusicUtil;
+import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.util.Util;
 
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -41,6 +48,13 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
     private List<Child> shuffling;
     private List<Child> grouped;
 
+    // Null while the filter is off.
+    private String starOrder;
+
+    private boolean showAlbumLine = true;
+
+    private boolean showDownloadIndicator;
+
     private final java.util.Map<String, String> playlistCoverCache = new java.util.HashMap<>();
 
     public DownloadHorizontalAdapter(ClickCallback click) {
@@ -48,6 +62,31 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         this.view = Constants.DOWNLOAD_TYPE_TRACK;
         this.songs = Collections.emptyList();
         this.grouped = Collections.emptyList();
+    }
+
+    public boolean isStarFilterActive() {
+        return starOrder != null;
+    }
+
+    public void setStarOrder(String starOrder) {
+        this.starOrder = starOrder;
+    }
+
+    public void setShowAlbumLine(boolean showAlbumLine) {
+        this.showAlbumLine = showAlbumLine;
+    }
+
+    public void setShowDownloadIndicator(boolean showDownloadIndicator) {
+        this.showDownloadIndicator = showDownloadIndicator;
+    }
+
+    // The same two ways of telling a track is on the phone as the song list uses: the download
+    // index while Tempus stores downloads itself, the files in the picked folder when it does not.
+    private static boolean isOnPhone(Context context, Child song) {
+        if (Preferences.getDownloadDirectoryUri() == null) {
+            return DownloadUtil.getDownloadTracker(context).isDownloaded(song.getId());
+        }
+        return ExternalAudioReader.getUri(song) != null;
     }
 
     @NonNull
@@ -94,14 +133,76 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
         this.songs = songs;
 
         List<Child> result = groupSong(songs);
-        if (!Constants.DOWNLOAD_TYPE_TRACK.equals(this.view)) {
+        if (isStarFilterActive()) {
+            result = filterLiked(result);
+        } else if (!Constants.DOWNLOAD_TYPE_TRACK.equals(this.view)) {
             sortByDisplayLabel(result);
         }
         this.grouped = result;
 
-        this.shuffling = shufflingSong(new ArrayList<>(songs));
+        List<Child> shuffleBase = shufflingSong(new ArrayList<>(songs));
+        if (isStarFilterActive()) {
+            shuffleBase = filterLiked(shuffleBase);
+        }
+        this.shuffling = shuffleBase;
 
         notifyDataSetChanged();
+    }
+
+    // The order of likes is read from the like date each track carries. For a group of several
+    // tracks it is the newest like among them, so an album or artist only shows up once something
+    // inside it has been liked, and takes the place of its newest like.
+    private List<Child> filterLiked(List<Child> representatives) {
+        Map<String, Date> likeByGroup = new HashMap<>();
+
+        for (Child song : songs) {
+            if (song.getStarred() == null) continue;
+
+            String key = groupKeyOf(song);
+            if (key == null) continue;
+
+            Date starred = song.getStarred();
+            Date known = likeByGroup.get(key);
+            if (known == null || starred.after(known)) {
+                likeByGroup.put(key, starred);
+            }
+        }
+
+        Comparator<Child> byLike = Comparator.comparing(
+                (Child child) -> likeByGroup.get(groupKeyOf(child)),
+                Comparator.nullsLast(Comparator.<Date>naturalOrder())
+        );
+
+        return representatives.stream()
+                .filter(child -> {
+                    String key = groupKeyOf(child);
+                    return key != null && likeByGroup.containsKey(key);
+                })
+                .sorted(byLike)
+                .collect(Collectors.toList());
+    }
+
+    // The value that puts a track in its group under the current view, so a group's representative
+    // can be matched against the tracks it was built from.
+    private String groupKeyOf(Child child) {
+        if (child == null) return null;
+
+        switch (view) {
+            case Constants.DOWNLOAD_TYPE_TRACK:
+                return child.getId();
+            case Constants.DOWNLOAD_TYPE_ALBUM:
+                return child.getAlbumId();
+            case Constants.DOWNLOAD_TYPE_ARTIST:
+                return child.getArtistId();
+            case Constants.DOWNLOAD_TYPE_GENRE:
+                return child.getGenre();
+            case Constants.DOWNLOAD_TYPE_YEAR:
+                return child.getYear() == null ? null : child.getYear().toString();
+            case Constants.DOWNLOAD_TYPE_PLAYLIST:
+                return child instanceof Download ? ((Download) child).getPlaylistId() : null;
+            default:
+                return null;
+        }
     }
 
     private List<Child> sortByDisplayLabel(List<Child> items) {
@@ -276,8 +377,6 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
                 )
         );
 
-        holder.item.downloadedItemPreTextView.setText(song.getAlbum());
-
         CustomGlideRequest.Builder
                 .from(holder.itemView.getContext(), song.getCoverArtId(), CustomGlideRequest.ResourceType.Song)
                 .build()
@@ -285,6 +384,20 @@ public class DownloadHorizontalAdapter extends RecyclerView.Adapter<DownloadHori
 
         holder.item.itemCoverImageView.setVisibility(View.VISIBLE);
         holder.item.downloadedItemMoreButton.setVisibility(View.VISIBLE);
+        holder.item.downloadedIndicatorFrame.setVisibility(
+                showDownloadIndicator && isOnPhone(holder.itemView.getContext(), song)
+                        ? View.VISIBLE
+                        : View.GONE);
+
+        // A flat list of tracks, like favorites, has no album to name: the line would only repeat
+        // what the row above already said, and the divider it carries has no albums to split.
+        if (!showAlbumLine) {
+            holder.item.downloadedItemPreTextView.setText(null);
+            holder.item.divider.setVisibility(View.GONE);
+            return;
+        }
+
+        holder.item.downloadedItemPreTextView.setText(song.getAlbum());
         holder.item.divider.setVisibility(View.VISIBLE);
 
         if (position > 0 && grouped.get(position - 1) != null && !sameAlbum(grouped.get(position - 1), grouped.get(position))) {

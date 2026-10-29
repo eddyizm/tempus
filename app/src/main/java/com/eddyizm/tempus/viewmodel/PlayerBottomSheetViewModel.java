@@ -20,6 +20,7 @@ import com.eddyizm.tempus.model.LyricsCache;
 import com.eddyizm.tempus.model.Queue;
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
+import com.eddyizm.tempus.repository.DownloadRepository;
 import com.eddyizm.tempus.repository.FavoriteRepository;
 import com.eddyizm.tempus.repository.LyricsRepository;
 import com.eddyizm.tempus.repository.OpenRepository;
@@ -53,6 +54,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
     private final QueueRepository queueRepository;
     private final FavoriteRepository favoriteRepository;
+    private final DownloadRepository downloadRepository;
     private final OpenRepository openRepository;
     private final LyricsRepository lyricsRepository;
     private final MutableLiveData<String> lyricsLiveData = new MutableLiveData<>(null);
@@ -78,6 +80,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         artistRepository = new ArtistRepository();
         queueRepository = new QueueRepository();
         favoriteRepository = new FavoriteRepository();
+        downloadRepository = new DownloadRepository();
         openRepository = new OpenRepository();
         lyricsRepository = new LyricsRepository();
     }
@@ -107,6 +110,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     private void removeFavoriteOffline(Child media) {
         favoriteRepository.starLater(media.getId(), null, null, false);
         media.setStarred(null);
+        downloadRepository.clearStarred(media.getId());
     }
 
     private void removeFavoriteOnline(Child media) {
@@ -117,11 +121,13 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
             }
         });
         media.setStarred(null);
+        downloadRepository.clearStarred(media.getId());
     }
 
     private void setFavoriteOffline(Child media) {
         favoriteRepository.starLater(media.getId(), null, null, true);
         media.setStarred(new Date());
+        downloadRepository.setStarred(media.getId(), media.getStarred());
     }
 
     private void setFavoriteOnline(Context context, Child media) {
@@ -133,6 +139,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         });
 
         media.setStarred(new Date());
+        downloadRepository.setStarred(media.getId(), media.getStarred());
 
         if (Preferences.isStarredSyncEnabled() && Preferences.getDownloadDirectoryUri() == null) {
             DownloadUtil.getDownloadTracker(context).download(

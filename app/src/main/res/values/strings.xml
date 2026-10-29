@@ -113,6 +113,9 @@
     <string name="download_directory_set">Set where music is downloaded</string>
     <string name="download_info_empty_subtitle">Once you download a song, you\'ll find it here</string>
     <string name="download_info_empty_title">No downloads yet!</string>
+    <string name="download_indicator_content_description">Downloaded for offline playback</string>
+    <string name="liked_info_empty_subtitle">Like a song and it shows up here, newest like first</string>
+    <string name="liked_info_empty_title">No favorites yet!</string>
     <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s items</string>
     <string name="download_item_single_subtitle_formatter">%1$s items</string>
     <string name="download_shuffle_all_subtitle">Shuffle all</string>
@@ -123,6 +126,7 @@
     <string name="download_storage_internal_dialog_negative_button">Internal</string>
     <string name="download_storage_directory_dialog_neutral_button">Directory</string>
     <string name="download_title_section">Downloads</string>
+    <string name="liked_title_section">Favorites</string>
     <string name="download_refresh_no_directory">Set a download folder to refresh your downloads.</string>
     <string name="download_refresh_no_changes">No missing downloads found.</string>
     <plurals name="download_refresh_removed">
@@ -259,6 +263,7 @@
     <string name="menu_download_all_button">Download all</string>
     <string name="menu_rate_album">Rate album</string>
     <string name="menu_download_label">Download</string>
+    <string name="menu_liked_label">Favorites</string>
     <string name="menu_filter_all">All</string>
     <string name="menu_filter_download">Downloaded</string>
     <string name="menu_group_by_album">Album</string>
@@ -563,6 +568,8 @@
     <string name="settings_enable_drawer_on_landscape_summary">Unlocks the lateral landscape menu drawer on portrait.</string>
     <string name="settings_hide_bottom_navbar_on_portrait">Hide bottom navbar on portrait [Experimental]</string>
     <string name="settings_hide_bottom_navbar_on_portrait_summary">Increases vertical space by removing the bottom navbar. The changes will take effect on restart.</string>
+    <string name="settings_bottom_nav_liked">Favorites tab on the bottom bar</string>
+    <string name="settings_bottom_nav_liked_summary">If enabled, add a tab that lists your liked tracks, newest like first. The tab takes them from what is on the phone.</string>
     <string name="settings_auto_download_lyrics">Auto download lyrics</string>
     <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
     <string name="settings_replay_gain">Set replay gain mode</string>

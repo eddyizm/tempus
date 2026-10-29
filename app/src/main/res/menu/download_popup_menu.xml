@@ -20,6 +20,10 @@
         android:id="@+id/menu_download_group_by_year"
         android:title="@string/menu_group_by_year" />
     <item
+        android:id="@+id/menu_download_liked_least_recent"
+        android:title="@string/menu_sort_least_recently_starred" />
+
+    <item
         android:id="@+id/menu_download_set_directory"
         android:title="@string/download_directory_set" />
 </menu>
