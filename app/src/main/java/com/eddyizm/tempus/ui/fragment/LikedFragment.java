@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eddyizm.tempus.R;
@@ -41,6 +42,8 @@ public class LikedFragment extends Fragment implements ClickCallback {
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
 
+    private com.google.android.material.appbar.MaterialToolbar materialToolbar;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity = (MainActivity) getActivity();
@@ -56,6 +59,7 @@ public class LikedFragment extends Fragment implements ClickCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initAppBar();
         initRecyclerView();
         initSwipeToRefresh();
         observeLikedSongs();
@@ -113,6 +117,28 @@ public class LikedFragment extends Fragment implements ClickCallback {
             likedViewModel.getStarredSongs().observe(getViewLifecycleOwner(), starred -> {
                 bind.swipeLikedToRefresh.setRefreshing(false);
             });
+        });
+    }
+
+    private void initAppBar() {
+        materialToolbar = bind.getRoot().findViewById(R.id.toolbar);
+        activity.setSupportActionBar(materialToolbar);
+
+        if (activity.getSupportActionBar() != null) {
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            activity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        materialToolbar.setNavigationOnClickListener(v -> activity.navController.navigateUp());
+
+        bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (bind == null) return;
+
+            if ((bind.likedInfoSector.getHeight() + verticalOffset) < (2 * ViewCompat.getMinimumHeight(bind.toolbar))) {
+                bind.toolbar.setTitle(R.string.liked_title_section);
+            } else {
+                bind.toolbar.setTitle(R.string.empty_string);
+            }
         });
     }
 
