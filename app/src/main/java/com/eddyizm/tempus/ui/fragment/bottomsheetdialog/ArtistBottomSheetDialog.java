@@ -26,6 +26,7 @@ import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.dialog.PlaylistChooserDialog;
 import java.util.ArrayList;
 import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.util.ArtistDownload;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.viewmodel.ArtistBottomSheetViewModel;
 import com.eddyizm.tempus.util.FavoriteRegistry;
@@ -242,6 +243,12 @@ public class ArtistBottomSheetDialog extends BottomSheetDialogFragment implement
             };
 
             artistBottomSheetViewModel.getArtistAllTracks().observe(getViewLifecycleOwner(), observer);
+        });
+
+        TextView downloadAll = view.findViewById(R.id.download_all_text_view);
+        downloadAll.setOnClickListener(v -> {
+            ArtistDownload.start(requireContext(), artist.getId());
+            dismissBottomSheet();
         });
     }
 

@@ -61,7 +61,12 @@
     <string name="artist_bottom_sheet_play_next">Play next</string>
     <string name="artist_bottom_sheet_add_to_queue">Add to queue</string>
     <string name="artist_bottom_sheet_add_to_playlist">Add to playlist</string>
+    <string name="artist_bottom_sheet_download_all">Download all</string>
     <string name="artist_bottom_sheet_loading_tracks">Loading tracks\u2026</string>
+    <string name="artist_download_load_failed">Couldn\'t load the artist\'s tracks. Check your connection and try again.</string>
+    <string name="artist_download_no_tracks">No tracks found for this artist</string>
+    <string name="artist_download_already_downloaded">All of this artist\'s tracks are already downloaded or queued</string>
+    <string name="artist_download_not_started">Couldn\'t start the download. Try again.</string>
     <string name="artist_catalogue_title">Artists</string>
     <string name="artist_catalogue_title_expanded">Browse Artists</string>
     <string name="artist_error_retrieving_radio">Error retrieving artist\'s radio</string>
@@ -755,6 +760,10 @@
     <plurals name="songs_download_started">
         <item quantity="one">Downloading %d song</item>
         <item quantity="other">Downloading %d songs</item>
+    </plurals>
+    <plurals name="artist_download_waiting_for_network">
+        <item quantity="one">%d song queued. It will download when you\'re back online.</item>
+        <item quantity="other">%d songs queued. They\'ll download when you\'re back online.</item>
     </plurals>
     <string name="equalizer_fragment_title">Equalizer</string>
     <string name="equalizer_reset">Reset</string>

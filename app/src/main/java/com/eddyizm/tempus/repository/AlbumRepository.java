@@ -113,24 +113,31 @@ public class AlbumRepository {
 
     /** Callback-based album fetch that always reports (empty list on failure). */
     public void getAlbumTracks(String id, Consumer<List<Child>> onResult) {
+        getAlbumTracks(id, onResult, () -> onResult.accept(Collections.emptyList()));
+    }
+
+    /** Callback-based album fetch that reports a failed request through onFailed instead of an empty list. */
+    public void getAlbumTracks(String id, Consumer<List<Child>> onResult, Runnable onFailed) {
         App.getSubsonicClientInstance(false)
                 .getBrowsingClient()
                 .getAlbum(id)
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (!response.isSuccessful() || response.body() == null || response.body().getSubsonicResponse().getAlbum() == null) {
+                            onFailed.run();
+                            return;
+                        }
                         List<Child> tracks = new ArrayList<>();
-                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getAlbum() != null) {
-                            if (response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
-                                tracks.addAll(response.body().getSubsonicResponse().getAlbum().getSongs());
-                            }
+                        if (response.body().getSubsonicResponse().getAlbum().getSongs() != null) {
+                            tracks.addAll(response.body().getSubsonicResponse().getAlbum().getSongs());
                         }
                         onResult.accept(tracks);
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
-                        onResult.accept(Collections.emptyList());
+                        onFailed.run();
                     }
                 });
     }
