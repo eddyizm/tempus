@@ -734,12 +734,18 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     fun setPlayer(oldPlayer: Player?, newPlayer: Player) {
         if (oldPlayer === newPlayer) return
-        if (oldPlayer != null) {
-            val currentQueue = getQueueFromPlayer(oldPlayer)
-            val currentIndex = oldPlayer.currentMediaItemIndex
-            val currentPosition = oldPlayer.currentPosition
-            val isPlaying = oldPlayer.playWhenReady
-            oldPlayer.stop()
+        var from = oldPlayer
+        // MediaRouter selects the new route before it unselects the old one.
+        if (from != null && from !== mediaLibrarySession.player) {
+            if (newPlayer === exoplayer) return
+            from = mediaLibrarySession.player
+        }
+        if (from != null) {
+            val currentQueue = getQueueFromPlayer(from)
+            val currentIndex = from.currentMediaItemIndex
+            val currentPosition = from.currentPosition
+            val isPlaying = from.playWhenReady
+            from.stop()
             newPlayer.setMediaItems(currentQueue, currentIndex, currentPosition)
             newPlayer.playWhenReady = isPlaying
             newPlayer.prepare()
