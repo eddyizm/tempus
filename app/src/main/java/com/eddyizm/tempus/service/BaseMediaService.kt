@@ -76,6 +76,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         const val ACTION_BIND_EQUALIZER = "com.eddyizm.tempus.service.BIND_EQUALIZER"
         const val ACTION_EQUALIZER_UPDATED = "com.eddyizm.tempus.service.EQUALIZER_UPDATED"
         const val ACTION_RELOAD_EQUALIZER = "com.eddyizm.tempus.service.ACTION_RELOAD_EQUALIZER"
+        private const val PREWARM_WINDOW_SIZE = 5
         var activeBrowserCount = 0
     }
 
@@ -370,6 +371,11 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     scheduleQueueSync()
                 }
                 ReplayGainUtil.applyGain(player, mediaItem)
+                try {
+                    ReplayGainUtil.prefetchQueueGains(player)
+                } catch (t: Throwable) {
+                    Log.w(TAG, "prefetchQueueGains failed: $t")
+                }
 
                 // --- Add for AA : Constants.AA_START_INDEX if présent ---
                 val extras = mediaItem.mediaMetadata.extras
@@ -419,6 +425,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
                 updateWidget(player)
                 QueuePreloader.preload(this@BaseMediaService, player)
+                prewarmUpcomingArtwork(player)
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -430,12 +437,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     Log.w(TAG, "prefetchQueueGains failed: $t")
                 }
                 QueuePreloader.preload(this@BaseMediaService, player)
-                if (timeline.isEmpty) return
-                val window = Timeline.Window()
-                for (i in 0 until timeline.windowCount) {
-                    timeline.getWindow(i, window)
-                    window.mediaItem.mediaMetadata.artworkUri?.let { bitmapLoader.prewarm(it) }
-                }
+                prewarmUpcomingArtwork(player)
             }
 
             override fun onTracksChanged(tracks: Tracks) {
@@ -686,6 +688,29 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         })
         if (player.isPlaying) {
             scheduleWidgetUpdates()
+        }
+    }
+
+    private fun prewarmUpcomingArtwork(player: Player) {
+        val timeline = player.currentTimeline
+        if (timeline.isEmpty) return
+        val window = Timeline.Window()
+        val currentIndex = player.currentMediaItemIndex
+        if (currentIndex == C.INDEX_UNSET) {
+            val end = PREWARM_WINDOW_SIZE.coerceAtMost(timeline.windowCount)
+            for (i in 0 until end) {
+                timeline.getWindow(i, window)
+                window.mediaItem.mediaMetadata.artworkUri?.let { bitmapLoader.prewarm(it) }
+            }
+        } else {
+            var idx: Int = currentIndex
+            var count = 0
+            while (idx != C.INDEX_UNSET && count < PREWARM_WINDOW_SIZE) {
+                timeline.getWindow(idx, window)
+                window.mediaItem.mediaMetadata.artworkUri?.let { bitmapLoader.prewarm(it) }
+                idx = timeline.getNextWindowIndex(idx, player.repeatMode, player.shuffleModeEnabled)
+                count++
+            }
         }
     }
 
