@@ -365,6 +365,12 @@
             android:key="data_saving_mode" />
 
         <SwitchPreference
+            android:title="@string/settings_radio_track_covers_title"
+            android:defaultValue="false"
+            android:summary="@string/settings_radio_track_covers_summary"
+            android:key="radio_track_covers" />
+
+        <SwitchPreference
             android:title="@string/settings_sync_starred_tracks_for_offline_use_title"
             android:defaultValue="false"
             android:summary="@string/settings_sync_starred_tracks_for_offline_use_summary"

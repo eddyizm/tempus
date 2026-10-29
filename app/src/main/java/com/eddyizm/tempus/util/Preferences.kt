@@ -61,6 +61,7 @@ object Preferences {
     private const val ALBUM_ARTIST_ATTEMPTS = "album_artist_backfill_attempts"
     private const val ALBUM_ARTIST_ATTEMPTS_VERSION = "album_artist_backfill_attempts_version"
     private const val DATA_SAVING_MODE = "data_saving_mode"
+    private const val RADIO_TRACK_COVERS = "radio_track_covers"
     private const val SERVER_UNREACHABLE = "server_unreachable"
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
     private const val SYNC_STARRED_ALBUMS_FOR_OFFLINE_USE = "sync_starred_albums_for_offline_use"
@@ -691,6 +692,11 @@ object Preferences {
     fun setDataSavingMode(isDataSavingModeEnabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(DATA_SAVING_MODE, isDataSavingModeEnabled)
                 .apply()
+    }
+
+    @JvmStatic
+    fun isRadioTrackCoversEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(RADIO_TRACK_COVERS, false)
     }
 
     @JvmStatic

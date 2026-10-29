@@ -309,6 +309,8 @@
     <string name="settings_covers_cache">Dimensione della cache delle copertine</string>
     <string name="settings_data_saving_mode_summary">Per ridurre il consumo di dati, evita di scaricare le copertine.</string>
     <string name="settings_data_saving_mode_title">Limita utilizzo dei dati mobili</string>
+    <string name="settings_radio_track_covers_summary">Cerca la copertina del brano in onda sulla radio su MusicBrainz, Deezer e Apple. I titoli dei brani vengono inviati a questi servizi.</string>
+    <string name="settings_radio_track_covers_title">Copertine dei brani radio</string>
     <string name="settings_delete_download_storage_summary">Continuando, tutti gli elementi salvati verranno eliminati in modo irreversibile.</string>
     <string name="settings_delete_download_storage_title">Elimina elementi salvati</string>
     <string name="settings_download_storage_title">Archivio download</string>

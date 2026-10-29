@@ -484,6 +484,8 @@
     <string name="settings_covers_cache">Size of artwork cache</string>
     <string name="settings_data_saving_mode_summary">In order to reduce data consumption, avoid downloading covers.</string>
     <string name="settings_data_saving_mode_title">Limit mobile data usage</string>
+    <string name="settings_radio_track_covers_summary">Look up the cover of the current radio song on MusicBrainz, Deezer and Apple. Song names are sent to these services.</string>
+    <string name="settings_radio_track_covers_title">Radio track covers</string>
     <string name="settings_delete_download_storage_summary">Proceeding will result in the irreversible deletion of all saved items.</string>
     <string name="settings_delete_download_storage_title">Delete saved items</string>
     <string name="settings_download_storage_title">Download storage</string>
