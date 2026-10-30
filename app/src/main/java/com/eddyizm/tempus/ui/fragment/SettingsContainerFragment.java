@@ -101,6 +101,8 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private static final int PARAMETRIC_EQ_MAX_BYTES = 16 * 1024;
 
+    private static final String STATE_EXPANDED_CATEGORIES = "expanded_categories";
+
     private final Set<String> expandedCategories = new HashSet<>();
 
     private boolean musicFoldersObserved = false;
@@ -117,6 +119,11 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            ArrayList<String> expanded = savedInstanceState.getStringArrayList(STATE_EXPANDED_CATEGORIES);
+            if (expanded != null) expandedCategories.addAll(expanded);
+        }
+
         super.onCreate(savedInstanceState);
 
         equalizerResultLauncher = registerForActivityResult(
@@ -179,8 +186,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
 
-        expandedCategories.clear();
-
         setStreamingCacheSize();
         setAppLanguage();
         setMusicLibrary();
@@ -211,6 +216,12 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionReplayGainPreamp();
 
         applyAccordionState();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(STATE_EXPANDED_CATEGORIES, new ArrayList<>(expandedCategories));
     }
 
     @Override
