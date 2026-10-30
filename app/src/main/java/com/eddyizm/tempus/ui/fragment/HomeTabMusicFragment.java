@@ -825,8 +825,6 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     private void initTopSongsView() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_TOP_SONGS)) return;
 
-        bind.topSongsRecyclerView.setHasFixedSize(true);
-
         topSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.topSongsRecyclerView.setAdapter(topSongAdapter);
         setTopSongsMediaBrowserListenableFuture();
@@ -865,8 +863,6 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
     private void initStarredTracksView() {
         if (homeViewModel.checkHomeSectorVisibility(Constants.HOME_SECTOR_STARRED_TRACKS)) return;
-
-        bind.starredTracksRecyclerView.setHasFixedSize(true);
 
         starredSongAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
         bind.starredTracksRecyclerView.setAdapter(starredSongAdapter);
