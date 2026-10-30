@@ -264,6 +264,9 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                     });
                 }
             }
+
+            checkLanPlayback();
+            collapseCategories(screen);
         }
 
         SwitchPreference downloadWifiOnlyPreference = findPreference("download_wifi_only");
@@ -299,23 +302,27 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         if (!searchQuery.isEmpty()) {
             filterPreferences(screen);
         } else {
-            for (int i = 0; i < screen.getPreferenceCount(); i++) {
-                Preference pref = screen.getPreference(i);
-                if (pref instanceof PreferenceCategory) {
-                    PreferenceCategory category = (PreferenceCategory) pref;
-                    boolean expanded = expandedCategories.contains(category.getKey());
-                    category.setIcon(expanded ? R.drawable.ic_arrow_down : R.drawable.ic_navigate_next);
-                    if (!expanded) {
-                        for (int j = 0; j < category.getPreferenceCount(); j++) {
-                            category.getPreference(j).setVisible(false);
-                        }
-                    }
-                }
-            }
+            collapseCategories(screen);
         }
 
         if (getListView() != null && getListView().getAdapter() != null) {
             getListView().getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    private void collapseCategories(PreferenceScreen screen) {
+        for (int i = 0; i < screen.getPreferenceCount(); i++) {
+            Preference pref = screen.getPreference(i);
+            if (pref instanceof PreferenceCategory) {
+                PreferenceCategory category = (PreferenceCategory) pref;
+                boolean expanded = expandedCategories.contains(category.getKey());
+                category.setIcon(expanded ? R.drawable.ic_arrow_down : R.drawable.ic_navigate_next);
+                if (!expanded) {
+                    for (int j = 0; j < category.getPreferenceCount(); j++) {
+                        category.getPreference(j).setVisible(false);
+                    }
+                }
+            }
         }
     }
 
