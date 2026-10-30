@@ -2,10 +2,13 @@ package com.eddyizm.tempus.repository;
 
 import android.util.Log;
 
+import androidx.annotation.OptIn;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.database.AppDatabase;
+import com.eddyizm.tempus.model.StarredSong;
 import com.eddyizm.tempus.subsonic.base.ApiResponse;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
@@ -17,14 +20,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 public class SongRepository {
 
     private static final String TAG = "SongRepository";
+    private static final ExecutorService STARRED_WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
 
     public interface MediaCallbackInternal {
         void onSongsAvailable(List<Child> songs);
@@ -43,6 +50,9 @@ public class SongRepository {
                             List<Child> songs = response.body().getSubsonicResponse().getStarred2().getSongs();
 
                             if (songs != null) {
+                                // Save starred songs locally with their starred date for ordering
+                                saveStarredSongsLocally(songs);
+
                                 if (!random) {
                                     starredSongs.setValue(songs);
                                 } else {
@@ -58,6 +68,21 @@ public class SongRepository {
                 });
 
         return starredSongs;
+    }
+
+    private void saveStarredSongsLocally(List<Child> songs) {
+        List<StarredSong> starredSongs = new ArrayList<>();
+        for (Child song : songs) {
+            if (song.getStarred() != null) {
+                starredSongs.add(new StarredSong(song.getId(), song.getStarred().getTime()));
+            }
+        }
+
+        if (!starredSongs.isEmpty()) {
+            STARRED_WRITE_EXECUTOR.execute(() -> {
+                AppDatabase.getInstance().starredSongDao().insertAll(starredSongs);
+            });
+        }
     }
 
     /**
