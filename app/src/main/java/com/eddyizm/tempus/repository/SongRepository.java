@@ -2,6 +2,7 @@ package com.eddyizm.tempus.repository;
 
 import android.util.Log;
 
+import androidx.annotation.OptIn;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
@@ -26,6 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+@OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 public class SongRepository {
 
     private static final String TAG = "SongRepository";
