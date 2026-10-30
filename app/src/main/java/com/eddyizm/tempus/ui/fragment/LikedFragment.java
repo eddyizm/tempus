@@ -28,6 +28,7 @@ import com.eddyizm.tempus.viewmodel.LikedViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @UnstableApi
@@ -102,11 +103,18 @@ public class LikedFragment extends Fragment implements ClickCallback {
                 bind.likedRecyclerView.setVisibility(View.GONE);
                 bind.emptyLikedLayout.setVisibility(View.VISIBLE);
                 bind.swipeLikedToRefresh.setVisibility(View.GONE);
+                bind.likedShuffleImageView.setEnabled(false);
             } else {
                 bind.likedRecyclerView.setVisibility(View.VISIBLE);
                 bind.emptyLikedLayout.setVisibility(View.GONE);
                 bind.swipeLikedToRefresh.setVisibility(View.VISIBLE);
                 songAdapter.setItems(songs);
+                bind.likedShuffleImageView.setEnabled(true);
+                bind.likedShuffleImageView.setOnClickListener(v -> {
+                    Collections.shuffle(songs);
+                    MediaManager.startQueue(mediaBrowserListenableFuture, songs.subList(0, Math.min(500, songs.size())), 0);
+                    activity.setBottomSheetInPeek(true);
+                });
             }
         });
     }
