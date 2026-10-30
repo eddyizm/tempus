@@ -42,6 +42,7 @@ import com.eddyizm.tempus.equalizer.ParametricEqAudioProcessor
 import androidx.mediarouter.media.MediaRouter
 import com.eddyizm.tempus.repository.QueueRepository
 import com.eddyizm.tempus.subsonic.base.ApiResponse
+import com.eddyizm.tempus.subsonic.models.NowPlayingEntry
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.upnp.UpnpControlPoint
 import com.eddyizm.tempus.upnp.UpnpDevice
@@ -335,6 +336,21 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private var restartableUntilMs = 0L
     private val restartAfterErrorWindowMs = 60_000L
 
+    /**
+     * The track the server is tracking a playback session for, opened by starting and closed by stopped.
+     * Shared across players, so moving playback to Cast or UPnP continues the same session.
+     */
+    private var playbackSessionItem: MediaItem? = null
+
+    /** Set while [setPlayer] moves the queue, so neither player's events open or close a session. */
+    private var playerHandOff = false
+
+    /**
+     * Set by a network error Tempus retries, for the idle that follows it, so the session stays open and the
+     * server does not count the play once at the error and again when the recovered track ends.
+     */
+    private var idleFromRetriedError = false
+
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
@@ -351,6 +367,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     PlaybackException.ERROR_CODE_IO_UNSPECIFIED -> true
                     else -> false
                 }
+                idleFromRetriedError = recoverable
                 val now = android.os.SystemClock.elapsedRealtime()
                 restartableUntilMs = now + restartAfterErrorWindowMs
                 if (!recoverable) return
@@ -419,6 +436,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
                 updateWidget(player)
                 QueuePreloader.preload(this@BaseMediaService, player)
+                reportPlaybackState(player)
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -594,12 +612,17 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     queueSyncHandler.removeCallbacks(queueSyncRunnable)
                 }
                 updateWidget(player)
+                reportPlaybackState(player)
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 Log.d(TAG, "onPlaybackStateChanged")
                 super.onPlaybackStateChanged(playbackState)
                 if (playbackState != Player.STATE_IDLE) stoppedSinceError = false
+                if (playbackState == Player.STATE_IDLE && !idleFromRetriedError && isReportingPlayer(player)) {
+                    endPlaybackSession(player.currentPosition, player.playbackParameters.speed)
+                }
+                idleFromRetriedError = false
                 if (!player.hasNextMediaItem() &&
                     playbackState == Player.STATE_ENDED &&
                     player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC
@@ -620,6 +643,13 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 Log.d(TAG, "onPositionDiscontinuity reason=$reason old=${oldPosition.mediaItemIndex} new=${newPosition.mediaItemIndex}")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
                 if (reason == Player.DISCONTINUITY_REASON_SEEK) scheduleQueueSync()
+                if (isReportingPlayer(player)) {
+                    if (leftTrack(oldPosition, newPosition, reason)) {
+                        endPlaybackSession(oldPosition.positionMs, player.playbackParameters.speed)
+                    } else if (reason == Player.DISCONTINUITY_REASON_SEEK) {
+                        reportPlaybackState(player)
+                    }
+                }
                 // Save the resume point of the track we're leaving whenever we move to a
                 // different track, so coming back to it later resumes where it was. (Pause
                 // is handled separately in onIsPlayingChanged; this covers switching tracks
@@ -678,6 +708,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 Preferences.setRepeatMode(repeatMode)
             }
 
+            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+                reportPlaybackState(player)
+            }
+
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
                 equalizerManager.attach(audioSessionId)
@@ -688,6 +722,53 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             scheduleWidgetUpdates()
         }
     }
+
+    /**
+     * Reports the current track as playing, paused or stopped, first opening its session with starting once the
+     * track is set to play, so one skipped past while paused is never reported. Buffering and idle are not
+     * reported, so a stall does not show as a pause; the next playing or paused change follows anyway.
+     */
+    private fun reportPlaybackState(player: Player) {
+        if (!isReportingPlayer(player)) return
+        val item = player.currentMediaItem ?: return
+        if (player.playbackState == Player.STATE_IDLE) return
+        val rate = player.playbackParameters.speed
+        if (playbackSessionItem?.mediaId != item.mediaId) {
+            if (!player.playWhenReady || player.playbackState == Player.STATE_ENDED) return
+            MediaManager.reportPlayback(item, NowPlayingEntry.STATE_STARTING, player.currentPosition, rate)
+            playbackSessionItem = item
+        }
+        val state = when {
+            player.isPlaying -> NowPlayingEntry.STATE_PLAYING
+            player.playbackState == Player.STATE_ENDED -> NowPlayingEntry.STATE_STOPPED
+            !player.playWhenReady ||
+                player.playbackSuppressionReason != Player.PLAYBACK_SUPPRESSION_REASON_NONE -> NowPlayingEntry.STATE_PAUSED
+            else -> return
+        }
+        MediaManager.reportPlayback(item, state, player.currentPosition, rate)
+        if (state == NowPlayingEntry.STATE_STOPPED) playbackSessionItem = null
+    }
+
+    /** Sends stopped, from which the server counts the play, so a track that never opened a session sends nothing. */
+    private fun endPlaybackSession(positionMs: Long, rate: Float) {
+        val item = playbackSessionItem ?: return
+        playbackSessionItem = null
+        MediaManager.reportPlayback(item, NowPlayingEntry.STATE_STOPPED, positionMs, rate)
+    }
+
+    /** Only the session's own player reports, so a player left behind by a hand-off cannot close the session. */
+    private fun isReportingPlayer(player: Player): Boolean =
+        !playerHandOff && player === mediaLibrarySession.player
+
+    /**
+     * Whether playback left the track, compared by media id so a copy with new metadata, such as a rating,
+     * is still the same track. A seek to another queue entry counts, so two copies of one song are told apart,
+     * and so does an automatic transition, which is how repeat-one restarts the song.
+     */
+    private fun leftTrack(oldPosition: Player.PositionInfo, newPosition: Player.PositionInfo, reason: Int): Boolean =
+        oldPosition.mediaItem?.mediaId != newPosition.mediaItem?.mediaId ||
+            reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION ||
+            (reason == Player.DISCONTINUITY_REASON_SEEK && oldPosition.mediaItemIndex != newPosition.mediaItemIndex)
 
     // -------------------------------------------------------------------------
     // Sleep timer
@@ -734,18 +815,23 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     fun setPlayer(oldPlayer: Player?, newPlayer: Player) {
         if (oldPlayer === newPlayer) return
-        if (oldPlayer != null) {
-            val currentQueue = getQueueFromPlayer(oldPlayer)
-            val currentIndex = oldPlayer.currentMediaItemIndex
-            val currentPosition = oldPlayer.currentPosition
-            val isPlaying = oldPlayer.playWhenReady
-            oldPlayer.stop()
-            newPlayer.setMediaItems(currentQueue, currentIndex, currentPosition)
-            newPlayer.playWhenReady = isPlaying
-            newPlayer.prepare()
+        playerHandOff = true
+        try {
+            if (oldPlayer != null) {
+                val currentQueue = getQueueFromPlayer(oldPlayer)
+                val currentIndex = oldPlayer.currentMediaItemIndex
+                val currentPosition = oldPlayer.currentPosition
+                val isPlaying = oldPlayer.playWhenReady
+                oldPlayer.stop()
+                newPlayer.setMediaItems(currentQueue, currentIndex, currentPosition)
+                newPlayer.playWhenReady = isPlaying
+                newPlayer.prepare()
+            }
+            mediaLibrarySession.player = newPlayer
+            (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
+        } finally {
+            playerHandOff = false
         }
-        mediaLibrarySession.player = newPlayer
-        (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
     /** Offers renderers as routes and moves playback onto one through [setPlayer], as Cast does. */
@@ -770,6 +856,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 setPlayer(player, exoplayer)
                 // Paused, as when Bluetooth headphones drop, so ending the cast does not start the phone's speaker.
                 exoplayer.playWhenReady = false
+                reportPlaybackState(exoplayer)
                 player.release()
             }
         }
@@ -794,6 +881,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 upnpPlayer?.let {
                     setPlayer(it, exoplayer)
                     exoplayer.playWhenReady = false
+                    reportPlaybackState(exoplayer)
                 }
                 releaseUpnpRoutes()
             }
@@ -850,6 +938,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     }
 
     override fun onDestroy() {
+        val player = mediaLibrarySession.player
+        endPlaybackSession(player.currentPosition, player.playbackParameters.speed)
         QueuePreloader.cancel()
         serviceDestroyed = true
         // Process scoped, so it outlives the service unless it is cleared here.
