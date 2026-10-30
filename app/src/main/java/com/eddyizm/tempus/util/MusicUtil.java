@@ -414,6 +414,51 @@ public class MusicUtil {
                 getBitratePreferenceForDownload());
     }
 
+    private static final Pattern QUERY_FORMAT_PATTERN = Pattern.compile("[?&]format=([^&]+)");
+    private static final Pattern QUERY_BITRATE_PATTERN = Pattern.compile("[?&]maxBitRate=([^&]+)");
+
+    /**
+     * Rewrites suffix/contentType/bitrate on a Download row using the format and
+     * maxBitRate baked into the download URI at queue time rather than the current
+     * preferences, so mid-batch preference changes cannot cause a mismatch.
+     *
+     * Falls back to no-op when the URI has no format param (raw / server-priority download).
+     */
+    public static void applyTranscodeMetadataFromUri(Download download, String downloadUri) {
+        if (download == null || downloadUri == null) return;
+
+        String format = null;
+        String maxBitRate = null;
+
+        Matcher formatMatcher = QUERY_FORMAT_PATTERN.matcher(downloadUri);
+        if (formatMatcher.find()) {
+            format = formatMatcher.group(1);
+        }
+
+        Matcher bitrateMatcher = QUERY_BITRATE_PATTERN.matcher(downloadUri);
+        if (bitrateMatcher.find()) {
+            maxBitRate = bitrateMatcher.group(1);
+        }
+
+        applyTranscodeMetadata(download, format, maxBitRate);
+    }
+
+    public static void applyBitrateFromUri(Download download, String downloadUri) {
+        if (download == null || downloadUri == null) return;
+
+        Matcher bitrateMatcher = QUERY_BITRATE_PATTERN.matcher(downloadUri);
+        if (bitrateMatcher.find()) {
+            String maxBitRate = bitrateMatcher.group(1);
+            try {
+                int parsed = Integer.parseInt(maxBitRate);
+                if (parsed > 0) {
+                    download.setBitrate(parsed);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+    }
+
     // The same rewrite, for a caller that knows the format and ceiling a file was actually fetched
     // with rather than the ones configured now.
     public static void applyTranscodeMetadata(Download download, String format, String maxBitRate) {
@@ -421,13 +466,11 @@ public class MusicUtil {
         if (format == null || format.equals("raw")) return;
 
         download.setSuffix(format);
-        // Moves with the suffix, since the track info dialog reads it.
         String mime = audioMimeTypeForFormat(format);
         if (mime != null) download.setContentType(mime);
         download.setSamplingRate(null);
         download.setBitDepth(null);
 
-        // maxBitRate is the configured ceiling; "0" means no limit, so the real bitrate is unknown.
         Integer bitrate = null;
         try {
             int parsed = Integer.parseInt(maxBitRate);
