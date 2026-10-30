@@ -1176,6 +1176,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             HomeRearrangementDialog dialog = new HomeRearrangementDialog();
             dialog.show(requireActivity().getSupportFragmentManager(), null);
         });
+
+        homeViewModel.getHomeSectorListLiveData().observe(getViewLifecycleOwner(), sectors -> reorder());
     }
 
     private void refreshSharesView() {
