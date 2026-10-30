@@ -1166,11 +1166,7 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
     }
 
     private void initHomeReorganizer() {
-        final Handler handler = new Handler();
-        final Runnable runnable = () -> {
-            if (bind != null) bind.homeSectorRearrangementButton.setVisibility(View.VISIBLE);
-        };
-        handler.postDelayed(runnable, 5000);
+        bind.homeSectorRearrangementButton.setVisibility(View.VISIBLE);
 
         bind.homeSectorRearrangementButton.setOnClickListener(v -> {
             HomeRearrangementDialog dialog = new HomeRearrangementDialog();
