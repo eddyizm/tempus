@@ -585,6 +585,10 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">有効にすると、お気に入りトラックがオフライン利用のためにダウンロードされます。</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">お気に入りトラックのオフライン向け同期</string>
     <string name="settings_permissions">アプリの権限</string>
+    <string name="settings_network_playback_title">ネットワーク再生</string>
+    <string name="settings_upnp_title">UPnP/DLNAレンダラー</string>
+    <string name="settings_upnp_summary">ネットワーク上のUPnP/DLNAレンダラーを探して再生します。キャスト先の選択画面を開いている間だけ検索します。</string>
+    <string name="settings_lan_remote_summary">別のデバイスのTempusを操作したり、別のデバイスからこのデバイスを操作したりできます。レシーバーがオンの間待ち受け、デバイス一覧を開いたときだけ検索します。</string>
     <string name="settings_theme">テーマ</string>
     <string name="settings_dark_theme_style">ダークテーマのスタイル</string>
     <string name="settings_tile_size">タイルのサイズ</string>
@@ -745,6 +749,13 @@
     <string name="settings_title_equalizer">イコライザー</string>
     <string name="settings_equalizer_select">使用するイコライザーを選択</string>
     <string name="settings_equalizer_dialog_title">イコライザー</string>
+    <string name="settings_parametric_eq_import">AutoEqプロファイルをインポート</string>
+    <string name="settings_parametric_eq_import_summary">AutoEqの ParametricEQ.txt ファイルを選択</string>
+    <string name="settings_parametric_eq_summary">%1$s: 音量が %2$s dB 小さくなります。キャスト出力には影響しません。Bluetoothヘッドホンでは、ノイズキャンセリングのモードに合ったプロファイルを選び、ヘッドホン側のイコライザーはフラットにしてください。</string>
+    <string name="settings_parametric_eq_summary_louder">%1$s: 音量が %2$s dB 大きくなります。キャスト出力には影響しません。Bluetoothヘッドホンでは、ノイズキャンセリングのモードに合ったプロファイルを選び、ヘッドホン側のイコライザーはフラットにしてください。</string>
+    <string name="settings_parametric_eq_imported">%1$s をインポートしました</string>
+    <string name="settings_parametric_eq_invalid">有効なAutoEq ParametricEQファイルではありません</string>
+    <string name="settings_parametric_eq_per_ear">2チャンネル（左右別）のプロファイルにはまだ対応していません。1チャンネルでエクスポートし直してください。</string>
     <string name="settings_album_detail">アルバムの詳細を表示</string>
     <string name="settings_album_detail_summary">有効にすると、アルバムページにジャンルや曲数などの詳細が表示されます</string>
     <string name="settings_artist_sort_by_album_count">アーティストをアルバム数で並び替え</string>
