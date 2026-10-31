@@ -21,4 +21,7 @@ public interface MediaAnnotationService {
 
     @GET("scrobble")
     Call<ApiResponse> scrobble(@QueryMap Map<String, String> params, @Query("id") String id, @Query("submission") Boolean submission);
+
+    @GET("reportPlayback")
+    Call<ApiResponse> reportPlayback(@QueryMap Map<String, String> params, @Query("mediaId") String mediaId, @Query("mediaType") String mediaType, @Query("positionMs") Long positionMs, @Query("state") String state, @Query("playbackRate") Float playbackRate, @Query("ignoreScrobble") Boolean ignoreScrobble);
 }

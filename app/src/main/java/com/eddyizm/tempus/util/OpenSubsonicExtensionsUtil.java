@@ -38,4 +38,8 @@ public class OpenSubsonicExtensionsUtil {
     public static boolean isSongLyricsExtensionAvailable() {
         return getOpenSubsonicExtension("songLyrics") != null;
     }
+
+    public static boolean isPlaybackReportExtensionAvailable() {
+        return getOpenSubsonicExtension("playbackReport") != null;
+    }
 }

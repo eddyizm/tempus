@@ -13,4 +13,11 @@ class NowPlayingEntry(
     var minutesAgo: Int = 0,
     var playerId: Int = 0,
     var playerName: String? = null,
-) : Child(id)
+) : Child(id) {
+    companion object {
+        const val STATE_STARTING = "starting"
+        const val STATE_PLAYING = "playing"
+        const val STATE_PAUSED = "paused"
+        const val STATE_STOPPED = "stopped"
+    }
+}

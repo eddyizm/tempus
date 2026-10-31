@@ -452,6 +452,8 @@ These are under **Settings → Data**.
 
 A track counts as played when it plays to the end. When you skip to another track in the queue, the one you left counts if it played past its halfway point or 4 minutes, whichever comes first, unless it is 30 seconds or shorter. Only music counts, not podcasts or radio. A play that does not reach the server is not sent again later.
 
+If your server supports the OpenSubsonic `playbackReport` extension, Tempus instead tells it when a song or podcast starts, plays, pauses and stops, along with its position and playback speed, and the server decides which plays count; the rules above then do not apply. A track is reported stopped when playback moves off it, the queue is cleared, or Tempus closes. A track you skip past while paused is not reported at all.
+
 [Back to top](#table-of-contents)
 
 ## Android Auto
