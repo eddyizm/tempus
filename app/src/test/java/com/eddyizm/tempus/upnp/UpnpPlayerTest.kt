@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.upnp
 
+import androidx.media3.common.Player
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -51,5 +52,50 @@ class UpnpPlayerTest {
         for (seconds in listOf(0L, 1L, 59L, 60L, 3599L, 3600L, 7_231L)) {
             assertEquals(seconds * 1000, UpnpPlayer.asMillis(UpnpPlayer.asClock(seconds * 1000)))
         }
+    }
+
+    @Test
+    fun withRepeatOffTheNextTrackFollowsTheCurrentOne() {
+        assertEquals(2, UpnpPlayer.nextIndexOf(1, 4, Player.REPEAT_MODE_OFF))
+    }
+
+    @Test
+    fun withRepeatOffTheLastTrackHasNoNextTrack() {
+        assertNull(UpnpPlayer.nextIndexOf(3, 4, Player.REPEAT_MODE_OFF))
+    }
+
+    @Test
+    fun withRepeatOneTheNextTrackIsTheCurrentOne() {
+        assertEquals(1, UpnpPlayer.nextIndexOf(1, 4, Player.REPEAT_MODE_ONE))
+        assertEquals(3, UpnpPlayer.nextIndexOf(3, 4, Player.REPEAT_MODE_ONE))
+    }
+
+    @Test
+    fun withRepeatAllTheLastTrackIsFollowedByTheFirst() {
+        assertEquals(0, UpnpPlayer.nextIndexOf(3, 4, Player.REPEAT_MODE_ALL))
+    }
+
+    @Test
+    fun withRepeatAllAMiddleTrackIsFollowedByTheNextOne() {
+        assertEquals(2, UpnpPlayer.nextIndexOf(1, 4, Player.REPEAT_MODE_ALL))
+    }
+
+    @Test
+    fun withRepeatAllAOneSongQueueIsFollowedByItself() {
+        assertEquals(0, UpnpPlayer.nextIndexOf(0, 1, Player.REPEAT_MODE_ALL))
+    }
+
+    @Test
+    fun anEmptyQueueHasNoNextTrack() {
+        assertNull(UpnpPlayer.nextIndexOf(0, 0, Player.REPEAT_MODE_OFF))
+        assertNull(UpnpPlayer.nextIndexOf(0, 0, Player.REPEAT_MODE_ONE))
+        assertNull(UpnpPlayer.nextIndexOf(0, 0, Player.REPEAT_MODE_ALL))
+    }
+
+    @Test
+    fun anIndexOutsideTheQueueHasNoNextTrack() {
+        assertNull(UpnpPlayer.nextIndexOf(4, 4, Player.REPEAT_MODE_ALL))
+        assertNull(UpnpPlayer.nextIndexOf(-1, 4, Player.REPEAT_MODE_ONE))
+        assertNull(UpnpPlayer.nextIndexOf(5, 4, Player.REPEAT_MODE_OFF))
     }
 }
