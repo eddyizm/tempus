@@ -137,6 +137,8 @@ class SettingsBackupTest {
         assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","settings":{}}""", keys))
         assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","version":"invalid","settings":{}}""", keys))
         assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","version":2,"settings":{}}""", keys))
+        assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","version":1.5,"settings":{}}""", keys))
+        assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","version":"1","settings":{}}""", keys))
         assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","version":1}""", keys))
         assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","version":1,"settings":[]}""", keys))
         assertNull(SettingsBackup.fromJson("""{"format":"tempus-settings","version":1,"settings":null}""", keys))

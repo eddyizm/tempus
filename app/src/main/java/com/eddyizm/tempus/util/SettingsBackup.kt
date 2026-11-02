@@ -157,7 +157,11 @@ object SettingsBackup {
         val root = runCatching { JsonParser.parseString(json).asJsonObject }.getOrNull() ?: return null
         val format = root.get("format")?.takeIf { it.isJsonPrimitive }?.asString
         if (format != FORMAT) return null
-        val version = runCatching { root.get("version")?.takeIf { it.isJsonPrimitive }?.asInt }.getOrNull()
+        // A number with an exact integer value. asInt would accept 1.5 and "1".
+        val version = runCatching {
+            root.get("version")?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isNumber }
+                ?.asBigDecimal?.intValueExact()
+        }.getOrNull()
         if (version != VERSION) return null
         val settings = root.get("settings")?.takeIf { it.isJsonObject }?.asJsonObject ?: return null
 
