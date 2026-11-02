@@ -438,6 +438,7 @@ public class MusicUtil {
     }
 
     // Inverse of audioFormatLabel. Null for an unrecognized format, so callers keep what they have.
+    // Also takes the container suffixes a server reports for a file, for Cast's stream type.
     public static String audioMimeTypeForFormat(String format) {
         if (format == null) return null;
         switch (format.toLowerCase()) {
@@ -445,6 +446,13 @@ public class MusicUtil {
             case "aac": return "audio/aac";
             case "mp3": return "audio/mpeg";
             case "flac": return "audio/flac";
+            case "m4a":
+            case "m4b":
+            case "mp4": return "audio/mp4";
+            case "ogg":
+            case "oga": return "audio/ogg";
+            case "wav": return "audio/wav";
+            case "webm": return "audio/webm";
             default: return null;
         }
     }
