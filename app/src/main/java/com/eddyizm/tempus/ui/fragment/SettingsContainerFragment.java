@@ -107,6 +107,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     private static final int PARAMETRIC_EQ_MAX_BYTES = 16 * 1024;
     private static final int SETTINGS_BACKUP_MAX_BYTES = 256 * 1024;
+    private static final String STATE_PENDING_EQUALIZER_RELOAD = "pending_equalizer_reload";
 
     private final Set<String> expandedCategories = new HashSet<>();
 
@@ -125,6 +126,10 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            pendingEqualizerReload = savedInstanceState.getBoolean(STATE_PENDING_EQUALIZER_RELOAD, false);
+        }
 
         equalizerResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -231,6 +236,14 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionReplayGainPreamp();
 
         applyAccordionState();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // An import recreates the screen before it can reach the player, so the reload is handed
+        // to the next instance, which binds in onResume.
+        outState.putBoolean(STATE_PENDING_EQUALIZER_RELOAD, pendingEqualizerReload);
     }
 
     @Override
@@ -1135,6 +1148,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private void importSettings(Uri uri) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String oldLanguage = prefs.getString("language", "default");
+        String oldEqualizer = prefs.getString("selected_equalizer", "0");
 
         String json = readTextFile(uri, SETTINGS_BACKUP_MAX_BYTES);
         int count = json == null ? -1 : SettingsBackup.importSettings(json, prefs, SettingsBackup.keys(requireContext()));
@@ -1154,6 +1168,15 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 Preferences.isDownloadWifiOnly()
                         ? new Requirements(Requirements.NETWORK_UNMETERED)
                         : new Requirements(0), false);
+        if (!oldEqualizer.equals(prefs.getString("selected_equalizer", "0"))) {
+            // The file picker pauses this screen, which drops the service link, so this normally
+            // waits for the recreated screen to bind.
+            if (mediaServiceBinder != null) {
+                mediaServiceBinder.reloadEqualizer();
+            } else {
+                pendingEqualizerReload = true;
+            }
+        }
 
         ThemeHelper.applyTheme(prefs.getString(Preferences.THEME, ThemeHelper.DEFAULT_MODE));
         String language = prefs.getString("language", "default");
