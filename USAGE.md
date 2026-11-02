@@ -455,7 +455,7 @@ A track counts as played when it plays to the end. When you skip to another trac
 
 ### Backing up settings
 
-**Export settings**, under **Settings → General**, saves the options on the Settings screen to a JSON file you choose. **Import settings** restores them from that file and reloads the app. Server logins, the music library choice and storage locations are not included, so after a reinstall you sign in again first and then import.
+**Export settings**, under **Settings → General**, saves the options on the Settings screen, plus the theme, true black, dynamic color and accent color, to a JSON file you choose. **Import settings** restores them from that file and reloads the app. Values the app does not offer, for example from an edited file, are skipped. Server logins, the music library choice and storage locations are not included, so after a reinstall you sign in again first and then import.
 
 [Back to top](#table-of-contents)
 
