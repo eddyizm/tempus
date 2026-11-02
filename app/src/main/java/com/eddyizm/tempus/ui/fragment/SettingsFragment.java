@@ -60,7 +60,7 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Add the PreferenceFragment only the first time
-        if (savedInstanceState == null) {
+        if (getChildFragmentManager().findFragmentById(R.id.settings_container) == null) {
             SettingsContainerFragment prefFragment = new SettingsContainerFragment();
 
             // Use the child fragment manager so the PreferenceFragment is scoped to this fragment
