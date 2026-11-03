@@ -17,6 +17,7 @@
     - [Folder or index playback](#folder-or-index-playback)
     - [Now Playing Screen](#now-playing-screen)
     - [Podcasts](#podcasts)
+    - [Syncing the play queue](#syncing-the-play-queue)
     - [Radio Stations](#radio-stations)
     - [Downloads](#downloads)
     - [Continue listening](#continue-listening)
@@ -199,7 +200,7 @@ Tap the artwork to show four buttons over it, and tap again to hide them.
 1. Downloads the track.
 2. Adds the track to a playlist.
 3. Adds this track again, followed by songs similar to it, right after the current track (Instant Mix). It uses [getSimilarSongs](https://opensubsonic.netlify.app/docs/endpoints/getsimilarsongs/) of the OpenSubsonic API, so which songs you get depends on your server. For example, Navidrome gets 15 similar artists from Last.fm, then 20 top songs from each.
-4. With **Sync play queue for this user** turned on under Settings → Miscellaneous, saves the play queue. With it off, this button opens the lyrics instead.
+4. Opens the lyrics.
 
 Below the playback controls is a row of three buttons.
 
@@ -220,6 +221,16 @@ The ⋮ menu next to the heart has **Play on…** and **Add to playlist**, plus 
 The player's format and bitrate label gives what was actually decoded, not the transcode Tempus asked for. If your server ignored the request, or had no rule matching the track, the label shows what it really sent. A track the server did transcode reads as the new format followed by "(Transcoding)".
 
 Downloaded tracks show the format on disk. When Tempus transcodes a download, the row and the track info dialog carry the transcoded format and bitrate instead of the source values.
+
+### Syncing the play queue
+
+With **Sync play queue for this user** turned on under Settings → Miscellaneous, Tempus keeps your play queue and your position in the current track on your server, so you can continue where you stopped, also on another device.
+
+Tempus saves automatically when you pause, switch to another track or seek, and every 30 seconds while playing. In the menu of the queue:
+
+- **Load Queue** replaces the queue with the saved one and starts at the saved position.
+
+This item only shows while syncing is on.
 
 ### Podcasts  
 If your server supports it - add a podcast rss feed

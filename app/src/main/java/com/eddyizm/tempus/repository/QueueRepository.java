@@ -120,14 +120,24 @@ public class QueueRepository {
 
     /**
      * Reads the current queue on the DB executor and pushes it (with the given
-     * current song + position) to the server. Used for auto-save on pause so the
-     * resume point is always current without a UI button press.
+     * current song + position) to the server. Used for the automatic saves (pause, track
+     * change, seek and the playback timer) so the resume point is always current without a UI
+     * button press.
+     * <p>
+     * Nothing is sent when the current item is not part of the local queue. Radio and podcasts
+     * played from the Podcast tab or a channel page do not update the local queue, so saving
+     * would pair the old song list with the station or episode as the current item.
      */
     public void savePlayQueueToServer(String current, long position) {
+        if (!Preferences.isSyncronizationEnabled()) return;
         dbExecutor.execute(() -> {
             List<String> ids = queueDao.getAllSimple().stream()
                     .map(Queue::getId)
                     .collect(Collectors.toList());
+            if (!ids.contains(current)) {
+                Log.d(TAG, "Skipping queue save, current item is not in the queue: " + current);
+                return;
+            }
             savePlayQueue(ids, current, position);
         });
     }

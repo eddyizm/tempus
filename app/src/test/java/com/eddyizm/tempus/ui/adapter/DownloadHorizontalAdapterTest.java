@@ -34,7 +34,11 @@ public class DownloadHorizontalAdapterTest {
                 child("a", "Alpha", "Amber Album", "Able Artist", "Ambient", 1999)
         );
 
-        assertSortedAndLabelled(Constants.DOWNLOAD_TYPE_TRACK, songs, "Alpha", "A");
+        // Track view preserves original song order (track/disc number order), with bubble matching album artist or album
+        adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_TRACK, null, new ArrayList<>(songs));
+        assertEquals("Zebra", adapter.getItem(0).getTitle());
+        assertEquals("Z", adapter.getTextToShowInBubble(0));
+
         assertSortedAndLabelled(Constants.DOWNLOAD_TYPE_ALBUM, songs, "Amber Album", "A");
         assertSortedAndLabelled(Constants.DOWNLOAD_TYPE_ARTIST, songs, "Able Artist", "A");
         assertSortedAndLabelled(Constants.DOWNLOAD_TYPE_GENRE, songs, "Ambient", "A");
@@ -50,15 +54,15 @@ public class DownloadHorizontalAdapterTest {
     @Test
     public void nullAndBlankLabelsSortLastAndHaveNoBubbleText() {
         List<Child> songs = Arrays.asList(
-                child("blank", "  ", null, null, null, null),
-                child("named", "Named", null, null, null, null),
-                child("missing", null, null, null, null, null)
+                child("blank", "Track 1", "Album", "  ", "Genre", 2000),
+                child("named", "Track 2", "Album", "Named", "Genre", 2000),
+                child("missing", "Track 3", "Album", null, "Genre", 2000)
         );
 
-        adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_TRACK, null, songs);
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ARTIST, Constants.DOWNLOAD_TYPE_ARTIST, null, songs);
 
-        assertEquals("Named", adapter.getItem(0).getTitle());
-        assertEquals("  ", adapter.getItem(1).getTitle());
+        assertEquals("Named", adapter.getItem(0).getArtist());
+        assertEquals("  ", adapter.getItem(1).getArtist());
         assertEquals("N", adapter.getTextToShowInBubble(0));
         assertNull(adapter.getTextToShowInBubble(1));
         assertNull(adapter.getTextToShowInBubble(2));
@@ -67,7 +71,8 @@ public class DownloadHorizontalAdapterTest {
     }
 
     @Test
-    public void filteredRowsRemainSortedByTheirDisplayedLabel() {
+    public void tracksWithinAlbumRetainOriginalTrackOrder() {
+        // Tracks within an album should stay in track/disc order from songs, NOT sorted alphabetically by title
         List<Child> songs = Arrays.asList(
                 child("z", "Zebra", "Shared Album", "Artist", "Rock", 2000),
                 child("a", "Alpha", "Shared Album", "Artist", "Rock", 2000)
@@ -76,8 +81,34 @@ public class DownloadHorizontalAdapterTest {
         adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_ALBUM, "Shared Album", songs);
 
         assertEquals(2, adapter.getItemCount());
-        assertEquals("Alpha", adapter.getItem(0).getTitle());
+        assertEquals("Zebra", adapter.getItem(0).getTitle());
+        assertEquals("Alpha", adapter.getItem(1).getTitle());
+        // Bubble reflects album artist or album title for tracks
+        assertEquals("S", adapter.getTextToShowInBubble(0));
+    }
+
+    @Test
+    public void albumSortingPrioritizesAlbumArtistAndIsCaseInsensitive() {
+        List<Child> albums = Arrays.asList(
+                child("3", "Track 3", "Charlie Album", "Artist C", "Rock", 2020, null),
+                child("1", "Track 1", "Zeta Album", "Artist Z", "Rock", 2020, "Alpha Artist"),
+                child("2", "Track 2", "beta album", "Artist B", "Rock", 2020, "bravo artist")
+        );
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, Constants.DOWNLOAD_TYPE_ALBUM, null, albums);
+
+        assertEquals(3, adapter.getItemCount());
+        // 1st: "Zeta Album" by "Alpha Artist"
+        assertEquals("Zeta Album", adapter.getItem(0).getAlbum());
         assertEquals("A", adapter.getTextToShowInBubble(0));
+
+        // 2nd: "beta album" by "bravo artist" (lowercase does not drop to the end)
+        assertEquals("beta album", adapter.getItem(1).getAlbum());
+        assertEquals("B", adapter.getTextToShowInBubble(1));
+
+        // 3rd: "Charlie Album" (no album artist, falls back to album title)
+        assertEquals("Charlie Album", adapter.getItem(2).getAlbum());
+        assertEquals("C", adapter.getTextToShowInBubble(2));
     }
 
     private void assertSortedAndLabelled(String type, List<Child> items, String expectedLabel, String expectedBubble) {
@@ -107,6 +138,10 @@ public class DownloadHorizontalAdapterTest {
     }
 
     private Child child(String id, String title, String album, String artist, String genre, Integer year) {
+        return child(id, title, album, artist, genre, year, null);
+    }
+
+    private Child child(String id, String title, String album, String artist, String genre, Integer year, String albumArtist) {
         Child child = new Child(id);
         child.setTitle(title);
         child.setAlbum(album);
@@ -115,6 +150,7 @@ public class DownloadHorizontalAdapterTest {
         child.setArtistId(artist);
         child.setGenre(genre);
         child.setYear(year);
+        child.setAlbumArtist(albumArtist);
         return child;
     }
 

@@ -202,7 +202,6 @@ public class PlayerBottomSheetFragment extends Fragment {
             @Override
             public void onPositionDiscontinuity(@NonNull Player.PositionInfo oldPosition, @NonNull Player.PositionInfo newPosition, int reason) {
                 setMediaControllerUI(mediaBrowser);
-                setMetadata(mediaBrowser.getMediaMetadata());
                 setContentDuration(mediaBrowser.getContentDuration());
             }
 
@@ -523,7 +522,9 @@ public class PlayerBottomSheetFragment extends Fragment {
                         if (index != -1) {
                             bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.VISIBLE);
                             bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setOnClickListener(v -> {
-                                MediaManager.startQueue(mediaBrowserListenableFuture, playQueue.getEntries(), index);
+                                Long savedPosition = playQueue.getPosition();
+                                long startPositionMs = savedPosition != null ? savedPosition : 0L;
+                                MediaManager.startQueue(mediaBrowserListenableFuture, playQueue.getEntries(), index, startPositionMs);
                                 bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.GONE);
                             });
                         }
@@ -542,7 +543,7 @@ public class PlayerBottomSheetFragment extends Fragment {
             new Handler().postDelayed(() -> {
                 if (bind != null)
                     bind.playerHeaderLayout.playerHeaderBookmarkMediaButton.setVisibility(View.GONE);
-            }, Preferences.getSyncCountdownTimer() * 1000L);
+            }, Constants.LOAD_BUTTON_VISIBLE_MS);
         }
     }
 }

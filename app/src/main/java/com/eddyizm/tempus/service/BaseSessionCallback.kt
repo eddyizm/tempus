@@ -214,6 +214,17 @@ open class BaseSessionCallback(
     // ─────────────────────────────────────────────────────────────
 
     @OptIn(UnstableApi::class)
+    override fun onPlayerInteractionFinished(
+        session: MediaSession,
+        controllerInfo: MediaSession.ControllerInfo,
+        playerCommands: Player.Commands
+    ) {
+        if (playerCommands.contains(Player.COMMAND_STOP) && session.player.playbackState == Player.STATE_IDLE) {
+            service.stoppedSinceError = true
+        }
+    }
+
+    @OptIn(UnstableApi::class)
     override fun onConnect(
         session: MediaSession,
         controller: MediaSession.ControllerInfo

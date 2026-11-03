@@ -451,7 +451,6 @@
     <string name="settings_track_number_summary">Si activé, rend visible la note de la piste en cours de lecture</string>
     <string name="settings_item_rating">Afficher la note</string>
     <string name="settings_item_rating_summary">Si activé, la note et le statut de mise en favori de l\'élément seront affichés.</string>
-    <string name="settings_queue_syncing_countdown">Minuteur de synchronisation</string>
     <string name="settings_queue_syncing_summary">Si activé, l\'utilisateur pourra sauvegarder sa file d\'attente et la recharger au démarrage de l\'application.</string>
     <string name="settings_queue_syncing_title">Synchroniser la file d\'attente pour cet utilisateur [fonctionnalité en évolution]</string>
     <string name="settings_show_mini_shuffle_button">Afficher le bouton Mélanger</string>

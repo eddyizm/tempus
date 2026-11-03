@@ -453,7 +453,6 @@
     <string name="settings_track_number_summary">Si está activado, mostrará el número de pista (en el álbum) de la canción que estás escuchando.</string>
     <string name="settings_item_rating">Mostrar valoración de estrellas</string>
     <string name="settings_item_rating_summary">Si está activado, mostrará si la canción esta marcada como favorita en las listas.</string>
-    <string name="settings_queue_syncing_countdown">Periodo de sincronización</string>
     <string name="settings_queue_syncing_summary">Si está activado, podrás guardar tu cola de reproducción actual al abrir la aplicación.</string>
     <string name="settings_queue_syncing_title">Sincronizar la cola de reproducción para el usuario [Puede no funcionar bien]</string>
     <string name="settings_show_mini_shuffle_button">Mostrar botón de aleatorio en las notificaciones</string>

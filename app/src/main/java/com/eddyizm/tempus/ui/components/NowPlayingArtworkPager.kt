@@ -1,7 +1,5 @@
 package com.eddyizm.tempus.ui.components
 
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -14,7 +12,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,16 +22,15 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
+import com.bumptech.glide.signature.ObjectKey
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.glide.CustomGlideRequest
 import com.eddyizm.tempus.subsonic.models.Child
@@ -122,6 +118,7 @@ fun NowPlayingArtworkPager(
         contentPadding = PaddingValues(horizontal = 0.dp),
         pageSpacing = 16.dp,
         userScrollEnabled = !isRadio && count > 1,
+        beyondViewportPageCount = 1,
         key = { page ->
             if (isRadio) "radio" else "${queue.getOrNull(page)?.id ?: "track"}_$page"
         }
@@ -156,106 +153,100 @@ fun NowPlayingArtworkPager(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun SongArtwork(
     coverArtId: String?,
     title: String?
 ) {
-    val appContext = LocalContext.current.applicationContext
-    var bitmap by remember(coverArtId) { mutableStateOf<Bitmap?>(null) }
-
-    DisposableEffect(coverArtId) {
-        if (coverArtId.isNullOrEmpty()) {
-            bitmap = null
-            return@DisposableEffect onDispose {}
-        }
-
-        val url = CustomGlideRequest.createUrl(coverArtId, Preferences.getImageSize())
-        val target = object : CustomTarget<Bitmap>() {
-            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                bitmap = resource
-            }
-
-            override fun onLoadCleared(placeholder: Drawable?) {
-                bitmap = null
-            }
-        }
-
-        Glide.with(appContext)
-            .asBitmap()
-            .load(url)
-            .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
-            .into(target)
-
-        onDispose {
-            Glide.with(appContext).clear(target)
-        }
-    }
-
-    val currentBitmap = bitmap
-    if (currentBitmap != null) {
-        Image(
-            bitmap = currentBitmap.asImageBitmap(),
-            contentDescription = title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-    } else {
+    if (coverArtId.isNullOrEmpty()) {
         Image(
             painter = painterResource(id = R.drawable.ic_placeholder_song),
             contentDescription = title,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        return
     }
+
+    val dataSaving = rememberDataSavingMode()
+
+    GlideImage(
+        model = CustomGlideRequest.createUrl(coverArtId, Preferences.getImageSize()),
+        contentDescription = title,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+        requestBuilderTransform = { request ->
+            var transformed = request
+                .signature(ObjectKey(coverArtId))
+                .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
+            if (dataSaving) {
+                transformed = transformed.onlyRetrieveFromCache(true)
+            }
+            transformed
+        },
+        loading = placeholder {
+            Image(
+                painter = painterResource(id = R.drawable.ic_placeholder_song),
+                contentDescription = title,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        },
+        failure = placeholder {
+            Image(
+                painter = painterResource(id = R.drawable.ic_placeholder_song),
+                contentDescription = title,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+    )
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun RadioArtwork(
     artworkUri: Uri?,
     coverArtId: String?
 ) {
-    val appContext = LocalContext.current.applicationContext
-    var bitmap by remember(artworkUri, coverArtId) { mutableStateOf<Bitmap?>(null) }
-
-    DisposableEffect(artworkUri, coverArtId) {
-        val target = object : CustomTarget<Bitmap>() {
-            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                bitmap = resource
-            }
-
-            override fun onLoadCleared(placeholder: Drawable?) {
-                bitmap = null
-            }
-        }
-
-        var request = Glide.with(appContext)
-            .asBitmap()
-            .load(artworkUri)
-            .apply(CustomGlideRequest.createRequestOptions(appContext, coverArtId, CustomGlideRequest.ResourceType.Radio))
-
-        request = RadioCoverArtDownloader.applyLocalFileSignature(request, artworkUri)
-        request.into(target)
-
-        onDispose {
-            Glide.with(appContext).clear(target)
-        }
-    }
-
-    val currentBitmap = bitmap
-    if (currentBitmap != null) {
-        Image(
-            bitmap = currentBitmap.asImageBitmap(),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-    } else {
+    if (artworkUri == null) {
         Image(
             painter = painterResource(id = R.drawable.ic_placeholder_radio),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        return
     }
+
+    GlideImage(
+        model = artworkUri,
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+        requestBuilderTransform = { request ->
+            var transformed = request
+                .signature(ObjectKey(coverArtId ?: artworkUri.toString()))
+                .diskCacheStrategy(CustomGlideRequest.DEFAULT_DISK_CACHE_STRATEGY)
+            transformed = RadioCoverArtDownloader.applyLocalFileSignature(transformed, artworkUri)
+            transformed
+        },
+        loading = placeholder {
+            Image(
+                painter = painterResource(id = R.drawable.ic_placeholder_radio),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        },
+        failure = placeholder {
+            Image(
+                painter = painterResource(id = R.drawable.ic_placeholder_radio),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+    )
 }

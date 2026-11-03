@@ -1,11 +1,17 @@
 package com.eddyizm.tempus.util
 
 import android.os.SystemClock
+import android.util.Log
+import androidx.annotation.OptIn
+import androidx.core.net.toUri
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSpec
+import com.eddyizm.tempus.App
 import java.util.concurrent.atomic.AtomicInteger
 
 object ConnectionUtil {
-    // The queue's stream URLs carry the address in force when it was built, so the media service
-    // holds the queue back until a ping answers. Counted, since the service starts several times.
+    private const val TAG = "ConnectionUtil"
+
     private val pingsInFlight = AtomicInteger(0)
 
     @Volatile
@@ -25,11 +31,13 @@ object ConnectionUtil {
     }
 
     @JvmStatic
+    fun isPingDeferred(): Boolean = pingDeferredUntil == Long.MAX_VALUE
+
+    @JvmStatic
     fun expirePingDeferral() {
         if (pingDeferredUntil == Long.MAX_VALUE) pingDeferredUntil = SystemClock.elapsedRealtime() + pingWaitMs()
     }
 
-    // The ping timeout is a user setting with no upper bound, so the wait is read from it.
     private fun pingWaitMs(): Long = Preferences.getNetworkPingTimeout() * 1000L + 1_000L
 
     @JvmStatic
@@ -43,16 +51,12 @@ object ConnectionUtil {
         pingsInFlight.updateAndGet { if (it > 0) it - 1 else 0 }
     }
 
-    // The age test stops a ping that never answers, an activity torn down mid request, from holding
-    // the queue for the life of the process. A start with no activity behind it never waits.
     @JvmStatic
     fun pingsOutstanding(): Boolean {
         return SystemClock.elapsedRealtime() < pingDeferredUntil || (pingsInFlight.get() > 0 &&
                 SystemClock.elapsedRealtime() - lastPingIssuedAt < pingWaitMs())
     }
 
-    // A local address of http://nas is a prefix of the public http://nas.duckdns.invalid, so the
-    // character after the address has to be a path separator. Pure, so a test can reach it.
     @JvmStatic
     fun isUnderAddress(url: String?, address: String?): Boolean {
         if (url == null || address.isNullOrEmpty()) return false
@@ -61,5 +65,36 @@ object ConnectionUtil {
         if (base.isEmpty() || !url.startsWith(base)) return false
 
         return url.length == base.length || url[base.length] == '/'
+    }
+
+    @JvmStatic
+    fun moveToAddress(url: String, addresses: List<String?>, inUse: String?): String {
+        if (inUse.isNullOrEmpty()) return url
+
+        val base = (addresses + inUse)
+            .filter { isUnderAddress(url, it) }
+            .map { it!!.trimEnd('/') }
+            .maxByOrNull { it.length } ?: return url
+        val target = inUse.trimEnd('/')
+
+        return if (base == target) url else target + url.substring(base.length)
+    }
+
+    @JvmStatic
+    @OptIn(UnstableApi::class)
+    fun moveStreamToAddressInUse(dataSpec: DataSpec): DataSpec {
+        val url = dataSpec.uri.toString()
+        val moved = moveToAddress(url, listOf(Preferences.getLocalAddress(), Preferences.getServer()),
+            Preferences.getInUseServerAddress())
+        if (moved == url) return dataSpec
+
+        Log.d(TAG, "Stream moved onto the in use server address")
+        return dataSpec.withUri(moved.toUri())
+    }
+
+    @JvmStatic
+    fun useServerAddress(address: String?) {
+        Preferences.setInUseServerAddress(address)
+        App.refreshSubsonicClient()
     }
 }
