@@ -183,16 +183,6 @@
         <item>mp3</item>
         <item>flac</item>
     </string-array>
-    <string-array name="queue_syncing_countdown_titles">
-        <item>10秒</item>
-        <item>5秒</item>
-        <item>2秒</item>
-    </string-array>
-    <string-array name="queue_syncing_countdown_values">
-        <item>10</item>
-        <item>5</item>
-        <item>2</item>
-    </string-array>
     <string-array name="rounded_corner_size_titles">
         <item>大</item>
         <item>中</item>

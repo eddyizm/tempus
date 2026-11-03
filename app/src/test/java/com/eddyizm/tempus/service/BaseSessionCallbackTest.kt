@@ -27,6 +27,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.times
+import org.mockito.kotlin.never
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.mockConstruction
@@ -253,5 +254,61 @@ class BaseSessionCallbackTest {
 
         assertEquals(1, sent.size)
         assertFalse(sent[0].isHeart)
+    }
+
+    @Test
+    fun stopInteraction_marksThePlayerStopped() {
+        val context = mock<Context>()
+        val service = mock<BaseMediaService>()
+        val commands = mock<Player.Commands>()
+        whenever(context.getString(anyInt())).thenReturn("mock_string")
+        whenever(commands.contains(Player.COMMAND_STOP)).thenReturn(true)
+        val session = sessionWithPlayerIn(Player.STATE_IDLE)
+
+        mockConstruction(SessionCommand::class.java).use {
+            BaseSessionCallback(context, service).onPlayerInteractionFinished(session, mock(), commands)
+        }
+
+        verify(service).stoppedSinceError = true
+    }
+
+    @Test
+    fun stopBatchedWithPlay_leavesThePlayerUnmarked() {
+        val context = mock<Context>()
+        val service = mock<BaseMediaService>()
+        val commands = mock<Player.Commands>()
+        whenever(context.getString(anyInt())).thenReturn("mock_string")
+        whenever(commands.contains(Player.COMMAND_STOP)).thenReturn(true)
+        val session = sessionWithPlayerIn(Player.STATE_BUFFERING)
+
+        mockConstruction(SessionCommand::class.java).use {
+            BaseSessionCallback(context, service).onPlayerInteractionFinished(session, mock(), commands)
+        }
+
+        verify(service, never()).stoppedSinceError = true
+    }
+
+    private fun sessionWithPlayerIn(state: Int): MediaSession {
+        val session = mock<MediaSession>()
+        val player = mock<Player>()
+        whenever(player.playbackState).thenReturn(state)
+        whenever(session.player).thenReturn(player)
+        return session
+    }
+
+    @Test
+    fun interactionWithoutStop_leavesThePlayerUnmarked() {
+        val context = mock<Context>()
+        val service = mock<BaseMediaService>()
+        val commands = mock<Player.Commands>()
+        whenever(context.getString(anyInt())).thenReturn("mock_string")
+        whenever(commands.contains(Player.COMMAND_PLAY_PAUSE)).thenReturn(true)
+
+        mockConstruction(SessionCommand::class.java).use {
+            BaseSessionCallback(context, service).onPlayerInteractionFinished(mock(), mock(), commands)
+        }
+
+        verify(service, never()).stoppedSinceError = true
+        verify(service, never()).stoppedSinceError = false
     }
 }

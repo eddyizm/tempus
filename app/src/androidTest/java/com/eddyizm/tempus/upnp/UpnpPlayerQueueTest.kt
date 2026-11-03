@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.os.SystemClock
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -391,6 +392,74 @@ class UpnpPlayerQueueTest {
     }
 
     @Test
+    fun aRendererStillReportingTheTrackBeforeTheLoadIsNotHandedOursAgain() {
+        // Kodi acknowledges the load, then reports the track it played before for about a second.
+        reportedTrackUri = urlAt(9)
+        onMain {
+            player.setMediaItems(listOf(itemAt(1)), 0, 0L)
+            player.playWhenReady = true
+        }
+        SystemClock.sleep(3000)
+
+        assertEquals("the stale track was answered with another load: $handovers", listOf(urlAt(1)), handovers)
+
+        reportedTrackUri = urlAt(1)
+        assertTrue("never reached ready once the renderer switched", awaitState(Player.STATE_READY))
+        assertEquals(listOf(urlAt(1)), handovers)
+        assertNull(onMainGet { player.playerError })
+    }
+
+    @Test
+    fun aStationTakesNoLengthFromTheRenderer() {
+        // Kodi reports the length of the track before the station for about a second after the switch.
+        reportedDuration = "00:03:42"
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(2500)
+
+        assertEquals("a station took a length", C.TIME_UNSET, onMainGet { player.duration })
+    }
+
+    @Test
+    fun aStationTheRendererKeepsPlayingAfterAPauseIsStopped() {
+        // Kodi's VideoPlayer answers Pause on a station with OK and plays on; the fake does the same.
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        actions.clear()
+
+        onMain { player.playWhenReady = false }
+        SystemClock.sleep(4000)
+
+        val pause = actions.indexOf("Pause")
+        assertTrue("a station was not paused first: $actions", pause >= 0)
+        assertTrue("an ignored pause was not followed by a stop: $actions", actions.indexOf("Stop") > pause)
+        assertFalse("the ignored pause was taken for a Play from outside", onMainGet { player.playWhenReady })
+    }
+
+    @Test
+    fun aStationTheRendererPausesIsNotStopped() {
+        onMain {
+            player.setMediaItems(listOf(itemWith(1, "mp3", type = Constants.MEDIA_TYPE_RADIO)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        actions.clear()
+
+        reportedState = "PAUSED_PLAYBACK"
+        onMain { player.playWhenReady = false }
+        SystemClock.sleep(4000)
+
+        assertTrue("a station was not paused: $actions", actions.contains("Pause"))
+        assertFalse("a station the renderer paused was stopped, which costs a rebuffer: $actions", actions.contains("Stop"))
+    }
+
+    @Test
     fun aRefusedSeekTargetDoesNotAbandonTheTrack() = seekRefusedWith(711)
 
     @Test
@@ -398,6 +467,94 @@ class UpnpPlayerQueueTest {
 
     @Test
     fun aSeekThatFailsOutrightDoesNotAbandonTheTrack() = seekRefusedWith(501)
+
+    /** The fake renderer as Kodi, which starts a track it is handed without waiting for Play. */
+    private fun actAsKodi() {
+        device = UpnpDevice.parseDescription(
+            description.replace(
+                "<friendlyName>Fake Renderer</friendlyName>",
+                "<friendlyName>Fake Kodi</friendlyName><manufacturer>XBMC Foundation</manufacturer><modelName>Kodi</modelName>"
+            ),
+            "http://192.0.2.10:1549/"
+        ).single()
+        onMain {
+            player.release()
+            player = UpnpPlayer(controlPoint(), device, Looper.getMainLooper())
+        }
+    }
+
+    @Test
+    fun aQueueLoadedWhilePausedIsHandedOverToKodiOnThePlay() {
+        actAsKodi()
+        onMain { player.setMediaItems(listOf(itemAt(1)), 0, 30_000L) }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(500)
+        assertTrue("a paused load was handed to Kodi, which starts it: $actions", handovers.isEmpty())
+
+        onMain { player.playWhenReady = true }
+        SystemClock.sleep(1000)
+
+        assertEquals(listOf(urlAt(1)), handovers)
+        val uri = actions.indexOf("SetAVTransportURI")
+        val play = actions.indexOf("Play")
+        val seek = actions.indexOf("Seek")
+        assertTrue("the play did not follow the handover: $actions", play > uri)
+        assertTrue("the position was not applied after the play: $actions", seek > play)
+    }
+
+    /** A renderer other than Kodi gets the track while paused, so it can show it until Play. */
+    @Test
+    fun aRendererOtherThanKodiIsHandedTheTrackWhilePaused() {
+        onMain { player.setMediaItems(listOf(itemAt(1)), 0, 0L) }
+        assertTrue("never reached ready", awaitState(Player.STATE_READY))
+        SystemClock.sleep(500)
+
+        assertEquals("a paused load was held back from a renderer that waits for Play", listOf(urlAt(1)), handovers)
+        assertFalse("a paused load was played: $actions", actions.contains("Play"))
+    }
+
+    /** A cast starting on Kodi (a load, Play, then a prepare) hands the track over and plays it once. */
+    @Test
+    fun castWhilePlayingPlaysOnce() {
+        actAsKodi()
+        onMain { player.setMediaItems(listOf(itemAt(1), itemAt(2)), 0, 30_000L) }
+        SystemClock.sleep(300)
+        onMain {
+            player.playWhenReady = true
+            player.prepare()
+        }
+        SystemClock.sleep(2000)
+
+        val sent = actions.toList()
+        assertEquals("handovers: $sent", 1, sent.count { it == "SetAVTransportURI" })
+        assertEquals("plays: $sent", 1, sent.count { it == "Play" })
+        assertEquals("seeks: $sent", 1, sent.count { it == "Seek" })
+    }
+
+    /** A Play on Kodi's remote after a track change while paused plays the track picked in the app. */
+    @Test
+    fun remotePlayAfterTrackChangeWhilePausedIsFollowed() {
+        actAsKodi()
+        onMain {
+            player.setMediaItems(listOf(itemAt(1), itemAt(2)), 0, 0L)
+            player.playWhenReady = true
+        }
+        assertTrue("never ready", awaitState(Player.STATE_READY))
+        reportedState = "PAUSED_PLAYBACK"
+        onMain { player.playWhenReady = false }
+        assertTrue("the app never paused", awaitPlayWhenReady(false))
+        onMain { player.seekToNextMediaItem() }
+        SystemClock.sleep(3000)
+        val from = actions.size
+        reportedState = "PLAYING"
+
+        val followed = awaitPlayWhenReady(true)
+        val sent = actions.toList().subList(from, actions.size)
+        assertTrue("the app ignored a Play from the renderer's remote, sent after it: $sent", followed)
+        // The track picked here wins over the one the remote resumed.
+        assertEquals("the picked track was not handed over: $sent", urlAt(2), handovers.last())
+        assertEquals("track-2", onMainGet { player.currentMediaItem?.mediaId })
+    }
 
     @Test
     fun aPositionWhilePausedWaitsForThePlay() {

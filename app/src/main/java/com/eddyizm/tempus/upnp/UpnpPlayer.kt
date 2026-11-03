@@ -99,6 +99,34 @@ class UpnpPlayer(
     @Volatile private var rendererStarted = false
     @Volatile private var pollsBeforeStart = 0
 
+    /**
+     * The URL last handed to the renderer with SetAVTransportURI, and when.
+     *
+     * Kodi acknowledges a load before it switches, and for about a second it still reports the
+     * track before it. Readings are ignored until the renderer names [handedOverUrl], so the player
+     * does not follow the old track and hand ours over again. [HANDOVER_WAIT_MS] bounds the wait
+     * for a renderer that never names it.
+     */
+    @Volatile private var handedOverUrl: String? = null
+    @Volatile private var handedOverAt = 0L
+
+    /**
+     * Whether the current track waits to be handed over until Play, which only Kodi needs.
+     *
+     * Kodi starts a track it is handed with SetAVTransportURI, Play or not (deliberately since
+     * Kodi 21), so for Kodi a load while paused only keeps the track and its position, and Play
+     * hands it over. Other renderers are handed the track while paused and show it until Play.
+     *
+     * Until then a prepare does nothing. Like one arriving while [pendingLoads] is above zero, it
+     * would hand the track over a second time: there a load already running hands it over, here
+     * the Play will, as when a cast starts with a load, Play and then a prepare.
+     */
+    @Volatile private var handoverOnPlay = false
+    private val isKodi = device.modelName.equals("Kodi", ignoreCase = true)
+
+    /** When a station was paused, until a reading says whether the renderer really did. */
+    @Volatile private var stationPausedAt = 0L
+
     // Only reads that got nothing back count, since a fault is an answer.
     @Volatile private var failingSince = 0L
 
@@ -284,6 +312,7 @@ class UpnpPlayer(
     override fun handlePrepare(): ListenableFuture<*> = when {
         error != null -> loadLater(seekToMs = positionMs)
         pendingLoads.get() > 0 -> Futures.immediateVoidFuture()
+        handoverOnPlay -> Futures.immediateVoidFuture()
         rendererUrl != null && rendererUrl == urlOf(currentEntry()) -> Futures.immediateVoidFuture()
         else -> loadLater(seekToMs = positionMs)
     }
@@ -292,9 +321,21 @@ class UpnpPlayer(
     override fun handleSetPlayWhenReady(playWhenReady: Boolean): ListenableFuture<*> =
         worker.submit<Unit> {
             try {
-                if (playWhenReady) {
+                if (playWhenReady && handoverOnPlay) {
+                    stationPausedAt = 0L
+                    this.playWhenReady = true
+                    updateWakeLock()
+                    // Counted as a load, or a prepare arriving while it runs hands the track over a second time.
+                    pendingLoads.incrementAndGet()
+                    try {
+                        loadCurrent(seekToMs = positionMs)
+                    } finally {
+                        pendingLoads.decrementAndGet()
+                    }
+                } else if (playWhenReady) {
                     // A play while already playing would otherwise show a pause and step the bar back.
                     val alreadyPlaying = this.playWhenReady
+                    stationPausedAt = 0L
                     controlPoint.play(device)
                     this.playWhenReady = true
                     updateWakeLock()
@@ -314,6 +355,7 @@ class UpnpPlayer(
                     handler.post { startPolling() }
                 } else {
                     pauseOrStop()
+                    stationPausedAt = if (isStation(currentEntry())) SystemClock.elapsedRealtime() else 0L
                     positionMs = positionNow()
                     this.playWhenReady = false
                     updateWakeLock()
@@ -529,6 +571,13 @@ class UpnpPlayer(
         invalidateLater()
 
         val restart = url == rendererUrl
+        handoverOnPlay = !restart && !playWhenReady && isKodi
+        if (handoverOnPlay) {
+            positionMs = seekToMs
+            playbackState = Player.STATE_READY
+            invalidateLater()
+            return
+        }
 
         try {
             if (restart) {
@@ -536,6 +585,8 @@ class UpnpPlayer(
             } else {
                 controlPoint.setAvTransportUri(device, url, metadataFor(entry.item, url))
                 rendererUrl = url
+                handedOverUrl = url
+                handedOverAt = SystemClock.elapsedRealtime()
             }
             if (playWhenReady) controlPoint.play(device)
         } catch (e: Exception) {
@@ -655,6 +706,16 @@ class UpnpPlayer(
         lengthMs > 0 && (playedMs >= lengthMs - POLL_INTERVAL_MS ||
             MediaManager.meetsScrobbleThreshold(playedMs, lengthMs))
 
+    /**
+     * A live stream, which has no length. Kodi reports the length of the track before it for about
+     * a second after the switch, so a station takes none from the renderer.
+     */
+    private fun isStation(entry: Entry?): Boolean {
+        val item = entry?.item ?: return false
+        return item.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_RADIO ||
+            item.mediaId.startsWith("ir-")
+    }
+
     private fun serverLengthMs(): Long =
         (currentEntry()?.item?.mediaMetadata?.extras?.getInt("duration", 0) ?: 0).toLong() * 1000L
 
@@ -695,7 +756,16 @@ class UpnpPlayer(
             val transport = controlPoint.transportInfo(device)
             failingSince = 0L
 
-            if (loadedGeneration != loadGeneration) return
+            when {
+                loadedGeneration != loadGeneration -> return
+                // Nothing is handed over yet, so the renderer still describes what it held before.
+                handoverOnPlay -> {
+                    followPlayFromTheRemote(transport["CurrentTransportState"])
+                    return
+                }
+                // Following the old track loads ours again, and each load queues another switch on Kodi.
+                stillSwitching(position["TrackURI"]) -> return
+            }
 
             // Read before this poll's reading, since the reply that catches a handover describes the next track.
             val barMs = positionNow()
@@ -704,7 +774,8 @@ class UpnpPlayer(
             val endMs = if (durationUs > 0) minOf(lengthMs, durationUs / 1000) else lengthMs
 
             // A zero never overwrites a known length, since chunked streams and handovers answer zero.
-            asMillis(position["TrackDuration"])?.takeIf { it > 0 }?.let { durationUs = it * 1000 }
+            asMillis(position["TrackDuration"])?.takeIf { it > 0 && !isStation(currentEntry()) }
+                ?.let { durationUs = it * 1000 }
             asMillis(position["RelTime"])?.let { takeReading(it, sentAt, arrivedAt) }
             // A stopped LG C1 still reports its last URL, and following it replayed a finished track.
             if (transport["CurrentTransportState"] !in STOPPED_STATES) {
@@ -715,6 +786,7 @@ class UpnpPlayer(
             // TRANSITIONING is also what a renderer answers while failing to fetch, so not started.
             when (transport["CurrentTransportState"]) {
                 "PLAYING", "PAUSED_PLAYBACK" -> {
+                    if (stopIfThePauseWasIgnored(transport["CurrentTransportState"], sentAt)) return
                     // Time spent buffering is not playback, and lands in the position otherwise.
                     if (playbackState != Player.STATE_READY) positionIsCurrentNow()
                     stoppedAtEndPolls = 0
@@ -753,6 +825,58 @@ class UpnpPlayer(
             }
         }
         invalidateLater()
+    }
+
+    /**
+     * True while the renderer still reports a URL other than [handedOverUrl]. A renderer that names
+     * no URL says nothing about the switch, so only a different one is waited out.
+     */
+    private fun stillSwitching(trackUri: String?): Boolean {
+        val awaited = handedOverUrl ?: return false
+        if (trackUri.isNullOrBlank() || trackUri == awaited ||
+            SystemClock.elapsedRealtime() - handedOverAt > HANDOVER_WAIT_MS
+        ) {
+            handedOverUrl = null
+            return false
+        }
+        return true
+    }
+
+    /**
+     * Follows a Play on the renderer's own remote while [handoverOnPlay] waits.
+     *
+     * The remote resumes the track the renderer held before, so after [OUTSIDE_PLAY_PAUSE_POLLS]
+     * readings in a row say PLAYING, the track picked in the app is handed over and played.
+     */
+    private fun followPlayFromTheRemote(state: String?) {
+        if (state != "PLAYING") {
+            outsidePlayPausePolls = 0
+            return
+        }
+        if (++outsidePlayPausePolls < OUTSIDE_PLAY_PAUSE_POLLS) return
+        outsidePlayPausePolls = 0
+        Log.d(TAG, "renderer started playing from outside while a handover waited, handing it over")
+        playWhenReady = true
+        updateWakeLock()
+        loadCurrent(seekToMs = positionMs)
+    }
+
+    /**
+     * Stops a station the renderer kept playing after a Pause, and returns whether it did.
+     *
+     * Kodi's VideoPlayer answers Pause on a station with OK and plays on, which would read as a
+     * Play from outside. Stop costs a rebuffer on a renderer where Pause works, so only a reading
+     * taken [PAUSE_SETTLE_MS] or more after the pause decides. That is shorter than the two
+     * readings a Play from outside waits for.
+     */
+    private fun stopIfThePauseWasIgnored(state: String?, sentAt: Long): Boolean {
+        val pausedAt = stationPausedAt
+        if (pausedAt == 0L || playWhenReady || sentAt - pausedAt < PAUSE_SETTLE_MS) return false
+        stationPausedAt = 0L
+        if (state != "PLAYING") return false
+        Log.d(TAG, "renderer kept playing a station it was asked to pause, stopping it")
+        stopRenderer("after an ignored pause")
+        return true
     }
 
     // Only a stop while playing, on a renderer seen playing, can end a track.
@@ -930,6 +1054,10 @@ class UpnpPlayer(
         private const val MAX_POLLS_AWAITING_HANDOVER = 3
 
         private const val OUTSIDE_PLAY_PAUSE_POLLS = 2
+
+        private const val PAUSE_SETTLE_MS = 1000L
+
+        private val HANDOVER_WAIT_MS = TimeUnit.SECONDS.toMillis(10)
 
         // A stop this close to a track's end is the track ending, and anything earlier came from outside.
         private val END_WINDOW_MS = TimeUnit.SECONDS.toMillis(10)

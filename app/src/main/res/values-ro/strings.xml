@@ -354,7 +354,6 @@
     <string name="settings_song_rating_summary">Dacă este activat, afișează evaluarea cu 5 stele pentru piesă pe pagina cântecului\n\n*Necesită restartarea aplicației</string>
     <string name="settings_item_rating">Arătați evaluarea articolului</string>
     <string name="settings_item_rating_summary">Dacă este activat, va fi afișată evaluarea articolului și dacă este marcat ca favorit.</string>
-    <string name="settings_queue_syncing_countdown">Cronometru sincronizare</string>
     <string name="settings_queue_syncing_summary">Dacă este activat, utilizatorul va avea capacitatea de a-și salva coada de redare și va putea să încărce starea la deschiderea aplicației.</string>
     <string name="settings_queue_syncing_title">Sincronizare coadă de redare pentru acest utilizator [Nu este complet finalizat]</string>
     <string name="settings_show_mini_shuffle_button">Arătați butonul Amestecare</string>

@@ -7,13 +7,10 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.media3.common.util.UnstableApi;
 
-import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.interfaces.StarCallback;
 import com.eddyizm.tempus.repository.AlbumRepository;
 import com.eddyizm.tempus.repository.ArtistRepository;
@@ -22,10 +19,9 @@ import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
 import com.eddyizm.tempus.subsonic.models.ArtistInfo2;
 import com.eddyizm.tempus.subsonic.models.Child;
-import com.eddyizm.tempus.util.DownloadUtil;
-import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.NetworkUtil;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.StarredSync;
 import com.eddyizm.tempus.util.FavoriteRegistry;
 
 import java.util.Collections;
@@ -192,18 +188,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
         artist.setStarred(new Date());
 
         if (Preferences.isStarredArtistsSyncEnabled()) {
-            artistRepository.getArtistAllSongs(artist.getId(), new ArtistRepository.ArtistSongsCallback() {
-                @OptIn(markerClass = UnstableApi.class)
-                @Override
-                public void onSongsCollected(List<Child> songs) {
-                    if (songs != null && !songs.isEmpty()) {
-                        DownloadUtil.getDownloadTracker(context).download(
-                                MappingUtil.mapDownloads(songs),
-                                songs.stream().map(Download::new).collect(Collectors.toList())
-                        );
-                    }
-                }
-            });
+            StarredSync.syncArtist(context, artist.getId());
         } else {
             Log.d("ArtistSync", "Artist sync preference is disabled");
         }

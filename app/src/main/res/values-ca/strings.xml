@@ -453,7 +453,6 @@
     <string name="settings_track_number_summary">Si s\'habilita, mostra el número de pista de la cançó en reproducció.</string>
     <string name="settings_item_rating">Mostra la valoració dels elements</string>
     <string name="settings_item_rating_summary">Si s\'habilita, es mostrarà la valoració dels elements i si s\'han marcat com a preferits.</string>
-    <string name="settings_queue_syncing_countdown">Temporitzador de sincronització</string>
     <string name="settings_queue_syncing_summary">Si s\'habilita, l\'usuari tindrà la possibilitat de desar la cua de reproducció i carregar l\'estat en obrir l\'aplicació.</string>
     <string name="settings_queue_syncing_title">Sincronitza la cua de reproducció d\'aquest usuari (implantat parcialment)</string>
     <string name="settings_show_mini_shuffle_button">Mostra el botó de reproducció aleatòria</string>

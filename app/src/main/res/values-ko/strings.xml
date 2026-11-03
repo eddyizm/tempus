@@ -266,7 +266,6 @@
     <string name="settings_podcast">팟캐스트 보기</string>
     <string name="settings_podcast_summary">활성화 시, 팟캐스트 섹션을 표시합니다.</string>
     <string name="settings_item_rating_summary">활성화 시 평점과 즐겨찾기 여부가 표시됩니다</string>
-    <string name="settings_queue_syncing_countdown">동기화 타이머</string>
     <string name="settings_queue_syncing_summary">활성화 시, 재생목록을 저장하여 재실행 시 상태를 불러올 수 있습니다.</string>
     <string name="settings_queue_syncing_title">사용자의 재생목록 동기화</string>
     <string name="settings_radio">라디오 보기</string>

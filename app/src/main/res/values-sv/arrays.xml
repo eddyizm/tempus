@@ -93,11 +93,6 @@
         <item>Mp3</item>
         <item>Flac</item>
     </string-array>
-    <string-array name="queue_syncing_countdown_titles">
-        <item>Tio sekunder</item>
-        <item>Fem sekunder</item>
-        <item>Två sekunder</item>
-    </string-array>
     <string-array name="rounded_corner_size_titles">
         <item>Stor</item>
         <item>Medelstor</item>
