@@ -138,6 +138,37 @@ class BaseSessionCallbackTest {
     }
 
     @Test
+    fun onConnect_mediaNotificationControllerDoesNotReceiveTimelineCommand() {
+        val context = mock<Context>()
+        val service = mock<BaseMediaService>()
+        val session = mock<MediaSession>()
+        val controller = mock<ControllerInfo>()
+        val player = mock<Player>()
+        val app = mock<App>()
+        val preferences = mock<SharedPreferences>()
+
+        whenever(context.getString(anyInt())).thenReturn("mock_string")
+        whenever(session.player).thenReturn(player)
+        whenever(session.isMediaNotificationController(any())).thenReturn(true)
+        whenever(session.isAutomotiveController(any())).thenReturn(false)
+        whenever(session.isAutoCompanionController(any())).thenReturn(false)
+        // Not a legacy controller – the new condition should still strip the timeline
+        whenever(controller.controllerVersion).thenReturn(Int.MAX_VALUE)
+        whenever(app.preferences).thenReturn(preferences)
+        whenever(preferences.getString(any(), any())).thenReturn(null)
+
+        mockStatic(App::class.java).use { appStatic ->
+            appStatic.`when`<App> { App.getInstance() }.thenReturn(app)
+
+            mockConstruction(SessionCommand::class.java).use {
+                val callback = BaseSessionCallback(context, service)
+                val result = callback.onConnect(session, controller)
+                assertEquals(callback.legacyPlayerCommands, result.availablePlayerCommands)
+            }
+        }
+    }
+
+    @Test
     fun handlePlayerChanged_beforeOnConnect_doesNotRegisterListener() {
         val context = mock<Context>()
         val service = mock<BaseMediaService>()

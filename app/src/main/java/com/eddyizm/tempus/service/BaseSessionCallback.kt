@@ -209,8 +209,9 @@ open class BaseSessionCallback(
                 }
             }.build()
 
-    // Omit COMMAND_GET_TIMELINE for legacy controllers so MediaSessionLegacyStub does not
-    // serialize the entire playlist into MediaSessionCompat.QueueItem instances.
+    // Omit COMMAND_GET_TIMELINE for legacy controllers and the media notification controller
+    // so MediaSessionLegacyStub does not serialize the entire playlist into
+    // MediaSessionCompat.QueueItem instances (causes system-wide OOM on large queues).
     @OptIn(UnstableApi::class)
     val legacyPlayerCommands: Player.Commands =
         MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
@@ -238,7 +239,9 @@ open class BaseSessionCallback(
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
         val playerCommands =
-            if (controller.controllerVersion == MediaSession.ControllerInfo.LEGACY_CONTROLLER_VERSION) {
+            if (controller.controllerVersion == MediaSession.ControllerInfo.LEGACY_CONTROLLER_VERSION
+                || session.isMediaNotificationController(controller)
+            ) {
                 legacyPlayerCommands
             } else {
                 MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS
