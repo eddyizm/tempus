@@ -1,7 +1,6 @@
 package com.eddyizm.tempus.viewmodel;
 
 import android.app.Application;
-import android.app.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -47,17 +46,6 @@ public class StarredAlbumsSyncViewModel extends AndroidViewModel {
             }
         });
         
-        return starredAlbumSongs;
-    }
-
-    public LiveData<List<Child>> getStarredAlbumSongs(Activity activity) {
-        albumRepository.getStarredAlbums(false, -1).observe((LifecycleOwner) activity, albums -> {
-            if (albums != null && !albums.isEmpty()) {
-                collectAllAlbumSongs(albums, starredAlbumSongs::postValue);
-            } else {
-                starredAlbumSongs.postValue(new ArrayList<>());
-            }
-        });
         return starredAlbumSongs;
     }
 

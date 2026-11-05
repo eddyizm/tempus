@@ -202,7 +202,6 @@ public class PlayerBottomSheetFragment extends Fragment {
             @Override
             public void onPositionDiscontinuity(@NonNull Player.PositionInfo oldPosition, @NonNull Player.PositionInfo newPosition, int reason) {
                 setMediaControllerUI(mediaBrowser);
-                setMetadata(mediaBrowser.getMediaMetadata());
                 setContentDuration(mediaBrowser.getContentDuration());
             }
 

@@ -96,6 +96,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     // swiped away during launch), that post must not touch the now released player.
     @Volatile private var serviceDestroyed = false
     private var lastResumeSaveAt = 0L
+    private var finishedMediaId: String? = null
     private val widgetUpdateRunnable = object : Runnable {
         override fun run() {
             val player = mediaLibrarySession.player
@@ -161,13 +162,13 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         // clearMediaItems() + setMediaItems() over the live player, which discards the
         // active item's forward buffer and forces a re-prepare on every WiFi<->cellular
         // switch — an audible ~0.5s gap (and, on some devices, the failed re-prepare that
-        // #682 recovers from). Instead, replace only the non-current items, and only when
-        // the resolved URI actually changed, so the active item is never touched while
+        // #682 recovers from). Instead, replace only items after the current one, from the
+        // first to the last whose resolved URI changed, so the active item is never touched while
         // upcoming tracks still pick up the new network's transcoding settings.
 
         // Threading: the heavy computation (MappingUtil + isDownloaded) runs on a background
         // thread to avoid blocking the main thread. Only items from current+1 onward are
-        // processed — already-played items are skipped. replaceMediaItem() is dispatched back
+        // processed — already-played items are skipped. replaceMediaItems() is dispatched back
         // to the main thread via widgetUpdateHandler. The guard i < player.mediaItemCount protects
         // against queue changes during the background computation.
 
@@ -195,15 +196,21 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         Futures.addCallback(future, object : FutureCallback<List<Pair<Int, MediaItem>>> {
             override fun onSuccess(updates: List<Pair<Int, MediaItem>>) {
                 widgetUpdateHandler.post {
-                    // Same hazard as restorePlayerFromQueue: the mapping runs on a background
-                    // thread, so this post can land after onDestroy released the player.
                     if (serviceDestroyed) return@post
-                    updates.forEach { (i, mapped) ->
-                        if (i > player.currentMediaItemIndex
+                    val valid = updates.filter { (i, mapped) ->
+                        i > player.currentMediaItemIndex
                             && i < player.mediaItemCount
-                            && player.getMediaItemAt(i).mediaId == mapped.mediaId) {
-                            player.replaceMediaItem(i, mapped)
-                        }
+                            && player.getMediaItemAt(i).mediaId == mapped.mediaId
+                    }
+                    if (valid.isEmpty()) return@post
+                    val byIndex = valid.toMap()
+                    val from = valid.first().first
+                    val to = valid.last().first + 1
+                    val items = (from until to).map { byIndex[it] ?: player.getMediaItemAt(it) }
+                    if (items.all { it.localConfiguration != null }) {
+                        player.replaceMediaItems(from, to, items)
+                    } else {
+                        valid.forEach { (i, mapped) -> player.replaceMediaItem(i, mapped) }
                     }
                 }
             }
@@ -572,11 +579,14 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 Log.d(TAG, "onIsPlayingChanged " + player.currentMediaItemIndex + " isPlaying=" + isPlaying)
-                if (isPlaying) hasPlayedSinceRestore = true
+                if (isPlaying) {
+                    hasPlayedSinceRestore = true
+                    finishedMediaId = null
+                }
                 if (!isPlaying) {
                     MediaManager.setResumePoint(
                         player.currentMediaItem,
-                        player.currentPosition
+                        if (player.playbackState == Player.STATE_ENDED) 0L else player.currentPosition
                     )
                     // Auto-push the queue + position to the server so resume works
                     // without a manual button press.
@@ -602,14 +612,14 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 Log.d(TAG, "onPlaybackStateChanged")
                 super.onPlaybackStateChanged(playbackState)
                 if (playbackState != Player.STATE_IDLE) stoppedSinceError = false
-                if (!player.hasNextMediaItem() &&
-                    playbackState == Player.STATE_ENDED &&
-                    player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC
-                ) {
-                    MediaManager.scrobble(player.currentMediaItem, true)
-                    MediaManager.saveChronology(player.currentMediaItem)
+                if (!player.hasNextMediaItem() && playbackState == Player.STATE_ENDED) {
+                    if (player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
+                        MediaManager.scrobble(player.currentMediaItem, true)
+                        MediaManager.saveChronology(player.currentMediaItem)
+                    }
                     // Last track played to completion - drop it from Continue listening.
                     MediaManager.deleteResumePoint(player.currentMediaItem)
+                    finishedMediaId = player.currentMediaItem?.mediaId
                 }
                 updateWidget(player)
             }
@@ -631,9 +641,12 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 if (oldPosition.mediaItemIndex != newPosition.mediaItemIndex &&
                     reason != Player.DISCONTINUITY_REASON_AUTO_TRANSITION) {
                     oldPosition.mediaItem?.let {
-                        MediaManager.setResumePoint(it, oldPosition.positionMs)
+                        if (it.mediaId != finishedMediaId) {
+                            MediaManager.setResumePoint(it, oldPosition.positionMs)
+                        }
                     }
                 }
+                finishedMediaId = null
 
                 // Re-apply gain whenever we stay on the same track for any reason
                 // except an automatic transition to the next track.
@@ -852,7 +865,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         if (!player.playWhenReady || player.mediaItemCount == 0) {
             // App swiped away while paused - write the final position so the resume
             // point (and server bookmark) reflect exactly where the user stopped.
-            if (player.currentMediaItem != null && player.currentPosition > 0) {
+            if (player.currentMediaItem != null && player.currentPosition > 0 &&
+                player.playbackState != Player.STATE_ENDED) {
                 MediaManager.setResumePoint(player.currentMediaItem, player.currentPosition)
             }
             stopSelf()
