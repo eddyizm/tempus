@@ -54,11 +54,16 @@ class DynamicMediaSourceFactory(
 
             else -> {
                 val extractorsFactory: ExtractorsFactory = DefaultExtractorsFactory()
-                val progressiveFactory = ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory)
 
                 val uri = mediaItem.localConfiguration?.uri
                 val isTranscoding = uri?.getQueryParameter("format") != null && uri.getQueryParameter("format") != "raw"
-                
+
+                // Reconnecting resumes with a range request, which only works for the original file;
+                // radio and transcodes would restart from the beginning.
+                val loadingFactory = if (isRadio || isTranscoding) dataSourceFactory else StallDetectingDataSource.Factory(
+                    dataSourceFactory, StallDetectingDataSource.minBytesPerSecondFor(mediaItem))
+                val progressiveFactory = ProgressiveMediaSource.Factory(loadingFactory, extractorsFactory)
+
                 if (isTranscoding && OpenSubsonicExtensionsUtil.isTranscodeOffsetExtensionAvailable()) {
                      TranscodingMediaSource(mediaItem, dataSourceFactory, progressiveFactory)
                 } else {
