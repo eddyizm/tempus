@@ -65,6 +65,12 @@
             android:title="@string/settings_hide_bottom_navbar_on_portrait"
             android:key="hide_bottom_navbar_on_portrait"
             android:summary="@string/settings_hide_bottom_navbar_on_portrait_summary"/>
+
+        <SwitchPreference
+            android:title="@string/settings_bottom_nav_favorites"
+            android:key="bottom_nav_favorites"
+            android:defaultValue="false"
+            android:summary="@string/settings_bottom_nav_favorites_summary"/>
         
         <SwitchPreference
             android:layout_height="match_parent"
