@@ -65,6 +65,7 @@ import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.AlbumArtistBackfill;
 import com.eddyizm.tempus.util.DownloadRepair;
+import com.eddyizm.tempus.repository.PlaylistFlush;
 import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.util.ConnectionUtil;
 import com.eddyizm.tempus.util.Preferences;
@@ -188,6 +189,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        PlaylistFlush.startForegroundLoop();
         pingServer();
         toggleNavigationDrawerLockOnOrientationChange();
     }
@@ -195,6 +197,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStop() {
         outstandingProbe = null;
+        PlaylistFlush.stopForegroundLoop();
         super.onStop();
     }
 
@@ -525,6 +528,7 @@ public class MainActivity extends BaseActivity {
     public void goFromLogin() {
         setBottomSheetInPeek(mainViewModel.isQueueLoaded());
         new PlaylistRepository().syncKeptPlaylists(getApplicationContext());
+        PlaylistFlush.kick();
         goToHome();
         consumePendingAssetLink();
         consumePendingNowPlayingIntent();

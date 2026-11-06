@@ -133,6 +133,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/playlist_song_count_label" />
 
+                <TextView
+                    android:id="@+id/playlist_sync_status_label"
+                    style="@style/LabelSmall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginEnd="18dp"
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/playlist_duration_label" />
+
                 <View
                     android:id="@+id/upper_button_divider"
                     style="@style/Divider"
@@ -141,7 +154,7 @@
                     android:layout_marginEnd="18dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/playlist_duration_label" />
+                    app:layout_constraintTop_toBottomOf="@+id/playlist_sync_status_label" />
 
                 <LinearLayout
                     android:id="@+id/playlist_page_button_layout"

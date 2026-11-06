@@ -35,6 +35,7 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentPlaylistPageBinding;
 import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.interfaces.ClickCallback;
+import com.eddyizm.tempus.model.PendingPlaylistEdit;
 import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Playlist;
@@ -48,6 +49,7 @@ import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.eddyizm.tempus.viewmodel.PlaylistPageViewModel;
 import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
 import com.eddyizm.tempus.interfaces.PlaylistCallback;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.ArrayList;
@@ -227,6 +229,16 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
             bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlistPageViewModel.getPlaylist());
             Navigation.findNavController(requireView()).navigate(R.id.playlistEditorFragment, bundle);
             return true;
+        } else if (item.getItemId() == R.id.action_retry_sync) {
+            playlistPageViewModel.retrySync();
+            return true;
+        } else if (item.getItemId() == R.id.action_discard_offline_edits) {
+            new MaterialAlertDialogBuilder(requireContext())
+                    .setMessage(R.string.playlist_discard_offline_edits_confirm)
+                    .setPositiveButton(R.string.menu_discard_offline_edits, (dialog, which) -> playlistPageViewModel.discardOfflineEdits())
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
+            return true;
         } else if (item.getItemId() == R.id.action_edit_playlist_details) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(Constants.PLAYLIST_OBJECT, playlistPageViewModel.getPlaylist());
@@ -261,6 +273,14 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         });
         playlistPageViewModel.isKeptSynced().observe(getViewLifecycleOwner(), kept -> {
             menu.findItem(R.id.action_keep_synced).setChecked(kept);
+        });
+        playlistPageViewModel.pendingEdit().observe(getViewLifecycleOwner(), edit -> {
+            boolean failed = edit != null && PendingPlaylistEdit.FAILED.equals(edit.getState());
+            menu.findItem(R.id.action_retry_sync).setVisible(failed);
+            menu.findItem(R.id.action_discard_offline_edits).setVisible(edit != null);
+            if (bind == null) return;
+            bind.playlistSyncStatusLabel.setVisibility(edit != null ? View.VISIBLE : View.GONE);
+            if (edit != null) bind.playlistSyncStatusLabel.setText(failed ? R.string.playlist_offline_failed : R.string.playlist_offline_pending);
         });
     }
 

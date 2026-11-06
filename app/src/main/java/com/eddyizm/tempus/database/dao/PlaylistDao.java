@@ -57,6 +57,12 @@ public interface PlaylistDao {
     @Query("UPDATE playlist SET name = :newName WHERE id = :playlistId")
     void updateName(String playlistId, String newName);
 
+    @Query("SELECT name FROM playlist WHERE id = :playlistId")
+    String getName(String playlistId);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM playlist WHERE id = :playlistId)")
+    boolean exists(String playlistId);
+
     @Query("UPDATE playlist SET lastPlayed = :timestamp WHERE id = :playlistId")
     void updateLastPlayed(String playlistId, long timestamp);
 
