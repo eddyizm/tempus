@@ -46,6 +46,9 @@ object ServerHeaders {
 
     private val sources = CopyOnWriteArrayList<HeaderSource>()
 
+    @Volatile
+    private var testServer: ServerContext? = null
+
     @JvmStatic
     fun register(source: HeaderSource) {
         sources.addIfAbsent(source)
@@ -54,6 +57,22 @@ object ServerHeaders {
     @JvmStatic
     fun unregister(source: HeaderSource) {
         sources.remove(source)
+    }
+
+    /**
+     * Temporarily supplies [server]'s headers to [getHeadersForActiveServer] while a connection
+     * test is in flight, before the server is signed in to. Clear it with [clearTestServer].
+     */
+    @JvmStatic
+    fun setTestServer(server: ServerContext?) {
+        testServer = server
+    }
+
+    /** Clears the test server, but only if it is still [server], so a late result can't clear a newer test. */
+    @JvmStatic
+    @Synchronized
+    fun clearTestServer(server: ServerContext) {
+        if (testServer === server) testServer = null
     }
 
     /** Merged headers for [url] if it belongs to [server], otherwise empty. */
@@ -83,27 +102,41 @@ object ServerHeaders {
         return merged
     }
 
-    /** Headers of the signed-in server if [url] points at it, otherwise empty. */
+    /** Headers of the signed-in server (or the server under [setTestServer]) if [url] points at it, otherwise empty. */
     @JvmStatic
-    fun getHeadersForActiveServer(url: String?): Map<String, String> {
+    fun getHeadersForActiveServer(url: String?): Map<String, String> =
+        getHeadersForActiveServer(url) { signedInServer() }
+
+    /** [getHeadersForActiveServer] with the signed-in server supplied by [signedInServer]. */
+    internal fun getHeadersForActiveServer(
+        url: String?,
+        signedInServer: () -> ServerContext?
+    ): Map<String, String> {
+        val test = testServer
+        if (test != null && CustomHeaders.isServerOrigin(url, test.addresses)) {
+            return getHeadersForUrl(url, test)
+        }
+        val server = signedInServer() ?: return emptyMap()
+        return getHeadersForUrl(url, server)
+    }
+
+    /** The signed-in server from the app preferences, or null when it has nothing to add. */
+    private fun signedInServer(): ServerContext? {
         val raw = Preferences.getCustomHeaders()
-        if (sources.isEmpty() && raw.isNullOrBlank()) return emptyMap()
-        return getHeadersForUrl(
-            url,
-            ServerContext(
-                addresses = listOf(
-                    Preferences.getInUseServerAddress(),
-                    Preferences.getServer(),
-                    Preferences.getLocalAddress()
-                ),
-                customHeaders = raw
-            )
+        if (sources.isEmpty() && raw.isNullOrBlank()) return null
+        return ServerContext(
+            addresses = listOf(
+                Preferences.getInUseServerAddress(),
+                Preferences.getServer(),
+                Preferences.getLocalAddress()
+            ),
+            customHeaders = raw
         )
     }
 
     /** OkHttp interceptor adding the signed-in server's headers, looked up on every request. */
     @JvmStatic
-    fun createInterceptor(): Interceptor = Interceptor(::getHeadersForActiveServer)
+    fun createInterceptor(): Interceptor = Interceptor { url -> getHeadersForActiveServer(url) }
 
     /**
      * Opens [url] with the signed-in server's headers when it points at that server.
