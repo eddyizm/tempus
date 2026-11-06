@@ -597,6 +597,14 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
     <string name="settings_permissions">App permissions</string>
+    <string name="settings_export_title">Export settings</string>
+    <string name="settings_export_summary">Save your settings to a file. Server logins are not included.</string>
+    <string name="settings_import_title">Import settings</string>
+    <string name="settings_import_summary">Restore settings from an exported file</string>
+    <string name="settings_exported">Settings exported</string>
+    <string name="settings_export_failed">Could not save the settings file</string>
+    <string name="settings_imported">Imported %d settings</string>
+    <string name="settings_import_invalid">Not a Tempus settings file</string>
     <string name="settings_network_playback_title">Network playback</string>
     <string name="settings_upnp_title">UPnP / DLNA renderers</string>
     <string name="settings_upnp_summary">Find and play to UPnP and DLNA renderers on your network. Searches only while the cast picker is open.</string>
