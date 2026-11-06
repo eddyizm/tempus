@@ -28,6 +28,16 @@
         <Preference
             android:key="permissions"
             android:title="@string/settings_permissions"/>
+
+        <Preference
+            android:key="settings_export"
+            android:title="@string/settings_export_title"
+            android:summary="@string/settings_export_summary"/>
+
+        <Preference
+            android:key="settings_import"
+            android:title="@string/settings_import_title"
+            android:summary="@string/settings_import_summary"/>
     </com.eddyizm.tempus.util.ClickablePreferenceCategory>
 
     <com.eddyizm.tempus.util.ClickablePreferenceCategory app:title="@string/settings_title_ui">
