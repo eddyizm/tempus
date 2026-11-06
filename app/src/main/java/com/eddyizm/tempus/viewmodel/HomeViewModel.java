@@ -76,6 +76,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Share>> shares = new MutableLiveData<>(null);
 
     private List<HomeSector> sectors;
+    private final MutableLiveData<List<HomeSector>> homeSectorList = new MutableLiveData<>();
 
     private String cachedMusicFolderId = Preferences.getActiveMusicFolderId();
     private int musicFolderGeneration = 0;
@@ -456,6 +457,18 @@ public class HomeViewModel extends AndroidViewModel {
 
     public List<HomeSector> getHomeSectorList() {
         return sectors;
+    }
+
+    public LiveData<List<HomeSector>> getHomeSectorListLiveData() {
+        return homeSectorList;
+    }
+
+    /**
+     * Replaces the home sector list and notifies observers, so a new layout shows without restarting.
+     */
+    public void updateHomeSectorList(List<HomeSector> sectors) {
+        this.sectors = sectors;
+        homeSectorList.setValue(sectors);
     }
 
     public boolean checkHomeSectorVisibility(String sectorId) {
