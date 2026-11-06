@@ -19,7 +19,6 @@ import androidx.media3.session.SessionToken;
 
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.util.AssetLinkUtil;
-import com.eddyizm.tempus.util.MusicUtil;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -46,7 +45,7 @@ public final class WidgetUpdateManager {
         if (TextUtils.isEmpty(artist)) artist = ctx.getString(R.string.widget_placeholder_subtitle);
         if (TextUtils.isEmpty(album)) album = "";
 
-        final TimingInfo timing = createTimingInfo(positionMs, durationMs);
+        final TimingInfo timing = WidgetTimingViews.createTimingInfo(positionMs, durationMs);
 
         AppWidgetManager mgr = AppWidgetManager.getInstance(ctx);
         int[] ids = mgr.getAppWidgetIds(new ComponentName(ctx, WidgetProvider4x1.class));
@@ -80,7 +79,9 @@ public final class WidgetUpdateManager {
                                        long durationMs,
                                        String songLink,
                                        String albumLink,
-                                       String artistLink) {
+                                       String artistLink,
+                                       int controlsVersionAtStart,
+                                       int timingVersionAtStart) {
         final Context appCtx = ctx.getApplicationContext();
         final String t = TextUtils.isEmpty(title) ? appCtx.getString(R.string.widget_not_playing) : title;
         final String a = TextUtils.isEmpty(artist) ? appCtx.getString(R.string.widget_placeholder_subtitle) : artist;
@@ -88,10 +89,11 @@ public final class WidgetUpdateManager {
         final boolean p = playing;
         final boolean sh = shuffleEnabled;
         final int rep = repeatMode;
-        final TimingInfo timing = createTimingInfo(positionMs, durationMs);
+        final TimingInfo timing = WidgetTimingViews.createTimingInfo(positionMs, durationMs);
         final String songLinkFinal = songLink;
         final String albumLinkFinal = albumLink;
         final String artistLinkFinal = artistLink;
+        final int generation = WidgetState.beginFullUpdate(controlsVersionAtStart, timingVersionAtStart);
 
         if (!TextUtils.isEmpty(coverArtId)) {
             CustomGlideRequest.loadAlbumArtBitmap(
@@ -101,23 +103,34 @@ public final class WidgetUpdateManager {
                     new CustomTarget<Bitmap>(WIDGET_SAFE_ART_SIZE, WIDGET_SAFE_ART_SIZE) {
                         @Override
                         public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                            if (!WidgetState.isCurrent(generation)) return;
+                            WidgetState.setShownCover(coverArtId);
                             AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);
                             int[] ids = mgr.getAppWidgetIds(new ComponentName(appCtx, WidgetProvider4x1.class));
                             for (int id : ids) {
                                 android.widget.RemoteViews rv = choosePopulate(appCtx, t, a, alb, resource, p,
                                         timing.elapsedText, timing.totalText, timing.progress, sh, rep, id);
+                                WidgetState.applyChangesSinceStart(appCtx, rv);
                                 WidgetProvider.attachIntents(appCtx, rv, id, songLinkFinal, albumLinkFinal, artistLinkFinal);
                                 mgr.updateAppWidget(id, rv);
                             }
                         }
 
                         @Override
+                        public void onLoadFailed(Drawable errorDrawable) {
+                            onLoadCleared(null);
+                        }
+
+                        @Override
                         public void onLoadCleared(Drawable placeholder) {
+                            if (!WidgetState.isCurrent(generation)) return;
+                            WidgetState.clearShownCover();
                             AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);
                             int[] ids = mgr.getAppWidgetIds(new ComponentName(appCtx, WidgetProvider4x1.class));
                             for (int id : ids) {
                                 android.widget.RemoteViews rv = choosePopulate(appCtx, t, a, alb, null, p,
                                         timing.elapsedText, timing.totalText, timing.progress, sh, rep, id);
+                                WidgetState.applyChangesSinceStart(appCtx, rv);
                                 WidgetProvider.attachIntents(appCtx, rv, id, songLinkFinal, albumLinkFinal, artistLinkFinal);
                                 mgr.updateAppWidget(id, rv);
                             }
@@ -125,11 +138,13 @@ public final class WidgetUpdateManager {
                     }
             );
         } else {
+            WidgetState.clearShownCover();
             AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);
             int[] ids = mgr.getAppWidgetIds(new ComponentName(appCtx, WidgetProvider4x1.class));
             for (int id : ids) {
                 android.widget.RemoteViews rv = choosePopulate(appCtx, t, a, alb, null, p,
                         timing.elapsedText, timing.totalText, timing.progress, sh, rep, id);
+                WidgetState.applyChangesSinceStart(appCtx, rv);
                 WidgetProvider.attachIntents(appCtx, rv, id, songLinkFinal, albumLinkFinal, artistLinkFinal);
                 mgr.updateAppWidget(id, rv);
             }
@@ -138,6 +153,7 @@ public final class WidgetUpdateManager {
 
     public static void refreshFromController(Context ctx) {
         final Context appCtx = ctx.getApplicationContext();
+        final int versionAtStart = WidgetState.version();
         SessionToken token = new SessionToken(appCtx, new ComponentName(appCtx, MediaService.class));
         ListenableFuture<MediaController> future = new MediaController.Builder(appCtx, token).buildAsync();
         future.addListener(() -> {
@@ -192,41 +208,13 @@ public final class WidgetUpdateManager {
                         duration,
                         songLink,
                         albumLink,
-                        artistLink);
+                        artistLink,
+                        versionAtStart,
+                        WidgetState.version());
                 c.release();
             } catch (ExecutionException | InterruptedException ignored) {
             }
         }, MoreExecutors.directExecutor());
-    }
-
-    private static TimingInfo createTimingInfo(long positionMs, long durationMs) {
-        long safePosition = Math.max(0L, positionMs);
-        long safeDuration = durationMs > 0 ? durationMs : 0L;
-        if (safeDuration > 0 && safePosition > safeDuration) {
-            safePosition = safeDuration;
-        }
-
-        String elapsed = (safeDuration > 0 || safePosition > 0)
-                ? MusicUtil.getReadableDurationString(safePosition, true)
-                : null;
-        String total = safeDuration > 0
-                ? MusicUtil.getReadableDurationString(safeDuration, true)
-                : null;
-
-        int progress = 0;
-        if (safeDuration > 0) {
-            long scaled = safePosition * WidgetViewsFactory.PROGRESS_MAX;
-            long progressLong = scaled / safeDuration;
-            if (progressLong < 0) {
-                progress = 0;
-            } else if (progressLong > WidgetViewsFactory.PROGRESS_MAX) {
-                progress = WidgetViewsFactory.PROGRESS_MAX;
-            } else {
-                progress = (int) progressLong;
-            }
-        }
-
-        return new TimingInfo(elapsed, total, progress);
     }
 
     public static android.widget.RemoteViews chooseBuild(Context ctx, int appWidgetId) {
@@ -292,18 +280,6 @@ public final class WidgetUpdateManager {
         MEDIUM,
         LARGE,
         EXPANDED
-    }
-
-    private static final class TimingInfo {
-        final String elapsedText;
-        final String totalText;
-        final int progress;
-
-        TimingInfo(String elapsedText, String totalText, int progress) {
-            this.elapsedText = elapsedText;
-            this.totalText = totalText;
-            this.progress = progress;
-        }
     }
 
 }

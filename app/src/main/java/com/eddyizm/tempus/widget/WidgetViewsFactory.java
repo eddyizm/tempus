@@ -12,7 +12,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import androidx.core.content.ContextCompat;
 import androidx.media3.common.Player;
 
 import com.eddyizm.tempus.R;
@@ -50,9 +49,7 @@ public final class WidgetViewsFactory {
         rv.setTextViewText(R.id.subtitle, ctx.getString(R.string.widget_placeholder_subtitle));
         rv.setTextViewText(R.id.album, "");
         rv.setViewVisibility(R.id.album, showAlbum ? View.INVISIBLE : View.GONE);
-        rv.setTextViewText(R.id.time_elapsed, ctx.getString(R.string.widget_time_elapsed_placeholder));
-        rv.setTextViewText(R.id.time_total, ctx.getString(R.string.widget_time_duration_placeholder));
-        rv.setProgressBar(R.id.progress, PROGRESS_MAX, 0, false);
+        WidgetTimingViews.apply(ctx, rv, null, null, 0);
         rv.setImageViewResource(R.id.btn_play_pause, R.drawable.ic_play);
         rv.setImageViewResource(R.id.album_art, R.drawable.ic_splash_logo);
         applySecondaryControlsDefaults(ctx, rv, showSecondaryControls);
@@ -67,11 +64,7 @@ public final class WidgetViewsFactory {
         rv.setViewVisibility(R.id.btn_shuffle, visibility);
         rv.setViewVisibility(R.id.btn_repeat, visibility);
         if (show) {
-            int defaultColor = ContextCompat.getColor(ctx, R.color.widget_icon_tint);
-            rv.setImageViewResource(R.id.btn_shuffle, R.drawable.ic_shuffle);
-            rv.setImageViewResource(R.id.btn_repeat, R.drawable.ic_repeat);
-            rv.setInt(R.id.btn_shuffle, "setColorFilter", defaultColor);
-            rv.setInt(R.id.btn_repeat, "setColorFilter", defaultColor);
+            WidgetSecondaryControlsViews.apply(ctx, rv, false, Player.REPEAT_MODE_OFF);
         }
     }
 
@@ -171,20 +164,7 @@ public final class WidgetViewsFactory {
         rv.setImageViewResource(R.id.btn_play_pause,
                 playing ? R.drawable.ic_pause : R.drawable.ic_play);
 
-        String elapsed = !TextUtils.isEmpty(elapsedText)
-                ? elapsedText
-                : ctx.getString(R.string.widget_time_elapsed_placeholder);
-        String total = !TextUtils.isEmpty(totalText)
-                ? totalText
-                : ctx.getString(R.string.widget_time_duration_placeholder);
-
-        int safeProgress = progress;
-        if (safeProgress < 0) safeProgress = 0;
-        if (safeProgress > PROGRESS_MAX) safeProgress = PROGRESS_MAX;
-
-        rv.setTextViewText(R.id.time_elapsed, elapsed);
-        rv.setTextViewText(R.id.time_total, total);
-        rv.setProgressBar(R.id.progress, PROGRESS_MAX, safeProgress, false);
+        WidgetTimingViews.apply(ctx, rv, elapsedText, totalText, progress);
 
         applySecondaryControls(ctx, rv, showSecondaryControls, shuffleEnabled, repeatMode);
 
@@ -236,17 +216,9 @@ public final class WidgetViewsFactory {
             return;
         }
 
-        int inactiveColor = ContextCompat.getColor(ctx, R.color.widget_icon_tint);
-        int activeColor = ContextCompat.getColor(ctx, R.color.widget_icon_tint_active);
-
         rv.setViewVisibility(R.id.controls_secondary, View.VISIBLE);
         rv.setViewVisibility(R.id.btn_shuffle, View.VISIBLE);
         rv.setViewVisibility(R.id.btn_repeat, View.VISIBLE);
-        rv.setImageViewResource(R.id.btn_shuffle, R.drawable.ic_shuffle);
-        rv.setImageViewResource(R.id.btn_repeat,
-                repeatMode == Player.REPEAT_MODE_ONE ? R.drawable.ic_repeat_one : R.drawable.ic_repeat);
-        rv.setInt(R.id.btn_shuffle, "setColorFilter", shuffleEnabled ? activeColor : inactiveColor);
-        rv.setInt(R.id.btn_repeat, "setColorFilter",
-                repeatMode == Player.REPEAT_MODE_OFF ? inactiveColor : activeColor);
+        WidgetSecondaryControlsViews.apply(ctx, rv, shuffleEnabled, repeatMode);
     }
 }

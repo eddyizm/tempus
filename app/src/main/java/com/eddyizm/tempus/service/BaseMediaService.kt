@@ -6,12 +6,14 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
+import android.os.PowerManager
 import android.os.SystemClock
 import android.os.Handler
 import android.os.Looper
@@ -51,6 +53,9 @@ import com.eddyizm.tempus.upnp.UpnpRoutesGate
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.*
 import com.eddyizm.tempus.util.SleepTimerManager
+import com.eddyizm.tempus.widget.WidgetPartialUpdater
+import com.eddyizm.tempus.widget.WidgetRefresh
+import com.eddyizm.tempus.widget.WidgetState
 import com.eddyizm.tempus.widget.WidgetUpdateManager
 import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
@@ -91,6 +96,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private val parametricEqProcessor = ParametricEqAudioProcessor()
     private val widgetUpdateHandler = Handler(Looper.getMainLooper())
     private var widgetUpdateScheduled = false
+    private var lastWidgetFullUpdateAt = 0L
+    private val powerManager by lazy { getSystemService(PowerManager::class.java) }
     // Set in onDestroy. restorePlayerFromQueue maps the saved queue on a background thread and
     // posts the player calls back to this handler; if the service is destroyed mid map (the app
     // swiped away during launch), that post must not touch the now released player.
@@ -111,7 +118,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 lastResumeSaveAt = now
                 MediaManager.setResumePoint(player.currentMediaItem, player.currentPosition)
             }
-            updateWidget(player)
+            tickWidget(player, now)
             widgetUpdateHandler.postDelayed(this, WIDGET_UPDATE_INTERVAL_MS)
         }
     }
@@ -631,7 +638,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             ) {
                 Log.d(TAG, "onPositionDiscontinuity reason=$reason old=${oldPosition.mediaItemIndex} new=${newPosition.mediaItemIndex}")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
-                if (reason == Player.DISCONTINUITY_REASON_SEEK) scheduleQueueSync()
+                if (reason == Player.DISCONTINUITY_REASON_SEEK) {
+                    scheduleQueueSync()
+                    updateWidgetTiming(player)
+                }
                 // Save the resume point of the track we're leaving whenever we move to a
                 // different track, so coming back to it later resumes where it was. (Pause
                 // is handled separately in onIsPlayingChanged; this covers switching tracks
@@ -687,10 +697,12 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
             override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
                 Preferences.setShuffleModeEnabled(shuffleModeEnabled)
+                updateWidgetSecondaryControls(player)
             }
 
             override fun onRepeatModeChanged(repeatMode: Int) {
                 Preferences.setRepeatMode(repeatMode)
+                updateWidgetSecondaryControls(player)
             }
 
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
@@ -877,6 +889,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     override fun onCreate() {
         super.onCreate()
+        WidgetPartialUpdater.rememberConfiguration(resources.configuration)
 
         playerInitHook()
         initializeEqualizer()
@@ -888,6 +901,15 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     override fun onGetSession(controllerInfo: ControllerInfo): MediaLibrarySession {
         return mediaLibrarySession
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        when (WidgetPartialUpdater.refreshAfterConfigurationChange(this, newConfig)) {
+            WidgetRefresh.FULL -> updateWidget(mediaLibrarySession.player)
+            WidgetRefresh.SECONDARY_CONTROLS -> updateWidgetSecondaryControls(mediaLibrarySession.player)
+            WidgetRefresh.NONE -> Unit
+        }
     }
 
     override fun onDestroy() {
@@ -1020,7 +1042,20 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         getSystemService(ConnectivityManager::class.java).unregisterNetworkCallback(networkCallback)
     }
 
+    private fun tickWidget(player: Player, now: Long) {
+        if (!powerManager.isInteractive) return
+        val coverId = player.currentMediaItem?.mediaMetadata?.extras?.getString("coverArtId")
+        if (now - lastWidgetFullUpdateAt >= WIDGET_COVER_RETRY_MS &&
+            WidgetState.needsCover(coverId) && WidgetPartialUpdater.hasWidgets(this)
+        ) {
+            updateWidget(player)
+        } else {
+            updateWidgetTiming(player)
+        }
+    }
+
     private fun updateWidget(player: Player) {
+        lastWidgetFullUpdateAt = SystemClock.elapsedRealtime()
         val mi = player.currentMediaItem
         val title = mi?.mediaMetadata?.title?.toString()
             ?: mi?.mediaMetadata?.extras?.getString("title")
@@ -1051,8 +1086,22 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             duration,
             songLink,
             albumLink,
-            artistLink
+            artistLink,
+            WidgetState.version(),
+            WidgetState.version()
         )
+    }
+
+    private fun updateWidgetTiming(player: Player) {
+        val position = player.currentPosition.takeIf { it != C.TIME_UNSET } ?: 0L
+        val duration = player.duration.takeIf { it != C.TIME_UNSET } ?: 0L
+        WidgetState.setTiming(position, duration)
+        WidgetPartialUpdater.updateTiming(this, position, duration)
+    }
+
+    private fun updateWidgetSecondaryControls(player: Player) {
+        WidgetState.setSecondaryControls(player.shuffleModeEnabled, player.repeatMode)
+        WidgetPartialUpdater.updateSecondaryControls(this, player.shuffleModeEnabled, player.repeatMode)
     }
 
     private fun scheduleQueueSync() {
@@ -1358,6 +1407,7 @@ private const val QUEUE_SYNC_DEBOUNCE_MS = 2000L
 // Delay after the last skip/seek/play before saving; each new trigger restarts it,
 // so skipping several songs in quick succession causes only one save.
 private const val WIDGET_UPDATE_INTERVAL_MS = 1000L
+private const val WIDGET_COVER_RETRY_MS = 10_000L
 // How often to re-persist the resume point (and server bookmark) during playback, so a
 // force-close or stop mid-playback still lands within a few seconds of where you were.
 private const val RESUME_SAVE_INTERVAL_MS = 15000L
