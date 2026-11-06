@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ThemeOverlay.App.DynamicSurfaces" parent="">
+        <item name="android:colorBackground">@android:color/system_background_dark</item>
+        <item name="colorSurface">@android:color/system_surface_dark</item>
+        <item name="colorSurfaceContainerLow">@android:color/system_surface_container_low_dark</item>
+    </style>
+</resources>
