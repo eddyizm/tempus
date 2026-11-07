@@ -62,6 +62,7 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
     private DirectoryRepository directoryRepository;
 
     private MenuItem menuItem;
+    private boolean hasDownloadableSongs = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +75,10 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.directory_page_menu, menu);
 
-        menuItem = menu.getItem(0);
+        menuItem = menu.findItem(R.id.action_download_directory);
+        if (menuItem != null) {
+            menuItem.setVisible(hasDownloadableSongs);
+        }
     }
 
     @Override
@@ -113,6 +117,7 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        menuItem = null;
         bind = null;
     }
 
@@ -165,6 +170,8 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         musicDirectoryAdapter = new MusicDirectoryAdapter(this);
         bind.directoryRecyclerView.setAdapter(musicDirectoryAdapter);
         directoryViewModel.loadMusicDirectory(getArguments().getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
+            if (directory == null || bind == null) return;
+
             bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
                 if (bind == null) return;
 
@@ -179,13 +186,13 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
 
             musicDirectoryAdapter.setItems(directory.getChildren());
 
-            menuItem.setVisible(
-                    directory.getChildren() != null && directory.getChildren()
-                            .stream()
-                            .filter(child -> !child.isDir())
-                            .findFirst()
-                            .orElse(null) != null
-            );
+            hasDownloadableSongs = directory.getChildren() != null && directory.getChildren()
+                    .stream()
+                    .anyMatch(child -> !child.isDir());
+
+            if (menuItem != null) {
+                menuItem.setVisible(hasDownloadableSongs);
+            }
         });
     }
 

@@ -20,14 +20,19 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Objects;
 
 public class TrackInfoDialog extends DialogFragment {
+    private static final String KEY_MEDIA_METADATA = "media_metadata";
     private DialogTrackInfoBinding bind;
 
-    private final MediaMetadata mediaMetadata;
+    private MediaMetadata mediaMetadata;
     private AssetLinkUtil.AssetLink songLink;
     private AssetLinkUtil.AssetLink albumLink;
     private AssetLinkUtil.AssetLink artistLink;
     private AssetLinkUtil.AssetLink genreLink;
     private AssetLinkUtil.AssetLink yearLink;
+
+    public TrackInfoDialog() {
+        this.mediaMetadata = null;
+    }
 
     public TrackInfoDialog(MediaMetadata mediaMetadata) {
         this.mediaMetadata = mediaMetadata;
@@ -36,12 +41,27 @@ public class TrackInfoDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(KEY_MEDIA_METADATA)) {
+            Bundle bundle = savedInstanceState.getBundle(KEY_MEDIA_METADATA);
+            if (bundle != null) {
+                mediaMetadata = MediaMetadata.fromBundle(bundle);
+            }
+        }
+
         bind = DialogTrackInfoBinding.inflate(getLayoutInflater());
 
         return new MaterialAlertDialogBuilder(requireActivity())
                 .setView(bind.getRoot())
                 .setPositiveButton(R.string.track_info_dialog_positive_button, (dialog, id) -> dialog.cancel())
                 .create();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mediaMetadata != null) {
+            outState.putBundle(KEY_MEDIA_METADATA, mediaMetadata.toBundle());
+        }
     }
 
     @Override
@@ -59,6 +79,7 @@ public class TrackInfoDialog extends DialogFragment {
     }
 
     private void setTrackInfo() {
+        if (mediaMetadata == null) return;
         genreLink = null;
         yearLink = null;
         
@@ -181,6 +202,7 @@ public class TrackInfoDialog extends DialogFragment {
     }
 
     private void setTrackTranscodingInfo() {
+        if (mediaMetadata == null) return;
         StringBuilder info = new StringBuilder();
 
         boolean prioritizeServerTranscoding = Preferences.isServerPrioritized();

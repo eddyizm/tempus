@@ -65,6 +65,10 @@ public class HomeTabPodcastFragment extends Fragment implements ClickCallback, P
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(PodcastChannelEditorDialog.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
+            onDismiss();
+        });
+
         init();
         initPodcastView();
         initNewestPodcastsView();

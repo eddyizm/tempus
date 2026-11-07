@@ -18,9 +18,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 @OptIn(markerClass = UnstableApi.class)
 public class DownloadStorageDialog extends DialogFragment {
-    private final DialogClickCallback dialogClickCallback;
+    private DialogClickCallback dialogClickCallback;
+
+    public DownloadStorageDialog() {
+        this.dialogClickCallback = null;
+    }
 
     public DownloadStorageDialog(DialogClickCallback dialogClickCallback) {
+        this.dialogClickCallback = dialogClickCallback;
+    }
+
+    public void setDialogClickCallback(DialogClickCallback dialogClickCallback) {
         this.dialogClickCallback = dialogClickCallback;
     }
 
@@ -56,7 +64,9 @@ public class DownloadStorageDialog extends DialogFragment {
                 if (currentPreference != newPreference) {
                     Preferences.setDownloadStoragePreference(newPreference);
                     DownloadUtil.getDownloadTracker(requireContext()).removeAll();
-                    dialogClickCallback.onPositiveClick();
+                    if (dialogClickCallback != null) {
+                        dialogClickCallback.onPositiveClick();
+                    }
                 }
 
                 dialog.dismiss();
@@ -70,7 +80,9 @@ public class DownloadStorageDialog extends DialogFragment {
                 if (currentPreference != newPreference) {
                     Preferences.setDownloadStoragePreference(newPreference);
                     DownloadUtil.getDownloadTracker(requireContext()).removeAll();
-                    dialogClickCallback.onNegativeClick();
+                    if (dialogClickCallback != null) {
+                        dialogClickCallback.onNegativeClick();
+                    }
                 }
 
                 dialog.dismiss();
@@ -84,7 +96,9 @@ public class DownloadStorageDialog extends DialogFragment {
                 if (currentPreference != newPreference) {
                     Preferences.setDownloadStoragePreference(newPreference);
                     DownloadUtil.getDownloadTracker(requireContext()).removeAll();
-                    dialogClickCallback.onNeutralClick();
+                    if (dialogClickCallback != null) {
+                        dialogClickCallback.onNeutralClick();
+                    }
                 }
 
                 dialog.dismiss();
