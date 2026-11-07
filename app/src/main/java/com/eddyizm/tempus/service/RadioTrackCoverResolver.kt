@@ -30,20 +30,16 @@ private val accents = Regex("\\p{M}+")
 private val leadingThe = Regex("^the\\s+")
 private val artistSeparator = Regex("""\s*(,|&|;|\+|\[\+]|\band\b|\bfeat\.?|\bft\.?|\bfeaturing\b)\s*""", RegexOption.IGNORE_CASE)
 
-// Compares text ignoring case, accents, punctuation and typographic apostrophes.
 internal fun normalizeText(s: String): String =
     Normalizer.normalize(s, Normalizer.Form.NFD).replace(accents, "").lowercase().replace("&", "and").filter { it.isLetterOrDigit() }
 
-// "The Beatles" and "BEATLES" are the same artist for us.
 internal fun normalizeArtist(s: String): String =
     normalizeText(Normalizer.normalize(s, Normalizer.Form.NFD).replace(accents, "").lowercase().trim().replace(leadingThe, ""))
 
-// "Eric Prydz, Hans Zimmer" -> "Eric Prydz". "AC/DC" has no separator and stays whole.
 internal fun primaryArtist(s: String): String = s.split(artistSeparator, limit = 2).first().trim().ifEmpty { s.trim() }
 
 private fun wantedArtists(artist: String) = setOf(normalizeArtist(artist), normalizeArtist(primaryArtist(artist)))
 
-// A hit from Deezer or iTunes is accepted only for the same artist and the same song.
 private fun isSameSong(foundArtist: String, foundTitle: String, artist: String, title: String): Boolean {
     if (normalizeArtist(foundArtist) !in wantedArtists(artist)) return false
     val found = normalizeText(foundTitle)
@@ -53,8 +49,7 @@ private fun isSameSong(foundArtist: String, foundTitle: String, artist: String, 
 
 private const val MIN_MUSICBRAINZ_SCORE = 90
 
-// The search is a phrase match ("Eagles" also finds "Eagles of Death Metal"), so keep only
-// recordings whose title and artist credit are the ones asked for (see normalizeText, primaryArtist).
+// The search is a phrase match ("Eagles" also finds "Eagles of Death Metal").
 private fun JSONObject.isRecordingOf(artist: String, title: String): Boolean {
     if (optInt("score") < MIN_MUSICBRAINZ_SCORE || normalizeText(optString("title")) != normalizeText(title)) return false
     val credits = optJSONArray("artist-credit") ?: return false
@@ -66,8 +61,6 @@ private fun JSONObject.isRecordingOf(artist: String, title: String): Boolean {
     }
 }
 
-// The studio recording is the one on the most clean releases (official, no live/compilation/demo).
-// Release order: Album, then Single, then the rest.
 internal fun musicBrainzReleaseIds(json: String, artist: String, title: String): List<String> {
     val recordings = JSONObject(json).optJSONArray("recordings") ?: return emptyList()
     var best = emptyList<Pair<String, String>>() // (primary type, release id)
@@ -88,15 +81,14 @@ internal fun musicBrainzReleaseIds(json: String, artist: String, title: String):
     return best.sortedBy { (type, _) -> when (type) { "Album" -> 0; "Single" -> 1; else -> 2 } }.map { it.second }
 }
 
-// The lookup runs in the background: the user may have started another station or track meanwhile.
 internal fun isSameRadioSong(
     currentMediaId: String?,
     startedMediaId: String,
     isRadio: Boolean,
     radioArtist: String?,
     radioTitle: String?,
-    artist: String,
-    title: String,
+    artist: String?,
+    title: String?,
 ): Boolean = currentMediaId == startedMediaId && isRadio && radioArtist == artist && radioTitle == title
 
 internal fun deezerCover(json: String, artist: String, title: String): String? {
@@ -125,25 +117,34 @@ internal fun itunesCover(json: String, artist: String, title: String): String? {
 
 /**
  * Finds the cover of a radio song: MusicBrainz + Cover Art Archive, then Deezer, then iTunes.
- * Blocking, call it off the main thread. Never throws. [get] returns the body or null,
- * [exists] tells if a URL answers 200.
+ * Blocking, call it off the main thread. Returns null on any failure or when interrupted.
+ * [get] returns the body or null, [exists] tells if a URL answers 200 and throws on a network error.
  */
 class RadioTrackCoverResolver(
     private val get: (String) -> String? = ::httpGet,
     private val exists: (String) -> Boolean = ::httpHead,
 ) {
-    // "" means "looked up, not found". A lookup that hit a network error is not cached.
+    // "" means "not found". A lookup that failed is not cached.
     private val cache = object : LinkedHashMap<String, String>(16, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, String>) = size > CACHE_SIZE
     }
 
-    fun resolve(artist: String, title: String): String? {
+    fun resolve(artist: String, title: String): String? = try {
+        lookup(artist, title)
+    } catch (e: InterruptedException) {
+        Thread.currentThread().interrupt()
+        null
+    }
+
+    private fun lookup(artist: String, title: String): String? {
         val key = "${artist.lowercase()}|${title.lowercase()}"
         synchronized(cache) { cache[key] }?.let { return it.ifEmpty { null } }
 
         var failed = false
         fun <T> guarded(source: String, block: () -> T?): T? = try {
             block()
+        } catch (e: InterruptedException) {
+            throw e
         } catch (e: Exception) {
             Log.w(TAG, "$source failed", e)
             failed = true
@@ -183,8 +184,7 @@ class RadioTrackCoverResolver(
 private fun enc(s: String) = URLEncoder.encode(s, "UTF-8")
 
 private fun open(url: String, method: String): HttpURLConnection {
-    // MusicBrainz allows about 1 request per second
-    if ("musicbrainz.org" in url) Thread.sleep(MUSICBRAINZ_DELAY_MS)
+    if ("musicbrainz.org" in url) Thread.sleep(MUSICBRAINZ_DELAY_MS) // 1 request per second
     return (URL(url).openConnection() as HttpURLConnection).apply {
         requestMethod = method
         connectTimeout = TIMEOUT_MS
@@ -204,13 +204,11 @@ internal fun httpGet(url: String): String? = try {
     null
 }
 
-internal fun httpHead(url: String): Boolean = try {
+internal fun httpHead(url: String): Boolean {
     val connection = open(url, "HEAD")
     try {
-        connection.responseCode == 200
+        return connection.responseCode == 200
     } finally {
         connection.disconnect()
     }
-} catch (e: IOException) {
-    false
 }

@@ -6,6 +6,7 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.io.IOException
 
 class RadioTrackCoverResolverTest {
 
@@ -176,6 +177,8 @@ class RadioTrackCoverResolverTest {
         val itunes: String? = null,
         val archiveHits: Set<String> = emptySet(),
         val failGet: Boolean = false,
+        val failExists: Boolean = false,
+        val interruptMusicBrainz: Boolean = false,
     ) {
         val getCalls = mutableListOf<String>()
         val existsCalls = mutableListOf<String>()
@@ -183,6 +186,7 @@ class RadioTrackCoverResolverTest {
         val get: (String) -> String? = { url ->
             getCalls += url
             if (failGet) throw RuntimeException("network down")
+            if (interruptMusicBrainz && "musicbrainz.org" in url) throw InterruptedException()
             when {
                 "musicbrainz.org" in url -> musicBrainz
                 "api.deezer.com" in url -> deezer
@@ -192,6 +196,7 @@ class RadioTrackCoverResolverTest {
         }
         val exists: (String) -> Boolean = { url ->
             existsCalls += url
+            if (failExists) throw IOException("timeout")
             archiveHits.any { url.contains("/$it/") }
         }
 
@@ -269,6 +274,24 @@ class RadioTrackCoverResolverTest {
         val callsAfterFirst = fake.getCalls.size
         assertNull(resolver.resolve("Dream Theater", "Pull Me Under"))
         assertTrue(fake.getCalls.size > callsAfterFirst)
+    }
+
+    @Test
+    fun `resolve does not cache a miss when the cover archive check failed`() {
+        val fake = Fake(musicBrainz = mbJson("r1"), deezer = """{"data":[]}""", itunes = """{"results":[]}""", failExists = true)
+        val resolver = fake.resolver()
+        assertNull(resolver.resolve("Dream Theater", "Pull Me Under"))
+        val callsAfterFirst = fake.getCalls.size
+        assertNull(resolver.resolve("Dream Theater", "Pull Me Under"))
+        assertTrue(fake.getCalls.size > callsAfterFirst)
+    }
+
+    @Test
+    fun `resolve stops when interrupted and does not ask the other services`() {
+        val fake = Fake(interruptMusicBrainz = true, deezer = deezerJson("Dream Theater", "https://x/dz.jpg"))
+        assertNull(fake.resolver().resolve("Dream Theater", "Pull Me Under"))
+        assertTrue(fake.getCalls.none { "api.deezer.com" in it })
+        Thread.interrupted()
     }
 
     @Test
