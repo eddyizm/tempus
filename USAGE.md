@@ -443,6 +443,8 @@ These are under **Settings → Data**.
 
 **Song preload buffer** sets how much music ahead of where you are Tempus downloads while streaming, 1 minute by default. Restart Tempus after changing it.
 
+If a song you are streaming gets stuck downloading more slowly than it plays, for example on mobile data, Tempus opens a new connection after about 8 seconds and carries on from where it was. If the new connection is just as slow, the network itself is too slow, and Tempus waits until it speeds up. This does not cover radio, the transcoded streams Tempus asks for, or a song the server is transcoding for the first time.
+
 **Size of streaming cache** keeps the music you stream on the phone, so playing it again does not download it again. It is 256 MiB by default, and when it is full the music you played longest ago is removed first. The setting shows how much of it is in use. A new size takes effect after Tempus restarts, and **Disabled** turns the cache off.
 
 **Pre-cache upcoming tracks** downloads the next 1, 2, 3 or 5 tracks of the queue into the streaming cache, so skipping to them starts at once and short signal drops do not stop playback. It follows shuffle and repeat, leaves out radio and downloaded tracks, and does nothing while the streaming cache is **Disabled**. **Pre-cache on Wi-Fi only**, on by default, pauses it on mobile data.
