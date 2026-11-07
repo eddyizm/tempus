@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.fragment.app.DialogFragment;
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.DialogTrackInfoBinding;
@@ -19,6 +21,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.Objects;
 
+@OptIn(markerClass = UnstableApi.class)
 public class TrackInfoDialog extends DialogFragment {
     private static final String KEY_MEDIA_METADATA = "media_metadata";
     private DialogTrackInfoBinding bind;
@@ -60,7 +63,10 @@ public class TrackInfoDialog extends DialogFragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mediaMetadata != null) {
-            outState.putBundle(KEY_MEDIA_METADATA, mediaMetadata.toBundle());
+            MediaMetadata metadataToSave = mediaMetadata.artworkData != null
+                    ? mediaMetadata.buildUpon().setArtworkData(null, null).build()
+                    : mediaMetadata;
+            outState.putBundle(KEY_MEDIA_METADATA, metadataToSave.toBundle());
         }
     }
 

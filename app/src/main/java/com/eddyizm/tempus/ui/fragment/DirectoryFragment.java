@@ -99,6 +99,12 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         initAppBar();
         initDirectoryListView();
 
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                DownloadDirectoryDialog.REQUEST_KEY,
+                getViewLifecycleOwner(),
+                (requestKey, result) -> downloadDirectorySongs()
+        );
+
         return view;
     }
 
@@ -124,31 +130,30 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_download_directory) {
-            DownloadDirectoryDialog dialog = new DownloadDirectoryDialog(new DialogClickCallback() {
-                @Override
-                public void onPositiveClick() {
-                    directoryViewModel.loadMusicDirectory(getArguments().getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
-                        if (isVisible() && getActivity() != null) {
-                            List<Child> songs = directory.getChildren().stream().filter(child -> !child.isDir()).collect(Collectors.toList());
-                            if (Preferences.getDownloadDirectoryUri() == null) {
-                                DownloadUtil.getDownloadTracker(requireContext()).download(
-                                        MappingUtil.mapDownloads(songs),
-                                        songs.stream().map(Download::new).collect(Collectors.toList())
-                                );
-                            } else {
-                                songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
-                            }
-                        }
-                    });
-                }
-            });
-
-            dialog.show(activity.getSupportFragmentManager(), null);
-
+            DownloadDirectoryDialog dialog = new DownloadDirectoryDialog();
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
             return true;
         }
 
         return false;
+    }
+
+    private void downloadDirectorySongs() {
+        Bundle args = getArguments();
+        if (args == null) return;
+        directoryViewModel.loadMusicDirectory(args.getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
+            if (isVisible() && getActivity() != null && directory != null && directory.getChildren() != null) {
+                List<Child> songs = directory.getChildren().stream().filter(child -> !child.isDir()).collect(Collectors.toList());
+                if (Preferences.getDownloadDirectoryUri() == null) {
+                    DownloadUtil.getDownloadTracker(requireContext()).download(
+                            MappingUtil.mapDownloads(songs),
+                            songs.stream().map(Download::new).collect(Collectors.toList())
+                    );
+                } else {
+                    songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+                }
+            }
+        });
     }
 
     private void initAppBar() {

@@ -16,6 +16,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 @OptIn(markerClass = UnstableApi.class)
 public class DownloadDirectoryDialog extends DialogFragment {
+    public static final String REQUEST_KEY = "DownloadDirectoryDialog";
+    public static final String KEY_DOWNLOAD_CONFIRMED = "download_confirmed";
+
     private DialogClickCallback dialogClickCallback;
 
     public DownloadDirectoryDialog() {
@@ -55,6 +58,9 @@ public class DownloadDirectoryDialog extends DialogFragment {
         if (dialog != null) {
             Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
+                Bundle result = new Bundle();
+                result.putBoolean(KEY_DOWNLOAD_CONFIRMED, true);
+                getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
                 if (dialogClickCallback != null) {
                     dialogClickCallback.onPositiveClick();
                 }
