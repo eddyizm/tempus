@@ -18,15 +18,30 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Objects;
 
 public class GithubTempoUpdateDialog extends DialogFragment {
-    private final LatestRelease latestRelease;
+    private static final String KEY_HTML_URL = "html_url";
+    private LatestRelease latestRelease;
+    private String htmlUrl;
+
+    public GithubTempoUpdateDialog() {
+        this.latestRelease = null;
+    }
 
     public GithubTempoUpdateDialog(LatestRelease latestRelease) {
         this.latestRelease = latestRelease;
+        if (latestRelease != null) {
+            this.htmlUrl = latestRelease.getHtmlUrl();
+        }
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            htmlUrl = savedInstanceState.getString(KEY_HTML_URL);
+        } else if (latestRelease != null) {
+            htmlUrl = latestRelease.getHtmlUrl();
+        }
+
         DialogGithubTempoUpdateBinding bind = DialogGithubTempoUpdateBinding.inflate(getLayoutInflater());
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity())
@@ -40,6 +55,12 @@ public class GithubTempoUpdateDialog extends DialogFragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_HTML_URL, htmlUrl != null ? htmlUrl : (latestRelease != null ? latestRelease.getHtmlUrl() : null));
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
@@ -50,18 +71,27 @@ public class GithubTempoUpdateDialog extends DialogFragment {
         AlertDialog alertDialog = (AlertDialog) Objects.requireNonNull(getDialog());
 
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-            openLink(latestRelease.getHtmlUrl());
-            Objects.requireNonNull(getDialog()).dismiss();
+            String url = htmlUrl != null ? htmlUrl : (latestRelease != null ? latestRelease.getHtmlUrl() : null);
+            if (url != null) {
+                openLink(url);
+            }
+            if (getDialog() != null) {
+                getDialog().dismiss();
+            }
         });
 
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(v -> {
             Preferences.setTempusUpdateReminder();
-            Objects.requireNonNull(getDialog()).dismiss();
+            if (getDialog() != null) {
+                getDialog().dismiss();
+            }
         });
 
         alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
             openLink(getString(R.string.support_url));
-            Objects.requireNonNull(getDialog()).dismiss();
+            if (getDialog() != null) {
+                getDialog().dismiss();
+            }
         });
     }
 

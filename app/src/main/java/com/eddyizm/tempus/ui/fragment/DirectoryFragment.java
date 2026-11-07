@@ -62,6 +62,7 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
     private DirectoryRepository directoryRepository;
 
     private MenuItem menuItem;
+    private boolean hasDownloadableSongs = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +75,10 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.directory_page_menu, menu);
 
-        menuItem = menu.getItem(0);
+        menuItem = menu.findItem(R.id.action_download_directory);
+        if (menuItem != null) {
+            menuItem.setVisible(hasDownloadableSongs);
+        }
     }
 
     @Override
@@ -95,6 +99,12 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         initAppBar();
         initDirectoryListView();
 
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(
+                DownloadDirectoryDialog.REQUEST_KEY,
+                getViewLifecycleOwner(),
+                (requestKey, result) -> downloadDirectorySongs()
+        );
+
         return view;
     }
 
@@ -113,37 +123,37 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        menuItem = null;
         bind = null;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.action_download_directory) {
-            DownloadDirectoryDialog dialog = new DownloadDirectoryDialog(new DialogClickCallback() {
-                @Override
-                public void onPositiveClick() {
-                    directoryViewModel.loadMusicDirectory(getArguments().getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
-                        if (isVisible() && getActivity() != null) {
-                            List<Child> songs = directory.getChildren().stream().filter(child -> !child.isDir()).collect(Collectors.toList());
-                            if (Preferences.getDownloadDirectoryUri() == null) {
-                                DownloadUtil.getDownloadTracker(requireContext()).download(
-                                        MappingUtil.mapDownloads(songs),
-                                        songs.stream().map(Download::new).collect(Collectors.toList())
-                                );
-                            } else {
-                                songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
-                            }
-                        }
-                    });
-                }
-            });
-
-            dialog.show(activity.getSupportFragmentManager(), null);
-
+            DownloadDirectoryDialog dialog = new DownloadDirectoryDialog();
+            dialog.show(requireActivity().getSupportFragmentManager(), null);
             return true;
         }
 
         return false;
+    }
+
+    private void downloadDirectorySongs() {
+        Bundle args = getArguments();
+        if (args == null) return;
+        directoryViewModel.loadMusicDirectory(args.getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
+            if (isVisible() && getActivity() != null && directory != null && directory.getChildren() != null) {
+                List<Child> songs = directory.getChildren().stream().filter(child -> !child.isDir()).collect(Collectors.toList());
+                if (Preferences.getDownloadDirectoryUri() == null) {
+                    DownloadUtil.getDownloadTracker(requireContext()).download(
+                            MappingUtil.mapDownloads(songs),
+                            songs.stream().map(Download::new).collect(Collectors.toList())
+                    );
+                } else {
+                    songs.forEach(child -> ExternalAudioWriter.downloadToUserDirectory(requireContext(), child));
+                }
+            }
+        });
     }
 
     private void initAppBar() {
@@ -165,6 +175,8 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
         musicDirectoryAdapter = new MusicDirectoryAdapter(this);
         bind.directoryRecyclerView.setAdapter(musicDirectoryAdapter);
         directoryViewModel.loadMusicDirectory(getArguments().getString(Constants.MUSIC_DIRECTORY_ID)).observe(getViewLifecycleOwner(), directory -> {
+            if (directory == null || bind == null) return;
+
             bind.appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
                 if (bind == null) return;
 
@@ -179,13 +191,13 @@ public class DirectoryFragment extends Fragment implements ClickCallback {
 
             musicDirectoryAdapter.setItems(directory.getChildren());
 
-            menuItem.setVisible(
-                    directory.getChildren() != null && directory.getChildren()
-                            .stream()
-                            .filter(child -> !child.isDir())
-                            .findFirst()
-                            .orElse(null) != null
-            );
+            hasDownloadableSongs = directory.getChildren() != null && directory.getChildren()
+                    .stream()
+                    .anyMatch(child -> !child.isDir());
+
+            if (menuItem != null) {
+                menuItem.setVisible(hasDownloadableSongs);
+            }
         });
     }
 

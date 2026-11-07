@@ -17,9 +17,17 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 @OptIn(markerClass = UnstableApi.class)
 public class StreamingCacheStorageDialog extends DialogFragment {
-    private final DialogClickCallback dialogClickCallback;
+    private DialogClickCallback dialogClickCallback;
+
+    public StreamingCacheStorageDialog() {
+        this.dialogClickCallback = null;
+    }
 
     public StreamingCacheStorageDialog(DialogClickCallback dialogClickCallback) {
+        this.dialogClickCallback = dialogClickCallback;
+    }
+
+    public void setDialogClickCallback(DialogClickCallback dialogClickCallback) {
         this.dialogClickCallback = dialogClickCallback;
     }
 
@@ -53,7 +61,9 @@ public class StreamingCacheStorageDialog extends DialogFragment {
 
                 if (currentPreference != newPreference) {
                     Preferences.setStreamingCacheStoragePreference(newPreference);
-                    dialogClickCallback.onPositiveClick();
+                    if (dialogClickCallback != null) {
+                        dialogClickCallback.onPositiveClick();
+                    }
                 }
 
                 dialog.dismiss();
@@ -66,7 +76,9 @@ public class StreamingCacheStorageDialog extends DialogFragment {
 
                 if (currentPreference != newPreference) {
                     Preferences.setStreamingCacheStoragePreference(newPreference);
-                    dialogClickCallback.onNegativeClick();
+                    if (dialogClickCallback != null) {
+                        dialogClickCallback.onNegativeClick();
+                    }
                 }
 
                 dialog.dismiss();

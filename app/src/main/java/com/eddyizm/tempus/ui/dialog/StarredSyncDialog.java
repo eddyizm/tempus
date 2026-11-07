@@ -20,7 +20,15 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 public class StarredSyncDialog extends DialogFragment {
     private Runnable onCancel;
 
+    public StarredSyncDialog() {
+        this.onCancel = null;
+    }
+
     public StarredSyncDialog(Runnable onCancel) {
+        this.onCancel = onCancel;
+    }
+
+    public void setOnCancel(Runnable onCancel) {
         this.onCancel = onCancel;
     }
 
