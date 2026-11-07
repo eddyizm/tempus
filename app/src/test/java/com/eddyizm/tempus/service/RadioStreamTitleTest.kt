@@ -113,6 +113,12 @@ class RadioStreamTitleTest {
     }
 
     @Test
+    fun `text with no letter or digit has no song`() {
+        assertEquals(null to null, parseStreamTitle(" - "))
+        assertEquals(null to null, parseStreamTitle("-"))
+    }
+
+    @Test
     fun `extra spaces around the dash are ignored`() {
         assertEquals("Tool" to "Vicarious", parseStreamTitle("Tool   - Vicarious "))
     }

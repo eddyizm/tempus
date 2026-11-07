@@ -504,15 +504,21 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
                 var artist: String? = null
                 var title: String? = null
+                var coverSong: Pair<String?, String?>? = null
 
                 // Extract metadata from ICY/ID3/Vorbis
                 for (i in 0 until metadata.length()) {
                     when (val entry = metadata[i]) {
                         is IcyInfo -> {
                             entry.title?.let { icyTitle ->
-                                val (parsedArtist, parsedTitle) = parseStreamTitle(icyTitle, stationName)
-                                artist = parsedArtist
-                                title = parsedTitle
+                                val parts = icyTitle.split(" - ", limit = 2)
+                                if (parts.size == 2) {
+                                    artist = parts[0].trim().ifEmpty { null }
+                                    title = parts[1].trim().ifEmpty { null }
+                                } else {
+                                    title = icyTitle.trim().ifEmpty { null }
+                                }
+                                coverSong = parseStreamTitle(icyTitle, stationName)
                             }
                         }
                         is TextInformationFrame -> {
@@ -570,7 +576,6 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     metadataBuilder.setArtist(stationName)
                 }
 
-                // A new song never keeps the previous song cover: go back to the station cover ("" = none)
                 val stationArtwork = extras?.getString("stationArtworkUri")
                     ?: currentItem.mediaMetadata.artworkUri?.toString().orEmpty()
                 newExtras.putString("stationArtworkUri", stationArtwork)
@@ -583,7 +588,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     updateWidget(exo)
                 }
 
-                fetchRadioTrackCover(player, artist, title)
+                val (coverArtist, coverTitle) = coverSong ?: (artist to title)
+                fetchRadioTrackCover(player, artist, title, coverArtist, coverTitle)
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -1090,14 +1096,15 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         widgetUpdateScheduled = false
     }
 
-    private fun fetchRadioTrackCover(player: Player, artist: String?, title: String?) {
-        if (artist.isNullOrBlank() || title.isNullOrBlank()) return
+    private fun fetchRadioTrackCover(player: Player, artist: String?, title: String?, coverArtist: String?, coverTitle: String?) {
+        if (coverArtist.isNullOrBlank() || coverTitle.isNullOrBlank()) return
         if (!Preferences.isRadioTrackCoversEnabled() || Preferences.isDataSavingMode()) return
 
         val startedMediaId = player.currentMediaItem?.mediaId ?: return
         radioCoverExecutor.execute {
-            val coverUrl = RadioTrackCoverResolver.instance.resolve(artist, title) ?: return@execute
+            val coverUrl = RadioTrackCoverResolver.instance.resolve(coverArtist, coverTitle) ?: return@execute
             Handler(player.applicationLooper).post {
+                if (serviceDestroyed) return@post
                 val item = player.currentMediaItem ?: return@post
                 val itemExtras = item.mediaMetadata.extras
                 val sameSong = isSameRadioSong(
