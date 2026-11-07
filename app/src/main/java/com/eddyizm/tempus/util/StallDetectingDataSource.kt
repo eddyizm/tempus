@@ -14,47 +14,17 @@ import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy
 import java.io.IOException
 
 /**
- * Fails a stream whose connection has slowed to a trickle, so the player reconnects.
+ * Fails a stream whose connection has slowed below real time, so the player reconnects.
  *
- * A TCP connection can get stuck at roughly one segment per round trip (~50 kbps on mobile data)
- * and stay there for minutes while new connections to the same server run at full speed. Data
- * keeps arriving, so no read timeout fires, and playback alternates between a few seconds of audio
- * and long buffering pauses. Skipping the track fixes it, because that opens a new connection.
+ * A mobile data connection can get stuck at ~50 kbps for minutes while new connections run at full
+ * speed. Data keeps arriving, so no read timeout fires; skipping the track fixes it. This does the
+ * same automatically: once 8 s of time spent in [read] (not of the clock, so a full buffer does not
+ * count) brings less than the stream needs, it throws [StalledStreamException], which Media3 retries
+ * with a range request from where it was. Use it with [RetryPolicy].
  *
- * This wrapper does the same thing automatically. It measures throughput over a window sliding
- * along the time spent waiting inside [read] (time the loader spends idle with a full buffer does
- * not count, so the window is 8 s of downloading, not of the clock). Once the rate over a whole
- * window is below what the stream needs to play in real time, it throws [StalledStreamException].
- * `ProgressiveMediaPeriod` treats that as a retryable load error and reopens the stream, normally
- * at the current position with a range request. Give the media source a [RetryPolicy] as well, so
- * these reconnects do not count towards Media3's limit of retries without audio. The new request
- * must also get a new connection: over HTTP/2 it would share the stuck one, so the OkHttp client
- * used for servers with custom headers speaks HTTP/1.1 only (see `DownloadUtil`).
- *
- * A reconnect only helps when the connection was at fault, not the network. So the connection
- * after a reconnect decides: if its first whole window is just as slow, the network is too slow
- * for this stream, and the wrapper stops reconnecting until a whole window runs fast enough again.
- * While the network is too slow, it still tries a reconnect after every minute of slow reading,
- * in case the connection after the reconnect was the one stuck.
- *
- * A reconnect normally resumes where the stalled connection was. Before playback starts it may
- * instead start a large cover picture or other header over, which Media3 reads in one piece; the
- * wrapper sees this as the next connection opening further back, but not before where the stalled
- * one started, and near the start of the file. It then does not reconnect again until the stream
- * is past that point, does not try the minutely reconnects for this song, and after a second such
- * restart leaves the song alone. A seek that lands at that moment can look the same; it is told
- * apart only when it goes further back or the stall was further in.
- *
- * A server that answers the range request with the whole file makes Media3 download and drop
- * everything before the position. Once a resumed connection shows that (no `Content-Range` in the
- * response), the wrapper does not reconnect again for this song.
- *
- * With the streaming cache on, the cache opens the network connection inside [read], so a slow
- * first response counts as slow reading; the reconnect that follows is quick, so this costs a
- * reconnect, not a stall.
- *
- * The rate needed is an average for the whole song, so a variable-bitrate file whose average is
- * below the stuck rate is not helped, even where a passage needs more than the connection gives.
+ * If the connection after a reconnect is just as slow, the network is at fault, so it waits until
+ * the rate recovers or a minute of slow reading has passed. It also stops after starting a header
+ * (such as a large cover) over twice, and when the server ignores range requests.
  */
 @UnstableApi
 class StallDetectingDataSource(
@@ -80,12 +50,7 @@ class StallDetectingDataSource(
     private var bytes = 0L
     private val samples = ArrayDeque<Sample>()
 
-    /**
-     * We reconnected and are waiting for a connection to show whether that helped. It stays set
-     * across connections that fail or end without showing anything, and is settled by a whole
-     * window, by reaching the end of the stream, or by a connection that ran fast enough for a
-     * while before it ended (for example because the player seeked).
-     */
+    /** We reconnected and wait for a connection to show whether that helped. */
     private var verdictPending = false
     /** This connection was opened after our reconnect, so it can settle [verdictPending]. */
     private var openedAfterReconnect = false
@@ -120,9 +85,8 @@ class StallDetectingDataSource(
         openedAfterReconnect = verdictPending
         openPosition = dataSpec.position
         if (!restartChecked) {
-            // The first connection after our reconnect shows where the player resumed. A resume
-            // repeats a little (the read we failed, data the extractor had only peeked at), but a
-            // restart either used nothing the stalled connection sent, or goes back much further.
+            // A resume repeats a little of what the stalled connection read; a header restart goes
+            // back to where it started, or much further.
             restartChecked = true
             val position = dataSpec.position
             if (position >= stalledOpenPosition && stallPosition <= HEADER_BYTES &&
@@ -132,8 +96,7 @@ class StallDetectingDataSource(
             }
         }
         val length = upstream.open(dataSpec)
-        // Without a known length the player may have to start the stream over to retry it, so such
-        // streams are left alone.
+        // Without a known length a retry may start the stream over, so it is not watched.
         watching = length != C.LENGTH_UNSET.toLong()
         val total = if (watching && dataSpec.length == C.LENGTH_UNSET.toLong()) dataSpec.position + length else 0
         minBytesPerSecond = requiredBytesPerSecond(bitrateKbps, durationSeconds, total)
@@ -142,10 +105,7 @@ class StallDetectingDataSource(
         return length
     }
 
-    /**
-     * With the streaming cache on, the network connection may only open later, inside [read], so
-     * the response is checked once its headers are there.
-     */
+    /** With the streaming cache on, the response may only arrive inside [read]. */
     private fun checkRange() {
         if (!rangeUnchecked) return
         val headers = upstream.responseHeaders
@@ -231,13 +191,9 @@ class StallDetectingDataSource(
         IOException("Stream stalled at $bytesPerSecond B/s, below $minBytesPerSecond B/s")
 
     /**
-     * The media source's load error policy, for one song. Media3 gives up on a load after a few
-     * errors in a row that brought no audio, and a reconnect while the header is still loading
-     * brings none, so without this each one would use up a retry that a real network error may
-     * need. Reconnects are retried at once and allowed on top of the default limit, up to
-     * [MAX_EXTRA_RETRIES] so that a network that is really gone still ends in an error. Every other
-     * error is handled as before, though Media3 waits a little longer before retrying it when our
-     * reconnects came first in the same run of errors.
+     * Load error policy for one watched song: reconnects are retried at once and do not use up
+     * Media3's retries without new data, up to [MAX_EXTRA_RETRIES], so a network that is really
+     * gone still ends in an error.
      */
     class RetryPolicy(
         private val delegate: LoadErrorHandlingPolicy = DefaultLoadErrorHandlingPolicy(),
@@ -279,10 +235,7 @@ class StallDetectingDataSource(
         /** While the network is too slow, how much slow reading before trying a reconnect anyway. */
         const val RETRY_WHEN_TOO_SLOW_MS = 60_000L
 
-        /**
-         * A margin above what Media3 normally holds read but not yet used while playing audio, so a
-         * resume rarely goes back this far. Not a hard limit: a large peek can hold more.
-         */
+        /** More than Media3 normally holds read but not yet used, so a resume rarely goes back this far. */
         const val UNUSED_BYTES = 512 * 1024L
 
         /** Headers sit at the start of a file; a stall further in is past them, with room for a large picture. */
@@ -300,11 +253,9 @@ class StallDetectingDataSource(
         private fun kbps(bytesPerSecond: Long) = bytesPerSecond * 8 / 1000
 
         /**
-         * The rate a stream must sustain to play in real time. The song's bitrate describes the
-         * original file, but the server may send a transcode instead (for example when the app
-         * leaves the format to the server), so the stream's own size over the song's duration is
-         * used too, and the lower of the two wins. That also keeps a large embedded picture, which
-         * inflates the size, from raising the bar, unless the song's bitrate is unknown.
+         * The rate a stream needs to play in real time: the lower of the song's bitrate and the
+         * stream's size over its duration, as the server may send a transcode and a large cover
+         * inflates the size.
          */
         fun requiredBytesPerSecond(bitrateKbps: Int, durationSeconds: Int, totalBytes: Long): Long {
             val fromBitrate = if (bitrateKbps > 0) bitrateKbps * 1000L / 8 else Long.MAX_VALUE

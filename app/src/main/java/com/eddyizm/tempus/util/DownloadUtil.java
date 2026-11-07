@@ -106,10 +106,8 @@ public final class DownloadUtil {
      * The OkHttp client behind {@link CustomHeadersDataSource}, with the same timeouts as
      * {@link DefaultHttpDataSource} and the client certificate, if one is set up.
      *
-     * <p>It speaks HTTP/1.1 only, as {@link DefaultHttpDataSource} does. Over HTTP/2 every request
-     * to the server shares one connection, so when {@link StallDetectingDataSource} gives up on a
-     * stuck connection, the new request would go over that same connection. Over HTTP/1.1 a
-     * response closed before its end takes its connection with it.
+     * <p>HTTP/1.1 only, as {@link DefaultHttpDataSource}: over HTTP/2, a reconnect by
+     * {@link StallDetectingDataSource} would share the stuck connection.
      */
     @VisibleForTesting
     static OkHttpClient buildCustomHeadersHttpClient() {

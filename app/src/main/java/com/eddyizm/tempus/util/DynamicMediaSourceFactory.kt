@@ -58,10 +58,7 @@ class DynamicMediaSourceFactory(
                 val uri = mediaItem.localConfiguration?.uri
                 val isTranscoding = uri?.getQueryParameter("format") != null && uri.getQueryParameter("format") != "raw"
 
-                // Reconnecting resumes with a range request. Radio and the transcodes the app asks for
-                // would restart from the beginning instead, so they are not watched. When the server
-                // picks the format, the check only applies if it sends the stream's length, and it is
-                // measured against the stream actually sent (see StallDetectingDataSource).
+                // A reconnect resumes with a range request, which radio and the transcodes the app asks for do not support.
                 val watched = !isRadio && !isTranscoding
                 val loadingFactory = if (watched) StallDetectingDataSource.Factory(dataSourceFactory, mediaItem) else dataSourceFactory
                 val progressiveFactory = ProgressiveMediaSource.Factory(loadingFactory, extractorsFactory)
