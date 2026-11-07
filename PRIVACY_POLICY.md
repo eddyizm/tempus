@@ -1,6 +1,6 @@
 # Privacy Policy for Tempus
 
-**Last updated:** 2026-10-15
+**Last updated:** 2026-11-07
 
 **Tempus** is a free and open-source software (FOSS) application distributed via [Google Play Store / F-Droid / GitHub]. This Privacy Policy clarifies our data handling practices and how platform-level services (like the Google Play Store) interact with your device.
 
@@ -39,6 +39,8 @@ While Tempus itself collects no information, downloading or updating the app via
 * Tempus allows users to connect to servers owned by them, service to which they connect voluntarily and for which they are responsible of the data exchange as standard IP addresses or standard HTTP requests. Tempus does not offer servers for users to connect to, but users may choose to connect to third-party servers not under they control and for which they must agree independently on their privacy policies.
 
 * Tempus connects to the internet strictly to fetch public radio listings (https://www.radio-browser.info) if you chose local radio usage (not required if your private server handles it). Standard IP addresses are visible to the receiving server during standard HTTP requests, but no account tokens, device IDs, or tracking headers are sent.
+
+* If you turn on **Radio track covers** (off by default), Tempus sends the artist and title of the song on air to [MusicBrainz](https://musicbrainz.org), the [Cover Art Archive](https://coverartarchive.org), [Deezer](https://www.deezer.com) and Apple ([iTunes Search](https://www.apple.com/legal/privacy/)) to find the cover. Standard IP addresses are visible to these servers, and no account tokens, device IDs, or personal data are sent. Turning the setting off stops these requests.
 
 ---
 
