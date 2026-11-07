@@ -133,7 +133,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
 
         activity.getSupportFragmentManager().setFragmentResultListener(PlaylistEditorDialog.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
             String name = result.getString(PlaylistEditorDialog.KEY_PLAYLIST_NAME);
-            if (name != null && playlistPageViewModel.getPlaylist() != null) {
+            if (name != null && playlistArg.getId().equals(result.getString(PlaylistEditorDialog.KEY_PLAYLIST_ID)) && playlistPageViewModel.getPlaylist() != null) {
                 playlistPageViewModel.getPlaylist().setName(name);
                 if (bind != null) {
                     bind.animToolbar.setTitle(name);

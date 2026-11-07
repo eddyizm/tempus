@@ -17,6 +17,7 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.DialogPlaylistEditorBinding;
 import com.eddyizm.tempus.interfaces.PlaylistCallback;
 import com.eddyizm.tempus.repository.PlaylistRepository;
+import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlaylistEditorViewModel;
@@ -26,6 +27,7 @@ import java.util.Objects;
 
 public class PlaylistEditorDialog extends DialogFragment {
     public static final String REQUEST_KEY = "PlaylistEditorDialog";
+    public static final String KEY_PLAYLIST_ID = "playlist_id";
     public static final String KEY_PLAYLIST_NAME = "playlist_name";
 
     private DialogPlaylistEditorBinding bind;
@@ -110,7 +112,10 @@ public class PlaylistEditorDialog extends DialogFragment {
                                 if (playlistCallback != null && playlistEditorViewModel.getPlaylistToEdit() != null) {
                                     playlistCallback.onRenamed(playlistName);
                                 } else if (playlistEditorViewModel.getPlaylistToEdit() != null) {
+                                    Bundle args = getArguments();
+                                    Playlist edited = args != null ? args.getParcelable(Constants.PLAYLIST_OBJECT) : null;
                                     Bundle result = new Bundle();
+                                    result.putString(KEY_PLAYLIST_ID, edited != null ? edited.getId() : null);
                                     result.putString(KEY_PLAYLIST_NAME, playlistName);
                                     getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
                                 }
