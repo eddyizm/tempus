@@ -25,20 +25,33 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Objects;
 
 public class PlaylistEditorDialog extends DialogFragment {
+    public static final String REQUEST_KEY = "PlaylistEditorDialog";
+    public static final String KEY_PLAYLIST_NAME = "playlist_name";
+
     private DialogPlaylistEditorBinding bind;
     private PlaylistEditorViewModel playlistEditorViewModel;
 
-    private final PlaylistCallback playlistCallback;
+    private PlaylistCallback playlistCallback;
 
     private String playlistName;
+    private boolean isRestored = false;
+
+    public PlaylistEditorDialog() {
+        this.playlistCallback = null;
+    }
 
     public PlaylistEditorDialog(PlaylistCallback playlistCallback) {
+        this.playlistCallback = playlistCallback;
+    }
+
+    public void setPlaylistCallback(PlaylistCallback playlistCallback) {
         this.playlistCallback = playlistCallback;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        isRestored = savedInstanceState != null;
         bind = DialogPlaylistEditorBinding.inflate(getLayoutInflater());
 
         playlistEditorViewModel = new ViewModelProvider(requireActivity()).get(PlaylistEditorViewModel.class);
@@ -67,14 +80,17 @@ public class PlaylistEditorDialog extends DialogFragment {
     }
 
     private void setParameterInfo() {
-        if (requireArguments().getParcelableArrayList(Constants.TRACKS_OBJECT) != null) {
-            playlistEditorViewModel.setSongsToAdd(requireArguments().getParcelableArrayList(Constants.TRACKS_OBJECT));
-            playlistEditorViewModel.setPlaylistToEdit(null);
-        } else if (requireArguments().getParcelable(Constants.PLAYLIST_OBJECT) != null) {
-            playlistEditorViewModel.setSongsToAdd(null);
-            playlistEditorViewModel.setPlaylistToEdit(requireArguments().getParcelable(Constants.PLAYLIST_OBJECT));
+        Bundle args = getArguments();
+        if (args == null) return;
 
-            if (playlistEditorViewModel.getPlaylistToEdit() != null) {
+        if (args.getParcelableArrayList(Constants.TRACKS_OBJECT) != null) {
+            playlistEditorViewModel.setSongsToAdd(args.getParcelableArrayList(Constants.TRACKS_OBJECT));
+            playlistEditorViewModel.setPlaylistToEdit(null);
+        } else if (args.getParcelable(Constants.PLAYLIST_OBJECT) != null) {
+            playlistEditorViewModel.setSongsToAdd(null);
+            playlistEditorViewModel.setPlaylistToEdit(args.getParcelable(Constants.PLAYLIST_OBJECT));
+
+            if (!isRestored && playlistEditorViewModel.getPlaylistToEdit() != null) {
                 bind.playlistNameTextView.setText(playlistEditorViewModel.getPlaylistToEdit().getName());
             }
         }
@@ -93,6 +109,10 @@ public class PlaylistEditorDialog extends DialogFragment {
                                 Toast.makeText(getContext(), R.string.playlist_editor_dialog_action_save_success, Toast.LENGTH_SHORT).show();
                                 if (playlistCallback != null && playlistEditorViewModel.getPlaylistToEdit() != null) {
                                     playlistCallback.onRenamed(playlistName);
+                                } else if (playlistEditorViewModel.getPlaylistToEdit() != null) {
+                                    Bundle result = new Bundle();
+                                    result.putString(KEY_PLAYLIST_NAME, playlistName);
+                                    getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
                                 }
                                 dialogDismiss();
                             });
