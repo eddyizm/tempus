@@ -13,14 +13,17 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.DialogHomeRearrangementBinding;
 import com.eddyizm.tempus.ui.adapter.HomeSectorHorizontalAdapter;
 import com.eddyizm.tempus.viewmodel.HomeRearrangementViewModel;
+import com.eddyizm.tempus.viewmodel.HomeViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
 public class HomeRearrangementDialog extends DialogFragment {
     private DialogHomeRearrangementBinding bind;
     private HomeRearrangementViewModel homeRearrangementViewModel;
+    private HomeViewModel homeViewModel;
     private HomeSectorHorizontalAdapter homeSectorHorizontalAdapter;
 
     @NonNull
@@ -29,6 +32,7 @@ public class HomeRearrangementDialog extends DialogFragment {
         bind = DialogHomeRearrangementBinding.inflate(getLayoutInflater());
 
         homeRearrangementViewModel = new ViewModelProvider(requireActivity()).get(HomeRearrangementViewModel.class);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
         return new MaterialAlertDialogBuilder(requireContext())
                 .setView(bind.getRoot())
@@ -59,11 +63,12 @@ public class HomeRearrangementDialog extends DialogFragment {
 
         alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             homeRearrangementViewModel.saveHomeSectorList(homeSectorHorizontalAdapter.getItems());
+            homeViewModel.updateHomeSectorList(new ArrayList<>(homeSectorHorizontalAdapter.getItems()));
             dismiss();
         });
 
         alertDialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_NEUTRAL).setOnClickListener(v -> {
-            homeRearrangementViewModel.resetHomeSectorList();
+            homeViewModel.updateHomeSectorList(homeRearrangementViewModel.resetHomeSectorList());
             dismiss();
         });
     }
