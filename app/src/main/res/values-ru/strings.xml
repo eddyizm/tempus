@@ -112,6 +112,9 @@
     <string name="download_directory_set">Указать папку для скачивания</string>
     <string name="download_info_empty_subtitle">Скачанные треки появятся здесь</string>
     <string name="download_info_empty_title">Загрузок пока нет</string>
+    <string name="download_indicator_content_description">Скачан для офлайн-воспроизведения</string>
+    <string name="liked_info_empty_subtitle">Поставьте лайк треку — он появится здесь, свежие лайки сверху</string>
+    <string name="liked_info_empty_title">В избранном пока нет треков!</string>
     <string name="download_item_multiple_subtitle_formatter">%1$s • %2$s эл.</string>
     <string name="download_item_single_subtitle_formatter">%1$s эл.</string>
     <string name="download_shuffle_all_subtitle">Перемешать всё</string>
@@ -122,6 +125,7 @@
     <string name="download_storage_internal_dialog_negative_button">Внутреннее</string>
     <string name="download_storage_directory_dialog_neutral_button">Папка</string>
     <string name="download_title_section">Загрузки</string>
+    <string name="liked_title_section">Избранное</string>
     <string name="download_refresh_no_directory">Укажите папку для обновления списка.</string>
     <string name="download_refresh_no_changes">Отсутствующих файлов нет.</string>
     <plurals name="download_refresh_removed">
@@ -267,6 +271,7 @@
     <string name="menu_download_all_button">Скачать всё</string>
     <string name="menu_rate_album">Оценить</string>
     <string name="menu_download_label">Скачать</string>
+    <string name="menu_liked_label">Избранное</string>
     <string name="menu_filter_all">Все</string>
     <string name="menu_filter_download">Скачанные</string>
     <string name="menu_group_by_album">Альбом</string>
@@ -542,6 +547,8 @@
     <string name="settings_enable_drawer_on_landscape_summary">Разблокировать выдвижное меню в портретной ориентации.</string>
     <string name="settings_hide_bottom_navbar_on_portrait">Скрыть нижнюю панель [Бета]</string>
     <string name="settings_hide_bottom_navbar_on_portrait_summary">Увеличить полезную площадь экрана (требуется перезапуск).</string>
+    <string name="settings_bottom_nav_favorites">Вкладка «Избранное» на нижней панели</string>
+    <string name="settings_bottom_nav_favorites_summary">Если включено, добавляет вкладку с вашими лайкнутыми треками и скачанными офлайн-песнями.</string>
     <string name="settings_auto_download_lyrics">Автозагрузка текстов</string>
     <string name="settings_auto_download_lyrics_summary">Сохранять тексты для офлайн-просмотра.</string>
     <string name="settings_replay_gain">Режим ReplayGain</string>
