@@ -2,6 +2,7 @@ package com.eddyizm.tempus.subsonic;
 
 import com.eddyizm.tempus.subsonic.utils.StringUtil;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class SubsonicPreferences {
@@ -27,7 +28,20 @@ public class SubsonicPreferences {
     }
 
     public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
+        this.serverUrl = normalizeScheme(serverUrl);
+    }
+
+    /**
+     * Android keyboards capitalise the first letter of a URL field, so users end up with
+     * {@code Https://host}. Retrofit/OkHttp lower-case the scheme themselves, but the cover-art
+     * loader checks the string prefix and must see a lower-case scheme too.
+     */
+    private static String normalizeScheme(String url) {
+        if (url == null) return null;
+        String trimmed = url.trim();
+        int schemeEnd = trimmed.indexOf("://");
+        if (schemeEnd <= 0) return trimmed;
+        return trimmed.substring(0, schemeEnd).toLowerCase(Locale.ROOT) + trimmed.substring(schemeEnd);
     }
 
     public void setUsername(String username) {
