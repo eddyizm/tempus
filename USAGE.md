@@ -37,6 +37,7 @@
     - [Sound](#sound)
     - [Buffering and cache](#buffering-and-cache)
     - [Scrobbling](#scrobbling)
+    - [Backing up settings](#backing-up-settings)
 - [Android Auto](#android-auto)
     - [Enabling on your head unit](#enabling-on-your-head-unit)
     - [Tabs](#tabs)
@@ -442,6 +443,8 @@ These are under **Settings → Data**.
 
 **Song preload buffer** sets how much music ahead of where you are Tempus downloads while streaming, 1 minute by default. Restart Tempus after changing it.
 
+If a song you are streaming gets stuck downloading more slowly than it plays, for example on mobile data, Tempus opens a new connection after about 8 seconds and carries on from where it was. If the new connection is just as slow, the network itself is too slow, and Tempus waits until it speeds up. This does not cover radio, the transcoded streams Tempus asks for, or a song the server is transcoding for the first time.
+
 **Size of streaming cache** keeps the music you stream on the phone, so playing it again does not download it again. It is 256 MiB by default, and when it is full the music you played longest ago is removed first. The setting shows how much of it is in use. A new size takes effect after Tempus restarts, and **Disabled** turns the cache off.
 
 **Pre-cache upcoming tracks** downloads the next 1, 2, 3 or 5 tracks of the queue into the streaming cache, so skipping to them starts at once and short signal drops do not stop playback. It follows shuffle and repeat, leaves out radio and downloaded tracks, and does nothing while the streaming cache is **Disabled**. **Pre-cache on Wi-Fi only**, on by default, pauses it on mobile data.
@@ -451,6 +454,10 @@ These are under **Settings → Data**.
 **Enable music scrobbling**, under **Settings → Miscellaneous**, is on by default. It tells your server what you are playing and which tracks you played. Tempus sends this only to your server, which may pass it on to a service such as Last.fm if it is set up to.
 
 A track counts as played when it plays to the end. When you skip to another track in the queue, the one you left counts if it played past its halfway point or 4 minutes, whichever comes first, unless it is 30 seconds or shorter. Only music counts, not podcasts or radio. A play that does not reach the server is not sent again later.
+
+### Backing up settings
+
+**Export settings**, under **Settings → General**, saves the options on the Settings screen, plus the theme, true black, dynamic color and accent color, to a JSON file you choose. **Import settings** restores them from that file and reloads the app. Values the app does not offer, for example from an edited file, are skipped. Server logins, the music library choice and storage locations are not included, so after a reinstall you sign in again first and then import.
 
 [Back to top](#table-of-contents)
 

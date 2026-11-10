@@ -62,6 +62,7 @@ import com.eddyizm.tempus.ui.login.LoginActivity;
 import com.eddyizm.tempus.util.AssetLinkNavigator;
 import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.AlbumArtistBackfill;
 import com.eddyizm.tempus.util.DownloadRepair;
 import com.eddyizm.tempus.repository.PlaylistRepository;
@@ -177,6 +178,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        DownloadUtil.queueDeferredDownloads();
         pingServer();
         initService();
         consumePendingPlaybackIntent();

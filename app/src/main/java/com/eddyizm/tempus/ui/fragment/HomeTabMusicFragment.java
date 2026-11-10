@@ -35,7 +35,6 @@ import com.eddyizm.tempus.databinding.FragmentHomeTabMusicBinding;
 import com.eddyizm.tempus.helper.recyclerview.CustomLinearSnapHelper;
 import com.eddyizm.tempus.helper.recyclerview.DotsIndicatorDecoration;
 import com.eddyizm.tempus.interfaces.ClickCallback;
-import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.model.HomeSector;
 import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.repository.QueueRepository;
@@ -62,10 +61,9 @@ import com.eddyizm.tempus.ui.dialog.HomeRearrangementDialog;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.ExternalAudioReader;
-import com.eddyizm.tempus.util.ExternalAudioWriter;
-import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.StarredSync;
 import com.eddyizm.tempus.util.TileSizeManager;
 import com.eddyizm.tempus.util.UIUtil;
 import com.eddyizm.tempus.viewmodel.HomeViewModel;
@@ -374,46 +372,10 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
             }
         });
 
-        bind.homeSyncStarredDownload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                homeViewModel.getAllStarredTracks().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
-                    @Override
-                    public void onChanged(List<Child> songs) {
-                        if (songs != null && !songs.isEmpty()) {
-                            int downloadedCount = 0;
-
-                            if (Preferences.getDownloadDirectoryUri() == null) {
-                                DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
-                                for (Child song : songs) {
-                                    if (!manager.isDownloaded(song.getId())) {
-                                        manager.download(MappingUtil.mapDownload(song), new Download(song));
-                                        downloadedCount++;
-                                    }
-                                }
-                            } else {
-                                for (Child song : songs) {
-                                    if (ExternalAudioReader.getUri(song) == null) {
-                                        ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
-                                        downloadedCount++;
-                                    }
-                                }
-                            }
-
-                            if (downloadedCount > 0) {
-                                Toast.makeText(requireContext(),
-                                        getResources().getQuantityString(R.plurals.songs_download_started, downloadedCount, downloadedCount),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                        bind.homeSyncStarredCard.setVisibility(View.GONE);
-                        if (getActivity() != null) {
-                            getActivity().runOnUiThread(() -> reorder());
-                        }
-                    }
-                });
-            }
+        bind.homeSyncStarredDownload.setOnClickListener(v -> {
+            StarredSync.syncSongs(requireContext());
+            bind.homeSyncStarredCard.setVisibility(View.GONE);
+            reorder();
         });
     }
 
@@ -438,42 +400,9 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
 
         bind.homeSyncStarredAlbumsDownload.setOnClickListener(v -> {
-            homeViewModel.getAllStarredAlbumSongs().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
-                @Override
-                public void onChanged(List<Child> allSongs) {
-                    if (allSongs != null && !allSongs.isEmpty()) {
-                        int songsToDownload = 0;
-
-                        if (Preferences.getDownloadDirectoryUri() == null) {
-                            DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
-                            for (Child song : allSongs) {
-                                if (!manager.isDownloaded(song.getId())) {
-                                    manager.download(MappingUtil.mapDownload(song), new Download(song));
-                                    songsToDownload++;
-                                }
-                            }
-                        } else {
-                            for (Child song : allSongs) {
-                                if (ExternalAudioReader.getUri(song) == null) {
-                                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
-                                    songsToDownload++;
-                                }
-                            }
-                        }
-
-                        if (songsToDownload > 0) {
-                            Toast.makeText(requireContext(),
-                                getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload, songsToDownload),
-                                Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    bind.homeSyncStarredAlbumsCard.setVisibility(View.GONE);
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> reorder());
-                    }
-                }
-            });
+            StarredSync.syncAlbums(requireContext());
+            bind.homeSyncStarredAlbumsCard.setVisibility(View.GONE);
+            reorder();
         });
     }
 
@@ -577,42 +506,9 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
 
         bind.homeSyncStarredArtistsDownload.setOnClickListener(v -> {
-            homeViewModel.getAllStarredArtistSongs().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
-                @Override
-                public void onChanged(List<Child> allSongs) {
-                    if (allSongs != null && !allSongs.isEmpty()) {
-                        int songsToDownload = 0;
-
-                        if (Preferences.getDownloadDirectoryUri() == null) {
-                            DownloaderManager manager = DownloadUtil.getDownloadTracker(requireContext());
-                            for (Child song : allSongs) {
-                                if (!manager.isDownloaded(song.getId())) {
-                                    manager.download(MappingUtil.mapDownload(song), new Download(song));
-                                    songsToDownload++;
-                                }
-                            }
-                        } else {
-                            for (Child song : allSongs) {
-                                if (ExternalAudioReader.getUri(song) == null) {
-                                    ExternalAudioWriter.downloadToUserDirectory(requireContext(), song);
-                                    songsToDownload++;
-                                }
-                            }
-                        }
-
-                        if (songsToDownload > 0) {
-                            Toast.makeText(requireContext(),
-                                getResources().getQuantityString(R.plurals.songs_download_started, songsToDownload, songsToDownload),
-                                Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    bind.homeSyncStarredArtistsCard.setVisibility(View.GONE);
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> reorder());
-                    }
-                }
-            });
+            StarredSync.syncArtists(requireContext());
+            bind.homeSyncStarredArtistsCard.setVisibility(View.GONE);
+            reorder();
         });
     }
 

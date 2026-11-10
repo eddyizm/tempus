@@ -8,6 +8,7 @@ import androidx.annotation.OptIn;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Metadata;
+import androidx.media3.common.Timeline;
 import androidx.media3.common.TrackGroup;
 import androidx.media3.common.Tracks;
 import androidx.media3.common.util.UnstableApi;
@@ -33,6 +34,7 @@ import java.util.concurrent.Executors;
 @OptIn(markerClass = UnstableApi.class)
 public class ReplayGainUtil {
     private static final String TAG = "ReplayGainUtil";
+    private static final int PREFETCH_WINDOW_SIZE = 5;
     private static final String[] tags = {
         "REPLAYGAIN_TRACK_GAIN", "REPLAYGAIN_ALBUM_GAIN",
         "R128_TRACK_GAIN", "R128_ALBUM_GAIN",
@@ -71,8 +73,19 @@ public class ReplayGainUtil {
 
         playerRef = new WeakReference<>(player);
 
-        for (int i = 0; i < player.getMediaItemCount(); i++) {
-            MediaItem item = player.getMediaItemAt(i);
+        Timeline timeline = player.getCurrentTimeline();
+        if (timeline.isEmpty()) return;
+
+        Timeline.Window window = new Timeline.Window();
+        int index = player.getCurrentMediaItemIndex();
+        if (index == C.INDEX_UNSET) index = 0;
+
+        for (int count = 0;
+             index != C.INDEX_UNSET && count < PREFETCH_WINDOW_SIZE;
+             count++, index = timeline.getNextWindowIndex(
+                     index, player.getRepeatMode(), player.getShuffleModeEnabled())) {
+            timeline.getWindow(index, window);
+            MediaItem item = window.mediaItem;
 
             if (item.mediaId == null || item.localConfiguration == null) continue;
 

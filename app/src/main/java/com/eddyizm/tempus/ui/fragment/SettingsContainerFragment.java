@@ -5,11 +5,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.audiofx.AudioEffect;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -51,6 +54,7 @@ import com.eddyizm.tempus.interfaces.DialogClickCallback;
 import com.eddyizm.tempus.interfaces.ScanCallback;
 import com.eddyizm.tempus.equalizer.EqualizerManager;
 import com.eddyizm.tempus.equalizer.ParametricProfile;
+import com.eddyizm.tempus.helper.ThemeHelper;
 import com.eddyizm.tempus.service.DownloaderService;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.ui.activity.MainActivity;
@@ -66,6 +70,7 @@ import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.subsonic.models.MusicFolder;
 import com.eddyizm.tempus.util.ExternalAudioReader;
 import com.eddyizm.tempus.util.Preferences;
+import com.eddyizm.tempus.util.SettingsBackup;
 import com.eddyizm.tempus.util.UIUtil;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.eddyizm.tempus.viewmodel.SettingViewModel;
@@ -73,6 +78,7 @@ import com.eddyizm.tempus.viewmodel.SettingViewModel;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,8 +104,15 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private boolean pendingEqualizerReload = false;
     private ActivityResultLauncher<Intent> equalizerResultLauncher;
     private ActivityResultLauncher<String[]> parametricEqPickerLauncher;
+    private ActivityResultLauncher<String> settingsExportLauncher;
+    private ActivityResultLauncher<String[]> settingsImportLauncher;
 
     private static final int PARAMETRIC_EQ_MAX_BYTES = 16 * 1024;
+    private static final int SETTINGS_BACKUP_MAX_BYTES = 256 * 1024;
+    private static final String STATE_PENDING_EQUALIZER_RELOAD = "pending_equalizer_reload";
+
+    private static final long SCAN_STATUS_POLL_INTERVAL_MS = 2000;
+    private final Handler scanStatusHandler = new Handler(Looper.getMainLooper());
 
     private final Set<String> expandedCategories = new HashSet<>();
 
@@ -119,6 +132,10 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            pendingEqualizerReload = savedInstanceState.getBoolean(STATE_PENDING_EQUALIZER_RELOAD, false);
+        }
+
         equalizerResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {}
@@ -128,6 +145,18 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                 new ActivityResultContracts.OpenDocument(),
                 uri -> {
                     if (uri != null) importParametricEq(uri);
+                });
+
+        settingsExportLauncher = registerForActivityResult(
+                new ActivityResultContracts.CreateDocument("application/json"),
+                uri -> {
+                    if (uri != null) exportSettings(uri);
+                });
+
+        settingsImportLauncher = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri != null) importSettings(uri);
                 });
 
         directoryPickerLauncher = registerForActivityResult(
@@ -203,6 +232,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionAutoDownloadLyrics();
         actionMiniPlayerHeart();
         actionLanRemote();
+        actionSettingsBackup();
 
         bindMediaService();
         actionBuiltinEqualizer();
@@ -214,8 +244,18 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // An import recreates the screen before it can reach the player, so the reload is handed
+        // to the next instance, which binds in onResume.
+        outState.putBoolean(STATE_PENDING_EQUALIZER_RELOAD, pendingEqualizerReload);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        scanStatusHandler.removeCallbacksAndMessages(null);
 
         // The flag means "this view already has the observer", and a child fragment can outlive
         // its parent's view, so it has to be cleared with the view rather than the instance.
@@ -717,13 +757,15 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             settingViewModel.launchScan(new ScanCallback() {
                 @Override
                 public void onError(Exception exception) {
+                    if (getView() == null) return;
                     findPreference("scan_library").setSummary(exception.getMessage());
                 }
 
                 @Override
                 public void onSuccess(boolean isScanning, long count) {
+                    if (getView() == null) return;
                     findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
-                    if (isScanning) getScanStatus();
+                    if (isScanning) scheduleScanStatusPoll();
                 }
             });
 
@@ -905,17 +947,24 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         });
     }
 
+    private void scheduleScanStatusPoll() {
+        scanStatusHandler.removeCallbacksAndMessages(null);
+        scanStatusHandler.postDelayed(this::getScanStatus, SCAN_STATUS_POLL_INTERVAL_MS);
+    }
+
     private void getScanStatus() {
         settingViewModel.getScanStatus(new ScanCallback() {
             @Override
             public void onError(Exception exception) {
+                if (getView() == null) return;
                 findPreference("scan_library").setSummary(exception.getMessage());
             }
 
             @Override
             public void onSuccess(boolean isScanning, long count) {
+                if (getView() == null) return;
                 findPreference("scan_library").setSummary(getString(R.string.settings_scan_result, count));
-                if (isScanning) getScanStatus();
+                if (isScanning) scheduleScanStatusPoll();
             }
         });
     }
@@ -1067,19 +1116,93 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     }
 
     private String readParametricEqFile(Uri uri) {
+        return readTextFile(uri, PARAMETRIC_EQ_MAX_BYTES);
+    }
+
+    private String readTextFile(Uri uri, int maxBytes) {
         try (InputStream in = requireContext().getContentResolver().openInputStream(uri)) {
             if (in == null) return null;
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             byte[] buffer = new byte[4096];
             int read;
-            while ((read = in.read(buffer)) != -1 && bytes.size() <= PARAMETRIC_EQ_MAX_BYTES) {
+            while ((read = in.read(buffer)) != -1 && bytes.size() <= maxBytes) {
                 bytes.write(buffer, 0, read);
             }
-            return bytes.size() <= PARAMETRIC_EQ_MAX_BYTES
+            return bytes.size() <= maxBytes
                     ? new String(bytes.toByteArray(), StandardCharsets.UTF_8)
                     : null;
         } catch (IOException | SecurityException e) {
             return null;
+        }
+    }
+
+    private void actionSettingsBackup() {
+        findPreference("settings_export").setOnPreferenceClickListener(preference -> {
+            String date = new java.text.SimpleDateFormat("yyyyMMdd", Locale.US).format(new java.util.Date());
+            settingsExportLauncher.launch("tempus-settings-" + date + ".json");
+            return true;
+        });
+        findPreference("settings_import").setOnPreferenceClickListener(preference -> {
+            settingsImportLauncher.launch(new String[]{"application/json", "text/*", "application/octet-stream"});
+            return true;
+        });
+    }
+
+    private void exportSettings(Uri uri) {
+        String json = SettingsBackup.exportSettings(
+                PreferenceManager.getDefaultSharedPreferences(requireContext()),
+                SettingsBackup.keys(requireContext()));
+        try (OutputStream out = requireContext().getContentResolver().openOutputStream(uri, "wt")) {
+            if (out == null) throw new IOException("No output stream");
+            out.write(json.getBytes(StandardCharsets.UTF_8));
+            Toast.makeText(requireContext(), R.string.settings_exported, Toast.LENGTH_SHORT).show();
+        } catch (IOException | SecurityException e) {
+            Toast.makeText(requireContext(), R.string.settings_export_failed, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void importSettings(Uri uri) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        String oldLanguage = prefs.getString("language", "default");
+        String oldEqualizer = prefs.getString("selected_equalizer", "0");
+
+        String json = readTextFile(uri, SETTINGS_BACKUP_MAX_BYTES);
+        int count = json == null ? -1 : SettingsBackup.importSettings(json, prefs, SettingsBackup.keys(requireContext()));
+        if (count < 0) {
+            Toast.makeText(requireContext(), R.string.settings_import_invalid, Toast.LENGTH_LONG).show();
+            return;
+        }
+        Toast.makeText(requireContext(), getString(R.string.settings_imported, count), Toast.LENGTH_SHORT).show();
+
+        // Written directly, so the effects the preference listeners would have had are applied here.
+        if (!Preferences.isLanRemoteEnabled()) {
+            com.eddyizm.tempus.lan.LanRemoteSession.disconnect();
+            com.eddyizm.tempus.lan.LanReceiverService.Companion.closePairing();
+            requireContext().stopService(new Intent(requireContext(), com.eddyizm.tempus.lan.LanReceiverService.class));
+        }
+        DownloadService.sendSetRequirements(requireContext(), DownloaderService.class,
+                Preferences.isDownloadWifiOnly()
+                        ? new Requirements(Requirements.NETWORK_UNMETERED)
+                        : new Requirements(0), false);
+        if (!oldEqualizer.equals(prefs.getString("selected_equalizer", "0"))) {
+            // The file picker pauses this screen, which drops the service link, so this normally
+            // waits for the recreated screen to bind.
+            if (mediaServiceBinder != null) {
+                mediaServiceBinder.reloadEqualizer();
+            } else {
+                pendingEqualizerReload = true;
+            }
+        }
+
+        ThemeHelper.applyTheme(prefs.getString(Preferences.THEME, ThemeHelper.DEFAULT_MODE));
+        String language = prefs.getString("language", "default");
+        if (language.equals(oldLanguage)) {
+            requireActivity().recreate();
+        } else {
+            // Recreates the activity itself once the new locale is in place.
+            AppCompatDelegate.setApplicationLocales("default".equals(language)
+                    ? LocaleListCompat.getEmptyLocaleList()
+                    : LocaleListCompat.forLanguageTags(language));
         }
     }
 

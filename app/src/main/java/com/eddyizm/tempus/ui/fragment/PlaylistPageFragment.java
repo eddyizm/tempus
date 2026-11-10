@@ -131,6 +131,17 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         initSongsView();
         initKeepSynced(savedInstanceState == null);
 
+        activity.getSupportFragmentManager().setFragmentResultListener(PlaylistEditorDialog.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
+            String name = result.getString(PlaylistEditorDialog.KEY_PLAYLIST_NAME);
+            if (name != null && playlistPageViewModel.getPlaylist() != null) {
+                playlistPageViewModel.getPlaylist().setName(name);
+                if (bind != null) {
+                    bind.animToolbar.setTitle(name);
+                    bind.playlistNameLabel.setText(name);
+                }
+            }
+        });
+
         playlistPageViewModel.getPlaylistMissingEvent().observe(getViewLifecycleOwner(), isMissing -> {
             // One dialog at a time. The event is raised again by a fetch landing after a
             // rotation rebuilt this view, and a second dialog's OK would navigate up twice.

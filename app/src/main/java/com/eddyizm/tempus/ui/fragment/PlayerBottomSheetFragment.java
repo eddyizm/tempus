@@ -36,6 +36,7 @@ import com.eddyizm.tempus.ui.queue.PlayerQueueBridge;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.bumptech.glide.Glide;
 import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.MusicUtil;
 import com.eddyizm.tempus.util.RadioCoverArtDownloader;
 import com.eddyizm.tempus.util.Preferences;
@@ -202,7 +203,6 @@ public class PlayerBottomSheetFragment extends Fragment {
             @Override
             public void onPositionDiscontinuity(@NonNull Player.PositionInfo oldPosition, @NonNull Player.PositionInfo newPosition, int reason) {
                 setMediaControllerUI(mediaBrowser);
-                setMetadata(mediaBrowser.getMediaMetadata());
                 setContentDuration(mediaBrowser.getContentDuration());
             }
 
@@ -243,7 +243,8 @@ public class PlayerBottomSheetFragment extends Fragment {
     private void setMetadata(MediaMetadata mediaMetadata) {
         if (com.eddyizm.tempus.lan.LanRemoteSession.isActive() || bind == null) return;
         if (mediaMetadata.extras != null) {
-            playerBottomSheetViewModel.setLiveMedia(getViewLifecycleOwner(), mediaMetadata.extras.getString("type"), mediaMetadata.extras.getString("id"));
+            playerBottomSheetViewModel.setLiveMedia(getViewLifecycleOwner(), mediaMetadata.extras.getString("type"), mediaMetadata.extras.getString("id"),
+                    MappingUtil.mapToChild(new MediaItem.Builder().setMediaMetadata(mediaMetadata).build()));
             playerBottomSheetViewModel.setLiveAlbum(getViewLifecycleOwner(), mediaMetadata.extras.getString("type"), mediaMetadata.extras.getString("albumId"));
             playerBottomSheetViewModel.setLiveArtist(getViewLifecycleOwner(), mediaMetadata.extras.getString("type"), mediaMetadata.extras.getString("artistId"));
             playerBottomSheetViewModel.setLiveDescription(mediaMetadata.extras.getString("description", null));
@@ -391,7 +392,7 @@ public class PlayerBottomSheetFragment extends Fragment {
             if (!Objects.equals(remoteMediaSignature, signature)) {
                 remoteMediaSignature = signature;
                 String type = song.getId().isEmpty() ? null : Constants.MEDIA_TYPE_MUSIC;
-                playerBottomSheetViewModel.setLiveMedia(getViewLifecycleOwner(), type, song.getId());
+                playerBottomSheetViewModel.setLiveMedia(getViewLifecycleOwner(), type, song.getId(), song);
                 playerBottomSheetViewModel.setLiveAlbum(getViewLifecycleOwner(), TextUtils.isEmpty(song.getAlbumId()) ? null : type, song.getAlbumId());
                 playerBottomSheetViewModel.setLiveArtist(getViewLifecycleOwner(), TextUtils.isEmpty(song.getArtistId()) ? null : type, song.getArtistId());
                 playerBottomSheetViewModel.setLiveDescription(null);

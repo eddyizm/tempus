@@ -8,27 +8,27 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.DialogStarredAlbumSyncBinding;
-import com.eddyizm.tempus.model.Download;
-import com.eddyizm.tempus.util.DownloadUtil;
-import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.Preferences;
-import com.eddyizm.tempus.viewmodel.StarredAlbumsSyncViewModel;
+import com.eddyizm.tempus.util.StarredSync;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.stream.Collectors;
 
 @OptIn(markerClass = UnstableApi.class)
 public class StarredAlbumSyncDialog extends DialogFragment {
-    private StarredAlbumsSyncViewModel starredAlbumsSyncViewModel;
-
     private Runnable onCancel;
 
+    public StarredAlbumSyncDialog() {
+        this.onCancel = null;
+    }
+
     public StarredAlbumSyncDialog(Runnable onCancel) {
+        this.onCancel = onCancel;
+    }
+
+    public void setOnCancel(Runnable onCancel) {
         this.onCancel = onCancel;
     }
 
@@ -36,8 +36,6 @@ public class StarredAlbumSyncDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         DialogStarredAlbumSyncBinding bind = DialogStarredAlbumSyncBinding.inflate(getLayoutInflater());
-
-        starredAlbumsSyncViewModel = new ViewModelProvider(requireActivity()).get(StarredAlbumsSyncViewModel.class);
 
         return new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
@@ -60,15 +58,8 @@ public class StarredAlbumSyncDialog extends DialogFragment {
         if (dialog != null) {
             Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                starredAlbumsSyncViewModel.getStarredAlbumSongs(requireActivity()).observe(this, allSongs -> {
-                    if (allSongs != null && !allSongs.isEmpty()) {
-                        DownloadUtil.getDownloadTracker(context).download(
-                                MappingUtil.mapDownloads(allSongs),
-                                allSongs.stream().map(Download::new).collect(Collectors.toList())
-                        );
-                    }
-                    dialog.dismiss();
-                });
+                StarredSync.syncAlbums(context);
+                dialog.dismiss();
             });
 
             Button neutralButton = dialog.getButton(Dialog.BUTTON_NEUTRAL);

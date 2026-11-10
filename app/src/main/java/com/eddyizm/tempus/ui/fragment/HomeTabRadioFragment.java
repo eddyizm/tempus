@@ -57,6 +57,10 @@ public class HomeTabRadioFragment extends Fragment implements ClickCallback, Rad
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        requireActivity().getSupportFragmentManager().setFragmentResultListener(RadioEditorDialog.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
+            onDismiss();
+        });
+
         init();
         initRadioStationView();
     }

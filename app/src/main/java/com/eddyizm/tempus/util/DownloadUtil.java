@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.core.app.NotificationCompat;
+import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.database.DatabaseProvider;
 import androidx.media3.database.StandaloneDatabaseProvider;
@@ -35,6 +36,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +47,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 
 @UnstableApi
 public final class DownloadUtil {
@@ -103,9 +106,14 @@ public final class DownloadUtil {
     /**
      * The OkHttp client behind {@link CustomHeadersDataSource}, with the same timeouts as
      * {@link DefaultHttpDataSource} and the client certificate, if one is set up.
+     *
+     * <p>HTTP/1.1 only, as {@link DefaultHttpDataSource}: over HTTP/2, a reconnect by
+     * {@link StallDetectingDataSource} would share the stuck connection.
      */
-    private static OkHttpClient buildCustomHeadersHttpClient() {
+    @VisibleForTesting
+    static OkHttpClient buildCustomHeadersHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(ServerHeaders.createInterceptor());
@@ -333,9 +341,26 @@ public final class DownloadUtil {
         return getStreamingCache(context).getCacheSpace();
     }
 
+    // Batches the download service could not be started for. Main thread only.
+    private static final List<Runnable> deferredBatches = new ArrayList<>();
+
     /**
-     * Queues the tracks neither on the device nor already asked for. Reports on the main thread how
-     * many reached the download service, or a negative number when every start was refused. Call on the main thread.
+     * Queues the batches {@link #downloadMissing} kept because Android refused to start the
+     * download service. Call when the app is back on screen. A batch is dropped if every download
+     * was removed since it was kept.
+     */
+    public static void queueDeferredDownloads() {
+        if (deferredBatches.isEmpty()) return;
+
+        List<Runnable> batches = new ArrayList<>(deferredBatches);
+        deferredBatches.clear();
+        batches.forEach(Runnable::run);
+    }
+
+    /**
+     * Queues the tracks neither on the device nor already asked for, and reports on the main thread
+     * how many reached the download service. When Android refuses to start the service, the batch is
+     * kept for {@link #queueDeferredDownloads()} and reported then. Call on the main thread.
      */
     public static void downloadMissing(Context context, List<Child> songs, String playlistId, String playlistName, IntConsumer onQueued) {
         // A playlist can list the same track twice.
@@ -349,6 +374,8 @@ public final class DownloadUtil {
             List<Child> missing = byId.values().stream()
                     .filter(song -> !manager.isDownloaded(song.getId()) && !manager.isRequested(song.getId()))
                     .collect(Collectors.toList());
+            // Queued right here, while the app is on screen: the download service has to come to the
+            // foreground now, and Android refuses that a few seconds after the app leaves the screen.
             int sent = manager.download(
                     MappingUtil.mapDownloads(missing),
                     missing.stream().map(child -> {
@@ -358,7 +385,17 @@ public final class DownloadUtil {
                         return toDownload;
                     }).collect(Collectors.toList())
             );
-            onQueued.accept(sent == 0 && !missing.isEmpty() ? -1 : sent);
+            if (sent == 0 && !missing.isEmpty()) {
+                // Android refused to start the service, as it does while the app is in the background.
+                int generation = DownloaderManager.getRemovalGeneration();
+                deferredBatches.add(() -> {
+                    if (generation == DownloaderManager.getRemovalGeneration()) {
+                        downloadMissing(appContext, songs, playlistId, playlistName, onQueued);
+                    }
+                });
+                return;
+            }
+            onQueued.accept(sent);
         } else {
             // The folder index only builds off main. While a rebuild runs it is empty and every track reads as
             // missing, and the writer's own size check is what keeps a file already there from being written again.
