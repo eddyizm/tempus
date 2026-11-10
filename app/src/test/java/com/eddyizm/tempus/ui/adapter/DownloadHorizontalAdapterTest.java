@@ -111,6 +111,113 @@ public class DownloadHorizontalAdapterTest {
         assertEquals("C", adapter.getTextToShowInBubble(2));
     }
 
+    @Test
+    public void groupRowsCountTheirSongs() {
+        List<Child> songs = Arrays.asList(
+                child("1", "One", "First Album", "Able Artist", "Rock", 1999),
+                child("2", "Two", "First Album", "Able Artist", "Rock", 1999),
+                child("3", "Three", "Second Album", "Able Artist", "Jazz", 2001),
+                child("4", "Four", "Third Album", "Baker Artist", "Rock", 1999)
+        );
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, Constants.DOWNLOAD_TYPE_ALBUM, null, new ArrayList<>(songs));
+        assertCounts("First Album", 2, "Second Album", 1, "Third Album", 1);
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ARTIST, Constants.DOWNLOAD_TYPE_ARTIST, null, new ArrayList<>(songs));
+        assertEquals("Able Artist", adapter.getItem(0).getArtist());
+        assertEquals(3, adapter.getGroupCount(0));
+        assertEquals(1, adapter.getGroupCount(1));
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_GENRE, Constants.DOWNLOAD_TYPE_GENRE, null, new ArrayList<>(songs));
+        assertEquals("Jazz", adapter.getItem(0).getGenre());
+        assertEquals(1, adapter.getGroupCount(0));
+        assertEquals(3, adapter.getGroupCount(1));
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_YEAR, Constants.DOWNLOAD_TYPE_YEAR, null, new ArrayList<>(songs));
+        assertEquals(Integer.valueOf(1999), adapter.getItem(0).getYear());
+        assertEquals(3, adapter.getGroupCount(0));
+        assertEquals(1, adapter.getGroupCount(1));
+    }
+
+    @Test
+    public void albumsOfAnArtistCountEveryDownloadedSongOfTheAlbum() {
+        List<Child> songs = Arrays.asList(
+                child("1", "One", "Shared Album", "Able Artist", "Rock", 1999),
+                child("2", "Two", "Shared Album", "Able Artist", "Rock", 1999),
+                child("3", "Three", "Own Album", "Able Artist", "Rock", 1999),
+                child("4", "Four", "Other Album", "Baker Artist", "Rock", 1999)
+        );
+
+        // Opening an artist lists its albums.
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, Constants.DOWNLOAD_TYPE_ARTIST, "Able Artist", new ArrayList<>(songs));
+
+        assertEquals(2, adapter.getItemCount());
+        assertCounts("Own Album", 1, "Shared Album", 2);
+    }
+
+    @Test
+    public void playlistRowsCountTheirSongs() {
+        List<Child> songs = Arrays.asList(
+                new Download("a", "p1", "First Playlist", 1, null),
+                new Download("b", "p1", "First Playlist", 1, null),
+                new Download("c", "p2", "Second Playlist", 1, null)
+        );
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_PLAYLIST, Constants.DOWNLOAD_TYPE_PLAYLIST, null, new ArrayList<>(songs));
+
+        assertEquals("First Playlist", ((Download) adapter.getItem(0)).getPlaylistName());
+        assertEquals(2, adapter.getGroupCount(0));
+        assertEquals(1, adapter.getGroupCount(1));
+    }
+
+    @Test
+    public void trackRowsHaveNoCount() {
+        adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_TRACK, null,
+                new ArrayList<>(Arrays.asList(child("1", "One", "Album", "Artist", "Rock", 1999))));
+
+        assertEquals(0, adapter.getGroupCount(0));
+    }
+
+    @Test
+    public void aRowIsFoundAgainAfterSongsAreAddedAboveIt() {
+        Child kept = child("2", "Kept", "Album", "Artist", "Rock", 1999);
+        adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_TRACK, null,
+                new ArrayList<>(Arrays.asList(kept)));
+        Object key = adapter.getRowKey(0);
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_TRACK, Constants.DOWNLOAD_TYPE_TRACK, null, new ArrayList<>(Arrays.asList(
+                child("0", "New", "Album", "Artist", "Rock", 1999),
+                child("1", "Newer", "Album", "Artist", "Rock", 1999),
+                kept)));
+
+        assertEquals(2, adapter.indexOfRowKey(key));
+    }
+
+    @Test
+    public void groupedRowsAreFoundByTheirGroup() {
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, Constants.DOWNLOAD_TYPE_ALBUM, null, new ArrayList<>(Arrays.asList(
+                child("1", "One", "Beta Album", "Artist", "Rock", 1999))));
+        Object key = adapter.getRowKey(0);
+
+        adapter.setItems(Constants.DOWNLOAD_TYPE_ALBUM, Constants.DOWNLOAD_TYPE_ALBUM, null, new ArrayList<>(Arrays.asList(
+                child("1", "One", "Beta Album", "Artist", "Rock", 1999),
+                child("2", "Two", "Alpha Album", "Artist", "Rock", 1999))));
+
+        assertEquals("Beta Album", key);
+        assertEquals(1, adapter.indexOfRowKey(key));
+        assertEquals(-1, adapter.indexOfRowKey("Gone Album"));
+        assertNull(adapter.getRowKey(-1));
+    }
+
+    // Album rows in order, each followed by its expected count.
+    private void assertCounts(Object... albumsAndCounts) {
+        assertEquals(albumsAndCounts.length / 2, adapter.getItemCount());
+        for (int i = 0; i < albumsAndCounts.length; i += 2) {
+            assertEquals(albumsAndCounts[i], adapter.getItem(i / 2).getAlbum());
+            assertEquals(albumsAndCounts[i + 1], adapter.getGroupCount(i / 2));
+        }
+    }
+
     private void assertSortedAndLabelled(String type, List<Child> items, String expectedLabel, String expectedBubble) {
         adapter.setItems(type, type, null, new ArrayList<>(items));
 
