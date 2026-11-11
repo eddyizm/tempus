@@ -1,0 +1,11 @@
+feat: 
+* export and import settings
+fix: 
+* reduce seek bar height to prevent accidental clicks
+* preserve lyrics when seeking playback
+* starred sync freezes and duplicate downloads
+* crash on launch when offline with downloads queued
+* widget crash on oversized cover art
+* Reduce memory pressure when loading large playback queues
+* address crashing on rotating dialogs and directory screens
+* reconnect a stream that has slowed below real time
