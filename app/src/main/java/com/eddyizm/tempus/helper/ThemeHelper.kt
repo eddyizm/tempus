@@ -25,6 +25,7 @@ import com.eddyizm.tempus.util.Preferences.isDynamicColorAccent
 import com.eddyizm.tempus.util.Preferences.getTheme
 
 import com.google.android.material.color.DynamicColors.applyToActivityIfAvailable
+import com.google.android.material.color.DynamicColors.isDynamicColorAvailable
 import com.google.android.material.color.DynamicColorsOptions
 import com.google.android.material.elevation.SurfaceColors
 
@@ -108,7 +109,7 @@ object ThemeHelper {
 
         when {
             isDynamicColorAccent() -> {
-                    applyToActivityIfAvailable(activity)
+                applyWallpaperDynamicColors(activity)
             }
             colorAccent.startsWith("HEX:") -> {
                 val hexString = colorAccent.removePrefix("HEX:")
@@ -116,7 +117,7 @@ object ThemeHelper {
                     applyCustomDynamicTheme(activity, hexString)
                 } catch (e: IllegalArgumentException) {
                     Log.e(TAG, e.toString())
-                    applyToActivityIfAvailable(activity)
+                    applyWallpaperDynamicColors(activity)
                 }
             }
             else -> Unit
@@ -152,6 +153,17 @@ object ThemeHelper {
             val typedValue = TypedValue()
             activity.theme.resolveAttribute(com.google.android.material.R.attr.colorSurface, typedValue, true)
             activity.window.setBackgroundDrawable(typedValue.data.toDrawable())
+        }
+    }
+
+    /**
+     * Wallpaper colors, with the background and surfaces taken from the system's own
+     * background/surface colors where available (see ThemeOverlay.App.DynamicSurfaces).
+     */
+    private fun applyWallpaperDynamicColors(activity: AppCompatActivity) {
+        applyToActivityIfAvailable(activity)
+        if (isDynamicColorAvailable()) {
+            activity.theme.applyStyle(R.style.ThemeOverlay_App_DynamicSurfaces, true)
         }
     }
 
