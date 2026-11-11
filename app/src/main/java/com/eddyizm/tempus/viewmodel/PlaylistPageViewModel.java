@@ -10,7 +10,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.media3.common.util.UnstableApi;
 
+import com.eddyizm.tempus.model.PendingPlaylistEdit;
 import com.eddyizm.tempus.model.PinnedPlaylist;
+import com.eddyizm.tempus.repository.PendingPlaylistEditRepository;
+import com.eddyizm.tempus.repository.PlaylistFlush;
 import com.eddyizm.tempus.repository.PlaylistRepository;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Playlist;
@@ -120,7 +123,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         Child removed = shorter.remove(index);
         songLiveList.setValue(shorter);
 
-        playlistRepository.removeSongFromPlaylist(playlistId, index, new PlaylistRepository.AddToPlaylistCallback() {
+        playlistRepository.removeSongFromPlaylist(playlistId, index, removed.getId(), new PlaylistRepository.AddToPlaylistCallback() {
             @Override
             public void onSuccess() {
                 // A read issued meanwhile can have replaced the list with one from before the
@@ -175,11 +178,12 @@ public class PlaylistPageViewModel extends AndroidViewModel {
 
         writingPlaylistId = playlistId;
         invalidateFetches(playlistId);
-        LiveData<List<Child>> current = playlistRepository.getPlaylistSongs(playlistId, false, () -> playlistMissing(playlistId));
-        current.observeForever(new androidx.lifecycle.Observer<List<Child>>() {
+        LiveData<PlaylistRepository.EditableSongs> current = playlistRepository.getPlaylistSongsForEdit(playlistId, () -> playlistMissing(playlistId));
+        current.observeForever(new androidx.lifecycle.Observer<PlaylistRepository.EditableSongs>() {
             @Override
-            public void onChanged(List<Child> songs) {
+            public void onChanged(PlaylistRepository.EditableSongs loaded) {
                 current.removeObserver(this);
+                List<Child> songs = loaded != null ? loaded.songs : null;
                 if (songs == null) {
                     writingPlaylistId = null;
                     callback.onFailure();
@@ -189,7 +193,7 @@ public class PlaylistPageViewModel extends AndroidViewModel {
                 restored.add(Math.min(index, restored.size()), song);
                 ArrayList<String> ids = new ArrayList<>(restored.size());
                 for (Child each : restored) ids.add(each.getId());
-                playlistRepository.createPlaylist(playlistId, null, ids, new PlaylistRepository.PlaylistActionCallback() {
+                playlistRepository.replaceEditedPlaylist(playlistId, ids, restored, loaded, new PlaylistRepository.PlaylistActionCallback() {
                     @Override
                     public void onSuccess() {
                         writingPlaylistId = null;
@@ -210,6 +214,20 @@ public class PlaylistPageViewModel extends AndroidViewModel {
                 });
             }
         });
+    }
+
+    /** The phone's unsynced changes to this playlist, null when there are none. */
+    public LiveData<PendingPlaylistEdit> pendingEdit() {
+        if (playlist == null) return new MutableLiveData<>(null);
+        return new PendingPlaylistEditRepository().observe(playlist.getId());
+    }
+
+    public void retrySync() {
+        if (playlist != null) PlaylistFlush.retry(playlist.getId());
+    }
+
+    public void discardOfflineEdits() {
+        if (playlist != null) PlaylistFlush.discard(playlist.getId());
     }
 
     public boolean isWriting() {
@@ -287,6 +305,8 @@ public class PlaylistPageViewModel extends AndroidViewModel {
         if (isDifferentPlaylist) {
             this.songLiveList.setValue(null); // Clear old data immediately
             playlistMissingEvent.setValue(false);
+            // Edits kept on the phone go out first, so the page lands on the merged list.
+            PlaylistFlush.kick(playlist.getId());
         }
     }
 

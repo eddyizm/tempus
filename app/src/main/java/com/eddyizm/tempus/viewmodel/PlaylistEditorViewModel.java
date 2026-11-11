@@ -33,6 +33,9 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
     private Playlist toEdit;
 
     private MutableLiveData<List<Child>> songLiveList = new MutableLiveData<>();
+    private PlaylistRepository.EditableSongs loaded;
+    private LiveData<PlaylistRepository.EditableSongs> loading;
+    private Observer<PlaylistRepository.EditableSongs> loadingObserver;
     private final MutableLiveData<Integer> saveResult = new MutableLiveData<>();
     private boolean savePending;
 
@@ -50,6 +53,7 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
         playlistRepository.createPlaylist(null, name, new ArrayList(Lists.transform(toAdd, Child::getId)), callback);
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     public void updatePlaylist(String name, PlaylistRepository.PlaylistActionCallback callback) {
         ArrayList<String> songsId = getPlaylistSongIds();
 
@@ -63,7 +67,7 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
             return;
         }
 
-        playlistRepository.updatePlaylist(toEdit.getId(), name, songsId, callback);
+        playlistRepository.saveEditedPlaylist(toEdit.getId(), name, songsId, songLiveList.getValue(), loaded, callback);
     }
 
     /**
@@ -98,14 +102,30 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
 
         // Detach before reassigning, while songLiveList still points at the list being observed.
         detachLoadedCountObserver();
+        detachLoadingObserver();
         loadedSongCount = null;
+        loaded = null;
+        this.songLiveList = new MutableLiveData<>();
 
         if (playlist != null) {
-            this.songLiveList = playlistRepository.getPlaylistSongs(toEdit.getId(), false);
             attachLoadedCountObserver();
-        } else {
-            this.songLiveList = new MutableLiveData<>();
+            MutableLiveData<List<Child>> target = songLiveList;
+            loading = playlistRepository.getPlaylistSongsForEdit(toEdit.getId(), null);
+            loadingObserver = editable -> {
+                detachLoadingObserver();
+                loaded = editable;
+                target.setValue(editable != null ? editable.songs : null);
+            };
+            loading.observeForever(loadingObserver);
         }
+    }
+
+    private void detachLoadingObserver() {
+        if (loadingObserver == null) return;
+
+        loading.removeObserver(loadingObserver);
+        loadingObserver = null;
+        loading = null;
     }
 
     private void attachLoadedCountObserver() {
@@ -129,6 +149,7 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         detachLoadedCountObserver();
+        detachLoadingObserver();
     }
 
     public LiveData<List<Child>> getPlaylistSongLiveList() {
@@ -182,6 +203,11 @@ public class PlaylistEditorViewModel extends AndroidViewModel {
             @Override
             public void onEmptied() {
                 saveResult.postValue(R.string.playlist_editor_dialog_action_save_empty);
+            }
+
+            @Override
+            public void onQueued() {
+                saveResult.postValue(R.string.playlist_editor_dialog_action_save_queued);
             }
         });
     }
