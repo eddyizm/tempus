@@ -5,14 +5,10 @@ import static com.eddyizm.tempus.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
-import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.text.TextUtils;
@@ -58,8 +54,8 @@ import com.eddyizm.tempus.ui.dialog.GithubTempoUpdateDialog;
 import com.eddyizm.tempus.ui.dialog.ServerUnreachableDialog;
 import com.eddyizm.tempus.ui.fragment.PlayerBottomSheetFragment;
 import com.eddyizm.tempus.ui.fragment.SettingsFragment;
-import com.eddyizm.tempus.ui.login.LoginActivity;
 import com.eddyizm.tempus.util.AssetLinkNavigator;
+import com.eddyizm.tempus.util.AppShortcuts;
 import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
@@ -75,7 +71,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -882,24 +877,6 @@ public class MainActivity extends BaseActivity {
             goToHome();
         }
 
-        new Thread(() -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setAction(Intent.ACTION_VIEW);
-
-                ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "login_activity_shortcut")
-                        .setShortLabel(getString(R.string.la_shortcut_label))
-                        .setLongLabel(getString(R.string.la_shortcut_label))
-                        .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher))
-                        .setIntents(new Intent[]{intent})
-                        .build();
-
-                if (shortcutManager != null) {
-                    shortcutManager.setDynamicShortcuts(Collections.singletonList(shortcut));
-                }
-            }
-        }).start();
+        AppShortcuts.publish(this);
     }
 }
