@@ -41,11 +41,15 @@ import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
+import com.eddyizm.tempus.util.AppShortcuts;
+import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.MusicUtil;
+import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.eddyizm.tempus.viewmodel.PlaylistPageViewModel;
+import com.eddyizm.tempus.ui.dialog.AppShortcutDialogs;
 import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
 import com.eddyizm.tempus.interfaces.PlaylistCallback;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -227,6 +231,14 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
         } else if (item.getItemId() == R.id.action_unpin_playlist) {
             playlistPageViewModel.setPinned(false);
             return true;
+        } else if (item.getItemId() == R.id.action_add_shortcut) {
+            AppShortcutDialogs.add(requireActivity(), AppShortcuts.itemOf(playlistPageViewModel.getPlaylist()),
+                    () -> requireActivity().invalidateOptionsMenu());
+            return true;
+        } else if (item.getItemId() == R.id.action_remove_shortcut) {
+            AppShortcuts.unpin(requireContext(), AssetLinkUtil.TYPE_PLAYLIST, playlistPageViewModel.getPlaylist().getId());
+            requireActivity().invalidateOptionsMenu();
+            return true;
         } else if (item.getItemId() == R.id.action_add_to_queue) {
             List<Child> songs = playlistPageViewModel.getPlaylistSongLiveList().getValue();
             if (isVisible() && getActivity() != null && songs != null && !songs.isEmpty()) {
@@ -266,6 +278,9 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initMenuOption(Menu menu) {
+        boolean shortcut = AppShortcuts.isPinned(AssetLinkUtil.TYPE_PLAYLIST, playlistPageViewModel.getPlaylist().getId());
+        menu.findItem(R.id.action_add_shortcut).setVisible(!shortcut);
+        menu.findItem(R.id.action_remove_shortcut).setVisible(shortcut);
         playlistPageViewModel.isPinned(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), isPinned -> {
             menu.findItem(R.id.action_unpin_playlist).setVisible(isPinned);
             menu.findItem(R.id.action_pin_playlist).setVisible(!isPinned);
@@ -350,18 +365,26 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                                     bind.songRecyclerViewPlaceholder.setVisibility(View.GONE);
                                 }
 
-                                bind.playlistPagePlayButton.setOnClickListener(v -> {
-                                    MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
-                                    activity.setBottomSheetInPeek(true);
-                                });
-                                bind.playlistPageShuffleButton.setOnClickListener(v -> {
-                                    List<Child> shuffled = new ArrayList<>(songs);
-                                    Collections.shuffle(shuffled);
-                                    MediaManager.startQueue(mediaBrowserListenableFuture, shuffled, 0);
-                                    activity.setBottomSheetInPeek(true);
-                                });
+                                bind.playlistPagePlayButton.setOnClickListener(v -> playAll(songs));
+                                bind.playlistPageShuffleButton.setOnClickListener(v -> shuffleAll(songs));
+
+                                String playMode = songs.isEmpty() ? null : AppShortcuts.takePlayMode(getArguments());
+                                if (Preferences.SHORTCUTS_PLAY_MODE_PLAY.equals(playMode)) playAll(songs);
+                                else if (Preferences.SHORTCUTS_PLAY_MODE_SHUFFLE.equals(playMode)) shuffleAll(songs);
                             }
                         });
+    }
+
+    private void playAll(List<Child> songs) {
+        MediaManager.startQueue(mediaBrowserListenableFuture, songs, 0);
+        activity.setBottomSheetInPeek(true);
+        AppShortcuts.playlistStarted(requireContext(), playlistPageViewModel.getPlaylist());
+    }
+
+    private void shuffleAll(List<Child> songs) {
+        List<Child> shuffled = new ArrayList<>(songs);
+        Collections.shuffle(shuffled);
+        playAll(shuffled);
     }
 
     private void initBackCover() {
@@ -487,6 +510,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     public void onMediaClick(Bundle bundle) {
         MediaManager.startQueue(mediaBrowserListenableFuture, bundle.getParcelableArrayList(Constants.TRACKS_OBJECT), bundle.getInt(Constants.ITEM_POSITION));
         activity.setBottomSheetInPeek(true);
+        AppShortcuts.playlistStarted(requireContext(), playlistPageViewModel.getPlaylist());
     }
 
     @Override

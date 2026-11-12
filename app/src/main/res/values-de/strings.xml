@@ -845,7 +845,27 @@
     <string name="la_perms_access_local_network_description">Erforderlich für den Zugriff auf andere Geräte im selben lokalen Netzwerk.</string>
     <string name="la_perms_nearby_devices_title">Geräte in der Nähe</string>
     <string name="la_perms_nearby_devices_description">Erforderlich zum Ermitteln anderer Geräte über UPnP und Chromecast.</string>
-    <string name="la_shortcut_label">Einführung</string>
     <string name="la_button_advanced_editor">Erweiterter Editor (Beta)</string>
     <string name="hello_blank_fragment">Leeres Fragment</string>
+
+    <string name="menu_add_shortcut">An App-Verknüpfungen anheften</string>
+    <string name="menu_remove_shortcut">Von App-Verknüpfungen lösen</string>
+    <string name="shortcut_replace_title">Alle App-Verknüpfungen sind belegt. Ersetzen:</string>
+    <string name="settings_shortcuts_manage">Angeheftete App-Verknüpfungen</string>
+    <string name="settings_shortcuts_manage_empty">Noch keine. Wiedergabelisten und Alben lassen sich über ihr Menü anheften.</string>
+    <string name="shortcut_manage_save">Speichern</string>
+    <string name="shortcut_type_playlist">Wiedergabeliste</string>
+    <string name="shortcut_type_album">Album</string>
+    <string name="shortcut_move">Verschieben</string>
+    <string name="shortcut_remove">Entfernen</string>
+    <string name="settings_shortcuts_recent_playlists">Zuletzt gespielte Wiedergabelisten als App-Verknüpfungen</string>
+    <string name="settings_shortcuts_recent_playlists_summary">Langes Drücken auf das App-Symbol zeigt die zuletzt gespielten Wiedergabelisten, nach den angehefteten Wiedergabelisten und Alben.</string>
+    <string name="settings_shortcuts_play_mode">Beim Tippen auf eine App-Verknüpfung</string>
+    <string name="settings_shortcuts_play_mode_open">Nur Wiedergabeliste oder Album öffnen</string>
+    <string name="settings_shortcuts_play_mode_play">Von vorne abspielen</string>
+    <string name="settings_shortcuts_play_mode_shuffle">Zufällig wiedergeben</string>
+    <string name="settings_shortcuts_play_mode_ask">Jedes Mal fragen</string>
+    <string name="shortcut_ask_open">Öffnen</string>
+    <string name="shortcut_ask_play">Abspielen</string>
+    <string name="shortcut_ask_shuffle">Zufall</string>
 </resources>

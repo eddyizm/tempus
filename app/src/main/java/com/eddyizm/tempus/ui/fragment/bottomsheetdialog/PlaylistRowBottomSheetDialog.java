@@ -24,6 +24,7 @@ import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.dialog.PlaylistEditorDialog;
+import com.eddyizm.tempus.util.AppShortcuts;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.ExternalAudioWriter;
@@ -81,6 +82,7 @@ public class PlaylistRowBottomSheetDialog extends BottomSheetDialogFragment {
         view.findViewById(R.id.play_row).setOnClickListener(v -> withSongs((activity, songs) -> {
             MediaManager.startQueue(activity.getMediaBrowserListenableFuture(), songs, 0);
             activity.setBottomSheetInPeek(true);
+            AppShortcuts.playlistStarted(activity, playlist);
         }));
 
         view.findViewById(R.id.play_shuffle_row).setOnClickListener(v -> withSongs((activity, songs) -> {
@@ -89,6 +91,7 @@ public class PlaylistRowBottomSheetDialog extends BottomSheetDialogFragment {
 
             MediaManager.startQueue(activity.getMediaBrowserListenableFuture(), shuffled, 0);
             activity.setBottomSheetInPeek(true);
+            AppShortcuts.playlistStarted(activity, playlist);
         }));
 
         view.findViewById(R.id.play_next_row).setOnClickListener(v -> withSongs((activity, songs) -> {
