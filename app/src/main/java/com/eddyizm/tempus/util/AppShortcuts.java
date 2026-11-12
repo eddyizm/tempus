@@ -67,6 +67,9 @@ public final class AppShortcuts {
     /** Extra of a shortcut's intent: the name, for the title of the dialog that asks how to play. */
     public static final String EXTRA_NAME = "com.eddyizm.tempus.SHORTCUT_NAME";
 
+    /** Extra of a shortcut's intent: its id, to report the shortcut as used. */
+    public static final String EXTRA_ID = "com.eddyizm.tempus.SHORTCUT_ID";
+
     /** An adaptive icon is 108dp, of which the launcher shows the middle 72dp. */
     private static final int ICON_SIZE = 324;
     private static final int ICON_VISIBLE_SIZE = ICON_SIZE * 72 / 108;
@@ -230,9 +233,11 @@ public final class AppShortcuts {
         Uri uri = AssetLinkUtil.buildUri(item.getType(), item.getId());
         String label = item.getName() != null && !item.getName().isEmpty()
                 ? item.getName() : context.getString(R.string.app_name);
+        String id = item.getType() + "_" + item.getId();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri, context, ShortcutActivity.class);
         intent.putExtra(EXTRA_NAME, label);
-        return new ShortcutInfoCompat.Builder(context, item.getType() + "_" + item.getId())
+        intent.putExtra(EXTRA_ID, id);
+        return new ShortcutInfoCompat.Builder(context, id)
                 .setShortLabel(label)
                 .setLongLabel(label)
                 .setIcon(loadIcon(context, item))

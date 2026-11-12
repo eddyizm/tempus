@@ -5,7 +5,10 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.util.AppShortcuts;
@@ -35,6 +38,11 @@ public class ShortcutActivity extends AppCompatActivity {
             finish();
             return;
         }
+        // Lets the launcher rank the shortcuts by use.
+        String shortcutId = getIntent().getStringExtra(AppShortcuts.EXTRA_ID);
+        if (shortcutId != null && savedInstanceState == null) {
+            ShortcutManagerCompat.reportShortcutUsed(this, shortcutId);
+        }
         String playMode = Preferences.getShortcutsPlayMode();
         if (!Preferences.SHORTCUTS_PLAY_MODE_ASK.equals(playMode)) {
             open(link, playMode);
@@ -52,6 +60,7 @@ public class ShortcutActivity extends AppCompatActivity {
                 .show();
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     private void open(@NonNull Uri link, @NonNull String playMode) {
         Intent intent = new Intent(Intent.ACTION_VIEW, AppShortcuts.stamp(link, playMode), this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

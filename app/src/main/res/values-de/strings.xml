@@ -845,7 +845,6 @@
     <string name="la_perms_access_local_network_description">Erforderlich für den Zugriff auf andere Geräte im selben lokalen Netzwerk.</string>
     <string name="la_perms_nearby_devices_title">Geräte in der Nähe</string>
     <string name="la_perms_nearby_devices_description">Erforderlich zum Ermitteln anderer Geräte über UPnP und Chromecast.</string>
-    <string name="la_shortcut_label">Einführung</string>
     <string name="la_button_advanced_editor">Erweiterter Editor (Beta)</string>
     <string name="hello_blank_fragment">Leeres Fragment</string>
 </resources>
