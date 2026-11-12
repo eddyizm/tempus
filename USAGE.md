@@ -30,6 +30,7 @@
 - [Playlist Management](#playlist-management)
     - [Editing a playlist](#editing-a-playlist)
     - [Sorting playlists](#sorting-playlists)
+    - [App shortcuts](#app-shortcuts)
 - [Settings](#settings)
     - [Finding a setting](#finding-a-setting)
     - [Language](#language)
@@ -107,7 +108,7 @@ The first screen lists your servers. Tap **Open server editor** to add one:
 
 To edit a server, open the editor, pick the server in the menu at the top, change what you need and tap **Update**. **Test** checks a saved server's connection. **Delete** removes the picked server at once, with no confirmation. A change to the server you are logged in to takes effect after you log out and tap the server again.
 
-Long press the Tempus icon and pick **Introduction** to open the welcome, permissions, themes and server pages on their own. The heart icon at the top of the server list opens the same pages.
+The heart icon at the top of the server list opens the welcome, permissions, themes and server pages on their own.
 
 To switch servers, go to **Settings → General → Log out**, which takes you back to this list.
 
@@ -389,6 +390,19 @@ Open the full playlist list with **See all** next to Playlists on Home or Librar
 **Faves**
 
 To make a playlist a fave, tap **Add to faves** in its ⋮ menu, or long press it in the playlist list. Tap **Remove from faves** to undo it. Faves are kept on the phone, not on your server, and a playlist deleted from the server stops being a fave.
+
+### App shortcuts
+
+Long press the Tempus icon to get to your music without opening the app first. It offers up to four playlists or albums:
+
+- The ones you pinned come first. Tap **Pin to app shortcuts** in a playlist's or album's ⋮ menu. When all four places are pinned, Tempus asks which one the new pin replaces.
+- The rest are filled with the playlists you played last. Only playing counts, opening a playlist does not. Turn this off with **Settings → Playlist → Recently played playlists as app shortcuts**.
+
+**Settings → Playlist → Pinned app shortcuts** lists your pins. Drag one by its handle to change the order, tap the bin to unpin it, and tap **Save**.
+
+**Settings → Playlist → When an app shortcut is used** sets what a tap on a shortcut does: only open the playlist or album (the default), play it from the start, play it shuffled, or ask every time. **Ask every time** shows Open, Play and Shuffle right over the home screen.
+
+Most launchers let you drag a shortcut onto the home screen, or offer a **+** next to it. Such an icon keeps working even after the playlist has left the long press list.
 
 [Back to top](#table-of-contents)
 
