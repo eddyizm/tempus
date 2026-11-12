@@ -928,22 +928,26 @@
     <string name="la_perms_nearby_devices_description">Required to discover other deivces through UPnP and Chromecast.</string>
 
     <string name="la_shortcut_label">Introduction</string>
-    <string name="menu_add_shortcut">Add to app shortcuts</string>
-    <string name="menu_remove_shortcut">Remove from app shortcuts</string>
-    <string name="shortcut_replace_title">All app shortcuts are taken. Replace:</string>
-    <string name="settings_shortcuts_manage">Your app shortcuts</string>
-    <string name="settings_shortcuts_manage_empty">None yet. Add playlists and albums from their menu.</string>
+    <string name="menu_add_shortcut">Pin to app shortcuts</string>
+    <string name="menu_remove_shortcut">Unpin from app shortcuts</string>
+    <string name="shortcut_replace_title">All app shortcuts are pinned. Replace:</string>
+    <string name="settings_shortcuts_manage">Pinned app shortcuts</string>
+    <string name="settings_shortcuts_manage_empty">None yet. Pin playlists and albums from their menu.</string>
     <string name="shortcut_manage_save">Save</string>
     <string name="shortcut_type_playlist">Playlist</string>
     <string name="shortcut_type_album">Album</string>
     <string name="shortcut_move">Move</string>
     <string name="shortcut_remove">Remove</string>
     <string name="settings_shortcuts_recent_playlists">Recently played playlists as app shortcuts</string>
-    <string name="settings_shortcuts_recent_playlists_summary">Long-pressing the app icon offers the playlists you played last, after the playlists and albums you added from their menu.</string>
+    <string name="settings_shortcuts_recent_playlists_summary">Long-pressing the app icon offers the playlists you played last, after the playlists and albums you pinned.</string>
     <string name="settings_shortcuts_play_mode">When an app shortcut is used</string>
     <string name="settings_shortcuts_play_mode_open">Only open the playlist or album</string>
     <string name="settings_shortcuts_play_mode_play">Play from the start</string>
     <string name="settings_shortcuts_play_mode_shuffle">Play + Shuffle</string>
+    <string name="settings_shortcuts_play_mode_ask">Ask every time</string>
+    <string name="shortcut_ask_open">Open</string>
+    <string name="shortcut_ask_play">Play</string>
+    <string name="shortcut_ask_shuffle">Shuffle</string>
     <string name="la_button_advanced_editor">Open server editor</string>
 
     <!-- TODO: Remove or change this placeholder text -->

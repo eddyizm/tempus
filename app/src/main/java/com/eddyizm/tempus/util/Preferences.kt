@@ -144,7 +144,8 @@ object Preferences {
     const val SHORTCUTS_PLAY_MODE_OPEN = "open"
     const val SHORTCUTS_PLAY_MODE_PLAY = "play"
     const val SHORTCUTS_PLAY_MODE_SHUFFLE = "shuffle"
-    private const val SHORTCUTS_FIXED = "shortcuts_fixed"
+    const val SHORTCUTS_PLAY_MODE_ASK = "ask"
+    private const val SHORTCUTS_PINNED = "shortcuts_pinned"
     private const val SHORTCUTS_RECENT = "shortcuts_recent"
 
     const val MUSIC_FOLDER_ALL = "default"
@@ -1315,10 +1316,10 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getFixedShortcuts(): MutableList<ShortcutItem> = readShortcutItems(SHORTCUTS_FIXED)
+    fun getPinnedShortcuts(): MutableList<ShortcutItem> = readShortcutItems(SHORTCUTS_PINNED)
 
     @JvmStatic
-    fun setFixedShortcuts(items: List<ShortcutItem>) = writeShortcutItems(SHORTCUTS_FIXED, items)
+    fun setPinnedShortcuts(items: List<ShortcutItem>) = writeShortcutItems(SHORTCUTS_PINNED, items)
 
     @JvmStatic
     fun getRecentShortcuts(): MutableList<ShortcutItem> = readShortcutItems(SHORTCUTS_RECENT)

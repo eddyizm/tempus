@@ -236,7 +236,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
                     () -> requireActivity().invalidateOptionsMenu());
             return true;
         } else if (item.getItemId() == R.id.action_remove_shortcut) {
-            AppShortcuts.removeFixed(requireContext(), AssetLinkUtil.TYPE_PLAYLIST, playlistPageViewModel.getPlaylist().getId());
+            AppShortcuts.unpin(requireContext(), AssetLinkUtil.TYPE_PLAYLIST, playlistPageViewModel.getPlaylist().getId());
             requireActivity().invalidateOptionsMenu();
             return true;
         } else if (item.getItemId() == R.id.action_add_to_queue) {
@@ -278,7 +278,7 @@ public class PlaylistPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initMenuOption(Menu menu) {
-        boolean shortcut = AppShortcuts.isFixed(AssetLinkUtil.TYPE_PLAYLIST, playlistPageViewModel.getPlaylist().getId());
+        boolean shortcut = AppShortcuts.isPinned(AssetLinkUtil.TYPE_PLAYLIST, playlistPageViewModel.getPlaylist().getId());
         menu.findItem(R.id.action_add_shortcut).setVisible(!shortcut);
         menu.findItem(R.id.action_remove_shortcut).setVisible(shortcut);
         playlistPageViewModel.isPinned(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), isPinned -> {

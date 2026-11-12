@@ -26,25 +26,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** The dialogs for the playlists and albums the user picked as launcher shortcuts. */
+/** The dialogs for the playlists and albums the user pinned as launcher shortcuts. */
 public final class AppShortcutDialogs {
     private AppShortcutDialogs() {
     }
 
     /**
-     * Adds a pick. When every place is taken, asks which pick it replaces instead of refusing,
+     * Pins an item. When every place is taken, asks which pinned one it replaces instead of refusing,
      * since the user may not remember which ones are there.
      */
     public static void add(@NonNull Context context, @NonNull Preferences.ShortcutItem item, @NonNull Runnable onChanged) {
-        if (AppShortcuts.addFixed(context, item)) {
+        if (AppShortcuts.pin(context, item)) {
             onChanged.run();
             return;
         }
-        List<Preferences.ShortcutItem> fixed = Preferences.getFixedShortcuts();
+        List<Preferences.ShortcutItem> pinned = Preferences.getPinnedShortcuts();
         new MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.shortcut_replace_title)
-                .setItems(labelsOf(context, fixed), (dialog, which) -> {
-                    AppShortcuts.replaceFixed(context, which, item);
+                .setItems(labelsOf(context, pinned), (dialog, which) -> {
+                    AppShortcuts.replacePinned(context, which, item);
                     onChanged.run();
                 })
                 .setNegativeButton(android.R.string.cancel, null)
@@ -52,12 +52,12 @@ public final class AppShortcutDialogs {
     }
 
     /**
-     * Lists the picks to reorder by their handle and remove by their bin. Nothing changes until
+     * Lists the pinned items to reorder by their handle and remove by their bin. Nothing changes until
      * Save, so Cancel undoes a removal.
      */
     public static void manage(@NonNull Context context, @NonNull Runnable onChanged) {
-        List<Preferences.ShortcutItem> fixed = Preferences.getFixedShortcuts();
-        if (fixed.isEmpty()) {
+        List<Preferences.ShortcutItem> pinned = Preferences.getPinnedShortcuts();
+        if (pinned.isEmpty()) {
             new MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.settings_shortcuts_manage)
                     .setMessage(R.string.settings_shortcuts_manage_empty)
@@ -69,7 +69,7 @@ public final class AppShortcutDialogs {
         int padding = Math.round(12 * context.getResources().getDisplayMetrics().density);
         list.setPadding(padding, padding, padding, 0);
         list.setLayoutManager(new LinearLayoutManager(context));
-        PicksAdapter adapter = new PicksAdapter(fixed);
+        PinnedAdapter adapter = new PinnedAdapter(pinned);
         list.setAdapter(adapter);
         ItemTouchHelper dragger = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
             @Override
@@ -98,18 +98,18 @@ public final class AppShortcutDialogs {
                 .setTitle(R.string.settings_shortcuts_manage)
                 .setView(list)
                 .setPositiveButton(R.string.shortcut_manage_save, (dialog, which) -> {
-                    AppShortcuts.keepFixed(context, adapter.items);
+                    AppShortcuts.keepPinned(context, adapter.items);
                     onChanged.run();
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
-    private static class PicksAdapter extends RecyclerView.Adapter<PicksAdapter.ViewHolder> {
+    private static class PinnedAdapter extends RecyclerView.Adapter<PinnedAdapter.ViewHolder> {
         final List<Preferences.ShortcutItem> items;
         ItemTouchHelper dragger;
 
-        PicksAdapter(@NonNull List<Preferences.ShortcutItem> items) {
+        PinnedAdapter(@NonNull List<Preferences.ShortcutItem> items) {
             this.items = new ArrayList<>(items);
         }
 
@@ -157,7 +157,7 @@ public final class AppShortcutDialogs {
         return AssetLinkUtil.TYPE_ALBUM.equals(item.getType()) ? R.string.shortcut_type_album : R.string.shortcut_type_playlist;
     }
 
-    /** Each pick's name, with whether it is a playlist or an album in smaller type below. */
+    /** Each pinned item's name, with whether it is a playlist or an album in smaller type below. */
     @NonNull
     private static CharSequence[] labelsOf(@NonNull Context context, @NonNull List<Preferences.ShortcutItem> items) {
         CharSequence[] labels = new CharSequence[items.size()];

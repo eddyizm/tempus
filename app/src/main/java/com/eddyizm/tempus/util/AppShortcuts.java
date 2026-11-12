@@ -22,7 +22,6 @@ import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.Playlist;
 import com.eddyizm.tempus.ui.activity.ShortcutActivity;
-import com.eddyizm.tempus.ui.login.LoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,26 +29,45 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * The shortcuts a launcher shows when the app icon is long-pressed: the items the user added
- * from a playlist's or album's menu first, then the playlists played last, then the
- * introduction. Launchers show four entries, so there are {@link #MAX_ITEMS} besides the
- * introduction.
+ * The shortcuts a launcher shows when the app icon is long-pressed: the playlists and albums the
+ * user pinned from their menu first, then the playlists played last.
  *
- * A shortcut opens its item through an asset link, which {@link ShortcutActivity} stamps with the
- * time of the tap in {@link #QUERY_SHORTCUT}, and only a tap from the last
- * {@link #PLAY_WINDOW_MS} may start playing. Whether it does is read from the settings when the
- * shortcut is used, so changing the setting needs no new shortcuts.
+ * "Pinned" here means pinned to this list. It is neither a playlist pinned to the faves
+ * ({@code PinnedPlaylist}) nor what Android calls a pinned shortcut, which is one the user put on
+ * the home screen.
+ *
+ * To add a kind of shortcut, write a method that builds its {@link ShortcutInfoCompat} and add it
+ * to the list in {@link #build}; the order of that list is the order the launcher shows. Every
+ * shortcut needs an id of its own that stays the same between versions, because a shortcut the
+ * user put on the home screen is found again by its id.
+ *
+ * A playlist or album shortcut starts {@link ShortcutActivity}, which settles how it plays (from
+ * the settings, or by asking) and passes its link on to MainActivity with that play mode and the
+ * time of the tap. Only a recent tap may start playing, see {@link #playMode}.
  */
 public final class AppShortcuts {
     private static final String TAG = "AppShortcuts";
 
+    /** Query parameter of a shortcut's link: the time of the tap, set by {@link #stamp}. */
     private static final String QUERY_SHORTCUT = "shortcut";
 
+    /** Query parameter of a shortcut's link: how it plays, set by {@link #stamp}. */
+    private static final String QUERY_PLAY_MODE = "play";
+
+    /**
+     * How long after the tap a shortcut's link may still start playing. Android hands an activity
+     * the intent that started it again when it recreates it, for example after the process was
+     * killed in the background, and that must not start the playlist again.
+     */
     private static final long PLAY_WINDOW_MS = 10_000;
 
-    public static final int MAX_ITEMS = 3;
+    /** Launchers show four entries for an app, so that is all the room there is. */
+    public static final int MAX_ITEMS = 4;
 
-    private static final String ID_INTRODUCTION = "login_activity_shortcut";
+    /** Extra of a shortcut's intent: the name, for the title of the dialog that asks how to play. */
+    public static final String EXTRA_NAME = "com.eddyizm.tempus.SHORTCUT_NAME";
+
+    /** An adaptive icon is 108dp, of which the launcher shows the middle 72dp. */
     private static final int ICON_SIZE = 324;
     private static final int ICON_VISIBLE_SIZE = ICON_SIZE * 72 / 108;
 
@@ -83,53 +101,55 @@ public final class AppShortcuts {
                 album.getName(), album.getCoverArtId());
     }
 
-    public static boolean isFixed(@NonNull String type, @NonNull String id) {
-        return indexOf(Preferences.getFixedShortcuts(), type, id) >= 0;
+    public static boolean isPinned(@NonNull String type, @NonNull String id) {
+        return indexOf(Preferences.getPinnedShortcuts(), type, id) >= 0;
     }
 
-    /** Adds an item the user picked. False when there is no room left for it. */
-    public static boolean addFixed(@NonNull Context context, @NonNull Preferences.ShortcutItem item) {
-        List<Preferences.ShortcutItem> fixed = Preferences.getFixedShortcuts();
-        if (indexOf(fixed, item.getType(), item.getId()) >= 0) return true;
-        if (fixed.size() >= MAX_ITEMS) return false;
-        fixed.add(item);
-        Preferences.setFixedShortcuts(fixed);
+    /** Pins an item. False when there is no room left for it. */
+    public static boolean pin(@NonNull Context context, @NonNull Preferences.ShortcutItem item) {
+        List<Preferences.ShortcutItem> pinned = Preferences.getPinnedShortcuts();
+        if (indexOf(pinned, item.getType(), item.getId()) >= 0) return true;
+        if (pinned.size() >= MAX_ITEMS) return false;
+        pinned.add(item);
+        Preferences.setPinnedShortcuts(pinned);
         publish(context);
         return true;
     }
 
-    /** Puts an item the user picked in the place of the one at {@code index}. */
-    public static void replaceFixed(@NonNull Context context, int index, @NonNull Preferences.ShortcutItem item) {
-        List<Preferences.ShortcutItem> fixed = Preferences.getFixedShortcuts();
-        if (index < 0 || index >= fixed.size()) return;
-        removeById(fixed, item.getType(), item.getId());
-        fixed.add(Math.min(index, fixed.size()), item);
-        while (fixed.size() > MAX_ITEMS) fixed.remove(fixed.size() - 1);
-        Preferences.setFixedShortcuts(fixed);
+    /** Pins an item in the place of the pinned one at {@code index}. */
+    public static void replacePinned(@NonNull Context context, int index, @NonNull Preferences.ShortcutItem item) {
+        List<Preferences.ShortcutItem> pinned = Preferences.getPinnedShortcuts();
+        if (index < 0 || index >= pinned.size()) return;
+        removeById(pinned, item.getType(), item.getId());
+        pinned.add(Math.min(index, pinned.size()), item);
+        while (pinned.size() > MAX_ITEMS) pinned.remove(pinned.size() - 1);
+        Preferences.setPinnedShortcuts(pinned);
         publish(context);
     }
 
-    /** Stores the picks as edited in the list: the ones left, in the order given. */
-    public static void keepFixed(@NonNull Context context, @NonNull List<Preferences.ShortcutItem> keep) {
-        Preferences.setFixedShortcuts(keep);
+    /** Stores the pinned items as edited in the list: the ones left, in the order given. */
+    public static void keepPinned(@NonNull Context context, @NonNull List<Preferences.ShortcutItem> keep) {
+        Preferences.setPinnedShortcuts(keep);
         publish(context);
     }
 
-    public static void removeFixed(@NonNull Context context, @NonNull String type, @NonNull String id) {
-        List<Preferences.ShortcutItem> fixed = Preferences.getFixedShortcuts();
-        if (removeById(fixed, type, id)) {
-            Preferences.setFixedShortcuts(fixed);
+    public static void unpin(@NonNull Context context, @NonNull String type, @NonNull String id) {
+        List<Preferences.ShortcutItem> pinned = Preferences.getPinnedShortcuts();
+        if (removeById(pinned, type, id)) {
+            Preferences.setPinnedShortcuts(pinned);
             publish(context);
         }
     }
 
     /**
      * How the page opened by this link starts playing: one of the SHORTCUTS_PLAY_MODE values in
-     * {@link Preferences}. Only a shortcut plays; every other link only opens.
+     * {@link Preferences}. Only a link a shortcut stamped in the last {@link #PLAY_WINDOW_MS}
+     * plays; every other link only opens.
      */
     @NonNull
     public static String playMode(@Nullable AssetLinkUtil.AssetLink assetLink) {
-        String stamp = assetLink != null ? assetLink.uri.getQueryParameter(QUERY_SHORTCUT) : null;
+        if (assetLink == null) return Preferences.SHORTCUTS_PLAY_MODE_OPEN;
+        String stamp = assetLink.uri.getQueryParameter(QUERY_SHORTCUT);
         long tappedAt;
         try {
             tappedAt = stamp != null ? Long.parseLong(stamp) : 0;
@@ -137,8 +157,9 @@ public final class AppShortcuts {
             tappedAt = 0;
         }
         long age = System.currentTimeMillis() - tappedAt;
-        if (age < 0 || age > PLAY_WINDOW_MS) return Preferences.SHORTCUTS_PLAY_MODE_OPEN;
-        return Preferences.getShortcutsPlayMode();
+        String playMode = assetLink.uri.getQueryParameter(QUERY_PLAY_MODE);
+        if (age < 0 || age > PLAY_WINDOW_MS || playMode == null) return Preferences.SHORTCUTS_PLAY_MODE_OPEN;
+        return playMode;
     }
 
     /**
@@ -152,14 +173,18 @@ public final class AppShortcuts {
         return playMode;
     }
 
-    /** The shortcut's link with the time of the tap, which {@link #playMode} checks. */
+    /** The shortcut's link with how it plays and the time of the tap, which {@link #playMode} checks. */
     @NonNull
-    public static Uri stamp(@NonNull Uri uri) {
+    public static Uri stamp(@NonNull Uri uri, @NonNull String playMode) {
         Uri.Builder builder = uri.buildUpon().clearQuery();
         for (String name : uri.getQueryParameterNames()) {
-            if (!QUERY_SHORTCUT.equals(name)) builder.appendQueryParameter(name, uri.getQueryParameter(name));
+            if (QUERY_SHORTCUT.equals(name) || QUERY_PLAY_MODE.equals(name)) continue;
+            builder.appendQueryParameter(name, uri.getQueryParameter(name));
         }
-        return builder.appendQueryParameter(QUERY_SHORTCUT, String.valueOf(System.currentTimeMillis())).build();
+        return builder
+                .appendQueryParameter(QUERY_PLAY_MODE, playMode)
+                .appendQueryParameter(QUERY_SHORTCUT, String.valueOf(System.currentTimeMillis()))
+                .build();
     }
 
     /**
@@ -184,7 +209,7 @@ public final class AppShortcuts {
 
     @NonNull
     private static List<ShortcutInfoCompat> build(@NonNull Context context, boolean withRecent) {
-        List<Preferences.ShortcutItem> items = new ArrayList<>(Preferences.getFixedShortcuts());
+        List<Preferences.ShortcutItem> items = new ArrayList<>(Preferences.getPinnedShortcuts());
         if (withRecent) {
             for (Preferences.ShortcutItem recent : Preferences.getRecentShortcuts()) {
                 if (items.size() >= MAX_ITEMS) break;
@@ -195,29 +220,18 @@ public final class AppShortcuts {
 
         List<ShortcutInfoCompat> shortcuts = new ArrayList<>();
         for (Preferences.ShortcutItem item : items) {
-            shortcuts.add(buildItem(context, item, shortcuts.size()));
+            shortcuts.add(item(context, item, shortcuts.size()));
         }
-
-        Intent introduction = new Intent(context, LoginActivity.class);
-        introduction.setAction(Intent.ACTION_VIEW);
-        shortcuts.add(new ShortcutInfoCompat.Builder(context, ID_INTRODUCTION)
-                .setShortLabel(context.getString(R.string.la_shortcut_label))
-                .setLongLabel(context.getString(R.string.la_shortcut_label))
-                .setIcon(IconCompat.createWithResource(context, R.mipmap.ic_launcher))
-                .setIntent(introduction)
-                .setRank(shortcuts.size())
-                .build());
         return shortcuts;
     }
 
     @NonNull
-    private static ShortcutInfoCompat buildItem(@NonNull Context context, @NonNull Preferences.ShortcutItem item, int rank) {
-        Uri uri = AssetLinkUtil.buildUri(item.getType(), item.getId()).buildUpon()
-                .appendQueryParameter(QUERY_SHORTCUT, "1")
-                .build();
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri, context, ShortcutActivity.class);
+    private static ShortcutInfoCompat item(@NonNull Context context, @NonNull Preferences.ShortcutItem item, int rank) {
+        Uri uri = AssetLinkUtil.buildUri(item.getType(), item.getId());
         String label = item.getName() != null && !item.getName().isEmpty()
                 ? item.getName() : context.getString(R.string.app_name);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri, context, ShortcutActivity.class);
+        intent.putExtra(EXTRA_NAME, label);
         return new ShortcutInfoCompat.Builder(context, item.getType() + "_" + item.getId())
                 .setShortLabel(label)
                 .setLongLabel(label)
@@ -249,9 +263,9 @@ public final class AppShortcuts {
 
     /**
      * The cover laid out for an adaptive icon, so the launcher shapes it like other icons instead
-     * of shrinking it onto a white disc. An adaptive icon is 108dp, of which the launcher shows
-     * the middle 72dp: the whole cover goes there, and the cover stretched under it fills the
-     * margin that only shows while the launcher animates the icon.
+     * of shrinking it onto a white disc. The whole cover goes in the middle the launcher shows,
+     * and the cover stretched under it fills the margin that only shows while the launcher
+     * animates the icon.
      */
     @NonNull
     private static Bitmap toAdaptive(@NonNull Bitmap cover) {

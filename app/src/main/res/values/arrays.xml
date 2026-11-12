@@ -276,11 +276,19 @@
         <item>@string/settings_shortcuts_play_mode_open</item>
         <item>@string/settings_shortcuts_play_mode_play</item>
         <item>@string/settings_shortcuts_play_mode_shuffle</item>
+        <item>@string/settings_shortcuts_play_mode_ask</item>
     </string-array>
     <string-array name="shortcuts_play_mode_values" translatable="false">
         <item>open</item>
         <item>play</item>
         <item>shuffle</item>
+        <item>ask</item>
+    </string-array>
+    <!-- Same order as ASK_MODES in ShortcutActivity. -->
+    <string-array name="shortcuts_ask_titles">
+        <item>@string/shortcut_ask_open</item>
+        <item>@string/shortcut_ask_play</item>
+        <item>@string/shortcut_ask_shuffle</item>
     </string-array>
     <string-array name="playlist_sort_option_values">
         <item>ORDER_BY_NAME</item>

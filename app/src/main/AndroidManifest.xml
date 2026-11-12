@@ -45,7 +45,8 @@
             android:exported="false"
             android:excludeFromRecents="true"
             android:noHistory="true"
-            android:theme="@android:style/Theme.NoDisplay" />
+            android:taskAffinity=""
+            android:theme="@style/AppTheme.Translucent" />
 
         <activity android:name=".lan.LanPlaybackActivity" android:exported="false"
             android:theme="@style/AppTheme" />

@@ -45,7 +45,6 @@ import com.eddyizm.tempus.ui.dialog.PlaylistChooserDialog;
 import com.eddyizm.tempus.ui.dialog.RatingDialog;
 import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.AppShortcuts;
-import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
 import com.eddyizm.tempus.util.MappingUtil;
@@ -89,7 +88,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
 
         AlbumID3 album = getArguments() != null ? getArguments().getParcelable(Constants.ALBUM_OBJECT) : null;
         boolean shortcut = album != null && album.getId() != null
-                && AppShortcuts.isFixed(AssetLinkUtil.TYPE_ALBUM, album.getId());
+                && AppShortcuts.isPinned(AssetLinkUtil.TYPE_ALBUM, album.getId());
         menu.findItem(R.id.action_add_shortcut).setVisible(album != null && album.getId() != null && !shortcut);
         menu.findItem(R.id.action_remove_shortcut).setVisible(shortcut);
     }
@@ -171,7 +170,7 @@ public class AlbumPageFragment extends Fragment implements ClickCallback {
                 AlbumID3 album = getArguments() != null ? getArguments().getParcelable(Constants.ALBUM_OBJECT) : null;
                 if (album == null || album.getId() == null) return true;
                 if (item.getItemId() == R.id.action_remove_shortcut) {
-                    AppShortcuts.removeFixed(requireContext(), AssetLinkUtil.TYPE_ALBUM, album.getId());
+                    AppShortcuts.unpin(requireContext(), AssetLinkUtil.TYPE_ALBUM, album.getId());
                     requireActivity().invalidateOptionsMenu();
                 } else {
                     AppShortcutDialogs.add(requireActivity(), AppShortcuts.itemOf(album),

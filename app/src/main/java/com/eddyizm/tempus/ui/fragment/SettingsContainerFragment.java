@@ -986,15 +986,15 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private void actionShortcutsManage() {
         Preference preference = findPreference("shortcuts_manage");
         if (preference == null) return;
-        Runnable showPicks = () -> {
+        Runnable showPinned = () -> {
             List<String> names = new ArrayList<>();
-            for (Preferences.ShortcutItem item : Preferences.getFixedShortcuts()) names.add(item.getName());
+            for (Preferences.ShortcutItem item : Preferences.getPinnedShortcuts()) names.add(item.getName());
             preference.setSummary(names.isEmpty()
                     ? getString(R.string.settings_shortcuts_manage_empty) : TextUtils.join(", ", names));
         };
-        showPicks.run();
+        showPinned.run();
         preference.setOnPreferenceClickListener(pref -> {
-            AppShortcutDialogs.manage(requireActivity(), showPicks);
+            AppShortcutDialogs.manage(requireActivity(), showPinned);
             return true;
         });
     }
