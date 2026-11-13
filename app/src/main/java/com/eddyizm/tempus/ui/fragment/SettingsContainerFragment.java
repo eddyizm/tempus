@@ -217,6 +217,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         setNetorkPingTimeoutBase();
 
         actionPermission();
+        actionBackup();
         actionTheme();
         actionLogout();
         actionScan();
