@@ -159,7 +159,9 @@ public class MainActivity extends BaseActivity {
 
         isLandscape = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
 
-        init(savedInstanceState);
+        init();
+        setupLoginRedirection(savedInstanceState != null);
+        toggleNavigationDrawerLockOnOrientationChange();
         checkConnectionType();
         getOpenSubsonicExtensions();
         checkTempusUpdate();
@@ -220,24 +222,26 @@ public class MainActivity extends BaseActivity {
         consumePendingNowPlayingIntent();
     }
 
-    public void init(Bundle savedInstanceState) {
-
+    public void init() {
         initBottomSheet();
         initNavigation();
         initBackPressedDispatcher();
+    }
 
-        boolean restoredOnLogin = savedInstanceState != null
+    private void setupLoginRedirection(boolean restored) {
+        boolean restoredOnLogin = restored
                 && navigationController.getNavController().getCurrentDestination() != null
                 && navigationController.getNavController().getCurrentDestination().getId() == R.id.loginFragment;
+        boolean hasCredentials = Preferences.getPassword() != null
+                || (Preferences.getToken() != null && Preferences.getSalt() != null);
 
-        if (!restoredOnLogin && (Preferences.getPassword() != null || (Preferences.getToken() != null && Preferences.getSalt() != null))) {
+        if (restoredOnLogin) {
+            hideBottomBarAndPlayer();
+        } else if (hasCredentials) {
             goFromLogin();
         } else {
             goToLogin();
         }
-
-        toggleNavigationDrawerLockOnOrientationChange();
-
     }
 
     private void initNavigation() {
@@ -493,23 +497,17 @@ public class MainActivity extends BaseActivity {
     }
 
     private void goToLogin() {
+        hideBottomBarAndPlayer();
+
+        NavController nc = navigationController.getNavController();
+        nc.navigate(R.id.loginFragment, null,
+                new NavOptions.Builder().setPopUpTo(nc.getGraph().getId(), true).build());
+    }
+
+    private void hideBottomBarAndPlayer() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         setBottomNavigationBarVisibility(false);
         setBottomSheetVisibility(false);
-
-        NavController nc = navigationController.getNavController();
-        int id = nc.getCurrentDestination().getId();
-
-        if (id == R.id.landingFragment) {
-           nc.navigate(R.id.action_landingFragment_to_loginFragment);
-        } else if (id == R.id.settingsFragment) {
-            nc.navigate(R.id.action_settingsFragment_to_loginFragment);
-        } else if (id == R.id.homeFragment) {
-            nc.navigate(R.id.action_homeFragment_to_loginFragment);
-        } else if (id != R.id.loginFragment) {
-            nc.navigate(R.id.loginFragment, null,
-                    new NavOptions.Builder().setPopUpTo(nc.getGraph().getId(), true).build());
-        }
     }
 
     private void goToHome() {
@@ -556,14 +554,7 @@ public class MainActivity extends BaseActivity {
         resetUserSession();
         resetMusicSession();
         resetViewModel();
-
-        NavController nc = navigationController.getNavController();
-        if (nc.getCurrentDestination().getId() == R.id.loginFragment) {
-            nc.popBackStack(R.id.loginFragment, true);
-            nc.navigate(R.id.loginFragment);
-        } else {
-            goToLogin();
-        }
+        goToLogin();
     }
 
     private void resetUserSession() {
@@ -703,9 +694,7 @@ public class MainActivity extends BaseActivity {
         NavController nc = navigationController.getNavController();
         int id = nc.getCurrentDestination().getId();
         if (id == R.id.loginFragment) return;
-
         resetViewModel();
-
         nc.popBackStack(id, true);
         nc.navigate(id);
     }
