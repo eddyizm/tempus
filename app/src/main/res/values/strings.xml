@@ -596,7 +596,8 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
-    <string name="settings_permissions">App permissions</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_backups">Backups</string>
     <string name="settings_export_title">Export settings</string>
     <string name="settings_export_summary">Save your settings to a file. Server logins are not included.</string>
     <string name="settings_import_title">Import settings</string>

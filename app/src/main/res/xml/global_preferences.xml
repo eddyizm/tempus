@@ -30,6 +30,10 @@
             android:title="@string/settings_permissions"/>
 
         <Preference
+            android:key="backups"
+            android:title="@string/settings_backups"/>
+
+        <Preference
             android:key="settings_export"
             android:title="@string/settings_export_title"
             android:summary="@string/settings_export_summary"/>

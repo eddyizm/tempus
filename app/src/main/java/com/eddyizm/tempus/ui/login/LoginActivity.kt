@@ -13,11 +13,11 @@ import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.helper.ThemeHelper
 import com.google.android.material.tabs.TabLayoutMediator
 
-private const val GREETER_FRAGMENT: Int     = 0
-private const val PERMISSIONS_FRAGMENT: Int = 1
-private const val BACKUP_FRAGMENT: Int      = 2
-private const val THEMES_FRAGMENT: Int      = 3
-private const val SERVERS_FRAGMENT: Int     = 4
+private const val GREETER_IDX: Int = 0
+private const val PERMISSIONS_IDX: Int = 1
+private const val BACKUPS_IDX: Int = 2
+private const val THEMES_IDX: Int = 3
+private const val SERVERS_IDX: Int = 4
 
 
 class LoginActivity : AppCompatActivity() {
@@ -77,7 +77,7 @@ class LoginActivity : AppCompatActivity() {
             tab.text = when (position) {
                 GREETER_FRAGMENT     -> getString(R.string.la_tab_greeter)
                 PERMISSIONS_FRAGMENT -> getString(R.string.la_tab_permission)
-                BACKUP_FRAGMENT      -> getString(R.string.la_tab_backup)
+                BACKUPS_FRAGMENT      -> getString(R.string.la_tab_backup)
                 THEMES_FRAGMENT      -> getString(R.string.la_tab_themes)
                 SERVERS_FRAGMENT     -> getString(R.string.la_tab_server)
                 else -> ""
@@ -102,7 +102,7 @@ class LoginActivity : AppCompatActivity() {
                         singlePageMode = hideTabLayout
                     )
                 }
-                BACKUP_FRAGMENT -> {
+                BACKUPS_FRAGMENT -> {
                     binding.topAppBar.title = getString(R.string.la_appbar_backup_title)
                     LoginBackupFragment.newInstance(
                         singlePageMode = hideTabLayout
@@ -125,5 +125,13 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    companion object {
+        const val GREETER_FRAGMENT: Int = GREETER_IDX
+        const val PERMISSIONS_FRAGMENT: Int = PERMISSIONS_IDX
+        const val BACKUPS_FRAGMENT: Int = BACKUPS_IDX
+        const val THEMES_FRAGMENT: Int = THEMES_IDX
+        const val SERVERS_FRAGMENT: Int = SERVERS_IDX
     }
 }

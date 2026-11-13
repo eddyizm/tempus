@@ -729,7 +729,18 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             Intent tempus = new Intent(requireActivity(), LoginActivity.class);
             tempus.putExtra("HIDE_TAB_LAYOUT", true);
             tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
-            tempus.putExtra("SELECT_FRAGMENT", 1);
+            tempus.putExtra("SELECT_FRAGMENT", LoginActivity.PERMISSIONS_FRAGMENT);
+            startActivity(tempus);
+            return true;
+        });
+    }
+
+    private void actionBackup() {
+        findPreference("backups").setOnPreferenceClickListener( preference -> {
+            Intent tempus = new Intent(requireActivity(), LoginActivity.class);
+            tempus.putExtra("HIDE_TAB_LAYOUT", true);
+            tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
+            tempus.putExtra("SELECT_FRAGMENT", LoginActivity.BACKUPS_FRAGMENT);
             startActivity(tempus);
             return true;
         });
@@ -740,7 +751,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
             Intent tempus = new Intent(requireActivity(), LoginActivity.class);
             tempus.putExtra("HIDE_TAB_LAYOUT", true);
             tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
-            tempus.putExtra("SELECT_FRAGMENT", 2);
+            tempus.putExtra("SELECT_FRAGMENT", LoginActivity.THEMES_FRAGMENT);
             startActivity(tempus);
             return true;
         });
@@ -1161,7 +1172,7 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         }
     }
 
-    private void importSettings(Uri uri) {
+    public void importSettings(Uri uri) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         String oldLanguage = prefs.getString("language", "default");
         String oldEqualizer = prefs.getString("selected_equalizer", "0");
