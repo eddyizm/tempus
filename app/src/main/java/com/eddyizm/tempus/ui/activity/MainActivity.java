@@ -34,6 +34,7 @@ import androidx.media3.common.MimeTypes;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.eddyizm.tempus.BuildConfig;
@@ -158,7 +159,7 @@ public class MainActivity extends BaseActivity {
 
         isLandscape = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
 
-        init();
+        init(savedInstanceState);
         checkConnectionType();
         getOpenSubsonicExtensions();
         checkTempusUpdate();
@@ -167,7 +168,7 @@ public class MainActivity extends BaseActivity {
         AlbumArtistBackfill.backfillIfNeeded();
 
         maybeSchedulePlaybackIntent(getIntent());
-        setupLoginActivity();
+        setupLoginActivity(savedInstanceState);
     }
 
     @Override
@@ -219,13 +220,17 @@ public class MainActivity extends BaseActivity {
         consumePendingNowPlayingIntent();
     }
 
-    public void init() {
+    public void init(Bundle savedInstanceState) {
 
         initBottomSheet();
         initNavigation();
         initBackPressedDispatcher();
 
-        if (Preferences.getPassword() != null || (Preferences.getToken() != null && Preferences.getSalt() != null)) {
+        boolean restoredOnLogin = savedInstanceState != null
+                && navigationController.getNavController().getCurrentDestination() != null
+                && navigationController.getNavController().getCurrentDestination().getId() == R.id.loginFragment;
+
+        if (!restoredOnLogin && (Preferences.getPassword() != null || (Preferences.getToken() != null && Preferences.getSalt() != null))) {
             goFromLogin();
         } else {
             goToLogin();
@@ -501,6 +506,9 @@ public class MainActivity extends BaseActivity {
             nc.navigate(R.id.action_settingsFragment_to_loginFragment);
         } else if (id == R.id.homeFragment) {
             nc.navigate(R.id.action_homeFragment_to_loginFragment);
+        } else if (id != R.id.loginFragment) {
+            nc.navigate(R.id.loginFragment, null,
+                    new NavOptions.Builder().setPopUpTo(nc.getGraph().getId(), true).build());
         }
     }
 
@@ -548,7 +556,14 @@ public class MainActivity extends BaseActivity {
         resetUserSession();
         resetMusicSession();
         resetViewModel();
-        goToLogin();
+
+        NavController nc = navigationController.getNavController();
+        if (nc.getCurrentDestination().getId() == R.id.loginFragment) {
+            nc.popBackStack(R.id.loginFragment, true);
+            nc.navigate(R.id.loginFragment);
+        } else {
+            goToLogin();
+        }
     }
 
     private void resetUserSession() {
@@ -685,11 +700,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private void resetView() {
-        resetViewModel();
-
         NavController nc = navigationController.getNavController();
         int id = nc.getCurrentDestination().getId();
-        
+        if (id == R.id.loginFragment) return;
+
+        resetViewModel();
+
         nc.popBackStack(id, true);
         nc.navigate(id);
     }
@@ -869,8 +885,8 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void setupLoginActivity() {
-        String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
+    private void setupLoginActivity(Bundle savedInstanceState) {
+        String triggerArg = savedInstanceState == null ? getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT") : null;
         if ("open_legacy_login_fragment".equals(triggerArg)) {
             goToLogin();
         } else if ("open_legacy_settings_fragment".equals(triggerArg)) {
