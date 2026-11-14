@@ -85,6 +85,8 @@ class LoginBackupFragment : Fragment() {
         binding.btnImport.setOnClickListener {
             settingsImportLauncher.launch(arrayOf("application/json", "text/plain", "*/*"))
         }
+
+        enableAdvancedBackupOptions(false)
     }
 
     override fun onDestroyView() {
@@ -222,6 +224,25 @@ class LoginBackupFragment : Fragment() {
         } catch (e: SecurityException) {
             return null
         }
+    }
+
+    fun enableAdvancedBackupOptions(enabled: Boolean) {
+        binding.layoutStorageDirectoryContainer.isEnabled = enabled
+        binding.layoutStorageDirectoryContainer.alpha = if (enabled) 1.0f else 0.38f
+        binding.layoutAutomaticBackupsContainer.isEnabled = enabled
+        binding.layoutAutomaticBackupsContainer.alpha = if (enabled) 1.0f else 0.38f
+
+        fun setViewGroupEnabled(viewGroup: ViewGroup, isEnabled: Boolean) {
+            for (i in 0 until viewGroup.childCount) {
+                val child = viewGroup.getChildAt(i)
+                child.isEnabled = isEnabled
+                if (child is ViewGroup) {
+                    setViewGroupEnabled(child, isEnabled)
+                }
+            }
+        }
+        setViewGroupEnabled(binding.layoutStorageDirectoryContainer, enabled)
+        setViewGroupEnabled(binding.layoutAutomaticBackupsContainer, enabled)
     }
 
     companion object {
