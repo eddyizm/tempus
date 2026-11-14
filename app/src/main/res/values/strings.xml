@@ -931,7 +931,7 @@
     <string name="la_perms_nearby_devices_description">Required to discover other deivces through UPnP and Chromecast.</string>
 
     <string name="la_backups_section_manual_title">Manual Backup</string>
-    <string name="la_backups_section_manual_description">Export your current data to a file or import from a previous backup to restore your data.</string>
+    <string name="la_backups_section_manual_description">Export your app settings to a file or import from a previous backup. Login credentials are not included.</string>
     <string name="la_backups_section_manual_button_export">Export</string>
     <string name="la_backups_section_manual_button_import">Import</string>
     <string name="la_backups_section_storage_title">Storage Directory</string>
