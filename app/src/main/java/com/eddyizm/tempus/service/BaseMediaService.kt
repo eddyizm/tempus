@@ -778,6 +778,8 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             val currentPosition = oldPlayer.currentPosition
             val isPlaying = oldPlayer.playWhenReady
             oldPlayer.stop()
+            val repeatFrom = if (oldPlayer.isCommandAvailable(Player.COMMAND_SET_REPEAT_MODE)) oldPlayer else exoplayer
+            if (oldPlayer is UpnpPlayer || newPlayer is UpnpPlayer) newPlayer.repeatMode = repeatFrom.repeatMode
             newPlayer.setMediaItems(currentQueue, currentIndex, currentPosition)
             newPlayer.playWhenReady = isPlaying
             newPlayer.prepare()

@@ -55,6 +55,7 @@ class UpnpPlayer(
     @Volatile private var index = 0
     @Volatile private var playWhenReady = false
     @Volatile private var playbackState = Player.STATE_IDLE
+    @Volatile private var repeatMode = Player.REPEAT_MODE_OFF
     @Volatile private var positionMs = 0L
         set(value) {
             field = value
@@ -123,6 +124,8 @@ class UpnpPlayer(
      */
     @Volatile private var handoverOnPlay = false
     private val isKodi = device.modelName.equals("Kodi", ignoreCase = true)
+    private val commands = if (isKodi) COMMANDS.withoutRepeat() else COMMANDS
+    private val commandsWithVolume = if (isKodi) COMMANDS_WITH_VOLUME.withoutRepeat() else COMMANDS_WITH_VOLUME
 
     /** When a station was paused, until a reading says whether the renderer really did. */
     @Volatile private var stationPausedAt = 0L
@@ -199,7 +202,7 @@ class UpnpPlayer(
 
         val volume = deviceVolume
         val state = State.Builder()
-            .setAvailableCommands(if (volume != null) COMMANDS_WITH_VOLUME else COMMANDS)
+            .setAvailableCommands(if (volume != null) commandsWithVolume else commands)
             .setPlayerError(error)
             .setPlaybackState(
                 when {
@@ -212,6 +215,7 @@ class UpnpPlayer(
             .setPlayWhenReady(playWhenReady, Player.PLAY_WHEN_READY_CHANGE_REASON_USER_REQUEST)
             .setPlaylist(items)
             .setCurrentMediaItemIndex(index.coerceIn(0, maxOf(0, items.size - 1)))
+            .setRepeatMode(repeatMode)
             .setContentPositionMs(position)
 
         if (volume != null) {
@@ -275,9 +279,16 @@ class UpnpPlayer(
         )
     }
 
+    override fun handleSetRepeatMode(repeatMode: Int): ListenableFuture<*> {
+        val nextUrlBefore = urlOf(nextEntry())
+        this.repeatMode = repeatMode
+        return if (urlOf(nextEntry()) != nextUrlBefore) worker.submit<Unit> { sendNextTrack() }
+        else Futures.immediateVoidFuture()
+    }
+
     private fun editQueue(edit: (MutableList<Entry>) -> Unit): ListenableFuture<*> {
         val playingUid = currentEntry()?.uid
-        val nextUrlBefore = urlOf(playlist.getOrNull(index + 1))
+        val nextUrlBefore = urlOf(nextEntry())
 
         val queue = playlist.toMutableList()
         edit(queue)
@@ -301,7 +312,7 @@ class UpnpPlayer(
                 durationUs = C.TIME_UNSET
                 loadLater(seekToMs = 0L)
             }
-            urlOf(queue.getOrNull(index + 1)) != nextUrlBefore ->
+            urlOf(nextEntry()) != nextUrlBefore ->
                 worker.submit<Unit> { sendNextTrack() }
             else -> Futures.immediateVoidFuture()
         }
@@ -690,8 +701,10 @@ class UpnpPlayer(
     // Only while playing, or filling the slot just consumed extends playback somebody asked to end.
     private fun sendNextTrack() {
         if (!playWhenReady) return
-        val next = playlist.getOrNull(index + 1) ?: return
+        val next = nextEntry() ?: return
         val nextUrl = urlOf(next) ?: return
+        // A renderer handed its own URL as the next track loops it without TrackURI ever changing.
+        if (nextUrl == urlOf(currentEntry())) return
         try {
             controlPoint.setNextAvTransportUri(device, nextUrl, metadataFor(next.item, nextUrl))
             nextTrackSentFor = nextUrl
@@ -720,8 +733,20 @@ class UpnpPlayer(
         (currentEntry()?.item?.mediaMetadata?.extras?.getInt("duration", 0) ?: 0).toLong() * 1000L
 
     // TrackURI is the URL the renderer actually has open, and it drifts when it advances on its own.
-    private fun followRenderer(trackUri: String?, playedMs: Long, lengthMs: Long): Boolean {
+    private fun followRenderer(trackUri: String?, playedMs: Long, lengthMs: Long, endMs: Long): Boolean {
         if (trackUri.isNullOrBlank() || trackUri == urlOf(currentEntry())) return false
+
+        val notInTheQueue = playlist.none { urlOf(it) == trackUri }
+        val nearTheEndOffKodi = !isKodi && !(endMs > 0 && playedMs < endMs - END_WINDOW_MS)
+        if (trackUri == nextTrackSentFor && trackUri != urlOf(nextEntry()) && (notInTheQueue || nearTheEndOffKodi)) {
+            if (nextIndexToPlay() == null) {
+                stopRenderer("on a next track the queue no longer has")
+                nextTrackSentFor = null
+            }
+            playNextOrEnd(countsAsPlayed(playedMs, lengthMs))
+            invalidateLater()
+            return true
+        }
 
         // The handover first, since a song queued twice matches its earlier copy and goes backwards.
         val handedOver = index + 1
@@ -780,7 +805,7 @@ class UpnpPlayer(
             // A stopped LG C1 still reports its last URL, and following it replayed a finished track.
             if (transport["CurrentTransportState"] !in STOPPED_STATES) {
                 position["TrackURI"]?.takeIf { it.isNotBlank() }?.let { rendererUrl = it }
-                if (followRenderer(position["TrackURI"], playedMs, lengthMs)) return
+                if (followRenderer(position["TrackURI"], playedMs, lengthMs, endMs)) return
             }
 
             // TRANSITIONING is also what a renderer answers while failing to fetch, so not started.
@@ -908,18 +933,22 @@ class UpnpPlayer(
         }
 
         // A renderer holding the next track reports stopped for a moment before starting it.
-        val next = playlist.getOrNull(index + 1)
-        val holdsNext = next != null && nextTrackSentFor == urlOf(next)
+        val held = nextTrackSentFor
+        val holdsNext = held != null && held != urlOf(entry)
         if (holdsNext && stoppedAtEndPolls < MAX_POLLS_AWAITING_HANDOVER) {
             stoppedAtEndPolls += 1
             return
         }
         stoppedAtEndPolls = 0
 
-        val counted = countsAsPlayed(playedMs, lengthMs)
-        if (index + 1 < playlist.size) {
+        playNextOrEnd(countsAsPlayed(playedMs, lengthMs))
+    }
+
+    private fun playNextOrEnd(counted: Boolean) {
+        val nextIndex = nextIndexToPlay()
+        if (nextIndex != null) {
             rendererAdvancedItself = counted
-            index += 1
+            index = nextIndex
             positionMs = 0
             durationUs = C.TIME_UNSET
             rendererStarted = false
@@ -927,12 +956,16 @@ class UpnpPlayer(
             playedHighWaterMs = 0
             loadCurrent(seekToMs = 0)
         } else {
-            playWhenReady = false
-            updateWakeLock()
-            // The service submits an ended queue on its own, so a stop that did not count is idle.
-            playbackState = if (counted) Player.STATE_ENDED else Player.STATE_IDLE
-            stopPolling()
+            endQueue(counted)
         }
+    }
+
+    private fun endQueue(counted: Boolean) {
+        playWhenReady = false
+        updateWakeLock()
+        // The service submits an ended queue on its own, so a stop that did not count is idle.
+        playbackState = if (counted) Player.STATE_ENDED else Player.STATE_IDLE
+        stopPolling()
     }
 
     private fun followOutsidePlayPause(rendererPlaying: Boolean) {
@@ -960,6 +993,14 @@ class UpnpPlayer(
     }
 
     private fun currentEntry(): Entry? = playlist.getOrNull(index)
+
+    private fun nextIndexToPlay(): Int? = nextIndexOf(
+        index,
+        playlist.size,
+        if (isStation(currentEntry())) Player.REPEAT_MODE_OFF else repeatMode
+    )
+
+    private fun nextEntry(): Entry? = nextIndexToPlay()?.let { playlist.getOrNull(it) }
 
     private fun metadataFor(item: MediaItem, url: String): String {
         val metadata = item.mediaMetadata
@@ -1123,6 +1164,7 @@ class UpnpPlayer(
             Player.COMMAND_GET_METADATA,
             // Without it the session strips the tracks from what a controller sees.
             Player.COMMAND_GET_TRACKS,
+            Player.COMMAND_SET_REPEAT_MODE,
             Player.COMMAND_RELEASE
         ).build()
 
@@ -1135,6 +1177,9 @@ class UpnpPlayer(
             Player.COMMAND_ADJUST_DEVICE_VOLUME_WITH_FLAGS
         ).build()
 
+        private fun Player.Commands.withoutRepeat() =
+            buildUpon().remove(Player.COMMAND_SET_REPEAT_MODE).build()
+
         // Never the item's own URL, which a download recorded long ago and a renderer has to fetch.
         @JvmStatic
         fun streamUrlFor(item: MediaItem): String? =
@@ -1143,6 +1188,15 @@ class UpnpPlayer(
             } else {
                 item.localConfiguration?.uri?.toString()
             }
+
+        @JvmStatic
+        fun nextIndexOf(index: Int, size: Int, repeatMode: Int): Int? = when {
+            index !in 0 until size -> null
+            repeatMode == Player.REPEAT_MODE_ONE -> index
+            index + 1 < size -> index + 1
+            repeatMode == Player.REPEAT_MODE_ALL -> 0
+            else -> null
+        }
 
         @JvmStatic
         fun asMillis(clock: String?): Long? {
