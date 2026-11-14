@@ -154,6 +154,8 @@ class LoginBackupFragment : Fragment() {
             prefs,
             oldLanguage,
             oldEqualizer)
+
+        restartAppFully()
     }
 
     private fun hotReloadSettings(
@@ -245,6 +247,19 @@ class LoginBackupFragment : Fragment() {
         }
         setViewGroupEnabled(binding.layoutStorageDirectoryContainer, enabled)
         setViewGroupEnabled(binding.layoutAutomaticBackupsContainer, enabled)
+    }
+
+    private fun restartAppFully() {
+        val context = requireContext()
+        val packageName = context.packageName
+        val intent = context.packageManager.getLaunchIntentForPackage(packageName)?.apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+
+        if (intent != null) {
+            context.startActivity(intent)
+            Runtime.getRuntime().exit(0)
+        }
     }
 
     companion object {
