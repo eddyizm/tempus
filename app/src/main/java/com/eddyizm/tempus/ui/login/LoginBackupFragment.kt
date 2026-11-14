@@ -130,7 +130,7 @@ class LoginBackupFragment : Fragment() {
         val oldLanguage: String? = prefs.getString("language", "default")
         val oldEqualizer: String = prefs.getString("selected_equalizer", "0")!!
 
-        val json = readTextFile(uri, SETTINGS_BACKUP_MAX_BYTES)
+        val json = readSettingsFile(uri)
 
         val count: Int
         if (json != null) {
@@ -203,17 +203,17 @@ class LoginBackupFragment : Fragment() {
         }
     }
 
-    private fun readTextFile(uri: Uri, maxBytes: Int): String? {
+    private fun readSettingsFile(uri: Uri): String? {
         try {
             requireContext().contentResolver.openInputStream(uri).use { `in` ->
                 if (`in` == null) return null
                 val bytes = ByteArrayOutputStream()
                 val buffer = ByteArray(4096)
                 var read: Int
-                while ((`in`.read(buffer).also { read = it }) != -1 && bytes.size() <= maxBytes) {
+                while ((`in`.read(buffer).also { read = it }) != -1 && bytes.size() <= SETTINGS_BACKUP_MAX_BYTES) {
                     bytes.write(buffer, 0, read)
                 }
-                return if (bytes.size() <= maxBytes) String(
+                return if (bytes.size() <= SETTINGS_BACKUP_MAX_BYTES) String(
                     bytes.toByteArray(),
                     StandardCharsets.UTF_8
                 ) else
