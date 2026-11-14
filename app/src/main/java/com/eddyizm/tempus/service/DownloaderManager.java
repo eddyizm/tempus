@@ -89,14 +89,10 @@ public class DownloaderManager {
         return requested.contains(mediaId);
     }
 
-    public boolean download(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
-        String downloadUri = mediaItem.requestMetadata != null && mediaItem.requestMetadata.mediaUri != null
-                ? mediaItem.requestMetadata.mediaUri.toString()
-                : null;
-        MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);
-        if (downloadUri != null) {
-            download.setDownloadUri(downloadUri);
-        }
+    private DownloadRequest prepare(MediaItem mediaItem, com.eddyizm.tempus.model.Download download) {
+        MusicUtil.applyTranscodedDownloadMetadata(download);
+        download.setDownloadUri(mediaItem.requestMetadata.mediaUri.toString());
+        // Marked before the send so a completion racing this call cannot leave the id behind.
         DownloadRequest request = buildDownloadRequest(mediaItem);
         requested.add(mediaItem.mediaId);
         insertDatabase(download);
