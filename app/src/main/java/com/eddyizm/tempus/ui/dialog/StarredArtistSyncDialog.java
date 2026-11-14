@@ -8,24 +8,16 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.DialogStarredArtistSyncBinding;
-import com.eddyizm.tempus.model.Download;
-import com.eddyizm.tempus.util.DownloadUtil;
-import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.Preferences;
-import com.eddyizm.tempus.viewmodel.StarredArtistsSyncViewModel;
+import com.eddyizm.tempus.util.StarredSync;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
-import java.util.stream.Collectors;
 
 @OptIn(markerClass = UnstableApi.class)
 public class StarredArtistSyncDialog extends DialogFragment {
-    private StarredArtistsSyncViewModel starredArtistsSyncViewModel;
-
     private Runnable onCancel;
 
     public StarredArtistSyncDialog(Runnable onCancel) {
@@ -36,8 +28,6 @@ public class StarredArtistSyncDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         DialogStarredArtistSyncBinding bind = DialogStarredArtistSyncBinding.inflate(getLayoutInflater());
-
-        starredArtistsSyncViewModel = new ViewModelProvider(requireActivity()).get(StarredArtistsSyncViewModel.class);
 
         return new MaterialAlertDialogBuilder(getActivity())
                 .setView(bind.getRoot())
@@ -60,15 +50,8 @@ public class StarredArtistSyncDialog extends DialogFragment {
         if (dialog != null) {
             Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                starredArtistsSyncViewModel.getStarredArtistSongs(requireActivity()).observe(this, allSongs -> {
-                    if (allSongs != null && !allSongs.isEmpty()) {
-                        DownloadUtil.getDownloadTracker(context).download(
-                                MappingUtil.mapDownloads(allSongs),
-                                allSongs.stream().map(Download::new).collect(Collectors.toList())
-                        );
-                    }
-                    dialog.dismiss();
-                });
+                StarredSync.syncArtists(context);
+                dialog.dismiss();
             });
 
             Button neutralButton = dialog.getButton(Dialog.BUTTON_NEUTRAL);

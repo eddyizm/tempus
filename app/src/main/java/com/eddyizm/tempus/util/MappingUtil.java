@@ -28,10 +28,12 @@ import com.google.common.collect.ImmutableList;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.nio.charset.StandardCharsets;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -248,15 +250,30 @@ public class MappingUtil {
     public static List<MediaItem> mapDownloads(List<Child> items) {
         ArrayList<MediaItem> downloads = new ArrayList<>();
 
+        // One read for the whole list: a lookup per song, on a thread joined each time, made
+        // queueing a starred sync of thousands of songs take seconds.
+        Map<String, Download> rows = Preferences.preferTranscodedDownload()
+                ? Collections.emptyMap()
+                : new DownloadRepository().getDownloads(items.stream().map(Child::getId).collect(Collectors.toList()));
+
         for (int i = 0; i < items.size(); i++) {
-            downloads.add(mapDownload(items.get(i)));
+            Child item = items.get(i);
+            downloads.add(mapDownload(item, getDownloadUri(item.getId(), rows.get(item.getId()))));
         }
 
         return downloads;
     }
 
     public static MediaItem mapDownload(Child media) {
+        Download row = Preferences.preferTranscodedDownload() ? null : new DownloadRepository().getDownload(media.getId());
+        return mapDownload(media, getDownloadUri(media.getId(), row));
+    }
 
+    private static Uri getDownloadUri(String id, Download row) {
+        return Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(id) : MusicUtil.getDownloadUri(id, row);
+    }
+
+    private static MediaItem mapDownload(Child media, Uri uri) {
         Bundle bundle = new Bundle();
         bundle.putInt("samplingRate", media.getSamplingRate() != null ? media.getSamplingRate() : 0);
         bundle.putInt("bitDepth", media.getBitDepth() != null ? media.getBitDepth() : 0);
@@ -279,11 +296,11 @@ public class MappingUtil {
                 .setRequestMetadata(
                         new MediaItem.RequestMetadata.Builder()
                                 .setExtras(bundle)
-                                .setMediaUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
+                                .setMediaUri(uri)
                                 .build()
                 )
                 .setMimeType(MimeTypes.BASE_TYPE_AUDIO)
-                .setUri(Preferences.preferTranscodedDownload() ? MusicUtil.getTranscodedDownloadUri(media.getId()) : MusicUtil.getDownloadUri(media.getId()))
+                .setUri(uri)
                 .build();
     }
 

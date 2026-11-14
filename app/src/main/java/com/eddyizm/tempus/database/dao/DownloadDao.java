@@ -27,6 +27,10 @@ public interface DownloadDao {
     @Query("SELECT COUNT(*) FROM download WHERE download_state = 1")
     int countDownloaded();
 
+    /** Rows in any state. Keep the list within SQLite's bound-argument limit. */
+    @Query("SELECT * FROM download WHERE id IN (:ids)")
+    List<Download> getByIds(List<String> ids);
+
     @Query("SELECT DISTINCT album_id FROM download WHERE NULLIF(album_artist, '') IS NULL AND NULLIF(album_id, '') IS NOT NULL AND download_state = 1")
     List<String> getAlbumIdsWithoutAlbumArtist();
 
