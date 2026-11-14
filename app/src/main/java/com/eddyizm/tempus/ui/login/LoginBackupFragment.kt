@@ -130,23 +130,25 @@ class LoginBackupFragment : Fragment() {
         val oldLanguage: String? = prefs.getString("language", "default")
         val oldEqualizer: String = prefs.getString("selected_equalizer", "0")!!
 
-        val json = readSettingsFile(uri)
+        val context = requireContext()
+        val count = readSettingsFile(uri)?.let {
+            SettingsBackup.importSettings(it, prefs, keys(context))
+        } ?: -1
 
-        val count: Int
-        if (json != null) {
-            count = SettingsBackup.importSettings(json, prefs, keys(requireContext()))
-            Toast.makeText(requireContext(),
-                getString(R.string.settings_imported, count),
-                Toast.LENGTH_SHORT
-            ).show()
-        } else {
+        if (count < 0) {
             Toast.makeText(
-                requireContext(),
+                context,
                 R.string.settings_import_invalid,
                 Toast.LENGTH_LONG
             ).show()
             return
         }
+
+        Toast.makeText(
+            context,
+            getString(R.string.settings_imported, count),
+            Toast.LENGTH_SHORT
+        ).show()
 
         hotReloadSettings(
             prefs,
