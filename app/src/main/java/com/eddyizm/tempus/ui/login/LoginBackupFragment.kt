@@ -1,12 +1,8 @@
 package com.eddyizm.tempus.ui.login
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.net.Uri
 import android.os.Bundle
-import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,10 +20,7 @@ import androidx.preference.PreferenceManager
 import com.eddyizm.tempus.R
 import com.eddyizm.tempus.databinding.FragmentLoginBackupBinding
 import com.eddyizm.tempus.helper.ThemeHelper
-import com.eddyizm.tempus.service.BaseMediaService
-import com.eddyizm.tempus.service.BaseMediaService.LocalBinder
 import com.eddyizm.tempus.service.DownloaderService
-import com.eddyizm.tempus.service.MediaService
 import com.eddyizm.tempus.util.Preferences
 import com.eddyizm.tempus.util.SettingsBackup
 import com.eddyizm.tempus.util.SettingsBackup.keys

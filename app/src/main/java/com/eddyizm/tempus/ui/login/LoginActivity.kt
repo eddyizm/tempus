@@ -3,10 +3,12 @@ package com.eddyizm.tempus.ui.login
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.media3.common.util.UnstableApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.eddyizm.tempus.databinding.ActivityLoginBinding
 import com.eddyizm.tempus.R;
@@ -88,6 +90,7 @@ class LoginActivity : AppCompatActivity() {
     private inner class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
         override fun getItemCount(): Int = 5
 
+        @OptIn(UnstableApi::class)
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 GREETER_FRAGMENT -> {
