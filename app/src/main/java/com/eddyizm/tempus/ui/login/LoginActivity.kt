@@ -1,24 +1,26 @@
 package com.eddyizm.tempus.ui.login
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.media3.common.util.UnstableApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.eddyizm.tempus.databinding.ActivityLoginBinding
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.helper.ThemeHelper
 import com.google.android.material.tabs.TabLayoutMediator
 
-private const val GREETER_FRAGMENT: Int     = 0
-private const val PERMISSIONS_FRAGMENT: Int = 1
-private const val THEMES_FRAGMENT: Int      = 2
-private const val SERVERS_FRAGMENT: Int     = 3
+private const val GREETER_IDX: Int = 0
+private const val PERMISSIONS_IDX: Int = 1
+private const val BACKUPS_IDX: Int = 2
+private const val THEMES_IDX: Int = 3
+private const val SERVERS_IDX: Int = 4
+
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -77,6 +79,7 @@ class LoginActivity : AppCompatActivity() {
             tab.text = when (position) {
                 GREETER_FRAGMENT     -> getString(R.string.la_tab_greeter)
                 PERMISSIONS_FRAGMENT -> getString(R.string.la_tab_permission)
+                BACKUPS_FRAGMENT      -> getString(R.string.la_tab_backup)
                 THEMES_FRAGMENT      -> getString(R.string.la_tab_themes)
                 SERVERS_FRAGMENT     -> getString(R.string.la_tab_server)
                 else -> ""
@@ -85,8 +88,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private inner class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
-        override fun getItemCount(): Int = 4
+        override fun getItemCount(): Int = 5
 
+        @OptIn(UnstableApi::class)
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 GREETER_FRAGMENT -> {
@@ -98,6 +102,12 @@ class LoginActivity : AppCompatActivity() {
                 PERMISSIONS_FRAGMENT -> {
                     binding.topAppBar.title = getString(R.string.la_appbar_permission_title)
                     LoginPermissionFragment.newInstance(
+                        singlePageMode = hideTabLayout
+                    )
+                }
+                BACKUPS_FRAGMENT -> {
+                    binding.topAppBar.title = getString(R.string.la_appbar_backup_title)
+                    LoginBackupFragment.newInstance(
                         singlePageMode = hideTabLayout
                     )
                 }
@@ -118,5 +128,13 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    companion object {
+        const val GREETER_FRAGMENT: Int = GREETER_IDX
+        const val PERMISSIONS_FRAGMENT: Int = PERMISSIONS_IDX
+        const val BACKUPS_FRAGMENT: Int = BACKUPS_IDX
+        const val THEMES_FRAGMENT: Int = THEMES_IDX
+        const val SERVERS_FRAGMENT: Int = SERVERS_IDX
     }
 }
