@@ -2,6 +2,8 @@ package com.eddyizm.tempus.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -507,8 +509,9 @@ class LoginServerFragment : Fragment() {
                     requireActivity(),
                     { alias ->
                         if (!alias.isNullOrBlank()) {
-                            requireActivity().runOnUiThread {
-                                _binding?.serverCertField?.setText(alias)
+                            Handler(Looper.getMainLooper()).post {
+                                val binding = _binding ?: return@post
+                                binding.serverCertField.setText(alias)
                             }
                         }
                     },
