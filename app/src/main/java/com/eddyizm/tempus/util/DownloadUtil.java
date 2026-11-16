@@ -116,13 +116,85 @@ public final class DownloadUtil {
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
-                .addNetworkInterceptor(ServerHeaders.createInterceptor());
-        if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
-            builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
-                    ClientCertManager.INSTANCE.getTrustManager());
-            SelfSignedSslHelper.INSTANCE.applyHostnameVerifierIfEnabled(builder);
-        }
+                .addNetworkInterceptor(ServerHeaders.createInterceptor())
+                .sslSocketFactory(new DynamicSslSocketFactory(), new DynamicX509TrustManager())
+                .hostnameVerifier((hostname, session) ->
+                        !SelfSignedSslHelper.INSTANCE.isEnabled()
+                                ? javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier().verify(hostname, session)
+                                : SelfSignedSslHelper.INSTANCE.getPermissiveHostnameVerifier().verify(hostname, session));
         return builder.build();
+    }
+
+    /**
+     * Delegates to the current trust manager so a cached client follows later TLS policy refreshes.
+     */
+    private static final class DynamicX509TrustManager implements javax.net.ssl.X509TrustManager {
+        private javax.net.ssl.X509TrustManager current() {
+            return SelfSignedSslHelper.INSTANCE.effectiveTrustManager();
+        }
+
+        @Override
+        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+                throws java.security.cert.CertificateException {
+            current().checkClientTrusted(chain, authType);
+        }
+
+        @Override
+        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+                throws java.security.cert.CertificateException {
+            current().checkServerTrusted(chain, authType);
+        }
+
+        @Override
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return current().getAcceptedIssuers();
+        }
+    }
+
+    /**
+     * Delegates to the current {@link ClientCertManager} socket factory so a cached client follows
+     * later TLS policy refreshes (for example self-signed toggles/server switches).
+     */
+    private static final class DynamicSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
+        private javax.net.ssl.SSLSocketFactory current() {
+            javax.net.ssl.SSLSocketFactory factory = ClientCertManager.INSTANCE.getSslSocketFactory();
+            return factory != null ? factory : (javax.net.ssl.SSLSocketFactory) javax.net.ssl.SSLSocketFactory.getDefault();
+        }
+
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return current().getDefaultCipherSuites();
+        }
+
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return current().getSupportedCipherSuites();
+        }
+
+        @Override
+        public java.net.Socket createSocket(java.net.Socket s, String host, int port, boolean autoClose) throws java.io.IOException {
+            return current().createSocket(s, host, port, autoClose);
+        }
+
+        @Override
+        public java.net.Socket createSocket(String host, int port) throws java.io.IOException {
+            return current().createSocket(host, port);
+        }
+
+        @Override
+        public java.net.Socket createSocket(String host, int port, java.net.InetAddress localHost, int localPort) throws java.io.IOException {
+            return current().createSocket(host, port, localHost, localPort);
+        }
+
+        @Override
+        public java.net.Socket createSocket(java.net.InetAddress host, int port) throws java.io.IOException {
+            return current().createSocket(host, port);
+        }
+
+        @Override
+        public java.net.Socket createSocket(java.net.InetAddress address, int port, java.net.InetAddress localAddress, int localPort) throws java.io.IOException {
+            return current().createSocket(address, port, localAddress, localPort);
+        }
     }
 
     public static synchronized DataSource.Factory getHttpDataSourceFactoryForRadio() {
