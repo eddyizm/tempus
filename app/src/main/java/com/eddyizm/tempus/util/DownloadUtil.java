@@ -32,22 +32,35 @@ import com.eddyizm.tempus.service.DownloaderManager;
 import com.eddyizm.tempus.subsonic.models.Child;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.IntConsumer;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.IntConsumer;
+import java.util.stream.Collectors;
 
+import okhttp3.Call;
+import okhttp3.EventListener;
 import okhttp3.OkHttpClient;
 import okhttp3.Protocol;
+
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.X509TrustManager;
 
 @UnstableApi
 public final class DownloadUtil {
@@ -61,6 +74,7 @@ public final class DownloadUtil {
 
     private static DataSource.Factory dataSourceFactory;
     private static DataSource.Factory httpDataSourceFactory;
+    private static OkHttpClient customHeadersHttpClient;
     private static DatabaseProvider databaseProvider;
     private static File streamingCacheDirectory;
     private static File downloadDirectory;
@@ -69,6 +83,11 @@ public final class DownloadUtil {
     private static DownloadManager downloadManager;
     private static DownloaderManager downloaderManager;
     private static DownloadNotificationHelper downloadNotificationHelper;
+
+    // Tracks custom-header calls (including body-streaming calls no longer in Dispatcher queues)
+    // so TLS policy changes can cancel active connections and prevent reuse under the old policy.
+    private static final Set<Call> activeCustomHeaderCalls = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private static final AtomicLong customHeaderTlsGeneration = new AtomicLong();
 
     public static boolean useExtensionRenderers() {
         return true;
@@ -93,9 +112,10 @@ public final class DownloadUtil {
                     .setAllowCrossProtocolRedirects(true);
             // Requests to the signed-in server that need its custom headers go through OkHttp,
             // which re-checks the host on every redirect; see CustomHeadersDataSource.
+            customHeadersHttpClient = buildCustomHeadersHttpClient();
             DataSource.Factory headersFactory = new CustomHeadersDataSource.Factory(
                     serverHttpFactory,
-                    new OkHttpDataSource.Factory(buildCustomHeadersHttpClient()),
+                    new OkHttpDataSource.Factory(customHeadersHttpClient),
                     url -> !ServerHeaders.getHeadersForActiveServer(url).isEmpty());
             httpDataSourceFactory = new ResolvingDataSource.Factory(headersFactory, ConnectionUtil::moveStreamToAddressInUse);
         }
@@ -108,45 +128,92 @@ public final class DownloadUtil {
      * {@link DefaultHttpDataSource} and the client certificate, if one is set up.
      *
      * <p>HTTP/1.1 only, as {@link DefaultHttpDataSource}: over HTTP/2, a reconnect by
-     * {@link StallDetectingDataSource} would share the stuck connection.
+     * stall-detecting data sources would share the stuck connection.
      */
     @VisibleForTesting
     static OkHttpClient buildCustomHeadersHttpClient() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+        // Keep hostname verification enabled (default). Trust is narrowed via the user-approved
+        // pinned certificate in SelfSignedSslHelper when allow-self-signed is enabled.
+        return new OkHttpClient.Builder()
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(ServerHeaders.createInterceptor())
+                .eventListener(new TlsPolicyTrackingEventListener(customHeaderTlsGeneration.get()))
                 .sslSocketFactory(new DynamicSslSocketFactory(), new DynamicX509TrustManager())
-                .hostnameVerifier((hostname, session) ->
-                        !SelfSignedSslHelper.INSTANCE.isEnabled()
-                                ? javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier().verify(hostname, session)
-                                : SelfSignedSslHelper.INSTANCE.getPermissiveHostnameVerifier().verify(hostname, session));
-        return builder.build();
+                .build();
+    }
+
+    /**
+     * TLS policy (self-signed allow/pin, client cert, etc.) changed: prevent reuse of connections
+     * established under the previous policy by the cached custom-header client.
+     *
+     * <p>Evicts idle pooled connections and cancels tracked active calls (including body-streaming
+     * calls that may no longer be in dispatcher queues) so they cannot be returned/reused under the
+     * new policy. Uses a generation marker to cancel calls that race with invalidation.
+     */
+    public static synchronized void invalidateTlsConnections() {
+        customHeaderTlsGeneration.incrementAndGet();
+        if (customHeadersHttpClient != null) {
+            customHeadersHttpClient.dispatcher().cancelAll();
+            customHeadersHttpClient.connectionPool().evictAll();
+        }
+        for (Call call : activeCustomHeaderCalls) {
+            call.cancel();
+        }
+        activeCustomHeaderCalls.clear();
+    }
+
+    private static final class TlsPolicyTrackingEventListener extends EventListener {
+        private final long generationAtCreation;
+
+        TlsPolicyTrackingEventListener(long generationAtCreation) {
+            this.generationAtCreation = generationAtCreation;
+        }
+
+        @Override
+        public void callStart(Call call) {
+            // Raced with or created after a policy refresh: do not allow under old policy context.
+            if (generationAtCreation != customHeaderTlsGeneration.get()) {
+                call.cancel();
+                return;
+            }
+            activeCustomHeaderCalls.add(call);
+        }
+
+        @Override
+        public void callEnd(Call call) {
+            activeCustomHeaderCalls.remove(call);
+        }
+
+        @Override
+        public void callFailed(Call call, IOException ioe) {
+            activeCustomHeaderCalls.remove(call);
+        }
     }
 
     /**
      * Delegates to the current trust manager so a cached client follows later TLS policy refreshes.
      */
-    private static final class DynamicX509TrustManager implements javax.net.ssl.X509TrustManager {
-        private javax.net.ssl.X509TrustManager current() {
+    private static final class DynamicX509TrustManager implements X509TrustManager {
+        private X509TrustManager current() {
             return SelfSignedSslHelper.INSTANCE.effectiveTrustManager();
         }
 
         @Override
-        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
-                throws java.security.cert.CertificateException {
+        public void checkClientTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
             current().checkClientTrusted(chain, authType);
         }
 
         @Override
-        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
-                throws java.security.cert.CertificateException {
+        public void checkServerTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
             current().checkServerTrusted(chain, authType);
         }
 
         @Override
-        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+        public X509Certificate[] getAcceptedIssuers() {
             return current().getAcceptedIssuers();
         }
     }
@@ -155,10 +222,10 @@ public final class DownloadUtil {
      * Delegates to the current {@link ClientCertManager} socket factory so a cached client follows
      * later TLS policy refreshes (for example self-signed toggles/server switches).
      */
-    private static final class DynamicSslSocketFactory extends javax.net.ssl.SSLSocketFactory {
-        private javax.net.ssl.SSLSocketFactory current() {
-            javax.net.ssl.SSLSocketFactory factory = ClientCertManager.INSTANCE.getSslSocketFactory();
-            return factory != null ? factory : (javax.net.ssl.SSLSocketFactory) javax.net.ssl.SSLSocketFactory.getDefault();
+    private static final class DynamicSslSocketFactory extends SSLSocketFactory {
+        private SSLSocketFactory current() {
+            SSLSocketFactory factory = ClientCertManager.INSTANCE.getSslSocketFactory();
+            return factory != null ? factory : (SSLSocketFactory) SSLSocketFactory.getDefault();
         }
 
         @Override
@@ -172,27 +239,27 @@ public final class DownloadUtil {
         }
 
         @Override
-        public java.net.Socket createSocket(java.net.Socket s, String host, int port, boolean autoClose) throws java.io.IOException {
+        public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
             return current().createSocket(s, host, port, autoClose);
         }
 
         @Override
-        public java.net.Socket createSocket(String host, int port) throws java.io.IOException {
+        public Socket createSocket(String host, int port) throws IOException {
             return current().createSocket(host, port);
         }
 
         @Override
-        public java.net.Socket createSocket(String host, int port, java.net.InetAddress localHost, int localPort) throws java.io.IOException {
+        public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
             return current().createSocket(host, port, localHost, localPort);
         }
 
         @Override
-        public java.net.Socket createSocket(java.net.InetAddress host, int port) throws java.io.IOException {
+        public Socket createSocket(InetAddress host, int port) throws IOException {
             return current().createSocket(host, port);
         }
 
         @Override
-        public java.net.Socket createSocket(java.net.InetAddress address, int port, java.net.InetAddress localAddress, int localPort) throws java.io.IOException {
+        public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
             return current().createSocket(address, port, localAddress, localPort);
         }
     }
@@ -201,12 +268,12 @@ public final class DownloadUtil {
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ORIGINAL_SERVER);
         CookieHandler.setDefault(cookieManager);
-        
+
         // Create a factory with ICY metadata support for radio streams
         Map<String, String> defaultRequestProperties = new HashMap<>();
         defaultRequestProperties.put("Icy-MetaData", "1");
         defaultRequestProperties.put("User-Agent", "Tempus/1.0");
-        
+
         return new DefaultHttpDataSource
                 .Factory()
                 .setAllowCrossProtocolRedirects(true)

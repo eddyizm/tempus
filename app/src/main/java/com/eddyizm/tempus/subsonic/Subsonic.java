@@ -23,6 +23,8 @@ public class Subsonic {
 
     private final Version apiVersion = API_MAX_VERSION;
     private final SubsonicPreferences preferences;
+    private final Boolean testAllowSelfSigned;
+    private final String testTrustedServerCert;
 
     private SystemClient systemClient;
     private BrowsingClient browsingClient;
@@ -39,7 +41,25 @@ public class Subsonic {
     private OpenClient openClient;
 
     public Subsonic(SubsonicPreferences preferences) {
+        this(preferences, null, null);
+    }
+
+    public Subsonic(SubsonicPreferences preferences, Boolean testAllowSelfSigned, String testTrustedServerCert) {
         this.preferences = preferences;
+        this.testAllowSelfSigned = testAllowSelfSigned;
+        this.testTrustedServerCert = testTrustedServerCert;
+    }
+
+    public boolean hasTestTrustOverride() {
+        return testAllowSelfSigned != null;
+    }
+
+    public boolean isTestAllowSelfSigned() {
+        return Boolean.TRUE.equals(testAllowSelfSigned);
+    }
+
+    public String getTestTrustedServerCert() {
+        return testTrustedServerCert;
     }
 
     public Version getApiVersion() {

@@ -105,9 +105,10 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
                 .readTimeout(DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(ServerHeaders.createInterceptor());
         if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
+            // Keep hostname verification enabled (default). Trust decisions are delegated to the
+            // current trust manager (including user-approved pinned certs for opted-in servers).
             builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
                     ClientCertManager.INSTANCE.getTrustManager());
-            SelfSignedSslHelper.INSTANCE.applyHostnameVerifierIfEnabled(builder);
         }
         return builder.build();
     }

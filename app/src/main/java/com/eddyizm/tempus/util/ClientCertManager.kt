@@ -38,17 +38,20 @@ object ClientCertManager {
 
     @JvmStatic
     fun refreshSslSocketFactory() {
-        val context = appContext ?: return
-        sslSocketFactory = createSslSocketFactory(context)
+        appContext ?: return
+        sslSocketFactory = createSslSocketFactory(SelfSignedSslHelper.effectiveTrustManager())
         sslSocketFactory?.let {
             // ExoPlayer uses HttpsURLConnection in DefaultHttpDataSource.
-            // Glide configures its OkHttp client with this socket factory in IPv6StringLoader.
             HttpsURLConnection.setDefaultSSLSocketFactory(it)
-            SelfSignedSslHelper.applyDefaultHostnameVerifier()
         }
+        // TLS policy changed: cached HTTP clients must not reuse connections established under
+        // the previous policy.
+        DownloadUtil.invalidateTlsConnections()
     }
 
-    private fun createSslSocketFactory(context: Context): SSLSocketFactory? {
+    @JvmStatic
+    fun createSslSocketFactory(trustManager: X509TrustManager): SSLSocketFactory? {
+        val context = appContext ?: return null
         return try {
             val clientKeyManager = object : X509KeyManager {
                 override fun getClientAliases(keyType: String?, issuers: Array<Principal>?) = null
@@ -76,26 +79,20 @@ object ClientCertManager {
                 override fun getCertificateChain(alias: String?): Array<X509Certificate>? {
                     val clientCert = Preferences.getClientCert()
                     return if (alias == clientCert && clientCert != null) {
-                        KeyChain.getCertificateChain(
-                            context,
-                            clientCert
-                        )
+                        KeyChain.getCertificateChain(context, clientCert)
                     } else null
                 }
 
                 override fun getPrivateKey(alias: String?): PrivateKey? {
                     val clientCert = Preferences.getClientCert()
                     return if (alias == clientCert && clientCert != null) {
-                        KeyChain.getPrivateKey(
-                            context,
-                            clientCert
-                        )
+                        KeyChain.getPrivateKey(context, clientCert)
                     } else null
                 }
             }
 
             val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(SelfSignedSslHelper.effectiveTrustManager()), SecureRandom())
+            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(trustManager), SecureRandom())
             sslContext.socketFactory
         } catch (e: NoSuchAlgorithmException) {
             Log.e(TAG, "Failed setting mTLS", e)
@@ -106,4 +103,3 @@ object ClientCertManager {
         }
     }
 }
-

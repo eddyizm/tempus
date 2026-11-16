@@ -26,8 +26,10 @@ import com.eddyizm.tempus.repository.SystemRepository
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.CustomHeaders
+import com.eddyizm.tempus.util.SelfSignedSslHelper
 import com.eddyizm.tempus.util.ServerHeaders
 import com.eddyizm.tempus.viewmodel.ServerViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 private const val ARG_SINGLE_PAGE_MODE = "single_page_mode"
@@ -43,6 +45,7 @@ class LoginServerFragment : Fragment() {
     private var selectedServerPosition: Int = 0
     private var isInitialSyncDone = false
     private var currentTestId = 0
+    private var pendingTrustedServerCert: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,7 +69,7 @@ class LoginServerFragment : Fragment() {
         super.onDestroyView()
         currentTestId++
         ServerHeaders.setTestServer(null)
-        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(null)
+        SelfSignedSslHelper.clearPendingApprovalCert()
         _binding = null // release from memory
     }
 
@@ -105,7 +108,8 @@ class LoginServerFragment : Fragment() {
             isLowSecurity = false,
             clientCert = "",
             customHeaders = "",
-            allowSelfSigned = false
+            allowSelfSigned = false,
+            trustedServerCert = null
         )
 
         serverViewModel.allServers.observe(viewLifecycleOwner) { servers ->
@@ -121,7 +125,8 @@ class LoginServerFragment : Fragment() {
                     isLowSecurity = server.isLowSecurity,
                     clientCert = server.clientCert,
                     customHeaders = server.customHeaders,
-                    allowSelfSigned = server.allowSelfSigned
+                    allowSelfSigned = server.allowSelfSigned,
+                    trustedServerCert = server.trustedServerCert
                 )
             } ?: emptyList())
             val adapter = ArrayAdapter(
@@ -157,6 +162,7 @@ class LoginServerFragment : Fragment() {
     }
 
     private fun onFirstServerSelected() {
+        pendingTrustedServerCert = null
         binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
         binding.deleteButton.isEnabled = false
         binding.testButton.isEnabled = false
@@ -177,6 +183,7 @@ class LoginServerFragment : Fragment() {
     }
 
     private fun onNonFirstServerSelected(position: Int) {
+        pendingTrustedServerCert = serverList[position].trustedServerCert
         binding.createOrUpdateButton.text = getString(R.string.la_server_button_update)
         binding.deleteButton.isEnabled = true
         binding.testButton.isEnabled = true
@@ -326,6 +333,7 @@ class LoginServerFragment : Fragment() {
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
         val allowSelfSigned: Boolean = s.allowSelfSigned
+        val trustedServerCert: String? = if (allowSelfSigned) s.trustedServerCert else null
 
         App.getInstance().preferences.edit { putString("server_id", serverId) }
         App.getInstance().preferences.edit { putString("server", server) }
@@ -336,6 +344,7 @@ class LoginServerFragment : Fragment() {
         App.getInstance().preferences.edit { putString("client_cert", clientCert) }
         App.getInstance().preferences.edit { putString("custom_headers", customHeaders) }
         App.getInstance().preferences.edit { putBoolean("allow_self_signed", allowSelfSigned) }
+        App.getInstance().preferences.edit { putString("trusted_server_cert", trustedServerCert) }
 
         com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory()
         App.getSubsonicClientInstance(true)
@@ -436,7 +445,8 @@ class LoginServerFragment : Fragment() {
         isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
         clientCert = binding.serverCertField.text.toString(),
         customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null },
-        allowSelfSigned = binding.serverAllowSelfSignedSwitch.isChecked
+        allowSelfSigned = binding.serverAllowSelfSignedSwitch.isChecked,
+        trustedServerCert = if (binding.serverAllowSelfSignedSwitch.isChecked) pendingTrustedServerCert else null
     )
 
     // TODO: Test is only enabled for a saved server. It reads the form, so it could also run for
@@ -444,6 +454,10 @@ class LoginServerFragment : Fragment() {
     // TODO: The test client does not use the form's client certificate; TLS uses the certificate
     //  already loaded by ClientCertManager.
     private fun testConnection() {
+        startConnectionTest(userApprovedPin = null)
+    }
+
+    private fun startConnectionTest(userApprovedPin: String?) {
         if (!inputSanitization()) return
 
         binding.testButton.isEnabled = false
@@ -453,19 +467,32 @@ class LoginServerFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
 
-        val server = serverFromForm(serverList[selectedServerPosition].serverId)
+        val formServer = serverFromForm(serverList[selectedServerPosition].serverId)
+        val server = if (userApprovedPin != null) formServer.copy(trustedServerCert = userApprovedPin) else formServer
         val testServer = ServerContext(
             addresses = listOf(server.address, server.localAddress),
             customHeaders = server.customHeaders
         )
         val testId = ++currentTestId
         ServerHeaders.setTestServer(testServer)
-        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(server.allowSelfSigned)
+        // Bind pending approval state to this specific test attempt.
+        SelfSignedSslHelper.beginTrustCapture()
+        val subsonicClient = App.getSubsonicClientInstanceForTest(
+            server,
+            server.allowSelfSigned,
+            server.trustedServerCert
+        )
 
         SystemRepository().checkUserCredential(
-            App.getSubsonicClientInstance(server),
+            subsonicClient,
             object : SystemCallback {
                 override fun onNetworkFailure(exception: Exception) {
+                    val pendingPin = SelfSignedSslHelper.consumePendingApprovalCert()
+                    if (pendingPin != null && testId == currentTestId) {
+                        ServerHeaders.clearTestServer(testServer)
+                        showUntrustedCertificateApprovalDialog(testId, pendingPin)
+                        return
+                    }
                     showTestResult(
                         testId,
                         testServer,
@@ -476,6 +503,12 @@ class LoginServerFragment : Fragment() {
                 }
 
                 override fun onError(exception: Exception) {
+                    val pendingPin = SelfSignedSslHelper.consumePendingApprovalCert()
+                    if (pendingPin != null && testId == currentTestId) {
+                        ServerHeaders.clearTestServer(testServer)
+                        showUntrustedCertificateApprovalDialog(testId, pendingPin)
+                        return
+                    }
                     // The server answered, so this is not a network fault. With no network at
                     // all it never answered, and the cache makes a 504 of its own that arrives
                     // here instead of through onNetworkFailure.
@@ -488,6 +521,20 @@ class LoginServerFragment : Fragment() {
                 }
 
                 override fun onSuccess(password: String?, token: String?, salt: String?) {
+                    if (testId != currentTestId) {
+                        ServerHeaders.clearTestServer(testServer)
+                        SelfSignedSslHelper.clearPendingApprovalCert()
+                        return
+                    }
+                    // Persist explicitly approved pin after successful retry.
+                    if (userApprovedPin != null) {
+                        pendingTrustedServerCert = userApprovedPin
+                        if (selectedServerPosition != 0) {
+                            val updated = server.copy(trustedServerCert = userApprovedPin)
+                            serverViewModel.updateServer(updated)
+                        }
+                    }
+                    SelfSignedSslHelper.clearPendingApprovalCert()
                     showTestResult(
                         testId,
                         testServer,
@@ -498,6 +545,30 @@ class LoginServerFragment : Fragment() {
                 }
             }
         )
+    }
+
+    private fun showUntrustedCertificateApprovalDialog(testId: Int, certificatePin: String) {
+        if (testId != currentTestId || _binding == null || !isAdded) return
+        val fingerprint = certificatePin.chunked(4).joinToString(" ")
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Untrusted certificate")
+            .setMessage(
+                "The server presented a certificate that is not trusted.\n\n" +
+                    "Only trust this certificate if you are sure it belongs to your server.\n\n" +
+                    "SHA-256 fingerprint:\n$fingerprint"
+            )
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                if (testId == currentTestId) {
+                    binding.testButton.isEnabled = selectedServerPosition != 0
+                }
+            }
+            .setPositiveButton("Trust certificate") { _, _ ->
+                if (testId == currentTestId) {
+                    // Retry only after explicit approval; credentials are sent in the retry request.
+                    startConnectionTest(userApprovedPin = certificatePin)
+                }
+            }
+            .show()
     }
 
     // The answer can arrive after the screen is gone, or after a newer test started. The text is
@@ -511,10 +582,10 @@ class LoginServerFragment : Fragment() {
         duration: Int
     ) {
         ServerHeaders.clearTestServer(testServer)
-        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(null)
+        SelfSignedSslHelper.clearPendingApprovalCert()
         if (testId != currentTestId) return
         val binding = _binding ?: return
-        binding.testButton.isEnabled = true
+        binding.testButton.isEnabled = selectedServerPosition != 0
 
         val message = getString(messageId) + if (detail == null) "" else "\n" + detail
         Toast.makeText(context, message, duration).show()
