@@ -66,6 +66,7 @@ class LoginServerFragment : Fragment() {
         super.onDestroyView()
         currentTestId++
         ServerHeaders.setTestServer(null)
+        com.eddyizm.tempus.util.ClientCertManager.setTestAllowSelfSigned(null)
         _binding = null // release from memory
     }
 
@@ -103,7 +104,8 @@ class LoginServerFragment : Fragment() {
             timestamp = 0,
             isLowSecurity = false,
             clientCert = "",
-            customHeaders = ""
+            customHeaders = "",
+            allowSelfSigned = false
         )
 
         serverViewModel.allServers.observe(viewLifecycleOwner) { servers ->
@@ -118,7 +120,8 @@ class LoginServerFragment : Fragment() {
                     timestamp = server.timestamp,
                     isLowSecurity = server.isLowSecurity,
                     clientCert = server.clientCert,
-                    customHeaders = server.customHeaders
+                    customHeaders = server.customHeaders,
+                    allowSelfSigned = server.allowSelfSigned
                 )
             } ?: emptyList())
             val adapter = ArrayAdapter(
@@ -161,8 +164,13 @@ class LoginServerFragment : Fragment() {
         binding.serverUserField.setText("")
         binding.serverPasswordField.setText("")
         binding.serverPublicUrlField.setText("")
+        binding.serverLocalUrlSwitch.isChecked = false
+        binding.serverLocalUrlFieldContainer.visibility = View.GONE
         binding.serverLocalUrlField.setText("")
+        binding.serverCertSwitch.isChecked = false
+        binding.serverCertFieldContainer.visibility = View.GONE
         binding.serverCertField.setText("")
+        binding.serverAllowSelfSignedSwitch.isChecked = false
         binding.serverHeadersSwitch.isChecked = false
         binding.serverHeadersFieldContainer.visibility = View.GONE
         binding.serverHeadersField.setText("")
@@ -184,6 +192,8 @@ class LoginServerFragment : Fragment() {
             binding.serverLocalUrlFieldContainer.visibility = View.VISIBLE
             binding.serverLocalUrlField.setText(localAddress)
         } else {
+            binding.serverLocalUrlSwitch.isChecked = false
+            binding.serverLocalUrlFieldContainer.visibility = View.GONE
             binding.serverLocalUrlField.setText("") // migrate old null to string
         }
 
@@ -194,8 +204,12 @@ class LoginServerFragment : Fragment() {
             binding.serverCertFieldContainer.visibility = View.VISIBLE
             binding.serverCertField.setText(clientCert)
         } else {
+            binding.serverCertSwitch.isChecked = false
+            binding.serverCertFieldContainer.visibility = View.GONE
             binding.serverCertField.setText("") // migrate old null to string
         }
+
+        binding.serverAllowSelfSignedSwitch.isChecked = serverList[position].allowSelfSigned
 
         /* Optional field */
         val customHeaders: String? = serverList[position].customHeaders
@@ -311,6 +325,7 @@ class LoginServerFragment : Fragment() {
         val localAddress: String = s.localAddress ?: s.address
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
+        val allowSelfSigned: Boolean = s.allowSelfSigned
 
         App.getInstance().preferences.edit { putString("server_id", serverId) }
         App.getInstance().preferences.edit { putString("server", server) }
@@ -320,7 +335,9 @@ class LoginServerFragment : Fragment() {
         App.getInstance().preferences.edit { putString("local_address", localAddress) }
         App.getInstance().preferences.edit { putString("client_cert", clientCert) }
         App.getInstance().preferences.edit { putString("custom_headers", customHeaders) }
+        App.getInstance().preferences.edit { putBoolean("allow_self_signed", allowSelfSigned) }
 
+        com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory()
         App.getSubsonicClientInstance(true)
 
     }
@@ -418,7 +435,8 @@ class LoginServerFragment : Fragment() {
         timestamp = System.currentTimeMillis(),
         isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
         clientCert = binding.serverCertField.text.toString(),
-        customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null }
+        customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null },
+        allowSelfSigned = binding.serverAllowSelfSignedSwitch.isChecked
     )
 
     // TODO: Test is only enabled for a saved server. It reads the form, so it could also run for
@@ -442,6 +460,7 @@ class LoginServerFragment : Fragment() {
         )
         val testId = ++currentTestId
         ServerHeaders.setTestServer(testServer)
+        com.eddyizm.tempus.util.ClientCertManager.setTestAllowSelfSigned(server.allowSelfSigned)
 
         SystemRepository().checkUserCredential(
             App.getSubsonicClientInstance(server),
@@ -492,6 +511,7 @@ class LoginServerFragment : Fragment() {
         duration: Int
     ) {
         ServerHeaders.clearTestServer(testServer)
+        com.eddyizm.tempus.util.ClientCertManager.setTestAllowSelfSigned(null)
         if (testId != currentTestId) return
         val binding = _binding ?: return
         binding.testButton.isEnabled = true

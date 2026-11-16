@@ -39,7 +39,7 @@ import com.eddyizm.tempus.subsonic.models.Playlist;
 
 @UnstableApi
 @Database(
-        version = 24,
+        version = 25,
         entities = {
             Queue.class,
             Server.class,
@@ -70,6 +70,7 @@ import com.eddyizm.tempus.subsonic.models.Playlist;
                 @AutoMigration(from = 21, to = 22),
                 @AutoMigration(from = 22, to = 23),
                 @AutoMigration(from = 23, to = 24),
+                @AutoMigration(from = 24, to = 25),
         }
 )
 @TypeConverters({DateConverters.class, StringListConverter.class})

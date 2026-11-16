@@ -109,6 +109,9 @@ class RetrofitClient(subsonic: Subsonic) {
     private fun OkHttpClient.Builder.setupSsl(): OkHttpClient.Builder {
         ClientCertManager.sslSocketFactory?.let { sslSocketFactory ->
             sslSocketFactory(sslSocketFactory, ClientCertManager.trustManager)
+            if (ClientCertManager.isAllowSelfSigned) {
+                hostnameVerifier(ClientCertManager.permissiveHostnameVerifier)
+            }
         }
         return this
     }

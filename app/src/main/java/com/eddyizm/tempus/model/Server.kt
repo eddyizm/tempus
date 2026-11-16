@@ -41,4 +41,7 @@ data class Server(
 
     @ColumnInfo(name = "custom_headers")
     val customHeaders: String? = null,
+
+    @ColumnInfo(name = "allow_self_signed", defaultValue = "false")
+    val allowSelfSigned: Boolean = false,
 ) : Parcelable

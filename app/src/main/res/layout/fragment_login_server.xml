@@ -200,6 +200,15 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Allow self-signed certificate switch -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/server_allow_self_signed_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:checked="false"
+                android:text="@string/la_server_switch_allow_self_signed"/>
+
             <!-- Server custom headers switch -->
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/server_headers_switch"

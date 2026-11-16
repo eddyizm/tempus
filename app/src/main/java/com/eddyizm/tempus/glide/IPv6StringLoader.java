@@ -113,6 +113,9 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
         if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
             builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
                     ClientCertManager.INSTANCE.getTrustManager());
+            if (ClientCertManager.INSTANCE.isAllowSelfSigned()) {
+                builder.hostnameVerifier(ClientCertManager.INSTANCE.getPermissiveHostnameVerifier());
+            }
         }
         return builder.build();
     }

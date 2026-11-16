@@ -346,6 +346,16 @@ object Preferences {
     }
 
     @JvmStatic
+    fun isAllowSelfSigned(): Boolean {
+        return App.getInstance().preferences.getBoolean("allow_self_signed", false)
+    }
+
+    @JvmStatic
+    fun setAllowSelfSigned(allowSelfSigned: Boolean) {
+        App.getInstance().preferences.edit().putBoolean("allow_self_signed", allowSelfSigned).apply()
+    }
+
+    @JvmStatic
     fun getCustomHeaders(): String? {
         return App.getInstance().preferences.getString(CUSTOM_HEADERS, null)
     }

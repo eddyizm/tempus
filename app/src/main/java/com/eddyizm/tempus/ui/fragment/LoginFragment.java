@@ -150,7 +150,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
     @Override
     public void onServerClick(Bundle bundle) {
         Server server = bundle.getParcelable("server_object");
-        saveServerPreference(server.getServerId(), server.getAddress(), server.getLocalAddress(), server.getUsername(), server.getPassword(), server.isLowSecurity(), server.getClientCert(), server.getCustomHeaders());
+        saveServerPreference(server.getServerId(), server.getAddress(), server.getLocalAddress(), server.getUsername(), server.getPassword(), server.isLowSecurity(), server.getClientCert(), server.getCustomHeaders(), server.getAllowSelfSigned());
 
         SystemRepository systemRepository = new SystemRepository();
         systemRepository.checkUserCredential(new SystemCallback() {
@@ -173,7 +173,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
         });
     }
 
-    private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert, String customHeaders) {
+    private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert, String customHeaders, boolean allowSelfSigned) {
         // Written only when the stored address belongs to another server. Tapping the same one
         // again has to keep the flip onError made, which is how a second attempt reaches the local
         // address. The server id cannot be the test, because onError clears it.
@@ -190,7 +190,9 @@ public class LoginFragment extends Fragment implements ClickCallback {
         Preferences.setLowSecurity(isLowSecurity);
         Preferences.setClientCert(clientCert);
         Preferences.setCustomHeaders(customHeaders);
+        Preferences.setAllowSelfSigned(allowSelfSigned);
 
+        com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory();
         App.getSubsonicClientInstance(true);
     }
 
@@ -204,7 +206,9 @@ public class LoginFragment extends Fragment implements ClickCallback {
         Preferences.setLowSecurity(false);
         Preferences.setClientCert(null);
         Preferences.setCustomHeaders(null);
+        Preferences.setAllowSelfSigned(false);
 
+        com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory();
         App.getSubsonicClientInstance(true);
     }
 }
