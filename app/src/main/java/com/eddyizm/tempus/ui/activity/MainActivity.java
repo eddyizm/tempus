@@ -77,6 +77,7 @@ import java.util.concurrent.ExecutionException;
 @UnstableApi
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivityLogs";
+    private static final String SERVER_UNREACHABLE_DIALOG_TAG = "ServerUnreachableDialog";
 
     private LiveData<SubsonicResponse> outstandingProbe = null;
 
@@ -624,8 +625,7 @@ public class MainActivity extends BaseActivity {
                         pingServer();
                         resetView();
                     } else if (Preferences.showServerUnreachableDialog()) {
-                        ServerUnreachableDialog dialog = new ServerUnreachableDialog();
-                        dialog.show(getSupportFragmentManager(), null);
+                        showServerUnreachableDialog();
                     }
                 } else {
                     ConnectionUtil.markPingAnswered();
@@ -644,8 +644,7 @@ public class MainActivity extends BaseActivity {
                         if (Preferences.isInUseServerAddressLocal() || outstandingProbe != null) return;
 
                         if (Preferences.showServerUnreachableDialog()) {
-                            ServerUnreachableDialog dialog = new ServerUnreachableDialog();
-                            dialog.show(getSupportFragmentManager(), null);
+                            showServerUnreachableDialog();
                         }
                     } else {
                         Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
@@ -653,6 +652,13 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }
+    }
+
+    private void showServerUnreachableDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(SERVER_UNREACHABLE_DIALOG_TAG) != null) return;
+
+        new ServerUnreachableDialog().showNow(fragmentManager, SERVER_UNREACHABLE_DIALOG_TAG);
     }
 
     private void probeLocalAddress() {
