@@ -1,5 +1,6 @@
 package com.eddyizm.tempus.util
 
+import androidx.annotation.GuardedBy
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -23,10 +24,13 @@ import androidx.media3.exoplayer.upstream.Allocator
 
 @OptIn(UnstableApi::class)
 class TranscodingMediaSource(
-        private val mediaItem: MediaItem,
+        mediaItem: MediaItem,
         private val dataSourceFactory: DataSource.Factory,
         private val progressiveMediaSourceFactory: ProgressiveMediaSource.Factory
 ) : CompositeMediaSource<Int>() {
+
+    @GuardedBy("this")
+    private var mediaItem: MediaItem = mediaItem
 
     private var durationUs: Long = C.TIME_UNSET
 
@@ -50,11 +54,25 @@ class TranscodingMediaSource(
         }
     }
 
+    @Synchronized
     override fun getMediaItem() = mediaItem
+
+    override fun canUpdateMediaItem(mediaItem: MediaItem): Boolean {
+        val current = getMediaItem().localConfiguration ?: return false
+        val next = mediaItem.localConfiguration ?: return false
+        return next.uri == current.uri &&
+                next.imageDurationMs == current.imageDurationMs &&
+                next.customCacheKey == current.customCacheKey
+    }
+
+    override fun updateMediaItem(mediaItem: MediaItem) {
+        synchronized(this) { this.mediaItem = mediaItem }
+        baseSource?.updateMediaItem(mediaItem)
+    }
 
     override fun prepareSourceInternal(mediaTransferListener: TransferListener?) {
         super.prepareSourceInternal(mediaTransferListener)
-        val source = progressiveMediaSourceFactory.createMediaSource(mediaItem)
+        val source = progressiveMediaSourceFactory.createMediaSource(getMediaItem())
         // Assigned before the child is prepared, because the first timeline refresh can call
         // createPeriod through the player's masking source before this method returns.
         baseSource = source
@@ -265,8 +283,9 @@ class TranscodingMediaSource(
             seekChildId?.let { releaseChildSource(it) }
 
             val seconds = Util.usToMs(positionUs) / 1000
-            val newUri = MusicUtil.getStreamUri(mediaItem.mediaId, seconds.toInt())
-            val newMediaItem = mediaItem.buildUpon().setUri(newUri).build()
+            val item = getMediaItem()
+            val newUri = MusicUtil.getStreamUri(item.mediaId, seconds.toInt())
+            val newMediaItem = item.buildUpon().setUri(newUri).build()
 
             val newSource = progressiveMediaSourceFactory.createMediaSource(newMediaItem)
 
