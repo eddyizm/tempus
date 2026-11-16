@@ -333,7 +333,7 @@ class LoginServerFragment : Fragment() {
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
         val allowSelfSigned: Boolean = s.allowSelfSigned
-        val trustedServerCert: String? = if (allowSelfSigned) s.trustedServerCert else null
+        val trustedServerCert: String? = SelfSignedSslHelper.effectiveTrustedServerCert(allowSelfSigned, s.trustedServerCert)
 
         App.getInstance().preferences.edit { putString("server_id", serverId) }
         App.getInstance().preferences.edit { putString("server", server) }
@@ -446,7 +446,10 @@ class LoginServerFragment : Fragment() {
         clientCert = binding.serverCertField.text.toString(),
         customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null },
         allowSelfSigned = binding.serverAllowSelfSignedSwitch.isChecked,
-        trustedServerCert = if (binding.serverAllowSelfSignedSwitch.isChecked) pendingTrustedServerCert else null
+        trustedServerCert = SelfSignedSslHelper.effectiveTrustedServerCert(
+            binding.serverAllowSelfSignedSwitch.isChecked,
+            pendingTrustedServerCert
+        )
     )
 
     // TODO: Test is only enabled for a saved server. It reads the form, so it could also run for
@@ -468,7 +471,16 @@ class LoginServerFragment : Fragment() {
         ).show()
 
         val formServer = serverFromForm(serverList[selectedServerPosition].serverId)
-        val server = if (userApprovedPin != null) formServer.copy(trustedServerCert = userApprovedPin) else formServer
+        val server = if (userApprovedPin != null) {
+            formServer.copy(
+                trustedServerCert = SelfSignedSslHelper.effectiveTrustedServerCert(
+                    formServer.allowSelfSigned,
+                    userApprovedPin
+                )
+            )
+        } else {
+            formServer
+        }
         val testServer = ServerContext(
             addresses = listOf(server.address, server.localAddress),
             customHeaders = server.customHeaders
@@ -549,7 +561,7 @@ class LoginServerFragment : Fragment() {
 
     private fun showUntrustedCertificateApprovalDialog(testId: Int, certificatePin: String) {
         if (testId != currentTestId || _binding == null || !isAdded) return
-        val fingerprint = certificatePin.chunked(4).joinToString(" ")
+        val fingerprint = SelfSignedSslHelper.formatFingerprint(certificatePin)
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Untrusted certificate")
             .setMessage(

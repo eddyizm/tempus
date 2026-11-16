@@ -191,7 +191,9 @@ public class LoginFragment extends Fragment implements ClickCallback {
         Preferences.setClientCert(clientCert);
         Preferences.setCustomHeaders(customHeaders);
         Preferences.setAllowSelfSigned(allowSelfSigned);
-        Preferences.setTrustedServerCert(allowSelfSigned ? trustedServerCert : null);
+        Preferences.setTrustedServerCert(
+                com.eddyizm.tempus.util.SelfSignedSslHelper.effectiveTrustedServerCert(allowSelfSigned, trustedServerCert)
+        );
 
         com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory();
         App.getSubsonicClientInstance(true);

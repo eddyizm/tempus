@@ -110,7 +110,7 @@ class RetrofitClient(private val subsonic: Subsonic) {
     private fun OkHttpClient.Builder.setupSsl(): OkHttpClient.Builder {
         if (subsonic.hasTestTrustOverride()) {
             val trustManager = SelfSignedSslHelper.createTrustManager(
-                SelfSignedSslHelper.TrustConfig(
+                SelfSignedSslHelper.testTrustConfig(
                     subsonic.isTestAllowSelfSigned,
                     subsonic.testTrustedServerCert
                 )

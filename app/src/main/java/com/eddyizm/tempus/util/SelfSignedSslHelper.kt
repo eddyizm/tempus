@@ -37,6 +37,25 @@ object SelfSignedSslHelper {
     @JvmStatic
     fun getTrustedServerCert(): String? = Preferences.getTrustedServerCert()
 
+    /** Approved pin only applies when self-signed trust is explicitly enabled for the server. */
+    @JvmStatic
+    fun effectiveTrustedServerCert(allowSelfSigned: Boolean, trustedServerCert: String?): String? =
+        if (allowSelfSigned) trustedServerCert?.takeIf { it.isNotBlank() } else null
+
+    /** Trust config for a login-test connection, optionally overriding with a user-approved pin. */
+    @JvmStatic
+    fun testTrustConfig(
+        allowSelfSigned: Boolean,
+        trustedServerCert: String?,
+        approvedPinOverride: String? = null
+    ): TrustConfig = TrustConfig(
+        allowSelfSigned,
+        effectiveTrustedServerCert(allowSelfSigned, approvedPinOverride ?: trustedServerCert)
+    )
+
+    @JvmStatic
+    fun formatFingerprint(certificatePin: String): String = certificatePin.chunked(4).joinToString(" ")
+
     /** Trust manager for normal app traffic based on active server preferences. */
     @JvmStatic
     fun effectiveTrustManager(): X509TrustManager = createTrustManager(null)
@@ -55,8 +74,10 @@ object SelfSignedSslHelper {
         override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) {
             val serverChain = chain?.map { it as X509Certificate }?.toTypedArray()
             val allowSelfSigned = config?.allowSelfSigned ?: Preferences.isAllowSelfSigned()
-            val expectedPin = (config?.trustedServerCert ?: Preferences.getTrustedServerCert())
-                ?.takeIf { it.isNotBlank() }
+            val expectedPin = effectiveTrustedServerCert(
+                allowSelfSigned,
+                config?.trustedServerCert ?: Preferences.getTrustedServerCert()
+            )
 
             try {
                 platformTrustManager.checkServerTrusted(serverChain, authType)
