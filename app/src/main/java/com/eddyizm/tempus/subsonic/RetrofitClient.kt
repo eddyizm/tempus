@@ -7,6 +7,7 @@ import com.eddyizm.tempus.subsonic.models.BookmarksDeserializer
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.subsonic.utils.EmptyDateTypeAdapter
 import com.eddyizm.tempus.util.ClientCertManager
+import com.eddyizm.tempus.util.SelfSignedSslHelper
 import com.eddyizm.tempus.util.ServerHeaders
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
@@ -109,9 +110,7 @@ class RetrofitClient(subsonic: Subsonic) {
     private fun OkHttpClient.Builder.setupSsl(): OkHttpClient.Builder {
         ClientCertManager.sslSocketFactory?.let { sslSocketFactory ->
             sslSocketFactory(sslSocketFactory, ClientCertManager.trustManager)
-            if (ClientCertManager.isAllowSelfSigned) {
-                hostnameVerifier(ClientCertManager.permissiveHostnameVerifier)
-            }
+            SelfSignedSslHelper.applyHostnameVerifierIfEnabled(this)
         }
         return this
     }

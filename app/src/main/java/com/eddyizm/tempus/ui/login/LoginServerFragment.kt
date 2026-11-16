@@ -66,7 +66,7 @@ class LoginServerFragment : Fragment() {
         super.onDestroyView()
         currentTestId++
         ServerHeaders.setTestServer(null)
-        com.eddyizm.tempus.util.ClientCertManager.setTestAllowSelfSigned(null)
+        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(null)
         _binding = null // release from memory
     }
 
@@ -460,7 +460,7 @@ class LoginServerFragment : Fragment() {
         )
         val testId = ++currentTestId
         ServerHeaders.setTestServer(testServer)
-        com.eddyizm.tempus.util.ClientCertManager.setTestAllowSelfSigned(server.allowSelfSigned)
+        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(server.allowSelfSigned)
 
         SystemRepository().checkUserCredential(
             App.getSubsonicClientInstance(server),
@@ -511,7 +511,7 @@ class LoginServerFragment : Fragment() {
         duration: Int
     ) {
         ServerHeaders.clearTestServer(testServer)
-        com.eddyizm.tempus.util.ClientCertManager.setTestAllowSelfSigned(null)
+        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(null)
         if (testId != currentTestId) return
         val binding = _binding ?: return
         binding.testButton.isEnabled = true

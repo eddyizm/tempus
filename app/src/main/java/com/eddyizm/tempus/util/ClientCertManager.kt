@@ -1,11 +1,9 @@
 package com.eddyizm.tempus.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.security.KeyChain
 import android.util.Log
 import androidx.core.net.toUri
-import okhttp3.internal.platform.Platform
 import java.net.Socket
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
@@ -13,7 +11,6 @@ import java.security.Principal
 import java.security.PrivateKey
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
-import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.SSLSocketFactory
@@ -25,27 +22,10 @@ object ClientCertManager {
 
     private const val TAG = "ClientCertManager"
 
-    private val platformTrustManager: X509TrustManager = Platform.get().platformTrustManager()
-
-    @SuppressLint("TrustAllX509TrustManager")
-    private val permissiveTrustManager: X509TrustManager = object : X509TrustManager {
-        override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) = Unit
-        override fun checkServerTrusted(chain: Array<out X509Certificate>?, authType: String?) = Unit
-        override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
-    }
-
-    @Volatile
-    private var testAllowSelfSigned: Boolean? = null
-
     private var appContext: Context? = null
 
-    val permissiveHostnameVerifier: HostnameVerifier = HostnameVerifier { _, _ -> true }
-
     val trustManager: X509TrustManager
-        get() = if (isAllowSelfSignedEnabled()) permissiveTrustManager else platformTrustManager
-
-    val isAllowSelfSigned: Boolean
-        get() = isAllowSelfSignedEnabled()
+        get() = SelfSignedSslHelper.effectiveTrustManager()
 
     var sslSocketFactory: SSLSocketFactory? = null
         private set
@@ -64,26 +44,8 @@ object ClientCertManager {
             // ExoPlayer uses HttpsURLConnection in DefaultHttpDataSource.
             // Glide configures its OkHttp client with this socket factory in IPv6StringLoader.
             HttpsURLConnection.setDefaultSSLSocketFactory(it)
-            if (isAllowSelfSignedEnabled()) {
-                HttpsURLConnection.setDefaultHostnameVerifier(permissiveHostnameVerifier)
-            } else {
-                // Restore OkHttp/Java default-like verifier behavior for normal cases.
-                HttpsURLConnection.setDefaultHostnameVerifier(
-                    javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier()
-                )
-            }
+            SelfSignedSslHelper.applyDefaultHostnameVerifier()
         }
-    }
-
-    @JvmStatic
-    fun setTestAllowSelfSigned(allow: Boolean?) {
-        testAllowSelfSigned = allow
-        refreshSslSocketFactory()
-    }
-
-    @JvmStatic
-    fun isAllowSelfSignedEnabled(): Boolean {
-        return testAllowSelfSigned ?: Preferences.isAllowSelfSigned()
     }
 
     private fun createSslSocketFactory(context: Context): SSLSocketFactory? {
@@ -133,7 +95,7 @@ object ClientCertManager {
             }
 
             val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(trustManager), SecureRandom())
+            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(SelfSignedSslHelper.effectiveTrustManager()), SecureRandom())
             sslContext.socketFactory
         } catch (e: NoSuchAlgorithmException) {
             Log.e(TAG, "Failed setting mTLS", e)
@@ -144,3 +106,4 @@ object ClientCertManager {
         }
     }
 }
+

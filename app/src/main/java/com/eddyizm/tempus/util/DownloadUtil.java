@@ -120,9 +120,7 @@ public final class DownloadUtil {
         if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
             builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
                     ClientCertManager.INSTANCE.getTrustManager());
-            if (ClientCertManager.INSTANCE.isAllowSelfSigned()) {
-                builder.hostnameVerifier(ClientCertManager.INSTANCE.getPermissiveHostnameVerifier());
-            }
+            SelfSignedSslHelper.INSTANCE.applyHostnameVerifierIfEnabled(builder);
         }
         return builder.build();
     }

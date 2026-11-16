@@ -13,6 +13,7 @@ import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.bumptech.glide.signature.ObjectKey;
 import com.eddyizm.tempus.util.ClientCertManager;
+import com.eddyizm.tempus.util.SelfSignedSslHelper;
 import com.eddyizm.tempus.util.ServerHeaders;
 
 import java.io.IOException;
@@ -113,9 +114,7 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
         if (ClientCertManager.INSTANCE.getSslSocketFactory() != null) {
             builder.sslSocketFactory(ClientCertManager.INSTANCE.getSslSocketFactory(),
                     ClientCertManager.INSTANCE.getTrustManager());
-            if (ClientCertManager.INSTANCE.isAllowSelfSigned()) {
-                builder.hostnameVerifier(ClientCertManager.INSTANCE.getPermissiveHostnameVerifier());
-            }
+            SelfSignedSslHelper.INSTANCE.applyHostnameVerifierIfEnabled(builder);
         }
         return builder.build();
     }
