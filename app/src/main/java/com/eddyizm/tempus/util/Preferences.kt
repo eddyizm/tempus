@@ -356,16 +356,6 @@ object Preferences {
     }
 
     @JvmStatic
-    fun getTrustedServerCert(): String? {
-        return App.getInstance().preferences.getString("trusted_server_cert", null)
-    }
-
-    @JvmStatic
-    fun setTrustedServerCert(trustedServerCert: String?) {
-        App.getInstance().preferences.edit().putString("trusted_server_cert", trustedServerCert).apply()
-    }
-
-    @JvmStatic
     fun getCustomHeaders(): String? {
         return App.getInstance().preferences.getString(CUSTOM_HEADERS, null)
     }

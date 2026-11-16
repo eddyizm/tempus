@@ -61,7 +61,6 @@ public final class DownloadUtil {
 
     private static DataSource.Factory dataSourceFactory;
     private static DataSource.Factory httpDataSourceFactory;
-    private static OkHttpClient customHeadersHttpClient;
     private static DatabaseProvider databaseProvider;
     private static File streamingCacheDirectory;
     private static File downloadDirectory;
@@ -94,10 +93,9 @@ public final class DownloadUtil {
                     .setAllowCrossProtocolRedirects(true);
             // Requests to the signed-in server that need its custom headers go through OkHttp,
             // which re-checks the host on every redirect; see CustomHeadersDataSource.
-            customHeadersHttpClient = buildCustomHeadersHttpClient();
             DataSource.Factory headersFactory = new CustomHeadersDataSource.Factory(
                     serverHttpFactory,
-                    new OkHttpDataSource.Factory(customHeadersHttpClient),
+                    new OkHttpDataSource.Factory(buildCustomHeadersHttpClient()),
                     url -> !ServerHeaders.getHeadersForActiveServer(url).isEmpty());
             httpDataSourceFactory = new ResolvingDataSource.Factory(headersFactory, ConnectionUtil::moveStreamToAddressInUse);
         }
@@ -114,26 +112,17 @@ public final class DownloadUtil {
      */
     @VisibleForTesting
     static OkHttpClient buildCustomHeadersHttpClient() {
-        // Keep hostname verification enabled (default). Trust is narrowed via the pinned/accepted
-        // server certificate in SelfSignedSslHelper when allow-self-signed is enabled.
-        return new OkHttpClient.Builder()
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(ServerHeaders.createInterceptor())
                 .sslSocketFactory(new DynamicSslSocketFactory(), new DynamicX509TrustManager())
-                .build();
-    }
-
-    /**
-     * TLS policy (self-signed allow/pin, client cert, etc.) changed: prevent reuse of connections
-     * established under the previous policy by the cached custom-header client.
-     */
-    public static synchronized void invalidateTlsConnections() {
-        if (customHeadersHttpClient != null) {
-            customHeadersHttpClient.dispatcher().cancelAll();
-            customHeadersHttpClient.connectionPool().evictAll();
-        }
+                .hostnameVerifier((hostname, session) ->
+                        !SelfSignedSslHelper.INSTANCE.isEnabled()
+                                ? javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier().verify(hostname, session)
+                                : SelfSignedSslHelper.INSTANCE.getPermissiveHostnameVerifier().verify(hostname, session));
+        return builder.build();
     }
 
     /**

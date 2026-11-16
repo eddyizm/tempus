@@ -44,7 +44,4 @@ data class Server(
 
     @ColumnInfo(name = "allow_self_signed", defaultValue = "false")
     val allowSelfSigned: Boolean = false,
-
-    @ColumnInfo(name = "trusted_server_cert")
-    val trustedServerCert: String? = null,
 ) : Parcelable

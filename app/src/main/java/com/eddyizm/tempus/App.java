@@ -104,42 +104,19 @@ public class App extends Application {
                 server.getPassword(),
                 null,
                 null,
-                server.isLowSecurity(),
-                null,
-                null
-        );
-    }
-
-    // Login "test connection" only: trust override is scoped to this client, not process-wide defaults.
-    public static Subsonic getSubsonicClientInstanceForTest(Server server, boolean allowSelfSigned, String trustedServerCert) {
-        return buildSubsonicClient(
-                server.getAddress(),
-                server.getUsername(),
-                server.getPassword(),
-                null,
-                null,
-                server.isLowSecurity(),
-                allowSelfSigned,
-                trustedServerCert
+                server.isLowSecurity()
         );
     }
 
     private static Subsonic buildSubsonicClient(String serverAddress, String username,
                                                 String password, String token, String salt,
                                                 boolean isLowSecurity) {
-        return buildSubsonicClient(serverAddress, username, password, token, salt, isLowSecurity, null, null);
-    }
-
-    private static Subsonic buildSubsonicClient(String serverAddress, String username,
-                                                String password, String token, String salt,
-                                                boolean isLowSecurity, Boolean testAllowSelfSigned,
-                                                String testTrustedServerCert) {
         SubsonicPreferences preferences = new SubsonicPreferences();
         preferences.setServerUrl(serverAddress);
         preferences.setUsername(username);
         preferences.setAuthentication(password, token, salt, isLowSecurity);
 
-        return new Subsonic(preferences, testAllowSelfSigned, testTrustedServerCert);
+        return new Subsonic(preferences);
     }
 
     public static Github getGithubClientInstance() {

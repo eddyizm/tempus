@@ -39,20 +39,16 @@ object ClientCertManager {
     @JvmStatic
     fun refreshSslSocketFactory() {
         val context = appContext ?: return
-        sslSocketFactory = createSslSocketFactory(SelfSignedSslHelper.effectiveTrustManager())
+        sslSocketFactory = createSslSocketFactory(context)
         sslSocketFactory?.let {
             // ExoPlayer uses HttpsURLConnection in DefaultHttpDataSource.
             // Glide configures its OkHttp client with this socket factory in IPv6StringLoader.
             HttpsURLConnection.setDefaultSSLSocketFactory(it)
+            SelfSignedSslHelper.applyDefaultHostnameVerifier()
         }
-        // Cached HTTP clients must not reuse idle/active connections established under the previous
-        // TLS trust policy (e.g. after disabling self-signed trust or changing the pinned cert).
-        DownloadUtil.invalidateTlsConnections()
     }
 
-    @JvmStatic
-    fun createSslSocketFactory(trustManager: X509TrustManager): SSLSocketFactory? {
-        val context = appContext ?: return null
+    private fun createSslSocketFactory(context: Context): SSLSocketFactory? {
         return try {
             val clientKeyManager = object : X509KeyManager {
                 override fun getClientAliases(keyType: String?, issuers: Array<Principal>?) = null
@@ -99,7 +95,7 @@ object ClientCertManager {
             }
 
             val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(trustManager), SecureRandom())
+            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(SelfSignedSslHelper.effectiveTrustManager()), SecureRandom())
             sslContext.socketFactory
         } catch (e: NoSuchAlgorithmException) {
             Log.e(TAG, "Failed setting mTLS", e)
