@@ -46,6 +46,7 @@ class LoginServerFragment : Fragment() {
     private var isInitialSyncDone = false
     private var currentTestId = 0
     private var pendingTrustedServerCert: String? = null
+    private var currentTestSession: SelfSignedSslHelper.LoginTestSession? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +69,8 @@ class LoginServerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         currentTestId++
+        currentTestSession = null
         ServerHeaders.setTestServer(null)
-        SelfSignedSslHelper.clearPendingApprovalCert()
         _binding = null // release from memory
     }
 
@@ -332,8 +333,6 @@ class LoginServerFragment : Fragment() {
         val localAddress: String = s.localAddress ?: s.address
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
-        val allowSelfSigned: Boolean = s.allowSelfSigned
-        val trustedServerCert: String? = SelfSignedSslHelper.effectiveTrustedServerCert(allowSelfSigned, s.trustedServerCert)
 
         App.getInstance().preferences.edit { putString("server_id", serverId) }
         App.getInstance().preferences.edit { putString("server", server) }
@@ -343,10 +342,8 @@ class LoginServerFragment : Fragment() {
         App.getInstance().preferences.edit { putString("local_address", localAddress) }
         App.getInstance().preferences.edit { putString("client_cert", clientCert) }
         App.getInstance().preferences.edit { putString("custom_headers", customHeaders) }
-        App.getInstance().preferences.edit { putBoolean("allow_self_signed", allowSelfSigned) }
-        App.getInstance().preferences.edit { putString("trusted_server_cert", trustedServerCert) }
 
-        com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory()
+        SelfSignedSslHelper.applyActiveServerTlsSettings(s.allowSelfSigned, s.trustedServerCert)
         App.getSubsonicClientInstance(true)
 
     }
@@ -471,51 +468,37 @@ class LoginServerFragment : Fragment() {
         ).show()
 
         val formServer = serverFromForm(serverList[selectedServerPosition].serverId)
-        val server = if (userApprovedPin != null) {
-            formServer.copy(
-                trustedServerCert = SelfSignedSslHelper.effectiveTrustedServerCert(
-                    formServer.allowSelfSigned,
-                    userApprovedPin
-                )
-            )
-        } else {
-            formServer
-        }
+        val session = SelfSignedSslHelper.beginLoginTestSession(
+            formServer.allowSelfSigned,
+            formServer.trustedServerCert,
+            userApprovedPin
+        )
+        val server = formServer.copy(trustedServerCert = session.config.trustedServerCert)
         val testServer = ServerContext(
             addresses = listOf(server.address, server.localAddress),
             customHeaders = server.customHeaders
         )
         val testId = ++currentTestId
+        currentTestSession = session
         ServerHeaders.setTestServer(testServer)
-        // Bind pending approval state to this specific test attempt.
-        SelfSignedSslHelper.beginTrustCapture()
-        val subsonicClient = App.getSubsonicClientInstanceForTest(
-            server,
-            server.allowSelfSigned,
-            server.trustedServerCert
-        )
+
+        val subsonicClient = App.getSubsonicClientInstanceForTest(server, session)
 
         SystemRepository().checkUserCredential(
             subsonicClient,
             object : SystemCallback {
                 override fun onNetworkFailure(exception: Exception) {
-                    val pendingPin = SelfSignedSslHelper.consumePendingApprovalCert()
+                    val pendingPin = session.consumePendingApprovalPin()
                     if (pendingPin != null && testId == currentTestId) {
                         ServerHeaders.clearTestServer(testServer)
                         showUntrustedCertificateApprovalDialog(testId, pendingPin)
                         return
                     }
-                    showTestResult(
-                        testId,
-                        testServer,
-                        R.string.la_server_toast_connection_error,
-                        exception.message,
-                        Toast.LENGTH_LONG
-                    )
+                    showTestResult(testId, testServer, R.string.la_server_toast_connection_error, exception.message, Toast.LENGTH_LONG)
                 }
 
                 override fun onError(exception: Exception) {
-                    val pendingPin = SelfSignedSslHelper.consumePendingApprovalCert()
+                    val pendingPin = session.consumePendingApprovalPin()
                     if (pendingPin != null && testId == currentTestId) {
                         ServerHeaders.clearTestServer(testServer)
                         showUntrustedCertificateApprovalDialog(testId, pendingPin)
@@ -535,7 +518,6 @@ class LoginServerFragment : Fragment() {
                 override fun onSuccess(password: String?, token: String?, salt: String?) {
                     if (testId != currentTestId) {
                         ServerHeaders.clearTestServer(testServer)
-                        SelfSignedSslHelper.clearPendingApprovalCert()
                         return
                     }
                     // Persist explicitly approved pin after successful retry.
@@ -546,7 +528,6 @@ class LoginServerFragment : Fragment() {
                             serverViewModel.updateServer(updated)
                         }
                     }
-                    SelfSignedSslHelper.clearPendingApprovalCert()
                     showTestResult(
                         testId,
                         testServer,
@@ -594,7 +575,7 @@ class LoginServerFragment : Fragment() {
         duration: Int
     ) {
         ServerHeaders.clearTestServer(testServer)
-        SelfSignedSslHelper.clearPendingApprovalCert()
+        if (testId == currentTestId) currentTestSession = null
         if (testId != currentTestId) return
         val binding = _binding ?: return
         binding.testButton.isEnabled = selectedServerPosition != 0

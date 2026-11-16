@@ -119,8 +119,21 @@ public class App extends Application {
                 null,
                 null,
                 server.isLowSecurity(),
-                allowSelfSigned,
-                trustedServerCert
+                com.eddyizm.tempus.util.SelfSignedSslHelper.testTrustConfig(allowSelfSigned, trustedServerCert),
+                null
+        );
+    }
+
+    public static Subsonic getSubsonicClientInstanceForTest(Server server, com.eddyizm.tempus.util.SelfSignedSslHelper.LoginTestSession session) {
+        return buildSubsonicClient(
+                server.getAddress(),
+                server.getUsername(),
+                server.getPassword(),
+                null,
+                null,
+                server.isLowSecurity(),
+                session != null ? session.getConfig() : null,
+                session
         );
     }
 
@@ -132,14 +145,15 @@ public class App extends Application {
 
     private static Subsonic buildSubsonicClient(String serverAddress, String username,
                                                 String password, String token, String salt,
-                                                boolean isLowSecurity, Boolean testAllowSelfSigned,
-                                                String testTrustedServerCert) {
+                                                boolean isLowSecurity,
+                                                com.eddyizm.tempus.util.SelfSignedSslHelper.TrustConfig testTrustConfig,
+                                                com.eddyizm.tempus.util.SelfSignedSslHelper.LoginTestSession testTrustSession) {
         SubsonicPreferences preferences = new SubsonicPreferences();
         preferences.setServerUrl(serverAddress);
         preferences.setUsername(username);
         preferences.setAuthentication(password, token, salt, isLowSecurity);
 
-        return new Subsonic(preferences, testAllowSelfSigned, testTrustedServerCert);
+        return new Subsonic(preferences, testTrustConfig, testTrustSession);
     }
 
     public static Github getGithubClientInstance() {

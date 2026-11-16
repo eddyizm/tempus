@@ -190,12 +190,8 @@ public class LoginFragment extends Fragment implements ClickCallback {
         Preferences.setLowSecurity(isLowSecurity);
         Preferences.setClientCert(clientCert);
         Preferences.setCustomHeaders(customHeaders);
-        Preferences.setAllowSelfSigned(allowSelfSigned);
-        Preferences.setTrustedServerCert(
-                com.eddyizm.tempus.util.SelfSignedSslHelper.effectiveTrustedServerCert(allowSelfSigned, trustedServerCert)
-        );
 
-        com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory();
+        com.eddyizm.tempus.util.SelfSignedSslHelper.applyActiveServerTlsSettings(allowSelfSigned, trustedServerCert);
         App.getSubsonicClientInstance(true);
     }
 
@@ -209,10 +205,8 @@ public class LoginFragment extends Fragment implements ClickCallback {
         Preferences.setLowSecurity(false);
         Preferences.setClientCert(null);
         Preferences.setCustomHeaders(null);
-        Preferences.setAllowSelfSigned(false);
-        Preferences.setTrustedServerCert(null);
 
-        com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory();
+        com.eddyizm.tempus.util.SelfSignedSslHelper.applyActiveServerTlsSettings(false, null);
         App.getSubsonicClientInstance(true);
     }
 }

@@ -1,10 +1,13 @@
 package com.eddyizm.tempus.util
 
 import android.util.Base64
+import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import java.security.MessageDigest
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
+import java.util.UUID
+import java.util.concurrent.atomic.AtomicReference
 import javax.net.ssl.X509TrustManager
 
 /**
@@ -26,10 +29,29 @@ object SelfSignedSslHelper {
         message: String = "Server certificate is not trusted yet"
     ) : CertificateException(message)
 
-    private val platformTrustManager: X509TrustManager = Platform.get().platformTrustManager()
+    /**
+     * Token-bound approval session for a single login "test connection" attempt/flow.
+     * Prevents global pending-approval state from leaking across unrelated tests.
+     */
+    class LoginTestSession internal constructor(
+        val token: String,
+        val config: TrustConfig
+    ) {
+        internal val pendingApprovalPin = AtomicReference<String?>()
 
-    @Volatile
-    private var pendingApprovalCert: String? = null
+        fun capturePendingPin(pin: String) {
+            pendingApprovalPin.compareAndSet(null, pin)
+        }
+
+        fun consumePendingApprovalPin(): String? = pendingApprovalPin.getAndSet(null)
+
+        fun approvedConfig(approvedPin: String): TrustConfig = testTrustConfig(
+            config.allowSelfSigned,
+            approvedPin
+        )
+    }
+
+    private val platformTrustManager: X509TrustManager = Platform.get().platformTrustManager()
 
     @JvmStatic
     fun isEnabled(): Boolean = Preferences.isAllowSelfSigned()
@@ -44,13 +66,27 @@ object SelfSignedSslHelper {
 
     /** Trust config for a login-test connection, optionally overriding with a user-approved pin. */
     @JvmStatic
+    fun testTrustConfig(allowSelfSigned: Boolean, trustedServerCert: String?): TrustConfig =
+        testTrustConfig(allowSelfSigned, trustedServerCert, null)
+
+    @JvmStatic
     fun testTrustConfig(
         allowSelfSigned: Boolean,
         trustedServerCert: String?,
-        approvedPinOverride: String? = null
+        approvedPinOverride: String?
     ): TrustConfig = TrustConfig(
         allowSelfSigned,
         effectiveTrustedServerCert(allowSelfSigned, approvedPinOverride ?: trustedServerCert)
+    )
+
+    @JvmStatic
+    fun beginLoginTestSession(
+        allowSelfSigned: Boolean,
+        trustedServerCert: String?,
+        approvedPinOverride: String? = null
+    ): LoginTestSession = LoginTestSession(
+        UUID.randomUUID().toString(),
+        testTrustConfig(allowSelfSigned, trustedServerCert, approvedPinOverride)
     )
 
     @JvmStatic
@@ -58,7 +94,7 @@ object SelfSignedSslHelper {
 
     /** Trust manager for normal app traffic based on active server preferences. */
     @JvmStatic
-    fun effectiveTrustManager(): X509TrustManager = createTrustManager(null)
+    fun effectiveTrustManager(): X509TrustManager = createTrustManager(null, null)
 
     /**
      * Trust manager for a specific connection. When [config] is provided, it scopes
@@ -66,7 +102,10 @@ object SelfSignedSslHelper {
      * process defaults.
      */
     @JvmStatic
-    fun createTrustManager(config: TrustConfig?): X509TrustManager = object : X509TrustManager {
+    fun createTrustManager(config: TrustConfig?): X509TrustManager = createTrustManager(config, null)
+
+    @JvmStatic
+    fun createTrustManager(config: TrustConfig?, session: LoginTestSession?): X509TrustManager = object : X509TrustManager {
         override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {
             platformTrustManager.checkClientTrusted(chain, authType)
         }
@@ -91,9 +130,9 @@ object SelfSignedSslHelper {
 
             if (expectedPin == null) {
                 // Require explicit user approval before trusting/sending credentials.
-                // For scoped login-test connections, expose the pin so UI can approve and retry.
-                if (config != null) {
-                    pendingApprovalCert = presentedPin
+                // For scoped login-test sessions, expose the pin so UI can approve and retry.
+                if (session != null) {
+                    session.capturePendingPin(presentedPin)
                     throw UnapprovedCertificateException(presentedPin)
                 }
                 throw CertificateException("Server certificate is not trusted")
@@ -109,26 +148,51 @@ object SelfSignedSslHelper {
         override fun getAcceptedIssuers(): Array<X509Certificate> = platformTrustManager.acceptedIssuers
     }
 
+    /**
+     * Apply SSL materials to an OkHttp client builder.
+     * - [config] null => active server policy (uses ClientCertManager's current socket factory/trust manager)
+     * - [config] non-null => scoped test policy for this client only
+     */
     @JvmStatic
-    fun beginTrustCapture() {
-        pendingApprovalCert = null
-    }
+    @JvmOverloads
+    fun applySsl(builder: OkHttpClient.Builder, config: TrustConfig?, session: LoginTestSession? = null): OkHttpClient.Builder {
+        if (config != null) {
+            val trustManager = createTrustManager(config, session)
+            ClientCertManager.createSslSocketFactory(trustManager)?.let { sslSocketFactory ->
+                // Scoped to this client only; hostname verification remains enabled.
+                builder.sslSocketFactory(sslSocketFactory, trustManager)
+            }
+            return builder
+        }
 
-    @JvmStatic
-    fun clearPendingApprovalCert() {
-        pendingApprovalCert = null
-    }
-
-    @JvmStatic
-    fun consumePendingApprovalCert(): String? {
-        val cert = pendingApprovalCert
-        pendingApprovalCert = null
-        return cert
+        ClientCertManager.sslSocketFactory?.let { sslSocketFactory ->
+            // Keep hostname verification enabled (default). Trust decisions are delegated to the
+            // current trust manager (including pinned accepted certs for opted-in servers).
+            builder.sslSocketFactory(sslSocketFactory, ClientCertManager.trustManager)
+        }
+        return builder
     }
 
     @JvmStatic
     fun certificatePin(certificate: X509Certificate): String {
         val digest = MessageDigest.getInstance("SHA-256").digest(certificate.encoded)
         return Base64.encodeToString(digest, Base64.NO_WRAP)
+    }
+
+    /** Persist active-server self-signed trust settings and refresh TLS policy/clients. */
+    @JvmStatic
+    fun applyActiveServerTlsSettings(allowSelfSigned: Boolean, trustedServerCert: String?) {
+        Preferences.setAllowSelfSigned(allowSelfSigned)
+        Preferences.setTrustedServerCert(effectiveTrustedServerCert(allowSelfSigned, trustedServerCert))
+        ClientCertManager.refreshSslSocketFactory()
+    }
+
+    /**
+     * Notify dependents that TLS policy changed (socket factory/trust decisions).
+     * Decouples policy-change notification from ClientCertManager internals.
+     */
+    @JvmStatic
+    fun notifyTlsPolicyChanged() {
+        DownloadUtil.invalidateTlsConnections()
     }
 }

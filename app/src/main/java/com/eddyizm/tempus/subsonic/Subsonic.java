@@ -23,8 +23,8 @@ public class Subsonic {
 
     private final Version apiVersion = API_MAX_VERSION;
     private final SubsonicPreferences preferences;
-    private final Boolean testAllowSelfSigned;
-    private final String testTrustedServerCert;
+    private final com.eddyizm.tempus.util.SelfSignedSslHelper.TrustConfig testTrustConfig;
+    private final com.eddyizm.tempus.util.SelfSignedSslHelper.LoginTestSession testTrustSession;
 
     private SystemClient systemClient;
     private BrowsingClient browsingClient;
@@ -41,25 +41,37 @@ public class Subsonic {
     private OpenClient openClient;
 
     public Subsonic(SubsonicPreferences preferences) {
-        this(preferences, null, null);
+        this(preferences, (com.eddyizm.tempus.util.SelfSignedSslHelper.TrustConfig) null, null);
     }
 
     public Subsonic(SubsonicPreferences preferences, Boolean testAllowSelfSigned, String testTrustedServerCert) {
+        this(
+                preferences,
+                testAllowSelfSigned != null
+                        ? com.eddyizm.tempus.util.SelfSignedSslHelper.testTrustConfig(testAllowSelfSigned, testTrustedServerCert)
+                        : null,
+                null
+        );
+    }
+
+    public Subsonic(SubsonicPreferences preferences,
+                    com.eddyizm.tempus.util.SelfSignedSslHelper.TrustConfig testTrustConfig,
+                    com.eddyizm.tempus.util.SelfSignedSslHelper.LoginTestSession testTrustSession) {
         this.preferences = preferences;
-        this.testAllowSelfSigned = testAllowSelfSigned;
-        this.testTrustedServerCert = testTrustedServerCert;
+        this.testTrustConfig = testTrustConfig;
+        this.testTrustSession = testTrustSession;
     }
 
     public boolean hasTestTrustOverride() {
-        return testAllowSelfSigned != null;
+        return testTrustConfig != null;
     }
 
-    public boolean isTestAllowSelfSigned() {
-        return Boolean.TRUE.equals(testAllowSelfSigned);
+    public com.eddyizm.tempus.util.SelfSignedSslHelper.TrustConfig getTestTrustConfig() {
+        return testTrustConfig;
     }
 
-    public String getTestTrustedServerCert() {
-        return testTrustedServerCert;
+    public com.eddyizm.tempus.util.SelfSignedSslHelper.LoginTestSession getTestTrustSession() {
+        return testTrustSession;
     }
 
     public Version getApiVersion() {

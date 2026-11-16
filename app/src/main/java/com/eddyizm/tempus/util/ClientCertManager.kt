@@ -46,7 +46,7 @@ object ClientCertManager {
         }
         // TLS policy changed: cached HTTP clients must not reuse connections established under
         // the previous policy.
-        DownloadUtil.invalidateTlsConnections()
+        SelfSignedSslHelper.notifyTlsPolicyChanged()
     }
 
     @JvmStatic
