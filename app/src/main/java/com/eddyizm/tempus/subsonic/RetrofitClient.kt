@@ -109,8 +109,9 @@ class RetrofitClient(subsonic: Subsonic) {
 
     private fun OkHttpClient.Builder.setupSsl(): OkHttpClient.Builder {
         ClientCertManager.sslSocketFactory?.let { sslSocketFactory ->
+            // Keep hostname verification enabled (default). Trust decisions are delegated to the
+            // current trust manager (including pinned accepted certs for opted-in self-signed servers).
             sslSocketFactory(sslSocketFactory, ClientCertManager.trustManager)
-            SelfSignedSslHelper.applyHostnameVerifierIfEnabled(this)
         }
         return this
     }

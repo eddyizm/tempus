@@ -26,6 +26,7 @@ import com.eddyizm.tempus.repository.SystemRepository
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.CustomHeaders
+import com.eddyizm.tempus.util.SelfSignedSslHelper
 import com.eddyizm.tempus.util.ServerHeaders
 import com.eddyizm.tempus.viewmodel.ServerViewModel
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -66,7 +67,7 @@ class LoginServerFragment : Fragment() {
         super.onDestroyView()
         currentTestId++
         ServerHeaders.setTestServer(null)
-        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(null)
+        SelfSignedSslHelper.clearTestTrustContext()
         _binding = null // release from memory
     }
 
@@ -105,7 +106,8 @@ class LoginServerFragment : Fragment() {
             isLowSecurity = false,
             clientCert = "",
             customHeaders = "",
-            allowSelfSigned = false
+            allowSelfSigned = false,
+            trustedServerCert = null
         )
 
         serverViewModel.allServers.observe(viewLifecycleOwner) { servers ->
@@ -121,7 +123,8 @@ class LoginServerFragment : Fragment() {
                     isLowSecurity = server.isLowSecurity,
                     clientCert = server.clientCert,
                     customHeaders = server.customHeaders,
-                    allowSelfSigned = server.allowSelfSigned
+                    allowSelfSigned = server.allowSelfSigned,
+                    trustedServerCert = server.trustedServerCert
                 )
             } ?: emptyList())
             val adapter = ArrayAdapter(
@@ -156,7 +159,10 @@ class LoginServerFragment : Fragment() {
         }
     }
 
+    private var pendingTrustedServerCert: String? = null
+
     private fun onFirstServerSelected() {
+        pendingTrustedServerCert = null
         binding.createOrUpdateButton.text = getString(R.string.la_server_button_create)
         binding.deleteButton.isEnabled = false
         binding.testButton.isEnabled = false
@@ -177,6 +183,7 @@ class LoginServerFragment : Fragment() {
     }
 
     private fun onNonFirstServerSelected(position: Int) {
+        pendingTrustedServerCert = serverList[position].trustedServerCert
         binding.createOrUpdateButton.text = getString(R.string.la_server_button_update)
         binding.deleteButton.isEnabled = true
         binding.testButton.isEnabled = true
@@ -326,6 +333,7 @@ class LoginServerFragment : Fragment() {
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
         val allowSelfSigned: Boolean = s.allowSelfSigned
+        val trustedServerCert: String? = s.trustedServerCert
 
         App.getInstance().preferences.edit { putString("server_id", serverId) }
         App.getInstance().preferences.edit { putString("server", server) }
@@ -336,6 +344,7 @@ class LoginServerFragment : Fragment() {
         App.getInstance().preferences.edit { putString("client_cert", clientCert) }
         App.getInstance().preferences.edit { putString("custom_headers", customHeaders) }
         App.getInstance().preferences.edit { putBoolean("allow_self_signed", allowSelfSigned) }
+        App.getInstance().preferences.edit { putString("trusted_server_cert", trustedServerCert) }
 
         com.eddyizm.tempus.util.ClientCertManager.refreshSslSocketFactory()
         App.getSubsonicClientInstance(true)
@@ -436,7 +445,8 @@ class LoginServerFragment : Fragment() {
         isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
         clientCert = binding.serverCertField.text.toString(),
         customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null },
-        allowSelfSigned = binding.serverAllowSelfSignedSwitch.isChecked
+        allowSelfSigned = binding.serverAllowSelfSignedSwitch.isChecked,
+        trustedServerCert = if (binding.serverAllowSelfSignedSwitch.isChecked) pendingTrustedServerCert else null
     )
 
     // TODO: Test is only enabled for a saved server. It reads the form, so it could also run for
@@ -460,7 +470,7 @@ class LoginServerFragment : Fragment() {
         )
         val testId = ++currentTestId
         ServerHeaders.setTestServer(testServer)
-        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(server.allowSelfSigned)
+        SelfSignedSslHelper.setTestTrustContext(server.allowSelfSigned, server.trustedServerCert)
 
         SystemRepository().checkUserCredential(
             App.getSubsonicClientInstance(server),
@@ -488,6 +498,14 @@ class LoginServerFragment : Fragment() {
                 }
 
                 override fun onSuccess(password: String?, token: String?, salt: String?) {
+                    val captured = SelfSignedSslHelper.consumeCapturedTrustedCert()
+                    if (captured != null) {
+                        pendingTrustedServerCert = captured
+                        if (selectedServerPosition != 0) {
+                            val updated = server.copy(trustedServerCert = captured)
+                            serverViewModel.updateServer(updated)
+                        }
+                    }
                     showTestResult(
                         testId,
                         testServer,
@@ -511,7 +529,7 @@ class LoginServerFragment : Fragment() {
         duration: Int
     ) {
         ServerHeaders.clearTestServer(testServer)
-        com.eddyizm.tempus.util.SelfSignedSslHelper.setTestAllowSelfSigned(null)
+        SelfSignedSslHelper.clearTestTrustContext()
         if (testId != currentTestId) return
         val binding = _binding ?: return
         binding.testButton.isEnabled = true

@@ -112,17 +112,15 @@ public final class DownloadUtil {
      */
     @VisibleForTesting
     static OkHttpClient buildCustomHeadersHttpClient() {
-        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+        // Keep hostname verification enabled (default). Trust is narrowed via the pinned/accepted
+        // server certificate in SelfSignedSslHelper when allow-self-signed is enabled.
+        return new OkHttpClient.Builder()
                 .protocols(Collections.singletonList(Protocol.HTTP_1_1))
                 .connectTimeout(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .readTimeout(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS)
                 .addNetworkInterceptor(ServerHeaders.createInterceptor())
                 .sslSocketFactory(new DynamicSslSocketFactory(), new DynamicX509TrustManager())
-                .hostnameVerifier((hostname, session) ->
-                        !SelfSignedSslHelper.INSTANCE.isEnabled()
-                                ? javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier().verify(hostname, session)
-                                : SelfSignedSslHelper.INSTANCE.getPermissiveHostnameVerifier().verify(hostname, session));
-        return builder.build();
+                .build();
     }
 
     /**
