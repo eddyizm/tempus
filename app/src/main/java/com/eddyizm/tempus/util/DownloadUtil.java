@@ -61,6 +61,7 @@ public final class DownloadUtil {
 
     private static DataSource.Factory dataSourceFactory;
     private static DataSource.Factory httpDataSourceFactory;
+    private static OkHttpClient customHeadersHttpClient;
     private static DatabaseProvider databaseProvider;
     private static File streamingCacheDirectory;
     private static File downloadDirectory;
@@ -93,9 +94,10 @@ public final class DownloadUtil {
                     .setAllowCrossProtocolRedirects(true);
             // Requests to the signed-in server that need its custom headers go through OkHttp,
             // which re-checks the host on every redirect; see CustomHeadersDataSource.
+            customHeadersHttpClient = buildCustomHeadersHttpClient();
             DataSource.Factory headersFactory = new CustomHeadersDataSource.Factory(
                     serverHttpFactory,
-                    new OkHttpDataSource.Factory(buildCustomHeadersHttpClient()),
+                    new OkHttpDataSource.Factory(customHeadersHttpClient),
                     url -> !ServerHeaders.getHeadersForActiveServer(url).isEmpty());
             httpDataSourceFactory = new ResolvingDataSource.Factory(headersFactory, ConnectionUtil::moveStreamToAddressInUse);
         }
@@ -121,6 +123,17 @@ public final class DownloadUtil {
                 .addNetworkInterceptor(ServerHeaders.createInterceptor())
                 .sslSocketFactory(new DynamicSslSocketFactory(), new DynamicX509TrustManager())
                 .build();
+    }
+
+    /**
+     * TLS policy (self-signed allow/pin, client cert, etc.) changed: prevent reuse of connections
+     * established under the previous policy by the cached custom-header client.
+     */
+    public static synchronized void invalidateTlsConnections() {
+        if (customHeadersHttpClient != null) {
+            customHeadersHttpClient.dispatcher().cancelAll();
+            customHeadersHttpClient.connectionPool().evictAll();
+        }
     }
 
     /**

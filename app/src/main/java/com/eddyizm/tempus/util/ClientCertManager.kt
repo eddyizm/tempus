@@ -45,6 +45,9 @@ object ClientCertManager {
             // Glide configures its OkHttp client with this socket factory in IPv6StringLoader.
             HttpsURLConnection.setDefaultSSLSocketFactory(it)
         }
+        // Cached HTTP clients must not reuse idle/active connections established under the previous
+        // TLS trust policy (e.g. after disabling self-signed trust or changing the pinned cert).
+        DownloadUtil.invalidateTlsConnections()
     }
 
     @JvmStatic
