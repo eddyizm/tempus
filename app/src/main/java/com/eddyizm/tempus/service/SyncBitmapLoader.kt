@@ -79,6 +79,19 @@ class SyncBitmapLoader(
         return uri
     }
 
+    private fun fetchBitmap(model: Any): Bitmap {
+        var request = Glide.with(context)
+            .asBitmap()
+            .load(model)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+
+        if (Preferences.isDataSavingMode() && model is String) {
+            request = request.onlyRetrieveFromCache(true)
+        }
+
+        return request.submit(MAX_ART_SIZE, MAX_ART_SIZE).get()
+    }
+
     override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
         cache.get(uri)?.let {
             return Futures.immediateFuture(it)
@@ -87,12 +100,7 @@ class SyncBitmapLoader(
         executor.execute {
             try {
                 val model = resolveModel(uri)
-                val bitmap = Glide.with(context)
-                    .asBitmap()
-                    .load(model)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .submit(MAX_ART_SIZE, MAX_ART_SIZE)
-                    .get()
+                val bitmap = fetchBitmap(model)
                 cache.put(uri, bitmap)
                 future.set(bitmap)
             } catch (e: Exception) {
@@ -109,12 +117,7 @@ class SyncBitmapLoader(
                 try {
                     if (cache.get(uri) != null) return@execute
                     val model = resolveModel(uri)
-                    val bitmap = Glide.with(context)
-                        .asBitmap()
-                        .load(model)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .submit(MAX_ART_SIZE, MAX_ART_SIZE)
-                        .get()
+                    val bitmap = fetchBitmap(model)
                     cache.put(uri, bitmap)
                 } catch (_: Exception) {
                 } finally {
