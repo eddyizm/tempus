@@ -28,11 +28,6 @@ import okhttp3.ResponseBody;
 
 public class IPv6StringLoader implements ModelLoader<String, InputStream> {
     private static final int DEFAULT_TIMEOUT_MS = 2500;
-    private final OkHttpClient client;
-
-    private IPv6StringLoader(OkHttpClient client) {
-        this.client = client;
-    }
 
     @Override
     public boolean handles(@NonNull String model) {
@@ -44,24 +39,22 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
         if (!handles(model)) {
             return null;
         }
-        return new LoadData<>(new ObjectKey(model), new IPv6StreamFetcher(client, model));
+        return new LoadData<>(new ObjectKey(model), new IPv6StreamFetcher(model));
     }
 
     private static class IPv6StreamFetcher implements DataFetcher<InputStream> {
-        private final OkHttpClient client;
         private final String model;
         private Call call;
         private Response response;
 
-        IPv6StreamFetcher(OkHttpClient client, String model) {
-            this.client = client;
+        IPv6StreamFetcher(String model) {
             this.model = model;
         }
 
         @Override
         public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> callback) {
             try {
-                call = client.newCall(new Request.Builder().url(model).build());
+                call = buildClient().newCall(new Request.Builder().url(model).build());
                 response = call.execute();
                 if (!response.isSuccessful()) {
                     callback.onLoadFailed(new IOException("Request failed with status code: " + response.code()));
@@ -120,16 +113,10 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
     }
 
     public static class Factory implements ModelLoaderFactory<String, InputStream> {
-        private final OkHttpClient client;
-
-        public Factory() {
-            client = buildClient();
-        }
-
         @NonNull
         @Override
         public ModelLoader<String, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
-            return new IPv6StringLoader(client);
+            return new IPv6StringLoader();
         }
 
         @Override
@@ -140,16 +127,10 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
 
     /** Loads http(s) {@link Uri} models with the same client as {@link String} models. */
     public static class UriFactory implements ModelLoaderFactory<Uri, InputStream> {
-        private final OkHttpClient client;
-
-        public UriFactory() {
-            client = buildClient();
-        }
-
         @NonNull
         @Override
         public ModelLoader<Uri, InputStream> build(@NonNull MultiModelLoaderFactory multiFactory) {
-            IPv6StringLoader stringLoader = new IPv6StringLoader(client);
+            IPv6StringLoader stringLoader = new IPv6StringLoader();
             return new ModelLoader<Uri, InputStream>() {
                 @Override
                 public LoadData<InputStream> buildLoadData(@NonNull Uri model, int width, int height, @NonNull Options options) {
