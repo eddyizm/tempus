@@ -454,6 +454,10 @@ class LoginServerFragment : Fragment() {
     // TODO: The test client does not use the form's client certificate; TLS uses the certificate
     //  already loaded by ClientCertManager.
     private fun testConnection() {
+        startConnectionTest(userApprovedNewCert = false)
+    }
+
+    private fun startConnectionTest(userApprovedNewCert: Boolean) {
         if (!inputSanitization()) return
 
         binding.testButton.isEnabled = false
@@ -486,6 +490,15 @@ class LoginServerFragment : Fragment() {
                 }
 
                 override fun onError(exception: Exception) {
+                    val approvalPin = SelfSignedSslHelper.consumePendingApprovalCert()
+                    if (!userApprovedNewCert && approvalPin != null && isAdded && context != null) {
+                        ServerHeaders.clearTestServer(testServer)
+                        SelfSignedSslHelper.clearCapturedTrustedCert()
+                        if (testId != currentTestId) return
+                        showUntrustedCertificateApprovalDialog(approvalPin, server, testServer, testId)
+                        return
+                    }
+
                     // The server answered, so this is not a network fault. With no network at
                     // all it never answered, and the cache makes a 504 of its own that arrives
                     // here instead of through onNetworkFailure.
@@ -498,14 +511,16 @@ class LoginServerFragment : Fragment() {
                 }
 
                 override fun onSuccess(password: String?, token: String?, salt: String?) {
-                    val captured = SelfSignedSslHelper.consumeCapturedTrustedCert()
-                    if (captured != null) {
-                        pendingTrustedServerCert = captured
+                    // When user explicitly approved this cert for the retry, persist it as trusted.
+                    val approvedPin = if (userApprovedNewCert) server.trustedServerCert else null
+                    if (approvedPin != null) {
+                        pendingTrustedServerCert = approvedPin
                         if (selectedServerPosition != 0) {
-                            val updated = server.copy(trustedServerCert = captured)
+                            val updated = server.copy(trustedServerCert = approvedPin)
                             serverViewModel.updateServer(updated)
                         }
                     }
+                    SelfSignedSslHelper.consumeCapturedTrustedCert()
                     showTestResult(
                         testId,
                         testServer,
@@ -516,6 +531,35 @@ class LoginServerFragment : Fragment() {
                 }
             }
         )
+    }
+
+    private fun showUntrustedCertificateApprovalDialog(
+        certificatePin: String,
+        server: Server,
+        testServer: ServerContext,
+        testId: Int
+    ) {
+        if (testId != currentTestId) return
+        val fingerprint = certificatePin.chunked(4).joinToString(" ")
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Untrusted certificate")
+            .setMessage(
+                "The server presented a certificate that is not trusted.\n\n" +
+                    "Only approve this if you trust this server.\n\n" +
+                    "SHA-256 fingerprint:\n$fingerprint"
+            )
+            .setNegativeButton(android.R.string.cancel) { _, _ ->
+                if (testId == currentTestId) {
+                    binding.testButton.isEnabled = selectedServerPosition != 0
+                }
+            }
+            .setPositiveButton("Trust certificate") { _, _ ->
+                if (testId != currentTestId) return@setPositiveButton
+                pendingTrustedServerCert = certificatePin
+                // Retry with the approved pin so credentials are only sent after explicit approval.
+                startConnectionTest(userApprovedNewCert = true)
+            }
+            .show()
     }
 
     // The answer can arrive after the screen is gone, or after a newer test started. The text is

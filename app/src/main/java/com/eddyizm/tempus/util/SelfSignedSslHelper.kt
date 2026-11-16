@@ -25,6 +25,14 @@ object SelfSignedSslHelper {
     @Volatile
     private var capturedTrustedCert: String? = null
 
+    @Volatile
+    private var pendingApprovalCert: String? = null
+
+    class UnapprovedCertificateException(
+        val certificatePin: String,
+        message: String = "Server certificate is not trusted yet"
+    ) : CertificateException(message)
+
     @JvmStatic
     fun isEnabled(): Boolean = Preferences.isAllowSelfSigned()
 
@@ -62,12 +70,12 @@ object SelfSignedSslHelper {
             val presentedPin = certificatePin(leaf)
 
             if (expectedPin == null) {
-                // Explicit opt-in: accept and capture this certificate as the server's anchor for
-                // subsequent connections (caller persists it on success).
+                // Do not accept or send credentials until the presented certificate is explicitly approved.
                 if (config != null) {
-                    capturedTrustedCert = presentedPin
+                    pendingApprovalCert = presentedPin
+                    throw UnapprovedCertificateException(presentedPin)
                 }
-                return
+                throw CertificateException("Server certificate is not trusted")
             }
 
             if (expectedPin == presentedPin) {
@@ -83,17 +91,26 @@ object SelfSignedSslHelper {
     @JvmStatic
     fun beginTrustCapture() {
         capturedTrustedCert = null
+        pendingApprovalCert = null
     }
 
     @JvmStatic
     fun clearCapturedTrustedCert() {
         capturedTrustedCert = null
+        pendingApprovalCert = null
     }
 
     @JvmStatic
     fun consumeCapturedTrustedCert(): String? {
         val cert = capturedTrustedCert
         capturedTrustedCert = null
+        return cert
+    }
+
+    @JvmStatic
+    fun consumePendingApprovalCert(): String? {
+        val cert = pendingApprovalCert
+        pendingApprovalCert = null
         return cert
     }
 
