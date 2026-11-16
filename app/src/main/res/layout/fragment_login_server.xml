@@ -191,9 +191,11 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:cursorVisible="false"
-                    android:focusable="false"
+                    android:focusable="true"
                     android:focusableInTouchMode="false"
                     android:hint="@string/la_server_field_server_cert"
+                    android:inputType="none"
+                    android:longClickable="false"
                     android:textCursorDrawable="@null" />
 
             </com.google.android.material.textfield.TextInputLayout>

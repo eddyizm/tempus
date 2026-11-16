@@ -522,6 +522,7 @@ class LoginServerFragment : Fragment() {
             }
         }
 
+        binding.serverCertField.showSoftInputOnFocus = false
         binding.serverCertField.setOnClickListener(onCertFieldClick)
         binding.serverCertFieldContainer.setOnClickListener(onCertFieldClick)
     }
