@@ -21,19 +21,11 @@ import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.util.RadioCoverArtDownloader;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class AlbumArtContentProvider extends ContentProvider {
     public static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".albumart.provider";
     public static final String ALBUM_ART = "albumArt";
-    private ExecutorService executor;
 
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -54,96 +46,54 @@ public class AlbumArtContentProvider extends ContentProvider {
     @Override
     public ParcelFileDescriptor openFile(@NonNull Uri uri, @NonNull String mode) throws FileNotFoundException {
         Context context = getContext();
+        if (context == null) {
+            throw new FileNotFoundException("Context is null");
+        }
         String albumId = uri.getLastPathSegment();
-        Uri artworkUri = null;
-        File localFile = null;
+        if (albumId == null) {
+            throw new FileNotFoundException("No album ID in URI: " + uri);
+        }
 
-        if (albumId != null && albumId.startsWith("rl_")) {
-            // Local radio cover: stored in our app-private files dir, which other processes
-            // (SystemUI media controls, Android Auto) cannot open directly. Reading it here in the
-            // provider's own process and piping the bytes makes it accessible cross-process.
-            localFile = RadioCoverArtDownloader.getLocalCoverFile(albumId.substring("rl_".length()));
-        } else if (albumId != null && albumId.startsWith("ir_")) {
-            String encodedUrl = albumId.substring("ir_".length());
-            String decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
-            artworkUri = Uri.parse(decodedUrl);
+        File file = null;
+        if (albumId.startsWith("rl_")) {
+            File localFile = RadioCoverArtDownloader.getLocalCoverFile(albumId.substring("rl_".length()));
+            if (localFile != null && localFile.exists()) {
+                file = localFile;
+            }
         } else {
-            artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
-        }
+            Uri artworkUri;
+            if (albumId.startsWith("ir_")) {
+                String encodedUrl = albumId.substring("ir_".length());
+                String decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
+                artworkUri = Uri.parse(decodedUrl);
+            } else {
+                artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
+            }
 
-        final File localFileFinal = localFile;
-        final Uri artworkUriFinal = artworkUri;
-
-        try {
-            // use pipe to communicate between background thread and caller of openFile()
-            ParcelFileDescriptor[] pipe = ParcelFileDescriptor.createPipe();
-            ParcelFileDescriptor readSide = pipe[0];
-            ParcelFileDescriptor writeSide = pipe[1];
-
-            // perform loading in background thread to avoid blocking UI
-            executor.execute(() -> {
-                try (OutputStream out = new ParcelFileDescriptor.AutoCloseOutputStream(writeSide)) {
-
-                    // local radio cover: read directly from disk; otherwise fetch via Glide
-                    File file;
-                    if (localFileFinal != null) {
-                        file = localFileFinal;
-                    } else {
-                        var fileRequest = Glide.with(context)
-                                .asFile()
-                                .load(artworkUriFinal)
-                                .diskCacheStrategy(DiskCacheStrategy.DATA);
-                        if (Preferences.isDataSavingMode()) {
-                            fileRequest = fileRequest.onlyRetrieveFromCache(true);
-                        }
-                        file = fileRequest.submit().get();
-                    }
-
-                    // copy artwork down pipe returned by ContentProvider
-                    try (InputStream in = new FileInputStream(file)) {
-                        byte[] buffer = new byte[8192];
-                        int bytesRead;
-                        while ((bytesRead = in.read(buffer)) != -1) {
-                            out.write(buffer, 0, bytesRead);
-                        }
-                    } catch (Exception e) {
-                        writeSide.closeWithError("Failed to load image: " + e.getMessage());
-                    }
-
-                } catch (Exception e) {
-                    try {
-                        writeSide.closeWithError("Failed to load image: " + e.getMessage());
-                    } catch (IOException ignored) {}
+            try {
+                var fileRequest = Glide.with(context)
+                        .asFile()
+                        .load(artworkUri)
+                        .diskCacheStrategy(DiskCacheStrategy.DATA);
+                if (Preferences.isDataSavingMode()) {
+                    fileRequest = fileRequest.onlyRetrieveFromCache(true);
                 }
-            });
-
-            return readSide;
-
-        } catch (IOException e) {
-            throw new FileNotFoundException("Could not create pipe: " + e.getMessage());
+                file = fileRequest.submit().get();
+            } catch (Exception e) {
+                throw new FileNotFoundException("Failed to load image for " + uri + ": " + e.getMessage());
+            }
         }
+
+        if (file == null || !file.exists()) {
+            throw new FileNotFoundException("Artwork file not found for: " + uri);
+        }
+
+        return ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
     }
 
     @Override
     public boolean onCreate() {
-        executor = Executors.newFixedThreadPool(
-                Math.max(2, Runtime.getRuntime().availableProcessors() / 2)
-        );
         return true;
-    }
-
-    @Override
-    public void shutdown() {
-        if (executor != null) {
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    executor.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                executor.shutdownNow();
-            }
-        }
     }
 
     @Nullable

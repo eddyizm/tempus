@@ -4,11 +4,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.LruCache
+import android.util.Base64
 import android.util.Log
+import android.util.LruCache
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.eddyizm.tempus.glide.CustomGlideRequest
+import com.eddyizm.tempus.provider.AlbumArtContentProvider
+import com.eddyizm.tempus.util.Preferences
+import com.eddyizm.tempus.util.RadioCoverArtDownloader
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
@@ -50,6 +56,29 @@ class SyncBitmapLoader(
         }
     }
 
+    private fun resolveModel(uri: Uri): Any {
+        if (uri.authority == AlbumArtContentProvider.AUTHORITY &&
+            uri.pathSegments.firstOrNull() == AlbumArtContentProvider.ALBUM_ART
+        ) {
+            val albumId = uri.lastPathSegment
+            if (albumId != null) {
+                if (albumId.startsWith("rl_")) {
+                    val localFile = RadioCoverArtDownloader.getLocalCoverFile(albumId.substring("rl_".length))
+                    if (localFile != null && localFile.exists()) {
+                        return localFile
+                    }
+                } else if (albumId.startsWith("ir_")) {
+                    val encodedUrl = albumId.substring("ir_".length)
+                    val decodedUrl = String(Base64.decode(encodedUrl, Base64.URL_SAFE or Base64.NO_WRAP))
+                    return decodedUrl
+                } else {
+                    return CustomGlideRequest.createUrl(albumId, Preferences.getImageSize())
+                }
+            }
+        }
+        return uri
+    }
+
     override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
         cache.get(uri)?.let {
             return Futures.immediateFuture(it)
@@ -57,9 +86,11 @@ class SyncBitmapLoader(
         val future = SettableFuture.create<Bitmap>()
         executor.execute {
             try {
+                val model = resolveModel(uri)
                 val bitmap = Glide.with(context)
                     .asBitmap()
-                    .load(uri)
+                    .load(model)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .submit(MAX_ART_SIZE, MAX_ART_SIZE)
                     .get()
                 cache.put(uri, bitmap)
@@ -77,9 +108,11 @@ class SyncBitmapLoader(
             executor.execute {
                 try {
                     if (cache.get(uri) != null) return@execute
+                    val model = resolveModel(uri)
                     val bitmap = Glide.with(context)
                         .asBitmap()
-                        .load(uri)
+                        .load(model)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .submit(MAX_ART_SIZE, MAX_ART_SIZE)
                         .get()
                     cache.put(uri, bitmap)
