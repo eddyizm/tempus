@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
-class RetrofitClient(subsonic: Subsonic) {
+class RetrofitClient(private val subsonic: Subsonic) {
     val retrofit: Retrofit
 
     init {
@@ -108,6 +108,20 @@ class RetrofitClient(subsonic: Subsonic) {
     }
 
     private fun OkHttpClient.Builder.setupSsl(): OkHttpClient.Builder {
+        if (subsonic.hasTestTrustOverride()) {
+            val trustManager = SelfSignedSslHelper.createTrustManager(
+                SelfSignedSslHelper.TrustConfig(
+                    subsonic.isTestAllowSelfSigned,
+                    subsonic.testTrustedServerCert
+                )
+            )
+            ClientCertManager.createSslSocketFactory(trustManager)?.let { sslSocketFactory ->
+                // Scoped to this login-test client only; hostname verification remains enabled.
+                sslSocketFactory(sslSocketFactory, trustManager)
+            }
+            return this
+        }
+
         ClientCertManager.sslSocketFactory?.let { sslSocketFactory ->
             // Keep hostname verification enabled (default). Trust decisions are delegated to the
             // current trust manager (including pinned accepted certs for opted-in self-signed servers).

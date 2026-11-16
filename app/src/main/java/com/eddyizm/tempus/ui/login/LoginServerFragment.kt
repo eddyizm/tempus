@@ -67,7 +67,7 @@ class LoginServerFragment : Fragment() {
         super.onDestroyView()
         currentTestId++
         ServerHeaders.setTestServer(null)
-        SelfSignedSslHelper.clearTestTrustContext()
+        SelfSignedSslHelper.clearCapturedTrustedCert()
         _binding = null // release from memory
     }
 
@@ -470,10 +470,10 @@ class LoginServerFragment : Fragment() {
         )
         val testId = ++currentTestId
         ServerHeaders.setTestServer(testServer)
-        SelfSignedSslHelper.setTestTrustContext(server.allowSelfSigned, server.trustedServerCert)
+        SelfSignedSslHelper.beginTrustCapture()
 
         SystemRepository().checkUserCredential(
-            App.getSubsonicClientInstance(server),
+            App.getSubsonicClientInstanceForTest(server, server.allowSelfSigned, server.trustedServerCert),
             object : SystemCallback {
                 override fun onNetworkFailure(exception: Exception) {
                     showTestResult(
@@ -529,7 +529,7 @@ class LoginServerFragment : Fragment() {
         duration: Int
     ) {
         ServerHeaders.clearTestServer(testServer)
-        SelfSignedSslHelper.clearTestTrustContext()
+        SelfSignedSslHelper.clearCapturedTrustedCert()
         if (testId != currentTestId) return
         val binding = _binding ?: return
         binding.testButton.isEnabled = true

@@ -39,16 +39,17 @@ object ClientCertManager {
     @JvmStatic
     fun refreshSslSocketFactory() {
         val context = appContext ?: return
-        sslSocketFactory = createSslSocketFactory(context)
+        sslSocketFactory = createSslSocketFactory(SelfSignedSslHelper.effectiveTrustManager())
         sslSocketFactory?.let {
             // ExoPlayer uses HttpsURLConnection in DefaultHttpDataSource.
             // Glide configures its OkHttp client with this socket factory in IPv6StringLoader.
             HttpsURLConnection.setDefaultSSLSocketFactory(it)
-            SelfSignedSslHelper.applyDefaultHostnameVerifier()
         }
     }
 
-    private fun createSslSocketFactory(context: Context): SSLSocketFactory? {
+    @JvmStatic
+    fun createSslSocketFactory(trustManager: X509TrustManager): SSLSocketFactory? {
+        val context = appContext ?: return null
         return try {
             val clientKeyManager = object : X509KeyManager {
                 override fun getClientAliases(keyType: String?, issuers: Array<Principal>?) = null
@@ -95,7 +96,7 @@ object ClientCertManager {
             }
 
             val sslContext = SSLContext.getInstance("TLS")
-            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(SelfSignedSslHelper.effectiveTrustManager()), SecureRandom())
+            sslContext.init(arrayOf(clientKeyManager), arrayOf<TrustManager>(trustManager), SecureRandom())
             sslContext.socketFactory
         } catch (e: NoSuchAlgorithmException) {
             Log.e(TAG, "Failed setting mTLS", e)
