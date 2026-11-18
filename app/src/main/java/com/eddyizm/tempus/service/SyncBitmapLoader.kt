@@ -10,7 +10,7 @@ import android.util.LruCache
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.signature.ObjectKey
 import com.eddyizm.tempus.glide.CustomGlideRequest
 import com.eddyizm.tempus.provider.AlbumArtContentProvider
 import com.eddyizm.tempus.util.Preferences
@@ -18,6 +18,7 @@ import com.eddyizm.tempus.util.RadioCoverArtDownloader
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
+import java.io.File
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
@@ -83,7 +84,10 @@ class SyncBitmapLoader(
         var request = Glide.with(context)
             .asBitmap()
             .load(model)
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
+
+        if (model is File) {
+            request = request.signature(ObjectKey(model.lastModified()))
+        }
 
         if (Preferences.isDataSavingMode() && model is String) {
             request = request.onlyRetrieveFromCache(true)

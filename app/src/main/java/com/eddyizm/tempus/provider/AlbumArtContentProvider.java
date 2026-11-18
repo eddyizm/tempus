@@ -61,19 +61,18 @@ public class AlbumArtContentProvider extends ContentProvider {
                 file = localFile;
             }
         } else {
-            Uri artworkUri;
+            String artworkUrl;
             if (albumId.startsWith("ir_")) {
                 String encodedUrl = albumId.substring("ir_".length());
-                String decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
-                artworkUri = Uri.parse(decodedUrl);
+                artworkUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
             } else {
-                artworkUri = Uri.parse(CustomGlideRequest.createUrl(albumId, Preferences.getImageSize()));
+                artworkUrl = CustomGlideRequest.createUrl(albumId, Preferences.getImageSize());
             }
 
             try {
                 var fileRequest = Glide.with(context)
                         .asFile()
-                        .load(artworkUri)
+                        .load(artworkUrl)
                         .diskCacheStrategy(DiskCacheStrategy.DATA);
                 if (Preferences.isDataSavingMode()) {
                     fileRequest = fileRequest.onlyRetrieveFromCache(true);
