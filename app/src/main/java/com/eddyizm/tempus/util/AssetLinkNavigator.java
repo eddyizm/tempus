@@ -46,13 +46,13 @@ public final class AssetLinkNavigator {
                 openSong(assetLink.id);
                 break;
             case AssetLinkUtil.TYPE_ALBUM:
-                openAlbum(assetLink.id);
+                openAlbum(assetLink.id, AppShortcuts.playMode(assetLink));
                 break;
             case AssetLinkUtil.TYPE_ARTIST:
                 openArtist(assetLink.id);
                 break;
             case AssetLinkUtil.TYPE_PLAYLIST:
-                openPlaylist(assetLink.id);
+                openPlaylist(assetLink.id, AppShortcuts.playMode(assetLink));
                 break;
             case AssetLinkUtil.TYPE_GENRE:
                 openGenre(assetLink.id);
@@ -88,7 +88,7 @@ public final class AssetLinkNavigator {
         liveData.observe(activity, observer);
     }
 
-    private void openAlbum(@NonNull String id) {
+    private void openAlbum(@NonNull String id, @NonNull String playMode) {
         MutableLiveData<AlbumID3> liveData = albumRepository.getAlbum(id);
         Observer<AlbumID3> observer = new Observer<AlbumID3>() {
             @Override
@@ -100,6 +100,7 @@ public final class AssetLinkNavigator {
                 }
                 Bundle args = new Bundle();
                 args.putParcelable(Constants.ALBUM_OBJECT, album.strippedForNav());
+                args.putString(Constants.AUTO_PLAY, playMode);
                 navigateSafely(R.id.albumPageFragment, args);
             }
         };
@@ -124,7 +125,7 @@ public final class AssetLinkNavigator {
         liveData.observe(activity, observer);
     }
 
-    private void openPlaylist(@NonNull String id) {
+    private void openPlaylist(@NonNull String id, @NonNull String playMode) {
         MutableLiveData<Playlist> liveData = playlistRepository.getPlaylist(id);
         Observer<Playlist> observer = new Observer<Playlist>() {
             @Override
@@ -136,6 +137,7 @@ public final class AssetLinkNavigator {
                 }
                 Bundle args = new Bundle();
                 args.putParcelable(Constants.PLAYLIST_OBJECT, playlist);
+                args.putString(Constants.AUTO_PLAY, playMode);
                 navigateSafely(R.id.playlistPageFragment, args);
             }
         };

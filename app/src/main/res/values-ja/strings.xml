@@ -873,7 +873,6 @@
     <string name="la_perms_access_local_network_description">同じLAN上にある他のデバイスにアクセスするために必要です。</string>
     <string name="la_perms_nearby_devices_title">付近のデバイス</string>
     <string name="la_perms_nearby_devices_description">UPnPやChromecastで他のデバイスを検出するために必要です。</string>
-    <string name="la_shortcut_label">はじめに</string>
     <string name="la_button_advanced_editor">サーバーエディターを開く</string>
     <string name="hello_blank_fragment">空のフラグメント</string>
 </resources>
