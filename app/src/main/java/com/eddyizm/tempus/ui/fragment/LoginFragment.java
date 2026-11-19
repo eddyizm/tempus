@@ -109,6 +109,11 @@ public class LoginFragment extends Fragment implements ClickCallback {
                 if (bind != null) bind.serverListRecyclerView.setVisibility(View.GONE);
             }
         });
+        loginViewModel.getLoginSucceeded().observe(getViewLifecycleOwner(), succeeded -> {
+            if (!Boolean.TRUE.equals(succeeded)) return;
+            loginViewModel.setLoginSucceeded(false);
+            ((MainActivity) requireActivity()).goFromLogin();
+        });
     }
 
     public void initNewLoginButton() {
@@ -168,7 +173,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
             @Override
             public void onSuccess(String password, String token, String salt) {
                 new PlaylistRepository().refreshAllPlaylists();
-                activity.goFromLogin();
+                loginViewModel.setLoginSucceeded(true);
             }
         });
     }
