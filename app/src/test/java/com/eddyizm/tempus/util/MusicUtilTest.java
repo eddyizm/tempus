@@ -140,4 +140,19 @@ public class MusicUtilTest {
         assertNull(MusicUtil.sourceSuffix(null));
         assertNull(MusicUtil.sourceSuffix(extrasWith(null, null)));
     }
+
+    // Transcode formats keep the types downloads already store; container suffixes are added.
+    @Test
+    public void audioMimeTypeForFormat_mapsFormatsAndContainers() {
+        assertEquals("audio/opus", MusicUtil.audioMimeTypeForFormat("opus"));
+        assertEquals("audio/aac", MusicUtil.audioMimeTypeForFormat("aac"));
+        assertEquals("audio/mpeg", MusicUtil.audioMimeTypeForFormat("mp3"));
+        assertEquals("audio/flac", MusicUtil.audioMimeTypeForFormat("flac"));
+        assertEquals("audio/mp4", MusicUtil.audioMimeTypeForFormat("m4a"));
+        assertEquals("audio/ogg", MusicUtil.audioMimeTypeForFormat("ogg"));
+        assertEquals("audio/wav", MusicUtil.audioMimeTypeForFormat("wav"));
+        assertEquals("audio/webm", MusicUtil.audioMimeTypeForFormat("webm"));
+        assertNull(MusicUtil.audioMimeTypeForFormat("raw"));
+        assertNull(MusicUtil.audioMimeTypeForFormat(null));
+    }
 }
