@@ -21,7 +21,7 @@ import java.util.Objects;
 import com.google.android.material.color.MaterialColors;
 
 public final class AssetLinkUtil {
-    public static final String SCHEME = "tempo";
+    public static final String SCHEME = "tempus";
     public static final String HOST_ASSET = "asset";
 
     public static final String TYPE_SONG = "song";

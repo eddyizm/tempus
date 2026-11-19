@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
@@ -67,6 +68,10 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
     private boolean lyricsSyncState = true;
     private LiveData<LyricsCache> cachedLyricsSource;
     private String currentSongId;
+    private Child postedSong;
+    private String tappedSongId;
+    private Integer tappedRating;
+    private int tapCount;
     private final Observer<LyricsCache> cachedLyricsObserver = this::onCachedLyricsChanged;
 
 
@@ -201,7 +206,7 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         return liveMedia;
     }
 
-    public void setLiveMedia(LifecycleOwner owner, String mediaType, String mediaId) {
+    public void setLiveMedia(LifecycleOwner owner, String mediaType, String mediaId, @Nullable Child queuedSong) {
         currentSongId = mediaId;
 
         if (!TextUtils.isEmpty(mediaId)) {
@@ -216,22 +221,39 @@ public class PlayerBottomSheetViewModel extends AndroidViewModel {
         if (mediaType != null) {
             switch (mediaType) {
                 case Constants.MEDIA_TYPE_MUSIC:
-                    if (!TextUtils.isEmpty(mediaId)) songRepository.getSong(mediaId).observe(owner, song -> {
-                        if (java.util.Objects.equals(currentSongId, mediaId)) liveMedia.postValue(song);
-                    });
-                    else liveMedia.postValue(null);
+                    if (!TextUtils.isEmpty(mediaId)) {
+                        if (queuedSong != null && (postedSong == null || !mediaId.equals(postedSong.getId()))) postLiveMedia(queuedSong);
+                        int sentTapCount = tapCount;
+                        songRepository.getSong(mediaId).observe(owner, song -> {
+                            if (!java.util.Objects.equals(currentSongId, mediaId)) return;
+                            if (song != null && tapCount != sentTapCount && mediaId.equals(tappedSongId)) song.setUserRating(tappedRating);
+                            postLiveMedia(song);
+                        });
+                    }
+                    else postLiveMedia(null);
                     descriptionLiveData.postValue(null);
                     break;
                 case Constants.MEDIA_TYPE_PODCAST:
-                    liveMedia.postValue(null);
+                    postLiveMedia(null);
                     break;
                 default:
-                    liveMedia.postValue(null);
+                    postLiveMedia(null);
                     break;
             }
         } else {
-            liveMedia.postValue(null);
+            postLiveMedia(null);
         }
+    }
+
+    public void setTappedRating(String songId, int rating) {
+        tappedSongId = songId;
+        tappedRating = rating;
+        tapCount++;
+    }
+
+    private void postLiveMedia(Child media) {
+        postedSong = media;
+        liveMedia.postValue(media);
     }
 
     public LiveData<AlbumID3> getLiveAlbum() {

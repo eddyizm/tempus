@@ -209,6 +209,15 @@ open class BaseSessionCallback(
                 }
             }.build()
 
+    // Omit COMMAND_GET_TIMELINE for legacy controllers and the media notification controller
+    // so MediaSessionLegacyStub does not serialize the entire playlist into
+    // MediaSessionCompat.QueueItem instances (causes system-wide OOM on large queues).
+    @OptIn(UnstableApi::class)
+    val legacyPlayerCommands: Player.Commands =
+        MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS.buildUpon()
+            .remove(Player.COMMAND_GET_TIMELINE)
+            .build()
+
     // ─────────────────────────────────────────────────────────────
     // onConnect
     // ─────────────────────────────────────────────────────────────
@@ -229,6 +238,15 @@ open class BaseSessionCallback(
         session: MediaSession,
         controller: MediaSession.ControllerInfo
     ): MediaSession.ConnectionResult {
+        val playerCommands =
+            if (controller.controllerVersion == MediaSession.ControllerInfo.LEGACY_CONTROLLER_VERSION
+                || session.isMediaNotificationController(controller)
+            ) {
+                legacyPlayerCommands
+            } else {
+                MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS
+            }
+
         // Reset listener on every AA connection to avoid stale state after reconnection.
         // AA may call onConnect multiple times (double gearhead event observed in logs).
         if (currentSession == null
@@ -248,10 +266,11 @@ open class BaseSessionCallback(
             session.isAutomotiveController(controller) ||
             session.isAutoCompanionController(controller)
         ) {
-        return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
-            .setAvailableSessionCommands(mediaNotificationSessionCommands)
-            .setMediaButtonPreferences(buildMediaButtonPreferences(session.player))
-            .build()
+            return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
+                .setAvailableSessionCommands(mediaNotificationSessionCommands)
+                .setAvailablePlayerCommands(playerCommands)
+                .setMediaButtonPreferences(buildMediaButtonPreferences(session.player))
+                .build()
         }
 
         val sessionCommands =
@@ -261,6 +280,7 @@ open class BaseSessionCallback(
 
         return MediaSession.ConnectionResult.AcceptedResultBuilder(session)
             .setAvailableSessionCommands(sessionCommands)
+            .setAvailablePlayerCommands(playerCommands)
             .build()
     }
 

@@ -63,6 +63,7 @@ Please note the two variants in the release assets include release/debug and 32/
 
 ### 🟩F-droid & 🟥Github
 - **Subsonic Integration**: Tempus seamlessly integrates with your Subsonic server, providing you with easy access to your entire music collection on the go.
+- **Servers Supported**: Lightweight Media Server (LMS), Navidrome, Gonic, NextCloud Music, Ampache, Airsonic Advanced and more
 - **Sleek and Intuitive UI**: Enjoy a clean and user-friendly interface designed to enhance your music listening experience, tailored to your preferences and listening history.
 - **Browse and Search**: Easily navigate through your music library using various browsing and searching options, including artists, albums, genres, playlists, decades and more.
 - **Streaming and Offline Mode**: Stream music directly from your Subsonic server. Offline mode is currently under active development and may have limitations when using multiple servers.
@@ -77,7 +78,7 @@ Please note the two variants in the release assets include release/debug and 32/
 - **Multiple Libraries**: Tempus handles multi-library setups gracefully. They are displayed as Library folders.
 - **Equalizer**: Option to use built-in or third-party equalizer.
 - **Widget**: New widget to keeping the basic controls on your screen at all times.
-- **Available in 14 languages**: Currently in Basque, Catalan, Chinese, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russion, Spanish (Spain), Spanish (Latam) and Turkish
+- **Available in 14 languages**: Currently in Basque, Catalan, Chinese, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish (Spain), Spanish (Latam) and Turkish
 
 ### 🟥GitHub version only
 - **Chromecast Support**: Stream your music to Chromecast devices. The support is currently in a rudimentary state.

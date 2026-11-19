@@ -113,11 +113,14 @@ public class MusicUtil {
     }
 
     public static Uri getDownloadUri(String id) {
+        return getDownloadUri(id, new DownloadRepository().getDownload(id));
+    }
+
+    /** {@link #getDownloadUri(String)} with the song's row, or null, already looked up. */
+    public static Uri getDownloadUri(String id, Download download) {
         StringBuilder uri = new StringBuilder();
 
-        Download download = new DownloadRepository().getDownload(id);
-
-        if (download == null || download.getDownloadUri().isEmpty()) {
+        if (download == null || download.getDownloadUri() == null || download.getDownloadUri().isEmpty()) {
             Map<String, String> params = App.getSubsonicClientInstance(false).getParams();
 
             uri.append(App.getSubsonicClientInstance(false).getUrl());

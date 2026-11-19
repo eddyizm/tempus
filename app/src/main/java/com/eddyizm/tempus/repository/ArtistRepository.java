@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -44,13 +46,12 @@ public class ArtistRepository {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                         if (response.isSuccessful() && response.body() != null && 
-                            response.body().getSubsonicResponse().getArtist() != null && 
-                            response.body().getSubsonicResponse().getArtist().getAlbums() != null) {
+                            response.body().getSubsonicResponse().getArtist() != null) {
                             
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
-                            Log.d("ArtistSync", "Got albums directly: " + albums.size());
+                            Log.d("ArtistSync", "Got albums directly: " + (albums != null ? albums.size() : 0));
                             
-                            if (!albums.isEmpty()) {
+                            if (albums != null && !albums.isEmpty()) {
                                 // Pass target artist id and name so we can filter compilation tracks
                                 ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
                                 String targetName = artist != null ? artist.getName() : null;
@@ -61,14 +62,14 @@ public class ArtistRepository {
                             }
                         } else {
                             Log.d("ArtistSync", "Failed to get artist info");
-                            callback.onSongsCollected(new ArrayList<>());
+                            callback.onFailed(new ArrayList<>());
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
                         Log.d("ArtistSync", "Error getting artist info: " + t.getMessage());
-                        callback.onSongsCollected(new ArrayList<>());
+                        callback.onFailed(new ArrayList<>());
                     }
                 });
     }
@@ -82,12 +83,12 @@ public class ArtistRepository {
 
         List<Child> allSongs = new ArrayList<>();
         AtomicInteger remainingAlbums = new AtomicInteger(albums.size());
+        AtomicBoolean anyFailed = new AtomicBoolean(false);
         Log.d("ArtistSync", "Processing " + albums.size() + " albums");
         
         for (AlbumID3 album : albums) {
             Log.d("ArtistSync", "Getting tracks for album: " + album.getName());
-            MutableLiveData<List<Child>> albumTracks = albumRepository.getAlbumTracks(album.getId());
-            albumTracks.observeForever(songs -> {
+            Consumer<List<Child>> onAlbumTracks = songs -> {
                 Log.d("ArtistSync", "Got " + (songs != null ? songs.size() : 0) + " songs from album");
                 if (songs != null) {
                     List<Child> filtered = new ArrayList<>();
@@ -103,21 +104,31 @@ public class ArtistRepository {
                     }
                     allSongs.addAll(filtered);
                 }
-                albumTracks.removeObservers(null);
                 
                 int remaining = remainingAlbums.decrementAndGet();
                 Log.d("ArtistSync", "Remaining albums: " + remaining);
                 
                 if (remaining == 0) {
                     Log.d("ArtistSync", "All albums processed. Total songs: " + allSongs.size());
-                    callback.onSongsCollected(allSongs);
+                    if (anyFailed.get()) callback.onFailed(allSongs);
+                    else callback.onSongsCollected(allSongs);
                 }
+            };
+            albumRepository.getAlbumTracks(album.getId(), onAlbumTracks, () -> {
+                Log.d("ArtistSync", "Failed to get tracks for album: " + album.getName());
+                anyFailed.set(true);
+                onAlbumTracks.accept(null);
             });
         }
     }
 
     public interface ArtistSongsCallback {
         void onSongsCollected(List<Child> songs);
+
+        /** The artist or one of its albums could not be loaded; songs holds what was. By default reported as collected. */
+        default void onFailed(List<Child> songs) {
+            onSongsCollected(songs);
+        }
     }
 
     /**

@@ -918,6 +918,7 @@ public class PlayerControllerFragment extends Fragment {
                         if (fromUser) {
                             ratingViewModel.rate((int) rating);
                             media.setUserRating((int) rating);
+                            playerBottomSheetViewModel.setTappedRating(media.getId(), (int) rating);
                         }
                     }
                 });

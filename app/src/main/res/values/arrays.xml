@@ -403,4 +403,10 @@
         <item>[instantMixID]</item>
     </string-array>
 
+    <string-array name="la_backups_automatic_dropdown_items">
+        <item>@string/la_backups_section_automatic_dropdown_item_hourly</item>
+        <item>@string/la_backups_section_automatic_dropdown_item_daily</item>
+        <item>@string/la_backups_section_automatic_dropdown_item_weekly</item>
+    </string-array>
+
 </resources>

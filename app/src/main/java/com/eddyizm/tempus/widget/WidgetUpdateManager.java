@@ -98,7 +98,7 @@ public final class WidgetUpdateManager {
                     appCtx,
                     coverArtId,
                     WIDGET_SAFE_ART_SIZE,
-                    new CustomTarget<Bitmap>() {
+                    new CustomTarget<Bitmap>(WIDGET_SAFE_ART_SIZE, WIDGET_SAFE_ART_SIZE) {
                         @Override
                         public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
                             AppWidgetManager mgr = AppWidgetManager.getInstance(appCtx);

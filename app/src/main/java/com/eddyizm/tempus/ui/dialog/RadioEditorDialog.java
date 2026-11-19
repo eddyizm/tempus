@@ -43,9 +43,12 @@ import java.util.List;
 import java.util.Objects;
 
 public class RadioEditorDialog extends DialogFragment {
+    public static final String REQUEST_KEY = "RadioEditorDialog";
+
     private DialogRadioEditorBinding bind;
     private RadioEditorViewModel radioEditorViewModel;
-    private final RadioCallback radioCallback;
+    private RadioCallback radioCallback;
+    private boolean isRestored = false;
 
     private String radioName;
     private String radioStreamURL;
@@ -59,13 +62,22 @@ public class RadioEditorDialog extends DialogFragment {
     private ArrayAdapter<String> countryListAdapter;
     private boolean suppressCountryFilter;
 
+    public RadioEditorDialog() {
+        this.radioCallback = null;
+    }
+
     public RadioEditorDialog(RadioCallback radioCallback) {
+        this.radioCallback = radioCallback;
+    }
+
+    public void setRadioCallback(RadioCallback radioCallback) {
         this.radioCallback = radioCallback;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        isRestored = savedInstanceState != null;
         bind = DialogRadioEditorBinding.inflate(getLayoutInflater());
         // Scope the ViewModel to this dialog (not the activity) so each opening starts with a
         // clean state — otherwise a retained toEdit / isSuccess leaks between add and edit flows.
@@ -108,7 +120,13 @@ public class RadioEditorDialog extends DialogFragment {
                     bind.internetRadioStationCoverArtUrlLayout.setVisibility(isLocal ? View.VISIBLE : View.GONE);
                 }
             });
-            bind.radioSourceToggle.check(R.id.radio_source_server);
+            if (!isRestored) {
+                bind.radioSourceToggle.check(R.id.radio_source_server);
+            } else {
+                boolean isLocal = bind.radioSourceToggle.getCheckedButtonId() == R.id.radio_source_local;
+                radioEditorViewModel.setLocal(isLocal);
+                bind.internetRadioStationCoverArtUrlLayout.setVisibility(isLocal ? View.VISIBLE : View.GONE);
+            }
         }
     }
 
@@ -413,16 +431,21 @@ public class RadioEditorDialog extends DialogFragment {
     private void setParameterInfo() {
         InternetRadioStation toEdit = radioEditorViewModel.getRadioToEdit();
         if (toEdit != null) {
-            bind.internetRadioStationNameTextView.setText(toEdit.getName());
-            bind.internetRadioStationStreamUrlTextView.setText(toEdit.getStreamUrl());
-            bind.internetRadioStationHomepageUrlTextView.setText(toEdit.getHomePageUrl());
+            if (!isRestored) {
+                bind.internetRadioStationNameTextView.setText(toEdit.getName());
+                bind.internetRadioStationStreamUrlTextView.setText(toEdit.getStreamUrl());
+                bind.internetRadioStationHomepageUrlTextView.setText(toEdit.getHomePageUrl());
+
+                if (radioEditorViewModel.isLocal()) {
+                    bind.internetRadioStationCoverArtUrlTextView.setText(toEdit.getCoverArt());
+                }
+            }
 
             bind.sourceToggleLayout.setVisibility(View.GONE);
             bind.searchDirectoryButton.setVisibility(View.GONE);
 
             if (radioEditorViewModel.isLocal()) {
                 bind.internetRadioStationCoverArtUrlLayout.setVisibility(View.VISIBLE);
-                bind.internetRadioStationCoverArtUrlTextView.setText(toEdit.getCoverArt());
             }
 
             if (getDialog() != null) {
@@ -455,8 +478,12 @@ public class RadioEditorDialog extends DialogFragment {
     private void dismissDialog() {
         if (radioCallback != null) {
             radioCallback.onDismiss();
+        } else {
+            getParentFragmentManager().setFragmentResult(REQUEST_KEY, new Bundle());
         }
-        Objects.requireNonNull(getDialog()).dismiss();
+        if (getDialog() != null) {
+            getDialog().dismiss();
+        }
     }
 
     private static class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.ViewHolder> {

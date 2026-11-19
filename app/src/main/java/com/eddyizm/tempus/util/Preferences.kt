@@ -14,9 +14,9 @@ object Preferences {
     const val THEME = "theme"
     const val UPNP_ENABLED = "upnp_enabled"
     const val LAN_REMOTE_ENABLED = "lan_remote_enabled"
-    private const val DARK_THEME_BLACK = "dark_theme_black"
-    private const val COLOR_ACCENT = "color_accent"
-    private const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
+    const val DARK_THEME_BLACK = "dark_theme_black"
+    const val COLOR_ACCENT = "color_accent"
+    const val DYNAMIC_COLOR_ACCENT = "dynamic_color_accent"
     private const val SERVER = "server"
     private const val USER = "user"
     private const val PASSWORD = "password"
@@ -1061,7 +1061,7 @@ object Preferences {
 
     @JvmStatic
     fun getSelectedEqualizer(): Int {
-        return App.getInstance().preferences.getString(SELECTED_EQUALIZER, "0")!!.toInt()
+        return App.getInstance().preferences.getString(SELECTED_EQUALIZER, "0")?.toIntOrNull() ?: 0
     }
 
     @JvmStatic

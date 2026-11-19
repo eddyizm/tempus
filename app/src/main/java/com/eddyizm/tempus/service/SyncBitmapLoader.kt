@@ -4,17 +4,26 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.LruCache
+import android.util.Base64
 import android.util.Log
+import android.util.LruCache
 import androidx.media3.common.util.BitmapLoader
 import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
+import com.eddyizm.tempus.glide.CustomGlideRequest
+import com.eddyizm.tempus.provider.AlbumArtContentProvider
+import com.eddyizm.tempus.util.Preferences
+import com.eddyizm.tempus.util.RadioCoverArtDownloader
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.SettableFuture
+import java.io.File
 import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.RejectedExecutionException
 
 // Custom BitmapLoader that returns immediateFuture on cache hits. Works around
 // Media3 MediaSessionLegacyStub pushing an initial setMetadata(bitmap=null) to
@@ -28,6 +37,7 @@ class SyncBitmapLoader(
 ) : BitmapLoader {
 
     private val cache = LruCache<Uri, Bitmap>(CACHE_SIZE)
+    private val prewarmingUris = ConcurrentHashMap.newKeySet<Uri>()
     private val executor: ExecutorService = Executors.newFixedThreadPool(2)
 
     override fun supportsMimeType(mimeType: String): Boolean {
@@ -47,6 +57,45 @@ class SyncBitmapLoader(
         }
     }
 
+    private fun resolveModel(uri: Uri): Any {
+        if (uri.authority == AlbumArtContentProvider.AUTHORITY &&
+            uri.pathSegments.firstOrNull() == AlbumArtContentProvider.ALBUM_ART
+        ) {
+            val albumId = uri.lastPathSegment
+            if (albumId != null) {
+                if (albumId.startsWith("rl_")) {
+                    val localFile = RadioCoverArtDownloader.getLocalCoverFile(albumId.substring("rl_".length))
+                    if (localFile != null && localFile.exists()) {
+                        return localFile
+                    }
+                } else if (albumId.startsWith("ir_")) {
+                    val encodedUrl = albumId.substring("ir_".length)
+                    val decodedUrl = String(Base64.decode(encodedUrl, Base64.URL_SAFE or Base64.NO_WRAP))
+                    return decodedUrl
+                } else {
+                    return CustomGlideRequest.createUrl(albumId, Preferences.getImageSize())
+                }
+            }
+        }
+        return uri
+    }
+
+    private fun fetchBitmap(model: Any): Bitmap {
+        var request = Glide.with(context)
+            .asBitmap()
+            .load(model)
+
+        if (model is File) {
+            request = request.signature(ObjectKey(model.lastModified()))
+        }
+
+        if (Preferences.isDataSavingMode() && model is String) {
+            request = request.onlyRetrieveFromCache(true)
+        }
+
+        return request.submit(MAX_ART_SIZE, MAX_ART_SIZE).get()
+    }
+
     override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
         cache.get(uri)?.let {
             return Futures.immediateFuture(it)
@@ -54,11 +103,8 @@ class SyncBitmapLoader(
         val future = SettableFuture.create<Bitmap>()
         executor.execute {
             try {
-                val bitmap = Glide.with(context)
-                    .asBitmap()
-                    .load(uri)
-                    .submit(MAX_ART_SIZE, MAX_ART_SIZE)
-                    .get()
+                val model = resolveModel(uri)
+                val bitmap = fetchBitmap(model)
                 cache.put(uri, bitmap)
                 future.set(bitmap)
             } catch (e: Exception) {
@@ -69,18 +115,22 @@ class SyncBitmapLoader(
     }
 
     fun prewarm(uri: Uri) {
-        if (cache.get(uri) != null) return
-        executor.execute {
-            if (cache.get(uri) != null) return@execute
-            try {
-                val bitmap = Glide.with(context)
-                    .asBitmap()
-                    .load(uri)
-                    .submit(MAX_ART_SIZE, MAX_ART_SIZE)
-                    .get()
-                cache.put(uri, bitmap)
-            } catch (_: Exception) {
+        if (cache.get(uri) != null || !prewarmingUris.add(uri)) return
+        try {
+            executor.execute {
+                try {
+                    if (cache.get(uri) != null) return@execute
+                    val model = resolveModel(uri)
+                    val bitmap = fetchBitmap(model)
+                    cache.put(uri, bitmap)
+                } catch (_: Exception) {
+                } finally {
+                    prewarmingUris.remove(uri)
+                }
             }
+        } catch (e: RejectedExecutionException) {
+            prewarmingUris.remove(uri)
+            Log.w(TAG, "Unable to schedule artwork prewarm for $uri", e)
         }
     }
 
