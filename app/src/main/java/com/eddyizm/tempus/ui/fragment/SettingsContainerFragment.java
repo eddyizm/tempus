@@ -107,6 +107,8 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     private static final long SCAN_STATUS_POLL_INTERVAL_MS = 2000;
     private final Handler scanStatusHandler = new Handler(Looper.getMainLooper());
 
+    private static final String STATE_EXPANDED_CATEGORIES = "expanded_categories";
+
     private final Set<String> expandedCategories = new HashSet<>();
 
     private boolean musicFoldersObserved = false;
@@ -123,6 +125,11 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            ArrayList<String> expanded = savedInstanceState.getStringArrayList(STATE_EXPANDED_CATEGORIES);
+            if (expanded != null) expandedCategories.addAll(expanded);
+        }
+
         super.onCreate(savedInstanceState);
 
         equalizerResultLauncher = registerForActivityResult(
@@ -185,8 +192,6 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
 
-        expandedCategories.clear();
-
         setStreamingCacheSize();
         setAppLanguage();
         setMusicLibrary();
@@ -218,6 +223,12 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         actionReplayGainPreamp();
 
         applyAccordionState();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(STATE_EXPANDED_CATEGORIES, new ArrayList<>(expandedCategories));
     }
 
     @Override
@@ -273,6 +284,9 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
                     });
                 }
             }
+
+            checkLanPlayback();
+            collapseCategories(screen);
         }
 
         SwitchPreference downloadWifiOnlyPreference = findPreference("download_wifi_only");
@@ -308,23 +322,27 @@ public class SettingsContainerFragment extends PreferenceFragmentCompat {
         if (!searchQuery.isEmpty()) {
             filterPreferences(screen);
         } else {
-            for (int i = 0; i < screen.getPreferenceCount(); i++) {
-                Preference pref = screen.getPreference(i);
-                if (pref instanceof PreferenceCategory) {
-                    PreferenceCategory category = (PreferenceCategory) pref;
-                    boolean expanded = expandedCategories.contains(category.getKey());
-                    category.setIcon(expanded ? R.drawable.ic_arrow_down : R.drawable.ic_navigate_next);
-                    if (!expanded) {
-                        for (int j = 0; j < category.getPreferenceCount(); j++) {
-                            category.getPreference(j).setVisible(false);
-                        }
-                    }
-                }
-            }
+            collapseCategories(screen);
         }
 
         if (getListView() != null && getListView().getAdapter() != null) {
             getListView().getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    private void collapseCategories(PreferenceScreen screen) {
+        for (int i = 0; i < screen.getPreferenceCount(); i++) {
+            Preference pref = screen.getPreference(i);
+            if (pref instanceof PreferenceCategory) {
+                PreferenceCategory category = (PreferenceCategory) pref;
+                boolean expanded = expandedCategories.contains(category.getKey());
+                category.setIcon(expanded ? R.drawable.ic_arrow_down : R.drawable.ic_navigate_next);
+                if (!expanded) {
+                    for (int j = 0; j < category.getPreferenceCount(); j++) {
+                        category.getPreference(j).setVisible(false);
+                    }
+                }
+            }
         }
     }
 
