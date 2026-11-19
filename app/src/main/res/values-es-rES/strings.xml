@@ -421,6 +421,14 @@
     <string name="settings_summary_scrobble">El scrobbling es una característica que permite a tu dispositivo enviar información sobre las pistas que escuchas al servidor de música. Esta información ayuda a crear recomendaciones personalizadas basadas en tus gustos musicales.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sincronizar pistas destacadas para uso sin conexión</string>
     <string name="settings_permissions">Permisos de la app</string>
+    <string name="settings_export_title">Exportar ajustes</string>
+    <string name="settings_export_summary">Guarda tus ajustes en un archivo. No se incluyen los inicios de sesión de los servidores.</string>
+    <string name="settings_import_title">Importar ajustes</string>
+    <string name="settings_import_summary">Restaura los ajustes desde un archivo exportado</string>
+    <string name="settings_exported">Ajustes exportados</string>
+    <string name="settings_export_failed">No se pudo guardar el archivo de ajustes</string>
+    <string name="settings_imported">Se han importado %d ajustes</string>
+    <string name="settings_import_invalid">No es un archivo de ajustes de Tempus</string>
     <string name="settings_theme">Tema</string>
     <string name="settings_dark_theme_style">Estilo del tema oscuro</string>
     <string name="settings_tile_size">Tamaño de los elementos de la cuadrícula</string>
