@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.datasource.DataSource
 import androidx.media3.exoplayer.SeekParameters
 import androidx.media3.exoplayer.analytics.PlayerId
@@ -12,6 +13,9 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.exoplayer.upstream.Allocator
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertSame
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.Mockito.mockConstruction
 import org.mockito.Mockito.mockStatic
@@ -49,8 +53,10 @@ class TranscodingMediaSourceTest {
         val seekChild get() = children[1]
     }
 
-    private fun prepared(factory: Factory): TranscodingMediaSource {
-        val item = MediaItem.Builder().setMediaId("song-1").build()
+    private fun prepared(
+            factory: Factory,
+            item: MediaItem = MediaItem.Builder().setMediaId("song-1").build()
+    ): TranscodingMediaSource {
         val source = TranscodingMediaSource(item, mock<DataSource.Factory>(), factory.mock)
         source.prepareSource(mock<MediaSource.MediaSourceCaller>(), null, PlayerId.UNSET)
         return source
@@ -99,5 +105,40 @@ class TranscodingMediaSourceTest {
         // the seek source instead.
         verify(factory.base.source, times(2)).createPeriod(any(), any(), any())
         verify(factory.seekChild.source, times(1)).createPeriod(any(), any(), any())
+    }
+
+    private fun song(uri: Uri, title: String) =
+            MediaItem.Builder()
+                    .setMediaId("song-1")
+                    .setUri(uri)
+                    .setMediaMetadata(MediaMetadata.Builder().setTitle(title).build())
+                    .build()
+
+    @Test
+    fun aChangeToTheDetailsOnlyIsUpdatedInPlace() {
+        val uri = mock<Uri>()
+        val source = TranscodingMediaSource(song(uri, "a"), mock<DataSource.Factory>(), Factory().mock)
+
+        assertTrue(source.canUpdateMediaItem(song(uri, "b")))
+    }
+
+    @Test
+    fun aNewStreamAddressIsNotUpdatedInPlace() {
+        val source = TranscodingMediaSource(song(mock<Uri>(), "a"), mock<DataSource.Factory>(), Factory().mock)
+
+        assertFalse(source.canUpdateMediaItem(song(mock<Uri>(), "a")))
+    }
+
+    @Test
+    fun anUpdateIsKeptAndPassedToTheBaseSource() = withAndroidLooper {
+        val uri = mock<Uri>()
+        val factory = Factory()
+        val source = prepared(factory, song(uri, "a"))
+        val starred = song(uri, "b")
+
+        source.updateMediaItem(starred)
+
+        assertSame(starred, source.mediaItem)
+        verify(factory.base.source).updateMediaItem(starred)
     }
 }
