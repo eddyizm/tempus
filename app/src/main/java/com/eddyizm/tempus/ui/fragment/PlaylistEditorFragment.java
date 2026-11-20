@@ -108,7 +108,7 @@ public class PlaylistEditorFragment extends Fragment implements PlaylistDialogSo
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
             playlistEditorViewModel.clearSavePending();
             bind.toolbar.getMenu().findItem(R.id.action_save_playlist).setEnabled(true);
-            if (message == R.string.playlist_editor_dialog_action_save_success) {
+            if (message == R.string.playlist_editor_dialog_action_save_success || message == R.string.playlist_editor_dialog_action_save_queued) {
                 NavHostFragment.findNavController(this).navigateUp();
             }
         });
@@ -125,9 +125,9 @@ public class PlaylistEditorFragment extends Fragment implements PlaylistDialogSo
             if (songs != null) {
                 adapter.setItems(songs);
             } else {
-                // With the allowCache false the view model passes, the repository publishes null
-                // when the fetch fails or the playlist is gone, so there is nothing to edit and a
-                // blank list would read as an empty playlist.
+                // The repository publishes null when the playlist is gone, or when the server cannot
+                // be reached and the playlist's order was never cached, so there is nothing to edit
+                // and a blank list would read as an empty playlist.
                 Toast.makeText(requireContext(), R.string.playlist_editor_load_failure, Toast.LENGTH_SHORT).show();
                 NavHostFragment.findNavController(this).navigateUp();
             }

@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.OptIn;
 import androidx.media3.common.util.UnstableApi;
 
+import com.eddyizm.tempus.repository.PlaylistFlush;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -28,6 +29,7 @@ public class ConnectivityStatusBroadcastReceiver extends BroadcastReceiver {
                 activity.bind.offlineModeTextView.setVisibility(View.VISIBLE);
             } else {
                 activity.bind.offlineModeTextView.setVisibility(View.GONE);
+                PlaylistFlush.kick();
             }
         }
     }
