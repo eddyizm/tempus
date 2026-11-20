@@ -46,8 +46,9 @@ public class HomeRearrangementViewModel extends AndroidViewModel {
         Preferences.setHomeSectorList(sectors);
     }
 
-    public void resetHomeSectorList() {
+    public List<HomeSector> resetHomeSectorList() {
         Preferences.setHomeSectorList(null);
+        return fillStandardHomeSectorList();
     }
 
     public void closeDialog() {
