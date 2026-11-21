@@ -613,7 +613,8 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronizuj albumy oznaczone gwiazdką do użycia offline</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
-	<string name="settings_permissions">Uprawnienia aplikacji</string>
+	<string name="settings_permissions">Uprawnienia</string>
+	<string name="settings_backups">Kopie zapasowe</string>
 	<string name="settings_export_title">Eksport ustawień</string>
     <string name="settings_export_summary">Zapisuje twoje ustawienia do pliku. Dane logowania do serwerów nie są dołączane.</string>
     <string name="settings_import_title">Import ustawień</string>
@@ -877,11 +878,13 @@
 
     <string name="la_tab_greeter">Powitanie</string>
     <string name="la_tab_permission">Uprawnienia</string>
+	<string name="la_tab_backup">Kopie zapasowe</string>
     <string name="la_tab_themes">Motywy</string>
     <string name="la_tab_server">Serwery</string>
 	
     <string name="la_appbar_greeter_title">Informacje</string>
     <string name="la_appbar_permission_title">Przegląd uprawnień</string>
+	<string name="la_appbar_backup_title">Zarządzanie kopiami zapasowymi</string>
     <string name="la_appbar_themes_title">Edytor motywów</string>
     <string name="la_appbar_server_title">Edytor serwerów</string>
 
@@ -932,6 +935,21 @@
     <string name="la_perms_access_local_network_description">Wymagany do uzyskania dostępu do innych urządzeń w tej samej sieci LAN co twoje aktualne urządzenie.</string>
     <string name="la_perms_nearby_devices_title">Urządzenia w pobliżu</string>
     <string name="la_perms_nearby_devices_description">Wymagane do znajdowania urządzeń przez UPnP i Chromecast.</string>
+
+    <string name="la_backups_section_manual_title">Ręczna kopia zapasowa</string>
+    <string name="la_backups_section_manual_description">Wyeksportuj ustawienia aplikacji do pliku lub zaimportuj je z wcześniejszej kopii. Nie zawierają danych logowania.</string>
+    <string name="la_backups_section_manual_button_export">Eksport</string>
+    <string name="la_backups_section_manual_button_import">Import</string>
+    <string name="la_backups_section_storage_title">Katalog do przechowywania</string>
+    <string name="la_backups_section_storage_description">Lokalny folder gdzie są aktualnie zapisywane pliki kopii zapasowych.</string>
+    <string name="la_backups_section_storage_placeholder">/storage/emulated/0/Tempus/Backups</string>
+    <string name="la_backups_section_automatic_title">Automatyczne kopie zapasowe</string>
+    <string name="la_backups_section_automatic_description">Twórz kopie zapasowe ustawień automatycznie w tle.</string>
+    <string name="la_backups_section_automatic_switch">Włącz kopie zapasowe według harmonogramu</string>
+    <string name="la_backups_section_automatic_dropdown_title">Częstotliwość</string>
+    <string name="la_backups_section_automatic_dropdown_item_hourly">co godzinę</string>
+    <string name="la_backups_section_automatic_dropdown_item_daily">codziennie</string>
+    <string name="la_backups_section_automatic_dropdown_item_weekly">co tydzień</string>
 	
     <string name="la_theme_description">Styl dla palety dynamicznej twojej aplikacji.</string>
 
