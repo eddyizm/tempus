@@ -60,7 +60,12 @@
 	<string name="artist_bottom_sheet_play_next">Odtwórz następne</string>
     <string name="artist_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
     <string name="artist_bottom_sheet_add_to_playlist">Dodaj do playlisty</string>
+	<string name="artist_bottom_sheet_download_all">Pobierz wszystko</string>
     <string name="artist_bottom_sheet_loading_tracks">Ładowanie utworów\u2026</string>
+	<string name="artist_download_load_failed">Nie udało się załadować utworów wykonawcy. Sprawdź swoje połączenie i spróbuj ponownie.</string>
+    <string name="artist_download_no_tracks">Nie znaleziono utworów dla tego wykonawcy</string>
+    <string name="artist_download_already_downloaded">Wszystkie utwory tego wykonawcy są już pobrane lub zakolejkowane</string>
+    <string name="artist_download_not_started">Nie udało się rozpocząć pobierania. Spróbuj ponownie.</string>
     <string name="artist_catalogue_title">Wykonawcy</string>
     <string name="artist_catalogue_title_expanded">Przeglądaj wykonawców</string>
     <string name="artist_error_retrieving_radio">Błąd podczas pobierania radia wykonawcy</string>
@@ -778,6 +783,12 @@
 		<item quantity="few">Pobieram %d piosenki</item>
 		<item quantity="many">Pobieram %d piosenek</item>
         <item quantity="other">Pobieram %d piosenek</item>
+    </plurals>    
+	<plurals name="artist_download_waiting_for_network">
+        <item quantity="one">%d piosenka zakolejkowana. Zostanie ona pobrana, gdy znowu będziesz online.</item>
+        <item quantity="few">Zakolejkowano %d piosenki. Zostaną one pobrane, gdy znowu będziesz online.</item>
+        <item quantity="many">Zakolejkowano %d piosenek. Zostaną one pobrane, gdy znowu będziesz online.</item>
+        <item quantity="other">Zakolejkowano %d piosenek. Zostaną one pobrane, gdy znowu będziesz online.</item>
     </plurals>
     <string name="equalizer_fragment_title">Korektor dźwięku</string>
     <string name="equalizer_reset">Reset</string>
