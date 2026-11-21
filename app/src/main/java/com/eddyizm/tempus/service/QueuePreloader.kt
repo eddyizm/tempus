@@ -151,7 +151,7 @@ object QueuePreloader {
 
         try {
             writer.cache()
-            Log.d(TAG, "Pre-cached $uri")
+            Log.d(TAG, "Pre-cached stream ${uri.getQueryParameter("id") ?: "unknown"}")
         } catch (exception: Exception) {
             Log.d(TAG, "Pre-cache aborted for $uri: $exception")
             // When connectivity was just lost, keep whatever got cached: it is a
@@ -170,13 +170,27 @@ object QueuePreloader {
         }
     }
 
-    private fun isFullyCached(context: Context, uri: Uri): Boolean {
+    fun isFullyCached(context: Context, uri: Uri, mediaId: String? = null): Boolean {
         return try {
             val cache = DownloadUtil.getStreamingCacheForPreload(context)
             val cacheKey = StreamingCacheKeyFactory().buildCacheKey(DataSpec.Builder().setUri(uri).build())
             val contentLength = ContentMetadata.getContentLength(cache.getContentMetadata(cacheKey))
-            contentLength != C.LENGTH_UNSET.toLong() && cache.isCached(cacheKey, 0, contentLength)
+            val cachedLength = if (contentLength != C.LENGTH_UNSET.toLong()) {
+                cache.getCachedLength(cacheKey, 0, contentLength)
+            } else {
+                C.LENGTH_UNSET.toLong()
+            }
+            val fullyCached = contentLength != C.LENGTH_UNSET.toLong() &&
+                cachedLength == contentLength &&
+                cache.isCached(cacheKey, 0, contentLength)
+            Log.i(
+                TAG,
+                "Cache completion for ${mediaId ?: cacheKey}: complete=$fullyCached, " +
+                    "contentLength=$contentLength, cachedFromStart=$cachedLength"
+            )
+            fullyCached
         } catch (exception: Exception) {
+            Log.e(TAG, "Failed to inspect streaming cache for ${mediaId ?: uri.path}", exception)
             false
         }
     }

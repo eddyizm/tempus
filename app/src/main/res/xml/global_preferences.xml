@@ -376,6 +376,12 @@
             android:key="sync_starred_tracks_for_offline_use" />
 
         <SwitchPreference
+            android:title="@string/settings_auto_download_played_tracks_title"
+            android:defaultValue="false"
+            android:summary="@string/settings_auto_download_played_tracks_summary"
+            android:key="auto_download_played_tracks" />
+
+        <SwitchPreference
             android:title="@string/settings_sync_starred_albums_for_offline_use_title"
             android:defaultValue="false"
             android:summary="@string/settings_sync_starred_albums_for_offline_use_summary"

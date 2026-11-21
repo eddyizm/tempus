@@ -20,6 +20,7 @@ import androidx.media3.exoplayer.offline.DownloadIndex;
 import androidx.media3.exoplayer.offline.DownloadManager;
 import androidx.media3.exoplayer.offline.DownloadRequest;
 import androidx.media3.exoplayer.offline.DownloadService;
+import androidx.media3.exoplayer.offline.WritableDownloadIndex;
 
 import com.eddyizm.tempus.repository.DownloadRepository;
 import com.eddyizm.tempus.util.DownloadUtil;
@@ -212,6 +213,20 @@ public class DownloaderManager {
     public static void updateRequestDownload(Download download) {
         updateDatabase(download.request.id);
         downloads.put(download.request.id, download);
+        requested.remove(download.request.id);
+    }
+
+    public void registerCompletedDownload(Download download) {
+        if (downloadIndex instanceof WritableDownloadIndex) {
+            try {
+                ((WritableDownloadIndex) downloadIndex).putDownload(download);
+            } catch (IOException e) {
+                Log.w(TAG, "Failed to persist download in index: " + download.request.id, e);
+            }
+        }
+        if (downloads != null) {
+            downloads.put(download.request.id, download);
+        }
         requested.remove(download.request.id);
     }
 

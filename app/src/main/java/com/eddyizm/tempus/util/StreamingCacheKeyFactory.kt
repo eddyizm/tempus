@@ -20,25 +20,25 @@ private const val TAG = "StreamingCacheKeyFactory"
 @UnstableApi
 class StreamingCacheKeyFactory : CacheKeyFactory {
     override fun buildCacheKey(dataSpec: DataSpec): String {
-        dataSpec.key?.let { return it }
-
         val uri = dataSpec.uri
         val scheme = uri.scheme
-        if (scheme != "http" && scheme != "https") return uri.toString()
+        if (scheme == "http" || scheme == "https") {
+            val id = try {
+                uri.getQueryParameter("id")
+            } catch (exception: UnsupportedOperationException) {
+                // opaque uri, cannot be parsed for query parameters
+                Log.d(TAG, "Opaque URI, falling back to its cache key")
+                null
+            }
+            if (id != null) {
+                val bitrate = uri.getQueryParameter("maxBitRate").orEmpty()
+                val format = uri.getQueryParameter("format").orEmpty()
+                val timeOffset = uri.getQueryParameter("timeOffset").orEmpty()
+                val server = Preferences.getServerId().orEmpty()
+                return "$server|$id|$bitrate|$format|$timeOffset"
+            }
+        }
 
-        val id = try {
-            uri.getQueryParameter("id")
-        } catch (exception: UnsupportedOperationException) {
-            // opaque uri, cannot be parsed for query parameters
-            Log.d(TAG, "Opaque URI, falling back to URL-based cache key", exception)
-            null
-        } ?: return uri.toString()
-
-        val bitrate = uri.getQueryParameter("maxBitRate").orEmpty()
-        val format = uri.getQueryParameter("format").orEmpty()
-        val timeOffset = uri.getQueryParameter("timeOffset").orEmpty()
-        val server = Preferences.getServerId().orEmpty()
-
-        return "$server|$id|$bitrate|$format|$timeOffset"
+        return dataSpec.key ?: uri.toString()
     }
 }

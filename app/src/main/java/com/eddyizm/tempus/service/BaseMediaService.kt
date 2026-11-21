@@ -616,6 +616,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     if (player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.scrobble(player.currentMediaItem, true)
                         MediaManager.saveChronology(player.currentMediaItem)
+                        val child = MappingUtil.mapToChild(player.currentMediaItem)
+                        val uri = player.currentMediaItem?.localConfiguration?.uri
+                            ?: player.currentMediaItem?.requestMetadata?.mediaUri
+                        AutoDownloadPromoter.promoteIfEligible(this@BaseMediaService, child, uri, "queue_ended")
                     }
                     // Last track played to completion - drop it from Continue listening.
                     MediaManager.deleteResumePoint(player.currentMediaItem)
@@ -666,6 +670,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.scrobble(oldPosition.mediaItem, true)
                         MediaManager.saveChronology(oldPosition.mediaItem)
+                        val child = MappingUtil.mapToChild(oldPosition.mediaItem)
+                        val uri = oldPosition.mediaItem?.localConfiguration?.uri
+                            ?: oldPosition.mediaItem?.requestMetadata?.mediaUri
+                        AutoDownloadPromoter.promoteIfEligible(this@BaseMediaService, child, uri, "auto_transition")
                     }
                     // The old track played to completion - drop it from Continue listening.
                     MediaManager.deleteResumePoint(oldPosition.mediaItem)
@@ -680,6 +688,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                         if (MediaManager.meetsScrobbleThreshold(oldPosition.positionMs, durationMs)) {
                             MediaManager.scrobble(oldPosition.mediaItem, true)
                             MediaManager.saveChronology(oldPosition.mediaItem)
+                            val child = MappingUtil.mapToChild(oldPosition.mediaItem)
+                            val uri = oldPosition.mediaItem?.localConfiguration?.uri
+                                ?: oldPosition.mediaItem?.requestMetadata?.mediaUri
+                            AutoDownloadPromoter.promoteIfEligible(this@BaseMediaService, child, uri, "cross_track_seek_after_scrobble_threshold")
                         }
                     }
                 }
