@@ -54,11 +54,16 @@ class DynamicMediaSourceFactory(
 
             else -> {
                 val extractorsFactory: ExtractorsFactory = DefaultExtractorsFactory()
-                val progressiveFactory = ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory)
 
                 val uri = mediaItem.localConfiguration?.uri
                 val isTranscoding = uri?.getQueryParameter("format") != null && uri.getQueryParameter("format") != "raw"
-                
+
+                // A reconnect resumes with a range request, which radio and the transcodes the app asks for do not support.
+                val watched = !isRadio && !isTranscoding
+                val loadingFactory = if (watched) StallDetectingDataSource.Factory(dataSourceFactory, mediaItem) else dataSourceFactory
+                val progressiveFactory = ProgressiveMediaSource.Factory(loadingFactory, extractorsFactory)
+                if (watched) progressiveFactory.setLoadErrorHandlingPolicy(StallDetectingDataSource.RetryPolicy())
+
                 if (isTranscoding && OpenSubsonicExtensionsUtil.isTranscodeOffsetExtensionAvailable()) {
                      TranscodingMediaSource(mediaItem, dataSourceFactory, progressiveFactory)
                 } else {

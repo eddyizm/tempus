@@ -16,9 +16,20 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 @OptIn(markerClass = UnstableApi.class)
 public class DownloadDirectoryDialog extends DialogFragment {
-    private final DialogClickCallback dialogClickCallback;
+    public static final String REQUEST_KEY = "DownloadDirectoryDialog";
+    public static final String KEY_DOWNLOAD_CONFIRMED = "download_confirmed";
+
+    private DialogClickCallback dialogClickCallback;
+
+    public DownloadDirectoryDialog() {
+        this.dialogClickCallback = null;
+    }
 
     public DownloadDirectoryDialog(DialogClickCallback dialogClickCallback) {
+        this.dialogClickCallback = dialogClickCallback;
+    }
+
+    public void setDialogClickCallback(DialogClickCallback dialogClickCallback) {
         this.dialogClickCallback = dialogClickCallback;
     }
 
@@ -47,13 +58,20 @@ public class DownloadDirectoryDialog extends DialogFragment {
         if (dialog != null) {
             Button positiveButton = dialog.getButton(Dialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                dialogClickCallback.onPositiveClick();
+                Bundle result = new Bundle();
+                result.putBoolean(KEY_DOWNLOAD_CONFIRMED, true);
+                getParentFragmentManager().setFragmentResult(REQUEST_KEY, result);
+                if (dialogClickCallback != null) {
+                    dialogClickCallback.onPositiveClick();
+                }
                 dialog.dismiss();
             });
 
             Button negativeButton = dialog.getButton(Dialog.BUTTON_NEGATIVE);
             negativeButton.setOnClickListener(v -> {
-                dialogClickCallback.onNegativeClick();
+                if (dialogClickCallback != null) {
+                    dialogClickCallback.onNegativeClick();
+                }
                 dialog.dismiss();
             });
         }

@@ -114,9 +114,18 @@ class UpnpPlayerVolumeTest {
         if (::player.isInitialized) onMain { player.release() }
     }
 
-    private fun start() {
-        val device = UpnpDevice.parseDescription(description, "http://127.0.0.1:1549/").single()
+    private fun start(xml: String = description) {
+        val device = UpnpDevice.parseDescription(xml, "http://127.0.0.1:1549/").single()
         onMain { player = UpnpPlayer(controlPoint(), device, Looper.getMainLooper()) }
+    }
+
+    @Test
+    fun kodiOffersNoRepeatOnceItHasReportedALevel() {
+        start(description.replace("<friendlyName>Fake Renderer</friendlyName>", "<friendlyName>Fake Kodi</friendlyName><modelName>Kodi</modelName>"))
+        notify(awaitSubscription(1), 18)
+        awaitVolume(18)
+
+        assertFalse("Kodi offered repeat", onMainGet { player.isCommandAvailable(Player.COMMAND_SET_REPEAT_MODE) })
     }
 
     @Test

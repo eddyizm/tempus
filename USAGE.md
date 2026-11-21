@@ -137,8 +137,6 @@ The local address gets the headers too, like it already gets your Subsonic crede
 
 After editing the headers of the server you are signed in to, sign out and back in for them to take effect.
 
-**Test** in the server editor sends the headers only for the server you are signed in to. For a new server behind a proxy that requires them, Test fails; sign in to the server instead.
-
 Devices that fetch the music themselves cannot send them:
 
 - Chromecast and UPnP/DLNA renderers (see [Playing on another device](#playing-on-another-device)) get a plain stream URL, so they will be refused by a proxy that requires the headers.
@@ -442,6 +440,8 @@ Tempus takes the values from your server and, if the server sends none, from the
 These are under **Settings → Data**.
 
 **Song preload buffer** sets how much music ahead of where you are Tempus downloads while streaming, 1 minute by default. Restart Tempus after changing it.
+
+If a song you are streaming gets stuck downloading more slowly than it plays, for example on mobile data, Tempus opens a new connection after about 8 seconds and carries on from where it was. If the new connection is just as slow, the network itself is too slow, and Tempus waits until it speeds up. This does not cover radio, the transcoded streams Tempus asks for, or a song the server is transcoding for the first time.
 
 **Size of streaming cache** keeps the music you stream on the phone, so playing it again does not download it again. It is 256 MiB by default, and when it is full the music you played longest ago is removed first. The setting shows how much of it is in use. A new size takes effect after Tempus restarts, and **Disabled** turns the cache off.
 

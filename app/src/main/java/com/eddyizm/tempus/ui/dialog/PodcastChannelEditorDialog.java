@@ -18,14 +18,24 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Objects;
 
 public class PodcastChannelEditorDialog extends DialogFragment {
+    public static final String REQUEST_KEY = "PodcastChannelEditorDialog";
+
     private DialogPodcastChannelEditorBinding bind;
     private PodcastChannelEditorViewModel podcastChannelEditorViewModel;
 
-    private final PodcastCallback podcastCallback;
+    private PodcastCallback podcastCallback;
 
     private String channelUrl;
 
+    public PodcastChannelEditorDialog() {
+        this.podcastCallback = null;
+    }
+
     public PodcastChannelEditorDialog(PodcastCallback podcastCallback) {
+        this.podcastCallback = podcastCallback;
+    }
+
+    public void setPodcastCallback(PodcastCallback podcastCallback) {
         this.podcastCallback = podcastCallback;
     }
 
@@ -83,7 +93,13 @@ public class PodcastChannelEditorDialog extends DialogFragment {
     }
 
     private void dismissDialog() {
-        podcastCallback.onDismiss();
-        Objects.requireNonNull(getDialog()).dismiss();
+        if (podcastCallback != null) {
+            podcastCallback.onDismiss();
+        } else {
+            getParentFragmentManager().setFragmentResult(REQUEST_KEY, new Bundle());
+        }
+        if (getDialog() != null) {
+            getDialog().dismiss();
+        }
     }
 }

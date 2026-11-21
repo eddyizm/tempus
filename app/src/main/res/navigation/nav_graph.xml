@@ -10,11 +10,6 @@
         android:label="fragment_landing"
         tools:layout="@layout/fragment_landing">
         <action
-            android:id="@+id/action_landingFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/landingFragment"
-            app:popUpToInclusive="true" />
-        <action
             android:id="@+id/action_landingFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpTo="@id/landingFragment"
@@ -36,11 +31,6 @@
         android:name="com.eddyizm.tempus.ui.fragment.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
-        <action
-            android:id="@+id/action_homeFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_homeFragment_to_songListPageFragment"
             app:destination="@id/songListPageFragment" />
@@ -149,11 +139,6 @@
         android:name="com.eddyizm.tempus.ui.fragment.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings">
-        <action
-            android:id="@+id/action_settingsFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_settingsFragment_to_equalizerFragment"
             app:destination="@id/equalizerFragment" />
