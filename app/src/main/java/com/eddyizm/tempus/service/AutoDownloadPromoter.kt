@@ -132,8 +132,6 @@ object AutoDownloadPromoter {
         val roomDownload = RoomDownload(child).apply {
             downloadState = 1
             downloadUri = streamUri.toString()
-            playlistId = "auto_download"
-            playlistName = "Auto Downloaded"
         }
         MusicUtil.applyTranscodedDownloadMetadata(roomDownload)
         DownloadRepository().insert(roomDownload)
@@ -193,8 +191,6 @@ object AutoDownloadPromoter {
         val roomDownload = RoomDownload(child).apply {
             downloadState = 1
             downloadUri = targetFile.uri.toString()
-            playlistId = "auto_download"
-            playlistName = "Auto Downloaded"
             suffix = format
             contentType = mimeType
         }
