@@ -27,8 +27,10 @@ class StreamingCacheKeyFactoryTest {
 
         mockStatic(Preferences::class.java).use { preferences ->
             preferences.`when`<String?> { Preferences.getServerId() }.thenReturn("server-1")
+            val keyFactory = StreamingCacheKeyFactory(Preferences.getServerId())
+            preferences.`when`<String?> { Preferences.getServerId() }.thenReturn("server-2")
 
-            val key = StreamingCacheKeyFactory().buildCacheKey(dataSpec)
+            val key = keyFactory.buildCacheKey(dataSpec)
 
             assertEquals("server-1|track-1|128|mp3|", key)
         }

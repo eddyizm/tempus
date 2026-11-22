@@ -18,7 +18,11 @@ import androidx.media3.datasource.cache.CacheKeyFactory
 private const val TAG = "StreamingCacheKeyFactory"
 
 @UnstableApi
-class StreamingCacheKeyFactory : CacheKeyFactory {
+class StreamingCacheKeyFactory private constructor(private val serverIdProvider: () -> String?) : CacheKeyFactory {
+    constructor() : this({ Preferences.getServerId() })
+
+    constructor(serverId: String?) : this({ serverId })
+
     override fun buildCacheKey(dataSpec: DataSpec): String {
         val uri = dataSpec.uri
         val scheme = uri.scheme
@@ -34,7 +38,7 @@ class StreamingCacheKeyFactory : CacheKeyFactory {
                 val bitrate = uri.getQueryParameter("maxBitRate").orEmpty()
                 val format = uri.getQueryParameter("format").orEmpty()
                 val timeOffset = uri.getQueryParameter("timeOffset").orEmpty()
-                val server = Preferences.getServerId().orEmpty()
+                val server = serverIdProvider().orEmpty()
                 return "$server|$id|$bitrate|$format|$timeOffset"
             }
         }

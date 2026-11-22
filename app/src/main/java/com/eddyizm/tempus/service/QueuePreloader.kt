@@ -170,10 +170,15 @@ object QueuePreloader {
         }
     }
 
-    fun isFullyCached(context: Context, uri: Uri, mediaId: String? = null): Boolean {
+    fun isFullyCached(
+        context: Context,
+        uri: Uri,
+        mediaId: String? = null,
+        serverId: String? = Preferences.getServerId()
+    ): Boolean {
         return try {
             val cache = DownloadUtil.getStreamingCacheForPreload(context)
-            val cacheKey = StreamingCacheKeyFactory().buildCacheKey(DataSpec.Builder().setUri(uri).build())
+            val cacheKey = StreamingCacheKeyFactory(serverId).buildCacheKey(DataSpec.Builder().setUri(uri).build())
             val contentLength = ContentMetadata.getContentLength(cache.getContentMetadata(cacheKey))
             val cachedLength = if (contentLength != C.LENGTH_UNSET.toLong()) {
                 cache.getCachedLength(cacheKey, 0, contentLength)

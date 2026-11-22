@@ -20,6 +20,7 @@ import com.eddyizm.tempus.util.ExternalAudioReader
 import com.eddyizm.tempus.util.MusicUtil
 import com.eddyizm.tempus.util.Preferences
 import com.eddyizm.tempus.util.StreamingCacheKeyFactory
+import java.io.IOException
 import java.util.concurrent.Executors
 
 @UnstableApi
@@ -54,17 +55,20 @@ object AutoDownloadPromoter {
         Log.i(TAG, "Promotion requested for ${child.id} (trigger=$trigger, path=${streamUri.path})")
 
         val appContext = context.applicationContext
+        val serverId = Preferences.getServerId()
 
         executor.execute {
             try {
-                promoteInternal(appContext, child, streamUri, trigger)
+                promoteInternal(appContext, child, streamUri, trigger, serverId)
             } catch (exception: Exception) {
                 Log.e(TAG, "Failed to auto-download ${child.id} (trigger=$trigger)", exception)
             }
         }
     }
 
-    private fun promoteInternal(context: Context, child: Child, streamUri: Uri, trigger: String) {
+    private fun promoteInternal(context: Context, child: Child, streamUri: Uri, trigger: String, serverId: String?) {
+        if (!isActiveServer(serverId, child.id)) return
+
         // 1. Check if already downloaded
         val downloadTracker = DownloadUtil.getDownloadTracker(context)
         if (downloadTracker.isDownloaded(child.id)) {
@@ -78,27 +82,30 @@ object AutoDownloadPromoter {
         }
 
         // 2. Check if fully cached in streamingCache
-        if (!QueuePreloader.isFullyCached(context, streamUri, child.id)) {
+        if (!isActiveServer(serverId, child.id)) return
+        if (!QueuePreloader.isFullyCached(context, streamUri, child.id, serverId)) {
             Log.i(TAG, "Skipping ${child.id}: streaming cache is incomplete (trigger=$trigger)")
             return
         }
 
         // 3. Promote based on configured download storage preference
         val externalFolderUri = Preferences.getDownloadDirectoryUri()
+        if (!isActiveServer(serverId, child.id)) return
         Log.i(TAG, "Promoting ${child.id} from complete streaming cache to ${if (externalFolderUri == null) "Path A" else "Path B"}")
         if (externalFolderUri == null) {
-            promoteToPathA(context, child, streamUri)
+            promoteToPathA(context, child, streamUri, serverId)
         } else {
-            promoteToPathB(context, child, streamUri, externalFolderUri)
+            promoteToPathB(context, child, streamUri, externalFolderUri, serverId)
         }
     }
 
-    private fun promoteToPathA(context: Context, child: Child, streamUri: Uri) {
+    private fun promoteToPathA(context: Context, child: Child, streamUri: Uri, serverId: String?) {
+        if (!isActiveServer(serverId, child.id)) return
         Log.i(TAG, "Copying ${child.id} from streaming cache to Media3 download cache")
 
         val sourceDataSource = CacheDataSource.Factory()
             .setCache(DownloadUtil.getStreamingCacheForPreload(context))
-            .setCacheKeyFactory(StreamingCacheKeyFactory())
+            .setCacheKeyFactory(StreamingCacheKeyFactory(serverId))
             .setUpstreamDataSourceFactory(null)
             .createDataSource()
 
@@ -113,6 +120,11 @@ object AutoDownloadPromoter {
             totalBytesCached = bytesCached
         }
         writer.cache()
+
+        if (!isActiveServer(serverId, child.id)) {
+            DownloadUtil.getDownloadCache(context).removeResource(streamUri.toString())
+            return
+        }
 
         val bytes = if (totalBytesCached > 0L) totalBytesCached else (child.size ?: 0L)
 
@@ -133,17 +145,28 @@ object AutoDownloadPromoter {
             downloadState = 1
             downloadUri = streamUri.toString()
         }
-        MusicUtil.applyTranscodedDownloadMetadata(roomDownload)
+        MusicUtil.applyTranscodeMetadata(
+            roomDownload,
+            streamUri.getQueryParameter("format"),
+            streamUri.getQueryParameter("maxBitRate")
+        )
         DownloadRepository().insert(roomDownload)
         Log.i(TAG, "Promoted ${child.id} to Path A; Room insert queued")
     }
 
-    private fun promoteToPathB(context: Context, child: Child, streamUri: Uri, directoryUriString: String) {
+    private fun promoteToPathB(
+        context: Context,
+        child: Child,
+        streamUri: Uri,
+        directoryUriString: String,
+        serverId: String?
+    ) {
+        if (!isActiveServer(serverId, child.id)) return
         Log.i(TAG, "Copying ${child.id} from streaming cache to SAF storage")
         val directory = DocumentFile.fromTreeUri(context, Uri.parse(directoryUriString))
         if (directory == null || !directory.canWrite()) {
             Log.w(TAG, "Configured download directory not writable, falling back to Path A")
-            promoteToPathA(context, child, streamUri)
+            promoteToPathA(context, child, streamUri, serverId)
             return
         }
 
@@ -163,29 +186,48 @@ object AutoDownloadPromoter {
         val targetFile = directory.createFile(mimeType, fileName)
         if (targetFile == null) {
             Log.w(TAG, "Could not create SAF target file $fileName, falling back to Path A")
-            promoteToPathA(context, child, streamUri)
+            promoteToPathA(context, child, streamUri, serverId)
             return
         }
 
-        val sourceDataSource = CacheDataSource.Factory()
-            .setCache(DownloadUtil.getStreamingCacheForPreload(context))
-            .setCacheKeyFactory(StreamingCacheKeyFactory())
-            .setUpstreamDataSourceFactory(null)
-            .createDataSource()
-
-        val dataSpec = DataSpec.Builder().setUri(streamUri).build()
-        val buffer = ByteArray(16 * 1024)
-        sourceDataSource.open(dataSpec)
+        var sourceDataSource: CacheDataSource? = null
+        var copyComplete = false
+        var sourceClosed = false
         try {
-            context.contentResolver.openOutputStream(targetFile.uri)?.use { output ->
+            val source = CacheDataSource.Factory()
+                .setCache(DownloadUtil.getStreamingCacheForPreload(context))
+                .setCacheKeyFactory(StreamingCacheKeyFactory(serverId))
+                .setUpstreamDataSourceFactory(null)
+                .createDataSource()
+            sourceDataSource = source
+
+            val dataSpec = DataSpec.Builder().setUri(streamUri).build()
+            val buffer = ByteArray(16 * 1024)
+            source.open(dataSpec)
+            val outputStream = context.contentResolver.openOutputStream(targetFile.uri)
+                ?: throw IOException("Could not open SAF target for writing: $fileName")
+            outputStream.use { output ->
                 var read: Int
-                while (sourceDataSource.read(buffer, 0, buffer.size).also { read = it } != C.RESULT_END_OF_INPUT) {
+                while (source.read(buffer, 0, buffer.size).also { read = it } != C.RESULT_END_OF_INPUT) {
                     output.write(buffer, 0, read)
                 }
                 output.flush()
             }
+            copyComplete = true
         } finally {
-            sourceDataSource.close()
+            try {
+                sourceDataSource?.close()
+                sourceClosed = sourceDataSource != null
+            } finally {
+                if (!copyComplete || !sourceClosed) {
+                    deleteTargetFile(targetFile, child.id)
+                }
+            }
+        }
+
+        if (!isActiveServer(serverId, child.id)) {
+            deleteTargetFile(targetFile, child.id)
+            return
         }
 
         val roomDownload = RoomDownload(child).apply {
@@ -197,5 +239,17 @@ object AutoDownloadPromoter {
         DownloadRepository().insert(roomDownload)
         ExternalAudioReader.refreshCacheAsync()
         Log.i(TAG, "Promoted ${child.id} to Path B; Room insert queued")
+    }
+
+    private fun isActiveServer(serverId: String?, mediaId: String): Boolean {
+        if (Preferences.getServerId() == serverId) return true
+        Log.i(TAG, "Skipping $mediaId: active server changed before promotion completed")
+        return false
+    }
+
+    private fun deleteTargetFile(targetFile: DocumentFile, mediaId: String) {
+        if (!targetFile.delete()) {
+            Log.w(TAG, "Failed to delete incomplete SAF target for $mediaId")
+        }
     }
 }

@@ -69,7 +69,12 @@ class StreamingCacheDataSource private constructor(
 
             // If the stream reached EOF from position 0, we now know the full total length
             // even if the server did not supply Content-Length (chunked transcoding).
-            if (contentLength == C.LENGTH_UNSET.toLong() && reachedEof && dataSpec.position == 0L && bytesRead > 0L) {
+            if (contentLength == C.LENGTH_UNSET.toLong() &&
+                dataSpec.length == C.LENGTH_UNSET.toLong() &&
+                reachedEof &&
+                dataSpec.position == 0L &&
+                bytesRead > 0L
+            ) {
                 try {
                     val mutations = ContentMetadataMutations()
                     ContentMetadataMutations.setContentLength(mutations, bytesRead)

@@ -10,6 +10,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.Mockito.mockStatic
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.kotlin.mock
 
 @UnstableApi
@@ -25,6 +26,8 @@ class AutoDownloadPromoterTest {
         AutoDownloadPromoter.promoteIfEligible(context, null, uri)
         AutoDownloadPromoter.promoteIfEligible(context, child, null)
         AutoDownloadPromoter.promoteIfEligible(context, null, null)
+
+        verifyNoInteractions(context)
     }
 
     @Test
@@ -42,6 +45,8 @@ class AutoDownloadPromoterTest {
             // Should bail out immediately because setting is disabled
             AutoDownloadPromoter.promoteIfEligible(context, child, uri)
         }
+
+        verifyNoInteractions(context)
     }
 
     @Test
@@ -63,5 +68,7 @@ class AutoDownloadPromoterTest {
             AutoDownloadPromoter.promoteIfEligible(context, radioChild1, uri)
             AutoDownloadPromoter.promoteIfEligible(context, radioChild2, uri)
         }
+
+        verifyNoInteractions(context)
     }
 }

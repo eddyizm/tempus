@@ -28,10 +28,10 @@ import com.eddyizm.tempus.util.MusicUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @UnstableApi
@@ -42,7 +42,7 @@ public class DownloaderManager {
     private final DataSource.Factory dataSourceFactory;
     private final DownloadIndex downloadIndex;
 
-    private static HashMap<String, Download> downloads;
+    private static final ConcurrentMap<String, Download> downloads = new ConcurrentHashMap<>();
     // Handed to the service and not yet finished, the map above only learns of a download once it completes.
     private static final Set<String> requested = ConcurrentHashMap.newKeySet();
     private static final AtomicInteger removalGeneration = new AtomicInteger();
@@ -51,9 +51,9 @@ public class DownloaderManager {
         this.context = context.getApplicationContext();
         this.dataSourceFactory = dataSourceFactory;
 
-        downloads = new HashMap<>();
         downloadIndex = downloadManager.getDownloadIndex();
 
+        downloads.clear();
         loadDownloads();
     }
 
