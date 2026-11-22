@@ -426,9 +426,11 @@ public class MusicUtil {
      * preferences, so mid-batch preference changes cannot cause a mismatch.
      *
      * Falls back to no-op when the URI has no format param (raw / server-priority download).
+     *
+     * @return true when a non-raw transcode format was applied
      */
-    public static void applyTranscodeMetadataFromUri(Download download, String downloadUri) {
-        if (download == null || downloadUri == null) return;
+    public static boolean applyTranscodeMetadataFromUri(Download download, String downloadUri) {
+        if (download == null || downloadUri == null) return false;
 
         String format = null;
         String maxBitRate = null;
@@ -443,7 +445,10 @@ public class MusicUtil {
             maxBitRate = bitrateMatcher.group(1);
         }
 
+        if (format == null || format.equals("raw")) return false;
+
         applyTranscodeMetadata(download, format, maxBitRate);
+        return true;
     }
 
     public static void applyBitrateFromUri(Download download, String downloadUri) {

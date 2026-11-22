@@ -202,12 +202,6 @@ public class DownloaderManager {
                 getDownloadRepository().deleteFailed(orphan.getId());
             }
         }
-
-        for (com.eddyizm.tempus.model.Download orphan : getDownloadRepository().getFailedDownloads()) {
-            if (!downloads.containsKey(orphan.getId()) && !requested.contains(orphan.getId())) {
-                deleteDatabase(orphan.getId());
-            }
-        }
     }
 
     public static String getDownloadNotificationMessage(String id) {

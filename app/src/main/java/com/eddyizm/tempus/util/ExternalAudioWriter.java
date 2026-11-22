@@ -221,6 +221,7 @@ public class ExternalAudioWriter {
                     extension = "bin";
                 }
             }
+            extension = resolveDownloadExtension(extension, child, mediaUri.toString());
 
             String sanitized = sanitizeFileName(baseName);
             if (sanitized.isEmpty()) sanitized = sanitizeFileName(fallbackName);
@@ -357,29 +358,7 @@ public class ExternalAudioWriter {
                                        String actualMimeType, String actualExtension, String downloadUri) {
         if (child == null) return;
 
-        Download download = new Download(child);
-        if (actualExtension != null && !actualExtension.isEmpty() && !"bin".equals(actualExtension)) {
-            download.setSuffix(actualExtension);
-            if (actualMimeType != null && !actualMimeType.equals("application/octet-stream")) {
-                download.setContentType(actualMimeType);
-            }
-            String sourceSuffix = child.getSuffix();
-            boolean formatChanged = sourceSuffix == null
-                    || !actualExtension.equalsIgnoreCase(sourceSuffix);
-            if (formatChanged) {
-                download.setSamplingRate(null);
-                download.setBitDepth(null);
-            }
-            if (downloadUri != null) {
-                MusicUtil.applyBitrateFromUri(download, downloadUri);
-            }
-        } else {
-            if (downloadUri != null) {
-                MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);
-            } else {
-                MusicUtil.applyTranscodedDownloadMetadata(download);
-            }
-        }
+        Download download = createDownloadMetadata(child, actualMimeType, actualExtension, downloadUri);
         download.setDownloadState(1);
         download.setPlaylistId(playlistId);
         download.setPlaylistName(playlistName);
@@ -389,7 +368,54 @@ public class ExternalAudioWriter {
         }
 
         new DownloadRepository().insert(download);
-    }   
+    }
+
+    static String resolveDownloadExtension(String extension, Child child, String downloadUri) {
+        if (child == null) return extension;
+
+        Download requestedDownload = new Download(child);
+        if (MusicUtil.applyTranscodeMetadataFromUri(requestedDownload, downloadUri)) {
+            String requestedSuffix = requestedDownload.getSuffix();
+            if (requestedSuffix != null && !requestedSuffix.isEmpty()) return requestedSuffix;
+        }
+
+        String sourceSuffix = child.getSuffix();
+        if ("oga".equalsIgnoreCase(extension)
+                && ("ogg".equalsIgnoreCase(sourceSuffix) || "opus".equalsIgnoreCase(sourceSuffix))) {
+            return sourceSuffix;
+        }
+        return extension;
+    }
+
+    static Download createDownloadMetadata(Child child, String actualMimeType, String actualExtension,
+                                           String downloadUri) {
+        if (child == null) return null;
+
+        Download download = new Download(child);
+        boolean transcodeRequested = MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);
+        if (transcodeRequested) return download;
+
+        String resolvedExtension = resolveDownloadExtension(actualExtension, child, downloadUri);
+        if (resolvedExtension != null && !resolvedExtension.isEmpty() && !"bin".equals(resolvedExtension)) {
+            download.setSuffix(resolvedExtension);
+            if (actualMimeType != null && !actualMimeType.equals("application/octet-stream")) {
+                download.setContentType(actualMimeType);
+            }
+            String sourceSuffix = child.getSuffix();
+            boolean formatChanged = sourceSuffix == null
+                    || !resolvedExtension.equalsIgnoreCase(sourceSuffix);
+            if (formatChanged) {
+                download.setSamplingRate(null);
+                download.setBitDepth(null);
+            }
+            if (downloadUri != null) {
+                MusicUtil.applyBitrateFromUri(download, downloadUri);
+            }
+        } else if (downloadUri == null) {
+            MusicUtil.applyTranscodedDownloadMetadata(download);
+        }
+        return download;
+    }
 
     private static InputStream openInputStream(Context context,
                                                Uri mediaUri,
