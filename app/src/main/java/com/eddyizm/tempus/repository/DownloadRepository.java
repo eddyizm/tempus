@@ -170,23 +170,25 @@ public class DownloadRepository {
         }
     }
 
-    public void update(String id) {
-        UpdateThreadSafe update = new UpdateThreadSafe(downloadDao, id);
+    public void updateCompleted(String id, long downloadedSize) {
+        UpdateThreadSafe update = new UpdateThreadSafe(downloadDao, id, downloadedSize);
         DOWNLOAD_WRITE_EXECUTOR.execute(update);
     }
 
     private static class UpdateThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private final String id;
+        private final long downloadedSize;
 
-        public UpdateThreadSafe(DownloadDao downloadDao, String id) {
+        public UpdateThreadSafe(DownloadDao downloadDao, String id, long downloadedSize) {
             this.downloadDao = downloadDao;
             this.id = id;
+            this.downloadedSize = downloadedSize;
         }
 
         @Override
         public void run() {
-            downloadDao.update(id);
+            downloadDao.updateCompleted(id, downloadedSize);
         }
     }
 

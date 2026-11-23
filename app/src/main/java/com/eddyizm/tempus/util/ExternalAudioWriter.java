@@ -212,7 +212,8 @@ public class ExternalAudioWriter {
                     extension = name.substring(dot + 1);
                 }
             }
-            if (extension == null || extension.isEmpty()) {
+            boolean extensionDetected = extension != null && !extension.isEmpty();
+            if (!extensionDetected) {
                 String suffix = child.getSuffix();
                 if (suffix != null && !suffix.isEmpty()) {
                     extension = suffix;
@@ -220,6 +221,7 @@ public class ExternalAudioWriter {
                     extension = "bin";
                 }
             }
+            extension = resolveDownloadExtension(extension, child, mediaUri.toString());
 
             String sanitized = sanitizeFileName(baseName);
             if (sanitized.isEmpty()) sanitized = sanitizeFileName(fallbackName);
@@ -238,9 +240,9 @@ public class ExternalAudioWriter {
                 }
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
-                    recordDownload(child, existingFile.getUri(), playlistId, playlistName);
+                    recordDownload(child, existingFile.getUri(), playlistId, playlistName, mimeType,
+                            extensionDetected ? extension : null, mediaUri.toString(), localLength);
                     ExternalAudioReader.refreshCacheAsync();
-                    // Already exists — count as a quiet skip so progress resolves correctly
                     DownloadProgressState.getInstance().onSkipped(context);
                     return;
                 } else {
@@ -296,7 +298,8 @@ public class ExternalAudioWriter {
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
-                recordDownload(child, targetUri, playlistId, playlistName);
+                recordDownload(child, targetUri, playlistId, playlistName, mimeType,
+                        extensionDetected ? extension : null, mediaUri.toString(), total);
                 DownloadProgressState.getInstance().onSuccess(context);
                 ExternalAudioReader.refreshCacheAsync();
             }
@@ -353,11 +356,13 @@ public class ExternalAudioWriter {
         manager.notify(FOLDER_ERROR_NOTIFICATION_ID, builder.build());
     }
 
-    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName) {
+    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName,
+                                       String actualMimeType, String actualExtension, String downloadUri,
+                                       long downloadedSize) {
         if (child == null) return;
 
-        Download download = new Download(child);
-        MusicUtil.applyTranscodedDownloadMetadata(download);
+        Download download = createDownloadMetadata(
+                child, actualMimeType, actualExtension, downloadUri, downloadedSize);
         download.setDownloadState(1);
         download.setPlaylistId(playlistId);
         download.setPlaylistName(playlistName);
@@ -367,7 +372,55 @@ public class ExternalAudioWriter {
         }
 
         new DownloadRepository().insert(download);
-    }   
+    }
+
+    static String resolveDownloadExtension(String extension, Child child, String downloadUri) {
+        if (child == null) return extension;
+
+        Download requestedDownload = new Download(child);
+        if (MusicUtil.applyTranscodeMetadataFromUri(requestedDownload, downloadUri)) {
+            String requestedSuffix = requestedDownload.getSuffix();
+            if (requestedSuffix != null && !requestedSuffix.isEmpty()) return requestedSuffix;
+        }
+
+        String sourceSuffix = child.getSuffix();
+        if ("oga".equalsIgnoreCase(extension)
+                && ("ogg".equalsIgnoreCase(sourceSuffix) || "opus".equalsIgnoreCase(sourceSuffix))) {
+            return sourceSuffix;
+        }
+        return extension;
+    }
+
+    static Download createDownloadMetadata(Child child, String actualMimeType, String actualExtension,
+                                           String downloadUri, long downloadedSize) {
+        if (child == null) return null;
+
+        Download download = new Download(child);
+        download.setSize(downloadedSize);
+        boolean transcodeRequested = MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);
+        if (transcodeRequested) return download;
+
+        String resolvedExtension = resolveDownloadExtension(actualExtension, child, downloadUri);
+        if (resolvedExtension != null && !resolvedExtension.isEmpty() && !"bin".equals(resolvedExtension)) {
+            download.setSuffix(resolvedExtension);
+            if (actualMimeType != null && !actualMimeType.equals("application/octet-stream")) {
+                download.setContentType(actualMimeType);
+            }
+            String sourceSuffix = child.getSuffix();
+            boolean formatChanged = sourceSuffix == null
+                    || !resolvedExtension.equalsIgnoreCase(sourceSuffix);
+            if (formatChanged) {
+                download.setSamplingRate(null);
+                download.setBitDepth(null);
+            }
+            if (downloadUri != null) {
+                MusicUtil.applyBitrateFromUri(download, downloadUri);
+            }
+        } else if (downloadUri == null) {
+            MusicUtil.applyTranscodedDownloadMetadata(download);
+        }
+        return download;
+    }
 
     private static InputStream openInputStream(Context context,
                                                Uri mediaUri,
