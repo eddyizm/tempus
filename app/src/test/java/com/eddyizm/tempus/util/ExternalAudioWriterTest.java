@@ -18,8 +18,9 @@ public class ExternalAudioWriterTest {
             assertEquals(suffix, ExternalAudioWriter.resolveDownloadExtension("oga", child, downloadUri()));
 
             Download download = ExternalAudioWriter.createDownloadMetadata(
-                    child, "audio/ogg", "oga", downloadUri());
+                    child, "audio/ogg", "oga", downloadUri(), 7_900_000L);
             assertEquals(suffix, download.getSuffix());
+            assertEquals(Long.valueOf(7_900_000L), download.getSize());
             assertEquals(Integer.valueOf(44100), download.getSamplingRate());
             assertEquals(Integer.valueOf(16), download.getBitDepth());
         }
@@ -29,13 +30,16 @@ public class ExternalAudioWriterTest {
     public void explicitTranscodeFormatOverridesAmbiguousOggMime() {
         Child child = childWithAudioMetadata("ogg");
         child.setBitrate(3216);
+        child.setSize(186_000_000L);
         String uri = "https://subsonic.example.com/rest/stream?format=opus&maxBitRate=0&id=song-1";
 
         assertEquals("opus", ExternalAudioWriter.resolveDownloadExtension("oga", child, uri));
 
-        Download download = ExternalAudioWriter.createDownloadMetadata(child, "audio/ogg", "oga", uri);
+        Download download = ExternalAudioWriter.createDownloadMetadata(
+                child, "audio/ogg", "oga", uri, 7_900_000L);
         assertEquals("opus", download.getSuffix());
         assertEquals("audio/opus", download.getContentType());
+        assertEquals(Long.valueOf(7_900_000L), download.getSize());
         assertNull(download.getBitrate());
         assertNull(download.getSamplingRate());
         assertNull(download.getBitDepth());

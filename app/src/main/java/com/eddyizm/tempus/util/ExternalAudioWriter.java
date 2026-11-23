@@ -240,7 +240,8 @@ public class ExternalAudioWriter {
                 }
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
-                    recordDownload(child, existingFile.getUri(), playlistId, playlistName, mimeType, extensionDetected ? extension : null, mediaUri != null ? mediaUri.toString() : null);
+                    recordDownload(child, existingFile.getUri(), playlistId, playlistName, mimeType,
+                            extensionDetected ? extension : null, mediaUri.toString(), localLength);
                     ExternalAudioReader.refreshCacheAsync();
                     DownloadProgressState.getInstance().onSkipped(context);
                     return;
@@ -297,7 +298,8 @@ public class ExternalAudioWriter {
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
-                recordDownload(child, targetUri, playlistId, playlistName, mimeType, extensionDetected ? extension : null, mediaUri != null ? mediaUri.toString() : null);
+                recordDownload(child, targetUri, playlistId, playlistName, mimeType,
+                        extensionDetected ? extension : null, mediaUri.toString(), total);
                 DownloadProgressState.getInstance().onSuccess(context);
                 ExternalAudioReader.refreshCacheAsync();
             }
@@ -355,10 +357,12 @@ public class ExternalAudioWriter {
     }
 
     private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName,
-                                       String actualMimeType, String actualExtension, String downloadUri) {
+                                       String actualMimeType, String actualExtension, String downloadUri,
+                                       long downloadedSize) {
         if (child == null) return;
 
-        Download download = createDownloadMetadata(child, actualMimeType, actualExtension, downloadUri);
+        Download download = createDownloadMetadata(
+                child, actualMimeType, actualExtension, downloadUri, downloadedSize);
         download.setDownloadState(1);
         download.setPlaylistId(playlistId);
         download.setPlaylistName(playlistName);
@@ -388,10 +392,11 @@ public class ExternalAudioWriter {
     }
 
     static Download createDownloadMetadata(Child child, String actualMimeType, String actualExtension,
-                                           String downloadUri) {
+                                           String downloadUri, long downloadedSize) {
         if (child == null) return null;
 
         Download download = new Download(child);
+        download.setSize(downloadedSize);
         boolean transcodeRequested = MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);
         if (transcodeRequested) return download;
 
