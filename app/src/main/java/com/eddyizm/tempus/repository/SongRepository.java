@@ -11,12 +11,15 @@ import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.SubsonicResponse;
 import com.eddyizm.tempus.util.Constants.SeedType;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,6 +28,7 @@ import retrofit2.Response;
 public class SongRepository {
 
     private static final String TAG = "SongRepository";
+    private static final ExecutorService PLAYBACK_REPORTS = Executors.newSingleThreadExecutor();
 
     public interface MediaCallbackInternal {
         void onSongsAvailable(List<Child> songs);
@@ -342,6 +346,17 @@ public class SongRepository {
         App.getSubsonicClientInstance(false).getMediaAnnotationClient().scrobble(id, submission).enqueue(new Callback<ApiResponse>() {
             @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {}
             @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
+        });
+    }
+
+    public void reportPlayback(String mediaId, String mediaType, long positionMs, String state, float playbackRate, boolean ignoreScrobble) {
+        // One thread keeps stopped, starting and playing in order, since the server counts plays from that sequence.
+        PLAYBACK_REPORTS.execute(() -> {
+            try {
+                App.getSubsonicClientInstance(false).getMediaAnnotationClient().reportPlayback(mediaId, mediaType, positionMs, state, playbackRate, ignoreScrobble).execute();
+            } catch (IOException e) {
+                Log.w(TAG, "reportPlayback failed", e);
+            }
         });
     }
 

@@ -51,8 +51,8 @@ public interface DownloadDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertAllKeepingExisting(List<Download> downloads);
 
-    @Query("UPDATE download SET download_state = 1 WHERE id = :id")
-    void update(String id);
+    @Query("UPDATE download SET download_state = 1, size = CASE WHEN :downloadedSize > 0 THEN :downloadedSize ELSE size END WHERE id = :id")
+    void updateCompleted(String id, long downloadedSize);
 
     @Query("DELETE FROM download WHERE id = :id")
     void delete(String id);

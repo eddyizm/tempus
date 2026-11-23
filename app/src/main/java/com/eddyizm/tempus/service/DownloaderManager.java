@@ -211,7 +211,7 @@ public class DownloaderManager {
     }
 
     public static void updateRequestDownload(Download download) {
-        updateDatabase(download.request.id);
+        getDownloadRepository().updateCompleted(download.request.id, download.getBytesDownloaded());
         downloads.put(download.request.id, download);
         requested.remove(download.request.id);
     }
@@ -263,7 +263,4 @@ public class DownloaderManager {
         getDownloadRepository().deleteAll();
     }
 
-    private static void updateDatabase(String id) {
-        getDownloadRepository().update(id);
-    }
 }
