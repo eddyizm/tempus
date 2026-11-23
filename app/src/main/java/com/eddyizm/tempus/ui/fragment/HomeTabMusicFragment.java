@@ -69,6 +69,7 @@ import com.eddyizm.tempus.util.UIUtil;
 import com.eddyizm.tempus.viewmodel.HomeViewModel;
 import com.eddyizm.tempus.viewmodel.MainViewModel;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
+import com.eddyizm.tempus.viewmodel.StarredArtistsSyncViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -275,6 +276,9 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
         bind.starredArtistsTextViewRefreshable.setOnLongClickListener(v -> {
             homeViewModel.refreshStarredArtists(getViewLifecycleOwner());
+            if (Preferences.isStarredArtistsSyncEnabled()) {
+                homeViewModel.refreshAllStarredArtistSongs();
+            }
             return true;
         });
 
@@ -488,14 +492,8 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
 
     private void initSyncStarredArtistsView() {
         if (Preferences.isStarredArtistsSyncEnabled()) {
-            homeViewModel.getStarredArtists(getViewLifecycleOwner()).observe(getViewLifecycleOwner(), new Observer<List<ArtistID3>>() {
-                @Override
-                public void onChanged(List<ArtistID3> artists) {
-                    if (artists != null && !artists.isEmpty()) {
-                        checkIfArtistsNeedSync(artists);
-                    }
-                }
-            });
+            checkIfArtistsNeedSync();
+            homeViewModel.refreshAllStarredArtistSongs();
         }
 
         bind.homeSyncStarredArtistsCancel.setOnClickListener(v -> {
@@ -512,11 +510,13 @@ public class HomeTabMusicFragment extends Fragment implements ClickCallback {
         });
     }
 
-    private void checkIfArtistsNeedSync(List<ArtistID3> artists) {
-        homeViewModel.getAllStarredArtistSongs().observe(getViewLifecycleOwner(), new Observer<List<Child>>() {
+    private void checkIfArtistsNeedSync() {
+        homeViewModel.getAllStarredArtistSongs().observe(getViewLifecycleOwner(), new Observer<StarredArtistsSyncViewModel.StarredArtistSongs>() {
             @Override
-            public void onChanged(List<Child> allSongs) {
-                if (allSongs != null) {
+            public void onChanged(StarredArtistsSyncViewModel.StarredArtistSongs starred) {
+                if (starred != null) {
+                    List<ArtistID3> artists = starred.artists;
+                    List<Child> allSongs = starred.songs;
                     int songsToDownload = 0;
                     List<String> artistsNeedingSync = new ArrayList<>();
 
