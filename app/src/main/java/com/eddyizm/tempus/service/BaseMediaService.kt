@@ -42,6 +42,7 @@ import com.eddyizm.tempus.equalizer.ParametricEqAudioProcessor
 import androidx.mediarouter.media.MediaRouter
 import com.eddyizm.tempus.repository.QueueRepository
 import com.eddyizm.tempus.subsonic.base.ApiResponse
+import com.eddyizm.tempus.subsonic.models.NowPlayingEntry
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.upnp.UpnpControlPoint
 import com.eddyizm.tempus.upnp.UpnpDevice
@@ -343,6 +344,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     private var restartableUntilMs = 0L
     private val restartAfterErrorWindowMs = 60_000L
 
+    // The track the server is tracking a playback session for, opened by starting and closed by stopped.
+    // Shared across players, so moving playback to Cast or UPnP continues the same session.
+    private var playbackSessionMediaId: String? = null
+
     fun initializePlayerListener(player: Player) {
         player.addListener(object : Player.Listener {
             override fun onPlayerError(error: PlaybackException) {
@@ -432,6 +437,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
                 updateWidget(player)
                 QueuePreloader.preload(this@BaseMediaService, player)
+                reportPlaybackState(player)
                 prewarmUpcomingArtwork(player)
             }
 
@@ -606,6 +612,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     queueSyncHandler.removeCallbacks(queueSyncRunnable)
                 }
                 updateWidget(player)
+                reportPlaybackState(player)
             }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -632,6 +639,14 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 Log.d(TAG, "onPositionDiscontinuity reason=$reason old=${oldPosition.mediaItemIndex} new=${newPosition.mediaItemIndex}")
                 super.onPositionDiscontinuity(oldPosition, newPosition, reason)
                 if (reason == Player.DISCONTINUITY_REASON_SEEK) scheduleQueueSync()
+                // Close the old track's session whenever playback leaves it, including repeat-one
+                // restarts and a cleared queue; a seek within the track moves the server's position.
+                val oldItem = oldPosition.mediaItem
+                if (oldItem != null && (oldItem != newPosition.mediaItem || reason == Player.DISCONTINUITY_REASON_AUTO_TRANSITION)) {
+                    endPlaybackSession(oldItem, oldPosition.positionMs, player.playbackParameters.speed)
+                } else if (reason == Player.DISCONTINUITY_REASON_SEEK) {
+                    reportPlaybackState(player)
+                }
                 // Save the resume point of the track we're leaving whenever we move to a
                 // different track, so coming back to it later resumes where it was. (Pause
                 // is handled separately in onIsPlayingChanged; this covers switching tracks
@@ -693,6 +708,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 Preferences.setRepeatMode(repeatMode)
             }
 
+            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+                reportPlaybackState(player)
+            }
+
             override fun onAudioSessionIdChanged(audioSessionId: Int) {
                 Log.d(TAG, "onAudioSessionIdChanged")
                 equalizerManager.attach(audioSessionId)
@@ -725,6 +744,36 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                 count++
             }
         }
+    }
+
+    // Buffering and idle are not reported, so a stall or a hand-off between players
+    // does not show as a pause; the next playing or paused change follows anyway.
+    private fun reportPlaybackState(player: Player) {
+        val item = player.currentMediaItem ?: return
+        if (player.playbackState == Player.STATE_IDLE) return
+        val rate = player.playbackParameters.speed
+        if (playbackSessionMediaId != item.mediaId) {
+            // Opened once the track is set to play, so one skipped past while paused is never reported.
+            if (!player.playWhenReady || player.playbackState == Player.STATE_ENDED) return
+            MediaManager.reportPlayback(item, NowPlayingEntry.STATE_STARTING, player.currentPosition, rate)
+            playbackSessionMediaId = item.mediaId
+        }
+        val state = when {
+            player.isPlaying -> NowPlayingEntry.STATE_PLAYING
+            player.playbackState == Player.STATE_ENDED -> NowPlayingEntry.STATE_STOPPED
+            !player.playWhenReady ||
+                player.playbackSuppressionReason != Player.PLAYBACK_SUPPRESSION_REASON_NONE -> NowPlayingEntry.STATE_PAUSED
+            else -> return
+        }
+        MediaManager.reportPlayback(item, state, player.currentPosition, rate)
+        if (state == NowPlayingEntry.STATE_STOPPED) playbackSessionMediaId = null
+    }
+
+    // The server counts the play from this, so a track that never opened a session sends nothing.
+    private fun endPlaybackSession(item: MediaItem?, positionMs: Long, rate: Float) {
+        if (playbackSessionMediaId == null) return
+        playbackSessionMediaId = null
+        MediaManager.reportPlayback(item, NowPlayingEntry.STATE_STOPPED, positionMs, rate)
     }
 
     // -------------------------------------------------------------------------
@@ -891,6 +940,9 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     }
 
     override fun onDestroy() {
+        // Before the players are released, while the current item and position are still readable.
+        val player = mediaLibrarySession.player
+        endPlaybackSession(player.currentMediaItem, player.currentPosition, player.playbackParameters.speed)
         QueuePreloader.cancel()
         serviceDestroyed = true
         // Process scoped, so it outlives the service unless it is cleared here.
