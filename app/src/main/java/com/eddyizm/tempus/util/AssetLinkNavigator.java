@@ -179,11 +179,20 @@ public final class AssetLinkNavigator {
             if (navController == null) {
                 return;
             }
+            boolean fromSettings = navController.getCurrentDestination() != null
+                    && navController.getCurrentDestination().getId() == R.id.settingsFragment;
             if (navController.getCurrentDestination() != null
                     && navController.getCurrentDestination().getId() == destinationId) {
                 navController.navigate(destinationId, args, new NavOptions.Builder().setLaunchSingleTop(true).build());
             } else {
                 navController.navigate(destinationId, args);
+            }
+            // Settings hides the bottom navigation and only gets it back from the screen the user
+            // returns to. A link opened while Settings is showing (a shortcut tapped after pinning
+            // it there) skips that screen, so the navigation stayed hidden while the player kept
+            // the peek height that makes room for it.
+            if (fromSettings) {
+                activity.toggleBottomNavigationBarVisibilityOnOrientationChange();
             }
         });
     }
