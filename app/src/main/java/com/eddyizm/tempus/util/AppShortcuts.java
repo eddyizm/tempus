@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
@@ -12,6 +14,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -73,6 +76,15 @@ public final class AppShortcuts {
     /** An adaptive icon is 108dp, of which the launcher shows the middle 72dp. */
     private static final int ICON_SIZE = 324;
     private static final int ICON_VISIBLE_SIZE = ICON_SIZE * 72 / 108;
+
+    /**
+     * The badge on a pinned item's cover: a 28dp disc at the top right, whose edge stays 1dp
+     * inside the 72dp circle that even a round launcher mask shows.
+     */
+    private static final int BADGE_SIZE = ICON_SIZE * 28 / 108;
+    private static final int BADGE_CENTER_OFFSET = ICON_SIZE * 148 / 1080;
+    private static final int BADGE_GLYPH_SIZE = ICON_SIZE * 18 / 108;
+    private static final int BADGE_COLOR = 0xB3000000;
 
     private static final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -221,15 +233,18 @@ public final class AppShortcuts {
         }
         while (items.size() > MAX_ITEMS) items.remove(items.size() - 1);
 
+        List<Preferences.ShortcutItem> pinned = Preferences.getPinnedShortcuts();
         List<ShortcutInfoCompat> shortcuts = new ArrayList<>();
         for (Preferences.ShortcutItem item : items) {
-            shortcuts.add(item(context, item, shortcuts.size()));
+            boolean isPinned = indexOf(pinned, item.getType(), item.getId()) >= 0;
+            shortcuts.add(item(context, item, isPinned, shortcuts.size()));
         }
         return shortcuts;
     }
 
     @NonNull
-    private static ShortcutInfoCompat item(@NonNull Context context, @NonNull Preferences.ShortcutItem item, int rank) {
+    private static ShortcutInfoCompat item(@NonNull Context context, @NonNull Preferences.ShortcutItem item,
+                                           boolean pinned, int rank) {
         Uri uri = AssetLinkUtil.buildUri(item.getType(), item.getId());
         String label = item.getName() != null && !item.getName().isEmpty()
                 ? item.getName() : context.getString(R.string.app_name);
@@ -240,14 +255,14 @@ public final class AppShortcuts {
         return new ShortcutInfoCompat.Builder(context, id)
                 .setShortLabel(label)
                 .setLongLabel(label)
-                .setIcon(loadIcon(context, item))
+                .setIcon(loadIcon(context, item, pinned))
                 .setIntent(intent)
                 .setRank(rank)
                 .build();
     }
 
     @NonNull
-    private static IconCompat loadIcon(@NonNull Context context, @NonNull Preferences.ShortcutItem item) {
+    private static IconCompat loadIcon(@NonNull Context context, @NonNull Preferences.ShortcutItem item, boolean pinned) {
         if (item.getCoverArtId() != null) {
             try {
                 Bitmap cover = Glide.with(context)
@@ -258,7 +273,11 @@ public final class AppShortcuts {
                         .centerCrop()
                         .submit(ICON_VISIBLE_SIZE, ICON_VISIBLE_SIZE)
                         .get();
-                if (cover != null) return IconCompat.createWithAdaptiveBitmap(toAdaptive(cover));
+                if (cover != null) {
+                    Bitmap icon = toAdaptive(cover);
+                    if (pinned) drawPinBadge(context, icon);
+                    return IconCompat.createWithAdaptiveBitmap(icon);
+                }
             } catch (Exception e) {
                 Log.d(TAG, "No cover for shortcut " + item.getId(), e);
             }
@@ -281,6 +300,23 @@ public final class AppShortcuts {
         int inset = (ICON_SIZE - ICON_VISIBLE_SIZE) / 2;
         canvas.drawBitmap(cover, null, new Rect(inset, inset, ICON_SIZE - inset, ICON_SIZE - inset), paint);
         return icon;
+    }
+
+    /** Marks a pinned item's icon, so it stands apart from the recently played ones. */
+    private static void drawPinBadge(@NonNull Context context, @NonNull Bitmap icon) {
+        Drawable glyph = ContextCompat.getDrawable(context, R.drawable.ic_pin);
+        if (glyph == null) return;
+        Canvas canvas = new Canvas(icon);
+        float cx = ICON_SIZE / 2f + BADGE_CENTER_OFFSET;
+        float cy = ICON_SIZE / 2f - BADGE_CENTER_OFFSET;
+        Paint disc = new Paint(Paint.ANTI_ALIAS_FLAG);
+        disc.setColor(BADGE_COLOR);
+        canvas.drawCircle(cx, cy, BADGE_SIZE / 2f, disc);
+        glyph = glyph.mutate();
+        glyph.setTint(Color.WHITE);
+        int half = BADGE_GLYPH_SIZE / 2;
+        glyph.setBounds((int) cx - half, (int) cy - half, (int) cx + half, (int) cy + half);
+        glyph.draw(canvas);
     }
 
     private static int indexOf(@NonNull List<Preferences.ShortcutItem> items, @NonNull String type, @NonNull String id) {

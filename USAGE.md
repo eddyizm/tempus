@@ -395,7 +395,7 @@ To make a playlist a fave, tap **Add to faves** in its ⋮ menu, or long press i
 
 Long press the Tempus icon to get to your music without opening the app first. It offers up to four playlists or albums:
 
-- The ones you pinned come first. Tap **Pin to app shortcuts** in a playlist's or album's ⋮ menu. When all four places are pinned, Tempus asks which one the new pin replaces.
+- The ones you pinned come first. Tap **Pin to app shortcuts** in a playlist's or album's ⋮ menu. When all four places are pinned, Tempus asks which one the new pin replaces. A small pin on the cover marks them.
 - The rest are filled with the playlists you played last. Only playing counts, opening a playlist does not. Turn this off with **Settings → Playlist → Recently played playlists as app shortcuts**.
 
 **Settings → Playlist → Pinned app shortcuts** lists your pins. Drag one by its handle to change the order, tap the bin to unpin it, and tap **Save**.
