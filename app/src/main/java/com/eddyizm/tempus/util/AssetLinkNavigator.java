@@ -5,9 +5,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 
@@ -173,6 +175,7 @@ public final class AssetLinkNavigator {
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     private void navigateSafely(int destinationId, @Nullable Bundle args) {
         activity.runOnUiThread(() -> {
             NavController navController = activity.navController;
