@@ -13,4 +13,15 @@ class NowPlayingEntry(
     var minutesAgo: Int = 0,
     var playerId: Int = 0,
     var playerName: String? = null,
-) : Child(id)
+    // state, positionMs and playbackRate are only sent by servers with the playbackReport extension
+    var state: String? = null,
+    var positionMs: Long? = null,
+    var playbackRate: Float? = null,
+) : Child(id) {
+    companion object {
+        const val STATE_STARTING = "starting"
+        const val STATE_PLAYING = "playing"
+        const val STATE_PAUSED = "paused"
+        const val STATE_STOPPED = "stopped"
+    }
+}

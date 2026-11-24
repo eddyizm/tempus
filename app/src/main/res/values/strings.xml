@@ -61,7 +61,12 @@
     <string name="artist_bottom_sheet_play_next">Play next</string>
     <string name="artist_bottom_sheet_add_to_queue">Add to queue</string>
     <string name="artist_bottom_sheet_add_to_playlist">Add to playlist</string>
+    <string name="artist_bottom_sheet_download_all">Download all</string>
     <string name="artist_bottom_sheet_loading_tracks">Loading tracks\u2026</string>
+    <string name="artist_download_load_failed">Couldn\'t load the artist\'s tracks. Check your connection and try again.</string>
+    <string name="artist_download_no_tracks">No tracks found for this artist</string>
+    <string name="artist_download_already_downloaded">All of this artist\'s tracks are already downloaded or queued</string>
+    <string name="artist_download_not_started">Couldn\'t start the download. Try again.</string>
     <string name="artist_catalogue_title">Artists</string>
     <string name="artist_catalogue_title_expanded">Browse Artists</string>
     <string name="artist_error_retrieving_radio">Error retrieving artist\'s radio</string>
@@ -596,7 +601,8 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
-    <string name="settings_permissions">App permissions</string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_backups">Backups</string>
     <string name="settings_export_title">Export settings</string>
     <string name="settings_export_summary">Save your settings to a file. Server logins are not included.</string>
     <string name="settings_import_title">Import settings</string>
@@ -764,6 +770,10 @@
         <item quantity="one">Downloading %d song</item>
         <item quantity="other">Downloading %d songs</item>
     </plurals>
+    <plurals name="artist_download_waiting_for_network">
+        <item quantity="one">%d song queued. It will download when you\'re back online.</item>
+        <item quantity="other">%d songs queued. They\'ll download when you\'re back online.</item>
+    </plurals>
     <string name="equalizer_fragment_title">Equalizer</string>
     <string name="equalizer_reset">Reset</string>
     <string name="equalizer_enable">Enable</string>
@@ -858,11 +868,13 @@
 
     <string name="la_tab_greeter">Welcome</string>
     <string name="la_tab_permission">Permissions</string>
+    <string name="la_tab_backup">Backups</string>
     <string name="la_tab_themes">Themes</string>
     <string name="la_tab_server">Servers</string>
 
     <string name="la_appbar_greeter_title">About</string>
     <string name="la_appbar_permission_title">Permissions management</string>
+    <string name="la_appbar_backup_title">Backups management</string>
     <string name="la_appbar_themes_title">Theme editor</string>
     <string name="la_appbar_server_title">Server editor</string>
 
@@ -947,6 +959,20 @@
     <string name="shortcut_ask_open">Open</string>
     <string name="shortcut_ask_play">Play</string>
     <string name="shortcut_ask_shuffle">Shuffle</string>
+    <string name="la_backups_section_manual_title">Manual Backup</string>
+    <string name="la_backups_section_manual_description">Export your app settings to a file or import from a previous backup. Login credentials are not included.</string>
+    <string name="la_backups_section_manual_button_export">Export</string>
+    <string name="la_backups_section_manual_button_import">Import</string>
+    <string name="la_backups_section_storage_title">Storage Directory</string>
+    <string name="la_backups_section_storage_description">Local folder where your backup files are currently saved.</string>
+    <string name="la_backups_section_storage_placeholder">/storage/emulated/0/Tempus/Backups</string>
+    <string name="la_backups_section_automatic_title">Automatic Backups</string>
+    <string name="la_backups_section_automatic_description">Backup your settings automatically in the background.</string>
+    <string name="la_backups_section_automatic_switch">Enable scheduled backups</string>
+    <string name="la_backups_section_automatic_dropdown_title">Frequency</string>
+    <string name="la_backups_section_automatic_dropdown_item_hourly">Hourly</string>
+    <string name="la_backups_section_automatic_dropdown_item_daily">Daily</string>
+    <string name="la_backups_section_automatic_dropdown_item_weekly">Weekly</string>
     <string name="la_button_advanced_editor">Open server editor</string>
 
     <!-- TODO: Remove or change this placeholder text -->

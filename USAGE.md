@@ -138,8 +138,6 @@ The local address gets the headers too, like it already gets your Subsonic crede
 
 After editing the headers of the server you are signed in to, sign out and back in for them to take effect.
 
-**Test** in the server editor sends the headers only for the server you are signed in to. For a new server behind a proxy that requires them, Test fails; sign in to the server instead.
-
 Devices that fetch the music themselves cannot send them:
 
 - Chromecast and UPnP/DLNA renderers (see [Playing on another device](#playing-on-another-device)) get a plain stream URL, so they will be refused by a proxy that requires the headers.
@@ -468,6 +466,8 @@ If a song you are streaming gets stuck downloading more slowly than it plays, fo
 **Enable music scrobbling**, under **Settings → Miscellaneous**, is on by default. It tells your server what you are playing and which tracks you played. Tempus sends this only to your server, which may pass it on to a service such as Last.fm if it is set up to.
 
 A track counts as played when it plays to the end. When you skip to another track in the queue, the one you left counts if it played past its halfway point or 4 minutes, whichever comes first, unless it is 30 seconds or shorter. Only music counts, not podcasts or radio. A play that does not reach the server is not sent again later.
+
+If your server supports the OpenSubsonic `playbackReport` extension, Tempus instead tells it when a song or podcast starts, plays, pauses and stops, along with its position and playback speed, and the server decides which plays count; the rules above then do not apply. A track is reported stopped when playback moves off it, the queue is cleared, or Tempus closes. A track you skip past while paused is not reported at all. With scrobbling turned off, these reports are still sent so the server can show what you are playing, but they do not count any plays.
 
 ### Backing up settings
 
