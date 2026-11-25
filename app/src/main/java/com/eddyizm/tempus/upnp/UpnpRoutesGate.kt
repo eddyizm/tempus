@@ -1,6 +1,6 @@
 package com.eddyizm.tempus.upnp
 
-/** What the media service does with its UPnP route provider when the UPnP switch is read. */
+/** What the media service does with its hold on the UPnP routes when the UPnP switch is read. */
 object UpnpRoutesGate {
 
     enum class Change { REGISTER, RELEASE, NONE }

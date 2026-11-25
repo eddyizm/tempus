@@ -291,6 +291,8 @@ The spot is also saved as a bookmark on your server, if the server supports book
 
 Tempus can hand playback to a UPnP or DLNA renderer on your network, such as a TV, an AV receiver or a network speaker. Tap the cast button in the toolbar, pick the device, and the queue, the position and the play state move to it while the app keeps the controls. On the GitHub build the same button lists Chromecast devices and network renderers together. On the degoogled build the button shows a speaker icon, not the Cast icon.
 
+On Android 11 and newer the renderers also appear in Android's own output switcher, the device chip on the media player in the notification shade, next to the phone and Bluetooth devices. From there you can start casting, stop it by picking the phone again, or move straight from one renderer to another without opening the app. The switcher names the renderer as the output while it plays. Turning UPnP off in the settings removes the renderers from the switcher too.
+
 <p align="left">
     <img src="mockup/usage/toolbar_github.png" width=400 style="margin-right:16px;">
     <img src="mockup/usage/toolbar_degoogled.png" width=400>
