@@ -10,6 +10,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Binder
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
@@ -46,10 +47,12 @@ import com.eddyizm.tempus.subsonic.base.ApiResponse
 import com.eddyizm.tempus.subsonic.models.NowPlayingEntry
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.upnp.UpnpDevice
+import com.eddyizm.tempus.upnp.UpnpHandback
 import com.eddyizm.tempus.upnp.UpnpPlayer
 import com.eddyizm.tempus.upnp.UpnpRouteProvider
 import com.eddyizm.tempus.upnp.UpnpRoutes
 import com.eddyizm.tempus.upnp.UpnpRoutesGate
+import com.eddyizm.tempus.upnp.UpnpSwitchWatcher
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.*
 import com.eddyizm.tempus.util.SleepTimerManager
@@ -856,9 +859,10 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             if (player.device != device) return
             upnpPlayer = null
             UpnpRoutes.reportVolume(device, null, 0)
+            val wasPlaying = player.playWhenReady
             setPlayer(player, exoplayer)
-            // Paused, as when Bluetooth headphones drop, so ending the cast does not start the phone's speaker.
-            exoplayer.playWhenReady = false
+            // Paused unless the phone or Bluetooth was picked, so stopping the cast does not start the phone's speaker.
+            exoplayer.playWhenReady = upnpHandback.rendererLeft(wasPlaying, SystemClock.elapsedRealtime())
             player.release()
         }
 
@@ -890,6 +894,19 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         }
     }
 
+    private val upnpHandback = UpnpHandback()
+
+    // The output switcher only exists from Android 11, and so does the transfer it reports a switch with.
+    private val upnpSwitchWatcher: UpnpSwitchWatcher? by lazy {
+        if (Build.VERSION.SDK_INT >= 30) UpnpSwitchWatcher(this) { onUpnpSwitchedAway() } else null
+    }
+
+    private fun onUpnpSwitchedAway() {
+        if (upnpHandback.switchedAway(SystemClock.elapsedRealtime()) && mediaLibrarySession.player === exoplayer) {
+            exoplayer.play()
+        }
+    }
+
     // Registers the app's interest in UPnP routes with the system, which lists in its output switcher only
     // routes an app asked for. Passive, so it only keeps the request alive while no route button is on screen.
     private val upnpRouteInterest = object : MediaRouter.Callback() {}
@@ -900,6 +917,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             MediaRouteSelector.Builder().addControlCategory(UpnpRouteProvider.CATEGORY_UPNP).build(),
             upnpRouteInterest
         )
+        if (Build.VERSION.SDK_INT >= 30) upnpSwitchWatcher?.start()
         upnpRoutesActive = true
     }
 
@@ -929,6 +947,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
             if (UpnpRoutes.playback === upnpPlayback) UpnpRoutes.playback = null
             val router = MediaRouter.getInstance(this)
             router.removeCallback(upnpRouteInterest)
+            if (Build.VERSION.SDK_INT >= 30) upnpSwitchWatcher?.stop()
             // Ends the system's session too, or its switcher keeps naming the renderer as the output.
             if (router.selectedRoute.supportsControlCategory(UpnpRouteProvider.CATEGORY_UPNP)) {
                 router.unselect(MediaRouter.UNSELECT_REASON_STOPPED)
