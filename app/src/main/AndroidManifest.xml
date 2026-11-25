@@ -40,6 +40,14 @@
             android:name="androidx.car.app.TintableAttributionIcon"
             android:resource="@drawable/ic_graphic_eq" />
 
+        <activity
+            android:name=".ui.activity.ShortcutActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme.Translucent" />
+
         <activity android:name=".lan.LanPlaybackActivity" android:exported="false"
             android:theme="@style/AppTheme" />
         <service android:name=".lan.LanReceiverService" android:exported="false"

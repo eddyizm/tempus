@@ -5,9 +5,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 
@@ -46,13 +48,13 @@ public final class AssetLinkNavigator {
                 openSong(assetLink.id);
                 break;
             case AssetLinkUtil.TYPE_ALBUM:
-                openAlbum(assetLink.id);
+                openAlbum(assetLink.id, AppShortcuts.playMode(assetLink));
                 break;
             case AssetLinkUtil.TYPE_ARTIST:
                 openArtist(assetLink.id);
                 break;
             case AssetLinkUtil.TYPE_PLAYLIST:
-                openPlaylist(assetLink.id);
+                openPlaylist(assetLink.id, AppShortcuts.playMode(assetLink));
                 break;
             case AssetLinkUtil.TYPE_GENRE:
                 openGenre(assetLink.id);
@@ -88,7 +90,7 @@ public final class AssetLinkNavigator {
         liveData.observe(activity, observer);
     }
 
-    private void openAlbum(@NonNull String id) {
+    private void openAlbum(@NonNull String id, @NonNull String playMode) {
         MutableLiveData<AlbumID3> liveData = albumRepository.getAlbum(id);
         Observer<AlbumID3> observer = new Observer<AlbumID3>() {
             @Override
@@ -100,6 +102,7 @@ public final class AssetLinkNavigator {
                 }
                 Bundle args = new Bundle();
                 args.putParcelable(Constants.ALBUM_OBJECT, album.strippedForNav());
+                args.putString(Constants.AUTO_PLAY, playMode);
                 navigateSafely(R.id.albumPageFragment, args);
             }
         };
@@ -124,7 +127,7 @@ public final class AssetLinkNavigator {
         liveData.observe(activity, observer);
     }
 
-    private void openPlaylist(@NonNull String id) {
+    private void openPlaylist(@NonNull String id, @NonNull String playMode) {
         MutableLiveData<Playlist> liveData = playlistRepository.getPlaylist(id);
         Observer<Playlist> observer = new Observer<Playlist>() {
             @Override
@@ -136,6 +139,7 @@ public final class AssetLinkNavigator {
                 }
                 Bundle args = new Bundle();
                 args.putParcelable(Constants.PLAYLIST_OBJECT, playlist);
+                args.putString(Constants.AUTO_PLAY, playMode);
                 navigateSafely(R.id.playlistPageFragment, args);
             }
         };
@@ -171,17 +175,27 @@ public final class AssetLinkNavigator {
         }
     }
 
+    @OptIn(markerClass = UnstableApi.class)
     private void navigateSafely(int destinationId, @Nullable Bundle args) {
         activity.runOnUiThread(() -> {
             NavController navController = activity.navController;
             if (navController == null) {
                 return;
             }
+            boolean fromSettings = navController.getCurrentDestination() != null
+                    && navController.getCurrentDestination().getId() == R.id.settingsFragment;
             if (navController.getCurrentDestination() != null
                     && navController.getCurrentDestination().getId() == destinationId) {
                 navController.navigate(destinationId, args, new NavOptions.Builder().setLaunchSingleTop(true).build());
             } else {
                 navController.navigate(destinationId, args);
+            }
+            // Settings hides the bottom navigation and only gets it back from the screen the user
+            // returns to. A link opened while Settings is showing (a shortcut tapped after pinning
+            // it there) skips that screen, so the navigation stayed hidden while the player kept
+            // the peek height that makes room for it.
+            if (fromSettings) {
+                activity.toggleBottomNavigationBarVisibilityOnOrientationChange();
             }
         });
     }
