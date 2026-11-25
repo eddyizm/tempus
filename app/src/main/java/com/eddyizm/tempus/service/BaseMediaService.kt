@@ -42,6 +42,7 @@ import com.eddyizm.tempus.equalizer.ParametricBackend
 import com.eddyizm.tempus.equalizer.ParametricEqAudioProcessor
 import androidx.mediarouter.media.MediaRouteSelector
 import androidx.mediarouter.media.MediaRouter
+import androidx.mediarouter.media.MediaRouterParams
 import com.eddyizm.tempus.repository.QueueRepository
 import com.eddyizm.tempus.subsonic.base.ApiResponse
 import com.eddyizm.tempus.subsonic.models.NowPlayingEntry
@@ -913,7 +914,16 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
 
     private fun initializeUpnpRoutes() {
         UpnpRoutes.playback = upnpPlayback
-        MediaRouter.getInstance(this).addCallback(
+        val router = MediaRouter.getInstance(this)
+        // Tells the system the app can take playback back to the phone or Bluetooth, so picking one in the output
+        // switcher is a transfer and not the end of the cast. The Cast SDK sets this too, the degoogled build has none.
+        val params = router.routerParams
+        if (params?.isTransferToLocalEnabled != true) {
+            router.routerParams = (params?.let { MediaRouterParams.Builder(it) } ?: MediaRouterParams.Builder())
+                .setTransferToLocalEnabled(true)
+                .build()
+        }
+        router.addCallback(
             MediaRouteSelector.Builder().addControlCategory(UpnpRouteProvider.CATEGORY_UPNP).build(),
             upnpRouteInterest
         )

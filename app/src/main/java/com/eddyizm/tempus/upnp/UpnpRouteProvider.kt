@@ -50,7 +50,6 @@ class UpnpRouteProvider(
     private var request: MediaRouteDiscoveryRequest? = null
 
     @Volatile private var scanning = false
-    @Volatile private var activeScan = false
     @Volatile private var scanInFlight = false
 
     private val rescan = object : Runnable {
@@ -67,20 +66,20 @@ class UpnpRouteProvider(
                     }
                 }
             }
-            handler.postDelayed(this, if (activeScan) ACTIVE_INTERVAL_MS else PASSIVE_INTERVAL_MS)
+            handler.postDelayed(this, SCAN_INTERVAL_MS)
         }
     }
 
     /** The executor thread is not a daemon and the owning service cycles often, leaking one per cycle. */
     fun release() {
         scanning = false
-        activeScan = false
         handler.removeCallbacksAndMessages(null)
         worker.shutdown()
     }
 
-    // The media service keeps a passive request open while UPnP is on, so the system switcher has renderers to
-    // list. The chooser dialog and the system switcher ask for an active scan while they are open.
+    // Searches only for an active request, which the cast picker and the system output switcher make while they are
+    // open. The media service's passive request only keeps the system asking, and the renderers found last stay
+    // listed meanwhile, so a cast that is running searches for nothing.
     override fun onDiscoveryRequestChanged(request: MediaRouteDiscoveryRequest?) {
         this.request = request
         applyDiscovery()
@@ -100,11 +99,10 @@ class UpnpRouteProvider(
 
     private fun applyDiscovery() {
         val request = request
-        val wanted = enabled && request?.selector?.hasControlCategory(CATEGORY_UPNP) == true
-        val active = wanted && request?.isActiveScan == true
-        if (wanted == scanning && active == activeScan) return
+        val wanted = enabled && request?.isActiveScan == true &&
+            request.selector.hasControlCategory(CATEGORY_UPNP)
+        if (wanted == scanning) return
         scanning = wanted
-        activeScan = active
         handler.removeCallbacks(rescan)
         if (wanted) handler.post(rescan)
     }
@@ -203,8 +201,6 @@ class UpnpRouteProvider(
 
         private const val ROUNDS_PER_SCAN = 3
 
-        private val ACTIVE_INTERVAL_MS = TimeUnit.SECONDS.toMillis(10)
-
-        private val PASSIVE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(2)
+        private val SCAN_INTERVAL_MS = TimeUnit.SECONDS.toMillis(10)
     }
 }
