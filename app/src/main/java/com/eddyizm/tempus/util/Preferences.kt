@@ -736,11 +736,6 @@ object Preferences {
     }
 
     @JvmStatic
-    fun setAutoDownloadPlayedTracks(enabled: Boolean) {
-        App.getInstance().preferences.edit().putBoolean(AUTO_DOWNLOAD_PLAYED_TRACKS, enabled).apply()
-    }
-
-    @JvmStatic
     fun showShuffleInsteadOfHeart(): Boolean {
         return App.getInstance().preferences.getBoolean(MINI_SHUFFLE_BUTTON_VISIBILITY, false)
     }

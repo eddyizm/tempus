@@ -17,6 +17,7 @@ import com.eddyizm.tempus.subsonic.models.Child
 import com.eddyizm.tempus.util.Constants
 import com.eddyizm.tempus.util.DownloadUtil
 import com.eddyizm.tempus.util.ExternalAudioReader
+import com.eddyizm.tempus.util.ExternalAudioWriter
 import com.eddyizm.tempus.util.MusicUtil
 import com.eddyizm.tempus.util.Preferences
 import com.eddyizm.tempus.util.StreamingCacheKeyFactory
@@ -73,6 +74,14 @@ object AutoDownloadPromoter {
         val downloadTracker = DownloadUtil.getDownloadTracker(context)
         if (downloadTracker.isDownloaded(child.id)) {
             Log.i(TAG, "Skipping ${child.id}: already downloaded in Path A")
+            return
+        }
+        if (downloadTracker.isRequested(child.id)) {
+            Log.i(TAG, "Skipping ${child.id}: already queued in Path A")
+            return
+        }
+        if (ExternalAudioWriter.isPending(child.id)) {
+            Log.i(TAG, "Skipping ${child.id}: already queued for Path B")
             return
         }
 
@@ -213,6 +222,9 @@ object AutoDownloadPromoter {
                 }
                 output.flush()
             }
+            if (targetFile.length() <= 0L) {
+                throw IOException("SAF target is empty after copying: $fileName")
+            }
             copyComplete = true
         } finally {
             try {
@@ -230,9 +242,17 @@ object AutoDownloadPromoter {
             return
         }
 
+        val downloadedSize = targetFile.length()
+        if (downloadedSize <= 0L) {
+            deleteTargetFile(targetFile, child.id)
+            throw IOException("SAF target has no readable length after copying: $fileName")
+        }
+        ExternalAudioReader.recordDownloadedFileSize(child, downloadedSize)
+
         val roomDownload = RoomDownload(child).apply {
             downloadState = 1
             downloadUri = targetFile.uri.toString()
+            size = downloadedSize
             suffix = format
             contentType = mimeType
         }

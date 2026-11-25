@@ -265,6 +265,10 @@ The Track and Album lists are sorted by album artist, then album, then disc and 
 
 In a playlist's ⋮ menu, turn on **Keep synced**. Tempus downloads every track of the playlist that is not on the phone yet, then checks again each time you open the playlist and once each time the app starts, and downloads any track added since. Tracks removed from the playlist stay downloaded. There is no check while Tempus is closed.
 
+**Auto-download played tracks**
+
+Turn on **Auto-download played tracks** under **Settings → Data** to save eligible music for offline playback (off by default). Tempus saves a track when it finishes or when you move on after it has played long enough to count as played. It copies the complete track from the streaming cache, so it does not request another copy from your server. The saved file uses the streaming format and bitrate, not the separate download-quality settings, and goes to your configured download storage. If the full track is not in the streaming cache, Tempus skips it rather than downloading the missing data. Radio and podcasts are not included, and tracks already downloaded or queued for download are left alone.
+
 **Download only on Wi-Fi**, under Settings → Data, pauses downloads on mobile data and resumes them on Wi-Fi. It does not apply when downloads are saved to a folder you picked.
 
 ### Continue listening

@@ -123,6 +123,16 @@ public class ExternalAudioReader {
         return findUri(episode.getArtist(), episode.getTitle(), episode.getAlbum());
     }
 
+    public static void recordDownloadedFileSize(Child media, long size) {
+        if (media == null || size <= 0) return;
+
+        String title = media.getTitle() != null ? media.getTitle() : media.getId();
+        ExternalDownloadMetadataStore.recordSize(
+                buildKey(media.getArtist(), title, media.getAlbum()),
+                size
+        );
+    }
+
     public static synchronized void removeMetadata(Child media) {
         if (media == null) {
             return;
