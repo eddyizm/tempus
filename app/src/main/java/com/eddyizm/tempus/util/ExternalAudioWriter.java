@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.core.app.NotificationCompat;
@@ -37,12 +38,22 @@ import androidx.media3.common.util.UnstableApi;
 @UnstableApi
 public class ExternalAudioWriter {
 
+    private static final String TAG = "ExternalAudioWriter";
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Set<String> PENDING = ConcurrentHashMap.newKeySet();
 
     public static boolean isPending(String mediaId) {
         return PENDING.contains(mediaId);
     }
+
+    public static boolean tryMarkPending(String mediaId) {
+        return PENDING.add(mediaId);
+    }
+
+    public static void clearPending(String mediaId) {
+        PENDING.remove(mediaId);
+    }
+
     private static final int BUFFER_SIZE = 8192;
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 60_000;
@@ -86,26 +97,50 @@ public class ExternalAudioWriter {
     public static void downloadToUserDirectory(Context context, Child child, String playlistId, String playlistName) {
         if (context == null || child == null) return;
         Context appContext = context.getApplicationContext();
-        MediaItem mediaItem = MappingUtil.mapDownload(child);
+        if (!tryMarkPending(child.getId())) return;
+
+        MediaItem mediaItem;
+        try {
+            mediaItem = MappingUtil.mapDownload(child);
+        } catch (RuntimeException e) {
+            clearPending(child.getId());
+            throw e;
+        }
         String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
 
         // Register with the progress tracker BEFORE submitting to the executor so the
         // total count is accurate even when many tracks are enqueued in rapid succession.
-        DownloadProgressState.getInstance().onEnqueue(appContext);
+        try {
+            DownloadProgressState.getInstance().onEnqueue(appContext);
+        } catch (RuntimeException e) {
+            clearPending(child.getId());
+            throw e;
+        }
 
-        PENDING.add(child.getId());
-        EXECUTOR.execute(() -> {
-            try {
-                performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName);
-            } finally {
-                PENDING.remove(child.getId());
-            }
-        });
+        try {
+            EXECUTOR.execute(() -> {
+                try {
+                    performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName);
+                } finally {
+                    clearPending(child.getId());
+                }
+            });
+        } catch (RuntimeException e) {
+            clearPending(child.getId());
+            DownloadProgressState.getInstance().onFailed(appContext);
+            throw e;
+        }
     }
 
     private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
         DownloadProgressState.getInstance().setCurrentTrackTitle(
                 child.getTitle() != null ? child.getTitle() : fallbackName);
+
+        if (new DownloadRepository().hasCompletedDownload(child.getId())) {
+            Log.i(TAG, "Skipping " + child.getId() + ": completed download record already exists");
+            DownloadProgressState.getInstance().onSkipped(context);
+            return;
+        }
 
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
@@ -371,7 +406,8 @@ public class ExternalAudioWriter {
             download.setDownloadUri(fileUri.toString());
         }
 
-        new DownloadRepository().insert(download);
+        new DownloadRepository().insertAndWait(download);
+        MappingUtil.invalidateCachedDownloads();
     }
 
     static String resolveDownloadExtension(String extension, Child child, String downloadUri) {

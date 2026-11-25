@@ -18,6 +18,7 @@ import com.eddyizm.tempus.util.Constants
 import com.eddyizm.tempus.util.DownloadUtil
 import com.eddyizm.tempus.util.ExternalAudioReader
 import com.eddyizm.tempus.util.ExternalAudioWriter
+import com.eddyizm.tempus.util.MappingUtil
 import com.eddyizm.tempus.util.MusicUtil
 import com.eddyizm.tempus.util.Preferences
 import com.eddyizm.tempus.util.StreamingCacheKeyFactory
@@ -80,6 +81,10 @@ object AutoDownloadPromoter {
             Log.i(TAG, "Skipping ${child.id}: already queued in Path A")
             return
         }
+        if (DownloadRepository().hasCompletedDownload(child.id)) {
+            Log.i(TAG, "Skipping ${child.id}: completed download record already exists")
+            return
+        }
         if (ExternalAudioWriter.isPending(child.id)) {
             Log.i(TAG, "Skipping ${child.id}: already queued for Path B")
             return
@@ -104,7 +109,19 @@ object AutoDownloadPromoter {
         if (externalFolderUri == null) {
             promoteToPathA(context, child, streamUri, serverId)
         } else {
-            promoteToPathB(context, child, streamUri, externalFolderUri, serverId)
+            if (!ExternalAudioWriter.tryMarkPending(child.id)) {
+                Log.i(TAG, "Skipping ${child.id}: another Path B download started before promotion")
+                return
+            }
+            try {
+                if (DownloadRepository().hasCompletedDownload(child.id)) {
+                    Log.i(TAG, "Skipping ${child.id}: completed download record appeared before promotion")
+                    return
+                }
+                promoteToPathB(context, child, streamUri, externalFolderUri, serverId)
+            } finally {
+                ExternalAudioWriter.clearPending(child.id)
+            }
         }
     }
 
@@ -256,7 +273,14 @@ object AutoDownloadPromoter {
             suffix = format
             contentType = mimeType
         }
-        DownloadRepository().insert(roomDownload)
+        try {
+            DownloadRepository().insertAndWait(roomDownload)
+        } catch (exception: RuntimeException) {
+            deleteTargetFile(targetFile, child.id)
+            ExternalAudioReader.removeMetadata(child)
+            throw exception
+        }
+        MappingUtil.invalidateCachedDownloads()
         ExternalAudioReader.refreshCacheAsync()
         Log.i(TAG, "Promoted ${child.id} to Path B; Room insert queued")
     }
