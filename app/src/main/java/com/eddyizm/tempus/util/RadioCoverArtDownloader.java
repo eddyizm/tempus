@@ -31,8 +31,25 @@ public class RadioCoverArtDownloader {
         return dir;
     }
 
+    /**
+     * Returns the local cover file for the given station ID, or null if the ID
+     * is invalid (path traversal, special characters, etc.).
+     */
     public static File getLocalCoverFile(String stationId) {
-        return new File(getCoverDir(), stationId);
+        if (!isSafeStationId(stationId)) return null;
+        File dir = getCoverDir();
+        File f = new File(dir, stationId);
+        try {
+            if (!f.getCanonicalPath().startsWith(dir.getCanonicalPath() + File.separator)) return null;
+        } catch (java.io.IOException e) {
+            return null;
+        }
+        return f;
+    }
+
+    /** Allow only simple alphanumeric IDs — no path separators or traversal. */
+    static boolean isSafeStationId(String id) {
+        return id != null && id.matches("[A-Za-z0-9._-]{1,128}") && !id.contains("..");
     }
 
     // Cache-bust Glide by the cover file's mtime so an edited cover (written to the same path)
@@ -50,6 +67,10 @@ public class RadioCoverArtDownloader {
         executor.execute(() -> {
             try {
                 File targetFile = getLocalCoverFile(stationId);
+                if (targetFile == null) {
+                    Log.w(TAG, "Invalid station ID, skipping download: " + stationId);
+                    return;
+                }
                 String urlString = resolveCoverArtUrl(coverArtUrl);
 
                 if (urlString == null) return;
@@ -138,7 +159,7 @@ public class RadioCoverArtDownloader {
     public static void deleteCoverArt(String stationId) {
         executor.execute(() -> {
             File file = getLocalCoverFile(stationId);
-            if (file.exists()) {
+            if (file != null && file.exists()) {
                 file.delete();
             }
         });
