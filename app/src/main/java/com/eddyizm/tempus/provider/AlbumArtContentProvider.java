@@ -57,14 +57,28 @@ public class AlbumArtContentProvider extends ContentProvider {
         File file = null;
         if (albumId.startsWith("rl_")) {
             File localFile = RadioCoverArtDownloader.getLocalCoverFile(albumId.substring("rl_".length()));
-            if (localFile != null && localFile.exists()) {
+            if (localFile == null) {
+                throw new FileNotFoundException("Bad cover id");
+            }
+            if (localFile.exists()) {
                 file = localFile;
             }
         } else {
             String artworkUrl;
             if (albumId.startsWith("ir_")) {
                 String encodedUrl = albumId.substring("ir_".length());
-                artworkUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
+                String decodedUrl;
+                try {
+                    decodedUrl = new String(Base64.decode(encodedUrl, Base64.URL_SAFE | Base64.NO_WRAP));
+                } catch (IllegalArgumentException e) {
+                    throw new FileNotFoundException("Bad cover url");
+                }
+                Uri artworkUri = Uri.parse(decodedUrl);
+                String scheme = artworkUri.getScheme();
+                if (scheme == null || !(scheme.equalsIgnoreCase("https") || scheme.equalsIgnoreCase("http"))) {
+                    throw new FileNotFoundException("Only web cover images allowed");
+                }
+                artworkUrl = decodedUrl;
             } else {
                 artworkUrl = CustomGlideRequest.createUrl(albumId, Preferences.getImageSize());
             }
