@@ -174,6 +174,29 @@ public class ArtistRepository {
         return starredArtists;
     }
 
+    public void getStarredArtistList(Consumer<List<ArtistID3>> onResult) {
+        App.getSubsonicClientInstance(false)
+                .getAlbumSongListClient()
+                .getStarred2()
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse() != null
+                                && response.body().getSubsonicResponse().getStarred2() != null) {
+                            List<ArtistID3> artists = response.body().getSubsonicResponse().getStarred2().getArtists();
+                            onResult.accept(artists != null ? artists : new ArrayList<>());
+                        } else {
+                            onResult.accept(null);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        onResult.accept(null);
+                    }
+                });
+    }
+
     public MutableLiveData<List<ArtistID3>> getArtists(boolean random, int size) {
         MutableLiveData<List<ArtistID3>> listLiveArtists = new MutableLiveData<>();
 
