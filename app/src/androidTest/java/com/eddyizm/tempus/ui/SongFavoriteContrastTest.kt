@@ -19,7 +19,6 @@ import com.eddyizm.tempus.util.Preferences
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.color.MaterialColors
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,15 +33,19 @@ class SongFavoriteContrastTest {
             Configuration.UI_MODE_NIGHT_YES to false,
             Configuration.UI_MODE_NIGHT_NO to false
         )) {
-            val hadTheme = prefs.contains(Preferences.THEME)
             val savedTheme = prefs.getString(Preferences.THEME, null)
-            val hadDarkThemeBlack = prefs.contains(Preferences.DARK_THEME_BLACK)
-            val savedDarkThemeBlack = prefs.getBoolean(Preferences.DARK_THEME_BLACK, false)
+            val savedDarkThemeBlack = prefs.all[Preferences.DARK_THEME_BLACK] as Boolean?
+            val savedAccent = prefs.getString(Preferences.COLOR_ACCENT, null)
+            val savedDynamicAccent = prefs.all[Preferences.DYNAMIC_COLOR_ACCENT] as Boolean?
             val savedNightMode = AppCompatDelegate.getDefaultNightMode()
             val theme = if (mode == Configuration.UI_MODE_NIGHT_YES) ThemeHelper.DARK_MODE else ThemeHelper.LIGHT_MODE
             try {
-                Preferences.setTheme(theme)
-                Preferences.setDarkThemeBlack(amoled)
+                prefs.edit(commit = true) {
+                    putString(Preferences.THEME, theme)
+                    putBoolean(Preferences.DARK_THEME_BLACK, amoled)
+                    remove(Preferences.COLOR_ACCENT)
+                    putBoolean(Preferences.DYNAMIC_COLOR_ACCENT, false)
+                }
                 instrumentation.runOnMainSync {
                     ThemeHelper.applyTheme(theme)
                 }
@@ -58,8 +61,12 @@ class SongFavoriteContrastTest {
                 }
             } finally {
                 prefs.edit(commit = true) {
-                    if (hadTheme) putString(Preferences.THEME, savedTheme) else remove(Preferences.THEME)
-                    if (hadDarkThemeBlack) putBoolean(Preferences.DARK_THEME_BLACK, savedDarkThemeBlack) else remove(Preferences.DARK_THEME_BLACK)
+                    putString(Preferences.THEME, savedTheme)
+                    putString(Preferences.COLOR_ACCENT, savedAccent)
+                    if (savedDarkThemeBlack == null) remove(Preferences.DARK_THEME_BLACK)
+                    else putBoolean(Preferences.DARK_THEME_BLACK, savedDarkThemeBlack)
+                    if (savedDynamicAccent == null) remove(Preferences.DYNAMIC_COLOR_ACCENT)
+                    else putBoolean(Preferences.DYNAMIC_COLOR_ACCENT, savedDynamicAccent)
                 }
                 instrumentation.runOnMainSync {
                     if (savedNightMode != AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
@@ -74,16 +81,15 @@ class SongFavoriteContrastTest {
 
     private fun assertHeartContrast(toggle: AppCompatToggleButton, mode: Int, amoled: Boolean) {
         val surface = MaterialColors.getColor(toggle, com.google.android.material.R.attr.colorSurface)
+        val expectedSurface = when {
+            amoled -> Color.BLACK
+            mode == Configuration.UI_MODE_NIGHT_YES -> toggle.context.getColor(R.color.md_theme_dark_surface)
+            else -> toggle.context.getColor(R.color.md_theme_light_surface)
+        }
+        assertEquals("Unexpected surface for mode=$mode amoled=$amoled", expectedSurface, surface)
         if (amoled) {
-            assertEquals("Expected AMOLED black surface", Color.BLACK, surface)
             val onSurface = MaterialColors.getColor(toggle, com.google.android.material.R.attr.colorOnSurface)
             assertEquals("AMOLED heart tint", onSurface, toggle.backgroundTintList?.defaultColor)
-        } else if (mode == Configuration.UI_MODE_NIGHT_YES) {
-            assertNotEquals("Expected ordinary dark surface, not AMOLED black", Color.BLACK, surface)
-            assertTrue("Expected dark surface", ColorUtils.calculateLuminance(surface) < 0.2)
-        } else {
-            assertNotEquals("Expected light surface, not AMOLED black", Color.BLACK, surface)
-            assertTrue("Expected light surface", ColorUtils.calculateLuminance(surface) > 0.5)
         }
         for (checked in listOf(false, true)) {
             toggle.isChecked = checked
