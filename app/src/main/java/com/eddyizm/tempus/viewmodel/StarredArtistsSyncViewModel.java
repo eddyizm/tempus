@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eddyizm.tempus.repository.ArtistRepository;
@@ -16,13 +15,16 @@ import com.eddyizm.tempus.subsonic.models.Child;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class StarredArtistsSyncViewModel extends AndroidViewModel {
     private final ArtistRepository artistRepository;
 
     private final MutableLiveData<List<ArtistID3>> starredArtists = new MutableLiveData<>(null);
-    private final MutableLiveData<List<Child>> starredArtistSongs = new MutableLiveData<>(null);
+    private final MutableLiveData<StarredArtistSongs> starredArtistSongs = new MutableLiveData<>(null);
+    private final AtomicBoolean checkInFlight = new AtomicBoolean(false);
+    private final AtomicBoolean rerunWanted = new AtomicBoolean(false);
 
     public StarredArtistsSyncViewModel(@NonNull Application application) {
         super(application);
@@ -34,20 +36,31 @@ public class StarredArtistsSyncViewModel extends AndroidViewModel {
         return starredArtists;
     }
 
-    public LiveData<List<Child>> getAllStarredArtistSongs() {
-        artistRepository.getStarredArtists(false, -1).observeForever(new Observer<List<ArtistID3>>() {
-            @Override
-            public void onChanged(List<ArtistID3> artists) {
-                if (artists != null && !artists.isEmpty()) {
-                    collectAllArtistSongs(artists, starredArtistSongs::postValue);
-                } else {
-                    starredArtistSongs.postValue(new ArrayList<>());
-                }
-                artistRepository.getStarredArtists(false, -1).removeObserver(this);
-            }
-        });
-        
+    public LiveData<StarredArtistSongs> getAllStarredArtistSongs() {
         return starredArtistSongs;
+    }
+
+    public void refreshAllStarredArtistSongs() {
+        if (!checkInFlight.compareAndSet(false, true)) {
+            rerunWanted.set(true);
+            return;
+        }
+
+        artistRepository.getStarredArtistList(artists -> {
+            if (artists == null) {
+                finishCheck(new StarredArtistSongs(new ArrayList<>(), new ArrayList<>()));
+                return;
+            }
+            collectAllArtistSongs(artists, songs -> finishCheck(new StarredArtistSongs(artists, songs)));
+        });
+    }
+
+    private void finishCheck(StarredArtistSongs result) {
+        checkInFlight.set(false);
+        starredArtistSongs.postValue(result);
+        if (rerunWanted.getAndSet(false)) {
+            refreshAllStarredArtistSongs();
+        }
     }
 
     private void collectAllArtistSongs(List<ArtistID3> artists, ArtistSongsCallback callback) {
@@ -78,5 +91,15 @@ public class StarredArtistsSyncViewModel extends AndroidViewModel {
 
     private interface ArtistSongsCallback {
         void onSongsCollected(List<Child> songs);
+    }
+
+    public static final class StarredArtistSongs {
+        public final List<ArtistID3> artists;
+        public final List<Child> songs;
+
+        StarredArtistSongs(List<ArtistID3> artists, List<Child> songs) {
+            this.artists = artists;
+            this.songs = songs;
+        }
     }
 }

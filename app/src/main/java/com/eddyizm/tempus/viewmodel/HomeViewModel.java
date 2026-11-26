@@ -196,8 +196,12 @@ public class HomeViewModel extends AndroidViewModel {
         return albumsSyncViewModel.getAllStarredAlbumSongs();
     }
 
-    public LiveData<List<Child>> getAllStarredArtistSongs() {
+    public LiveData<StarredArtistsSyncViewModel.StarredArtistSongs> getAllStarredArtistSongs() {
         return artistSyncViewModel.getAllStarredArtistSongs();
+    }
+
+    public void refreshAllStarredArtistSongs() {
+        artistSyncViewModel.refreshAllStarredArtistSongs();
     }
 
     public LiveData<List<ArtistID3>> getStarredArtists(LifecycleOwner owner) {

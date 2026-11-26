@@ -1,0 +1,13 @@
+feat: 
+* add backups manager
+* playlists and albums as launcher shortcuts
+* Auto download streaming tracks
+* add "Download all" to the artist menu
+fix: 
+* repeat unavailable while casting over UPnP
+* server unreachable dialog shows twice
+* heart restarts a transcoded song
+* go to login opens the login screen from any screen
+* playlist page shows another playlist's new name
+* starred artist sync check floods the server
+* album art content provide security fix
