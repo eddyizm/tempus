@@ -3,12 +3,14 @@ package com.eddyizm.tempus.util;
 import android.net.Uri;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.Log;
 
 import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eddyizm.tempus.App;
+import com.eddyizm.tempus.repository.DownloadRepository;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.subsonic.models.PodcastEpisode;
 
@@ -24,6 +26,7 @@ import java.util.concurrent.Executors;
 
 public class ExternalAudioReader {
 
+    private static final String TAG = "ExternalAudioReader";
     private static final Map<String, DocumentFile> cache = new ConcurrentHashMap<>();
     private static final Object LOCK = new Object();
     private static final ExecutorService REFRESH_EXECUTOR = Executors.newSingleThreadExecutor();
@@ -123,6 +126,16 @@ public class ExternalAudioReader {
         return findUri(episode.getArtist(), episode.getTitle(), episode.getAlbum());
     }
 
+    public static void recordDownloadedFileSize(Child media, long size) {
+        if (media == null || size <= 0) return;
+
+        String title = media.getTitle() != null ? media.getTitle() : media.getId();
+        ExternalDownloadMetadataStore.recordSize(
+                buildKey(media.getArtist(), title, media.getAlbum()),
+                size
+        );
+    }
+
     public static synchronized void removeMetadata(Child media) {
         if (media == null) {
             return;
@@ -135,19 +148,22 @@ public class ExternalAudioReader {
 
     public static boolean delete(Child media) {
         ensureCache();
-        if (cachedDirUri == null) return false;
 
         String key = buildKey(media.getArtist(), media.getTitle(), media.getAlbum());
         DocumentFile file = cache.get(key);
-        boolean deleted = false;
-        if (file != null && file.exists()) {
-            deleted = file.delete();
+        boolean fileExists = file != null && file.exists();
+        if (fileExists && !file.delete()) {
+            Log.w(TAG, "Failed to delete SAF download for " + media.getId());
+            return false;
         }
-        if (deleted) {
-            cache.remove(key);
-            ExternalDownloadMetadataStore.remove(key);
-        }
-        return deleted;
+        if (!fileExists) return false;
+
+        cache.remove(key);
+        ExternalDownloadMetadataStore.remove(key);
+        new DownloadRepository().deleteExternalDownload(media.getId());
+        MappingUtil.invalidateCachedDownloads();
+        refreshCacheAsync();
+        return true;
     }
 
     private static void requestRefresh() {

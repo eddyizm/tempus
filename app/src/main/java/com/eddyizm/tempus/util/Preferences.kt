@@ -66,6 +66,7 @@ object Preferences {
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
     private const val SYNC_STARRED_ALBUMS_FOR_OFFLINE_USE = "sync_starred_albums_for_offline_use"
     private const val SYNC_STARRED_TRACKS_FOR_OFFLINE_USE = "sync_starred_tracks_for_offline_use"
+    private const val AUTO_DOWNLOAD_PLAYED_TRACKS = "auto_download_played_tracks"
     private const val QUEUE_SYNCING = "queue_syncing"
     private const val ROUNDED_CORNER = "rounded_corner"
     private const val ROUNDED_CORNER_SIZE = "rounded_corner_size"
@@ -736,6 +737,11 @@ object Preferences {
         App.getInstance().preferences.edit().putBoolean(
                 SYNC_STARRED_TRACKS_FOR_OFFLINE_USE, isStarredSyncEnabled
         ).apply()
+    }
+
+    @JvmStatic
+    fun isAutoDownloadPlayedTracks(): Boolean {
+        return App.getInstance().preferences.getBoolean(AUTO_DOWNLOAD_PLAYED_TRACKS, false)
     }
 
     @JvmStatic

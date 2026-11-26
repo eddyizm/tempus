@@ -448,7 +448,16 @@ public class PlayerControllerFragment extends Fragment {
 
     private void setMediaInfo(MediaMetadata mediaMetadata) {
         if (bind == null || (com.eddyizm.tempus.lan.LanRemoteSession.isActive() && !renderingRemote)) return;
-        boolean isLocal = !com.eddyizm.tempus.lan.LanRemoteSession.isActive() && MusicUtil.isCurrentTrackLocal(getBrowser());
+        MediaBrowser browser = getBrowser();
+        boolean isLocal = !com.eddyizm.tempus.lan.LanRemoteSession.isActive() && MusicUtil.isCurrentTrackLocal(browser);
+        if (browser != null && browser.getCurrentMediaItem() != null) {
+            android.net.Uri currentUri = browser.getCurrentMediaItem().requestMetadata.mediaUri;
+            Log.d(TAG, "Playback source: id=" + browser.getCurrentMediaItem().mediaId
+                    + ", uriScheme=" + (currentUri != null ? currentUri.getScheme() : null)
+                    + ", local=" + isLocal
+                    + ", suffix=" + (mediaMetadata.extras != null
+                            ? mediaMetadata.extras.getString("suffix") : null));
+        }
 
         if (mediaMetadata.extras != null) {
             String extension = mediaMetadata.extras.getString("suffix", getString(R.string.player_unknown_format));
@@ -529,6 +538,12 @@ public class PlayerControllerFragment extends Fragment {
                 ? MusicUtil.sourceSuffix(browser.getMediaMetadata().extras)
                 : MusicUtil.getCurrentOriginalSuffix(browser);
         boolean transcoded = MusicUtil.isTranscodedFormat(actual, original);
+        String currentMediaId = browser.getCurrentMediaItem() != null
+                ? browser.getCurrentMediaItem().mediaId : "unknown";
+        Log.d(TAG, "Playback decoder: id=" + currentMediaId
+                + ", mime=" + format.sampleMimeType
+                + ", sourceSuffix=" + original
+                + ", transcoded=" + transcoded);
 
         if (actual != null && !actual.isEmpty()) {
             playerMediaExtension.setText(transcoded

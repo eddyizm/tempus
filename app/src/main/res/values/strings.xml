@@ -601,6 +601,8 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
+    <string name="settings_auto_download_played_tracks_title">Auto-download played tracks</string>
+    <string name="settings_auto_download_played_tracks_summary">Automatically save played songs for offline playback using current streaming quality settings (download quality settings are ignored to avoid extra data usage).</string>
     <string name="settings_permissions">Permissions</string>
     <string name="settings_backups">Backups</string>
     <string name="settings_export_title">Export settings</string>

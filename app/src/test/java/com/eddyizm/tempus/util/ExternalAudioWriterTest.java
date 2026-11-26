@@ -1,11 +1,15 @@
 package com.eddyizm.tempus.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mockStatic;
 
 import com.eddyizm.tempus.model.Download;
 import com.eddyizm.tempus.subsonic.models.Child;
 
+import org.mockito.MockedStatic;
 import org.junit.Test;
 
 public class ExternalAudioWriterTest {
@@ -43,6 +47,35 @@ public class ExternalAudioWriterTest {
         assertNull(download.getBitrate());
         assertNull(download.getSamplingRate());
         assertNull(download.getBitDepth());
+    }
+
+    @Test
+    public void recordsAutoDownloadSizeUsingNormalizedAudioReaderKey() {
+        Child child = new Child("song-1");
+        child.setArtist("Beyoncé");
+        child.setTitle("Déjà Vu");
+        child.setAlbum("Rénaissance");
+
+        try (MockedStatic<ExternalDownloadMetadataStore> metadata =
+                     mockStatic(ExternalDownloadMetadataStore.class)) {
+            ExternalAudioReader.recordDownloadedFileSize(child, 7_900_000L);
+
+            metadata.verify(() -> ExternalDownloadMetadataStore.recordSize(
+                    "beyonce - deja vu (renaissance)", 7_900_000L));
+        }
+    }
+
+    @Test
+    public void pendingPathBRequestsReserveMediaIdOnlyOnce() {
+        String mediaId = "pending-song";
+        assertTrue(ExternalAudioWriter.tryMarkPending(mediaId));
+        try {
+            assertFalse(ExternalAudioWriter.tryMarkPending(mediaId));
+            assertTrue(ExternalAudioWriter.isPending(mediaId));
+        } finally {
+            ExternalAudioWriter.clearPending(mediaId);
+        }
+        assertFalse(ExternalAudioWriter.isPending(mediaId));
     }
 
     private static Child childWithAudioMetadata(String suffix) {

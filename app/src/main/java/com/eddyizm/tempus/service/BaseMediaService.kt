@@ -623,6 +623,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     if (player.mediaMetadata.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.scrobble(player.currentMediaItem, true)
                         MediaManager.saveChronology(player.currentMediaItem)
+                        promotePlayedTrack(player.currentMediaItem, "queue_ended")
                     }
                     // Last track played to completion - drop it from Continue listening.
                     MediaManager.deleteResumePoint(player.currentMediaItem)
@@ -681,6 +682,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                     if (oldPosition.mediaItem?.mediaMetadata?.extras?.getString("type") == Constants.MEDIA_TYPE_MUSIC) {
                         MediaManager.scrobble(oldPosition.mediaItem, true)
                         MediaManager.saveChronology(oldPosition.mediaItem)
+                        promotePlayedTrack(oldPosition.mediaItem, "auto_transition")
                     }
                     // The old track played to completion - drop it from Continue listening.
                     MediaManager.deleteResumePoint(oldPosition.mediaItem)
@@ -695,6 +697,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
                         if (MediaManager.meetsScrobbleThreshold(oldPosition.positionMs, durationMs)) {
                             MediaManager.scrobble(oldPosition.mediaItem, true)
                             MediaManager.saveChronology(oldPosition.mediaItem)
+                            promotePlayedTrack(oldPosition.mediaItem, "cross_track_seek_after_scrobble_threshold")
                         }
                     }
                 }
@@ -774,6 +777,13 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         if (playbackSessionMediaId == null) return
         playbackSessionMediaId = null
         MediaManager.reportPlayback(item, NowPlayingEntry.STATE_STOPPED, positionMs, rate)
+    }
+
+    private fun promotePlayedTrack(item: MediaItem?, trigger: String) {
+        if (item == null) return
+        val child = MappingUtil.mapToChild(item)
+        val uri = item.localConfiguration?.uri ?: item.requestMetadata.mediaUri
+        AutoDownloadPromoter.promoteIfEligible(this, child, uri, trigger)
     }
 
     // -------------------------------------------------------------------------
