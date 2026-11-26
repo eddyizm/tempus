@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.PopupWindow;
@@ -392,6 +393,13 @@ public class RadioEditorDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         setParameterInfo();
+
+        // Shrink the dialog above the keyboard, so its fields scroll into view instead of
+        // staying hidden behind it (landscape especially).
+        Window window = getDialog() != null ? getDialog().getWindow() : null;
+        if (window != null) {
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
 
         // Override the positive button so clicking it does not auto-dismiss the dialog; we
         // dismiss manually only on success (see the isSuccess observer). This keeps the dialog
