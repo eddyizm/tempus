@@ -6,14 +6,20 @@ import android.graphics.Canvas
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatToggleButton
+import androidx.core.content.edit
 import androidx.core.graphics.ColorUtils
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import com.eddyizm.tempus.App
 import com.eddyizm.tempus.R
+import com.eddyizm.tempus.helper.ThemeHelper
 import com.eddyizm.tempus.ui.login.LoginActivity
+import com.eddyizm.tempus.util.Preferences
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.color.MaterialColors
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,24 +27,46 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class SongFavoriteContrastTest {
     @Test fun favoriteHeartHasContrastInBothStates() {
+        val prefs = App.getInstance().preferences
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
         for ((mode, amoled) in listOf(
             Configuration.UI_MODE_NIGHT_YES to true,
             Configuration.UI_MODE_NIGHT_YES to false,
             Configuration.UI_MODE_NIGHT_NO to false
         )) {
-            ActivityScenario.launch(LoginActivity::class.java).use { scenario ->
-                scenario.onActivity { activity ->
-                    activity.delegate.localNightMode = if (mode == Configuration.UI_MODE_NIGHT_YES)
-                        AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+            val hadTheme = prefs.contains(Preferences.THEME)
+            val savedTheme = prefs.getString(Preferences.THEME, null)
+            val hadDarkThemeBlack = prefs.contains(Preferences.DARK_THEME_BLACK)
+            val savedDarkThemeBlack = prefs.getBoolean(Preferences.DARK_THEME_BLACK, false)
+            val savedNightMode = AppCompatDelegate.getDefaultNightMode()
+            val theme = if (mode == Configuration.UI_MODE_NIGHT_YES) ThemeHelper.DARK_MODE else ThemeHelper.LIGHT_MODE
+            try {
+                Preferences.setTheme(theme)
+                Preferences.setDarkThemeBlack(amoled)
+                instrumentation.runOnMainSync {
+                    ThemeHelper.applyTheme(theme)
                 }
-                scenario.onActivity { activity ->
-                    assertEquals(mode, activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
-                    if (amoled) activity.theme.applyStyle(R.style.AppTheme_Amoled_SurfacesOnly, true)
-                    val fragment = BottomSheetDialogFragment()
-                    fragment.showNow(activity.supportFragmentManager, null)
-                    val sheet = fragment.layoutInflater.inflate(R.layout.bottom_sheet_song_dialog, null)
-                    val toggle = sheet.findViewById<AppCompatToggleButton>(R.id.button_favorite)
-                    assertHeartContrast(toggle, mode, amoled)
+                ActivityScenario.launch(LoginActivity::class.java).use { scenario ->
+                    scenario.onActivity { activity ->
+                        assertEquals(mode, activity.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK)
+                        val fragment = BottomSheetDialogFragment()
+                        fragment.showNow(activity.supportFragmentManager, null)
+                        val sheet = fragment.layoutInflater.inflate(R.layout.bottom_sheet_song_dialog, null)
+                        val toggle = sheet.findViewById<AppCompatToggleButton>(R.id.button_favorite)
+                        assertHeartContrast(toggle, mode, amoled)
+                    }
+                }
+            } finally {
+                prefs.edit(commit = true) {
+                    if (hadTheme) putString(Preferences.THEME, savedTheme) else remove(Preferences.THEME)
+                    if (hadDarkThemeBlack) putBoolean(Preferences.DARK_THEME_BLACK, savedDarkThemeBlack) else remove(Preferences.DARK_THEME_BLACK)
+                }
+                instrumentation.runOnMainSync {
+                    if (savedNightMode != AppCompatDelegate.MODE_NIGHT_UNSPECIFIED) {
+                        AppCompatDelegate.setDefaultNightMode(savedNightMode)
+                    } else {
+                        ThemeHelper.applyTheme(Preferences.getTheme())
+                    }
                 }
             }
         }
@@ -47,8 +75,15 @@ class SongFavoriteContrastTest {
     private fun assertHeartContrast(toggle: AppCompatToggleButton, mode: Int, amoled: Boolean) {
         val surface = MaterialColors.getColor(toggle, com.google.android.material.R.attr.colorSurface)
         if (amoled) {
+            assertEquals("Expected AMOLED black surface", Color.BLACK, surface)
             val onSurface = MaterialColors.getColor(toggle, com.google.android.material.R.attr.colorOnSurface)
             assertEquals("AMOLED heart tint", onSurface, toggle.backgroundTintList?.defaultColor)
+        } else if (mode == Configuration.UI_MODE_NIGHT_YES) {
+            assertNotEquals("Expected ordinary dark surface, not AMOLED black", Color.BLACK, surface)
+            assertTrue("Expected dark surface", ColorUtils.calculateLuminance(surface) < 0.2)
+        } else {
+            assertNotEquals("Expected light surface, not AMOLED black", Color.BLACK, surface)
+            assertTrue("Expected light surface", ColorUtils.calculateLuminance(surface) > 0.5)
         }
         for (checked in listOf(false, true)) {
             toggle.isChecked = checked
@@ -58,8 +93,8 @@ class SongFavoriteContrastTest {
             val pixels = IntArray(48 * 48)
             bitmap.getPixels(pixels, 0, 48, 0, 0, 48, 48)
             val opaque = pixels.filter { Color.alpha(it) == 255 }
-            assertTrue("Missing heart for mode=$mode checked=$checked", opaque.isNotEmpty())
-            assertTrue("Low contrast for mode=$mode checked=$checked",
+            assertTrue("Missing heart for mode=$mode amoled=$amoled checked=$checked", opaque.isNotEmpty())
+            assertTrue("Low contrast for mode=$mode amoled=$amoled checked=$checked",
                 opaque.all { ColorUtils.calculateContrast(it, surface) >= 3.0 })
             assertEquals(if (checked) 255 else 0, Color.alpha(bitmap.getPixel(24, 24)))
         }
