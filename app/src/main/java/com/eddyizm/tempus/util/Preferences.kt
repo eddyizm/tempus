@@ -121,6 +121,7 @@ object Preferences {
     private const val ARTIST_SORT_BY_ALBUM_COUNT= "artist_sort_by_album_count"
     private const val SORT_SEARCH_CHRONOLOGICALLY= "sort_search_chronologically"
     private const val ARTIST_DISPLAY_BIOGRAPHY= "artist_display_biography"
+    private const val ARTIST_ALBUMS_CATEGORIZED = "artist_albums_categorized"
     private const val NETWORK_PING_TIMEOUT = "network_ping_timeout_base"
     
     private const val TILE_SIZE = "tile_size"
@@ -1158,6 +1159,11 @@ object Preferences {
     @JvmStatic
     fun setArtistDisplayBiography(displayBiographyEnabled: Boolean) {
         App.getInstance().preferences.edit().putBoolean(ARTIST_DISPLAY_BIOGRAPHY, displayBiographyEnabled).apply()
+    }
+
+    @JvmStatic
+    fun isArtistAlbumsCategorized(): Boolean {
+        return App.getInstance().preferences.getBoolean(ARTIST_ALBUMS_CATEGORIZED, true)
     }
 
     @JvmStatic

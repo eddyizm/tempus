@@ -155,6 +155,12 @@
             android:key="artist_sort_by_album_count" />
 
         <SwitchPreference
+            android:title="@string/settings_artist_albums_categorized"
+            android:defaultValue="true"
+            android:summary="@string/settings_artist_albums_categorized_summary"
+            android:key="artist_albums_categorized" />
+
+        <SwitchPreference
             android:title="@string/search_sort_title"
             android:defaultValue="false"
             android:summary="@string/search_sort_summary"
