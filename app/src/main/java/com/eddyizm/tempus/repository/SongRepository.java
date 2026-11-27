@@ -411,15 +411,30 @@ public class SongRepository {
 
     public MutableLiveData<List<Child>> getSongsByGenre(String id, int page) {
         MutableLiveData<List<Child>> songsByGenre = new MutableLiveData<>();
-        App.getSubsonicClientInstance(false).getAlbumSongListClient().getSongsByGenre(id, 100, 100 * page).enqueue(new Callback<ApiResponse>() {
-            @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
-                    songsByGenre.setValue(response.body().getSubsonicResponse().getSongsByGenre().getSongs());
-                }
-            }
-            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
-        });
+        fetchSongsByGenrePage(id, page, 100, songsByGenre::setValue);
         return songsByGenre;
+    }
+
+    /**
+     * Fetches one ordered page of a genre's songs. Always completes (empty list on failure)
+     * so callers tracking an in-flight request can reliably clear their loading state.
+     */
+    public void fetchSongsByGenrePage(String id, int page, int size, Consumer<List<Child>> callback) {
+        App.getSubsonicClientInstance(false).getAlbumSongListClient().getSongsByGenre(id, size, size * page).enqueue(new Callback<ApiResponse>() {
+            @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                List<Child> songs = new ArrayList<>();
+                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
+                    List<Child> returned = response.body().getSubsonicResponse().getSongsByGenre().getSongs();
+                    if (returned != null) {
+                        songs.addAll(returned);
+                    }
+                }
+                callback.accept(songs);
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                callback.accept(new ArrayList<>());
+            }
+        });
     }
 
     public MutableLiveData<List<Child>> getSongsByGenres(ArrayList<String> genresId) {

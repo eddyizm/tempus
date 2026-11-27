@@ -24,6 +24,7 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eddyizm.tempus.R;
@@ -34,6 +35,7 @@ import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.ui.activity.MainActivity;
+import com.eddyizm.tempus.ui.adapter.LoadingFooterAdapter;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
@@ -53,10 +55,9 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     private PlaybackViewModel playbackViewModel;
 
     private SongHorizontalAdapter songHorizontalAdapter;
+    private LoadingFooterAdapter loadingFooterAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
-
-    private boolean isLoading = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -209,26 +210,32 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         bind.songListRecyclerView.setHasFixedSize(true);
 
         songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
-        bind.songListRecyclerView.setAdapter(songHorizontalAdapter);
+        loadingFooterAdapter = new LoadingFooterAdapter();
+        bind.songListRecyclerView.setAdapter(new ConcatAdapter(songHorizontalAdapter, loadingFooterAdapter));
         setMediaBrowserListenableFuture();
         reapplyPlayback();
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
-            isLoading = false;
             songHorizontalAdapter.setItems(songs);
             reapplyPlayback();
             setSongListPageSubtitle(songs);
         });
+        songListPageViewModel.getLoadingMore().observe(getViewLifecycleOwner(),
+                loading -> loadingFooterAdapter.setVisible(Boolean.TRUE.equals(loading)));
 
         bind.songListRecyclerView.addOnScrollListener(new PaginationScrollListener((LinearLayoutManager) bind.songListRecyclerView.getLayoutManager()) {
             @Override
+            protected boolean canLoadMore() {
+                return songListPageViewModel.hasMorePages();
+            }
+
+            @Override
             protected void loadMoreItems() {
-                isLoading = true;
-                songListPageViewModel.getSongsByPage(getViewLifecycleOwner());
+                songListPageViewModel.loadNextPage();
             }
 
             @Override
             public boolean isLoading() {
-                return isLoading;
+                return Boolean.TRUE.equals(songListPageViewModel.getLoadingMore().getValue());
             }
         });
 
@@ -296,9 +303,9 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         if (children == null) return;
         switch (songListPageViewModel.title) {
             case Constants.MEDIA_BY_GENRE:
-                bind.pageSubtitleLabel.setText(children.size() < songListPageViewModel.maxNumberByGenre ?
-                        getString(R.string.generic_list_page_count, children.size()) :
-                        getString(R.string.generic_list_page_count_unknown, songListPageViewModel.maxNumberByGenre)
+                bind.pageSubtitleLabel.setText(songListPageViewModel.hasMorePages() ?
+                        getString(R.string.generic_list_page_count_unknown, children.size()) :
+                        getString(R.string.generic_list_page_count, children.size())
                 );
                 break;
             case Constants.MEDIA_BY_YEAR:
