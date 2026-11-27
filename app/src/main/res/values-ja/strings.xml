@@ -585,6 +585,7 @@
     <string name="settings_sync_starred_tracks_for_offline_use_summary">有効にすると、お気に入りトラックがオフライン利用のためにダウンロードされます。</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">お気に入りトラックのオフライン向け同期</string>
     <string name="settings_permissions">アプリの権限</string>
+    <string name="settings_backups">バックアップ</string>
     <string name="settings_export_title">設定をエクスポート</string>
     <string name="settings_export_summary">設定をファイルに保存します。サーバーのログイン情報は含まれません。</string>
     <string name="settings_import_title">設定をインポート</string>
