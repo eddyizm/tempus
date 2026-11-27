@@ -1,7 +1,6 @@
 package com.eddyizm.tempus.util;
 
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import androidx.media3.common.util.UnstableApi;
@@ -146,7 +145,7 @@ public class DownloadRepair {
                 Download download = new Download(song);
                 download.setDownloadState(1);
                 download.setDownloadUri(entry.uri);
-                applyTranscodeFromUri(download, entry.uri);
+                MusicUtil.applyTranscodeMetadataFromUri(download, entry.uri);
 
                 batch.add(download);
 
@@ -280,20 +279,6 @@ public class DownloadRepair {
         }
 
         return song;
-    }
-
-    /**
-     * Same rewrite the live download path applies, but driven by the stored uri rather than the
-     * current preferences, because the uri records what was actually requested at download time.
-     */
-    private static void applyTranscodeFromUri(Download download, String downloadUri) {
-        Uri uri = Uri.parse(downloadUri);
-
-        // getQueryParameter refuses an opaque uri.
-        if (uri.isOpaque()) return;
-
-        MusicUtil.applyTranscodeMetadata(download, uri.getQueryParameter("format"),
-                uri.getQueryParameter("maxBitRate"));
     }
 
     private static class CachedDownload {

@@ -1,5 +1,30 @@
 # Changelog
 
+## [4.33.0](https://github.com/eddyizm/tempus/releases/tag/v4.33.0) (2026-11-26)
+## What's Changed
+* refactor: build the launcher shortcuts in one place by @pLum0 in https://github.com/eddyizm/tempus/pull/1328
+* fix: repeat unavailable while casting over UPnP by @herrerad85 in https://github.com/eddyizm/tempus/pull/1324
+* fix: Test button tests the values in the form by @karan in https://github.com/eddyizm/tempus/pull/1263
+* fix: server unreachable dialog shows twice by @herrerad85 in https://github.com/eddyizm/tempus/pull/1335
+* fix: Return seekable descriptor, Bypass ContentResolver loop & disabl… by @eddyizm in https://github.com/eddyizm/tempus/pull/1342
+* fix: heart restarts a transcoded song by @herrerad85 in https://github.com/eddyizm/tempus/pull/1347
+* feat: add "Download all" to the artist menu by @hexwreaker in https://github.com/eddyizm/tempus/pull/1262
+* fix: apply server date offsets and keep the chosen song sort by @karan in https://github.com/eddyizm/tempus/pull/1274
+* fix: go to login opens the login screen from any screen by @herrerad85 in https://github.com/eddyizm/tempus/pull/1334
+* feat: add backups manager by @tvillega in https://github.com/eddyizm/tempus/pull/1336
+* fix: playlist page shows another playlist's new name by @herrerad85 in https://github.com/eddyizm/tempus/pull/1340
+* feat: report playback through the OpenSubsonic playbackReport extension by @sewnie in https://github.com/eddyizm/tempus/pull/1285
+* fix: Transcoding mismatch by @eddyizm in https://github.com/eddyizm/tempus/pull/1243
+* feat: playlists and albums as launcher shortcuts by @pLum0 in https://github.com/eddyizm/tempus/pull/1329
+* feat: Auto download by @eddyizm in https://github.com/eddyizm/tempus/pull/1349
+* fix: starred artist sync check floods the server by @herrerad85 in https://github.com/eddyizm/tempus/pull/1362
+* fix: album art content provide security fix by @eddyizm in https://github.com/eddyizm/tempus/pull/1365
+
+## New Contributors
+* @sewnie made their first contribution in https://github.com/eddyizm/tempus/pull/1285
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.32.0...v4.33.0
+
 ## [4.32.0](https://github.com/eddyizm/tempus/releases/tag/v4.32.0) (2026-11-11)
 ## What's Changed
 * fix: reduce seek bar height to prevent accidental clicks by @jaime-grj in https://github.com/eddyizm/tempus/pull/1256

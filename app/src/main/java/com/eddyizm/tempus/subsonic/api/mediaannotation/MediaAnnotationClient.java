@@ -38,4 +38,9 @@ public class MediaAnnotationClient {
         Log.d(TAG, "scrobble()");
         return mediaAnnotationService.scrobble(subsonic.getParams(), id, submission);
     }
+
+    public Call<ApiResponse> reportPlayback(String mediaId, String mediaType, long positionMs, String state, float playbackRate, boolean ignoreScrobble) {
+        Log.d(TAG, "reportPlayback()");
+        return mediaAnnotationService.reportPlayback(subsonic.getParams(), mediaId, mediaType, positionMs, state, playbackRate, ignoreScrobble);
+    }
 }

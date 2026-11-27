@@ -1,6 +1,7 @@
 package com.eddyizm.tempus.util
 
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.core.content.edit
 import androidx.media3.common.Player
 import com.eddyizm.tempus.App
@@ -65,6 +66,7 @@ object Preferences {
     private const val SYNC_STARRED_ARTISTS_FOR_OFFLINE_USE = "sync_starred_artists_for_offline_use"
     private const val SYNC_STARRED_ALBUMS_FOR_OFFLINE_USE = "sync_starred_albums_for_offline_use"
     private const val SYNC_STARRED_TRACKS_FOR_OFFLINE_USE = "sync_starred_tracks_for_offline_use"
+    private const val AUTO_DOWNLOAD_PLAYED_TRACKS = "auto_download_played_tracks"
     private const val QUEUE_SYNCING = "queue_syncing"
     private const val ROUNDED_CORNER = "rounded_corner"
     private const val ROUNDED_CORNER_SIZE = "rounded_corner_size"
@@ -138,6 +140,14 @@ object Preferences {
     private const val AA_SHUFFLE_PLAYLISTS = "androidauto_shuffle_playlists"
     private const val AA_SHUFFLE_DOWNLOADED_TRACKS = "androidauto_shuffle_downloaded_tracks"
     private const val ACTIVE_MUSIC_FOLDER_ID = "active_music_folder_id"
+    const val SHORTCUTS_RECENT_PLAYLISTS = "shortcuts_recent_playlists"
+    private const val SHORTCUTS_PLAY_MODE = "shortcuts_play_mode"
+    const val SHORTCUTS_PLAY_MODE_OPEN = "open"
+    const val SHORTCUTS_PLAY_MODE_PLAY = "play"
+    const val SHORTCUTS_PLAY_MODE_SHUFFLE = "shuffle"
+    const val SHORTCUTS_PLAY_MODE_ASK = "ask"
+    private const val SHORTCUTS_PINNED = "shortcuts_pinned"
+    private const val SHORTCUTS_RECENT = "shortcuts_recent"
 
     const val MUSIC_FOLDER_ALL = "default"
 
@@ -730,6 +740,11 @@ object Preferences {
     }
 
     @JvmStatic
+    fun isAutoDownloadPlayedTracks(): Boolean {
+        return App.getInstance().preferences.getBoolean(AUTO_DOWNLOAD_PLAYED_TRACKS, false)
+    }
+
+    @JvmStatic
     fun showShuffleInsteadOfHeart(): Boolean {
         return App.getInstance().preferences.getBoolean(MINI_SHUFFLE_BUTTON_VISIBILITY, false)
     }
@@ -1284,6 +1299,53 @@ object Preferences {
     @JvmStatic
     fun setColorAccent(colorAccent: String) {
         App.getInstance().preferences.edit().putString(COLOR_ACCENT, colorAccent).apply()
+    }
+
+    /** A playlist or album offered as a launcher shortcut. */
+    @Keep
+    data class ShortcutItem(
+        val type: String,
+        val id: String,
+        val name: String?,
+        val coverArtId: String?
+    )
+
+    @JvmStatic
+    fun isShortcutsRecentPlaylistsEnabled(): Boolean {
+        return App.getInstance().preferences.getBoolean(SHORTCUTS_RECENT_PLAYLISTS, true)
+    }
+
+    @JvmStatic
+    fun getShortcutsPlayMode(): String {
+        return App.getInstance().preferences.getString(SHORTCUTS_PLAY_MODE, SHORTCUTS_PLAY_MODE_OPEN)
+            ?: SHORTCUTS_PLAY_MODE_OPEN
+    }
+
+    @JvmStatic
+    fun getPinnedShortcuts(): MutableList<ShortcutItem> = readShortcutItems(SHORTCUTS_PINNED)
+
+    @JvmStatic
+    fun setPinnedShortcuts(items: List<ShortcutItem>) = writeShortcutItems(SHORTCUTS_PINNED, items)
+
+    @JvmStatic
+    fun getRecentShortcuts(): MutableList<ShortcutItem> = readShortcutItems(SHORTCUTS_RECENT)
+
+    @JvmStatic
+    fun setRecentShortcuts(items: List<ShortcutItem>) = writeShortcutItems(SHORTCUTS_RECENT, items)
+
+    private fun readShortcutItems(key: String): MutableList<ShortcutItem> {
+        val raw = App.getInstance().preferences.getString(key, null)
+        return try {
+            if (raw.isNullOrBlank()) mutableListOf()
+            else Gson().fromJson(raw, object : TypeToken<MutableList<ShortcutItem>>() {}.type)
+                ?: mutableListOf()
+        } catch (_: Exception) {
+            mutableListOf()
+        }
+    }
+
+    private fun writeShortcutItems(key: String, items: List<ShortcutItem>) {
+        App.getInstance().preferences.edit().putString(key, Gson().toJson(items)).apply()
     }
 }
 

@@ -40,6 +40,14 @@
             android:name="androidx.car.app.TintableAttributionIcon"
             android:resource="@drawable/ic_graphic_eq" />
 
+        <activity
+            android:name=".ui.activity.ShortcutActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@style/AppTheme.Translucent" />
+
         <activity android:name=".lan.LanPlaybackActivity" android:exported="false"
             android:theme="@style/AppTheme" />
         <service android:name=".lan.LanReceiverService" android:exported="false"
@@ -69,7 +77,7 @@
         <activity
             android:name=".ui.login.LoginActivity"
             android:theme="@style/AppTheme"
-            android:exported="true"/>
+            android:exported="false"/>
 
         <activity
             android:name=".ui.crash.CrashActivity"
@@ -89,7 +97,7 @@
 
         <service
             android:name=".service.DownloaderService"
-            android:exported="true"
+            android:exported="false"
             android:foregroundServiceType="dataSync">
             <intent-filter>
                 <action android:name="androidx.media3.exoplayer.downloadService.action.RESTART" />

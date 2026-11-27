@@ -34,6 +34,7 @@ import com.eddyizm.tempus.subsonic.models.PodcastEpisode;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.MappingUtil;
 import com.eddyizm.tempus.util.ConnectionUtil;
+import com.eddyizm.tempus.util.OpenSubsonicExtensionsUtil;
 import com.eddyizm.tempus.util.Preferences;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.google.common.util.concurrent.FutureCallback;
@@ -656,10 +657,30 @@ public class MediaManager {
         return saved != 0 ? saved : Math.max(0L, lastPlayed.getPlayingChanged());
     }
 
+    // A server with playbackReport counts plays from reportPlayback instead.
     public static void scrobble(MediaItem mediaItem, boolean submission) {
-        if (mediaItem != null && mediaItem.mediaMetadata.extras != null && Preferences.isScrobblingEnabled()) {
+        if (mediaItem != null && mediaItem.mediaMetadata.extras != null && Preferences.isScrobblingEnabled()
+                && !OpenSubsonicExtensionsUtil.isPlaybackReportExtensionAvailable()) {
             getSongRepository().scrobble(mediaItem.mediaMetadata.extras.getString("id"), submission);
         }
+    }
+
+    // Sent even with scrobbling off, which only stops the server counting the play.
+    public static void reportPlayback(MediaItem mediaItem, String state, long positionMs, float playbackRate) {
+        if (mediaItem == null || mediaItem.mediaMetadata.extras == null
+                || !OpenSubsonicExtensionsUtil.isPlaybackReportExtensionAvailable()) return;
+
+        String mediaType;
+        String type = mediaItem.mediaMetadata.extras.getString("type");
+        if (Constants.MEDIA_TYPE_MUSIC.equals(type)) {
+            mediaType = "song";
+        } else if (Constants.MEDIA_TYPE_PODCAST.equals(type)) {
+            mediaType = "podcast";
+        } else {
+            return;
+        }
+
+        getSongRepository().reportPlayback(mediaItem.mediaMetadata.extras.getString("id"), mediaType, positionMs, state, playbackRate, !Preferences.isScrobblingEnabled());
     }
 
     // Last.fm rule: a play counts once it has passed half the track or 4 minutes, whichever comes first; never under 30 seconds.

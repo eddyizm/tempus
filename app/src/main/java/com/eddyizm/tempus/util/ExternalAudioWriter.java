@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.core.app.NotificationCompat;
@@ -37,12 +38,22 @@ import androidx.media3.common.util.UnstableApi;
 @UnstableApi
 public class ExternalAudioWriter {
 
+    private static final String TAG = "ExternalAudioWriter";
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     private static final Set<String> PENDING = ConcurrentHashMap.newKeySet();
 
     public static boolean isPending(String mediaId) {
         return PENDING.contains(mediaId);
     }
+
+    public static boolean tryMarkPending(String mediaId) {
+        return PENDING.add(mediaId);
+    }
+
+    public static void clearPending(String mediaId) {
+        PENDING.remove(mediaId);
+    }
+
     private static final int BUFFER_SIZE = 8192;
     private static final int CONNECT_TIMEOUT_MS = 15_000;
     private static final int READ_TIMEOUT_MS = 60_000;
@@ -86,26 +97,50 @@ public class ExternalAudioWriter {
     public static void downloadToUserDirectory(Context context, Child child, String playlistId, String playlistName) {
         if (context == null || child == null) return;
         Context appContext = context.getApplicationContext();
-        MediaItem mediaItem = MappingUtil.mapDownload(child);
+        if (!tryMarkPending(child.getId())) return;
+
+        MediaItem mediaItem;
+        try {
+            mediaItem = MappingUtil.mapDownload(child);
+        } catch (RuntimeException e) {
+            clearPending(child.getId());
+            throw e;
+        }
         String fallbackName = child.getTitle() != null ? child.getTitle() : child.getId();
 
         // Register with the progress tracker BEFORE submitting to the executor so the
         // total count is accurate even when many tracks are enqueued in rapid succession.
-        DownloadProgressState.getInstance().onEnqueue(appContext);
+        try {
+            DownloadProgressState.getInstance().onEnqueue(appContext);
+        } catch (RuntimeException e) {
+            clearPending(child.getId());
+            throw e;
+        }
 
-        PENDING.add(child.getId());
-        EXECUTOR.execute(() -> {
-            try {
-                performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName);
-            } finally {
-                PENDING.remove(child.getId());
-            }
-        });
+        try {
+            EXECUTOR.execute(() -> {
+                try {
+                    performDownload(appContext, mediaItem, fallbackName, child, playlistId, playlistName);
+                } finally {
+                    clearPending(child.getId());
+                }
+            });
+        } catch (RuntimeException e) {
+            clearPending(child.getId());
+            DownloadProgressState.getInstance().onFailed(appContext);
+            throw e;
+        }
     }
 
     private static void performDownload(Context context, MediaItem mediaItem, String fallbackName, Child child, String playlistId, String playlistName) {
         DownloadProgressState.getInstance().setCurrentTrackTitle(
                 child.getTitle() != null ? child.getTitle() : fallbackName);
+
+        if (new DownloadRepository().hasCompletedDownload(child.getId())) {
+            Log.i(TAG, "Skipping " + child.getId() + ": completed download record already exists");
+            DownloadProgressState.getInstance().onSkipped(context);
+            return;
+        }
 
         String uriString = Preferences.getDownloadDirectoryUri();
         if (uriString == null) {
@@ -212,7 +247,8 @@ public class ExternalAudioWriter {
                     extension = name.substring(dot + 1);
                 }
             }
-            if (extension == null || extension.isEmpty()) {
+            boolean extensionDetected = extension != null && !extension.isEmpty();
+            if (!extensionDetected) {
                 String suffix = child.getSuffix();
                 if (suffix != null && !suffix.isEmpty()) {
                     extension = suffix;
@@ -220,6 +256,7 @@ public class ExternalAudioWriter {
                     extension = "bin";
                 }
             }
+            extension = resolveDownloadExtension(extension, child, mediaUri.toString());
 
             String sanitized = sanitizeFileName(baseName);
             if (sanitized.isEmpty()) sanitized = sanitizeFileName(fallbackName);
@@ -238,9 +275,9 @@ public class ExternalAudioWriter {
                 }
                 if (matches) {
                     ExternalDownloadMetadataStore.recordSize(metadataKey, localLength);
-                    recordDownload(child, existingFile.getUri(), playlistId, playlistName);
+                    recordDownload(child, existingFile.getUri(), playlistId, playlistName, mimeType,
+                            extensionDetected ? extension : null, mediaUri.toString(), localLength);
                     ExternalAudioReader.refreshCacheAsync();
-                    // Already exists — count as a quiet skip so progress resolves correctly
                     DownloadProgressState.getInstance().onSkipped(context);
                     return;
                 } else {
@@ -296,7 +333,8 @@ public class ExternalAudioWriter {
                 }
 
                 ExternalDownloadMetadataStore.recordSize(metadataKey, total);
-                recordDownload(child, targetUri, playlistId, playlistName);
+                recordDownload(child, targetUri, playlistId, playlistName, mimeType,
+                        extensionDetected ? extension : null, mediaUri.toString(), total);
                 DownloadProgressState.getInstance().onSuccess(context);
                 ExternalAudioReader.refreshCacheAsync();
             }
@@ -353,11 +391,13 @@ public class ExternalAudioWriter {
         manager.notify(FOLDER_ERROR_NOTIFICATION_ID, builder.build());
     }
 
-    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName) {
+    private static void recordDownload(Child child, Uri fileUri, String playlistId, String playlistName,
+                                       String actualMimeType, String actualExtension, String downloadUri,
+                                       long downloadedSize) {
         if (child == null) return;
 
-        Download download = new Download(child);
-        MusicUtil.applyTranscodedDownloadMetadata(download);
+        Download download = createDownloadMetadata(
+                child, actualMimeType, actualExtension, downloadUri, downloadedSize);
         download.setDownloadState(1);
         download.setPlaylistId(playlistId);
         download.setPlaylistName(playlistName);
@@ -366,8 +406,57 @@ public class ExternalAudioWriter {
             download.setDownloadUri(fileUri.toString());
         }
 
-        new DownloadRepository().insert(download);
-    }   
+        new DownloadRepository().insertAndWait(download);
+        MappingUtil.invalidateCachedDownloads();
+    }
+
+    static String resolveDownloadExtension(String extension, Child child, String downloadUri) {
+        if (child == null) return extension;
+
+        Download requestedDownload = new Download(child);
+        if (MusicUtil.applyTranscodeMetadataFromUri(requestedDownload, downloadUri)) {
+            String requestedSuffix = requestedDownload.getSuffix();
+            if (requestedSuffix != null && !requestedSuffix.isEmpty()) return requestedSuffix;
+        }
+
+        String sourceSuffix = child.getSuffix();
+        if ("oga".equalsIgnoreCase(extension)
+                && ("ogg".equalsIgnoreCase(sourceSuffix) || "opus".equalsIgnoreCase(sourceSuffix))) {
+            return sourceSuffix;
+        }
+        return extension;
+    }
+
+    static Download createDownloadMetadata(Child child, String actualMimeType, String actualExtension,
+                                           String downloadUri, long downloadedSize) {
+        if (child == null) return null;
+
+        Download download = new Download(child);
+        download.setSize(downloadedSize);
+        boolean transcodeRequested = MusicUtil.applyTranscodeMetadataFromUri(download, downloadUri);
+        if (transcodeRequested) return download;
+
+        String resolvedExtension = resolveDownloadExtension(actualExtension, child, downloadUri);
+        if (resolvedExtension != null && !resolvedExtension.isEmpty() && !"bin".equals(resolvedExtension)) {
+            download.setSuffix(resolvedExtension);
+            if (actualMimeType != null && !actualMimeType.equals("application/octet-stream")) {
+                download.setContentType(actualMimeType);
+            }
+            String sourceSuffix = child.getSuffix();
+            boolean formatChanged = sourceSuffix == null
+                    || !resolvedExtension.equalsIgnoreCase(sourceSuffix);
+            if (formatChanged) {
+                download.setSamplingRate(null);
+                download.setBitDepth(null);
+            }
+            if (downloadUri != null) {
+                MusicUtil.applyBitrateFromUri(download, downloadUri);
+            }
+        } else if (downloadUri == null) {
+            MusicUtil.applyTranscodedDownloadMetadata(download);
+        }
+        return download;
+    }
 
     private static InputStream openInputStream(Context context,
                                                Uri mediaUri,

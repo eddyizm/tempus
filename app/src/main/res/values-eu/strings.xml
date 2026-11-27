@@ -865,7 +865,6 @@
     <string name="la_theme_card_teal_description">Berde-urdinaren azentu-kolorea</string>
     <string name="la_theme_card_slate_gray_description">Arbel-grisaren azentu-kolorea</string>
     <string name="la_theme_dialog_color_picker_title">Azentu-kolore bat aukeratu</string>
-    <string name="la_shortcut_label">Sarrera</string>
     <string name="la_button_advanced_editor">Editore aurreratua (beta)</string>
     <string name="hello_blank_fragment">Kaixo, zati hutsa</string>
     <string name="menu_login_button">Hasi saioa</string>

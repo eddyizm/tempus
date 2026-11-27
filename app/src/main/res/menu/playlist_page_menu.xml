@@ -41,4 +41,12 @@
         android:checkable="true"
         android:title="@string/menu_keep_synced_button"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_add_shortcut"
+        android:title="@string/menu_add_shortcut"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_remove_shortcut"
+        android:title="@string/menu_remove_shortcut"
+        app:showAsAction="never" />
 </menu>
