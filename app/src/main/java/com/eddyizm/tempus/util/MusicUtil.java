@@ -266,6 +266,22 @@ public class MusicUtil {
         return "";
     }
 
+    /**
+     * Artist to show beneath a song title. A song whose artist is the album artist would repeat
+     * the album context, so it gets no subtitle.
+     */
+    public static String getSongArtistSubtitle(Child song) {
+        if (song == null) return null;
+
+        String artist = song.getArtist() == null ? null : song.getArtist().trim();
+        if (artist == null || artist.isEmpty()) return null;
+
+        String albumArtist = song.getAlbumArtist() == null ? null : song.getAlbumArtist().trim();
+        if (albumArtist != null && albumArtist.equalsIgnoreCase(artist)) return null;
+
+        return artist;
+    }
+
     public static String forceReadableString(String string) {
         if (string != null) {
             return getReadableString(string)

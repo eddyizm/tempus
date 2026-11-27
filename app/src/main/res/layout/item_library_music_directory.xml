@@ -41,10 +41,26 @@
         android:paddingEnd="12dp"
         android:singleLine="true"
         android:text="@string/label_placeholder"
+        app:layout_constraintBottom_toTopOf="@+id/music_directory_subtitle_text_view"
+        app:layout_constraintEnd_toStartOf="@+id/music_directory_more_button"
+        app:layout_constraintStart_toEndOf="@+id/music_directory_play_button"
+        app:layout_constraintTop_toTopOf="@+id/music_directory_cover_image_view"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/music_directory_subtitle_text_view"
+        style="@style/LabelSmall"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="marquee"
+        android:paddingEnd="12dp"
+        android:singleLine="true"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/music_directory_cover_image_view"
         app:layout_constraintEnd_toStartOf="@+id/music_directory_more_button"
         app:layout_constraintStart_toEndOf="@+id/music_directory_play_button"
-        app:layout_constraintTop_toTopOf="@+id/music_directory_cover_image_view" />
+        app:layout_constraintTop_toBottomOf="@id/music_directory_title_text_view" />
 
     <ImageView
         android:id="@+id/music_directory_more_button"

@@ -11,6 +11,8 @@ import static org.mockito.Mockito.when;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
 
+import com.eddyizm.tempus.subsonic.models.Child;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -201,5 +203,57 @@ public class MusicUtilTest {
         assertEquals("flac", download.getSuffix());
 
         MusicUtil.applyTranscodeMetadataFromUri(null, "https://subsonic.example.com/rest/stream?format=opus");
+    }
+
+    @Test
+    public void songArtistSubtitle_hidesArtistMatchingAlbumArtist() {
+        Child song = new Child("song-1");
+        song.setArtist("  Varied Artists  ");
+        song.setAlbumArtist("VARIED ARTISTS");
+
+        assertNull(MusicUtil.getSongArtistSubtitle(song));
+    }
+
+    @Test
+    public void songArtistSubtitle_showsDifferentArtistTrimmed() {
+        Child song = new Child("song-1");
+        song.setArtist("  Guest Artist  ");
+        song.setAlbumArtist("Album Artist");
+
+        assertEquals("Guest Artist", MusicUtil.getSongArtistSubtitle(song));
+    }
+
+    @Test
+    public void songArtistSubtitle_showsArtistWhenAlbumArtistMissingOrBlank() {
+        Child song = new Child("song-1");
+        song.setArtist("Solo Artist");
+
+        assertEquals("Solo Artist", MusicUtil.getSongArtistSubtitle(song));
+
+        song.setAlbumArtist("   ");
+        assertEquals("Solo Artist", MusicUtil.getSongArtistSubtitle(song));
+    }
+
+    @Test
+    public void songArtistSubtitle_hidesMissingArtist() {
+        Child song = new Child("song-1");
+        song.setAlbumArtist("Album Artist");
+        assertNull(MusicUtil.getSongArtistSubtitle(song));
+
+        song.setArtist("   ");
+        assertNull(MusicUtil.getSongArtistSubtitle(song));
+
+        assertNull(MusicUtil.getSongArtistSubtitle(null));
+    }
+
+    @Test
+    public void songArtistSubtitle_comparesWholeMultiArtistString() {
+        Child song = new Child("song-1");
+        song.setArtist("Artist A; Artist B");
+        song.setAlbumArtist("ARTIST A; ARTIST B");
+        assertNull(MusicUtil.getSongArtistSubtitle(song));
+
+        song.setAlbumArtist("Artist A");
+        assertEquals("Artist A; Artist B", MusicUtil.getSongArtistSubtitle(song));
     }
 }
