@@ -61,9 +61,9 @@
                     style="@style/Widget.Material3.Button.TonalButton.Icon"
                     android:layout_width="52dp"
                     android:layout_height="52dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="4dp"
                     android:layout_marginBottom="12dp"
                     android:insetLeft="0dp"
                     android:insetTop="0dp"
@@ -73,6 +73,25 @@
                     app:cornerRadius="30dp"
                     app:icon="@drawable/ic_sort_list"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/song_list_add_to_queue_image_view" />
+
+                <Button
+                    android:id="@+id/song_list_add_to_queue_image_view"
+                    style="@style/Widget.Material3.Button.TonalButton.Icon"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="12dp"
+                    android:contentDescription="@string/content_description_add_to_queue_button"
+                    android:insetLeft="0dp"
+                    android:insetTop="0dp"
+                    android:insetRight="0dp"
+                    android:insetBottom="0dp"
+                    app:cornerRadius="30dp"
+                    app:icon="@drawable/ic_queue"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/song_list_shuffle_image_view" />
 
                 <Button
@@ -80,7 +99,7 @@
                     style="@style/Widget.Material3.Button.TonalButton.Icon"
                     android:layout_width="52dp"
                     android:layout_height="52dp"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="4dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="12dp"

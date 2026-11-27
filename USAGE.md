@@ -175,6 +175,8 @@ The setting is hidden when there is only one library to choose from.
 
 Song lists with a sort button (starred tracks, top songs, multi-genre lists and All songs) can be ordered by name, artist, album or how recently a track was starred. Sorting happens locally in the app, not on the server. On lists that load more songs as you scroll, the order is applied to the songs loaded so far, so newly loaded pages are inserted into the current order. The chosen sort survives a refresh and screen rotation, and it also applies to search filtering and to the queue built from the displayed list.
 
+The queue button on a song list appends the songs **currently displayed**, in the visible order — including any search filter and sort. It does not fetch more songs from the server and does not start playback; the current track keeps playing. On very large libraries the mapping work is done off the main thread, but a queue with tens of thousands of entries may still take a moment to appear. Shuffle starts playback from a shuffled copy of the loaded songs instead; it never reorders the list on screen.
+
 ### Folder or index playback
 
 If your Subsonic-compatible server exposes the folder tree **or** provides an artist index (for example Gonic, Navidrome, or any backend with folder browsing enabled), Tempus lets you play an entire folder from anywhere in the library hierarchy:

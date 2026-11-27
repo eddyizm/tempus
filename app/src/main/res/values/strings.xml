@@ -103,6 +103,7 @@
     <string name="connection_alert_dialog_summary">Access to the Subsonic server on connections other than Wi-Fi has been restricted. To prevent this alert dialog from reappearing, disable the connection check in the app settings.</string>
     <string name="connection_alert_dialog_title">Wi-Fi not connected</string>
     <string name="content_description_shuffle_button">Shuffle</string>
+    <string name="content_description_add_to_queue_button">Add to queue</string>
     <string name="content_description_more_options">More options</string>
     <string name="delete_download_storage_dialog_negative_button">Cancel</string>
     <string name="delete_download_storage_dialog_positive_button">Continue</string>
@@ -698,6 +699,7 @@
     <string name="song_bottom_sheet_undo">Undo</string>
     <string name="song_bottom_sheet_undo_failure">Failed to put the song back</string>
     <string name="song_bottom_sheet_share">Share</string>
+    <string name="song_list_page_added_to_queue">Added to queue</string>
     <string name="song_list_page_downloaded">Downloaded</string>
     <string name="song_list_page_most_played">Most played tracks</string>
     <string name="song_list_page_recently_added">Recently added tracks</string>

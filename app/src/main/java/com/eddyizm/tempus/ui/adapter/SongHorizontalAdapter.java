@@ -281,6 +281,11 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         filtering.filter(currentFilter);
     }
 
+    /** Snapshot of the currently displayed songs, including the active filter and sort. */
+    public List<Child> getDisplayedSongs() {
+        return new ArrayList<>(differ.getCurrentList());
+    }
+
     @Override
     public long getItemId(int position) {
         return position;

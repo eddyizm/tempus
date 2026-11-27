@@ -14,6 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,12 +43,15 @@ import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.eddyizm.tempus.viewmodel.SongListPageViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @UnstableApi
 public class SongListPageFragment extends Fragment implements ClickCallback {
     private static final String TAG = "SongListPageFragment";
+    /** Shuffle-and-play starts a larger batch than tap-to-play's PLAYABLE_MEDIA_LIMIT. */
+    private static final int SHUFFLE_QUEUE_LIMIT = 500;
 
     private FragmentSongListPageBinding bind;
     private MainActivity activity;
@@ -191,13 +195,25 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initButtons() {
+        bind.songListAddToQueueImageView.setOnClickListener(v -> {
+            List<Child> displayed = songHorizontalAdapter.getDisplayedSongs();
+            if (displayed.isEmpty()) return;
+            MediaManager.enqueueBulk(mediaBrowserListenableFuture, displayed);
+            activity.setBottomSheetInPeek(true);
+            Toast.makeText(requireContext(), R.string.song_list_page_added_to_queue, Toast.LENGTH_SHORT).show();
+        });
+
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
             if (bind != null) {
                 setSongListPageSorter();
 
                 bind.songListShuffleImageView.setOnClickListener(v -> {
-                    Collections.shuffle(songs);
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs.subList(0, Math.min(500, songs.size())), 0);
+                    // Never shuffle the LiveData list in place: that would reorder the model
+                    // and leave the displayed list out of sync with the queued order.
+                    List<Child> shuffled = new ArrayList<>(songs == null ? Collections.emptyList() : songs);
+                    Collections.shuffle(shuffled);
+                    MediaManager.startQueue(mediaBrowserListenableFuture,
+                            shuffled.subList(0, Math.min(SHUFFLE_QUEUE_LIMIT, shuffled.size())), 0);
                     activity.setBottomSheetInPeek(true);
                 });
             }

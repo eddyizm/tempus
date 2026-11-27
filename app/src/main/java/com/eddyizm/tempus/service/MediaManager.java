@@ -421,6 +421,38 @@ public class MediaManager {
         }
     }
 
+    /**
+     * Appends a large displayed list (for example every song loaded so far) without blocking
+     * the UI. Unlike {@link #enqueue(ListenableFuture, List, boolean)}, the per-song mapping
+     * runs on the background executor; only the player call is posted to the main thread.
+     * Playback is not started and the current song keeps playing.
+     */
+    @OptIn(markerClass = UnstableApi.class)
+    public static void enqueueBulk(ListenableFuture<MediaBrowser> mediaBrowserListenableFuture, List<Child> media) {
+        if (media == null || media.isEmpty()) return;
+        if (LanRemoteSession.routeSongs(media, "append", 0)) return;
+        if (mediaBrowserListenableFuture == null) return;
+
+        mediaBrowserListenableFuture.addListener(() -> {
+            try {
+                if (!mediaBrowserListenableFuture.isDone()) return;
+                final MediaBrowser browser = mediaBrowserListenableFuture.get();
+
+                backgroundExecutor.execute(() -> {
+                    final List<MediaItem> items = MappingUtil.mapMediaItems(media);
+
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if (LanRemoteSession.isActive()) return;
+                        enqueueDatabase(media, false, browser.getMediaItemCount());
+                        browser.addMediaItems(items);
+                    });
+                });
+            } catch (ExecutionException | InterruptedException e) {
+                Log.e(TAG, "Error in enqueueBulk: " + e.getMessage(), e);
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
     public static void enqueue(QueueTarget queueTarget, List<Child> media, boolean playImmediatelyAfter) {
         Player player = queueTarget.livePlayer();
         if (player == null) {
