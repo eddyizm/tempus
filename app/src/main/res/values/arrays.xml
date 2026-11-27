@@ -10,14 +10,6 @@
         <item>default</item>
     </string-array>
 
-    <string-array name="dark_theme_style_titles">
-        <item>Standard</item>
-        <item>AMOLED (Pure black)</item>
-    </string-array>
-    <string-array name="dark_theme_style_values">
-        <item>standard</item>
-        <item>amoled</item>
-    </string-array>
 
 
     <string-array name="pref_cache_size_titles">
@@ -219,18 +211,6 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Do not transcode</item>
-        <item>Server settings</item>
-        <item>Wi-Fi Transcode format</item>
-        <item>Mobile Transcode format</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
     <string-array name="song_preload_buffer_titles">
         <item>5 seconds</item>
@@ -302,34 +282,6 @@
     </string-array>
 
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>0 star minimum</item>
-        <item>1 star minimum</item>
-        <item>2 stars minimum</item>
-        <item>3 stars minimum</item>
-        <item>4 stars minimum</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3"</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
 		
     <string-array name="tile_size_titles">
         <item>Tiny</item>
@@ -421,10 +373,5 @@
         <item>[instantMixID]</item>
     </string-array>
 
-    <string-array name="la_backups_automatic_dropdown_items">
-        <item>@string/la_backups_section_automatic_dropdown_item_hourly</item>
-        <item>@string/la_backups_section_automatic_dropdown_item_daily</item>
-        <item>@string/la_backups_section_automatic_dropdown_item_weekly</item>
-    </string-array>
 
 </resources>

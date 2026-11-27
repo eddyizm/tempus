@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Adăugați la playlist</string>
+    <string name="album_bottom_sheet_add_to_queue">Adăugați la coadă</string>
+    <string name="album_bottom_sheet_download_all">Descărcați tot</string>
+    <string name="album_bottom_sheet_go_to_artist">Mergeți la artist</string>
+    <string name="album_bottom_sheet_instant_mix">Mix instant</string>
+    <string name="album_bottom_sheet_play_next">Redați următoarea</string>
+    <string name="album_bottom_sheet_remove_all">Eliminați tot</string>
+    <string name="album_bottom_sheet_share">Partajați</string>
+    <string name="album_bottom_sheet_shuffle">Amestecare</string>
+    <string name="album_catalogue_title">Albume</string>
+    <string name="album_catalogue_title_expanded">Răsfoiți Albume</string>
+    <string name="album_error_retrieving_artist">Eroare la preluarea artistului</string>
+    <string name="album_list_page_downloaded">Albume descărcate</string>
+    <string name="album_list_page_most_played">Albume cele mai ascultate</string>
+    <string name="album_list_page_new_releases">Lansări noi</string>
+    <string name="album_list_page_recently_added">Albume adăugate recent</string>
+    <string name="album_list_page_recently_played">Albume redate recent</string>
+    <string name="album_list_page_starred">Albume marcate</string>
+    <string name="album_list_page_title">Albume</string>
+    <string name="album_page_play_button">Redare</string>
+    <string name="album_page_release_date_label">Lansat pe %1$s</string>
+    <string name="album_page_release_dates_label">Lansat pe %1$s, inițial %2$s</string>
+    <string name="album_page_shuffle_button">Amestecare</string>
+    <string name="album_page_tracks_count_and_duration">%1$d cântece  •  %2$d minute</string>
+</resources>

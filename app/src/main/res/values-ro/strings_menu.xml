@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Adăugați la playlist</string>
+    <string name="menu_download_all_button">Descărcați tot</string>
+    <string name="menu_download_label">Descarcaţi</string>
+    <string name="menu_edit_playlist_details_button">Editează detaliile</string>
+    <string name="menu_filter_all">Toate</string>
+    <string name="menu_filter_download">Descarcate</string>
+    <string name="menu_group_by_album">Album</string>
+    <string name="menu_group_by_artist">Artist</string>
+    <string name="menu_group_by_genre">Gen</string>
+    <string name="menu_group_by_track">Piesă</string>
+    <string name="menu_group_by_year">Anul</string>
+    <string name="menu_home_label">Acasă</string>
+    <string name="menu_keep_synced_button">Păstrează sincronizarea</string>
+    <string name="menu_last_month_name">Luna trecută</string>
+    <string name="menu_last_week_name">Săptămâna trecută</string>
+    <string name="menu_last_year_name">Anul trecut</string>
+    <string name="menu_library_label">Bibliotecă</string>
+    <string name="menu_pin_button">Adăugați pe ecranul de start</string>
+    <string name="menu_rate_album">Evaluați albumul</string>
+    <string name="menu_search_button">Cautaţi</string>
+    <string name="menu_settings_button">Setări</string>
+    <string name="menu_sort_album_count">Număr Album</string>
+    <string name="menu_sort_artist">Artist</string>
+    <string name="menu_sort_least_recently_starred">Cel mai puțin recent marcat</string>
+    <string name="menu_sort_most_played">Cele mai ascultate</string>
+    <string name="menu_sort_most_recently_starred">Cel mai recent marcat</string>
+    <string name="menu_sort_name">Nume</string>
+    <string name="menu_sort_random">Aleatoriu</string>
+    <string name="menu_sort_recently_added">Adăugate recent</string>
+    <string name="menu_sort_recently_played">Redate recent</string>
+    <string name="menu_sort_year">Anul</string>
+    <string name="menu_unpin_button">Eliminați din ecranul de start</string>
+</resources>

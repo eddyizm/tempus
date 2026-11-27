@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">В плейлист</string>
+    <string name="album_bottom_sheet_add_to_queue">В очередь</string>
+    <string name="album_bottom_sheet_download_all">Скачать всё</string>
+    <string name="album_bottom_sheet_go_to_artist">К исполнителю</string>
+    <string name="album_bottom_sheet_instant_mix">Мгновенный микс</string>
+    <string name="album_bottom_sheet_play_next">Играть следующим</string>
+    <string name="album_bottom_sheet_remove_all">Удалить всё</string>
+    <string name="album_bottom_sheet_share">Поделиться</string>
+    <string name="album_bottom_sheet_shuffle">Перемешать</string>
+    <string name="album_catalogue_title">Альбомы</string>
+    <string name="album_catalogue_title_expanded">Обзор альбомов</string>
+    <string name="album_error_retrieving_artist">Ошибка получения исполнителя</string>
+    <string name="album_list_page_downloaded">Скачанные альбомы</string>
+    <string name="album_list_page_most_played">Часто слушаемые альбомы</string>
+    <string name="album_list_page_new_releases">Новые релизы</string>
+    <string name="album_list_page_recently_added">Недавно добавленные</string>
+    <string name="album_list_page_recently_played">Недавно прослушанные</string>
+    <string name="album_list_page_starred">Избранные альбомы</string>
+    <string name="album_list_page_title">Альбомы</string>
+    <string name="album_page_play_button">Играть</string>
+    <string name="album_page_release_date_label">Релиз: %1$s</string>
+    <string name="album_page_release_dates_label">Релиз: %1$s (ориг. %2$s)</string>
+    <string name="album_page_shuffle_button">Перемешать</string>
+    <string name="album_page_tracks_count_and_duration">%1$d треков • %2$d мин</string>
+</resources>

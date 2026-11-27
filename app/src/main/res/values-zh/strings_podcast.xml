@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">添加到队列</string>
+    <string name="podcast_bottom_sheet_delete">删除</string>
+    <string name="podcast_bottom_sheet_download">下载</string>
+    <string name="podcast_bottom_sheet_go_to_channel">前往该频道</string>
+    <string name="podcast_bottom_sheet_play_next">下一首播放</string>
+    <string name="podcast_bottom_sheet_remove">移除</string>
+    <string name="podcast_channel_catalogue_title">频道</string>
+    <string name="podcast_channel_catalogue_title_expanded">浏览频道</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS 网址</string>
+    <string name="podcast_channel_editor_dialog_title">播客频道</string>
+    <string name="podcast_channel_not_supported_snackbar">此服务器不支持播客。</string>
+    <string name="podcast_channel_page_title_description_section">描述</string>
+    <string name="podcast_channel_page_title_episode_section">剧集</string>
+    <string name="podcast_episode_download_request_snackbar">您的请求已发送至服务器</string>
+    <string name="podcast_info_empty_button">单击以隐藏该部分\n重启应用后生效</string>
+    <string name="podcast_info_empty_subtitle">添加频道后，您将在此处找到它</string>
+    <string name="podcast_info_empty_title">未找到播客！</string>
+    <string name="podcast_release_date_duration_formatter">%1$s • %2$s</string>
+</resources>

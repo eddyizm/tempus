@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">伺服器不支援網路電臺管理。</string>
+    <string name="radio_editor_dialog_added">已新增電臺</string>
+    <string name="radio_editor_dialog_hint_homepage_url">電臺首頁 URL</string>
+    <string name="radio_editor_dialog_hint_name">電臺名稱</string>
+    <string name="radio_editor_dialog_hint_stream_url">廣播流 URL</string>
+    <string name="radio_editor_dialog_negative_button">取消</string>
+    <string name="radio_editor_dialog_neutral_button">刪除</string>
+    <string name="radio_editor_dialog_positive_button">儲存</string>
+    <string name="radio_editor_dialog_title">網路廣播電臺</string>
+    <string name="radio_editor_dialog_updated">已更新電臺</string>
+    <string name="radio_station_info_empty_button">單擊以隱藏該部分\n重啟應用程式後生效</string>
+    <string name="radio_station_info_empty_subtitle">新增廣播電臺後，您可以在此處找到它</string>
+    <string name="radio_station_info_empty_title">沒有找到電臺！</string>
+</resources>

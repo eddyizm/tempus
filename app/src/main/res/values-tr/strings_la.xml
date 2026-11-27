@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Activity -->
+    <string name="la_perms_access_local_network_description">Mevcut cihazınızla aynı LAN üzerindeki diğer cihazlara erişmek için gereklidir.</string>
+    <string name="la_perms_access_local_network_title">Yerel Ağa Erişim</string>
+    <string name="la_perms_description">Gerekli izinler ve kullanım amaçları aşağıda gösterilmiştir.</string>
+    <string name="la_perms_internet_description">Müzik sunucunuza internet üzerinden erişmek için gereklidir.</string>
+    <string name="la_perms_internet_title">İnternet</string>
+    <string name="la_perms_nearby_devices_description">UPnP ve Chromecast aracılığıyla diğer cihazları keşfetmek için gereklidir.</string>
+    <string name="la_perms_nearby_devices_title">Yakındaki Cihazlar</string>
+    <string name="la_perms_notifications_description">İndirme durumunu ve oynatıcı denetimlerini göstermek için gereklidir.</string>
+    <string name="la_perms_notifications_title">Bildirimler</string>
+    <string name="la_perms_status_not_provided">İste</string>
+    <string name="la_perms_status_provided">Verildi</string>
+    <string name="la_theme_card_emerald_green_description">Zümrüt yeşili vurgu rengi</string>
+</resources>

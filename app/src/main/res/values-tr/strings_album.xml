@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Çalma listesine ekle</string>
+    <string name="album_bottom_sheet_add_to_queue">Sıraya ekle</string>
+    <string name="album_bottom_sheet_download_all">Tümünü indir</string>
+    <string name="album_bottom_sheet_go_to_artist">Sanatçıya git</string>
+    <string name="album_bottom_sheet_instant_mix">Anında karışım</string>
+    <string name="album_bottom_sheet_play_next">Sıradakini çal</string>
+    <string name="album_bottom_sheet_remove_all">Tümünü kaldır</string>
+    <string name="album_bottom_sheet_share">Paylaş</string>
+    <string name="album_bottom_sheet_shuffle">Karıştır</string>
+    <string name="album_catalogue_title">Albümler</string>
+    <string name="album_catalogue_title_expanded">Albümleri görüntüle</string>
+    <string name="album_error_retrieving_artist">Sanatçı getirilirken hata oluştu</string>
+    <string name="album_list_page_downloaded">İndirilen albümler</string>
+    <string name="album_list_page_most_played">En çok çalınan albümler</string>
+    <string name="album_list_page_new_releases">Yeni çıkanlar</string>
+    <string name="album_list_page_recently_added">Yakın zamanda eklenen albümler</string>
+    <string name="album_list_page_recently_played">Yakın zamanda çalınan albümler</string>
+    <string name="album_list_page_starred">Yıldızlı albümler</string>
+    <string name="album_list_page_title">Albümler</string>
+    <string name="album_page_play_button">Çal</string>
+    <string name="album_page_release_date_label">%1$s tarihinde yayınlandı</string>
+    <string name="album_page_release_dates_label">%1$s tarihinde yayınlandı, orijinali %2$s</string>
+    <string name="album_page_shuffle_button">Karıştır</string>
+    <string name="album_page_tracks_count_and_duration">%1$d parça  •  %2$d dakika</string>
+</resources>

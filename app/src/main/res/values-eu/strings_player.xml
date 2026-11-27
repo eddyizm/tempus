@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="playback_speed_decrease_button_content_description">Erreprodukzio-abiadura jaitsi</string>
+    <string name="playback_speed_dialog_negative_button">Utzi</string>
+    <string name="playback_speed_dialog_reset_button">Berrezarri</string>
+    <string name="playback_speed_dialog_title">Erreprodukzio-abiadura</string>
+    <string name="playback_speed_increase_button_content_description">Erreprodukzio-abiadura igo</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Eskuzko tonua jaitsi</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Eskuzko tonua igo</string>
+    <string name="playback_speed_manual_pitch_switch_title">Tonu eskuzkoa</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_pitch_switch_title">Tonua mantendu</string>
+    <string name="player_lyrics_download_content_description">Letra deskargatu lineaz kanpo entzuteko</string>
+    <string name="player_lyrics_download_failure">Letra ez dago deskargatzeko erabilgarri.</string>
+    <string name="player_lyrics_download_success">Letra gorde da lineaz kanpo entzuteko.</string>
+    <string name="player_lyrics_downloaded_content_description">Letra deskargatuta dago lineaz kanpo entzuteko</string>
+    <string name="player_overflow_menu_add_to_playlist">Zerrendara gehitu</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_all_downloaded">Abesti guztiak deskargatuta daude dagoeneko</string>
+    <string name="player_queue_clear">Garbitu</string>
+    <string name="player_queue_download_all">Denak deskargatu</string>
+    <string name="player_queue_downloaded">Deskargatuak</string>
+    <plurals name="player_queue_duration_hours">
+        <item quantity="one">%d ordu</item>
+        <item quantity="other">%d ordu</item>
+    </plurals>
+    <plurals name="player_queue_duration_minutes">
+        <item quantity="one">%d minutu</item>
+        <item quantity="other">%d minutu</item>
+    </plurals>
+    <plurals name="player_queue_duration_seconds">
+        <item quantity="one">%d segundo</item>
+        <item quantity="other">%d segundo</item>
+    </plurals>
+    <string name="player_queue_empty">Ilara hutsik dago</string>
+    <string name="player_queue_load_queue">Ilara kargatu</string>
+    <string name="player_queue_loaded">Ilara kargatu da</string>
+    <string name="player_queue_no_saved_queue">Ez da gordetako ilararik aurkitu</string>
+    <string name="player_queue_pause">Pausatu</string>
+    <string name="player_queue_play">Erreproduzitu</string>
+    <string name="player_queue_playing_next">Hurrengoak</string>
+    <string name="player_queue_remove">Ilaratik kendu</string>
+    <string name="player_queue_reorder">Berrordenatu</string>
+    <string name="player_queue_save_to_playlist">Ilara zerrenda gisa gorde</string>
+    <string name="player_queue_shuffle_upcoming">Hurrengoak nahastu</string>
+    <plurals name="player_queue_song_count">
+        <item quantity="one">%d abesti</item>
+        <item quantity="other">%d abesti</item>
+    </plurals>
+    <string name="player_queue_starred">Gogokoak</string>
+    <string name="player_transcoding">Transkodetzen</string>
+    <string name="player_unknown_format">Formatu ezezaguna</string>
+</resources>

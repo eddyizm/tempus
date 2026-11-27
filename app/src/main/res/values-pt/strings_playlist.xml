@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_catalogue_title">Catálogo de Playlists</string>
+    <string name="playlist_catalogue_title_expanded">Navegar pelas Playlists</string>
+    <string name="playlist_chooser_dialog_cancel_button">Cancelar</string>
+    <string name="playlist_chooser_dialog_create_button">Criar</string>
+    <string name="playlist_chooser_dialog_empty">Nenhuma playlist criada</string>
+    <string name="playlist_chooser_dialog_title">Adicionar a uma playlist</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Falha ao adicionar uma playlist de reprodução</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Ativar isso torna a playlist pública. Deixá-lo como está não altera a visibilidade da playlist.</string>
+    <string name="playlist_counted_tracks">%1$d faixas •  %2$s</string>
+    <string name="playlist_details_dialog_title">Detalhes da playlist</string>
+    <string name="playlist_duration">Duração  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_save_empty">Uma playlist precisa manter pelo menos uma faixa</string>
+    <string name="playlist_editor_dialog_hint_name">Nome da playlist</string>
+    <string name="playlist_editor_dialog_negative_button">Cancelar</string>
+    <string name="playlist_editor_dialog_neutral_button">Excluir</string>
+    <string name="playlist_editor_dialog_positive_button">Salvar</string>
+    <string name="playlist_editor_dialog_title">Editar playlist</string>
+    <string name="playlist_editor_drag_track">Arraste para reordenar</string>
+    <string name="playlist_editor_hint">Arraste a alça para reordenar e toque na lixeira para remover. Nada será enviado até você salvar.</string>
+    <string name="playlist_editor_load_failure">Não foi possível carregar a playlist</string>
+    <string name="playlist_editor_remove_track">Remover faixa</string>
+    <string name="playlist_editor_removed_track">Removida da lista</string>
+    <string name="playlist_page_play_button">Reproduzir</string>
+    <string name="playlist_page_shuffle_button">Aleatório</string>
+    <string name="playlist_song_count">Playlist  •  %1$d músicas</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Baixando %d faixa</item>
+        <item quantity="other">Baixando %d faixas</item>
+    </plurals>
+</resources>

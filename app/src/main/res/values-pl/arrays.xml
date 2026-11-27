@@ -209,18 +209,6 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Nie transkoduj</item>
-        <item>Ustawienia serwera</item>
-        <item>Format transkodowania Wi-FI</item>
-        <item>Format transkodowania sieci komórkowej</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
     <string-array name="song_preload_buffer_titles">
         <item>5 sekund</item>
@@ -274,34 +262,6 @@
         <item>ORDER_BY_BOTH</item>
     </string-array>
     
-    <string-array name="skip_min_star_rating_titles">
-        <item>Minimum 0 gwiazdek</item>
-        <item>Minimum 1 gwiazdka</item>
-        <item>Minimum 2 gwiazdki</item>
-        <item>Minimum 3 gwiazdki</item>
-        <item>Minimum 4 gwiazdki</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3"</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
     
     <string-array name="tile_size_titles">
         <item>Bardzo mały</item>

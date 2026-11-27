@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Continua a les %1$s</string>
+    <string name="home_option_reorganize">Reorganitza</string>
+    <string name="home_rearrangement_dialog_negative_button">Cancel·la</string>
+    <string name="home_rearrangement_dialog_neutral_button">Reinicialitza</string>
+    <string name="home_rearrangement_dialog_positive_button">Desa</string>
+    <string name="home_rearrangement_dialog_subtitle">Tingueu en compte que, perquè els canvis tinguin efecte, cal reiniciar l\'aplicació.</string>
+    <string name="home_rearrangement_dialog_title">Reorganització de l\'inici</string>
+    <string name="home_section_music">Música</string>
+    <string name="home_section_podcast">Pòdcasts</string>
+    <string name="home_section_radio">Ràdio</string>
+    <string name="home_subtitle_best_of">Les millors cançons dels vostres artistes preferits</string>
+    <string name="home_subtitle_made_for_you">Comenceu una mescla a partir d\'una cançó que us ha agradat</string>
+    <string name="home_subtitle_new_internet_radio_station">Afegeix una ràdio nova</string>
+    <string name="home_subtitle_new_podcast_channel">Afegeix un canal de pòdcasts nou</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">Se sincronitzarà %d àlbum</item>
+        <item quantity="other">Se sincronitzaran %d àlbums</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Els àlbums marcats amb una estrella estaran disponibles fora de línia</string>
+    <string name="home_sync_starred_albums_title">Sincronitza els àlbums amb estrelles</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">Se sincronitzarà %d artista</item>
+        <item quantity="other">Se sincronitzaran %d artistes</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">Teniu artistes amb estrella amb música sense baixar</string>
+    <string name="home_sync_starred_artists_title">Sincronització dels artistes amb estrelles</string>
+    <string name="home_sync_starred_cancel">Cancel·la</string>
+    <string name="home_sync_starred_download">Baixades</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">Cal sincronitzar %d cançó</item>
+        <item quantity="other">Cal sincronitzar %d cançons</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Baixar aquestes pistes pot suposar un ús de dades important</string>
+    <string name="home_sync_starred_title">Sembla que hi ha pistes amb estrelles pendents de sincronitzar</string>
+    <string name="home_title_best_of">El millor de</string>
+    <string name="home_title_continue_listening">Continua escoltant</string>
+    <string name="home_title_discovery">Descobriment</string>
+    <string name="home_title_discovery_shuffle_all_button">Reprodueix-ho tot aleatòriament</string>
+    <string name="home_title_flashback">Viatge al passat</string>
+    <string name="home_title_internet_radio_station">Emissores de ràdio per Internet</string>
+    <string name="home_title_last_month">El mes passat</string>
+    <string name="home_title_last_played">Darreres reproduccions</string>
+    <string name="home_title_last_played_see_all_button">Visualitza-ho tot</string>
+    <string name="home_title_last_week">La setmana passada</string>
+    <string name="home_title_last_year">L\'any passat</string>
+    <string name="home_title_made_for_you">Fet a mida</string>
+    <string name="home_title_most_played">Més reproduccions</string>
+    <string name="home_title_most_played_see_all_button">Visualitza-ho tot</string>
+    <string name="home_title_new_releases">Llançaments nous</string>
+    <string name="home_title_newest_podcasts">Pòdcasts més recents</string>
+    <string name="home_title_pinned_playlists">Llistes de reproducció</string>
+    <string name="home_title_podcast_channels">Canals</string>
+    <string name="home_title_podcast_channels_see_all_button">Visualitza-ho tot</string>
+    <string name="home_title_radio_station">Emissores de ràdio</string>
+    <string name="home_title_recently_added">Addicions recents</string>
+    <string name="home_title_recently_added_see_all_button">Visualitza-ho tot</string>
+    <string name="home_title_shares">Elements compartits</string>
+    <string name="home_title_starred_albums">★ Àlbums amb estrelles</string>
+    <string name="home_title_starred_albums_see_all_button">Visualitza-ho tot</string>
+    <string name="home_title_starred_artists">★ Artistes amb estrelles</string>
+    <string name="home_title_starred_artists_see_all_button">Visualitza-ho tot</string>
+    <string name="home_title_starred_tracks">★ Pistes amb estrelles</string>
+    <string name="home_title_starred_tracks_see_all_button">Visualitza-ho tot</string>
+    <string name="home_title_top_songs">Les vostres cançons més escoltades</string>
+</resources>

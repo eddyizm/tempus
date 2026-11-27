@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Zu Warteschlange hinzufügen</string>
+    <string name="podcast_bottom_sheet_delete">Löschen</string>
+    <string name="podcast_bottom_sheet_download">Herunterladen</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Zum Kanal</string>
+    <string name="podcast_bottom_sheet_play_next">Als nächstes spielen</string>
+    <string name="podcast_bottom_sheet_remove">Entfernen</string>
+    <string name="podcast_channel_catalogue_title">Kanäle</string>
+    <string name="podcast_channel_catalogue_title_expanded">Kanäle durchsuchen</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS-Adresse</string>
+    <string name="podcast_channel_editor_dialog_title">Podcast-Kanal</string>
+    <string name="podcast_channel_not_supported_snackbar">Der Server unterstützt keine Podcasts.</string>
+    <string name="podcast_channel_page_title_description_section">Beschreibung</string>
+    <string name="podcast_channel_page_title_episode_section">Episoden</string>
+    <string name="podcast_episode_download_request_snackbar">Anfrage wurde an den Server gesendet.</string>
+    <string name="podcast_info_empty_button">Hier tippen, um Bereich auszublenden (Neustart der App nötig)</string>
+    <string name="podcast_info_empty_subtitle">Sobald du Podcasts hinzufügst, findest du sie hier</string>
+    <string name="podcast_info_empty_title">Keine Podcasts gefunden!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">Kein Datum</string>
+    <string name="podcast_release_unknown_duration">Unbekannte Dauer</string>
+</resources>

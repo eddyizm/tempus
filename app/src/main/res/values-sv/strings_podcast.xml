@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Lägg till i kön</string>
+    <string name="podcast_bottom_sheet_delete">Radera</string>
+    <string name="podcast_bottom_sheet_download">Hämta</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Gå till kanal</string>
+    <string name="podcast_bottom_sheet_play_next">Spela härnäst</string>
+    <string name="podcast_bottom_sheet_remove">Ta bort</string>
+    <string name="podcast_channel_catalogue_title">Kanaler</string>
+    <string name="podcast_channel_catalogue_title_expanded">Bläddra bland kanaler</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS-adress</string>
+    <string name="podcast_channel_editor_dialog_title">Poddkanal</string>
+    <string name="podcast_channel_not_supported_snackbar">Den här servern stöder inte poddar.</string>
+    <string name="podcast_channel_page_title_description_section">Beskrivning</string>
+    <string name="podcast_channel_page_title_episode_section">Avsnitt</string>
+    <string name="podcast_episode_download_request_snackbar">Din begäran har skickats till servern</string>
+    <string name="podcast_info_empty_button">Tryck för att dölja sektionen\nÄndringen syns efter omstart</string>
+    <string name="podcast_info_empty_subtitle">När du har lagt till en kanal hittar du den här</string>
+    <string name="podcast_info_empty_title">Inga poddar hittades!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">Inget datum</string>
+    <string name="podcast_release_unknown_duration">Okänd speltid</string>
+</resources>

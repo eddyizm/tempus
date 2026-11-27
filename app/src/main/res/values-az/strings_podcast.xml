@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Növbəyə əlavə et</string>
+    <string name="podcast_bottom_sheet_delete">Sil</string>
+    <string name="podcast_bottom_sheet_download">Yüklə</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Kanala keç</string>
+    <string name="podcast_bottom_sheet_play_next">Növbəti səsləndir</string>
+    <string name="podcast_bottom_sheet_remove">Sil</string>
+    <string name="podcast_channel_catalogue_title">Kanallar</string>
+    <string name="podcast_channel_catalogue_title_expanded">Kanallara baxış</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS URL ünvanı</string>
+    <string name="podcast_channel_editor_dialog_title">Podkast kanalı</string>
+    <string name="podcast_channel_not_supported_snackbar">Bu server podkastları dəstəkləmir.</string>
+    <string name="podcast_channel_page_title_description_section">Təsvir</string>
+    <string name="podcast_channel_page_title_episode_section">Epizodlar</string>
+    <string name="podcast_episode_download_request_snackbar">Sorğunuz serverə göndərildi</string>
+    <string name="podcast_info_empty_button">Bölməni gizlətmək üçün toxunun\nDəyişiklik yenidən başladıqdan sonra görünəcək</string>
+    <string name="podcast_info_empty_subtitle">Kanal əlavə etdikdən sonra onu burada görəcəksiniz</string>
+    <string name="podcast_info_empty_title">Podkast tapılmadı!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">Tarix yoxdur</string>
+    <string name="podcast_release_unknown_duration">Naməlum müddət</string>
+</resources>

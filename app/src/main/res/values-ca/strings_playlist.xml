@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">S\'ha afegit la llista de reproducció a la cua</string>
+    <string name="playlist_catalogue_title">Catàleg de llistes de reproducció</string>
+    <string name="playlist_catalogue_title_expanded">Exploració de llistes de reproducció</string>
+    <string name="playlist_chooser_dialog_cancel_button">Cancel·la</string>
+    <string name="playlist_chooser_dialog_create_button">Crea</string>
+    <string name="playlist_chooser_dialog_empty">No s\'ha creat cap llista de reproducció</string>
+    <string name="playlist_chooser_dialog_title">Addició a una llista de reproducció</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">No s\'han pogut afegir les cançons a la llista de reproducció</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">No s\'ha pogut suprimir la cançó de la llista de reproducció</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">S\'ha suprimit la cançó de la llista de reproducció</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">En activar això, la llista de reproducció es fa pública. Si ho deixes tal qual, no canvia la visibilitat de la llista de reproducció.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Marca la llista de reproducció com a pública</string>
+    <string name="playlist_counted_tracks">%1$d pistes •  %2$s</string>
+    <string name="playlist_details_dialog_title">Detalls de la llista de reproducció</string>
+    <string name="playlist_duration">Durada  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">No s\'ha pogut suprimir la llista de reproducció</string>
+    <string name="playlist_editor_dialog_action_delete_success">S\'ha suprimit la llista de reproducció</string>
+    <string name="playlist_editor_dialog_action_save_empty">Una llista de reproducció ha de tenir almenys una pista</string>
+    <string name="playlist_editor_dialog_action_save_failure">No s\'ha pogut desar la llista de reproducció</string>
+    <string name="playlist_editor_dialog_action_save_success">S\'ha desat la llista de reproducció</string>
+    <string name="playlist_editor_dialog_hint_name">Nom de la llista de reproducció</string>
+    <string name="playlist_editor_dialog_negative_button">Cancel·la</string>
+    <string name="playlist_editor_dialog_neutral_button">Suprimeix</string>
+    <string name="playlist_editor_dialog_positive_button">Desa</string>
+    <string name="playlist_editor_dialog_title">Edició de la llista de reproducció</string>
+    <string name="playlist_editor_drag_track">Arrossega per reordenar</string>
+    <string name="playlist_editor_hint">Arrossega l\'ansa per reordenar i toca la paperera per suprimir. No s\'enviarà res fins que desis.</string>
+    <string name="playlist_editor_load_failure">No s\'ha pogut carregar la llista de reproducció</string>
+    <string name="playlist_editor_remove_track">Suprimeix la pista</string>
+    <string name="playlist_editor_removed_track">Suprimida de la llista</string>
+    <string name="playlist_error_not_found_message">No s\'ha trobat aquesta llista de reproducció al servidor. Se suprimirà de la memòria cau local.</string>
+    <string name="playlist_error_not_found_title">No s\'ha trobat la llista de reproducció</string>
+    <string name="playlist_error_not_found_toast">S\'ha suprimit la llista de reproducció de la memòria cau</string>
+    <string name="playlist_page_play_button">Reprodueix</string>
+    <string name="playlist_page_shuffle_button">Reprodueix aleatòriament</string>
+    <string name="playlist_song_count">Llista de reproducció  •  %1$d cançons</string>
+    <string name="playlist_sort_pinned">Preferits</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">S\'està baixant %d pista</item>
+        <item quantity="other">S\'estan baixant %d pistes</item>
+    </plurals>
+</resources>

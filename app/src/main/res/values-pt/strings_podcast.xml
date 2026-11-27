@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Adicionar à fila</string>
+    <string name="podcast_bottom_sheet_delete">Excluir</string>
+    <string name="podcast_bottom_sheet_download">Download</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Ir para o canal</string>
+    <string name="podcast_bottom_sheet_play_next">Tocar em seguida</string>
+    <string name="podcast_bottom_sheet_remove">Remover</string>
+    <string name="podcast_channel_catalogue_title">Canais</string>
+    <string name="podcast_channel_catalogue_title_expanded">Navegar pelos Canais</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">URL do Feed RSS</string>
+    <string name="podcast_channel_editor_dialog_title">Canal de Podcast</string>
+    <string name="podcast_channel_page_title_description_section">Descrição</string>
+    <string name="podcast_channel_page_title_episode_section">Episódios</string>
+    <string name="podcast_episode_download_request_snackbar">Sua solicitação foi enviada ao servidor</string>
+    <string name="podcast_info_empty_button">Clique para ocultar a seção\nOs efeitos serão visíveis ao reiniciar</string>
+    <string name="podcast_info_empty_subtitle">Ao adicionar um canal, você o encontrará aqui</string>
+    <string name="podcast_info_empty_title">Nenhum podcast encontrado!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+</resources>

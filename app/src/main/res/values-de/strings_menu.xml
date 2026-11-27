@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_shortcut">An App-Verknüpfungen anheften</string>
+    <string name="menu_add_to_playlist_button">Zu Wiedergabeliste hinzufügen</string>
+    <string name="menu_add_to_queue_button">Zu Warteschlange hinzufügen</string>
+    <string name="menu_download_all_button">Alle herunterladen</string>
+    <string name="menu_download_label">Downloads</string>
+    <string name="menu_edit_playlist_button">Wiedergabeliste bearbeiten</string>
+    <string name="menu_edit_playlist_details_button">Details bearbeiten</string>
+    <string name="menu_filter_all">Alle</string>
+    <string name="menu_filter_download">Heruntergeladen</string>
+    <string name="menu_go_to_playlist_button">Wiedergabe</string>
+    <string name="menu_group_by_album">Album</string>
+    <string name="menu_group_by_artist">Interpret</string>
+    <string name="menu_group_by_genre">Genre</string>
+    <string name="menu_group_by_playlist">Wiedergabeliste</string>
+    <string name="menu_group_by_track">Titel</string>
+    <string name="menu_group_by_year">Jahr</string>
+    <string name="menu_home_label">Start</string>
+    <string name="menu_keep_synced_button">Synchronisiert halten</string>
+    <string name="menu_last_month_name">Letzter Monat</string>
+    <string name="menu_last_week_name">Letzte Woche</string>
+    <string name="menu_last_year_name">Letztes Jahr</string>
+    <string name="menu_library_label">Mediathek</string>
+    <string name="menu_pin_button">Zur Startseite hinzufügen</string>
+    <string name="menu_play_shuffle_button">Zufällig abspielen</string>
+    <string name="menu_rate_album">Album bewerten</string>
+    <string name="menu_remove_shortcut">Von App-Verknüpfungen lösen</string>
+    <string name="menu_search_button">Suche</string>
+    <string name="menu_settings_button">Einstellungen</string>
+    <string name="menu_sort_album_count">Albenanzahl</string>
+    <string name="menu_sort_artist">Interpret</string>
+    <string name="menu_sort_date_created">Erstellungsdatum</string>
+    <string name="menu_sort_least_recently_starred">Älteste Favoriten</string>
+    <string name="menu_sort_most_played">Oft gespielt</string>
+    <string name="menu_sort_most_recently_starred">Neuste Favoriten</string>
+    <string name="menu_sort_name">Name</string>
+    <string name="menu_sort_random">Zufall</string>
+    <string name="menu_sort_recently_added">Kürzlich hinzugefügt</string>
+    <string name="menu_sort_recently_played">Kürzlich gespielt</string>
+    <string name="menu_sort_song_count">Titelanzahl</string>
+    <string name="menu_sort_year">Jahr</string>
+    <string name="menu_unpin_button">Von Startseite entfernen</string>
+</resources>

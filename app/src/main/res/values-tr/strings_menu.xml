@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Çalma listesine ekle</string>
+    <string name="menu_download_all_button">Tümünü indir</string>
+    <string name="menu_download_label">İndir</string>
+    <string name="menu_edit_playlist_details_button">Ayrıntıları düzenle</string>
+    <string name="menu_filter_all">Tümü</string>
+    <string name="menu_filter_download">İndirilenler</string>
+    <string name="menu_group_by_album">Albüm</string>
+    <string name="menu_group_by_artist">Sanatçı</string>
+    <string name="menu_group_by_genre">Tür</string>
+    <string name="menu_group_by_track">Parça</string>
+    <string name="menu_group_by_year">Yıl</string>
+    <string name="menu_home_label">Ana sayfa</string>
+    <string name="menu_keep_synced_button">Eşitlemeyi sürdür</string>
+    <string name="menu_last_month_name">Geçen ay</string>
+    <string name="menu_last_week_name">Geçen hafta</string>
+    <string name="menu_last_year_name">Geçen yıl</string>
+    <string name="menu_library_label">Kütüphane</string>
+    <string name="menu_pin_button">Ana ekrana ekle</string>
+    <string name="menu_rate_album">Albümü oyla</string>
+    <string name="menu_search_button">Ara</string>
+    <string name="menu_settings_button">Ayarlar</string>
+    <string name="menu_sort_artist">Sanatçı</string>
+    <string name="menu_sort_least_recently_starred">En eski yıldızlananlar</string>
+    <string name="menu_sort_most_played">En çok çalınanlar</string>
+    <string name="menu_sort_most_recently_starred">En son yıldızlananlar</string>
+    <string name="menu_sort_name">Ad</string>
+    <string name="menu_sort_random">Rastgele</string>
+    <string name="menu_sort_recently_added">Son eklenenler</string>
+    <string name="menu_sort_recently_played">Son çalınanlar</string>
+    <string name="menu_sort_year">Yıl</string>
+    <string name="menu_unpin_button">Ana ekrandan kaldır</string>
+</resources>

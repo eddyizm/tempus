@@ -209,31 +209,5 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>不转码</item>
-        <item>服务器设置</item>
-        <item>Wi-Fi转码设置</item>
-        <item>移动数据转码设置</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>不筛选评分</item>
-        <item>1 星及以上</item>
-        <item>2 星及以上</item>
-        <item>3 星及以上</item>
-        <item>4 星及以上</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
 </resources>

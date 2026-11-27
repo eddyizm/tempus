@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">Gestionarea radioului internet nu este acceptată de acest server.</string>
+    <string name="radio_editor_dialog_added">Stație radio adăugată</string>
+    <string name="radio_editor_dialog_hint_homepage_url">URL Pagină de Start Radio</string>
+    <string name="radio_editor_dialog_hint_name">Nume Radio</string>
+    <string name="radio_editor_dialog_hint_stream_url">URL Flux Radio</string>
+    <string name="radio_editor_dialog_negative_button">Anulati</string>
+    <string name="radio_editor_dialog_neutral_button">Ștergeţi</string>
+    <string name="radio_editor_dialog_positive_button">Salvaţi</string>
+    <string name="radio_editor_dialog_title">Stație Radio Internet</string>
+    <string name="radio_editor_dialog_updated">Stație radio actualizată</string>
+    <string name="radio_station_info_empty_button">Faceți clic pentru a ascunde secțiunea\nEfectele vor fi vizibile la restart</string>
+    <string name="radio_station_info_empty_subtitle">Odată ce adăugați o stație radio, o veți găsi aici</string>
+    <string name="radio_station_info_empty_title">Nu au fost găsite stații!</string>
+</resources>

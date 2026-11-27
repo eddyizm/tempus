@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">Zerbitzari honek ez du interneteko irratien kudeaketa onartzen.</string>
+    <string name="radio_editor_dialog_added">Irrati-uhina gehitu da</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">Azalaren URLa (aukerakoa)</string>
+    <string name="radio_editor_dialog_hint_homepage_url">Irratiaren webgunearen URLa</string>
+    <string name="radio_editor_dialog_hint_name">Irratiaren izena</string>
+    <string name="radio_editor_dialog_hint_stream_url">Irratiaren transmisio-URLa</string>
+    <string name="radio_editor_dialog_negative_button">Utzi</string>
+    <string name="radio_editor_dialog_neutral_button">Ezabatu</string>
+    <string name="radio_editor_dialog_positive_button">Gorde</string>
+    <string name="radio_editor_dialog_title">Interneteko irrati-uhina</string>
+    <string name="radio_editor_dialog_updated">Irrati-uhina eguneratu da</string>
+    <string name="radio_editor_search_directory">Direktorioan bilatu</string>
+    <string name="radio_editor_source_label">Non gorde</string>
+    <string name="radio_editor_source_local">Lokala</string>
+    <string name="radio_editor_source_server">Zerbitzaria</string>
+    <string name="radio_local_badge">LOKALA</string>
+    <string name="radio_search_add">Gehitu</string>
+    <string name="radio_search_button">Bilatu</string>
+    <string name="radio_search_country_hint">Herrialdea</string>
+    <string name="radio_search_empty_query">Idatzi irratiaren izena</string>
+    <string name="radio_search_error">Bilaketak huts egin du: %s</string>
+    <string name="radio_search_hint">Irratiaren izena</string>
+    <string name="radio_search_no_results">Ez da irratirik aurkitu</string>
+    <string name="radio_search_use">Erabili</string>
+    <string name="radio_station_info_empty_button">Sakatu atala ezkutatzeko\nEfektuak berrabiaraztean ikusiko dira</string>
+    <string name="radio_station_info_empty_subtitle">Irrati-uhin bat gehitzen duzunean, hemen aurkituko duzu</string>
+    <string name="radio_station_info_empty_title">Ez da irrati-uhinik aurkitu!</string>
+</resources>

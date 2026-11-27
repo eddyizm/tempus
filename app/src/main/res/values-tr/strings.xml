@@ -1,76 +1,46 @@
 <resources>
+
+    <!-- Activity -->
     <string name="activity_battery_optimizations_conclusion">Sorun yaşarsanız https://dontkillmyapp.com adresini ziyaret edin. Uygulamanın performansını etkileyebilecek güç tasarrufu özelliklerinin nasıl devre dışı bırakılacağına dair ayrıntılı talimatlar sağlar.</string>
     <string name="activity_battery_optimizations_summary">Ekran kapalıyken medya oynatma için lütfen pil optimizasyonlarını devre dışı bırakın.</string>
     <string name="activity_battery_optimizations_title">Pil optimizasyonu</string>
     <string name="activity_info_offline_mode">Çevrimdışı mod</string>
-    <string name="album_bottom_sheet_add_to_playlist">Çalma listesine ekle</string>
-    <string name="album_bottom_sheet_add_to_queue">Sıraya ekle</string>
-    <string name="album_bottom_sheet_download_all">Tümünü indir</string>
-    <string name="album_bottom_sheet_go_to_artist">Sanatçıya git</string>
-    <string name="album_bottom_sheet_instant_mix">Anında karışım</string>
-    <string name="album_bottom_sheet_play_next">Sıradakini çal</string>
-    <string name="album_bottom_sheet_remove_all">Tümünü kaldır</string>
-    <string name="album_bottom_sheet_share">Paylaş</string>
-    <string name="album_bottom_sheet_shuffle">Karıştır</string>
-    <string name="album_catalogue_title">Albümler</string>
-    <string name="album_catalogue_title_expanded">Albümleri görüntüle</string>
-    <string name="album_error_retrieving_artist">Sanatçı getirilirken hata oluştu</string>
-    <string name="album_list_page_downloaded">İndirilen albümler</string>
-    <string name="album_list_page_most_played">En çok çalınan albümler</string>
-    <string name="album_list_page_new_releases">Yeni çıkanlar</string>
-    <string name="album_list_page_recently_added">Yakın zamanda eklenen albümler</string>
-    <string name="album_list_page_recently_played">Yakın zamanda çalınan albümler</string>
-    <string name="album_list_page_starred">Yıldızlı albümler</string>
-    <string name="album_list_page_title">Albümler</string>
-    <string name="album_page_extra_info_button">Buna benzer daha fazla</string>
-    <string name="album_page_play_button">Çal</string>
-    <string name="album_page_release_date_label">%1$s tarihinde yayınlandı</string>
-    <string name="album_page_release_dates_label">%1$s tarihinde yayınlandı, orijinali %2$s</string>
-    <string name="album_page_shuffle_button">Karıştır</string>
-    <string name="album_page_tracks_count_and_duration">%1$d parça  •  %2$d dakika</string>
+
+    <!-- App -->
     <string name="app_name">Tempus</string>
-    <string name="artist_adapter_radio_station_starting">Aranıyor…</string>
-    <string name="artist_bottom_sheet_instant_mix">Anında karışım</string>
-    <string name="artist_bottom_sheet_shuffle">Karıştır</string>
-    <string name="artist_catalogue_title">Sanatçılar</string>
-    <string name="artist_catalogue_title_expanded">Sanatçılara göz at</string>
-    <string name="artist_error_retrieving_radio">Sanatçının radyosu alınırken hata oluştu</string>
-    <string name="artist_error_retrieving_tracks">Sanatçının parçaları alınırken hata oluştu</string>
-    <string name="artist_list_page_downloaded">İndirilen sanatçılar</string>
-    <string name="artist_list_page_starred">Yıldızlı sanatçılar</string>
-    <string name="artist_list_page_title">Sanatçılar</string>
-    <string name="artist_page_radio_button">Radyo</string>
-    <string name="artist_page_shuffle_button">Karıştır</string>
-    <string name="artist_page_switch_layout_button">Düzeni değiştir</string>
-    <string name="artist_page_title_album_more_like_this_button">Buna benzer daha fazla</string>
-    <string name="artist_page_title_album_section">Albümler</string>
-    <string name="artist_page_title_biography_more_button">Daha fazla</string>
-    <string name="artist_page_title_biography_section">Biyografi</string>
-    <string name="artist_page_title_most_streamed_song_section">En Çok Dinlenen Şarkılar</string>
-    <string name="artist_page_title_most_streamed_song_see_all_button">Tümünü gör</string>
+
+    <!-- Battery Optimization -->
     <string name="battery_optimization_negative_button">Yok say</string>
     <string name="battery_optimization_neutral_button">Bir daha sorma</string>
     <string name="battery_optimization_positive_button">Devre dışı bırak</string>
+
+    <!-- Connection Alert Dialog -->
     <string name="connection_alert_dialog_negative_button">İptal</string>
     <string name="connection_alert_dialog_neutral_button">Veri tasarrufunu etkinleştir</string>
     <string name="connection_alert_dialog_positive_button">Tamam</string>
     <string name="connection_alert_dialog_summary">Wi-Fi dışındaki bağlantılarda Subsonic sunucusuna erişim kısıtlandı. Bu uyarı penceresinin tekrar görünmemesi için, uygulama ayarlarından bağlantı denetimini devre dışı bırakın.</string>
     <string name="connection_alert_dialog_title">Wi-Fi bağlı değil</string>
-    <string name="content_description_shuffle_button">Karıştır</string>
+
+    <!-- Delete Download Storage Dialog -->
     <string name="delete_download_storage_dialog_negative_button">İptal</string>
     <string name="delete_download_storage_dialog_positive_button">Devam ettir</string>
     <string name="delete_download_storage_dialog_summary">Lütfen dikkat edin, bu işleme devam etmek tüm sunuculardan indirilen kayıtlı öğelerin kalıcı olarak silinmesine yol açacaktır.</string>
     <string name="delete_download_storage_dialog_title">Kayıtlı öğeleri sil</string>
+
+    <!-- Description -->
     <string name="description_empty_title">Açıklama yok</string>
+
+    <!-- Disc -->
     <string name="disc_titlefull">Disk %1$s - %2$s</string>
     <string name="disc_titleless">Disk %1$s</string>
+
+    <!-- Download -->
     <string name="download_directory_dialog_negative_button">İptal</string>
     <string name="download_directory_dialog_positive_button">İndir</string>
     <string name="download_directory_dialog_summary">Bu klasördeki tüm parçalar indirilecektir. Alt klasörlerde bulunan parçalar indirilmeyecektir.</string>
     <string name="download_directory_dialog_title">Parçaları indir</string>
     <string name="download_info_empty_subtitle">Bir şarkı indirdiğinde burada görünecek</string>
     <string name="download_info_empty_title">Henüz indirme yok!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s öğe</string>
     <string name="download_item_single_subtitle_formatter">%1$s öğe</string>
     <string name="download_shuffle_all_subtitle">Tümünü karıştır</string>
     <string name="download_storage_dialog_sub_summary">Değişikliklerin geçerli olması için uygulamayı yeniden başlatın.</string>
@@ -79,79 +49,49 @@
     <string name="download_storage_external_dialog_positive_button">Harici</string>
     <string name="download_storage_internal_dialog_negative_button">Dahili</string>
     <string name="download_title_section">İndirilenler</string>
+
+    <!-- Downloaded Bottom Sheet -->
     <string name="downloaded_bottom_sheet_add_to_queue">Sıraya ekle</string>
     <string name="downloaded_bottom_sheet_play_next">Sonra çal</string>
     <string name="downloaded_bottom_sheet_remove">Kaldır</string>
     <string name="downloaded_bottom_sheet_remove_all">Tümünü kaldır</string>
     <string name="downloaded_bottom_sheet_shuffle">Karıştır</string>
+
+    <!-- Empty -->
     <string name="empty_string" />
+
+    <!-- Error -->
     <string name="error_required">Zorunlu</string>
-    <string name="error_server_prefix">http veya https öneki gerekli</string>
+
+    <!-- Exo -->
     <string name="exo_download_notification_channel_name">İndirilenler</string>
+
+    <!-- Filter -->
+    <string name="filter_artist">Sanatçıları filtrele</string>
     <string name="filter_info_selection">İki veya daha fazla filtre seçin</string>
     <string name="filter_title">Filtre</string>
-    <string name="filter_artist">Sanatçıları filtrele</string>
     <string name="filter_title_expanded">Türleri filtrele</string>
+
+    <!-- Generic List Page Count -->
     <string name="generic_list_page_count">(%1$d)</string>
     <string name="generic_list_page_count_unknown">(+%1$d)</string>
+
+    <!-- Genre Catalogue Title -->
     <string name="genre_catalogue_title">Tür Kataloğu</string>
     <string name="genre_catalogue_title_expanded">Türlere göz at</string>
+
+    <!-- Github Update Dialog -->
     <string name="github_update_dialog_negative_button">Bana sonra hatırlat</string>
     <string name="github_update_dialog_neutral_button">Destek ol</string>
     <string name="github_update_dialog_positive_button">Hemen indir</string>
     <string name="github_update_dialog_summary">Uygulamanın yeni bir sürümü Github’da mevcut.</string>
     <string name="github_update_dialog_title">Güncelleme mevcut</string>
-    <string name="home_rearrangement_dialog_negative_button">İptal</string>
-    <string name="home_rearrangement_dialog_neutral_button">Sıfırla</string>
-    <string name="home_rearrangement_dialog_positive_button">Kaydet</string>
-    <string name="home_rearrangement_dialog_title">Ana sayfayı düzenle</string>
-    <string name="home_rearrangement_dialog_subtitle">Yapılan değişikliklerin etkili olması için uygulamayı yeniden başlatmanız gerekir.</string>
-    <string name="home_section_music">Müzik</string>
-    <string name="home_section_podcast">Podcast</string>
-    <string name="home_section_radio">Radyo</string>
-    <string name="home_subtitle_best_of">Favori sanatçılarının en iyi şarkıları</string>
-    <string name="home_subtitle_made_for_you">Beğendiğin bir şarkıdan karışım başlat</string>
-    <string name="home_subtitle_new_internet_radio_station">Yeni radyo ekle</string>
-    <string name="home_subtitle_new_podcast_channel">Yeni podcast kanalı ekle</string>
-    <string name="home_sync_starred_cancel">İptal</string>
-    <string name="home_sync_starred_download">İndir</string>
-    <string name="home_sync_starred_subtitle">Bu parçaların indirilmesi önemli miktarda veri kullanabilir</string>
-    <string name="home_sync_starred_title">Eşitlenecek bazı yıldızlı parçalar var gibi görünüyor</string>
-    <string name="home_sync_starred_albums_subtitle">Yıldız ile işaretlenen albümler çevrimdışı kullanılabilir olacak</string>
-    <string name="home_title_best_of">En iyiler</string>
-    <string name="home_title_discovery">Keşfet</string>
-    <string name="home_title_continue_listening">Dinlemeye devam et</string>
-    <string name="home_continue_listening_resume_at">%1$s\'de devam et</string>
-    <string name="home_title_discovery_shuffle_all_button">Tümünü karıştır</string>
-    <string name="home_title_flashback">Geçmişe dönüş</string>
-    <string name="home_title_internet_radio_station">İnternet radyo istasyonları</string>
-    <string name="home_title_last_played">Son çalınanlar</string>
-    <string name="home_title_last_played_see_all_button">Tümünü gör</string>
-    <string name="home_title_last_week">Geçen hafta</string>
-    <string name="home_title_last_month">Geçen ay</string>
-    <string name="home_title_last_year">Geçen yıl</string>
-    <string name="home_title_made_for_you">Senin için</string>
-    <string name="home_title_most_played">En çok çalınanlar</string>
-    <string name="home_title_most_played_see_all_button">Tümünü gör</string>
-    <string name="home_title_new_releases">Yeni çıkışlar</string>
-    <string name="home_title_newest_podcasts">En yeni podcastler</string>
-    <string name="home_title_pinned_playlists">Çalma listeleri</string>
-    <string name="home_title_podcast_channels">Kanallar</string>
-    <string name="home_title_podcast_channels_see_all_button">Tümünü gör</string>
-    <string name="home_title_radio_station">Radyo istasyonları</string>
-    <string name="home_title_recently_added">Son eklenenler</string>
-    <string name="home_title_recently_added_see_all_button">Tümünü gör</string>
-    <string name="home_title_shares">Paylaşımlar</string>
-    <string name="home_title_starred_albums">★ Yıldızlı albümler</string>
-    <string name="home_title_starred_albums_see_all_button">Tümünü gör</string>
-    <string name="home_title_starred_artists">★ Yıldızlı sanatçılar</string>
-    <string name="home_title_starred_artists_see_all_button">Tümünü gör</string>
-    <string name="home_title_starred_tracks">★ Yıldızlı parçalar</string>
-    <string name="home_title_starred_tracks_see_all_button">Tümünü gör</string>
-    <string name="home_title_top_songs">En iyi şarkıların</string>
-    <string name="home_option_reorganize">Yeniden düzenle</string>
+
+    <!-- Label -->
     <string name="label_dot_separator" translatable="false">•</string>
     <string name="label_placeholder" translatable="false">--</string>
+
+    <!-- Library -->
     <string name="library_title_album">Albümler</string>
     <string name="library_title_album_see_all_button">Tümünü gör</string>
     <string name="library_title_artist">Sanatçılar</string>
@@ -161,196 +101,36 @@
     <string name="library_title_music_folder">Müzik klasörleri</string>
     <string name="library_title_playlist">Çalma listeleri</string>
     <string name="library_title_playlist_see_all_button">Tümünü gör</string>
+
+    <!-- Login -->
     <string name="login_empty">Sunucu eklenmedi</string>
     <string name="login_title">Subsonic sunucuları</string>
     <string name="login_title_expanded">Subsonic sunucuları</string>
+
+    <!-- Media -->
     <string name="media_route_menu_title">Yayınla</string>
-    <string name="menu_add_to_playlist_button">Çalma listesine ekle</string>
-    <string name="menu_download_all_button">Tümünü indir</string>
-    <string name="menu_rate_album">Albümü oyla</string>
-    <string name="menu_download_label">İndir</string>
-    <string name="menu_filter_all">Tümü</string>
-    <string name="menu_filter_download">İndirilenler</string>
-    <string name="menu_group_by_album">Albüm</string>
-    <string name="menu_group_by_artist">Sanatçı</string>
-    <string name="menu_group_by_genre">Tür</string>
-    <string name="menu_group_by_track">Parça</string>
-    <string name="menu_group_by_year">Yıl</string>
-    <string name="menu_home_label">Ana sayfa</string>
-    <string name="menu_last_week_name">Geçen hafta</string>
-    <string name="menu_last_month_name">Geçen ay</string>
-    <string name="menu_last_year_name">Geçen yıl</string>
-    <string name="menu_library_label">Kütüphane</string>
-    <string name="menu_search_button">Ara</string>
-    <string name="menu_settings_button">Ayarlar</string>
-    <string name="menu_sort_artist">Sanatçı</string>
-    <string name="menu_sort_name">Ad</string>
-    <string name="menu_sort_random">Rastgele</string>
-    <string name="menu_sort_recently_added">Son eklenenler</string>
-    <string name="menu_sort_recently_played">Son çalınanlar</string>
-    <string name="menu_sort_most_played">En çok çalınanlar</string>
-    <string name="menu_sort_most_recently_starred">En son yıldızlananlar</string>
-    <string name="menu_sort_least_recently_starred">En eski yıldızlananlar</string>
-    <string name="menu_pin_button">Ana ekrana ekle</string>
-    <string name="menu_unpin_button">Ana ekrandan kaldır</string>
-    <string name="menu_sort_year">Yıl</string>
-    <string name="player_playback_speed">%1$.2fx</string>
-    <string name="player_queue_clean_all_button">Çalma sırasını temizle</string>
-    <string name="player_queue_save_queue_success">Kayıtlı oynatma sırası</string>
-    <string name="player_server_priority">Sunucu önceliği</string>
-    <string name="player_unknown_format">Bilinmeyen format</string>
-    <string name="player_transcoding">Dönüştürme</string>
-    <string name="player_transcoding_requested">talep edildi</string>
-    <string name="playlist_catalogue_title">Çalma Listesi Kataloğu</string>
-    <string name="playlist_catalogue_title_expanded">Çalma listelerine göz at</string>
-    <string name="playlist_chooser_dialog_empty">Henüz çalma listesi oluşturulmadı</string>
-    <string name="playlist_chooser_dialog_cancel_button">İptal</string>
-    <string name="playlist_chooser_dialog_create_button">Oluştur</string>
-    <string name="playlist_chooser_dialog_title">Çalma listesine ekle</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Şarkı çalma listesine eklendi</string>
-    <string name="playlist_chooser_dialog_toast_add_failure">Şarkı çalma listesine eklenemedi</string>
-    <string name="playlist_counted_tracks">%1$d parça • %2$s</string>
-    <string name="playlist_duration">Süre  •  %1$s</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Silmek için uzun basın</string>
-    <string name="playlist_editor_dialog_hint_name">Çalma listesi adı</string>
-    <string name="playlist_editor_dialog_negative_button">İptal</string>
-    <string name="playlist_editor_dialog_neutral_button">Sil</string>
-    <string name="playlist_editor_dialog_positive_button">Kaydet</string>
-    <string name="playlist_editor_dialog_title">Çalma listesini düzenle</string>
-    <string name="playlist_page_play_button">Çal</string>
-    <string name="playlist_page_shuffle_button">Karıştır</string>
-    <string name="playlist_song_count">Çalma listesi • %1$d şarkı</string>
-    <string name="podcast_bottom_sheet_add_to_queue">Sıraya ekle</string>
-    <string name="podcast_bottom_sheet_delete">Sil</string>
-    <string name="podcast_bottom_sheet_download">İndir</string>
-    <string name="podcast_bottom_sheet_go_to_channel">Kanala git</string>
-    <string name="podcast_bottom_sheet_play_next">Sonra çal</string>
-    <string name="podcast_bottom_sheet_remove">Kaldır</string>
-    <string name="podcast_channel_catalogue_title">Kanallar</string>
-    <string name="podcast_channel_catalogue_title_expanded">Kanallara göz at</string>
-    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS URL</string>
-    <string name="podcast_channel_editor_dialog_title">Podcast Kanalı</string>
-    <string name="podcast_channel_page_title_description_section">Açıklama</string>
-    <string name="podcast_channel_page_title_episode_section">Bölümler</string>
-    <string name="podcast_channel_page_title_no_episode_available">Bölüm mevcut değil</string>
-    <string name="podcast_episode_download_request_snackbar">İsteğiniz sunucuya gönderildi</string>
-    <string name="podcast_info_empty_button">Bölümü gizlemek için tıklayın\nDeğişiklikler yeniden başlatıldığında görülecek</string>
-    <string name="podcast_info_empty_subtitle">Bir kanal eklediğinizde burada göreceksiniz</string>
-    <string name="podcast_info_empty_title">Podcast bulunamadı!</string>
-    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
-    <string name="radio_editor_dialog_hint_homepage_url">Radyo Anasayfa URL’si</string>
-    <string name="radio_editor_dialog_hint_name">Radyo Adı</string>
-    <string name="radio_editor_dialog_hint_stream_url">Radyo Yayın URL’si</string>
-    <string name="radio_editor_dialog_negative_button">İptal</string>
-    <string name="radio_editor_dialog_neutral_button">Sil</string>
-    <string name="radio_editor_dialog_positive_button">Kaydet</string>
-    <string name="radio_editor_dialog_title">İnternet Radyo İstasyonu</string>
-    <string name="radio_station_info_empty_button">Bölümü gizlemek için tıklayın\nDeğişiklikler yeniden başlatıldığında görülecek</string>
-    <string name="radio_station_info_empty_subtitle">Bir radyo istasyonu eklediğinizde burada göreceksiniz</string>
-    <string name="radio_station_info_empty_title">İstasyon bulunamadı!</string>
+
+    <!-- Rating Dialog -->
     <string name="rating_dialog_negative_button">İptal</string>
     <string name="rating_dialog_positive_button">Kaydet</string>
     <string name="rating_dialog_title">Değerlendir</string>
+
+    <!-- Search -->
+    <string name="search_description_empty_response">Sunucu yanıtınızı kontrol ettik ancak boştu.</string>
     <string name="search_hint">Başlık, sanatçı veya albüm ara</string>
-    <string name="search_info_minimum_characters">En az üç karakter girin</string>
     <string name="search_title_album">Albümler</string>
     <string name="search_title_artist">Sanatçılar</string>
+    <string name="search_title_empty_response">Sonuç yok.</string>
     <string name="search_title_song">Şarkılar</string>
+
+    <!-- Server Unreachable Dialog -->
     <string name="server_unreachable_dialog_negative_button">İptal</string>
     <string name="server_unreachable_dialog_neutral_button">Girişe git</string>
     <string name="server_unreachable_dialog_positive_button">Yine de devam et</string>
     <string name="server_unreachable_dialog_summary">İstenen sunucuya ulaşılamıyor. Devam etmeyi seçerseniz bu iletişim penceresi bir saat boyunca tekrar görünmez.</string>
     <string name="server_unreachable_dialog_title">Sunucuya ulaşılamıyor</string>
-    <string name="settings_about_summary">Tempus, Subsonic için açık kaynaklı ve hafif bir müzik istemcisidir, Android için yerel olarak tasarlanıp geliştirilmiştir.</string>
-    <string name="settings_about_title">Hakkında</string>
-    <string name="settings_always_on_display">Her zaman açık ekran</string>
-    <string name="settings_audio_transcode_download_format">Dönüştürme formatı</string>
-    <string name="settings_audio_transcode_download_priority_summary">Etkinleştirildiğinde, Tempus parçayı aşağıdaki dönüştürme ayarlarıyla indirmeye zorlamaz.</string>
-    <string name="settings_audio_transcode_download_priority_title">İndirmelerde yayın için kullanılan sunucu ayarlarına öncelik ver</string>
-    <string name="settings_audio_transcode_download_summary">Etkinleştirildiğinde, Tempus dönüştürülmüş parçaları indirir.</string>
-    <string name="settings_audio_transcode_download_title">Dönüştürülmüş parçaları indir</string>
-    <string name="settings_audio_transcode_format_download">İndirmeler için dönüştürme formatı</string>
-    <string name="settings_audio_transcode_format_mobile">Mobilde dönüştürme formatı</string>
-    <string name="settings_audio_transcode_format_wifi">Wi-Fi’da dönüştürme formatı</string>
-    <string name="settings_audio_transcode_priority_summary">Etkinleştirildiğinde, Tempus parçayı aşağıdaki dönüştürme ayarlarıyla yayınlamayacaktır.</string>
-    <string name="settings_audio_transcode_priority_title">Sunucu dönüştürme ayarlarına öncelik ver</string>
-    <string name="settings_audio_transcode_priority_toast">Parçanın dönüştürülmesinde öncelik sunucuya verildi</string>
-    <string name="settings_continuous_play_summary">Bir çalma listesi bittiğinde benzer şarkılar çalarak müziğin devam etmesine izin verir</string>
-    <string name="settings_continuous_play_title">Sürekli çalma</string>
-    <string name="settings_covers_cache">Albüm kapağı önbelleği boyutu</string>
-    <string name="settings_data_saving_mode_summary">Veri tüketimini azaltmak için kapak görsellerinin indirilmesinden kaçının.</string>
-    <string name="settings_data_saving_mode_title">Mobil veri kullanımını sınırla</string>
-    <string name="settings_delete_download_storage_summary">Devam ederseniz tüm kayıtlı öğeler geri alınamaz şekilde silinecektir.</string>
-    <string name="settings_delete_download_storage_title">Kayıtlı öğeleri sil</string>
-    <string name="settings_download_storage_title">İndirme depolaması</string>
-    <string name="settings_system_equalizer_summary">Ses ayarlarını düzenle</string>
-    <string name="settings_system_equalizer_title">Sistem ekolayzır</string>
-    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
-    <string name="settings_github_summary">Gelişmeleri takip et</string>
-    <string name="settings_github_title">Github</string>
-    <string name="settings_image_size">Görsel çözünürlüğünü ayarla</string>
-    <string name="settings_language">Dil</string>
-    <string name="settings_logout_title">Çıkış yap</string>
-    <string name="settings_max_bitrate_download">İndirmeler için bit hızı</string>
-    <string name="settings_max_bitrate_mobile">Mobilde bit hızı</string>
-    <string name="settings_max_bitrate_wifi">Wi-Fi’da bit hızı</string>
-    <string name="settings_media_cache">Ortam dosyası önbelleği boyutu</string>
-    <string name="settings_music_directory">Müzik dizinlerini göster</string>
-    <string name="settings_music_directory_summary">Etkinleştirildiğinde müzik dizini bölümü görüntülenir. Klasörlerde gezinmenin doğru çalışması için sunucunun bu özelliği desteklemesi gerekir.</string>
-    <string name="settings_podcast">Podcast’i göster</string>
-    <string name="settings_podcast_summary">Etkinleştirildiğinde podcast bölümü görüntülenir. Tam etkili olması için uygulamayı yeniden başlatın.</string>
-    <string name="settings_audio_quality">Ses kalitesini göster</string>
-    <string name="settings_audio_quality_summary">Her ses parçası için bit hızı ve ses formatı gösterilecektir.</string>
-    <string name="settings_song_rating_summary">" "</string>
-    <string name="settings_item_rating">Öğe değerlemesini göster</string>
-    <string name="settings_item_rating_summary">Etkinleştirildiğinde, öğenin puanı ve favori olarak işaretlenip işaretlenmediği görüntülenir.</string>
-    <string name="settings_queue_syncing_summary">Etkinleştirildiğinde, kullanıcı çalma sırasını kaydedebilir ve uygulamayı açtığında bu durumu yükleyebilir.</string>
-    <string name="settings_queue_syncing_title">Bu kullanıcı için çalma sırasını eşitle</string>
-    <string name="settings_radio">Radyoyu göster</string>
-    <string name="settings_radio_summary">Etkinleştirildiğinde radyo bölümü görüntülenir. Tam etkili olması için uygulamayı yeniden başlatın.</string>
-    <string name="settings_replay_gain">Yeniden çalma kazanç modunu ayarla</string>
-    <string name="settings_rounded_corner">Yuvarlatılmış köşeler</string>
-    <string name="settings_rounded_corner_size">Köşe boyutu</string>
-    <string name="settings_rounded_corner_size_summary">Eğrilik açısının büyüklüğünü ayarlar.</string>
-    <string name="settings_rounded_corner_summary">Etkinleştirildiğinde, tüm kapak görselleri için bir eğme açısı uygulanır. Değişiklikler yeniden başlatıldığında geçerli olur.</string>
-    <string name="settings_scan_title">Kütüphaneyi tara</string>
-    <string name="settings_scrobble_title">Müzik scrobbling özelliğini etkinleştir</string>
-    <string name="settings_system_language">Sistem dili</string>
-    <string name="settings_share_title">Müzik paylaşımını etkinleştir</string>
-    <string name="settings_streaming_cache_size">Yayın önbelleği boyutu</string>
-    <string name="settings_streaming_cache_storage_title">Yayın önbellek depolaması</string>
-    <string name="settings_sub_summary_scrobble">Scrobbling özelliğinin çalışabilmesi için sunucunun bu verileri alacak şekilde etkinleştirilmiş olması gerekir.</string>
-    <string name="settings_summary_skip_min_star_rating">Bir sanatçı radyosu dinlerken, anında karışımda veya tümünü karıştırırken belirli bir kullanıcı puanının altındaki parçalar yok sayılacaktır.</string>
-    <string name="settings_summary_replay_gain">Replay gain, ses parçalarının ses seviyesini ayarlayarak tutarlı bir dinleme deneyimi sağlayan bir özelliktir. Bu ayar yalnızca parçada gerekli meta veriler varsa etkilidir.</string>
-    <string name="settings_summary_scrobble">Scrobbling, cihazınızın dinlediğiniz şarkılar hakkında bilgileri müzik sunucusuna göndermesini sağlayan bir özelliktir. Bu bilgiler müzik tercihlerinize göre kişisel öneriler oluşturulmasına yardımcı olur.</string>
-    <string name="settings_summary_share">Kullanıcının müziği bir bağlantı üzerinden paylaşmasına olanak tanır. Bu işlevin sunucu tarafından desteklenmesi ve etkinleştirilmesi gerekir ve yalnızca tekil parçalar, albümler ve çalma listeleriyle sınırlıdır.</string>
-    <string name="settings_summary_syncing">Bu kullanıcının çalma sırasının durumunu geri yükler. Buna çalma sırasındaki parçalar, o anda çalan parça ve bu parçadaki konum dahildir. Sunucunun bu özelliği desteklemesi gerekir.</string>
-    <string name="settings_summary_streaming_cache_size">%1$s \nŞu anda kullanımda: %2$s MiB</string>
-    <string name="settings_summary_transcoding">Dönüştürme moduna öncelik verilir. “Doğrudan çal” olarak ayarlanırsa dosyanın bit hızı değiştirilmez.</string>
-    <string name="settings_summary_transcoding_download">Dönüştürülmüş medyayı indir. Etkinleştirilirse indirme uç noktası kullanılmaz, bunun yerine aşağıdaki ayarlar geçerli olur. \n\n “İndirmeler için dönüştürme formatı” “Doğrudan indir” olarak ayarlanırsa dosyanın bit hızı değiştirilmez.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">Dosya anlık olarak dönüştürüldüğünde, istemci genellikle parçanın süresini göstermez. Bu işlevi destekleyen sunuculardan çalınan parçanın süresini tahmin etmeleri istenebilir, 
-    ancak yanıt süreleri daha uzun olabilir.</string>
-    <string name="settings_sync_starred_albums_for_offline_use_title">Çevrimdışı kullanım için yıldızlı albümleri senkronize et</string>
-    <string name="settings_sync_starred_tracks_for_offline_use_summary">Etkinleştirildiğinde, yıldızlı parçalar çevrimdışı kullanım için indirilecektir.</string>
-    <string name="settings_sync_starred_tracks_for_offline_use_title">Çevrimdışı kullanım için yıldızlı parçaları eşitle</string>
-    <string name="settings_theme">Tema</string>
-    <string name="settings_title_data">Veri</string>
-    <string name="settings_title_general">Genel</string>
-    <string name="settings_title_rating">Değerlendirme</string>
-    <string name="settings_title_replay_gain">Replay Gain</string>
-    <string name="settings_title_scrobble">Scrobble</string>
-    <string name="settings_title_skip_min_star_rating">Değerlendirmeye göre parçaları yok say</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Şu puana sahip şarkılar:</string>
-    <string name="settings_title_share">Paylaş</string>
-    <string name="settings_title_syncing">Eşitleme</string>
-    <string name="settings_title_transcoding">Dönüştürme</string>
-    <string name="settings_title_transcoding_download">Dönüştürme İndir</string>
-    <string name="settings_title_ui">Arayüz</string>
-    <string name="settings_transcoded_download">Dönüştürülmüş indirme</string>
-    <string name="settings_version_summary" translatable="false">3.1.0</string>
-    <string name="settings_version_title">Sürüm</string>
-    <string name="settings_wifi_only_summary">Mobil ağ üzerinden yayın yapmadan önce kullanıcı onayı iste.</string>
-    <string name="settings_wifi_only_title">Yalnızca Wi-Fi ile yayın uyarısı</string>
+
+    <!-- Share -->
     <string name="share_bottom_sheet_copy_link">Bağlantıyı kopyala</string>
     <string name="share_bottom_sheet_delete">Paylaşımı sil</string>
     <string name="share_bottom_sheet_update">Paylaşımı güncelle</string>
@@ -361,6 +141,8 @@
     <string name="share_update_dialog_negative_button">İptal</string>
     <string name="share_update_dialog_positive_button">Kaydet</string>
     <string name="share_update_dialog_title">Paylaş</string>
+
+    <!-- Song -->
     <string name="song_bottom_sheet_add_to_playlist">Çalma listesine ekle</string>
     <string name="song_bottom_sheet_add_to_queue">Sıraya ekle</string>
     <string name="song_bottom_sheet_download">İndir</string>
@@ -373,6 +155,8 @@
     <string name="song_bottom_sheet_rate">Değerlendir</string>
     <string name="song_bottom_sheet_remove">Kaldır</string>
     <string name="song_bottom_sheet_share">Paylaş</string>
+    <string name="song_bottom_sheet_undo">Geri al</string>
+    <string name="song_bottom_sheet_undo_failure">Şarkı geri yüklenemedi</string>
     <string name="song_list_page_downloaded">İndirilenler</string>
     <string name="song_list_page_most_played">En çok çalınan parçalar</string>
     <string name="song_list_page_recently_added">Son eklenen parçalar</string>
@@ -381,26 +165,33 @@
     <string name="song_list_page_top">%1$s’in en iyi parçaları</string>
     <string name="song_list_page_year">%1$d yılı</string>
     <string name="song_subtitle_formatter">%1$s  •  %2$s  %3$s</string>
+
+    <!-- Starred -->
+    <string name="starred_album_sync_dialog_summary">Yıldızlı albümleri indirmek yüksek miktarda veri kullanımı gerektirebilir.</string>
+    <string name="starred_album_sync_dialog_title">Yıldızlı albümleri senkronize et</string>
     <string name="starred_sync_dialog_negative_button">İptal</string>
     <string name="starred_sync_dialog_neutral_button">Devam et</string>
     <string name="starred_sync_dialog_positive_button">Devam et ve indir</string>
     <string name="starred_sync_dialog_summary">Yıldızlı parçaların indirilmesi yüksek miktarda veri gerektirebilir.</string>
     <string name="starred_sync_dialog_title">Yıldızlı parçaları eşitle</string>
-    <string name="starred_album_sync_dialog_summary">Yıldızlı albümleri indirmek yüksek miktarda veri kullanımı gerektirebilir.</string>
-    <string name="starred_album_sync_dialog_title">Yıldızlı albümleri senkronize et</string>
+
+    <!-- Streaming Cache Storage -->
     <string name="streaming_cache_storage_dialog_sub_summary">Değişikliklerin geçerli olması için uygulamayı yeniden başlatın.</string>
     <string name="streaming_cache_storage_dialog_summary">Önbelleğe alınmış dosyaların hedefini bir depolamadan diğerine değiştirmek, önceki depolamadaki önbellek dosyalarının silinmesine yol açabilir.</string>
     <string name="streaming_cache_storage_dialog_title">Depolama seçeneğini seç</string>
     <string name="streaming_cache_storage_external_dialog_positive_button">Harici</string>
     <string name="streaming_cache_storage_internal_dialog_negative_button">Dahili</string>
+
+    <!-- Support -->
     <string name="support_url">https://buymeacoffee.com/a.cappiello</string>
+
+    <!-- Track Info -->
     <string name="track_info_album">Albüm</string>
     <string name="track_info_artist">Sanatçı</string>
     <string name="track_info_bit_depth">Bit derinliği</string>
     <string name="track_info_bitrate">Bit hızı</string>
     <string name="track_info_content_type">İçerik türü</string>
     <string name="track_info_dialog_positive_button">Tamam</string>
-    <string name="track_info_dialog_title">Parça bilgisi</string>
     <string name="track_info_disc_number">Disk numarası</string>
     <string name="track_info_duration">Süre</string>
     <string name="track_info_genre">Tür</string>
@@ -423,50 +214,20 @@
     <string name="track_info_transcoded_content_type">Dönüştürülmüş içerik türü</string>
     <string name="track_info_transcoded_suffix">Dönüştürülmüş uzantı</string>
     <string name="track_info_year">Yıl</string>
+
+    <!-- Undraw -->
     <string name="undraw_page">unDraw</string>
     <string name="undraw_thanks">İllüstrasyonlarıyla bu uygulamayı daha güzel hale getirmemize yardımcı olan unDraw’a özel teşekkürler.</string>
     <string name="undraw_url">https://undraw.co/</string>
-    <string name="home_sync_starred_albums_title">Yıldızlı Albümleri Senkronize Et</string>
+
+    <!-- Widget -->
+    <string name="widget_content_desc_album_art">Albüm kapağı</string>
+    <string name="widget_content_desc_next">Sonraki parça</string>
+    <string name="widget_content_desc_play_pause">Çal/Duraklat</string>
+    <string name="widget_content_desc_prev">Önceki parça</string>
     <string name="widget_label">Tempus Widget</string>
     <string name="widget_not_playing">Şu an oynatılmıyor</string>
     <string name="widget_placeholder_subtitle">Tempus’yu aç</string>
-    <string name="widget_time_elapsed_placeholder">0:00</string>
     <string name="widget_time_duration_placeholder">0:00</string>
-    <string name="widget_content_desc_album_art">Albüm kapağı</string>
-    <string name="widget_content_desc_play_pause">Çal/Duraklat</string>
-    <string name="widget_content_desc_next">Sonraki parça</string>
-    <string name="widget_content_desc_prev">Önceki parça</string>
-    <string name="settings_song_rating">Şarkının yıldız derecelendirmesini göster</string>
-    <string name="settings_sync_starred_albums_for_offline_use_summary">"Etkinleştirildiğinde yıldızlı albümler çevrimdışı kullanım için indirilecek. "</string>
-    <string name="playlist_chooser_dialog_visibility_summary_v2">Bunu açtığınızda çalma listesi herkese açık hale gelir. Kendi haline bıraktığınızda çalma listesinin görünürlüğü değişmez.</string>
-    <string name="playlist_editor_dialog_action_save_empty">Bir çalma listesi en az bir parça içermelidir</string>
-    <string name="search_title_empty_response">Sonuç yok.</string>
-    <string name="search_description_empty_response">Sunucu yanıtınızı kontrol ettik ancak boştu.</string>
-    <string name="menu_keep_synced_button">Eşitlemeyi sürdür</string>
-    <plurals name="playlist_sync_downloading">
-        <item quantity="one">%d parça indiriliyor</item>
-        <item quantity="other">%d parça indiriliyor</item>
-    </plurals>
-    <string name="playlist_editor_hint">Yeniden sıralamak için tutamacı sürükleyin, kaldırmak için çöp kutusuna dokunun. Siz Kaydet\'e dokunana kadar hiçbir şey gönderilmez.</string>
-    <string name="playlist_editor_remove_track">Parçayı kaldır</string>
-    <string name="playlist_editor_drag_track">Yeniden sıralamak için sürükleyin</string>
-    <string name="menu_edit_playlist_details_button">Ayrıntıları düzenle</string>
-    <string name="playlist_details_dialog_title">Çalma listesi ayrıntıları</string>
-    <string name="playlist_editor_load_failure">Çalma listesi yüklenemedi</string>
-    <string name="playlist_editor_removed_track">Listeden kaldırıldı</string>
-    <string name="song_bottom_sheet_undo">Geri al</string>
-    <string name="song_bottom_sheet_undo_failure">Şarkı geri yüklenemedi</string>
-    <string name="la_theme_card_emerald_green_description">Zümrüt yeşili vurgu rengi</string>
-    <string name="la_perms_title">İzin iste</string>
-    <string name="la_perms_description">Gerekli izinler ve kullanım amaçları aşağıda gösterilmiştir.</string>
-    <string name="la_perms_status_provided">Verildi</string>
-    <string name="la_perms_status_not_provided">İste</string>
-    <string name="la_perms_internet_title">İnternet</string>
-    <string name="la_perms_internet_description">Müzik sunucunuza internet üzerinden erişmek için gereklidir.</string>
-    <string name="la_perms_notifications_title">Bildirimler</string>
-    <string name="la_perms_notifications_description">İndirme durumunu ve oynatıcı denetimlerini göstermek için gereklidir.</string>
-    <string name="la_perms_access_local_network_title">Yerel Ağa Erişim</string>
-    <string name="la_perms_access_local_network_description">Mevcut cihazınızla aynı LAN üzerindeki diğer cihazlara erişmek için gereklidir.</string>
-    <string name="la_perms_nearby_devices_title">Yakındaki Cihazlar</string>
-    <string name="la_perms_nearby_devices_description">UPnP ve Chromecast aracılığıyla diğer cihazları keşfetmek için gereklidir.</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
 </resources>

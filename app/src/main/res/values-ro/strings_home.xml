@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Continuă la %1$s</string>
+    <string name="home_option_reorganize">Reorganizați</string>
+    <string name="home_rearrangement_dialog_negative_button">Anulati</string>
+    <string name="home_rearrangement_dialog_neutral_button">Resetaţi</string>
+    <string name="home_rearrangement_dialog_positive_button">Salvaţi</string>
+    <string name="home_rearrangement_dialog_subtitle">Rețineți că pentru ca modificările să aibă efect, este necesar să reporniți aplicația.</string>
+    <string name="home_rearrangement_dialog_title">Rearanjați pagina de start</string>
+    <string name="home_section_music">Muzică</string>
+    <string name="home_section_podcast">Podcast</string>
+    <string name="home_section_radio">Radio</string>
+    <string name="home_subtitle_best_of">Top piese din artiștii dvs. preferați</string>
+    <string name="home_subtitle_made_for_you">Porniți mix-ul dintr-o cântec pe care ți-a plăcut</string>
+    <string name="home_subtitle_new_internet_radio_station">Adăugați o nouă radio</string>
+    <string name="home_subtitle_new_podcast_channel">Adăugați un nou canal podcast</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">%d album de sincronizat</item>
+        <item quantity="other">%d albume de sincronizat</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Albumele marcate cu o stea vor fi disponibile offline</string>
+    <string name="home_sync_starred_albums_title">Sincronizați Albume Marcate</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d artist de sincronizat</item>
+        <item quantity="other">%d artiști de sincronizat</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">Aveți artiști marcați cu muzică care nu a fost descărcată</string>
+    <string name="home_sync_starred_artists_title">Sincronizare Artiști Marcați</string>
+    <string name="home_sync_starred_cancel">Anulati</string>
+    <string name="home_sync_starred_download">Descarcaţi</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d cântec trebuie sincronizată</item>
+        <item quantity="other">%d cântece trebuie sincronizate</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Descărcarea acestor piese poate implica o utilizare semnificativă a datelor</string>
+    <string name="home_sync_starred_title">Se pare că sunt niște piese marcate de sincronizat</string>
+    <string name="home_title_best_of">Cel mai bun</string>
+    <string name="home_title_continue_listening">Continuă ascultarea</string>
+    <string name="home_title_discovery">Descoperire</string>
+    <string name="home_title_discovery_shuffle_all_button">Amestecare toate</string>
+    <string name="home_title_flashback">Retrospectivă</string>
+    <string name="home_title_internet_radio_station">Stații radio internet</string>
+    <string name="home_title_last_month">Luna trecută</string>
+    <string name="home_title_last_played">Redată ultima dată</string>
+    <string name="home_title_last_played_see_all_button">Vezi tot</string>
+    <string name="home_title_last_week">Săptămâna trecută</string>
+    <string name="home_title_last_year">Anul trecut</string>
+    <string name="home_title_made_for_you">Făcut pentru tine</string>
+    <string name="home_title_most_played">Cele mai ascultate</string>
+    <string name="home_title_most_played_see_all_button">Vezi tot</string>
+    <string name="home_title_new_releases">Lansări noi</string>
+    <string name="home_title_newest_podcasts">Podcasturi cele mai noi</string>
+    <string name="home_title_pinned_playlists">Playlisturi</string>
+    <string name="home_title_podcast_channels">Canale</string>
+    <string name="home_title_podcast_channels_see_all_button">Vezi tot</string>
+    <string name="home_title_radio_station">Stații radio</string>
+    <string name="home_title_recently_added">Adăugate recent</string>
+    <string name="home_title_recently_added_see_all_button">Vezi tot</string>
+    <string name="home_title_shares">Partajări</string>
+    <string name="home_title_starred_albums">★ Albume marcate</string>
+    <string name="home_title_starred_albums_see_all_button">Vezi tot</string>
+    <string name="home_title_starred_artists">★ Artiști marcați</string>
+    <string name="home_title_starred_artists_see_all_button">Vezi tot</string>
+    <string name="home_title_starred_tracks">★ Piese marcate</string>
+    <string name="home_title_starred_tracks_see_all_button">Vezi tot</string>
+    <string name="home_title_top_songs">Piesa dvs. top</string>
+</resources>

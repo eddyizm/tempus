@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="player_lyrics_download_content_description">Descărcați versuri pentru redare offline</string>
+    <string name="player_lyrics_download_failure">Versurile nu sunt disponibile pentru descărcare.</string>
+    <string name="player_lyrics_download_success">Versuri salvate pentru redare offline.</string>
+    <string name="player_lyrics_downloaded_content_description">Versuri descărcate pentru redare offline</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_load_queue">Încărcați Coada</string>
+    <string name="player_queue_save_to_playlist">Salvați Coada în Playlist</string>
+    <string name="player_transcoding">Transcodare</string>
+    <string name="player_unknown_format">Format necunoscut</string>
+</resources>

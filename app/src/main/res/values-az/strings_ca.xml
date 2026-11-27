@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Jurnalı köçür</string>
+    <string name="ca_export_button_share">Jurnalı paylaş</string>
+    <string name="ca_export_description">
+        İxrac edilən hesabatın əvvəlinə cihaz məlumatları əlavə olunur.\n\n
+
+        Razılığınız olmadan məlumatlar heç yerə göndərilmir.
+    </string>
+    <string name="ca_export_label">İxrac</string>
+    <string name="ca_export_title">Hesabatın alınması</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Hesabat buferə köçürüldü</string>
+    <string name="ca_info_button_close">Tətbiqi bağla</string>
+    <string name="ca_info_button_restart">Tətbiqi yenidən başlat</string>
+    <string name="ca_info_description">
+        Problemi həll etmək üçün GitHub üzərində xəta bildirişi açın və qəza hesabatının surətini əlavə edin.
+    </string>
+    <string name="ca_info_label">Məlumat</string>
+    <string name="ca_info_title">Tempus qəzası</string>
+    <string name="ca_logs_description">
+        Baş vermiş xətanın təfərrüatları.
+    </string>
+    <string name="ca_logs_label">Jurnallar</string>
+    <string name="ca_logs_title">Java çağırış yığınının izi</string>
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">从 %1$s 继续</string>
+    <string name="home_option_reorganize">定制首页</string>
+    <string name="home_rearrangement_dialog_negative_button">取消</string>
+    <string name="home_rearrangement_dialog_neutral_button">重置</string>
+    <string name="home_rearrangement_dialog_positive_button">保存</string>
+    <string name="home_rearrangement_dialog_subtitle">请重启应用以应用更改。</string>
+    <string name="home_rearrangement_dialog_title">主页排序</string>
+    <string name="home_section_music">音乐</string>
+    <string name="home_section_podcast">播客</string>
+    <string name="home_section_radio">电台</string>
+    <string name="home_subtitle_best_of">您最喜欢的艺术家的热门歌曲</string>
+    <string name="home_subtitle_made_for_you">从您喜欢的歌曲开始混听</string>
+    <string name="home_subtitle_new_internet_radio_station">添加新的电台</string>
+    <string name="home_subtitle_new_podcast_channel">添加新的播客频道</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">%d 个待同步专辑</item>
+        <item quantity="other">%d 个待同步专辑</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">标记为收藏的专辑可离线使用</string>
+    <string name="home_sync_starred_albums_title">同步收藏的专辑</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d 个待同步艺术家</item>
+        <item quantity="other">%d 个待同步艺术家</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">你收藏的艺术家有未下载的歌曲</string>
+    <string name="home_sync_starred_artists_title">同步收藏的艺术家</string>
+    <string name="home_sync_starred_cancel">取消</string>
+    <string name="home_sync_starred_download">下载</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d 首待同步歌曲</item>
+        <item quantity="other">%d 首待同步歌曲</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">下载这些歌曲可能需要大量移动数据流量</string>
+    <string name="home_sync_starred_title">似乎有一些收藏的歌曲需要同步</string>
+    <string name="home_title_best_of">最佳</string>
+    <string name="home_title_continue_listening">继续收听</string>
+    <string name="home_title_discovery">发现</string>
+    <string name="home_title_discovery_shuffle_all_button">随机播放全部</string>
+    <string name="home_title_flashback">重温旧曲</string>
+    <string name="home_title_internet_radio_station">网络广播电台</string>
+    <string name="home_title_last_month">上月</string>
+    <string name="home_title_last_played">最近播放</string>
+    <string name="home_title_last_played_see_all_button">查看全部</string>
+    <string name="home_title_last_week">上周</string>
+    <string name="home_title_last_year">去年</string>
+    <string name="home_title_made_for_you">为您定制</string>
+    <string name="home_title_most_played">最常播放</string>
+    <string name="home_title_most_played_see_all_button">查看全部</string>
+    <string name="home_title_new_releases">新发行</string>
+    <string name="home_title_newest_podcasts">最新播客</string>
+    <string name="home_title_pinned_playlists">播放列表</string>
+    <string name="home_title_podcast_channels">频道</string>
+    <string name="home_title_podcast_channels_see_all_button">查看全部</string>
+    <string name="home_title_radio_station">广播电台</string>
+    <string name="home_title_recently_added">最近添加</string>
+    <string name="home_title_recently_added_see_all_button">查看全部</string>
+    <string name="home_title_shares">分享</string>
+    <string name="home_title_starred_albums">★ 收藏的专辑</string>
+    <string name="home_title_starred_albums_see_all_button">查看全部</string>
+    <string name="home_title_starred_artists">★ 收藏的艺术家</string>
+    <string name="home_title_starred_artists_see_all_button">查看全部</string>
+    <string name="home_title_starred_tracks">★ 收藏的歌曲</string>
+    <string name="home_title_starred_tracks_see_all_button">查看全部</string>
+    <string name="home_title_top_songs">你最喜欢的歌曲</string>
+</resources>

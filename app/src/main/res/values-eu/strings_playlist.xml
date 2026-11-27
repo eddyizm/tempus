@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">Zerrenda ilarara gehitu da</string>
+    <string name="playlist_catalogue_title">Zerrenda katalogoa</string>
+    <string name="playlist_catalogue_title_expanded">Zerrendak arakatu</string>
+    <string name="playlist_chooser_dialog_cancel_button">Utzi</string>
+    <string name="playlist_chooser_dialog_create_button">Sortu</string>
+    <string name="playlist_chooser_dialog_empty">Ez da zerrendarik sortu</string>
+    <string name="playlist_chooser_dialog_title">Zerrenda batera gehitu</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Ezin izan da/dira abestia(k) zerrendara gehitu</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Ezin izan da abestia zerrendatik kendu</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Abestia zerrendatik kendu da</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Hau aktibatuz gero, erreprodukzio-zerrenda publikoa izango da. Bere horretan utziz gero, ez da erreprodukzio-zerrendaren ikusgarritasuna aldatzen.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Zerrenda publiko gisa markatu</string>
+    <string name="playlist_counted_tracks">%1$d abesti •  %2$s</string>
+    <string name="playlist_details_dialog_title">Erreprodukzio-zerrendaren xehetasunak</string>
+    <string name="playlist_duration">Iraupena  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Ezin izan da zerrenda ezabatu</string>
+    <string name="playlist_editor_dialog_action_delete_success">Zerrenda ezabatu da</string>
+    <string name="playlist_editor_dialog_action_save_empty">Erreprodukzio-zerrenda batek gutxienez pista bat izan behar du</string>
+    <string name="playlist_editor_dialog_action_save_failure">Ezin izan da zerrenda gorde</string>
+    <string name="playlist_editor_dialog_action_save_success">Zerrenda gorde da</string>
+    <string name="playlist_editor_dialog_hint_name">Zerrendaren izena</string>
+    <string name="playlist_editor_dialog_negative_button">Utzi</string>
+    <string name="playlist_editor_dialog_neutral_button">Ezabatu</string>
+    <string name="playlist_editor_dialog_positive_button">Gorde</string>
+    <string name="playlist_editor_dialog_title">Zerrenda editatu</string>
+    <string name="playlist_editor_drag_track">Arrastatu berrantolatzeko</string>
+    <string name="playlist_editor_hint">Arrastatu heldulekua berrantolatzeko eta ukitu zakarrontzia kentzeko. Ez da ezer bidaliko Gorde sakatu arte.</string>
+    <string name="playlist_editor_load_failure">Ezin izan da erreprodukzio-zerrenda kargatu</string>
+    <string name="playlist_editor_remove_track">Kendu pista</string>
+    <string name="playlist_editor_removed_track">Zerrendatik kendu da</string>
+    <string name="playlist_error_not_found_message">Zerrenda hau ezin izan da zerbitzarian aurkitu. Zure lokaleko cachetik kenduko da.</string>
+    <string name="playlist_error_not_found_title">Zerrenda ez da aurkitu</string>
+    <string name="playlist_error_not_found_toast">Zerrenda cachetik kendu da</string>
+    <string name="playlist_page_empty">Ez dago abestirik zerrenda honetan</string>
+    <string name="playlist_page_play_button">Erreproduzitu</string>
+    <string name="playlist_page_shuffle_button">Nahastu</string>
+    <string name="playlist_song_count">Zerrenda  •  %1$d abesti</string>
+    <string name="playlist_sort_both">Azken jarduera</string>
+    <string name="playlist_sort_last_played">Azken entzunak</string>
+    <string name="playlist_sort_last_updated">Azken eguneratuak</string>
+    <string name="playlist_sort_pinned">Ainguratutakoak</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">%d pista deskargatzen</item>
+        <item quantity="other">%d pista deskargatzen</item>
+    </plurals>
+</resources>

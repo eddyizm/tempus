@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="playback_speed_decrease_button_content_description">Səsləndirmə sürətini azalt</string>
+    <string name="playback_speed_dialog_negative_button">Ləğv et</string>
+    <string name="playback_speed_dialog_reset_button">Sıfırla</string>
+    <string name="playback_speed_dialog_title">Səsləndirmə sürəti</string>
+    <string name="playback_speed_increase_button_content_description">Səsləndirmə sürətini artır</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Səsin tonunu əl ilə alçalt</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Səsin tonunu əl ilə yüksəlt</string>
+    <string name="playback_speed_manual_pitch_switch_title">Səs tonunun əl ilə tənzimlənməsi</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_pitch_switch_title">Səsin tonunu qoru</string>
+    <string name="player_lyrics_download_content_description">Oflayn səsləndirmə üçün mahnı sözlərini yüklə</string>
+    <string name="player_lyrics_download_failure">Yükləmək üçün mahnı sözləri yoxdur.</string>
+    <string name="player_lyrics_download_success">Mahnı sözləri oflayn səsləndirmə üçün saxlanıldı.</string>
+    <string name="player_lyrics_downloaded_content_description">Mahnı sözləri oflayn səsləndirmə üçün yüklənib</string>
+    <string name="player_overflow_menu_add_to_playlist">Pleylistə əlavə et</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_load_queue">Növbəni aç</string>
+    <string name="player_queue_save_to_playlist">Növbəni pleylistdə yadda saxla</string>
+    <string name="player_transcoding">Transkodlaşdırma</string>
+    <string name="player_unknown_format">Naməlum format</string>
+</resources>

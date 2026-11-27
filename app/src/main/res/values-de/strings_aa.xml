@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android Auto -->
+    <string name="aa_album_most_played">Oft gespielte Alben</string>
+    <string name="aa_album_recently_added">Neue Alben</string>
+    <string name="aa_albums">Alben</string>
+    <string name="aa_artists">Interpreten</string>
+    <string name="aa_discovery_mix">Entdeckungs-Mix</string>
+    <string name="aa_genres">Genres</string>
+    <string name="aa_home">Start</string>
+    <string name="aa_instant_mix">Sofort-Mix</string>
+    <string name="aa_made_for_you">Für dich</string>
+    <string name="aa_more">Mehr</string>
+    <string name="aa_music_folder">Ordner</string>
+    <string name="aa_my_mix">Mein Mix</string>
+    <string name="aa_playlists">Wiedergabelisten</string>
+    <string name="aa_podcast">Podcasts</string>
+    <string name="aa_quick_mix">Schnell-Mix</string>
+    <string name="aa_radio">Radio</string>
+    <string name="aa_random">Zufall</string>
+    <string name="aa_recent_albums">Letzte Alben</string>
+    <string name="aa_song_recently_played">Letzte Lieder</string>
+    <string name="aa_starred">Favoriten</string>
+    <string name="aa_starred_albums">★ Alben</string>
+    <string name="aa_starred_artists">★ Interpreten</string>
+    <string name="aa_starred_tracks">★ Titel</string>
+    <string name="aa_tracks">Titel</string>
+    <string name="aa_view_by_albums">Nach Alben anzeigen</string>
+</resources>

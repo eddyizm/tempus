@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Artist -->
+    <string name="artist_adapter_radio_station_starting">Se caută…</string>
+    <string name="artist_bottom_sheet_instant_mix">Mix instant</string>
+    <string name="artist_bottom_sheet_shuffle">Amestecare</string>
+    <string name="artist_catalogue_title">Artiști</string>
+    <string name="artist_catalogue_title_expanded">Răsfoiți Artiști</string>
+    <string name="artist_list_page_downloaded">Artiști descărcați</string>
+    <string name="artist_list_page_starred">Artiști marcați</string>
+    <string name="artist_list_page_title">Artiști</string>
+    <string name="artist_no_artist_info_toast">Nu sunt informații suplimentare despre artist</string>
+    <string name="artist_page_radio_button">Radio</string>
+    <string name="artist_page_shuffle_button">Amestecare</string>
+    <string name="artist_page_title_album_more_like_this_button">Mai mult ca aceasta</string>
+    <string name="artist_page_title_album_section">Albume</string>
+    <string name="artist_page_title_biography_more_button">Mai mult</string>
+    <string name="artist_page_title_biography_section">Biografie</string>
+    <string name="artist_page_title_most_streamed_song_section">Cele mai ascultate cântece</string>
+    <string name="artist_page_title_most_streamed_song_see_all_button">Vezi tot</string>
+</resources>

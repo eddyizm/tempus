@@ -10,14 +10,6 @@
         <item>default</item>
     </string-array>
 
-    <string-array name="dark_theme_style_titles">
-        <item>標準</item>
-        <item>AMOLED (純黑)</item>
-    </string-array>
-    <string-array name="dark_theme_style_values">
-        <item>standard</item>
-        <item>amoled</item>
-    </string-array>
 
 
     <string-array name="pref_cache_size_titles">
@@ -219,18 +211,6 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>不要轉碼</item>
-        <item>伺服器設定</item>
-        <item>Wi-Fi 轉碼格式</item>
-        <item>行動網路轉碼格式</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
     <string-array name="song_preload_buffer_titles">
         <item>5 秒</item>
@@ -284,34 +264,6 @@
     </string-array>
 
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>最少 0 顆星</item>
-        <item>最少 1 顆星</item>
-        <item>最少 2 顆星</item>
-        <item>最少 3 顆星</item>
-        <item>最少 4 顆星</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3"</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
 		
     <string-array name="tile_size_titles">
         <item>超小</item>

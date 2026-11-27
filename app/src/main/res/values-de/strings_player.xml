@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="playback_speed_decrease_button_content_description">Wiedergabegeschwindigkeit verringern</string>
+    <string name="playback_speed_dialog_negative_button">Abbrechen</string>
+    <string name="playback_speed_dialog_reset_button">Zurücksetzen</string>
+    <string name="playback_speed_dialog_title">Wiedergabegeschwindigkeit</string>
+    <string name="playback_speed_increase_button_content_description">Wiedergabegeschwindigkeit erhöhen</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Manuelle Tonhöhe verringern</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Manuelle Tonhöhe erhöhen</string>
+    <string name="playback_speed_manual_pitch_switch_title">Manuelle Tonhöhe</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_pitch_switch_title">Tonhöhe beibehalten</string>
+    <string name="player_lyrics_download_content_description">Liedtexte für Offline-Wiedergabe herunterladen</string>
+    <string name="player_lyrics_download_failure">Keine Liedtexte verfügbar.</string>
+    <string name="player_lyrics_download_success">Liedtexte heruntergeladen.</string>
+    <string name="player_lyrics_downloaded_content_description">Liedtexte für Offline-Wiedergabe heruntergeladen</string>
+    <string name="player_overflow_menu_add_to_playlist">Zu Wiedergabeliste hinzufügen</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_load_queue">Warteschlange laden</string>
+    <string name="player_queue_save_to_playlist">Warteschlange zu Wiedergabeliste hinzufügen</string>
+    <string name="player_transcoding">Umwandeln</string>
+    <string name="player_unknown_format">Unbekanntes Format</string>
+</resources>

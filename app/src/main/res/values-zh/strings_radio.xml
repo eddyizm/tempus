@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">服务器不支持网络电台管理。</string>
+    <string name="radio_editor_dialog_added">已添加电台</string>
+    <string name="radio_editor_dialog_hint_homepage_url">电台主页 URL</string>
+    <string name="radio_editor_dialog_hint_name">电台名称</string>
+    <string name="radio_editor_dialog_hint_stream_url">广播流 URL</string>
+    <string name="radio_editor_dialog_negative_button">取消</string>
+    <string name="radio_editor_dialog_neutral_button">删除</string>
+    <string name="radio_editor_dialog_positive_button">保存</string>
+    <string name="radio_editor_dialog_title">网络广播电台</string>
+    <string name="radio_editor_dialog_updated">已更新电台</string>
+    <string name="radio_station_info_empty_button">单击以隐藏该部分\n重启应用后生效</string>
+    <string name="radio_station_info_empty_subtitle">添加广播电台后，您可以在此处找到它</string>
+    <string name="radio_station_info_empty_title">没有找到电台！</string>
+</resources>

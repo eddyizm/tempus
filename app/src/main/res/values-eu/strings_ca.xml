@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Erregistroa kopiatu</string>
+    <string name="ca_export_button_share">Erregistroa partekatu</string>
+    <string name="ca_export_description">
+        Debug apk batek (aurre-argitalpena) erregistro zabalagoa eskaintzen du eta aplikazioaren
+        barruan zer gertatu den ulertzen laguntzen digu.\n\n
+
+        Datuak ez dira inora bidaltzen zure baimenik gabe.
+    </string>
+    <string name="ca_export_label">Esportazioa</string>
+    <string name="ca_export_title">Erregistroen eskurapena</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Erregistroa arbelera kopiatu da</string>
+    <string name="ca_info_button_close">Aplikazioa itxi</string>
+    <string name="ca_info_button_restart">Aplikazioa berrabiarazi</string>
+    <string name="ca_info_description">
+        Mesedez, ireki arazo bat GitHub-en eta erantsi erregistroen kopia hau konpontzeko.
+    </string>
+    <string name="ca_info_label">Informazioa</string>
+    <string name="ca_info_title">Tempus kraskatu da</string>
+    <string name="ca_logs_description">
+        Hau da gertatu dena.
+    </string>
+    <string name="ca_logs_label">Erregistroak</string>
+    <string name="ca_logs_title">Java-ren aztarna-pila</string>
+</resources>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">Playlist added to queue</string>
+    <string name="playlist_catalogue_title">Playlist Catalogue</string>
+    <string name="playlist_catalogue_title_expanded">Browse Playlists</string>
+    <string name="playlist_chooser_dialog_cancel_button">Cancel</string>
+    <string name="playlist_chooser_dialog_create_button">Create</string>
+    <string name="playlist_chooser_dialog_empty">No playlists created</string>
+    <string name="playlist_chooser_dialog_title">Add to a playlist</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song(s) to playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Failed to remove song from playlist</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Removed song from playlist</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Turning this on marks the playlist public. Leaving it alone does not change the playlist visibility.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Mark the playlist as public</string>
+    <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
+    <string name="playlist_details_dialog_title">Playlist details</string>
+    <string name="playlist_duration">Duration  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Failed to delete playlist</string>
+    <string name="playlist_editor_dialog_action_delete_success">Playlist deleted</string>
+    <string name="playlist_editor_dialog_action_save_empty">A playlist has to keep at least one track</string>
+    <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
+    <string name="playlist_editor_dialog_action_save_success">Playlist saved</string>
+    <string name="playlist_editor_dialog_hint_name">Playlist Name</string>
+    <string name="playlist_editor_dialog_negative_button">Cancel</string>
+    <string name="playlist_editor_dialog_neutral_button">Delete</string>
+    <string name="playlist_editor_dialog_positive_button">Save</string>
+    <string name="playlist_editor_dialog_title">Edit playlist</string>
+    <string name="playlist_editor_drag_track">Drag to reorder</string>
+    <string name="playlist_editor_hint">Drag the handle to reorder, tap the trash to remove. Nothing is sent until Save.</string>
+    <string name="playlist_editor_load_failure">Could not load the playlist</string>
+    <string name="playlist_editor_remove_track">Remove track</string>
+    <string name="playlist_editor_removed_track">Removed from the list</string>
+    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
+    <string name="playlist_error_not_found_title">Playlist not found</string>
+    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
+    <string name="playlist_page_empty">No songs in this playlist</string>
+    <string name="playlist_page_play_button">Play</string>
+    <string name="playlist_page_shuffle_button">Shuffle</string>
+    <string name="playlist_song_count">Playlist  •  %1$d songs</string>
+    <string name="playlist_sort_both">Recently active</string>
+    <string name="playlist_sort_last_played">Last played</string>
+    <string name="playlist_sort_last_updated">Last updated</string>
+    <string name="playlist_sort_pinned">Faves</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Downloading %d track</item>
+        <item quantity="other">Downloading %d tracks</item>
+    </plurals>
+</resources>

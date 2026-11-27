@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Activity -->
+    <string name="la_perms_access_local_network_description">Requis pour accéder aux autres appareils sur le même réseau local que votre appareil actuel.</string>
+    <string name="la_perms_access_local_network_title">Accès au réseau local</string>
+    <string name="la_perms_description">Les autorisations nécessaires et leur utilisation sont indiquées ci-dessous.</string>
+    <string name="la_perms_internet_description">Requise pour accéder à votre serveur musical sur Internet.</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_nearby_devices_description">Requise pour découvrir d\'autres appareils via UPnP et Chromecast.</string>
+    <string name="la_perms_nearby_devices_title">Appareils à proximité</string>
+    <string name="la_perms_notifications_description">Requise pour afficher l\'état des téléchargements et les commandes du lecteur.</string>
+    <string name="la_perms_notifications_title">Notifications</string>
+    <string name="la_perms_status_not_provided">Demander</string>
+    <string name="la_perms_status_provided">Accordée</string>
+    <string name="la_theme_card_emerald_green_description">Couleur d\'accent vert émeraude</string>
+</resources>

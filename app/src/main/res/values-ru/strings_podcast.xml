@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">В очередь</string>
+    <string name="podcast_bottom_sheet_delete">Удалить</string>
+    <string name="podcast_bottom_sheet_download">Скачать</string>
+    <string name="podcast_bottom_sheet_go_to_channel">К каналу</string>
+    <string name="podcast_bottom_sheet_play_next">Играть следующим</string>
+    <string name="podcast_bottom_sheet_remove">Убрать</string>
+    <string name="podcast_channel_catalogue_title">Каналы</string>
+    <string name="podcast_channel_catalogue_title_expanded">Обзор каналов</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS URL</string>
+    <string name="podcast_channel_editor_dialog_title">Канал подкаста</string>
+    <string name="podcast_channel_not_supported_snackbar">Сервер не поддерживает подкасты.</string>
+    <string name="podcast_channel_page_title_description_section">Описание</string>
+    <string name="podcast_channel_page_title_episode_section">Эпизоды</string>
+    <string name="podcast_episode_download_request_snackbar">Запрос отправлен на сервер</string>
+    <string name="podcast_info_empty_button">Нажмите, чтобы скрыть\n(потребуется перезапуск)</string>
+    <string name="podcast_info_empty_subtitle">Добавленные каналы появятся здесь</string>
+    <string name="podcast_info_empty_title">Подкастов нет</string>
+    <string name="podcast_release_date_duration_formatter">%1$s • %2$s</string>
+    <string name="podcast_release_no_date">Нет даты</string>
+    <string name="podcast_release_unknown_duration">Неизв. длительность</string>
+</resources>

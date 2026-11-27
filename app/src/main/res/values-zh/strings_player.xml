@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="player_lyrics_download_content_description">下载离线歌词</string>
+    <string name="player_lyrics_download_failure">暂无歌词可供下载。</string>
+    <string name="player_lyrics_download_success">离线歌词已保存。</string>
+    <string name="player_lyrics_downloaded_content_description">已下载的离线歌词</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_load_queue">加载队列</string>
+    <string name="player_queue_save_to_playlist">保存队列到播放列表</string>
+    <string name="player_transcoding">正在转码</string>
+    <string name="player_unknown_format">未知格式</string>
+</resources>

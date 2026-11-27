@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
+    <string name="podcast_bottom_sheet_delete">Usuń</string>
+    <string name="podcast_bottom_sheet_download">Pobierz</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Przejdź do kanału</string>
+    <string name="podcast_bottom_sheet_play_next">Odtwórz jako następny</string>
+    <string name="podcast_bottom_sheet_remove">Usuń</string>
+    <string name="podcast_channel_catalogue_title">Kanały</string>
+    <string name="podcast_channel_catalogue_title_expanded">Przeglądaj Kanały</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">Url RSS</string>
+    <string name="podcast_channel_editor_dialog_title">Kanał Podcastu</string>
+    <string name="podcast_channel_not_supported_snackbar">Podcasty nie są obsługiwane przez ten serwer.</string>
+    <string name="podcast_channel_page_title_description_section">Opis</string>
+    <string name="podcast_channel_page_title_episode_section">Odcinki</string>
+    <string name="podcast_episode_download_request_snackbar">Twoje zapytanie zostało wysłane do serwera</string>
+    <string name="podcast_info_empty_button">Naciśnij aby ukryć tę sekcję\nEfekty będą widoczne po restarcie</string>
+    <string name="podcast_info_empty_subtitle">Gdy dodasz kanał, znajdziesz go tutaj</string>
+    <string name="podcast_info_empty_title">Nie znaleziono podcastów!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">Brak daty</string>
+    <string name="podcast_release_unknown_duration">Nieznana długość</string>
+</resources>

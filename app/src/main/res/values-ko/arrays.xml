@@ -190,31 +190,5 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>트랜스코딩 하지 않음</item>
-        <item>서버 셋팅</item>
-        <item>Wi-Fi 트랜스코딩 포맷</item>
-        <item>모바일 트랜스코딩 포맷</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>최소 별점 0</item>
-        <item>최소 별점 1</item>
-        <item>최소 별점 2</item>
-        <item>최소 별점 3</item>
-        <item>최소 별점 4</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
 </resources>

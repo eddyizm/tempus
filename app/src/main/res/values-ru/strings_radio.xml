@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">Сервер не поддерживает интернет-радио.</string>
+    <string name="radio_editor_dialog_added">Станция добавлена</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">URL обложки (опц.)</string>
+    <string name="radio_editor_dialog_hint_homepage_url">URL сайта</string>
+    <string name="radio_editor_dialog_hint_name">Название</string>
+    <string name="radio_editor_dialog_hint_stream_url">URL потока</string>
+    <string name="radio_editor_dialog_negative_button">Отмена</string>
+    <string name="radio_editor_dialog_neutral_button">Удалить</string>
+    <string name="radio_editor_dialog_positive_button">Сохранить</string>
+    <string name="radio_editor_dialog_title">Интернет-радио</string>
+    <string name="radio_editor_dialog_updated">Станция обновлена</string>
+    <string name="radio_editor_search_directory">Поиск в каталоге</string>
+    <string name="radio_editor_source_label">Сохранить в</string>
+    <string name="radio_editor_source_local">Локально</string>
+    <string name="radio_editor_source_server">Сервер</string>
+    <string name="radio_local_badge">ЛОКАЛЬНО</string>
+    <string name="radio_search_add">Добавить</string>
+    <string name="radio_search_button">Поиск</string>
+    <string name="radio_search_country_hint">Страна</string>
+    <string name="radio_search_empty_query">Введите название</string>
+    <string name="radio_search_error">Ошибка поиска: %s</string>
+    <string name="radio_search_hint">Название станции</string>
+    <string name="radio_search_no_results">Ничего не найдено</string>
+    <string name="radio_search_use">Использовать</string>
+    <string name="radio_station_info_empty_button">Нажмите, чтобы скрыть\n(потребуется перезапуск)</string>
+    <string name="radio_station_info_empty_subtitle">Добавленные станции появятся здесь</string>
+    <string name="radio_station_info_empty_title">Станций нет</string>
+</resources>

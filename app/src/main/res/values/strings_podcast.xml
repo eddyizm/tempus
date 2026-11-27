@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Add to queue</string>
+    <string name="podcast_bottom_sheet_delete">Delete</string>
+    <string name="podcast_bottom_sheet_download">Download</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Go to channel</string>
+    <string name="podcast_bottom_sheet_play_next">Play next</string>
+    <string name="podcast_bottom_sheet_remove">Remove</string>
+    <string name="podcast_channel_catalogue_title">Channels</string>
+    <string name="podcast_channel_catalogue_title_expanded">Browse Channels</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS Url</string>
+    <string name="podcast_channel_editor_dialog_title">Podcast Channel</string>
+    <string name="podcast_channel_not_supported_snackbar">Podcasts are not supported by this server.</string>
+    <string name="podcast_channel_page_title_description_section">Description</string>
+    <string name="podcast_channel_page_title_episode_section">Episodes</string>
+    <string name="podcast_episode_download_request_snackbar">Your request has been sent to the server</string>
+    <string name="podcast_info_empty_button">Click to hide the section\nThe effects will be visible on restart</string>
+    <string name="podcast_info_empty_subtitle">Once you add a channel, you\'ll find it here</string>
+    <string name="podcast_info_empty_title">No podcasts found!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">No date</string>
+    <string name="podcast_release_unknown_duration">Unknown duration</string>
+</resources>

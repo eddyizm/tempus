@@ -10,14 +10,6 @@
         <item>default</item>
     </string-array>
 
-    <string-array name="dark_theme_style_titles">
-        <item>Standart</item>
-        <item>AMOLED (Tam qara)</item>
-    </string-array>
-    <string-array name="dark_theme_style_values">
-        <item>standard</item>
-        <item>amoled</item>
-    </string-array>
 
 
     <string-array name="pref_cache_size_titles">
@@ -219,18 +211,6 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Transkodlaşdırma</item>
-        <item>Server parametrləri</item>
-        <item>Wi-Fi şəbəkəsində transkodlaşdırma formatı</item>
-        <item>Mobil şəbəkədə transkodlaşdırma formatı</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
     <string-array name="song_preload_buffer_titles">
         <item>5 saniyə</item>
@@ -284,34 +264,6 @@
     </string-array>
 
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>Ən azı 0 ulduz</item>
-        <item>Ən azı 1 ulduz</item>
-        <item>Ən azı 2 ulduz</item>
-        <item>Ən azı 3 ulduz</item>
-        <item>Ən azı 4 ulduz</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3"</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
 		
     <string-array name="tile_size_titles">
         <item>Çox kiçik</item>

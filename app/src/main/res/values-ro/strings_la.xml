@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Activity -->
+    <string name="la_perms_access_local_network_description">Necesar pentru a accesa alte dispozitive din aceeași rețea LAN ca dispozitivul actual.</string>
+    <string name="la_perms_access_local_network_title">Acces la rețeaua locală</string>
+    <string name="la_perms_description">Permisiunile necesare și utilizarea acestora sunt afișate mai jos.</string>
+    <string name="la_perms_internet_description">Necesară pentru a accesa serverul tău de muzică prin internet.</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_nearby_devices_description">Necesară pentru a descoperi alte dispozitive prin UPnP și Chromecast.</string>
+    <string name="la_perms_nearby_devices_title">Dispozitive din apropiere</string>
+    <string name="la_perms_notifications_description">Necesară pentru a afișa starea descărcărilor și comenzile playerului.</string>
+    <string name="la_perms_notifications_title">Notificări</string>
+    <string name="la_perms_status_not_provided">Solicită</string>
+    <string name="la_perms_status_provided">Acordată</string>
+    <string name="la_theme_card_emerald_green_description">Culoare de accent verde smarald</string>
+</resources>

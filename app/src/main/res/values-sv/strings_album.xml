@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Lägg till i spellista</string>
+    <string name="album_bottom_sheet_add_to_queue">Lägg till i kön</string>
+    <string name="album_bottom_sheet_download_all">Hämta alla</string>
+    <string name="album_bottom_sheet_go_to_artist">Gå till artist</string>
+    <string name="album_bottom_sheet_instant_mix">Direktmix</string>
+    <string name="album_bottom_sheet_play_next">Spela härnäst</string>
+    <string name="album_bottom_sheet_remove_all">Ta bort alla</string>
+    <string name="album_bottom_sheet_share">Dela</string>
+    <string name="album_bottom_sheet_shuffle">Blanda</string>
+    <string name="album_catalogue_title">Album</string>
+    <string name="album_catalogue_title_expanded">Bläddra bland album</string>
+    <string name="album_error_retrieving_artist">Kunde inte hämta artist</string>
+    <string name="album_list_page_downloaded">Hämtade album</string>
+    <string name="album_list_page_most_played">Mest spelade album</string>
+    <string name="album_list_page_new_releases">Nya utgåvor</string>
+    <string name="album_list_page_recently_added">Nyligen tillagda album</string>
+    <string name="album_list_page_recently_played">Nyligen spelade album</string>
+    <string name="album_list_page_starred">Stjärnmärkta album</string>
+    <string name="album_list_page_title">Album</string>
+    <string name="album_page_play_button">Spela</string>
+    <string name="album_page_release_date_label">Utgivet %1$s</string>
+    <string name="album_page_release_dates_label">Utgivet %1$s, ursprungligen %2$s</string>
+    <string name="album_page_shuffle_button">Blanda</string>
+    <string name="album_page_tracks_count_and_duration">%1$d låtar  •  %2$d minuter</string>
+</resources>

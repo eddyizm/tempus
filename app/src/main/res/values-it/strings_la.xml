@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Activity -->
+    <string name="la_perms_access_local_network_description">Necessario per accedere ad altri dispositivi sulla stessa LAN del dispositivo attuale.</string>
+    <string name="la_perms_access_local_network_title">Accesso alla rete locale</string>
+    <string name="la_perms_description">Le autorizzazioni necessarie e il loro utilizzo sono indicati di seguito.</string>
+    <string name="la_perms_internet_description">Necessaria per accedere al tuo server musicale tramite internet.</string>
+    <string name="la_perms_internet_title">Internet</string>
+    <string name="la_perms_nearby_devices_description">Necessaria per trovare altri dispositivi tramite UPnP e Chromecast.</string>
+    <string name="la_perms_nearby_devices_title">Dispositivi nelle vicinanze</string>
+    <string name="la_perms_notifications_description">Necessaria per mostrare lo stato dei download e i controlli del lettore.</string>
+    <string name="la_perms_notifications_title">Notifiche</string>
+    <string name="la_perms_status_not_provided">Richiedi</string>
+    <string name="la_perms_status_provided">Concessa</string>
+    <string name="la_theme_card_emerald_green_description">Colore di accento verde smeraldo</string>
+</resources>

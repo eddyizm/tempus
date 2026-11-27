@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">Bu server internet radiosunun idarə edilməsini dəstəkləmir.</string>
+    <string name="radio_editor_dialog_added">Radio stansiyası əlavə edildi</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">Üz qabığının URL ünvanı (istəyə bağlı)</string>
+    <string name="radio_editor_dialog_hint_homepage_url">Radionun ana səhifəsinin URL ünvanı</string>
+    <string name="radio_editor_dialog_hint_name">Radio adı</string>
+    <string name="radio_editor_dialog_hint_stream_url">Radio yayımının URL ünvanı</string>
+    <string name="radio_editor_dialog_negative_button">Ləğv et</string>
+    <string name="radio_editor_dialog_neutral_button">Sil</string>
+    <string name="radio_editor_dialog_positive_button">Yadda saxla</string>
+    <string name="radio_editor_dialog_title">İnternet radio stansiyası</string>
+    <string name="radio_editor_dialog_updated">Radio stansiyası yeniləndi</string>
+    <string name="radio_editor_search_directory">Kataloqda axtar</string>
+    <string name="radio_editor_source_label">Saxlanma yeri</string>
+    <string name="radio_editor_source_local">Yerli</string>
+    <string name="radio_editor_source_server">Server</string>
+    <string name="radio_local_badge">Yerli</string>
+    <string name="radio_search_add">Əlavə et</string>
+    <string name="radio_search_button">Axtar</string>
+    <string name="radio_search_country_hint">Ölkə</string>
+    <string name="radio_search_empty_query">Stansiya adını daxil edin</string>
+    <string name="radio_search_error">Axtarış alınmadı: %s</string>
+    <string name="radio_search_hint">Stansiya adı</string>
+    <string name="radio_search_no_results">Stansiya tapılmadı</string>
+    <string name="radio_search_use">İstifadə et</string>
+    <string name="radio_station_info_empty_button">Bölməni gizlətmək üçün toxunun\nDəyişiklik yenidən başladıqdan sonra görünəcək</string>
+    <string name="radio_station_info_empty_subtitle">Radio stansiyası əlavə etdikdən sonra onu burada görəcəksiniz</string>
+    <string name="radio_station_info_empty_title">Stansiya tapılmadı!</string>
+</resources>

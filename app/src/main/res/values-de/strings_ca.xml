@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Log kopieren</string>
+    <string name="ca_export_button_share">Log teilen</string>
+    <string name="ca_export_description">\n        Geräteinformationen werden dem exportierten Bericht vorangestellt.\n\n\n\n        Die Daten werden ohne deine Zustimmung nirgendwohin gesendet.\n    </string>
+    <string name="ca_export_label">Exportieren</string>
+    <string name="ca_export_title">Bericht abrufen</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Bericht in die Zwischenablage kopiert</string>
+    <string name="ca_info_button_close">App schließen</string>
+    <string name="ca_info_button_restart">App neu starten</string>
+    <string name="ca_info_description">\n        Bitte erstelle ein Issue auf GitHub und füge eine Kopie des Crash-Reports hinzu, um das Problem zu beheben.\n    </string>
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus abgestürzt</string>
+    <string name="ca_logs_description">\n        Das ist, was schiefgelaufen ist.\n    </string>
+    <string name="ca_logs_label">Logs</string>
+    <string name="ca_logs_title">Java-Stacktrace</string>
+</resources>

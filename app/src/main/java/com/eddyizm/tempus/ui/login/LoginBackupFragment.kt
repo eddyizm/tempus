@@ -104,20 +104,20 @@ class LoginBackupFragment : Fragment() {
                 out.write(json.toByteArray(StandardCharsets.UTF_8))
                 Toast.makeText(
                     requireContext(),
-                    R.string.settings_exported,
+                    R.string.la_backups_toast_export_success,
                     Toast.LENGTH_SHORT
                 ).show()
             } ?: throw IOException("No output stream")
         } catch (e: IOException) {
             Toast.makeText(
                 requireContext(),
-                R.string.settings_export_failed,
+                R.string.la_backups_toast_export_failure,
                 Toast.LENGTH_LONG
             ).show()
         } catch (e: SecurityException) {
             Toast.makeText(
                 requireContext(),
-                R.string.settings_export_failed,
+                R.string.la_backups_toast_export_failure,
                 Toast.LENGTH_LONG
             ).show()
         }
@@ -138,7 +138,7 @@ class LoginBackupFragment : Fragment() {
         if (count < 0) {
             Toast.makeText(
                 context,
-                R.string.settings_import_invalid,
+                R.string.la_backups_toast_import_invalid,
                 Toast.LENGTH_LONG
             ).show()
             return
@@ -146,7 +146,7 @@ class LoginBackupFragment : Fragment() {
 
         Toast.makeText(
             context,
-            getString(R.string.settings_imported, count),
+            getString(R.string.la_backups_toast_import_success, count),
             Toast.LENGTH_SHORT
         ).show()
 

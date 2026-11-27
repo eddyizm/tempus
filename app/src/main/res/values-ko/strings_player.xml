@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_transcoding">트랜스코딩</string>
+    <string name="player_unknown_format">즐겨찾기 오래된순</string>
+</resources>

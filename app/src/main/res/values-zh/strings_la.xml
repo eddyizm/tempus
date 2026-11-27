@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Activity -->
+    <string name="la_perms_access_local_network_description">访问与当前设备位于同一局域网中的其他设备所必需。</string>
+    <string name="la_perms_access_local_network_title">访问本地网络</string>
+    <string name="la_perms_description">所需权限及其用途如下。</string>
+    <string name="la_perms_internet_description">通过互联网访问音乐服务器所必需。</string>
+    <string name="la_perms_internet_title">互联网</string>
+    <string name="la_perms_nearby_devices_description">通过 UPnP 和 Chromecast 发现其他设备所必需。</string>
+    <string name="la_perms_nearby_devices_title">附近设备</string>
+    <string name="la_perms_notifications_description">显示下载状态和播放器控件所必需。</string>
+    <string name="la_perms_notifications_title">通知</string>
+    <string name="la_perms_status_not_provided">请求</string>
+    <string name="la_perms_status_provided">已授予</string>
+    <string name="la_theme_card_emerald_green_description">祖母绿强调色</string>
+</resources>

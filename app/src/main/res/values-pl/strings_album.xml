@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Dodaj do playlisty</string>
+    <string name="album_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
+    <string name="album_bottom_sheet_download_all">Pobierz wszystkie</string>
+    <string name="album_bottom_sheet_go_to_artist">Przejdź do wykonawcy</string>
+    <string name="album_bottom_sheet_instant_mix">Natychmiastowy mix</string>
+    <string name="album_bottom_sheet_play_next">Odtwórz jako następne</string>
+    <string name="album_bottom_sheet_remove_all">Usuń wszystkie</string>
+    <string name="album_bottom_sheet_share">Udostępnij</string>
+    <string name="album_bottom_sheet_shuffle">Odtwórz losowo</string>
+    <string name="album_catalogue_title">Albumy</string>
+    <string name="album_catalogue_title_expanded">Przeglądaj Albumy</string>
+    <string name="album_error_retrieving_artist">Błąd podczas pobierania wykonawcy</string>
+    <string name="album_list_page_downloaded">Pobrane albumy</string>
+    <string name="album_list_page_most_played">Najczęściej odtwarzane albumy</string>
+    <string name="album_list_page_new_releases">Nowe wydania</string>
+    <string name="album_list_page_recently_added">Albumy dodane niedawno</string>
+    <string name="album_list_page_recently_played">Albumy odtwarzane niedawno</string>
+    <string name="album_list_page_starred">Albumy oznaczone gwiazdką</string>
+    <string name="album_list_page_title">Albumy</string>
+    <string name="album_page_play_button">Odtwarzaj</string>
+    <string name="album_page_release_date_label">Wydane %1$s</string>
+    <string name="album_page_release_dates_label">Wydane %1$s, oryginalnie %2$s</string>
+    <string name="album_page_shuffle_button">Odtwarzaj losowo</string>
+    <string name="album_page_tracks_count_and_duration">%1$d utworów  •  %2$d minut</string>
+</resources>

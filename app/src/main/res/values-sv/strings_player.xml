@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="playback_speed_decrease_button_content_description">Sänk uppspelningshastigheten</string>
+    <string name="playback_speed_dialog_negative_button">Avbryt</string>
+    <string name="playback_speed_dialog_reset_button">Återställ</string>
+    <string name="playback_speed_dialog_title">Uppspelningshastighet</string>
+    <string name="playback_speed_increase_button_content_description">Höj uppspelningshastigheten</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Sänk den manuella tonhöjden</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Höj den manuella tonhöjden</string>
+    <string name="playback_speed_manual_pitch_switch_title">Manuell tonhöjd</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_pitch_switch_title">Behåll tonhöjden</string>
+    <string name="player_lyrics_download_content_description">Hämta låttext för offlineuppspelning</string>
+    <string name="player_lyrics_download_failure">Låttexten går inte att hämta.</string>
+    <string name="player_lyrics_download_success">Låttexten har sparats för offlineuppspelning.</string>
+    <string name="player_lyrics_downloaded_content_description">Låttext hämtad för offlineuppspelning</string>
+    <string name="player_overflow_menu_add_to_playlist">Lägg till i spellista</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_load_queue">Läs in kö</string>
+    <string name="player_queue_save_to_playlist">Spara kön som spellista</string>
+    <string name="player_transcoding">Omkodning</string>
+    <string name="player_unknown_format">Okänt format</string>
+</resources>

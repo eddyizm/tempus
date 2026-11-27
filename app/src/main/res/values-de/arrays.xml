@@ -9,10 +9,6 @@
         <item>dark</item>
         <item>default</item>
     </string-array>
-    <string-array name="dark_theme_style_titles">
-        <item>Standard</item>
-        <item>AMOLED (Reinschwarz)</item>
-    </string-array>
 
     <string-array name="pref_cache_size_titles">
         <item>Groß</item>
@@ -213,18 +209,6 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Nicht umwandeln</item>
-        <item>Server entscheidet</item>
-        <item>Einstellung für WLAN Streamen</item>
-        <item>Einstellung für mobiles Streamen</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
     <string-array name="song_preload_buffer_titles">
         <item>5 Sekunden</item>
         <item>30 Sekunden</item>
@@ -262,34 +246,6 @@
     </string-array>
 
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>Mind. 0 Sterne</item>
-        <item>Mind. 1 Stern</item>
-        <item>Mind. 2 Sterne</item>
-        <item>Mind. 3 Sterne</item>
-        <item>Mind. 4 Sterne</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
 
     <string-array name="tile_size_titles">
         <item>Winzig</item>

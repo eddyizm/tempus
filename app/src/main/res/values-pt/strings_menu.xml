@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Adicionar a uma playlist</string>
+    <string name="menu_download_all_button">Baixar todos</string>
+    <string name="menu_download_label">Download</string>
+    <string name="menu_edit_playlist_details_button">Editar detalhes</string>
+    <string name="menu_filter_all">Todos</string>
+    <string name="menu_filter_download">Baixados</string>
+    <string name="menu_group_by_album">Álbum</string>
+    <string name="menu_group_by_artist">Artista</string>
+    <string name="menu_group_by_genre">Gênero</string>
+    <string name="menu_group_by_track">Faixa</string>
+    <string name="menu_group_by_year">Ano</string>
+    <string name="menu_home_label">Início</string>
+    <string name="menu_keep_synced_button">Manter sincronizada</string>
+    <string name="menu_library_label">Biblioteca</string>
+    <string name="menu_search_button">Pesquisar</string>
+    <string name="menu_settings_button">Configurações</string>
+    <string name="menu_sort_artist">Artista</string>
+    <string name="menu_sort_name">Nome</string>
+    <string name="menu_sort_random">Aleatório</string>
+    <string name="menu_sort_year">Ano</string>
+</resources>

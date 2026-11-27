@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Fortsätt från %1$s</string>
+    <string name="home_option_reorganize">Ordna om</string>
+    <string name="home_rearrangement_dialog_negative_button">Avbryt</string>
+    <string name="home_rearrangement_dialog_neutral_button">Återställ</string>
+    <string name="home_rearrangement_dialog_positive_button">Spara</string>
+    <string name="home_rearrangement_dialog_subtitle">Starta om appen för att ändringarna ska börja gälla.</string>
+    <string name="home_rearrangement_dialog_title">Ordna om startsidan</string>
+    <string name="home_section_music">Musik</string>
+    <string name="home_section_podcast">Poddar</string>
+    <string name="home_section_radio">Radio</string>
+    <string name="home_subtitle_best_of">Favoritartisternas populäraste låtar</string>
+    <string name="home_subtitle_made_for_you">Starta en mix från en låt du gillar</string>
+    <string name="home_subtitle_new_internet_radio_station">Lägg till en radiostation</string>
+    <string name="home_subtitle_new_podcast_channel">Lägg till en poddkanal</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">%d album att synkronisera</item>
+        <item quantity="other">%d album att synkronisera</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Stjärnmärkta album blir tillgängliga offline</string>
+    <string name="home_sync_starred_albums_title">Synkronisera stjärnmärkta album</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d artist att synkronisera</item>
+        <item quantity="other">%d artister att synkronisera</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">Du har stjärnmärkt artister vars musik inte har hämtats</string>
+    <string name="home_sync_starred_artists_title">Synkronisera stjärnmärkta artister</string>
+    <string name="home_sync_starred_cancel">Avbryt</string>
+    <string name="home_sync_starred_download">Hämta</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d låt behöver synkroniseras</item>
+        <item quantity="other">%d låtar behöver synkroniseras</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Det kan gå åt mycket data när du hämtar dessa låtar</string>
+    <string name="home_sync_starred_title">Det finns stjärnmärkta låtar att synkronisera</string>
+    <string name="home_title_best_of">Det bästa</string>
+    <string name="home_title_continue_listening">Fortsätt lyssna</string>
+    <string name="home_title_discovery">Upptäck</string>
+    <string name="home_title_discovery_shuffle_all_button">Blanda alla</string>
+    <string name="home_title_flashback">Tillbakablick</string>
+    <string name="home_title_internet_radio_station">Internetradiostationer</string>
+    <string name="home_title_last_month">Senaste månaden</string>
+    <string name="home_title_last_played">Senast spelat</string>
+    <string name="home_title_last_played_see_all_button">Visa alla</string>
+    <string name="home_title_last_week">Senaste veckan</string>
+    <string name="home_title_last_year">Senaste året</string>
+    <string name="home_title_made_for_you">Skapat för dig</string>
+    <string name="home_title_most_played">Mest spelat</string>
+    <string name="home_title_most_played_see_all_button">Visa alla</string>
+    <string name="home_title_new_releases">Nya utgåvor</string>
+    <string name="home_title_newest_podcasts">Senaste poddarna</string>
+    <string name="home_title_pinned_playlists">Spellistor</string>
+    <string name="home_title_podcast_channels">Kanaler</string>
+    <string name="home_title_podcast_channels_see_all_button">Visa alla</string>
+    <string name="home_title_radio_station">Radiostationer</string>
+    <string name="home_title_recently_added">Nyligen tillagt</string>
+    <string name="home_title_recently_added_see_all_button">Visa alla</string>
+    <string name="home_title_shares">Delningar</string>
+    <string name="home_title_starred_albums">★ Stjärnmärkta album</string>
+    <string name="home_title_starred_albums_see_all_button">Visa alla</string>
+    <string name="home_title_starred_artists">★ Stjärnmärkta artister</string>
+    <string name="home_title_starred_artists_see_all_button">Visa alla</string>
+    <string name="home_title_starred_tracks">★ Stjärnmärkta låtar</string>
+    <string name="home_title_starred_tracks_see_all_button">Visa alla</string>
+    <string name="home_title_top_songs">Dina populäraste låtar</string>
+</resources>

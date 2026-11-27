@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">Плейлист добавлен в очередь</string>
+    <string name="playlist_catalogue_title">Плейлисты</string>
+    <string name="playlist_catalogue_title_expanded">Обзор плейлистов</string>
+    <string name="playlist_chooser_dialog_cancel_button">Отмена</string>
+    <string name="playlist_chooser_dialog_create_button">Создать</string>
+    <string name="playlist_chooser_dialog_empty">Нет плейлистов</string>
+    <string name="playlist_chooser_dialog_title">Добавить в плейлист</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Ошибка добавления</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Ошибка удаления</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Трек удалён</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Вкл: плейлист станет публичным. Выкл: видимость не изменится.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Сделать публичным</string>
+    <string name="playlist_counted_tracks">%1$d треков • %2$s</string>
+    <string name="playlist_details_dialog_title">Сведения о плейлисте</string>
+    <string name="playlist_duration">Длительность • %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Ошибка удаления</string>
+    <string name="playlist_editor_dialog_action_delete_success">Плейлист удалён</string>
+    <string name="playlist_editor_dialog_action_save_empty">Плейлист не может быть пустым</string>
+    <string name="playlist_editor_dialog_action_save_failure">Ошибка сохранения</string>
+    <string name="playlist_editor_dialog_action_save_success">Плейлист сохранён</string>
+    <string name="playlist_editor_dialog_hint_name">Название</string>
+    <string name="playlist_editor_dialog_negative_button">Отмена</string>
+    <string name="playlist_editor_dialog_neutral_button">Удалить</string>
+    <string name="playlist_editor_dialog_positive_button">Сохранить</string>
+    <string name="playlist_editor_dialog_title">Изменить плейлист</string>
+    <string name="playlist_editor_drag_track">Перетащите для изменения порядка</string>
+    <string name="playlist_editor_hint">Перетаскивайте для изменения порядка, нажмите корзину для удаления. Изменения применятся после сохранения.</string>
+    <string name="playlist_editor_load_failure">Не удалось загрузить плейлист</string>
+    <string name="playlist_editor_remove_track">Удалить трек</string>
+    <string name="playlist_editor_removed_track">Удалено из списка</string>
+    <string name="playlist_error_not_found_message">Плейлист отсутствует на сервере. Он будет удалён из локального кэша.</string>
+    <string name="playlist_error_not_found_title">Плейлист не найден</string>
+    <string name="playlist_error_not_found_toast">Плейлист удалён из кэша</string>
+    <string name="playlist_page_empty">В плейлисте нет треков</string>
+    <string name="playlist_page_play_button">Играть</string>
+    <string name="playlist_page_shuffle_button">Перемешать</string>
+    <string name="playlist_song_count">Плейлист • %1$d треков</string>
+    <string name="playlist_sort_both">Недавно активные</string>
+    <string name="playlist_sort_last_played">Недавно играно</string>
+    <string name="playlist_sort_last_updated">Недавно обновлено</string>
+    <string name="playlist_sort_pinned">Избранное</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Скачивание %d трека</item>
+        <item quantity="few">Скачивание %d треков</item>
+        <item quantity="many">Скачивание %d треков</item>
+        <item quantity="other">Скачивание %d треков</item>
+    </plurals>
+</resources>

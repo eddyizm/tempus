@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android Auto -->
+    <string name="aa_album_most_played">Àlbums més reproduïts</string>
+    <string name="aa_album_recently_added">Àlbums afegits</string>
+    <string name="aa_albums">Àlbums</string>
+    <string name="aa_artists">Artistes</string>
+    <string name="aa_discovery_mix">Mescla de descobriment</string>
+    <string name="aa_genres">Gèneres</string>
+    <string name="aa_home">Inici</string>
+    <string name="aa_instant_mix">Mescla instantània</string>
+    <string name="aa_made_for_you">Per a vós</string>
+    <string name="aa_more">Més</string>
+    <string name="aa_music_folder">Carpeta</string>
+    <string name="aa_my_mix">La meva mescla</string>
+    <string name="aa_playlists">Llistes de reproducció</string>
+    <string name="aa_podcast">Pòdcasts</string>
+    <string name="aa_quick_mix">Mescla ràpida</string>
+    <string name="aa_radio">Ràdio</string>
+    <string name="aa_random">Aleatori</string>
+    <string name="aa_recent_albums">Recents</string>
+    <string name="aa_song_recently_played">Pistes reproduïdes</string>
+    <string name="aa_starred">Preferits</string>
+    <string name="aa_starred_albums">Àlbums amb ★</string>
+    <string name="aa_starred_artists">Artistes amb ★</string>
+    <string name="aa_starred_tracks">Pistes amb ★</string>
+    <string name="aa_tracks">Pistes</string>
+    <string name="aa_view_by_albums">Visualitza per àlbums</string>
+</resources>

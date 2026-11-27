@@ -9,14 +9,6 @@
         <item>dark</item>
         <item>default</item>
     </string-array>
-    <string-array name="dark_theme_style_titles">
-        <item>標準</item>
-        <item>AMOLED（純粋な黒）</item>
-    </string-array>
-    <string-array name="dark_theme_style_values">
-        <item>standard</item>
-        <item>amoled</item>
-    </string-array>
     <string-array name="pref_cache_size_titles">
         <item>大</item>
         <item>中</item>
@@ -205,18 +197,6 @@
         <item>album</item>
         <item>auto</item>
     </string-array>
-    <string-array name="transcoded_download_option_list_titles">
-        <item>トランスコードしない</item>
-        <item>サーバー設定</item>
-        <item>Wi-Fi向けトランスコード</item>
-        <item>モバイル向けトランスコード</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
     <string-array name="song_preload_buffer_titles">
         <item>5秒</item>
         <item>30秒</item>
@@ -264,34 +244,6 @@
         <item>ORDER_BY_LAST_PLAYED</item>
         <item>ORDER_BY_LAST_UPDATED</item>
         <item>ORDER_BY_BOTH</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_titles">
-        <item>★0以上</item>
-        <item>★1以上</item>
-        <item>★2以上</item>
-        <item>★3以上</item>
-        <item>★4以上</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
     </string-array>
     <string-array name="tile_size_titles">
         <item>極小</item>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_editor_dialog_hint_homepage_url">라디오 홈페이지 URL</string>
+    <string name="radio_editor_dialog_hint_name">라디오 이름</string>
+    <string name="radio_editor_dialog_hint_stream_url">라디오 스트리밍 URL</string>
+    <string name="radio_editor_dialog_negative_button">취소</string>
+    <string name="radio_editor_dialog_neutral_button">삭제</string>
+    <string name="radio_editor_dialog_positive_button">저장</string>
+    <string name="radio_editor_dialog_title">인터넷 라디오 섹션</string>
+    <string name="radio_station_info_empty_button">섹션을 숨기려면 클릭하세요.\n다시 시작하면 적용됩니다.</string>
+    <string name="radio_station_info_empty_subtitle">라디오 스테이션을 추가하면 표시됩니다.</string>
+    <string name="radio_station_info_empty_title">스테이션을 찾을 수 없습니다.</string>
+</resources>

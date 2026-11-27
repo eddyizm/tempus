@@ -209,33 +209,7 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Ne pas transcoder</item>
-        <item>Réglages du serveur</item>
-        <item>Format de transcodage (Wi-Fi)</item>
-        <item>Format de transcodage (Mobile)</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>0 étoile minimum</item>
-        <item>1 étoile minimum</item>
-        <item>2 étoiles minimum</item>
-        <item>3 étoiles minimum</item>
-        <item>4 étoiles minimum</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
 			
     <string-array name="tile_size_titles">
         <item>Minuscule</item>

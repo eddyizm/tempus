@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_catalogue_title">Catalogul Playlisturi</string>
+    <string name="playlist_catalogue_title_expanded">Răsfoiți Playlisturi</string>
+    <string name="playlist_chooser_dialog_cancel_button">Anulati</string>
+    <string name="playlist_chooser_dialog_create_button">Creaţi</string>
+    <string name="playlist_chooser_dialog_empty">Niciun playlist creat</string>
+    <string name="playlist_chooser_dialog_title">Adăugați la un playlist</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Eșec la adăugarea piese(lor) la playlist</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Activarea acestei opțiuni face lista de redare publică. Dacă este lăsată așa cum este, vizibilitatea listei de redare nu se va schimba.</string>
+    <string name="playlist_counted_tracks">%1$d piese •  %2$s</string>
+    <string name="playlist_details_dialog_title">Detaliile playlistului</string>
+    <string name="playlist_duration">Durată  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_save_empty">O listă de redare trebuie să conțină cel puțin o piesă</string>
+    <string name="playlist_editor_dialog_hint_name">Nume Playlist</string>
+    <string name="playlist_editor_dialog_negative_button">Anulati</string>
+    <string name="playlist_editor_dialog_neutral_button">Ștergeţi</string>
+    <string name="playlist_editor_dialog_positive_button">Salvaţi</string>
+    <string name="playlist_editor_dialog_title">Editați playlist</string>
+    <string name="playlist_editor_drag_track">Trage pentru a reordona</string>
+    <string name="playlist_editor_hint">Trageți de mâner pentru a reordona și atingeți coșul de gunoi pentru a elimina. Nimic nu se trimite până la salvare.</string>
+    <string name="playlist_editor_load_failure">Playlistul nu a putut fi încărcat</string>
+    <string name="playlist_editor_remove_track">Elimină piesa</string>
+    <string name="playlist_editor_removed_track">Eliminată din listă</string>
+    <string name="playlist_page_play_button">Redare</string>
+    <string name="playlist_page_shuffle_button">Amestecare</string>
+    <string name="playlist_song_count">Playlist  •  %1$d cântece</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Se descarcă %d piesă</item>
+        <item quantity="few">Se descarcă %d piese</item>
+        <item quantity="other">Se descarcă %d piese</item>
+    </plurals>
+</resources>

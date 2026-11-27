@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">%1$s에서 계속</string>
+    <string name="home_option_reorganize">다시 정렬</string>
+    <string name="home_rearrangement_dialog_negative_button">취소</string>
+    <string name="home_rearrangement_dialog_neutral_button">초기화</string>
+    <string name="home_rearrangement_dialog_positive_button">저장</string>
+    <string name="home_rearrangement_dialog_subtitle">이 작업은 시간이 소요되며, 다시 시작 후 적용됩니다</string>
+    <string name="home_rearrangement_dialog_title">홈 다시 정렬</string>
+    <string name="home_section_music">음악</string>
+    <string name="home_section_podcast">팟캐스트</string>
+    <string name="home_section_radio">라디오</string>
+    <string name="home_subtitle_best_of">최애 아티스트의 인기곡</string>
+    <string name="home_subtitle_made_for_you">좋아하는 음악으로 믹스를 시작해 보세요.</string>
+    <string name="home_subtitle_new_internet_radio_station">새 라디오 추가</string>
+    <string name="home_subtitle_new_podcast_channel">새 팟캐스트 채널 추가</string>
+    <string name="home_sync_starred_albums_title">즐겨찾기한 앨범 동기화</string>
+    <string name="home_sync_starred_cancel">취소</string>
+    <string name="home_sync_starred_download">다운로드</string>
+    <string name="home_sync_starred_subtitle">트랙 다운로드 시 많은 데이터 사용량이 발생할 수 있습니다.</string>
+    <string name="home_sync_starred_title">동기화가 필요한 즐겨찾기 트랙이 있는 것 같습니다.</string>
+    <string name="home_title_best_of">Best of</string>
+    <string name="home_title_continue_listening">계속 듣기</string>
+    <string name="home_title_discovery">Discovery</string>
+    <string name="home_title_discovery_shuffle_all_button">모두 셔플</string>
+    <string name="home_title_flashback">Flashback</string>
+    <string name="home_title_internet_radio_station">인터넷 라디오 스테이션</string>
+    <string name="home_title_last_month">지난 달</string>
+    <string name="home_title_last_played">최근 재생</string>
+    <string name="home_title_last_played_see_all_button">모두 보기</string>
+    <string name="home_title_last_week">지난 주</string>
+    <string name="home_title_last_year">지난 해</string>
+    <string name="home_title_made_for_you">Made for you</string>
+    <string name="home_title_most_played">가장 많이 재생</string>
+    <string name="home_title_most_played_see_all_button">모두 보기</string>
+    <string name="home_title_new_releases">New releases</string>
+    <string name="home_title_newest_podcasts">새로운 팟캐스트</string>
+    <string name="home_title_pinned_playlists">재생목록</string>
+    <string name="home_title_podcast_channels">채널</string>
+    <string name="home_title_podcast_channels_see_all_button">모두 보기</string>
+    <string name="home_title_radio_station">라디오 스테이션</string>
+    <string name="home_title_recently_added">최근 추가</string>
+    <string name="home_title_recently_added_see_all_button">모두 보기</string>
+    <string name="home_title_shares">공유</string>
+    <string name="home_title_starred_albums">★ 즐겨찾기한 앨범</string>
+    <string name="home_title_starred_albums_see_all_button">모두 보기</string>
+    <string name="home_title_starred_artists">★ 즐겨찾기한 아티스트</string>
+    <string name="home_title_starred_artists_see_all_button">모두 보기</string>
+    <string name="home_title_starred_tracks">★ 즐겨찾기한 트랙</string>
+    <string name="home_title_starred_tracks_see_all_button">모두 보기</string>
+    <string name="home_title_top_songs">자주 플레이한 음악</string>
+</resources>
