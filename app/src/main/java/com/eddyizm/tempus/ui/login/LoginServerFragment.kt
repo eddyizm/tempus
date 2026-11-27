@@ -2,6 +2,8 @@ package com.eddyizm.tempus.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -75,6 +77,7 @@ class LoginServerFragment : Fragment() {
         initOldLoginButton()
         initLocalUrlSwitch()
         initClientCertSwitch()
+        initClientCertField()
         initCustomHeadersSwitch()
     }
 
@@ -495,6 +498,33 @@ class LoginServerFragment : Fragment() {
 
         val message = getString(messageId) + if (detail == null) "" else "\n" + detail
         Toast.makeText(context, message, duration).show()
+    }
+
+    private fun initClientCertField() {
+        val onCertFieldClick = View.OnClickListener {
+            val currentBinding = _binding ?: return@OnClickListener
+            val currentText = currentBinding.serverCertField.text
+            if (currentText.isNullOrEmpty()) {
+                android.security.KeyChain.choosePrivateKeyAlias(
+                    requireActivity(),
+                    { alias ->
+                        if (!alias.isNullOrBlank()) {
+                            Handler(Looper.getMainLooper()).post {
+                                val binding = _binding ?: return@post
+                                binding.serverCertField.setText(alias)
+                            }
+                        }
+                    },
+                    null, null, null, null
+                )
+            } else {
+                currentBinding.serverCertField.text = null
+            }
+        }
+
+        binding.serverCertField.showSoftInputOnFocus = false
+        binding.serverCertField.setOnClickListener(onCertFieldClick)
+        binding.serverCertFieldContainer.setOnClickListener(onCertFieldClick)
     }
 
     companion object {
