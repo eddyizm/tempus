@@ -128,7 +128,7 @@ public class SongListPageViewModel extends AndroidViewModel {
                     refreshing.setValue(false);
                     break;
                 }
-                artistRepository.getArtistAllSongs(artist.getId(),
+                artistRepository.getArtistAllSongs(artist.getId(), true,
                         songs -> onResult.accept(uniqueSongs(songs)));
                 break;
             case Constants.MEDIA_BY_GENRE:

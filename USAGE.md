@@ -186,7 +186,7 @@ The queue button on a song list appends the songs **currently displayed**, in th
 
 On an artist's page, **All songs** sits between Top Songs and Albums. Tap **Browse every song by this artist** to open a full song list built from the artist's albums on the server. It uses the same sorting, search filtering, refresh and **Add to queue** actions as other song lists, and duplicate tracks are removed. For an artist with a large discography, collecting every album's tracks can take a while; the loading state stays until the request finishes.
 
-This artist list does not follow the active music-library filter; the server-wide **All songs** screen does. **Group artist releases by type**, under Settings → UI, is on by default and keeps the separate Albums, EPs, Singles and other release shelves. Turn it off to show one **Albums** shelf with all of the artist's albums, newest year first. The change applies the next time the artist page opens; it does not re-shelf a page that is already on screen.
+This artist list does not follow the active music-library filter; the server-wide **All songs** screen does. When an artist is a collection of other artists and no tracks are credited to it directly, the list falls back to every track on the albums listed for that artist. **Group artist releases by type**, under Settings → UI, is on by default and keeps the separate Albums, EPs, Singles and other release shelves. Turn it off to show one **Albums** shelf with all of the artist's albums, newest year first. The change applies the next time the artist page opens; it does not re-shelf a page that is already on screen.
 
 ### Folder or index playback
 
