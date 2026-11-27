@@ -111,7 +111,7 @@ class StallDetectingDataSource(
         val headers = upstream.responseHeaders
         if (headers.isEmpty()) return
         rangeUnchecked = false
-        if (headers.keys.none { "Content-Range".equals(it, ignoreCase = true) }) {
+        if (!headers.hasContentRange()) {
             rangesIgnored = true
             Log.w(TAG, "The server ignores range requests, so this stream is not reconnected again")
         }

@@ -141,7 +141,8 @@ public final class DownloadUtil {
     }
 
     public static synchronized DataSource.Factory getUpstreamDataSourceFactory(Context context) {
-        DefaultDataSource.Factory upstreamFactory = new DefaultDataSource.Factory(context, getHttpDataSourceFactory());
+        DefaultDataSource.Factory upstreamFactory = new DefaultDataSource.Factory(context,
+                new ResumingDataSource.Factory(getHttpDataSourceFactory()));
         dataSourceFactory = buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache(context));
         return dataSourceFactory;
     }
