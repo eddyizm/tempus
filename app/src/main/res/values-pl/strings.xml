@@ -613,6 +613,8 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronizuj albumy oznaczone gwiazdką do użycia offline</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
+	<string name="settings_auto_download_played_tracks_title">Automatycznie pobieraj odtwarzane utwory</string>
+    <string name="settings_auto_download_played_tracks_summary">Automatycznie zapisuj odtworzone piosenki do odtwarzania offline używając aktualnych ustawień jakości strumieniowania (ustawienia jakości pobierania są ignorowane, aby uniknąć dodatkowego zużycia danych).</string>
 	<string name="settings_permissions">Uprawnienia</string>
 	<string name="settings_backups">Kopie zapasowe</string>
 	<string name="settings_export_title">Eksport ustawień</string>
