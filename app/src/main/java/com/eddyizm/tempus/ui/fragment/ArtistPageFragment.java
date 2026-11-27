@@ -146,6 +146,15 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             activity.navController.navigate(R.id.action_artistPageFragment_to_songListPageFragment, bundle);
         });
 
+        bind.artistPageAllSongsSector.setVisibility(
+                artistPageViewModel.getArtist() != null ? View.VISIBLE : View.GONE);
+        bind.artistPageAllSongsTextViewClickable.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            ArtistID3 artistForNav = artistPageViewModel.getArtist();
+            bundle.putParcelable(Constants.ARTIST_OBJECT, artistForNav != null ? artistForNav.strippedForNav() : null);
+            activity.navController.navigate(R.id.action_artistPageFragment_to_artistAllSongsFragment, bundle);
+        });
+
         ToggleButton favoriteToggle = view.findViewById(R.id.button_favorite);
         favoriteToggle.setChecked(FavoriteRegistry.resolve(FavoriteRegistry.Kind.ARTIST, artistPageViewModel.getArtist().getId(), artistPageViewModel.getArtist().getStarred() != null));
         favoriteToggle.setOnClickListener(v -> artistPageViewModel.setFavorite(requireContext()));

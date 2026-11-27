@@ -80,6 +80,8 @@
     <string name="artist_page_switch_layout_button">Switch layout</string>
     <string name="artist_page_title_album_more_like_this_button">More like this</string>
     <string name="artist_page_title_album_section">Albums</string>
+    <string name="artist_page_title_all_songs_section">All songs</string>
+    <string name="artist_page_all_songs_clickable">Browse every song by this artist</string>
     <string name="artist_page_title_ep_section">EPs</string>
     <string name="artist_page_title_single_section">Singles</string>
     <string name="artist_page_title_compilation_section">Compilations</string>
