@@ -409,6 +409,12 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
             case Constants.MEDIA_BY_TITLE:
                 list.sort(Comparator.comparing(Child::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
                 break;
+            case Constants.SORT_BY_ARTIST:
+                list.sort(Comparator.comparing(Child::getArtist, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+                break;
+            case Constants.SORT_BY_ALBUM:
+                list.sort(Comparator.comparing(Child::getAlbum, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+                break;
             case Constants.MEDIA_MOST_RECENTLY_STARRED:
                 list.sort(Comparator.comparing(Child::getStarred, Comparator.nullsLast(Comparator.reverseOrder())));
                 break;

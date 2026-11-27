@@ -210,6 +210,9 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         bind.songListRecyclerView.setHasFixedSize(true);
 
         songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
+        if (songListPageViewModel.currentSort != null) {
+            songHorizontalAdapter.sort(songListPageViewModel.currentSort);
+        }
         loadingFooterAdapter = new LoadingFooterAdapter();
         bind.songListRecyclerView.setAdapter(new ConcatAdapter(songHorizontalAdapter, loadingFooterAdapter));
         setMediaBrowserListenableFuture();
@@ -282,18 +285,24 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         popup.getMenuInflater().inflate(menuResource, popup.getMenu());
 
         popup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() == R.id.menu_song_sort_name) {
-                songHorizontalAdapter.sort(Constants.MEDIA_BY_TITLE);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_song_sort_most_recently_starred) {
-                songHorizontalAdapter.sort(Constants.MEDIA_MOST_RECENTLY_STARRED);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_song_sort_least_recently_starred) {
-                songHorizontalAdapter.sort(Constants.MEDIA_LEAST_RECENTLY_STARRED);
-                return true;
+            String sortOrder = null;
+            int itemId = menuItem.getItemId();
+            if (itemId == R.id.menu_song_sort_name) {
+                sortOrder = Constants.MEDIA_BY_TITLE;
+            } else if (itemId == R.id.menu_song_sort_artist) {
+                sortOrder = Constants.SORT_BY_ARTIST;
+            } else if (itemId == R.id.menu_song_sort_album) {
+                sortOrder = Constants.SORT_BY_ALBUM;
+            } else if (itemId == R.id.menu_song_sort_most_recently_starred) {
+                sortOrder = Constants.MEDIA_MOST_RECENTLY_STARRED;
+            } else if (itemId == R.id.menu_song_sort_least_recently_starred) {
+                sortOrder = Constants.MEDIA_LEAST_RECENTLY_STARRED;
             }
 
-            return false;
+            if (sortOrder == null) return false;
+            songListPageViewModel.currentSort = sortOrder;
+            songHorizontalAdapter.sort(sortOrder);
+            return true;
         });
 
         popup.show();
@@ -328,6 +337,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
             case Constants.MEDIA_BY_YEAR:
                 bind.songListSortImageView.setVisibility(View.GONE);
                 break;
+            case Constants.MEDIA_ALL:
             case Constants.MEDIA_BY_ARTIST:
             case Constants.MEDIA_BY_GENRES:
             case Constants.MEDIA_STARRED:

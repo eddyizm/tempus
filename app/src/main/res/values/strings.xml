@@ -281,6 +281,7 @@
     <string name="settings_search_hint">Search settings</string>
     <string name="menu_settings_button">Settings</string>
     <string name="menu_sort_artist">Artist</string>
+    <string name="menu_sort_album">Album</string>
     <string name="menu_sort_name">Name</string>
     <string name="menu_sort_random">Random</string>
     <string name="menu_sort_album_count">Album Count</string>

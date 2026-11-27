@@ -171,6 +171,10 @@ Tap the app name in the toolbar on the Music tab of Home, or on Library. A secon
 
 The setting is hidden when there is only one library to choose from.
 
+**Song list sorting**
+
+Song lists with a sort button (starred tracks, top songs, multi-genre lists and All songs) can be ordered by name, artist, album or how recently a track was starred. Sorting happens locally in the app, not on the server. On lists that load more songs as you scroll, the order is applied to the songs loaded so far, so newly loaded pages are inserted into the current order. The chosen sort survives a refresh and screen rotation, and it also applies to search filtering and to the queue built from the displayed list.
+
 ### Folder or index playback
 
 If your Subsonic-compatible server exposes the folder tree **or** provides an artist index (for example Gonic, Navidrome, or any backend with folder browsing enabled), Tempus lets you play an entire folder from anywhere in the library hierarchy:

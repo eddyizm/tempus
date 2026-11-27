@@ -44,6 +44,8 @@ public class SongListPageViewModel extends AndroidViewModel {
 
     public String title;
     public String toolbarTitle;
+    /** Sort key chosen by the user, kept here so it survives refresh and rotation. */
+    public String currentSort;
     public Genre genre;
     public ArtistID3 artist;
     public AlbumID3 album;

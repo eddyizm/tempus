@@ -4,6 +4,12 @@
         android:id="@+id/menu_song_sort_name"
         android:title="@string/menu_sort_name" />
     <item
+        android:id="@+id/menu_song_sort_artist"
+        android:title="@string/menu_sort_artist" />
+    <item
+        android:id="@+id/menu_song_sort_album"
+        android:title="@string/menu_sort_album" />
+    <item
         android:id="@+id/menu_song_sort_most_recently_starred"
         android:title="@string/menu_sort_most_recently_starred" />
     <item
