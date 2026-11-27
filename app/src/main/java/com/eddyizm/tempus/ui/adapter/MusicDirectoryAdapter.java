@@ -14,6 +14,7 @@ import com.eddyizm.tempus.glide.CustomGlideRequest;
 import com.eddyizm.tempus.interfaces.ClickCallback;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.util.Constants;
+import com.eddyizm.tempus.util.MusicUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,10 @@ public class MusicDirectoryAdapter extends RecyclerView.Adapter<MusicDirectoryAd
         Child child = children.get(position);
 
         holder.item.musicDirectoryTitleTextView.setText(child.getTitle());
+
+        String artistSubtitle = child.isDir() ? null : MusicUtil.getSongArtistSubtitle(child);
+        holder.item.musicDirectorySubtitleTextView.setText(artistSubtitle);
+        holder.item.musicDirectorySubtitleTextView.setVisibility(artistSubtitle != null ? View.VISIBLE : View.GONE);
 
         CustomGlideRequest.ResourceType type = child.isDir()
                 ? CustomGlideRequest.ResourceType.Directory
