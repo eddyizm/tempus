@@ -12,6 +12,7 @@ import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.bumptech.glide.signature.ObjectKey;
+import com.eddyizm.tempus.subsonic.utils.StringUtil;
 import com.eddyizm.tempus.util.ClientCertManager;
 import com.eddyizm.tempus.util.ServerHeaders;
 
@@ -35,7 +36,7 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
 
     @Override
     public boolean handles(@NonNull String model) {
-        return model.startsWith("http://") || model.startsWith("https://");
+        return StringUtil.isHttpUrl(model);
     }
 
     @Override

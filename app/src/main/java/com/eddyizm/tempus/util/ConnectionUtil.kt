@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import com.eddyizm.tempus.App
+import com.eddyizm.tempus.subsonic.utils.StringUtil
 import java.util.concurrent.atomic.AtomicInteger
 
 object ConnectionUtil {
@@ -94,7 +95,7 @@ object ConnectionUtil {
 
     @JvmStatic
     fun useServerAddress(address: String?) {
-        Preferences.setInUseServerAddress(address)
+        Preferences.setInUseServerAddress(StringUtil.normalizeScheme(address))
         App.refreshSubsonicClient()
     }
 }

@@ -27,7 +27,7 @@ public class SubsonicPreferences {
     }
 
     public void setServerUrl(String serverUrl) {
-        this.serverUrl = serverUrl;
+        this.serverUrl = StringUtil.normalizeScheme(serverUrl);
     }
 
     public void setUsername(String username) {
