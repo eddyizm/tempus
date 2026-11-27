@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.eddyizm.tempus.repository.ArtistRepository;
+import com.eddyizm.tempus.repository.SearchingRepository;
 import com.eddyizm.tempus.repository.SongRepository;
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
 import com.eddyizm.tempus.subsonic.models.ArtistID3;
@@ -29,6 +30,7 @@ public class SongListPageViewModel extends AndroidViewModel {
 
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
+    private final SearchingRepository searchingRepository;
 
     private final MutableLiveData<List<Child>> songList = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Boolean> refreshing = new MutableLiveData<>(false);
@@ -61,6 +63,7 @@ public class SongListPageViewModel extends AndroidViewModel {
 
         songRepository = new SongRepository();
         artistRepository = new ArtistRepository();
+        searchingRepository = new SearchingRepository();
     }
 
     /**
@@ -116,6 +119,9 @@ public class SongListPageViewModel extends AndroidViewModel {
         };
 
         switch (title == null ? "" : title) {
+            case Constants.MEDIA_ALL:
+                searchingRepository.fetchAllSongsPage(0, PAGE_SIZE, onResult);
+                break;
             case Constants.MEDIA_BY_GENRE:
                 songRepository.fetchSongsByGenrePage(genre.getGenre(), 0, PAGE_SIZE, onResult);
                 break;
@@ -141,8 +147,7 @@ public class SongListPageViewModel extends AndroidViewModel {
 
     /** Only endpoints with a stable ordering may be paged; random samples would duplicate songs. */
     private boolean isPageable() {
-        return Constants.MEDIA_BY_GENRE.equals(title);
-        // Stage 5 adds MEDIA_ALL here, backed by paginated search3.
+        return Constants.MEDIA_BY_GENRE.equals(title) || Constants.MEDIA_ALL.equals(title);
     }
 
     /**
@@ -169,7 +174,9 @@ public class SongListPageViewModel extends AndroidViewModel {
             appendUnique(result);
         };
 
-        if (Constants.MEDIA_BY_GENRE.equals(title)) {
+        if (Constants.MEDIA_ALL.equals(title)) {
+            searchingRepository.fetchAllSongsPage(page * PAGE_SIZE, PAGE_SIZE, onResult);
+        } else if (Constants.MEDIA_BY_GENRE.equals(title)) {
             songRepository.fetchSongsByGenrePage(genre.getGenre(), page, PAGE_SIZE, onResult);
         } else {
             // Defensive: isPageable() should have kept hasMore false for anything else.

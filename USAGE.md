@@ -171,6 +171,10 @@ Tap the app name in the toolbar on the Music tab of Home, or on Library. A secon
 
 The setting is hidden when there is only one library to choose from.
 
+**All songs**
+
+Library has an **All songs** entry, and the same screen is available from the navigation drawer under "Filter all". It lists every song the server returns for an empty search request, in pages loaded as you scroll, and follows the active music-library filter. Some servers reject empty searches; in that case the screen shows an empty-state message rather than retrying indefinitely. You can still browse by album, artist, genre or playlist there.
+
 **Song list sorting**
 
 Song lists with a sort button (starred tracks, top songs, multi-genre lists and All songs) can be ordered by name, artist, album or how recently a track was starred. Sorting happens locally in the app, not on the server. On lists that load more songs as you scroll, the order is applied to the songs loaded so far, so newly loaded pages are inserted into the current order. The chosen sort survives a refresh and screen rotation, and it also applies to search filtering and to the queue built from the displayed list.

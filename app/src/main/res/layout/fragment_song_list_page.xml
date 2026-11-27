@@ -129,6 +129,18 @@
             android:paddingBottom="@dimen/global_padding_bottom"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+            <TextView
+                android:id="@+id/song_list_empty_label"
+                style="@style/TitleMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingStart="32dp"
+                android:paddingEnd="32dp"
+                android:text="@string/song_list_page_all_empty"
+                android:visibility="gone" />
+
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

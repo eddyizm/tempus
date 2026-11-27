@@ -62,6 +62,39 @@
                     android:paddingBottom="8dp" />
             </LinearLayout>
 
+            <!--  All songs  -->
+            <LinearLayout
+                android:id="@+id/library_all_songs_sector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TitleLarge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/library_title_all_songs" />
+
+                <TextView
+                    android:id="@+id/all_songs_text_view_clickable"
+                    style="@style/TitleMedium"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    app:drawableStartCompat="@drawable/ic_queue"
+                    android:drawablePadding="12dp"
+                    android:focusable="true"
+                    android:paddingStart="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="12dp"
+                    android:text="@string/library_title_all_songs_open" />
+            </LinearLayout>
+
             <!--  Album  -->
             <LinearLayout
                 android:id="@+id/library_album_sector"

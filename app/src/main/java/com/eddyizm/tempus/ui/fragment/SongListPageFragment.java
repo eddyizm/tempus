@@ -78,8 +78,8 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         songListPageViewModel = new ViewModelProvider(this).get(SongListPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        Bundle args = getArguments();
-        if (args == null) {
+        Bundle args = prepareArgs(getArguments());
+        if (args == null || args.isEmpty()) {
             if (activity != null && activity.navController != null) activity.navController.navigateUp();
             return view;
         }
@@ -91,6 +91,12 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         initSwipeToRefresh();
 
         return view;
+    }
+
+    /** Hook for dedicated screens that can supply their own media type without arguments. */
+    @Nullable
+    protected Bundle prepareArgs(@Nullable Bundle args) {
+        return args;
     }
 
     @Override
@@ -121,7 +127,11 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     }
 
     private void init(Bundle args) {
-        if (args.getString(Constants.MEDIA_RECENTLY_PLAYED) != null) {
+        if (args.getString(Constants.MEDIA_ALL) != null) {
+            songListPageViewModel.title = Constants.MEDIA_ALL;
+            songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_all);
+            bind.pageTitleLabel.setText(R.string.song_list_page_all);
+        } else if (args.getString(Constants.MEDIA_RECENTLY_PLAYED) != null) {
             songListPageViewModel.title = Constants.MEDIA_RECENTLY_PLAYED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_recently_played);
             bind.pageTitleLabel.setText(R.string.song_list_page_recently_played);
@@ -237,6 +247,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
             songHorizontalAdapter.setItems(songs);
             reapplyPlayback();
             setSongListPageSubtitle(songs);
+            updateEmptyState(songs);
         });
         songListPageViewModel.getLoadingMore().observe(getViewLifecycleOwner(),
                 loading -> loadingFooterAdapter.setVisible(Boolean.TRUE.equals(loading)));
@@ -327,6 +338,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     private void setSongListPageSubtitle(List<Child> children) {
         if (children == null) return;
         switch (songListPageViewModel.title) {
+            case Constants.MEDIA_ALL:
             case Constants.MEDIA_BY_GENRE:
                 bind.pageSubtitleLabel.setText(songListPageViewModel.hasMorePages() ?
                         getString(R.string.generic_list_page_count_unknown, children.size()) :
@@ -345,6 +357,14 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
                 bind.pageSubtitleLabel.setText(getString(R.string.generic_list_page_count, children.size()));
                 break;
         }
+    }
+
+    private void updateEmptyState(List<Child> songs) {
+        if (bind == null) return;
+        boolean show = Constants.MEDIA_ALL.equals(songListPageViewModel.title)
+                && (songs == null || songs.isEmpty())
+                && !Boolean.TRUE.equals(songListPageViewModel.getRefreshing().getValue());
+        bind.songListEmptyLabel.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void setSongListPageSorter() {
@@ -414,6 +434,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         songListPageViewModel.getRefreshing().observe(getViewLifecycleOwner(), refreshing -> {
             if (bind != null) {
                 bind.swipeSongListToRefresh.setRefreshing(Boolean.TRUE.equals(refreshing));
+                updateEmptyState(songListPageViewModel.getSongList().getValue());
             }
         });
     }
