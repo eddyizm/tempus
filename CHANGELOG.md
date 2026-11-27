@@ -1,5 +1,59 @@
 # Changelog
 
+## [4.33.0](https://github.com/eddyizm/tempus/releases/tag/v4.33.0) (2026-11-26)
+## What's Changed
+* refactor: build the launcher shortcuts in one place by @pLum0 in https://github.com/eddyizm/tempus/pull/1328
+* fix: repeat unavailable while casting over UPnP by @herrerad85 in https://github.com/eddyizm/tempus/pull/1324
+* fix: Test button tests the values in the form by @karan in https://github.com/eddyizm/tempus/pull/1263
+* fix: server unreachable dialog shows twice by @herrerad85 in https://github.com/eddyizm/tempus/pull/1335
+* fix: Return seekable descriptor, Bypass ContentResolver loop & disabl… by @eddyizm in https://github.com/eddyizm/tempus/pull/1342
+* fix: heart restarts a transcoded song by @herrerad85 in https://github.com/eddyizm/tempus/pull/1347
+* feat: add "Download all" to the artist menu by @hexwreaker in https://github.com/eddyizm/tempus/pull/1262
+* fix: apply server date offsets and keep the chosen song sort by @karan in https://github.com/eddyizm/tempus/pull/1274
+* fix: go to login opens the login screen from any screen by @herrerad85 in https://github.com/eddyizm/tempus/pull/1334
+* feat: add backups manager by @tvillega in https://github.com/eddyizm/tempus/pull/1336
+* fix: playlist page shows another playlist's new name by @herrerad85 in https://github.com/eddyizm/tempus/pull/1340
+* feat: report playback through the OpenSubsonic playbackReport extension by @sewnie in https://github.com/eddyizm/tempus/pull/1285
+* fix: Transcoding mismatch by @eddyizm in https://github.com/eddyizm/tempus/pull/1243
+* feat: playlists and albums as launcher shortcuts by @pLum0 in https://github.com/eddyizm/tempus/pull/1329
+* feat: Auto download by @eddyizm in https://github.com/eddyizm/tempus/pull/1349
+* fix: starred artist sync check floods the server by @herrerad85 in https://github.com/eddyizm/tempus/pull/1362
+* fix: album art content provide security fix by @eddyizm in https://github.com/eddyizm/tempus/pull/1365
+
+## New Contributors
+* @sewnie made their first contribution in https://github.com/eddyizm/tempus/pull/1285
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.32.0...v4.33.0
+
+## [4.32.0](https://github.com/eddyizm/tempus/releases/tag/v4.32.0) (2026-11-11)
+## What's Changed
+* fix: reduce seek bar height to prevent accidental clicks by @jaime-grj in https://github.com/eddyizm/tempus/pull/1256
+* fix: launcher icon on API 24-25 by @karan in https://github.com/eddyizm/tempus/pull/1273
+* fix: preserve lyrics when seeking playback by @mvanhorn in https://github.com/eddyizm/tempus/pull/1254
+* fix: starred sync freezes and duplicate downloads (#1103) by @hexwreaker in https://github.com/eddyizm/tempus/pull/1261
+* chore(i18n): Update Japanese translation by @kou029w in https://github.com/eddyizm/tempus/pull/1294
+* feat: handle Google Assistant voice queries in Android Auto by @sinful1992 in https://github.com/eddyizm/tempus/pull/1214
+* fix: poll scan status instead of re-triggering a scan by @sinful1992 in https://github.com/eddyizm/tempus/pull/1215
+* docs: correct typo in language list documentation by @abobov in https://github.com/eddyizm/tempus/pull/1315
+* fix: updated scheme, old tempo reference, to current tempus by @eddyizm in https://github.com/eddyizm/tempus/pull/1316
+* fix: out of memory after switching between wifi and mobile data by @herrerad85 in https://github.com/eddyizm/tempus/pull/1283
+* fix: crash on launch when offline with downloads queued by @herrerad85 in https://github.com/eddyizm/tempus/pull/1278
+* fix: podcast resumed from continue listening plays as music by @herrerad85 in https://github.com/eddyizm/tempus/pull/1298
+* fix: widget crash on oversized cover art by @herrerad85 in https://github.com/eddyizm/tempus/pull/1312
+* fix: Reduce memory pressure when loading large playback queues by @eddyizm in https://github.com/eddyizm/tempus/pull/1265
+* feat: export and import settings by @karan in https://github.com/eddyizm/tempus/pull/1276
+* fix: address crashing on rotating dialogs and directory screens (#119… by @eddyizm in https://github.com/eddyizm/tempus/pull/1320
+* fix: reconnect a stream that has slowed below real time by @BoiMat in https://github.com/eddyizm/tempus/pull/1238
+* fix: player rating shows and rates the previous song by @herrerad85 in https://github.com/eddyizm/tempus/pull/1321
+
+## New Contributors
+* @mvanhorn made their first contribution in https://github.com/eddyizm/tempus/pull/1254
+* @hexwreaker made their first contribution in https://github.com/eddyizm/tempus/pull/1261
+* @abobov made their first contribution in https://github.com/eddyizm/tempus/pull/1315
+* @BoiMat made their first contribution in https://github.com/eddyizm/tempus/pull/1238
+
+**Full Changelog**: https://github.com/eddyizm/tempus/compare/v4.31.0...v4.32.0
+
 ## [4.31.0](https://github.com/eddyizm/tempus/releases/tag/v4.31.0) (2026-10-25)
 ## What's Changed
 * feat: first pass at generating a aab google play bundle release by @eddyizm in https://github.com/eddyizm/tempus/pull/1056

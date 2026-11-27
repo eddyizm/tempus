@@ -88,6 +88,11 @@ public class MappingUtil {
             Child effective = downloaded != null ? downloaded : media;
 
             Uri uri = getUri(media);
+            if (downloaded != null) {
+                Log.d(TAG, "Mapped downloaded track " + media.getId()
+                        + ": playbackScheme=" + uri.getScheme()
+                        + ", suffix=" + effective.getSuffix());
+            }
             String coverArtId = effective.getCoverArtId();
             Uri artworkUri = null;
 
@@ -530,6 +535,11 @@ public class MappingUtil {
         cachedDownloads = map;
         cachedDownloadsAt = now;
         return map;
+    }
+
+    public static void invalidateCachedDownloads() {
+        cachedDownloads = null;
+        cachedDownloadsAt = -1;
     }
 
     private static Map<String, String> getDownloadUris() {

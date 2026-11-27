@@ -140,4 +140,66 @@ public class MusicUtilTest {
         assertNull(MusicUtil.sourceSuffix(null));
         assertNull(MusicUtil.sourceSuffix(extrasWith(null, null)));
     }
+
+    @Test
+    public void applyTranscodeMetadataFromUri_extractsFormatAndBitrate() {
+        com.eddyizm.tempus.model.Download download = new com.eddyizm.tempus.model.Download(new com.eddyizm.tempus.subsonic.models.Child("song-1"));
+        download.setSuffix("flac");
+        download.setContentType("audio/flac");
+        download.setSamplingRate(44100);
+        download.setBitDepth(16);
+
+        String uri = "https://subsonic.example.com/rest/stream?u=user&p=enc&v=1.16.1&c=tempus&format=opus&maxBitRate=128&id=song-1";
+        MusicUtil.applyTranscodeMetadataFromUri(download, uri);
+
+        assertEquals("opus", download.getSuffix());
+        assertEquals("audio/opus", download.getContentType());
+        assertEquals(Integer.valueOf(128), download.getBitrate());
+        assertNull(download.getSamplingRate());
+        assertNull(download.getBitDepth());
+    }
+
+    @Test
+    public void applyTranscodeMetadataFromUri_noFormatParamIsNoOp() {
+        com.eddyizm.tempus.model.Download download = new com.eddyizm.tempus.model.Download(new com.eddyizm.tempus.subsonic.models.Child("song-1"));
+        download.setSuffix("flac");
+        download.setContentType("audio/flac");
+        download.setSamplingRate(44100);
+        download.setBitDepth(16);
+
+        String uri = "https://subsonic.example.com/rest/download?u=user&p=enc&v=1.16.1&c=tempus&id=song-1";
+        MusicUtil.applyTranscodeMetadataFromUri(download, uri);
+
+        assertEquals("flac", download.getSuffix());
+        assertEquals("audio/flac", download.getContentType());
+        assertEquals(Integer.valueOf(44100), download.getSamplingRate());
+        assertEquals(Integer.valueOf(16), download.getBitDepth());
+    }
+
+    @Test
+    public void applyTranscodeMetadataFromUri_rawFormatIsNoOp() {
+        com.eddyizm.tempus.model.Download download = new com.eddyizm.tempus.model.Download(new com.eddyizm.tempus.subsonic.models.Child("song-1"));
+        download.setSuffix("flac");
+        download.setContentType("audio/flac");
+
+        String uri = "https://subsonic.example.com/rest/stream?u=user&p=enc&v=1.16.1&c=tempus&format=raw&maxBitRate=0&id=song-1";
+        MusicUtil.applyTranscodeMetadataFromUri(download, uri);
+
+        assertEquals("flac", download.getSuffix());
+        assertEquals("audio/flac", download.getContentType());
+    }
+
+    @Test
+    public void applyTranscodeMetadataFromUri_opaqueUriOrNullIsSafe() {
+        com.eddyizm.tempus.model.Download download = new com.eddyizm.tempus.model.Download(new com.eddyizm.tempus.subsonic.models.Child("song-1"));
+        download.setSuffix("flac");
+
+        MusicUtil.applyTranscodeMetadataFromUri(download, null);
+        assertEquals("flac", download.getSuffix());
+
+        MusicUtil.applyTranscodeMetadataFromUri(download, "mailto:nobody@example.com");
+        assertEquals("flac", download.getSuffix());
+
+        MusicUtil.applyTranscodeMetadataFromUri(null, "https://subsonic.example.com/rest/stream?format=opus");
+    }
 }

@@ -63,6 +63,7 @@ Please note the two variants in the release assets include release/debug and 32/
 
 ### 🟩F-droid & 🟥Github
 - **Subsonic Integration**: Tempus seamlessly integrates with your Subsonic server, providing you with easy access to your entire music collection on the go.
+- **Servers Supported**: Lightweight Media Server (LMS), Navidrome, Gonic, NextCloud Music, Ampache, Airsonic Advanced and more
 - **Sleek and Intuitive UI**: Enjoy a clean and user-friendly interface designed to enhance your music listening experience, tailored to your preferences and listening history.
 - **Browse and Search**: Easily navigate through your music library using various browsing and searching options, including artists, albums, genres, playlists, decades and more.
 - **Streaming and Offline Mode**: Stream music directly from your Subsonic server. Offline mode is currently under active development and may have limitations when using multiple servers.

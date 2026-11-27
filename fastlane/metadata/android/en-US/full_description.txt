@@ -17,6 +17,7 @@ Features<br>
 <li>Multiple Libraries: Tempus handles multi-library setups gracefully. They are displayed as Library folders.</li>
 <li>Equalizer: Option to use built-in or third-party equalizer.</li>
 <li>Widget: New widget to keeping the basic controls on your screen at all times.</li>
+<li>Supports Lightweight Media Server (LMS), Navidrome, Gonic, NextCloud Music, Ampache, AirSonic Advanced, and other servers that support OpenSubSonic API</li>
 <li>Available in 14 languages: Currently in Basque, Catalan, Chinese, French, German, Italian, Japanese, Korean, Polish, Portuguese, Russian, Spanish (Spain), Spanish (Latam) and Turkish</li>
 </ul>
 <br>

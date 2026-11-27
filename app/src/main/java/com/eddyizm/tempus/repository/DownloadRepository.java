@@ -1,5 +1,8 @@
 package com.eddyizm.tempus.repository;
 
+import android.net.Uri;
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 
 import com.eddyizm.tempus.database.AppDatabase;
@@ -14,8 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class DownloadRepository {
+    private static final String TAG = "DownloadRepository";
     private static final ExecutorService DOWNLOAD_WRITE_EXECUTOR = Executors.newSingleThreadExecutor();
 
     private final DownloadDao downloadDao = AppDatabase.getInstance().downloadDao();
@@ -78,6 +84,11 @@ public class DownloadRepository {
         }
 
         return download;
+    }
+
+    public boolean hasCompletedDownload(String id) {
+        Download download = getDownload(id);
+        return download != null && download.getDownloadState() == 1;
     }
 
     public List<Download> getFailedDownloads() {
@@ -155,6 +166,18 @@ public class DownloadRepository {
         DOWNLOAD_WRITE_EXECUTOR.execute(insert);
     }
 
+    public void insertAndWait(Download download) {
+        Future<?> insert = DOWNLOAD_WRITE_EXECUTOR.submit(() -> downloadDao.insert(download));
+        try {
+            insert.get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted while saving completed download " + download.getId(), e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("Failed to save completed download " + download.getId(), e.getCause());
+        }
+    }
+
     private static class InsertThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private final Download download;
@@ -170,23 +193,25 @@ public class DownloadRepository {
         }
     }
 
-    public void update(String id) {
-        UpdateThreadSafe update = new UpdateThreadSafe(downloadDao, id);
+    public void updateCompleted(String id, long downloadedSize) {
+        UpdateThreadSafe update = new UpdateThreadSafe(downloadDao, id, downloadedSize);
         DOWNLOAD_WRITE_EXECUTOR.execute(update);
     }
 
     private static class UpdateThreadSafe implements Runnable {
         private final DownloadDao downloadDao;
         private final String id;
+        private final long downloadedSize;
 
-        public UpdateThreadSafe(DownloadDao downloadDao, String id) {
+        public UpdateThreadSafe(DownloadDao downloadDao, String id, long downloadedSize) {
             this.downloadDao = downloadDao;
             this.id = id;
+            this.downloadedSize = downloadedSize;
         }
 
         @Override
         public void run() {
-            downloadDao.update(id);
+            downloadDao.updateCompleted(id, downloadedSize);
         }
     }
 
@@ -231,6 +256,23 @@ public class DownloadRepository {
     public void delete(String id) {
         DeleteThreadSafe delete = new DeleteThreadSafe(downloadDao, id);
         DOWNLOAD_WRITE_EXECUTOR.execute(delete);
+    }
+
+    public void deleteExternalDownload(String id) {
+        DOWNLOAD_WRITE_EXECUTOR.execute(() -> {
+            try {
+                Download download = downloadDao.getOne(id);
+                if (download == null || download.getDownloadUri() == null) return;
+
+                Uri uri = Uri.parse(download.getDownloadUri());
+                if (!"content".equalsIgnoreCase(uri.getScheme())) return;
+
+                downloadDao.delete(id);
+                com.eddyizm.tempus.util.MappingUtil.invalidateCachedDownloads();
+            } catch (RuntimeException exception) {
+                Log.e(TAG, "Failed to remove external download record " + id, exception);
+            }
+        });
     }
 
     public void deleteFailed(String id) {

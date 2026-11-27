@@ -204,7 +204,7 @@ public final class DownloadUtil {
         return downloaderManager;
     }
 
-    private static synchronized Cache getDownloadCache(Context context) {
+    public static synchronized Cache getDownloadCache(Context context) {
         if (downloadCache == null) {
             File downloadContentDirectory = new File(getDownloadDirectory(context), DOWNLOAD_CONTENT_DIRECTORY);
             downloadCache = new SimpleCache(downloadContentDirectory, new NoOpCacheEvictor(), getDatabaseProvider(context));

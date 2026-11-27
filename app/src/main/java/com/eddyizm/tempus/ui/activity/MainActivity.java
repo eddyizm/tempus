@@ -5,14 +5,10 @@ import static com.eddyizm.tempus.navigation.ManualEdgeToEdgeKt.setUpEdgeToEdge;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.Configuration;
-import android.graphics.drawable.Icon;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.text.TextUtils;
@@ -38,6 +34,7 @@ import androidx.media3.common.MimeTypes;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.eddyizm.tempus.BuildConfig;
@@ -58,8 +55,8 @@ import com.eddyizm.tempus.ui.dialog.GithubTempoUpdateDialog;
 import com.eddyizm.tempus.ui.dialog.ServerUnreachableDialog;
 import com.eddyizm.tempus.ui.fragment.PlayerBottomSheetFragment;
 import com.eddyizm.tempus.ui.fragment.SettingsFragment;
-import com.eddyizm.tempus.ui.login.LoginActivity;
 import com.eddyizm.tempus.util.AssetLinkNavigator;
+import com.eddyizm.tempus.util.AppShortcuts;
 import com.eddyizm.tempus.util.AssetLinkUtil;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.util.DownloadUtil;
@@ -75,13 +72,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.MoreExecutors;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @UnstableApi
 public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivityLogs";
+    private static final String SERVER_UNREACHABLE_DIALOG_TAG = "ServerUnreachableDialog";
 
     private LiveData<SubsonicResponse> outstandingProbe = null;
 
@@ -164,6 +161,8 @@ public class MainActivity extends BaseActivity {
         isLandscape = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE);
 
         init();
+        setupLoginRedirection(savedInstanceState != null);
+        toggleNavigationDrawerLockOnOrientationChange();
         checkConnectionType();
         getOpenSubsonicExtensions();
         checkTempusUpdate();
@@ -172,7 +171,7 @@ public class MainActivity extends BaseActivity {
         AlbumArtistBackfill.backfillIfNeeded();
 
         maybeSchedulePlaybackIntent(getIntent());
-        setupLoginActivity();
+        setupLoginActivity(savedInstanceState);
     }
 
     @Override
@@ -225,19 +224,25 @@ public class MainActivity extends BaseActivity {
     }
 
     public void init() {
-
         initBottomSheet();
         initNavigation();
         initBackPressedDispatcher();
+    }
 
-        if (Preferences.getPassword() != null || (Preferences.getToken() != null && Preferences.getSalt() != null)) {
+    private void setupLoginRedirection(boolean restored) {
+        boolean restoredOnLogin = restored
+                && navigationController.getNavController().getCurrentDestination() != null
+                && navigationController.getNavController().getCurrentDestination().getId() == R.id.loginFragment;
+        boolean hasCredentials = Preferences.getPassword() != null
+                || (Preferences.getToken() != null && Preferences.getSalt() != null);
+
+        if (restoredOnLogin) {
+            hideBottomBarAndPlayer();
+        } else if (hasCredentials) {
             goFromLogin();
         } else {
             goToLogin();
         }
-
-        toggleNavigationDrawerLockOnOrientationChange();
-
     }
 
     private void initNavigation() {
@@ -493,20 +498,17 @@ public class MainActivity extends BaseActivity {
     }
 
     private void goToLogin() {
+        hideBottomBarAndPlayer();
+
+        NavController nc = navigationController.getNavController();
+        nc.navigate(R.id.loginFragment, null,
+                new NavOptions.Builder().setPopUpTo(nc.getGraph().getId(), true).build());
+    }
+
+    private void hideBottomBarAndPlayer() {
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         setBottomNavigationBarVisibility(false);
         setBottomSheetVisibility(false);
-
-        NavController nc = navigationController.getNavController();
-        int id = nc.getCurrentDestination().getId();
-
-        if (id == R.id.landingFragment) {
-           nc.navigate(R.id.action_landingFragment_to_loginFragment);
-        } else if (id == R.id.settingsFragment) {
-            nc.navigate(R.id.action_settingsFragment_to_loginFragment);
-        } else if (id == R.id.homeFragment) {
-            nc.navigate(R.id.action_homeFragment_to_loginFragment);
-        }
     }
 
     private void goToHome() {
@@ -629,8 +631,7 @@ public class MainActivity extends BaseActivity {
                         pingServer();
                         resetView();
                     } else if (Preferences.showServerUnreachableDialog()) {
-                        ServerUnreachableDialog dialog = new ServerUnreachableDialog();
-                        dialog.show(getSupportFragmentManager(), null);
+                        showServerUnreachableDialog();
                     }
                 } else {
                     ConnectionUtil.markPingAnswered();
@@ -649,8 +650,7 @@ public class MainActivity extends BaseActivity {
                         if (Preferences.isInUseServerAddressLocal() || outstandingProbe != null) return;
 
                         if (Preferences.showServerUnreachableDialog()) {
-                            ServerUnreachableDialog dialog = new ServerUnreachableDialog();
-                            dialog.show(getSupportFragmentManager(), null);
+                            showServerUnreachableDialog();
                         }
                     } else {
                         Preferences.setOpenSubsonic(subsonicResponse.getOpenSubsonic() != null && subsonicResponse.getOpenSubsonic());
@@ -658,6 +658,13 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }
+    }
+
+    private void showServerUnreachableDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragmentManager.findFragmentByTag(SERVER_UNREACHABLE_DIALOG_TAG) != null) return;
+
+        new ServerUnreachableDialog().showNow(fragmentManager, SERVER_UNREACHABLE_DIALOG_TAG);
     }
 
     private void probeLocalAddress() {
@@ -690,11 +697,10 @@ public class MainActivity extends BaseActivity {
     }
 
     private void resetView() {
-        resetViewModel();
-
         NavController nc = navigationController.getNavController();
         int id = nc.getCurrentDestination().getId();
-        
+        if (id == R.id.loginFragment) return;
+        resetViewModel();
         nc.popBackStack(id, true);
         nc.navigate(id);
     }
@@ -874,32 +880,14 @@ public class MainActivity extends BaseActivity {
         });
     }
 
-    private void setupLoginActivity() {
-        String triggerArg = getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT");
+    private void setupLoginActivity(Bundle savedInstanceState) {
+        String triggerArg = savedInstanceState == null ? getIntent().getStringExtra("LOGIN_ACTIVITY_INTENT") : null;
         if ("open_legacy_login_fragment".equals(triggerArg)) {
             goToLogin();
         } else if ("open_legacy_settings_fragment".equals(triggerArg)) {
             goToHome();
         }
 
-        new Thread(() -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                ShortcutManager shortcutManager = getSystemService(ShortcutManager.class);
-
-                Intent intent = new Intent(this, LoginActivity.class);
-                intent.setAction(Intent.ACTION_VIEW);
-
-                ShortcutInfo shortcut = new ShortcutInfo.Builder(this, "login_activity_shortcut")
-                        .setShortLabel(getString(R.string.la_shortcut_label))
-                        .setLongLabel(getString(R.string.la_shortcut_label))
-                        .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher))
-                        .setIntents(new Intent[]{intent})
-                        .build();
-
-                if (shortcutManager != null) {
-                    shortcutManager.setDynamicShortcuts(Collections.singletonList(shortcut));
-                }
-            }
-        }).start();
+        AppShortcuts.publish(this);
     }
 }

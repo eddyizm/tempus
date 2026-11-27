@@ -2,6 +2,8 @@ package com.eddyizm.tempus.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,12 +20,14 @@ import com.eddyizm.tempus.R
 import com.eddyizm.tempus.databinding.FragmentLoginServerBinding
 import com.eddyizm.tempus.interfaces.SystemCallback
 import com.eddyizm.tempus.model.Server
+import com.eddyizm.tempus.model.ServerContext
 import com.eddyizm.tempus.repository.PlaylistRepository
 import com.eddyizm.tempus.repository.SystemRepository
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
 import com.eddyizm.tempus.subsonic.utils.StringUtil
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.CustomHeaders
+import com.eddyizm.tempus.util.ServerHeaders
 import com.eddyizm.tempus.viewmodel.ServerViewModel
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
@@ -39,6 +43,7 @@ class LoginServerFragment : Fragment() {
     private lateinit var serverList: List<Server>
     private var selectedServerPosition: Int = 0
     private var isInitialSyncDone = false
+    private var currentTestId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +65,8 @@ class LoginServerFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        currentTestId++
+        ServerHeaders.setTestServer(null)
         _binding = null // release from memory
     }
 
@@ -71,6 +78,7 @@ class LoginServerFragment : Fragment() {
         initOldLoginButton()
         initLocalUrlSwitch()
         initClientCertSwitch()
+        initClientCertField()
         initCustomHeadersSwitch()
     }
 
@@ -331,18 +339,7 @@ class LoginServerFragment : Fragment() {
                 serverId = serverList[selectedServerPosition].serverId
             }
 
-            val newServer = Server(
-                serverId = serverId,
-                serverName = binding.serverNameField.text.toString(),
-                username = binding.serverUserField.text.toString(),
-                password = binding.serverPasswordField.text.toString(),
-                address = StringUtil.normalizeScheme(binding.serverPublicUrlField.text.toString()),
-                localAddress = StringUtil.normalizeScheme(binding.serverLocalUrlField.text.toString()),
-                timestamp = System.currentTimeMillis(),
-                isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
-                clientCert = binding.serverCertField.text.toString(),
-                customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null }
-            )
+            val newServer = serverFromForm(serverId)
 
             if (selectedServerPosition == 0) {
                 serverViewModel.insertServer(newServer)
@@ -412,7 +409,26 @@ class LoginServerFragment : Fragment() {
         return true
     }
 
+    private fun serverFromForm(serverId: String): Server = Server(
+        serverId = serverId,
+        serverName = binding.serverNameField.text.toString(),
+        username = binding.serverUserField.text.toString(),
+        password = binding.serverPasswordField.text.toString(),
+        address = binding.serverPublicUrlField.text.toString(),
+        localAddress = binding.serverLocalUrlField.text.toString(),
+        timestamp = System.currentTimeMillis(),
+        isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
+        clientCert = binding.serverCertField.text.toString(),
+        customHeaders = binding.serverHeadersField.text.toString().trim().ifEmpty { null }
+    )
+
+    // TODO: Test is only enabled for a saved server. It reads the form, so it could also run for
+    //  "Add new server" before the first save.
+    // TODO: The test client does not use the form's client certificate; TLS uses the certificate
+    //  already loaded by ClientCertManager.
     private fun testConnection() {
+        if (!inputSanitization()) return
+
         binding.testButton.isEnabled = false
         Toast.makeText(
             context,
@@ -420,11 +436,21 @@ class LoginServerFragment : Fragment() {
             Toast.LENGTH_SHORT
         ).show()
 
+        val server = serverFromForm(serverList[selectedServerPosition].serverId)
+        val testServer = ServerContext(
+            addresses = listOf(server.address, server.localAddress),
+            customHeaders = server.customHeaders
+        )
+        val testId = ++currentTestId
+        ServerHeaders.setTestServer(testServer)
+
         SystemRepository().checkUserCredential(
-            App.getSubsonicClientInstance(serverList[selectedServerPosition]),
+            App.getSubsonicClientInstance(server),
             object : SystemCallback {
                 override fun onNetworkFailure(exception: Exception) {
                     showTestResult(
+                        testId,
+                        testServer,
                         R.string.la_server_toast_connection_error,
                         exception.message,
                         Toast.LENGTH_LONG
@@ -440,11 +466,13 @@ class LoginServerFragment : Fragment() {
                     else
                         R.string.la_server_toast_connection_error
 
-                    showTestResult(messageId, exception.message, Toast.LENGTH_LONG)
+                    showTestResult(testId, testServer, messageId, exception.message, Toast.LENGTH_LONG)
                 }
 
                 override fun onSuccess(password: String?, token: String?, salt: String?) {
                     showTestResult(
+                        testId,
+                        testServer,
                         R.string.la_server_toast_connection_success,
                         null,
                         Toast.LENGTH_SHORT
@@ -454,14 +482,50 @@ class LoginServerFragment : Fragment() {
         )
     }
 
-    // The answer can arrive after the screen is gone. The text is resolved past the guard because
-    // getString reaches requireContext, which throws once the fragment is detached.
-    private fun showTestResult(messageId: Int, detail: String?, duration: Int) {
+    // The answer can arrive after the screen is gone, or after a newer test started. The text is
+    // resolved past the guard because getString reaches requireContext, which throws once the
+    // fragment is detached.
+    private fun showTestResult(
+        testId: Int,
+        testServer: ServerContext,
+        messageId: Int,
+        detail: String?,
+        duration: Int
+    ) {
+        ServerHeaders.clearTestServer(testServer)
+        if (testId != currentTestId) return
         val binding = _binding ?: return
         binding.testButton.isEnabled = true
 
         val message = getString(messageId) + if (detail == null) "" else "\n" + detail
         Toast.makeText(context, message, duration).show()
+    }
+
+    private fun initClientCertField() {
+        val onCertFieldClick = View.OnClickListener {
+            val currentBinding = _binding ?: return@OnClickListener
+            val currentText = currentBinding.serverCertField.text
+            if (currentText.isNullOrEmpty()) {
+                android.security.KeyChain.choosePrivateKeyAlias(
+                    requireActivity(),
+                    { alias ->
+                        if (!alias.isNullOrBlank()) {
+                            Handler(Looper.getMainLooper()).post {
+                                val binding = _binding ?: return@post
+                                binding.serverCertField.setText(alias)
+                            }
+                        }
+                    },
+                    null, null, null, null
+                )
+            } else {
+                currentBinding.serverCertField.text = null
+            }
+        }
+
+        binding.serverCertField.showSoftInputOnFocus = false
+        binding.serverCertField.setOnClickListener(onCertFieldClick)
+        binding.serverCertFieldContainer.setOnClickListener(onCertFieldClick)
     }
 
     companion object {

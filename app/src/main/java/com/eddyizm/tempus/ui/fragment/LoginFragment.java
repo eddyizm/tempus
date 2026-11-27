@@ -110,6 +110,11 @@ public class LoginFragment extends Fragment implements ClickCallback {
                 if (bind != null) bind.serverListRecyclerView.setVisibility(View.GONE);
             }
         });
+        loginViewModel.getLoginSucceeded().observe(getViewLifecycleOwner(), succeeded -> {
+            if (!Boolean.TRUE.equals(succeeded)) return;
+            loginViewModel.setLoginSucceeded(false);
+            ((MainActivity) requireActivity()).goFromLogin();
+        });
     }
 
     public void initNewLoginButton() {
@@ -129,7 +134,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
             Intent tempus = new Intent(requireActivity(), LoginActivity.class);
             tempus.putExtra("HIDE_TAB_LAYOUT", true);
             tempus.putExtra("HIDE_TOPAPPBAR_LAYOUT", false);
-            tempus.putExtra("SELECT_FRAGMENT", 3);
+            tempus.putExtra("SELECT_FRAGMENT", LoginActivity.SERVERS_FRAGMENT);
             startActivity(tempus);
         });
     }
@@ -169,7 +174,7 @@ public class LoginFragment extends Fragment implements ClickCallback {
             @Override
             public void onSuccess(String password, String token, String salt) {
                 new PlaylistRepository().refreshAllPlaylists();
-                activity.goFromLogin();
+                loginViewModel.setLoginSucceeded(true);
             }
         });
     }

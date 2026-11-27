@@ -30,6 +30,7 @@
 - [Playlist Management](#playlist-management)
     - [Editing a playlist](#editing-a-playlist)
     - [Sorting playlists](#sorting-playlists)
+    - [App shortcuts](#app-shortcuts)
 - [Settings](#settings)
     - [Finding a setting](#finding-a-setting)
     - [Language](#language)
@@ -107,7 +108,7 @@ The first screen lists your servers. Tap **Open server editor** to add one:
 
 To edit a server, open the editor, pick the server in the menu at the top, change what you need and tap **Update**. **Test** checks a saved server's connection. **Delete** removes the picked server at once, with no confirmation. A change to the server you are logged in to takes effect after you log out and tap the server again.
 
-Long press the Tempus icon and pick **Introduction** to open the welcome, permissions, themes and server pages on their own. The heart icon at the top of the server list opens the same pages.
+The heart icon at the top of the server list opens the welcome, permissions, themes and server pages on their own.
 
 To switch servers, go to **Settings → General → Log out**, which takes you back to this list.
 
@@ -136,8 +137,6 @@ Headers are sent only to that server's address and local address (same scheme, h
 The local address gets the headers too, like it already gets your Subsonic credentials. If your local address is plain `http`, any device answering on that IP on the network you are connected to would receive them, so use an `https` local address or leave it empty when the headers are sensitive.
 
 After editing the headers of the server you are signed in to, sign out and back in for them to take effect.
-
-**Test** in the server editor sends the headers only for the server you are signed in to. For a new server behind a proxy that requires them, Test fails; sign in to the server instead.
 
 Devices that fetch the music themselves cannot send them:
 
@@ -267,6 +266,10 @@ The Track and Album lists are sorted by album artist, then album, then disc and 
 
 In a playlist's ⋮ menu, turn on **Keep synced**. Tempus downloads every track of the playlist that is not on the phone yet, then checks again each time you open the playlist and once each time the app starts, and downloads any track added since. Tracks removed from the playlist stay downloaded. There is no check while Tempus is closed.
 
+**Auto-download played tracks**
+
+Turn on **Auto-download played tracks** under **Settings → Data** to save eligible music for offline playback (off by default). Tempus saves a track when it finishes or when you move on after it has played long enough to count as played. It copies the complete track from the streaming cache, so it does not request another copy from your server. The saved file uses the streaming format and bitrate, not the separate download-quality settings, and goes to your configured download storage. If the full track is not in the streaming cache, Tempus skips it rather than downloading the missing data. Radio and podcasts are not included, and tracks already downloaded or queued for download are left alone.
+
 **Download only on Wi-Fi**, under Settings → Data, pauses downloads on mobile data and resumes them on Wi-Fi. It does not apply when downloads are saved to a folder you picked.
 
 ### Continue listening
@@ -390,6 +393,19 @@ Open the full playlist list with **See all** next to Playlists on Home or Librar
 
 To make a playlist a fave, tap **Add to faves** in its ⋮ menu, or long press it in the playlist list. Tap **Remove from faves** to undo it. Faves are kept on the phone, not on your server, and a playlist deleted from the server stops being a fave.
 
+### App shortcuts
+
+Long press the Tempus icon to get to your music without opening the app first. It offers up to four playlists or albums:
+
+- The ones you pinned come first. Tap **Pin to app shortcuts** in a playlist's or album's ⋮ menu. When all four places are pinned, Tempus asks which one the new pin replaces. A small pin on the cover marks them.
+- The rest are filled with the playlists you played last. Only playing counts, opening a playlist does not. Turn this off with **Settings → Playlist → Recently played playlists as app shortcuts**.
+
+**Settings → Playlist → Pinned app shortcuts** lists your pins. Drag one by its handle to change the order, tap the bin to unpin it, and tap **Save**.
+
+**Settings → Playlist → When an app shortcut is used** sets what a tap on a shortcut does: only open the playlist or album (the default), play it from the start, play it shuffled, or ask every time. **Ask every time** shows Open, Play and Shuffle right over the home screen.
+
+Most launchers let you drag a shortcut onto the home screen, or offer a **+** next to it. Such an icon keeps working even after the playlist has left the long press list.
+
 [Back to top](#table-of-contents)
 
 ## Settings
@@ -454,6 +470,8 @@ If a song you are streaming gets stuck downloading more slowly than it plays, fo
 **Enable music scrobbling**, under **Settings → Miscellaneous**, is on by default. It tells your server what you are playing and which tracks you played. Tempus sends this only to your server, which may pass it on to a service such as Last.fm if it is set up to.
 
 A track counts as played when it plays to the end. When you skip to another track in the queue, the one you left counts if it played past its halfway point or 4 minutes, whichever comes first, unless it is 30 seconds or shorter. Only music counts, not podcasts or radio. A play that does not reach the server is not sent again later.
+
+If your server supports the OpenSubsonic `playbackReport` extension, Tempus instead tells it when a song or podcast starts, plays, pauses and stops, along with its position and playback speed, and the server decides which plays count; the rules above then do not apply. A track is reported stopped when playback moves off it, the queue is cleared, or Tempus closes. A track you skip past while paused is not reported at all. With scrobbling turned off, these reports are still sent so the server can show what you are playing, but they do not count any plays.
 
 ### Backing up settings
 
