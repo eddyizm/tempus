@@ -1,4 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <!--  LAN  -->
     <string name="lan_title">Remote player</string>
     <string name="lan_choose_device">Choose a remote player</string>
     <string name="lan_searching">Finding players…</string>

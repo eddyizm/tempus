@@ -1,4 +1,5 @@
 <resources>
+    <!--  LAN  -->
     <string name="lan_allow">Zezwalaj na sterowanie z sieci lokalnej</string>
     <string name="lan_available">Tempus dostępny na sieci lokalnej</string>
     <string name="lan_available_devices">Dostępne odbiorniki</string>

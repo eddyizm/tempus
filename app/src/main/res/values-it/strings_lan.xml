@@ -1,4 +1,5 @@
 <resources>
+    <!--  LAN  -->
     <string name="lan_allow">Consenti il controllo dalla rete locale</string>
     <string name="lan_available">Tempus disponibile sulla rete locale</string>
     <string name="lan_available_devices">Riceventi disponibili</string>
