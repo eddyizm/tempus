@@ -60,7 +60,12 @@
 	<string name="artist_bottom_sheet_play_next">Odtwórz następne</string>
     <string name="artist_bottom_sheet_add_to_queue">Dodaj do kolejki</string>
     <string name="artist_bottom_sheet_add_to_playlist">Dodaj do playlisty</string>
+	<string name="artist_bottom_sheet_download_all">Pobierz wszystko</string>
     <string name="artist_bottom_sheet_loading_tracks">Ładowanie utworów\u2026</string>
+	<string name="artist_download_load_failed">Nie udało się załadować utworów wykonawcy. Sprawdź swoje połączenie i spróbuj ponownie.</string>
+    <string name="artist_download_no_tracks">Nie znaleziono utworów dla tego wykonawcy</string>
+    <string name="artist_download_already_downloaded">Wszystkie utwory tego wykonawcy są już pobrane lub zakolejkowane</string>
+    <string name="artist_download_not_started">Nie udało się rozpocząć pobierania. Spróbuj ponownie.</string>
     <string name="artist_catalogue_title">Wykonawcy</string>
     <string name="artist_catalogue_title_expanded">Przeglądaj wykonawców</string>
     <string name="artist_error_retrieving_radio">Błąd podczas pobierania radia wykonawcy</string>
@@ -564,7 +569,7 @@
     <string name="settings_item_rating">Pokaż oceny elementów</string>
     <string name="settings_item_rating_summary">Jeżeli włączone, ocena elementów oraz czy jest oznaczony jako ulubiony będą pokazywane.</string>
     <string name="settings_queue_syncing_summary">Jeżeli włączone, użytkownik będzie miał możliwość zapisania kolejki i będzie miał możliwość załadowania jej stanu przy otwarciu aplikacji.</string>
-    <string name="settings_queue_syncing_title">Synchronizuj kolejkę odtwarzania dla tego użytkownika [Niedokończone]</string>
+    <string name="settings_queue_syncing_title">Synchronizuj kolejkę odtwarzania dla tego użytkownika</string>
     <string name="settings_show_mini_shuffle_button">Pokaż przycisk odtwarzania losowego</string>
     <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
 	<string name="settings_custom_command_first_button">Pierwsza niestandardowa komenda</string>
@@ -608,7 +613,18 @@
     <string name="settings_sync_starred_albums_for_offline_use_title">Synchronizuj albumy oznaczone gwiazdką do użycia offline</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Jeżeli włączone, utwory oznaczone gwiazdką będą pobrane do użycia offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Zsynchronizuj utwory oznaczone gwiazdką do użycia offline</string>
-	<string name="settings_permissions">Uprawnienia aplikacji</string>
+	<string name="settings_auto_download_played_tracks_title">Automatycznie pobieraj odtwarzane utwory</string>
+    <string name="settings_auto_download_played_tracks_summary">Automatycznie zapisuj odtworzone piosenki do odtwarzania offline używając aktualnych ustawień jakości strumieniowania (ustawienia jakości pobierania są ignorowane, aby uniknąć dodatkowego zużycia danych).</string>
+	<string name="settings_permissions">Uprawnienia</string>
+	<string name="settings_backups">Kopie zapasowe</string>
+	<string name="settings_export_title">Eksport ustawień</string>
+    <string name="settings_export_summary">Zapisuje twoje ustawienia do pliku. Dane logowania do serwerów nie są dołączane.</string>
+    <string name="settings_import_title">Import ustawień</string>
+    <string name="settings_import_summary">Przywraca ustawienia z wyeksportowanego pliku</string>
+    <string name="settings_exported">Ustawienia wyeksportowane</string>
+    <string name="settings_export_failed">Nie udało się zapisać pliku ustawień</string>
+    <string name="settings_imported">Zaimportowano %d ustawień</string>
+    <string name="settings_import_invalid">To nie jest plik ustawień Tempus</string>
 	<string name="settings_network_playback_title">Odtwarzanie sieciowe</string>
     <string name="settings_upnp_title">Odtwarzacze UPnP / DLNA</string>
     <string name="settings_upnp_summary">Znajdź i odtwarzaj na odtwarzaczach UPnP i DLNA w twojej sieci. Szuka tylko wtedy gdy, wybieranie urządzenia jest otwarte.</string>
@@ -770,6 +786,12 @@
 		<item quantity="few">Pobieram %d piosenki</item>
 		<item quantity="many">Pobieram %d piosenek</item>
         <item quantity="other">Pobieram %d piosenek</item>
+    </plurals>    
+	<plurals name="artist_download_waiting_for_network">
+        <item quantity="one">%d piosenka zakolejkowana. Zostanie ona pobrana, gdy znowu będziesz online.</item>
+        <item quantity="few">Zakolejkowano %d piosenki. Zostaną one pobrane, gdy znowu będziesz online.</item>
+        <item quantity="many">Zakolejkowano %d piosenek. Zostaną one pobrane, gdy znowu będziesz online.</item>
+        <item quantity="other">Zakolejkowano %d piosenek. Zostaną one pobrane, gdy znowu będziesz online.</item>
     </plurals>
     <string name="equalizer_fragment_title">Korektor dźwięku</string>
     <string name="equalizer_reset">Reset</string>
@@ -858,11 +880,13 @@
 
     <string name="la_tab_greeter">Powitanie</string>
     <string name="la_tab_permission">Uprawnienia</string>
+	<string name="la_tab_backup">Kopie zapasowe</string>
     <string name="la_tab_themes">Motywy</string>
     <string name="la_tab_server">Serwery</string>
 	
     <string name="la_appbar_greeter_title">Informacje</string>
     <string name="la_appbar_permission_title">Przegląd uprawnień</string>
+	<string name="la_appbar_backup_title">Zarządzanie kopiami zapasowymi</string>
     <string name="la_appbar_themes_title">Edytor motywów</string>
     <string name="la_appbar_server_title">Edytor serwerów</string>
 
@@ -913,6 +937,41 @@
     <string name="la_perms_access_local_network_description">Wymagany do uzyskania dostępu do innych urządzeń w tej samej sieci LAN co twoje aktualne urządzenie.</string>
     <string name="la_perms_nearby_devices_title">Urządzenia w pobliżu</string>
     <string name="la_perms_nearby_devices_description">Wymagane do znajdowania urządzeń przez UPnP i Chromecast.</string>
+
+	<string name="menu_add_shortcut">Przypnij do skrótów aplikacji</string>
+    <string name="menu_remove_shortcut">Odepnij z skrótów aplikacji</string>
+    <string name="shortcut_replace_title">Wszystkie skróty aplikacji są przypięte. Zamienić:</string>
+    <string name="settings_shortcuts_manage">Przypięte skróty aplikacji</string>
+    <string name="settings_shortcuts_manage_empty">Na razie brak. Przypnij playlisty i albumy z ich menu.</string>
+    <string name="shortcut_manage_save">Zapisz</string>
+    <string name="shortcut_type_playlist">Playlista</string>
+    <string name="shortcut_type_album">Album</string>
+    <string name="shortcut_move">Przenieś</string>
+    <string name="shortcut_remove">Usuń</string>
+    <string name="settings_shortcuts_recent_playlists">Ostatnio odtwarzane playlisty jako skróty aplikacji</string>
+    <string name="settings_shortcuts_recent_playlists_summary">Długie przytrzymanie ikony aplikacji pokaże ostatnio odtwarzane playlistyt, zaraz po przypiętych playlistach i albumach.</string>
+    <string name="settings_shortcuts_play_mode">Gdy użyty zostanie skrót aplikacji</string>
+    <string name="settings_shortcuts_play_mode_open">Tylko otwórz playlistę lub album</string>
+    <string name="settings_shortcuts_play_mode_play">Odtwórz od początku</string>
+    <string name="settings_shortcuts_play_mode_shuffle">Odtwórz losowo</string>
+    <string name="settings_shortcuts_play_mode_ask">Pytaj za każdym razem</string>
+    <string name="shortcut_ask_open">Otwórz</string>
+    <string name="shortcut_ask_play">Odtwarzaj</string>
+    <string name="shortcut_ask_shuffle">Odtwarzaj losowo</string>
+    <string name="la_backups_section_manual_title">Ręczna kopia zapasowa</string>
+    <string name="la_backups_section_manual_description">Wyeksportuj ustawienia aplikacji do pliku lub zaimportuj je z wcześniejszej kopii. Nie zawierają danych logowania.</string>
+    <string name="la_backups_section_manual_button_export">Eksport</string>
+    <string name="la_backups_section_manual_button_import">Import</string>
+    <string name="la_backups_section_storage_title">Katalog do przechowywania</string>
+    <string name="la_backups_section_storage_description">Lokalny folder gdzie są aktualnie zapisywane pliki kopii zapasowych.</string>
+    <string name="la_backups_section_storage_placeholder">/storage/emulated/0/Tempus/Backups</string>
+    <string name="la_backups_section_automatic_title">Automatyczne kopie zapasowe</string>
+    <string name="la_backups_section_automatic_description">Twórz kopie zapasowe ustawień automatycznie w tle.</string>
+    <string name="la_backups_section_automatic_switch">Włącz kopie zapasowe według harmonogramu</string>
+    <string name="la_backups_section_automatic_dropdown_title">Częstotliwość</string>
+    <string name="la_backups_section_automatic_dropdown_item_hourly">co godzinę</string>
+    <string name="la_backups_section_automatic_dropdown_item_daily">codziennie</string>
+    <string name="la_backups_section_automatic_dropdown_item_weekly">co tydzień</string>
 	
     <string name="la_theme_description">Styl dla palety dynamicznej twojej aplikacji.</string>
 
