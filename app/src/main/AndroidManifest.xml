@@ -48,6 +48,24 @@
             android:taskAffinity=""
             android:theme="@style/AppTheme.Translucent" />
 
+        <!-- UPnP renderers as media routes. Exported so the system binds it and lists them in its
+             output switcher. The provider refuses controllers for any other app. -->
+        <service
+            android:name=".upnp.UpnpRouteProviderService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.media.MediaRouteProviderService" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.media.MediaRoute2ProviderService" />
+            </intent-filter>
+        </service>
+
+        <!-- Turns on media transfer, so routes picked in the system output switcher reach the app. -->
+        <receiver
+            android:name="androidx.mediarouter.media.MediaTransferReceiver"
+            android:exported="true" />
+
         <activity android:name=".lan.LanPlaybackActivity" android:exported="false"
             android:theme="@style/AppTheme" />
         <service android:name=".lan.LanReceiverService" android:exported="false"

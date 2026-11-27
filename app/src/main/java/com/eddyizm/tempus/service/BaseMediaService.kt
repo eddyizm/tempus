@@ -10,6 +10,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Binder
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
@@ -39,16 +40,20 @@ import com.eddyizm.tempus.equalizer.ExternalBackend
 import com.eddyizm.tempus.equalizer.DefaultBackend
 import com.eddyizm.tempus.equalizer.ParametricBackend
 import com.eddyizm.tempus.equalizer.ParametricEqAudioProcessor
+import androidx.mediarouter.media.MediaRouteSelector
 import androidx.mediarouter.media.MediaRouter
+import androidx.mediarouter.media.MediaRouterParams
 import com.eddyizm.tempus.repository.QueueRepository
 import com.eddyizm.tempus.subsonic.base.ApiResponse
 import com.eddyizm.tempus.subsonic.models.NowPlayingEntry
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
-import com.eddyizm.tempus.upnp.UpnpControlPoint
 import com.eddyizm.tempus.upnp.UpnpDevice
+import com.eddyizm.tempus.upnp.UpnpHandback
 import com.eddyizm.tempus.upnp.UpnpPlayer
 import com.eddyizm.tempus.upnp.UpnpRouteProvider
+import com.eddyizm.tempus.upnp.UpnpRoutes
 import com.eddyizm.tempus.upnp.UpnpRoutesGate
+import com.eddyizm.tempus.upnp.UpnpSwitchWatcher
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.*
 import com.eddyizm.tempus.util.SleepTimerManager
@@ -84,7 +89,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     protected lateinit var exoplayer: ExoPlayer
     protected lateinit var mediaLibrarySession: MediaLibrarySession
     protected var sessionCallback: MediaLibrarySession.Callback? = null
-    private var upnpRouteProvider: UpnpRouteProvider? = null
+    private var upnpRoutesActive = false
     private var upnpPlayer: UpnpPlayer? = null
     private lateinit var bitmapLoader: SyncBitmapLoader
     private lateinit var networkCallback: CustomNetworkCallback
@@ -847,37 +852,94 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
         (sessionCallback as? BaseSessionCallback)?.handlePlayerChanged(oldPlayer, newPlayer)
     }
 
-    /** Offers renderers as routes and moves playback onto one through [setPlayer], as Cast does. */
-    private fun initializeUpnpRoutes() {
-        val controlPoint = upnpControlPoint
-        val provider = UpnpRouteProvider(this, controlPoint)
-        provider.selectionListener = object : UpnpRouteProvider.SelectionListener {
-            override fun onRendererSelected(device: UpnpDevice) {
-                val previous = upnpPlayer
-                val player = UpnpPlayer(controlPoint, device, mainLooper, context = this@BaseMediaService)
-                upnpPlayer = player
-                initializePlayerListener(player)
-                setPlayer(mediaLibrarySession.player, player)
-                // The unselect that follows names the old renderer, so it is released here.
-                previous?.release()
-            }
+    /** Moves playback onto a renderer picked in the app or in the system output switcher, as Cast does. */
+    private val upnpPlayback = object : UpnpRouteProvider.SelectionListener {
+        override fun onRendererSelected(device: UpnpDevice) {
+            val previous = upnpPlayer
+            val player = UpnpPlayer(UpnpRoutes.controlPoint, device, mainLooper, context = this@BaseMediaService)
+            upnpPlayer = player
+            initializePlayerListener(player)
+            player.addListener(upnpVolumeReporter)
+            setPlayer(mediaLibrarySession.player, player)
+            // The unselect that follows names the old renderer, so it is released here.
+            previous?.release()
+        }
 
-            override fun onRendererUnselected(device: UpnpDevice) {
-                val player = upnpPlayer ?: return
-                if (player.device != device) return
-                upnpPlayer = null
-                setPlayer(player, exoplayer)
-                // Paused, as when Bluetooth headphones drop, so ending the cast does not start the phone's speaker.
-                exoplayer.playWhenReady = false
-                player.release()
+        override fun onRendererUnselected(device: UpnpDevice) {
+            val player = upnpPlayer ?: return
+            if (player.device != device) return
+            upnpPlayer = null
+            UpnpRoutes.reportVolume(device, null, 0)
+            val wasPlaying = player.playWhenReady
+            setPlayer(player, exoplayer)
+            // Paused unless the phone or Bluetooth was picked, so stopping the cast does not start the phone's speaker.
+            exoplayer.playWhenReady = upnpHandback.rendererLeft(wasPlaying, SystemClock.elapsedRealtime())
+            player.release()
+        }
+
+        override fun onVolumeRequested(device: UpnpDevice, volume: Int) {
+            upnpPlayer?.takeIf { it.device == device }?.setDeviceVolume(volume, 0)
+        }
+
+        override fun onVolumeAdjusted(device: UpnpDevice, delta: Int) {
+            val player = upnpPlayer?.takeIf { it.device == device } ?: return
+            if (player.isCommandAvailable(Player.COMMAND_GET_DEVICE_VOLUME)) {
+                player.setDeviceVolume(player.deviceVolume + delta, 0)
             }
         }
-        MediaRouter.getInstance(this).addProvider(provider)
-        upnpRouteProvider = provider
     }
 
-    // One per service, so turning the UPnP switch off and on again does not leave an HTTP client behind each time.
-    private val upnpControlPoint by lazy { UpnpControlPoint() }
+    // Unknown until the renderer's events settle, then the system switcher's slider follows the renderer.
+    private val upnpVolumeReporter = object : Player.Listener {
+        override fun onEvents(player: Player, events: Player.Events) {
+            if (!events.containsAny(
+                    Player.EVENT_DEVICE_VOLUME_CHANGED,
+                    Player.EVENT_DEVICE_INFO_CHANGED,
+                    Player.EVENT_AVAILABLE_COMMANDS_CHANGED
+                )
+            ) return
+            val upnp = player as? UpnpPlayer ?: return
+            if (upnp !== upnpPlayer) return
+            val known = upnp.isCommandAvailable(Player.COMMAND_GET_DEVICE_VOLUME)
+            UpnpRoutes.reportVolume(upnp.device, if (known) upnp.deviceVolume else null, upnp.deviceInfo.maxVolume)
+        }
+    }
+
+    private val upnpHandback = UpnpHandback()
+
+    // The output switcher only exists from Android 11, and so does the transfer it reports a switch with.
+    private val upnpSwitchWatcher: UpnpSwitchWatcher? by lazy {
+        if (Build.VERSION.SDK_INT >= 30) UpnpSwitchWatcher(this) { onUpnpSwitchedAway() } else null
+    }
+
+    private fun onUpnpSwitchedAway() {
+        if (upnpHandback.switchedAway(SystemClock.elapsedRealtime()) && mediaLibrarySession.player === exoplayer) {
+            exoplayer.play()
+        }
+    }
+
+    // Registers the app's interest in UPnP routes with the system, which lists in its output switcher only
+    // routes an app asked for. Passive, so it only keeps the request alive while no route button is on screen.
+    private val upnpRouteInterest = object : MediaRouter.Callback() {}
+
+    private fun initializeUpnpRoutes() {
+        UpnpRoutes.playback = upnpPlayback
+        val router = MediaRouter.getInstance(this)
+        // Tells the system the app can take playback back to the phone or Bluetooth, so picking one in the output
+        // switcher is a transfer and not the end of the cast. The Cast SDK sets this too, the degoogled build has none.
+        val params = router.routerParams
+        if (params?.isTransferToLocalEnabled != true) {
+            router.routerParams = (params?.let { MediaRouterParams.Builder(it) } ?: MediaRouterParams.Builder())
+                .setTransferToLocalEnabled(true)
+                .build()
+        }
+        router.addCallback(
+            MediaRouteSelector.Builder().addControlCategory(UpnpRouteProvider.CATEGORY_UPNP).build(),
+            upnpRouteInterest
+        )
+        if (Build.VERSION.SDK_INT >= 30) upnpSwitchWatcher?.start()
+        upnpRoutesActive = true
+    }
 
     // The UPnP switch is read at start and on every change, so turning it off takes effect without a restart.
     private val upnpSwitchListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
@@ -885,7 +947,7 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     }
 
     private fun applyUpnpSwitch() {
-        when (UpnpRoutesGate.change(Preferences.isUpnpEnabled(), upnpRouteProvider != null)) {
+        when (UpnpRoutesGate.change(Preferences.isUpnpEnabled(), upnpRoutesActive)) {
             UpnpRoutesGate.Change.REGISTER -> initializeUpnpRoutes()
             UpnpRoutesGate.Change.RELEASE -> {
                 // Bring playback home first, or the renderer keeps playing with nothing left to control it.
@@ -901,12 +963,17 @@ open class BaseMediaService : MediaLibraryService(), MediaManager.QueueTarget {
     }
 
     private fun releaseUpnpRoutes() {
-        upnpRouteProvider?.let { provider ->
-            provider.selectionListener = null
-            MediaRouter.getInstance(this).removeProvider(provider)
-            provider.release()
+        if (upnpRoutesActive) {
+            if (UpnpRoutes.playback === upnpPlayback) UpnpRoutes.playback = null
+            val router = MediaRouter.getInstance(this)
+            router.removeCallback(upnpRouteInterest)
+            if (Build.VERSION.SDK_INT >= 30) upnpSwitchWatcher?.stop()
+            // Ends the system's session too, or its switcher keeps naming the renderer as the output.
+            if (router.selectedRoute.supportsControlCategory(UpnpRouteProvider.CATEGORY_UPNP)) {
+                router.unselect(MediaRouter.UNSELECT_REASON_STOPPED)
+            }
         }
-        upnpRouteProvider = null
+        upnpRoutesActive = false
         // Left playing on the renderer otherwise, with nothing left to control it.
         upnpPlayer?.release()
         upnpPlayer = null

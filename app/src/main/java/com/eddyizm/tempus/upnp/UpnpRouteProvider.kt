@@ -22,7 +22,17 @@ class UpnpRouteProvider(
     interface SelectionListener {
         fun onRendererSelected(device: UpnpDevice)
         fun onRendererUnselected(device: UpnpDevice)
+
+        /** False refuses the route, so the system picker does not show a cast nothing plays on. */
+        fun acceptsSelection(): Boolean = true
+
+        /** The volume slider of the system output switcher, in the range last given to [setRouteVolume]. */
+        fun onVolumeRequested(device: UpnpDevice, volume: Int) {}
+
+        fun onVolumeAdjusted(device: UpnpDevice, delta: Int) {}
     }
+
+    private class Volume(val level: Int, val max: Int)
 
     var selectionListener: SelectionListener? = null
 
@@ -32,8 +42,14 @@ class UpnpRouteProvider(
     // Replaced whole, never edited in place, or publish() throws ConcurrentModificationException.
     @Volatile private var devices: Map<String, UpnpDevice> = emptyMap()
 
+    // Main thread. Only routes whose renderer reported a level, the others stay fixed.
+    private var volumes: Map<String, Volume> = emptyMap()
+
+    // Off publishes no routes and searches for none, whatever the system asks for.
+    private var enabled = true
+    private var request: MediaRouteDiscoveryRequest? = null
+
     @Volatile private var scanning = false
-    @Volatile private var activeScan = false
     @Volatile private var scanInFlight = false
 
     private val rescan = object : Runnable {
@@ -50,25 +66,43 @@ class UpnpRouteProvider(
                     }
                 }
             }
-            handler.postDelayed(this, if (activeScan) ACTIVE_INTERVAL_MS else PASSIVE_INTERVAL_MS)
+            handler.postDelayed(this, SCAN_INTERVAL_MS)
         }
     }
 
     /** The executor thread is not a daemon and the owning service cycles often, leaking one per cycle. */
     fun release() {
         scanning = false
-        activeScan = false
         handler.removeCallbacksAndMessages(null)
         worker.shutdown()
     }
 
-    // A route button on screen asks for no discovery, only the chooser dialog or the Cast SDK does.
+    // Searches only for an active request, which the cast picker and the system output switcher make while they are
+    // open. The media service's passive request only keeps the system asking, and the renderers found last stay
+    // listed meanwhile, so a cast that is running searches for nothing.
     override fun onDiscoveryRequestChanged(request: MediaRouteDiscoveryRequest?) {
-        val wanted = request?.selector?.hasControlCategory(CATEGORY_UPNP) == true
-        val active = wanted && request?.isActiveScan == true
-        if (wanted == scanning && active == activeScan) return
+        this.request = request
+        applyDiscovery()
+    }
+
+    /** Main thread, like [onDiscoveryRequestChanged]. */
+    fun setEnabled(enabled: Boolean) {
+        if (this.enabled == enabled) return
+        this.enabled = enabled
+        if (!enabled) {
+            devices = emptyMap()
+            volumes = emptyMap()
+            setDescriptor(null)
+        }
+        applyDiscovery()
+    }
+
+    private fun applyDiscovery() {
+        val request = request
+        val wanted = enabled && request?.isActiveScan == true &&
+            request.selector.hasControlCategory(CATEGORY_UPNP)
+        if (wanted == scanning) return
         scanning = wanted
-        activeScan = active
         handler.removeCallbacks(rescan)
         if (wanted) handler.post(rescan)
     }
@@ -90,29 +124,55 @@ class UpnpRouteProvider(
                     for (device in found) put(device.routeId, device)
                 }
             }
-            if (devices.isNotEmpty()) handler.post { publish() }
+            if (devices.isNotEmpty()) handler.post { if (enabled) publish() }
         }
+    }
+
+    /** Main thread. Null while the renderer has not reported a level, which leaves the slider out. */
+    fun setRouteVolume(routeId: String, level: Int?, max: Int) {
+        val updated = LinkedHashMap(volumes)
+        if (level == null || max <= 0) updated.remove(routeId) else updated[routeId] = Volume(level.coerceIn(0, max), max)
+        volumes = updated
+        if (enabled && devices.isNotEmpty()) publish()
     }
 
     private fun publish() {
         val builder = MediaRouteProviderDescriptor.Builder()
         for ((id, device) in devices) {
+            val volume = volumes[id]
+            val route = MediaRouteDescriptor.Builder(id, device.friendlyName.ifBlank { "UPnP renderer" })
+                .setDescription(device.modelName.ifBlank { device.manufacturer })
+                .addControlFilter(CONTROL_FILTER)
+                .setPlaybackType(MediaRouter.RouteInfo.PLAYBACK_TYPE_REMOTE)
+            // The system switcher draws a fixed route's slider empty, so it is variable once UpnpPlayer knows a level.
+            if (volume != null) {
+                route.setVolumeHandling(MediaRouter.RouteInfo.PLAYBACK_VOLUME_VARIABLE)
+                    .setVolume(volume.level)
+                    .setVolumeMax(volume.max)
+            } else {
+                route.setVolumeHandling(MediaRouter.RouteInfo.PLAYBACK_VOLUME_FIXED)
+            }
             builder.addRoute(
-                MediaRouteDescriptor.Builder(id, device.friendlyName.ifBlank { "UPnP renderer" })
-                    .setDescription(device.modelName.ifBlank { device.manufacturer })
-                    .addControlFilter(CONTROL_FILTER)
-                    .setPlaybackType(MediaRouter.RouteInfo.PLAYBACK_TYPE_REMOTE)
-                    // Fixed, since UpnpPlayer carries the volume through the session once the renderer reports one.
-                    .setVolumeHandling(MediaRouter.RouteInfo.PLAYBACK_VOLUME_FIXED)
+                route
                     .setEnabled(true)
+                    // The system picker lists routes to any app asking for their category, so only Tempus may.
+                    .setVisibilityRestricted(setOf(context.packageName))
                     .build()
             )
         }
         setDescriptor(builder.build())
     }
 
+    // The service is exported for the system, so another app could bind it and pick a renderer for Tempus.
+    override fun onCreateRouteController(routeId: String, options: RouteControllerOptions): RouteController? {
+        val client = options.clientPackageName
+        if (client.isNotEmpty() && client != context.packageName) return null
+        return onCreateRouteController(routeId)
+    }
+
     override fun onCreateRouteController(routeId: String): RouteController? {
         val device = devices[routeId] ?: return null
+        if (selectionListener?.acceptsSelection() == false) return null
         return object : RouteController() {
             override fun onSelect() {
                 selectionListener?.onRendererSelected(device)
@@ -120,6 +180,14 @@ class UpnpRouteProvider(
 
             override fun onUnselect(reason: Int) {
                 selectionListener?.onRendererUnselected(device)
+            }
+
+            override fun onSetVolume(volume: Int) {
+                selectionListener?.onVolumeRequested(device, volume)
+            }
+
+            override fun onUpdateVolume(delta: Int) {
+                selectionListener?.onVolumeAdjusted(device, delta)
             }
         }
     }
@@ -133,8 +201,6 @@ class UpnpRouteProvider(
 
         private const val ROUNDS_PER_SCAN = 3
 
-        private val ACTIVE_INTERVAL_MS = TimeUnit.SECONDS.toMillis(10)
-
-        private val PASSIVE_INTERVAL_MS = TimeUnit.MINUTES.toMillis(2)
+        private val SCAN_INTERVAL_MS = TimeUnit.SECONDS.toMillis(10)
     }
 }
