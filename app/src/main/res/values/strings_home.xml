@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Resume at %1$s</string>
+    <string name="home_option_reorganize">Reorganize</string>
+    <string name="home_rearrangement_dialog_negative_button">Cancel</string>
+    <string name="home_rearrangement_dialog_neutral_button">Reset</string>
+    <string name="home_rearrangement_dialog_positive_button">Save</string>
+    <string name="home_rearrangement_dialog_subtitle">Please note that in order for the changes made to take effect, it is necessary to restart the application.</string>
+    <string name="home_rearrangement_dialog_title">Rearrange home</string>
+    <string name="home_section_music">Music</string>
+    <string name="home_section_podcast">Podcast</string>
+    <string name="home_section_radio">Radio</string>
+    <string name="home_subtitle_best_of">Top songs of your favorite artists</string>
+    <string name="home_subtitle_made_for_you">Start mix from a song you liked</string>
+    <string name="home_subtitle_new_internet_radio_station">Add a new radio</string>
+    <string name="home_subtitle_new_podcast_channel">Add a new podcast channel</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">%d album to sync</item>
+        <item quantity="other">%d albums to sync</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Albums marked with a star will be available offline</string>
+    <string name="home_sync_starred_albums_title">Sync Starred Albums</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d artist to sync</item>
+        <item quantity="other">%d artists to sync</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">You have starred artists with music not downloaded</string>
+    <string name="home_sync_starred_artists_title">Starred Artists Sync</string>
+    <string name="home_sync_starred_cancel">Cancel</string>
+    <string name="home_sync_starred_download">Download</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d song needs sync</item>
+        <item quantity="other">%d songs need sync</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Downloading these tracks may involve significant data usage</string>
+    <string name="home_sync_starred_title">Looks like there are some starred tracks to sync</string>
+    <string name="home_title_best_of">Best of</string>
+    <string name="home_title_continue_listening">Continue listening</string>
+    <string name="home_title_discovery">Discovery</string>
+    <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
+    <string name="home_title_flashback">Flashback</string>
+    <string name="home_title_internet_radio_station">Internet radio stations</string>
+    <string name="home_title_last_month">Last month</string>
+    <string name="home_title_last_played">Last played</string>
+    <string name="home_title_last_played_see_all_button">See all</string>
+    <string name="home_title_last_week">Last week</string>
+    <string name="home_title_last_year">Last year</string>
+    <string name="home_title_made_for_you">Made for you</string>
+    <string name="home_title_most_played">Most played</string>
+    <string name="home_title_most_played_see_all_button">See all</string>
+    <string name="home_title_new_releases">New releases</string>
+    <string name="home_title_newest_podcasts">Newest podcasts</string>
+    <string name="home_title_pinned_playlists">Playlists</string>
+    <string name="home_title_podcast_channels">Channels</string>
+    <string name="home_title_podcast_channels_see_all_button">See all</string>
+    <string name="home_title_radio_station">Radio stations</string>
+    <string name="home_title_recently_added">Recently added</string>
+    <string name="home_title_recently_added_see_all_button">See all</string>
+    <string name="home_title_shares">Shares</string>
+    <string name="home_title_starred_albums">★ Starred albums</string>
+    <string name="home_title_starred_albums_see_all_button">See all</string>
+    <string name="home_title_starred_artists">★ Starred artists</string>
+    <string name="home_title_starred_artists_see_all_button">See all</string>
+    <string name="home_title_starred_tracks">★ Starred tracks</string>
+    <string name="home_title_starred_tracks_see_all_button">See all</string>
+    <string name="home_title_top_songs">Your top songs</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_shortcut">Pin to app shortcuts</string>
+    <string name="menu_add_to_playlist_button">Add to playlist</string>
+    <string name="menu_add_to_queue_button">Add to queue</string>
+    <string name="menu_download_all_button">Download all</string>
+    <string name="menu_download_label">Download</string>
+    <string name="menu_edit_playlist_button">Edit playlist</string>
+    <string name="menu_edit_playlist_details_button">Edit details</string>
+    <string name="menu_filter_all">All</string>
+    <string name="menu_filter_download">Downloaded</string>
+    <string name="menu_go_to_playlist_button">Play</string>
+    <string name="menu_group_by_album">Album</string>
+    <string name="menu_group_by_artist">Artist</string>
+    <string name="menu_group_by_genre">Genre</string>
+    <string name="menu_group_by_playlist">Playlist</string>
+    <string name="menu_group_by_track">Track</string>
+    <string name="menu_group_by_year">Year</string>
+    <string name="menu_home_label">Home</string>
+    <string name="menu_keep_synced_button">Keep synced</string>
+    <string name="menu_last_month_name">Last month</string>
+    <string name="menu_last_week_name">Last week</string>
+    <string name="menu_last_year_name">Last year</string>
+    <string name="menu_library_label">Library</string>
+    <string name="menu_login_button">Login</string>
+    <string name="menu_pin_button">Add to faves</string>
+    <string name="menu_play_shuffle_button">Play shuffle</string>
+    <string name="menu_rate_album">Rate album</string>
+    <string name="menu_remove_shortcut">Unpin from app shortcuts</string>
+    <string name="menu_search_button">Search</string>
+    <string name="menu_settings_button">Settings</string>
+    <string name="menu_sort_album_count">Album Count</string>
+    <string name="menu_sort_artist">Artist</string>
+    <string name="menu_sort_date_created">Date Created</string>
+    <string name="menu_sort_least_recently_starred">Least recently starred</string>
+    <string name="menu_sort_most_played">Most played</string>
+    <string name="menu_sort_most_recently_starred">Most recently starred</string>
+    <string name="menu_sort_name">Name</string>
+    <string name="menu_sort_random">Random</string>
+    <string name="menu_sort_recently_added">Recently added</string>
+    <string name="menu_sort_recently_played">Recently played</string>
+    <string name="menu_sort_song_count">Song Count</string>
+    <string name="menu_sort_year">Year</string>
+    <string name="menu_unpin_button">Remove from faves</string>
+</resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Add to playlist</string>
+    <string name="album_bottom_sheet_add_to_queue">Add to queue</string>
+    <string name="album_bottom_sheet_download_all">Download all</string>
+    <string name="album_bottom_sheet_go_to_artist">Go to artist</string>
+    <string name="album_bottom_sheet_instant_mix">Instant mix</string>
+    <string name="album_bottom_sheet_play_next">Play next</string>
+    <string name="album_bottom_sheet_remove_all">Remove all</string>
+    <string name="album_bottom_sheet_share">Share</string>
+    <string name="album_bottom_sheet_shuffle">Shuffle</string>
+    <string name="album_catalogue_title">Albums</string>
+    <string name="album_catalogue_title_expanded">Browse Albums</string>
+    <string name="album_error_retrieving_artist">Error retrieving artist</string>
+    <string name="album_list_page_downloaded">Downloaded albums</string>
+    <string name="album_list_page_most_played">Most played albums</string>
+    <string name="album_list_page_new_releases">New releases</string>
+    <string name="album_list_page_recently_added">Recently added albums</string>
+    <string name="album_list_page_recently_played">Recently played albums</string>
+    <string name="album_list_page_starred">Starred albums</string>
+    <string name="album_list_page_title">Albums</string>
+    <string name="album_page_extra_info_button">More like this</string>
+    <string name="album_page_play_button">Play</string>
+    <string name="album_page_release_date_label">Released on %1$s</string>
+    <string name="album_page_release_dates_label">Released on %1$s, originally %2$s</string>
+    <string name="album_page_shuffle_button">Shuffle</string>
+    <string name="album_page_tracks_count_and_duration">%1$d songs  •  %2$d minutes</string>
+</resources>

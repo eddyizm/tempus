@@ -1,116 +1,72 @@
 <resources>
-    <string name="aa_albums">Albums</string>
-    <string name="aa_album_most_played">Albums most played</string>
-    <string name="aa_album_recently_added">Albums added</string>
-    <string name="aa_artists">Artists</string>
-    <string name="aa_home">Home</string>
-    <string name="aa_made_for_you">For you</string>
-    <string name="aa_more">More</string>
-    <string name="aa_music_folder">Folder</string>
-    <string name="aa_playlists">Playlists</string>
-    <string name="aa_podcast">Podcast</string>
-    <string name="aa_radio">Radio</string>
-    <string name="aa_random">Random</string>
-    <string name="aa_genres">Genres</string>
-    <string name="aa_recent_albums">Recent</string>
-    <string name="aa_song_recently_played">Tracks played</string>
-    <string name="aa_starred">Starred</string>
-    <string name="aa_starred_albums">★ Albums</string>
-    <string name="aa_starred_artists">★ Artists</string>
-    <string name="aa_starred_tracks">★ Tracks</string>
-    <string name="aa_instant_mix">Instant mix</string>
-    <string name="aa_view_by_albums">View by albums</string>
-    <string name="aa_tracks">Tracks</string>
-    <string name="aa_quick_mix">Quick mix</string>
-    <string name="aa_my_mix">My mix</string>
-    <string name="aa_discovery_mix">Discovery mix</string>
 
+    <!-- Activity -->
     <string name="activity_battery_optimizations_conclusion">If in trouble visit https://dontkillmyapp.com. It provides detailed instructions on how to disable any power-saving features that may affect app\'s performance.</string>
     <string name="activity_battery_optimizations_summary">Please disable battery optimizations for media playback while the screen is off.</string>
     <string name="activity_battery_optimizations_title">Battery Optimizations</string>
     <string name="activity_info_offline_mode">Offline mode</string>
-    <string name="album_bottom_sheet_add_to_playlist">Add to playlist</string>
-    <string name="album_bottom_sheet_add_to_queue">Add to queue</string>
-    <string name="album_bottom_sheet_download_all">Download all</string>
-    <string name="album_bottom_sheet_go_to_artist">Go to artist</string>
-    <string name="album_bottom_sheet_instant_mix">Instant mix</string>
-    <string name="album_bottom_sheet_play_next">Play next</string>
-    <string name="album_bottom_sheet_remove_all">Remove all</string>
-    <string name="album_bottom_sheet_share">Share</string>
-    <string name="album_bottom_sheet_shuffle">Shuffle</string>
-    <string name="album_catalogue_title">Albums</string>
-    <string name="album_catalogue_title_expanded">Browse Albums</string>
-    <string name="album_error_retrieving_artist">Error retrieving artist</string>
-    <string name="album_list_page_downloaded">Downloaded albums</string>
-    <string name="album_list_page_most_played">Most played albums</string>
-    <string name="album_list_page_new_releases">New releases</string>
-    <string name="album_list_page_recently_added">Recently added albums</string>
-    <string name="album_list_page_recently_played">Recently played albums</string>
-    <string name="album_list_page_starred">Starred albums</string>
-    <string name="album_list_page_title">Albums</string>
-    <string name="album_page_extra_info_button">More like this</string>
-    <string name="album_page_play_button">Play</string>
-    <string name="album_page_release_date_label">Released on %1$s</string>
-    <string name="album_page_release_dates_label">Released on %1$s, originally %2$s</string>
-    <string name="album_page_shuffle_button">Shuffle</string>
-    <string name="album_page_tracks_count_and_duration">%1$d songs  •  %2$d minutes</string>
+
+    <!-- App -->
     <string name="app_name">Tempus</string>
-    <string name="artist_adapter_radio_station_starting">Searching…</string>
-    <string name="artist_bottom_sheet_instant_mix">Instant mix</string>
-    <string name="artist_bottom_sheet_shuffle">Shuffle</string>
-    <string name="artist_bottom_sheet_play_next">Play next</string>
-    <string name="artist_bottom_sheet_add_to_queue">Add to queue</string>
-    <string name="artist_bottom_sheet_add_to_playlist">Add to playlist</string>
-    <string name="artist_bottom_sheet_download_all">Download all</string>
-    <string name="artist_bottom_sheet_loading_tracks">Loading tracks\u2026</string>
-    <string name="artist_download_load_failed">Couldn\'t load the artist\'s tracks. Check your connection and try again.</string>
-    <string name="artist_download_no_tracks">No tracks found for this artist</string>
-    <string name="artist_download_already_downloaded">All of this artist\'s tracks are already downloaded or queued</string>
-    <string name="artist_download_not_started">Couldn\'t start the download. Try again.</string>
-    <string name="artist_catalogue_title">Artists</string>
-    <string name="artist_catalogue_title_expanded">Browse Artists</string>
-    <string name="artist_error_retrieving_radio">Error retrieving artist\'s radio</string>
-    <string name="artist_error_retrieving_tracks">Error retrieving artist\'s tracks</string>
-    <string name="artist_list_page_downloaded">Downloaded artists</string>
-    <string name="artist_list_page_starred">Starred artists</string>
-    <string name="artist_list_page_title">Artists</string>
-    <string name="artist_no_artist_info_toast">No additional artist info</string>
-    <string name="artist_page_radio_button">Radio</string>
-    <string name="artist_page_shuffle_button">Shuffle</string>
-    <string name="artist_page_switch_layout_button">Switch layout</string>
-    <string name="artist_page_title_album_more_like_this_button">More like this</string>
-    <string name="artist_page_title_album_section">Albums</string>
-    <string name="artist_page_title_ep_section">EPs</string>
-    <string name="artist_page_title_single_section">Singles</string>
-    <string name="artist_page_title_compilation_section">Compilations</string>
-    <string name="artist_page_title_soundtrack_section">Soundtracks</string>
-    <string name="artist_page_title_live_section">Lives</string>
-    <string name="artist_page_title_remix_section">Remixes</string>
-    <string name="artist_page_title_appears_on_section">Appears On</string>
-    <string name="artist_page_title_biography_more_button">More</string>
-    <string name="artist_page_title_biography_section">Biography</string>
-    <string name="artist_page_title_most_streamed_song_section">Top Songs</string>
-    <string name="artist_page_title_most_streamed_song_see_all_button">See all</string>
-    <string name="artist_page_title_most_streamed_song_unavailable">No top songs available\n\nTap to hide</string>
+
+    <!-- Asset Link -->
+    <string name="asset_link_chip_text">%1$s • %2$s</string>
+    <string name="asset_link_clipboard_label">Tempus asset link</string>
+    <string name="asset_link_copied_toast">Copied %1$s to clipboard</string>
+    <string name="asset_link_debug_toast">Asset link: %1$s</string>
+    <string name="asset_link_error_album">Album could not be opened</string>
+    <string name="asset_link_error_artist">Artist could not be opened</string>
+    <string name="asset_link_error_playlist">Playlist could not be opened</string>
+    <string name="asset_link_error_song">Song could not be opened</string>
+    <string name="asset_link_error_unsupported">Unsupported asset link</string>
+    <string name="asset_link_label_album">Album UID</string>
+    <string name="asset_link_label_artist">Artist UID</string>
+    <string name="asset_link_label_genre">Genre UID</string>
+    <string name="asset_link_label_playlist">Playlist UID</string>
+    <string name="asset_link_label_song">Song UID</string>
+    <string name="asset_link_label_unknown">Asset UID</string>
+    <string name="asset_link_label_year">Year UID</string>
+
+    <!-- Battery Optimization -->
     <string name="battery_optimization_negative_button">Ignore</string>
     <string name="battery_optimization_neutral_button">Don\'t ask again</string>
     <string name="battery_optimization_positive_button">Disable</string>
+
+    <!-- Bottom Sheet -->
     <string name="bottom_sheet_generating_instant_mix">Generating instant mix...</string>
     <string name="bottom_sheet_problem_generating_instant_mix">Could not retrieve tracks from subsonic server.</string>
+
+    <!-- Cast -->
+    <string name="cast_expanded_controller_loading">Loading…</string>
+
+    <!-- Connection Alert Dialog -->
     <string name="connection_alert_dialog_negative_button">Cancel</string>
     <string name="connection_alert_dialog_neutral_button">Enable data saver</string>
     <string name="connection_alert_dialog_positive_button">OK</string>
     <string name="connection_alert_dialog_summary">Access to the Subsonic server on connections other than Wi-Fi has been restricted. To prevent this alert dialog from reappearing, disable the connection check in the app settings.</string>
     <string name="connection_alert_dialog_title">Wi-Fi not connected</string>
-    <string name="content_description_shuffle_button">Shuffle</string>
+
+    <!-- Content Description -->
     <string name="content_description_more_options">More options</string>
+    <string name="content_description_shuffle_button">Shuffle</string>
+
+    <!-- Customactivityoncrash -->
+    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
+
+    <!-- Delete Download Storage Dialog -->
     <string name="delete_download_storage_dialog_negative_button">Cancel</string>
     <string name="delete_download_storage_dialog_positive_button">Continue</string>
     <string name="delete_download_storage_dialog_summary">Please be aware that continuing with this action will result in the permanent deletion of all saved items downloaded from all servers.</string>
     <string name="delete_download_storage_dialog_title">Delete saved items</string>
+
+    <!-- Description -->
     <string name="description_empty_title">No lyrics available</string>
+
+    <!-- Disc -->
     <string name="disc_titlefull">Disc %1$s - %2$s</string>
     <string name="disc_titleless">Disc %1$s</string>
+
+    <!-- Download -->
     <string name="download_directory_dialog_negative_button">Cancel</string>
     <string name="download_directory_dialog_positive_button">Download</string>
     <string name="download_directory_dialog_summary">All tracks in this folder will be downloaded. Tracks present in subfolders will not be downloaded.</string>
@@ -120,40 +76,118 @@
     <string name="download_info_empty_title">No downloads yet!</string>
     <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s items</string>
     <string name="download_item_single_subtitle_formatter">%1$s items</string>
-    <string name="download_shuffle_all_subtitle">Shuffle all</string>
-    <string name="download_storage_dialog_sub_summary">For the changes to take effect, restart the app.</string>
-    <string name="download_storage_dialog_summary">Changing the destination of downloaded files from one storage to another will result in the immediate deletion of any previously downloaded files in the other storage.</string>
-    <string name="download_storage_dialog_title">Select storage option</string>
-    <string name="download_storage_external_dialog_positive_button">External</string>
-    <string name="download_storage_internal_dialog_negative_button">Internal</string>
-    <string name="download_storage_directory_dialog_neutral_button">Directory</string>
-    <string name="download_title_section">Downloads</string>
-    <string name="download_refresh_no_directory">Set a download folder to refresh your downloads.</string>
+    <string name="download_refresh_button_content_description">Refresh downloaded items</string>
     <string name="download_refresh_no_changes">No missing downloads found.</string>
+    <string name="download_refresh_no_directory">Set a download folder to refresh your downloads.</string>
     <plurals name="download_refresh_removed">
         <item quantity="one">Removed %d missing download.</item>
         <item quantity="other">Removed %d missing downloads.</item>
     </plurals>
-    <string name="download_refresh_button_content_description">Refresh downloaded items</string>
+    <string name="download_shuffle_all_subtitle">Shuffle all</string>
+    <string name="download_storage_dialog_sub_summary">For the changes to take effect, restart the app.</string>
+    <string name="download_storage_dialog_summary">Changing the destination of downloaded files from one storage to another will result in the immediate deletion of any previously downloaded files in the other storage.</string>
+    <string name="download_storage_dialog_title">Select storage option</string>
+    <string name="download_storage_directory_dialog_neutral_button">Directory</string>
+    <string name="download_storage_external_dialog_positive_button">External</string>
+    <string name="download_storage_internal_dialog_negative_button">Internal</string>
+    <string name="download_title_section">Downloads</string>
+
+    <!-- Downloaded Bottom Sheet -->
     <string name="downloaded_bottom_sheet_add_to_queue">Add to queue</string>
     <string name="downloaded_bottom_sheet_play_next">Play next</string>
     <string name="downloaded_bottom_sheet_remove">Remove</string>
     <string name="downloaded_bottom_sheet_remove_all">Remove all</string>
     <string name="downloaded_bottom_sheet_shuffle">Shuffle</string>
+
+    <!-- Empty -->
     <string name="empty_string" />
+
+    <!-- Equalizer -->
+    <string name="equalizer_enable">Enable</string>
+    <string name="equalizer_fragment_title">Equalizer</string>
+    <string name="equalizer_managed_externally">Equalizer managed by system or third party app</string>
+    <string name="equalizer_reset">Reset</string>
+
+    <!-- Error -->
+    <string name="error_custom_headers_invalid">Invalid header on line %1$s. Use Name: Value</string>
     <string name="error_required">Required</string>
     <string name="error_server_prefix">http or https prefix required</string>
+
+    <!-- Exo -->
+    <string name="exo_controls_heart_off_description">Toggle Heart off</string>
+    <string name="exo_controls_heart_on_description">Toggle Heart on</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
-    <string name="notification_downloading">Downloading</string>
-    <string name="notification_downloading_title">Downloading %1$s</string>
-    <string name="notification_download_progress_format">%1$d of %2$d</string>
-    <string name="notification_downloading_progress">Downloading…</string>
-    <string name="notification_finalizing">Finalizing…</string>
-    <string name="notification_processing">Processing…</string>
-    <string name="notification_downloads_complete">Downloads complete</string>
+
+    <!-- Favorite -->
+    <string name="favorite_icon_description">Favorite</string>
+
+    <!-- Filter -->
+    <string name="filter_artist">Filter artists</string>
+    <string name="filter_info_selection">Select two or more filters</string>
+    <string name="filter_title">Filter</string>
+    <string name="filter_title_expanded">Filter Genres</string>
+
+    <!-- Folder Play -->
+    <string name="folder_play_collecting">Collecting songs from folder…</string>
+    <string name="folder_play_no_songs">No songs found in folder</string>
+    <string name="folder_play_playing">Playing %d songs</string>
+
+    <!-- Generic List Page Count -->
+    <string name="generic_list_page_count">(%1$d)</string>
+    <string name="generic_list_page_count_unknown">(+%1$d)</string>
+
+    <!-- Genre Catalogue Title -->
+    <string name="genre_catalogue_title">Genre Catalogue</string>
+    <string name="genre_catalogue_title_expanded">Browse Genres</string>
+
+    <!-- Github Update Dialog -->
+    <string name="github_update_dialog_negative_button">Remind me later</string>
+    <string name="github_update_dialog_neutral_button">Support me</string>
+    <string name="github_update_dialog_positive_button">Download now</string>
+    <string name="github_update_dialog_summary">There is a new version of the app available on Github.</string>
+    <string name="github_update_dialog_title">Update available</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Label -->
+    <string name="label_dot_separator" translatable="false">•</string>
+    <string name="label_placeholder" translatable="false">--</string>
+
+    <!-- Library -->
+    <string name="library_title_album">Albums</string>
+    <string name="library_title_album_see_all_button">See all</string>
+    <string name="library_title_artist">Artists</string>
+    <string name="library_title_artist_see_all_button">See all</string>
+    <string name="library_title_genre">Genres</string>
+    <string name="library_title_genre_see_all_button">See all</string>
+    <string name="library_title_music_folder">Music folders</string>
+    <string name="library_title_playlist">Playlists</string>
+    <string name="library_title_playlist_see_all_button">See all</string>
+    <string name="library_toast_long_press_to_refresh">Long press to refresh</string>
+
+    <!-- Login -->
+    <string name="login_empty">No server added</string>
+    <string name="login_title">Subsonic servers</string>
+    <string name="login_title_expanded">Subsonic servers</string>
+
+    <!-- Media -->
+    <string name="media_route_menu_title">Cast</string>
+
+    <!-- Nav -->
+    <string name="nav_drawer_index">Index</string>
+
+    <!-- Notification -->
     <string name="notification_download_failed">Download failed</string>
     <string name="notification_download_mixed_result">%1$d downloaded, %2$d failed</string>
     <string name="notification_download_mixed_saved">%1$d saved, %2$d failed</string>
+    <string name="notification_download_progress_format">%1$d of %2$d</string>
+    <string name="notification_downloading">Downloading</string>
+    <string name="notification_downloading_progress">Downloading…</string>
+    <string name="notification_downloading_title">Downloading %1$s</string>
+    <string name="notification_downloads_complete">Downloads complete</string>
+    <string name="notification_finalizing">Finalizing…</string>
+    <string name="notification_processing">Processing…</string>
     <plurals name="notification_tracks_downloaded">
         <item quantity="one">1 track downloaded</item>
         <item quantity="other">%d tracks downloaded</item>
@@ -166,659 +200,65 @@
         <item quantity="one">1 track saved</item>
         <item quantity="other">%d tracks saved</item>
     </plurals>
-    <string name="exo_controls_heart_off_description">Toggle Heart off</string>
-    <string name="exo_controls_heart_on_description">Toggle Heart on</string>
-    <string name="cast_expanded_controller_loading">Loading…</string>
-    <string name="filter_info_selection">Select two or more filters</string>
-    <string name="filter_title">Filter</string>
-    <string name="filter_artist">Filter artists</string>
-    <string name="filter_title_expanded">Filter Genres</string>
-    <string name="generic_list_page_count">(%1$d)</string>
-    <string name="generic_list_page_count_unknown">(+%1$d)</string>
-    <string name="genre_catalogue_title">Genre Catalogue</string>
-    <string name="genre_catalogue_title_expanded">Browse Genres</string>
-    <string name="github_update_dialog_negative_button">Remind me later</string>
-    <string name="github_update_dialog_neutral_button">Support me</string>
-    <string name="github_update_dialog_positive_button">Download now</string>
-    <string name="github_update_dialog_summary">There is a new version of the app available on Github.</string>
-    <string name="github_update_dialog_title">Update available</string>
-    <string name="home_rearrangement_dialog_negative_button">Cancel</string>
-    <string name="home_rearrangement_dialog_neutral_button">Reset</string>
-    <string name="home_rearrangement_dialog_positive_button">Save</string>
-    <string name="home_rearrangement_dialog_title">Rearrange home</string>
-    <string name="home_rearrangement_dialog_subtitle">Please note that in order for the changes made to take effect, it is necessary to restart the application.</string>
-    <string name="home_section_music">Music</string>
-    <string name="home_section_podcast">Podcast</string>
-    <string name="home_section_radio">Radio</string>
-    <string name="home_subtitle_best_of">Top songs of your favorite artists</string>
-    <string name="home_subtitle_made_for_you">Start mix from a song you liked</string>
-    <string name="home_subtitle_new_internet_radio_station">Add a new radio</string>
-    <string name="home_subtitle_new_podcast_channel">Add a new podcast channel</string>
-    <string name="home_sync_starred_cancel">Cancel</string>
-    <string name="home_sync_starred_download">Download</string>
-    <string name="home_sync_starred_subtitle">Downloading these tracks may involve significant data usage</string>
-    <string name="home_sync_starred_title">Looks like there are some starred tracks to sync</string>
-    <string name="home_sync_starred_albums_title">Sync Starred Albums</string>
-    <string name="home_sync_starred_albums_subtitle">Albums marked with a star will be available offline</string>
-    <string name="home_sync_starred_artists_title">Starred Artists Sync</string>
-    <string name="home_sync_starred_artists_subtitle">You have starred artists with music not downloaded</string>
-    <plurals name="home_sync_starred_songs_count">
-        <item quantity="one">%d song needs sync</item>
-        <item quantity="other">%d songs need sync</item>
-    </plurals>
-    <string name="home_title_best_of">Best of</string>
-    <string name="home_title_discovery">Discovery</string>
-    <string name="home_title_continue_listening">Continue listening</string>
-    <string name="home_continue_listening_resume_at">Resume at %1$s</string>
-    <string name="home_title_discovery_shuffle_all_button">Shuffle all</string>
-    <string name="home_title_flashback">Flashback</string>
-    <string name="home_title_internet_radio_station">Internet radio stations</string>
-    <string name="home_title_last_played">Last played</string>
-    <string name="home_title_last_played_see_all_button">See all</string>
-    <string name="home_title_last_week">Last week</string>
-    <string name="home_title_last_month">Last month</string>
-    <string name="home_title_last_year">Last year</string>
-    <string name="home_title_made_for_you">Made for you</string>
-    <string name="home_title_most_played">Most played</string>
-    <string name="home_title_most_played_see_all_button">See all</string>
-    <string name="home_title_new_releases">New releases</string>
-    <string name="home_title_newest_podcasts">Newest podcasts</string>
-    <string name="home_title_pinned_playlists">Playlists</string>
-    <string name="home_title_podcast_channels">Channels</string>
-    <string name="home_title_podcast_channels_see_all_button">See all</string>
-    <string name="home_title_radio_station">Radio stations</string>
-    <string name="home_title_recently_added">Recently added</string>
-    <string name="home_title_recently_added_see_all_button">See all</string>
-    <string name="home_title_shares">Shares</string>
-    <string name="home_title_starred_albums">★ Starred albums</string>
-    <string name="home_title_starred_albums_see_all_button">See all</string>
-    <string name="home_title_starred_artists">★ Starred artists</string>
-    <string name="home_title_starred_artists_see_all_button">See all</string>
-    <string name="home_title_starred_tracks">★ Starred tracks</string>
-    <string name="home_title_starred_tracks_see_all_button">See all</string>
-    <string name="home_title_top_songs">Your top songs</string>
-    <string name="home_option_reorganize">Reorganize</string>
-    <string name="label_dot_separator" translatable="false">•</string>
-    <string name="label_placeholder" translatable="false">--</string>
-    <string name="library_title_album">Albums</string>
-    <string name="library_title_album_see_all_button">See all</string>
-    <string name="library_title_artist">Artists</string>
-    <string name="library_title_artist_see_all_button">See all</string>
-    <string name="library_title_genre">Genres</string>
-    <string name="library_title_genre_see_all_button">See all</string>
-    <string name="library_title_music_folder">Music folders</string>
-    <string name="library_title_playlist">Playlists</string>
-    <string name="library_title_playlist_see_all_button">See all</string>
-    <string name="library_toast_long_press_to_refresh">Long press to refresh</string>
-    <string name="login_empty">No server added</string>
-    <string name="login_title">Subsonic servers</string>
-    <string name="login_title_expanded">Subsonic servers</string>
-    <string name="media_route_menu_title">Cast</string>
-    <string name="menu_login_button">Login</string>
-    <string name="menu_add_to_playlist_button">Add to playlist</string>
-    <string name="playlist_added_to_queue">Playlist added to queue</string>
-    <string name="menu_go_to_playlist_button">Play</string>
-    <string name="menu_play_shuffle_button">Play shuffle</string>
-    <string name="menu_add_to_queue_button">Add to queue</string>
-    <string name="menu_edit_playlist_button">Edit playlist</string>
-    <string name="menu_download_all_button">Download all</string>
-    <string name="menu_rate_album">Rate album</string>
-    <string name="menu_download_label">Download</string>
-    <string name="menu_filter_all">All</string>
-    <string name="menu_filter_download">Downloaded</string>
-    <string name="menu_group_by_album">Album</string>
-    <string name="menu_group_by_artist">Artist</string>
-    <string name="menu_group_by_genre">Genre</string>
-    <string name="menu_group_by_playlist">Playlist</string>
-    <string name="menu_group_by_track">Track</string>
-    <string name="menu_group_by_year">Year</string>
-    <string name="menu_home_label">Home</string>
-    <string name="menu_last_week_name">Last week</string>
-    <string name="menu_last_month_name">Last month</string>
-    <string name="menu_last_year_name">Last year</string>
-    <string name="menu_library_label">Library</string>
-    <string name="menu_search_button">Search</string>
-    <string name="settings_search_hint">Search settings</string>
-    <string name="menu_settings_button">Settings</string>
-    <string name="menu_sort_artist">Artist</string>
-    <string name="menu_sort_name">Name</string>
-    <string name="menu_sort_random">Random</string>
-    <string name="menu_sort_album_count">Album Count</string>
-    <string name="menu_sort_song_count">Song Count</string>
-    <string name="menu_sort_date_created">Date Created</string>
-    <string name="menu_sort_recently_added">Recently added</string>
-    <string name="menu_sort_recently_played">Recently played</string>
-    <string name="menu_sort_most_played">Most played</string>
-    <string name="menu_sort_most_recently_starred">Most recently starred</string>
-    <string name="menu_sort_least_recently_starred">Least recently starred</string>
-    <string name="menu_pin_button">Add to faves</string>
-    <string name="menu_unpin_button">Remove from faves</string>
-    <string name="menu_keep_synced_button">Keep synced</string>
-    <plurals name="playlist_sync_downloading">
-        <item quantity="one">Downloading %d track</item>
-        <item quantity="other">Downloading %d tracks</item>
-    </plurals>
-    <string name="playlist_sort_pinned">Faves</string>
-    <string name="playlist_sort_last_played">Last played</string>
-    <string name="playlist_sort_last_updated">Last updated</string>
-    <string name="playlist_sort_both">Recently active</string>
-    <string name="menu_sort_year">Year</string>
-    <string name="player_playback_speed">%1$.2fx</string>
-    <string name="playback_speed_dialog_title">Playback Speed</string>
-    <string name="playback_speed_decrease_button_content_description">Decrease playback speed</string>
-    <string name="playback_speed_increase_button_content_description">Increase playback speed</string>
-    <string name="playback_speed_pitch_switch_title">Preserve pitch</string>
-    <string name="playback_speed_manual_pitch_switch_title">Manual pitch</string>
-    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
-    <string name="playback_speed_manual_pitch_decrease_button_content_description">Decrease manual pitch</string>
-    <string name="playback_speed_manual_pitch_increase_button_content_description">Increase manual pitch</string>
-    <string name="playback_speed_dialog_reset_button">Reset</string>
-    <string name="playback_speed_dialog_negative_button">Cancel</string>
-    <string name="player_queue_clean_all_button">Clean play queue</string>
-    <string name="player_queue_save_queue_success">Saved play queue</string>
-    <string name="player_queue_save_to_playlist">Save Queue to Playlist</string>
-    <string name="player_queue_load_queue">Load Queue</string>
-    <string name="player_queue_playing_next">Playing Next</string>
-    <string name="player_queue_clear">Clear</string>
-    <string name="player_queue_shuffle_upcoming">Shuffle upcoming</string>
-    <string name="player_queue_download_all">Download all</string>
-    <string name="player_queue_empty">Queue is empty</string>
-    <string name="player_queue_reorder">Reorder</string>
-    <string name="player_queue_remove">Remove from queue</string>
-    <plurals name="player_queue_song_count">
-        <item quantity="one">%d song</item>
-        <item quantity="other">%d songs</item>
-    </plurals>
-    <plurals name="player_queue_duration_seconds">
-        <item quantity="one">%d second</item>
-        <item quantity="other">%d seconds</item>
-    </plurals>
-    <plurals name="player_queue_duration_minutes">
-        <item quantity="one">%d minute</item>
-        <item quantity="other">%d minutes</item>
-    </plurals>
-    <plurals name="player_queue_duration_hours">
-        <item quantity="one">%d hour</item>
-        <item quantity="other">%d hours</item>
-    </plurals>
-    <string name="player_queue_starred">Starred</string>
-    <string name="player_queue_downloaded">Downloaded</string>
-    <string name="player_queue_play">Play</string>
-    <string name="player_queue_pause">Pause</string>
-    <string name="player_queue_all_downloaded">All songs already downloaded</string>
-    <string name="player_queue_loaded">Queue loaded</string>
-    <string name="player_queue_no_saved_queue">No saved queue found</string>
-    <string name="player_lyrics_download_content_description">Download lyrics for offline playback</string>
-    <string name="player_lyrics_downloaded_content_description">Lyrics downloaded for offline playback</string>
-    <string name="player_lyrics_download_success">Lyrics saved for offline playback.</string>
-    <string name="player_lyrics_download_failure">Lyrics are not available to download.</string>
-    <string name="player_server_priority">Server Priority</string>
-    <string name="player_unknown_format">Unknown format</string>
-    <string name="player_transcoding">Transcoding</string>
-    <string name="player_transcoding_requested">requested</string>
-    <string name="playlist_catalogue_title">Playlist Catalogue</string>
-    <string name="playlist_catalogue_title_expanded">Browse Playlists</string>
-    <string name="playlist_chooser_dialog_empty">No playlists created</string>
-    <string name="playlist_chooser_dialog_cancel_button">Cancel</string>
-    <string name="playlist_chooser_dialog_create_button">Create</string>
-    <string name="playlist_chooser_dialog_title">Add to a playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Added song(s) to playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song(s) to playlist</string>
-    <string name="playlist_chooser_dialog_toast_remove_success">Removed song from playlist</string>
-    <string name="playlist_chooser_dialog_toast_remove_failure">Failed to remove song from playlist</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">All songs were skipped as duplicates</string>
-    <string name="playlist_chooser_dialog_visibility_public">Public</string>
-    <string name="playlist_chooser_dialog_visibility_private">Private</string>
-    <string name="playlist_chooser_dialog_visibility_switch_label">Mark the playlist as public</string>
-    <string name="playlist_chooser_dialog_visibility_summary_v2">Turning this on marks the playlist public. Leaving it alone does not change the playlist visibility.</string>
-    <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
-    <string name="playlist_duration">Duration  •  %1$s</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Long press to delete</string>
-    <string name="playlist_editor_dialog_hint_name">Playlist Name</string>
-    <string name="playlist_editor_dialog_negative_button">Cancel</string>
-    <string name="playlist_editor_dialog_neutral_button">Delete</string>
-    <string name="playlist_editor_dialog_positive_button">Save</string>
-    <string name="playlist_editor_dialog_title">Edit playlist</string>
-    <string name="playlist_editor_dialog_action_delete_success">Playlist deleted</string>
-    <string name="playlist_editor_dialog_action_delete_failure">Failed to delete playlist</string>
-    <string name="playlist_editor_dialog_action_save_success">Playlist saved</string>
-    <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
-    <string name="playlist_editor_dialog_action_save_empty">A playlist has to keep at least one track</string>
-    <string name="playlist_editor_hint">Drag the handle to reorder, tap the trash to remove. Nothing is sent until Save.</string>
-    <string name="playlist_editor_remove_track">Remove track</string>
-    <string name="playlist_editor_drag_track">Drag to reorder</string>
-    <string name="menu_edit_playlist_details_button">Edit details</string>
-    <string name="playlist_details_dialog_title">Playlist details</string>
-    <string name="playlist_editor_load_failure">Could not load the playlist</string>
-    <string name="playlist_editor_removed_track">Removed from the list</string>
-    <string name="playlist_page_empty">No songs in this playlist</string>
-    <string name="playlist_page_play_button">Play</string>
-    <string name="playlist_page_shuffle_button">Shuffle</string>
-    <string name="playlist_song_count">Playlist  •  %1$d songs</string>
-    <string name="podcast_bottom_sheet_add_to_queue">Add to queue</string>
-    <string name="podcast_bottom_sheet_delete">Delete</string>
-    <string name="podcast_bottom_sheet_download">Download</string>
-    <string name="podcast_bottom_sheet_go_to_channel">Go to channel</string>
-    <string name="podcast_bottom_sheet_play_next">Play next</string>
-    <string name="podcast_bottom_sheet_remove">Remove</string>
-    <string name="podcast_channel_catalogue_title">Channels</string>
-    <string name="podcast_channel_catalogue_title_expanded">Browse Channels</string>
-    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS Url</string>
-    <string name="podcast_channel_editor_dialog_title">Podcast Channel</string>
-    <string name="podcast_channel_not_supported_snackbar">Podcasts are not supported by this server.</string>
-    <string name="podcast_channel_page_title_description_section">Description</string>
-    <string name="podcast_channel_page_title_episode_section">Episodes</string>
-    <string name="podcast_channel_page_title_no_episode_available">No episodes available</string>
-    <string name="podcast_episode_download_request_snackbar">Your request has been sent to the server</string>
-    <string name="podcast_info_empty_button">Click to hide the section\nThe effects will be visible on restart</string>
-    <string name="podcast_info_empty_subtitle">Once you add a channel, you\'ll find it here</string>
-    <string name="podcast_info_empty_title">No podcasts found!</string>
-    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
-    <string name="podcast_release_no_date">No date</string>
-    <string name="podcast_release_unknown_duration">Unknown duration</string>
-    <string name="radio_editor_dialog_hint_homepage_url">Radio Homepage URL</string>
-    <string name="radio_editor_dialog_hint_name">Radio Name</string>
-    <string name="radio_editor_dialog_hint_stream_url">Radio Stream URL</string>
-    <string name="radio_editor_dialog_negative_button">Cancel</string>
-    <string name="radio_editor_dialog_neutral_button">Delete</string>
-    <string name="radio_editor_dialog_positive_button">Save</string>
-    <string name="radio_editor_dialog_added">Radio station added</string>
-    <string name="radio_editor_dialog_updated">Radio station updated</string>
-    <string name="radio_editor_dialog_title">Internet Radio Station</string>
-    <string name="radio_station_info_empty_button">Click to hide the section\nThe effects will be visible on restart</string>
-    <string name="radio_station_info_empty_subtitle">Once you add a radio station, you\'ll find it here</string>
-    <string name="radio_station_info_empty_title">No stations found!</string>
-    <string name="radio_dialog_not_supported_snackbar">Internet radio management are not supported by this server.</string>
-    <string name="radio_editor_source_label">Save to</string>
-    <string name="radio_editor_source_server">Server</string>
-    <string name="radio_editor_source_local">Local</string>
-    <string name="radio_editor_dialog_hint_cover_art_url">Cover Art URL (optional)</string>
-    <string name="radio_local_badge">LOCAL</string>
-    <string name="radio_search_dialog_title">Search Radio Directory</string>
-    <string name="radio_search_hint">Station name</string>
-    <string name="radio_search_button">Search</string>
-    <string name="radio_search_add">Add</string>
-    <string name="radio_search_no_results">No stations found</string>
-    <string name="radio_search_empty_query">Enter a station name</string>
-    <string name="radio_search_error">Search failed: %s</string>
-    <string name="radio_search_duplicate">Station already exists</string>
-    <string name="radio_search_station_added">Station added locally</string>
-    <string name="radio_search_directory_button">Directory</string>
-    <string name="radio_editor_search_directory">Search directory</string>
-    <string name="radio_search_country_hint">Country</string>
-    <string name="radio_search_use">Use</string>
+
+    <!-- Rating Dialog -->
     <string name="rating_dialog_negative_button">Cancel</string>
     <string name="rating_dialog_positive_button">Save</string>
     <string name="rating_dialog_title">Rate</string>
+
+    <!-- Search -->
+    <string name="search_all_songs">all %1$s songs</string>
+    <string name="search_all_songs_loading">Getting all songs ...</string>
+    <string name="search_all_songs_play">Play %1$s</string>
+    <string name="search_description_empty_response">We checked your server response but it was empty.</string>
     <string name="search_hint">Search title, artists or albums</string>
     <string name="search_info_minimum_characters">Enter at least three characters</string>
+    <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
+    <string name="search_sort_title">Sort recent searches chronologically</string>
     <string name="search_title_album">Albums</string>
     <string name="search_title_artist">Artists</string>
-    <string name="search_title_song">Songs</string>
     <string name="search_title_empty_response">No results.</string>
-    <string name="search_description_empty_response">We checked your server response but it was empty.</string>
+    <string name="search_title_song">Songs</string>
+
+    <!-- Server Unreachable Dialog -->
     <string name="server_unreachable_dialog_negative_button">Cancel</string>
     <string name="server_unreachable_dialog_neutral_button">Go to login</string>
     <string name="server_unreachable_dialog_positive_button">Continue anyway</string>
     <string name="server_unreachable_dialog_summary">The requested server is unavailable. If you choose to continue this dialog will not appear for the next hour.</string>
     <string name="server_unreachable_dialog_title">Server unreachable</string>
-    <string name="settings_about_summary">Tempus is an open source and lightweight music client for Subsonic, designed and built natively for Android.</string>
-    <string name="settings_about_title">About</string>
-    <string name="settings_always_on_display">Always on display</string>
-    <string name="settings_allow_playlist_duplicates">Allow adding duplicates to playlist</string>
-    <string name="settings_allow_playlist_duplicates_summary">If enabled, duplicates won\'t be checked while adding to a playlist.</string>
-    <string name="settings_audio_transcode_download_format">Transcode format</string>
-    <string name="settings_audio_transcode_download_priority_summary">If enabled, Tempus will not force download the track with the transcode settings below.</string>
-    <string name="settings_audio_transcode_download_priority_title">Prioritize server settings used for streaming in downloads</string>
-    <string name="settings_audio_transcode_download_summary">If enabled, Tempus will download transcoded tracks.</string>
-    <string name="settings_audio_transcode_download_title">Download transcoded tracks</string>
-    <string name="settings_audio_transcode_format_download">Transcode format for downloads</string>
-    <string name="settings_audio_transcode_format_mobile">Transcode format in mobile</string>
-    <string name="settings_audio_transcode_format_wifi">Transcode format in Wi-Fi</string>
-    <string name="settings_audio_transcode_priority_summary">If enabled, Tempus will not force stream the track with the transcode settings below.</string>
-    <string name="settings_audio_transcode_priority_title">Prioritize server transcode settings</string>
-    <string name="settings_audio_transcode_priority_toast">Priority on transcoding of track given to server</string>
-    <string name="settings_choose_download_folder">Choose a folder for downloaded music files</string>
-    <string name="settings_clear_download_folder">Clear download folder</string>
-    <string name="settings_continuous_play_summary">Allows music to keep playing after a playlist has ended, playing similar songs</string>
-    <string name="settings_continuous_play_title">Continuous play</string>
-    <string name="settings_number_tracks_keep_in_queue">Number of tracks to keep in queue</string>
-    <string name="settings_number_tracks_keep_in_queue_summary">Adjust the number of tracks to keep in queue before starting to add tracks with continuous play</string>
-    <string name="settings_fallback_to_random_tracks_summary">Play random songs as a fallback when similar tracks are unavailable</string>
-    <string name="settings_fallback_to_random_tracks_title">Fallback to random tracks</string>
-    <string name="settings_covers_cache">Size of artwork cache</string>
-    <string name="settings_data_saving_mode_summary">In order to reduce data consumption, avoid downloading covers.</string>
-    <string name="settings_data_saving_mode_title">Limit mobile data usage</string>
-    <string name="settings_delete_download_storage_summary">Proceeding will result in the irreversible deletion of all saved items.</string>
-    <string name="settings_delete_download_storage_title">Delete saved items</string>
-    <string name="settings_download_storage_title">Download storage</string>
-    <string name="settings_download_folder_cleared">Download folder cleared.</string>
-    <string name="settings_download_folder_set">Download folder set</string>
-    <string name="settings_set_download_folder">Set download folder</string>
-    <string name="settings_song_preload_buffer">Song preload buffer</string>
-    <string name="settings_song_preload_buffer_summary">Current value: %1$s\nFor the change to take effect you must manually restart the app.</string>
-    <string name="settings_precache_tracks">Pre-cache upcoming tracks [Experimental]</string>
-    <string name="settings_precache_tracks_summary">Fully cache the next tracks of the queue in the background, so skips start instantly and playback survives short signal drops</string>
-    <string name="settings_precache_wifi_only">Pre-cache on Wi-Fi only</string>
-    <string name="settings_precache_wifi_only_summary">Pause pre-caching while on a metered connection</string>
-    <string name="settings_system_equalizer_summary">Adjust audio settings</string>
-    <string name="settings_system_equalizer_title">System equalizer</string>
-    <string name="settings_github_link">https://github.com/eddyizm/tempus</string>
-    <string name="settings_github_summary">Follow the development</string>
-    <string name="settings_github_title">Github</string>
-    <string name="settings_support_discussion_link" translatable="false">https://github.com/eddyizm/tempus/discussions</string>
-    <string name="settings_github_update">Updates</string>
-    <string name="settings_github_update_title">Check github for release updates</string>
-    <string name="settings_github_update_summary">If using the github version, by default app will check for new apk release. Toggle to disable automatic github checks</string>
-    <string name="settings_support_summary">Join community discussions and support</string>
-    <string name="settings_support_title">User support</string>
-    <string name="settings_scan_result">Scanning: counting %1$d tracks</string>
-    <string name="settings_image_size">Set image resolution</string>
-    <string name="settings_language">Language</string>
-    <string name="settings_logout_title">Log out</string>
-    <string name="settings_ping_timeout_title">Server Ping Timeout</string>
-    <string name="settings_ping_timeout_summary">Set Local URL timeout. Default 2 seconds. (Remote server will use this value x3 up to 10 seconds max.)</string>
-    <string name="settings_ping_timeout_dialog">Set base timeout in seconds.</string>
-    <string name="settings_max_bitrate_download">Bitrate for downloads</string>
-    <string name="settings_max_bitrate_mobile">Bitrate in mobile</string>
-    <string name="settings_max_bitrate_wifi">Bitrate in Wi-Fi</string>
-    <string name="settings_media_cache">Size of media file cache</string>
-    <string name="settings_music_directory">Show music directories</string>
-    <string name="settings_music_directory_summary">If enabled, show the music directory section. Please note that for folder navigation to work properly, the server must support this feature.</string>
-    <string name="settings_podcast">Show podcast</string>
-    <string name="settings_podcast_summary">If enabled, show the podcast section. Restart the app for it to take full effect.</string>
-    <string name="settings_playlist_sort">Playlist sorting</string>
-    <string name="settings_androidauto">Android Auto</string>
-    <string name="settings_androidauto_album_view">Grid view for albums and artists</string>
-    <string name="settings_androidauto_home_view">Grid view for home</string>
-    <string name="settings_androidauto_playlist_view">Grid view for playlists</string>
-    <string name="settings_androidauto_podcast_view">Grid view for podcast</string>
-    <string name="settings_androidauto_radio_view">Grid view for radio</string>
-    <string name="settings_androidauto_first_tab">First tab display</string>
-    <string name="settings_androidauto_second_tab">Second tab display</string>
-    <string name="settings_androidauto_third_tab">Third tab display</string>
-    <string name="settings_androidauto_fourth_tab">Fourth tab display</string>
-    <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
-    <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
-    <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
-    <string name="settings_androidauto_shuffle_downloaded_tracks">Shuffle downloaded tracks</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
-    <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
-    <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
-    <string name="settings_audio_quality">Show audio quality</string>
-    <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
-    <string name="settings_song_rating">Show song star rating</string>
-    <string name="settings_song_rating_summary">If enabled, shows 5 star rating for track on song page\n\n*Requires App restart</string>
-    <string name="settings_track_number">Show track number</string>
-    <string name="settings_track_number_summary">If enabled, shows the track number of the song being played.</string>
-    <string name="settings_album_year">Show album year</string>
-    <string name="settings_album_year_summary">If enabled, shows the year of each album on the artist page.</string>
-    <string name="settings_item_rating">Show item rating</string>
-    <string name="settings_item_rating_summary">If enabled, the item\'s rating and whether it is marked as a favorite will be displayed.</string>
-    <string name="settings_queue_syncing_summary">If enabled, the user will have the ability to save their play queue and will have the ability to load state when opening the application.</string>
-    <string name="settings_queue_syncing_title">Sync play queue for this user</string>
-    <string name="settings_show_mini_shuffle_button">Show Shuffle button</string>
-    <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
-    <string name="settings_custom_command_first_button">First custom command</string>
-    <string name="settings_custom_command_second_button">Second custom command</string>
 
-    <string name="settings_radio">Show radio</string>
-    <string name="settings_radio_summary">If enabled, show the radio section. Restart the app for it to take full effect.</string>
-    <string name="settings_enable_drawer_on_landscape">Enable drawer on portrait</string>
-    <string name="settings_enable_drawer_on_landscape_summary">Unlocks the lateral landscape menu drawer on portrait.</string>
-    <string name="settings_hide_bottom_navbar_on_portrait">Hide bottom navbar on portrait [Experimental]</string>
-    <string name="settings_hide_bottom_navbar_on_portrait_summary">Increases vertical space by removing the bottom navbar. The changes will take effect on restart.</string>
-    <string name="settings_auto_download_lyrics">Auto download lyrics</string>
-    <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
-    <string name="settings_replay_gain">Set replay gain mode</string>
-    <string name="settings_rounded_corner">Rounded corners</string>
-    <string name="settings_rounded_corner_size">Corners size</string>
-    <string name="settings_rounded_corner_size_summary">Sets the magnitude of the curvature angle.</string>
-    <string name="settings_rounded_corner_summary">If enabled, sets a curvature angle for all rendered covers. The changes will take effect on restart.</string>
-    <string name="settings_scan_title">Scan library</string>
-    <string name="settings_music_library">Music library</string>
-    <string name="settings_music_library_all">All libraries</string>
-    <string name="settings_scrobble_title">Enable music scrobbling</string>
-    <string name="settings_system_language">System language</string>
-    <string name="settings_share_title">Enable music sharing</string>
-    <string name="settings_streaming_cache_size">Size of streaming cache</string>
-    <string name="settings_streaming_cache_storage_title">Streaming cache storage</string>
-    <string name="settings_sub_summary_scrobble">It\'s important to note that scrobbling also relies on the server being enabled to receive this data.</string>
-    <string name="settings_summary_skip_min_star_rating">When listening to an artist\'s radio, an instant mix or when shuffling all, tracks below a certain user rating will be ignored.</string>
-    <string name="settings_summary_replay_gain">Normalizes the volume level of audio tracks. Files must contain the necessary metadata.</string>
-    <string name="settings_summary_loudness">Allows to correct the volume of audio playback devices (e.g. speakers).\n\nFor ReplayGain -6 is recommended, this is to avoid conflicts with clipping prevention.</string>
-    <string name="settings_summary_scrobble">Scrobbling is a feature that allows your device to send information about the songs you listen to the music server. This information helps create personalized recommendations based on your music preferences.</string>
-    <string name="settings_summary_share">Allows the user to share music via a link. The functionality must be supported and enabled server-side and is limited to individual tracks, albums and playlists.</string>
-    <string name="settings_summary_syncing">Returns the state of the play queue for this user. This includes the tracks in the play queue, the currently playing track, and the position within this track. The server must support this feature.\n*This setting is not 100% working on all servers/devices.</string>
-    <string name="settings_summary_streaming_cache_size">%1$s \nCurrently in use:   %2$s MiB</string>
-    <string name="settings_summary_transcoding">Priority given to the transcoding mode. If set to \"Direct play\" the bitrate of the file will not be changed.</string>
-    <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for downloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
-    <string name="settings_summary_landscape_items_per_row">Applies to all album and artist listings. Defaults to 4</string>
-    <string name="settings_sync_starred_artists_for_offline_use_summary">If enabled, starred artists will be downloaded for offline use.</string>
-    <string name="settings_sync_starred_artists_for_offline_use_title">Sync starred artists for offline use</string>
-    <string name="settings_sync_starred_albums_for_offline_use_summary">If enabled, starred albums will be downloaded for offline use.</string>
-    <string name="settings_sync_starred_albums_for_offline_use_title">Sync starred albums for offline use</string>
-    <string name="settings_sync_starred_tracks_for_offline_use_summary">If enabled, starred tracks will be downloaded for offline use.</string>
-    <string name="settings_sync_starred_tracks_for_offline_use_title">Sync starred tracks for offline use</string>
-    <string name="settings_auto_download_played_tracks_title">Auto-download played tracks</string>
-    <string name="settings_auto_download_played_tracks_summary">Automatically save played songs for offline playback using current streaming quality settings (download quality settings are ignored to avoid extra data usage).</string>
-    <string name="settings_permissions">Permissions</string>
-    <string name="settings_backups">Backups</string>
-    <string name="settings_export_title">Export settings</string>
-    <string name="settings_export_summary">Save your settings to a file. Server logins are not included.</string>
-    <string name="settings_import_title">Import settings</string>
-    <string name="settings_import_summary">Restore settings from an exported file</string>
-    <string name="settings_exported">Settings exported</string>
-    <string name="settings_export_failed">Could not save the settings file</string>
-    <string name="settings_imported">Imported %d settings</string>
-    <string name="settings_import_invalid">Not a Tempus settings file</string>
-    <string name="settings_network_playback_title">Network playback</string>
-    <string name="settings_upnp_title">UPnP / DLNA renderers</string>
-    <string name="settings_upnp_summary">Find and play to UPnP and DLNA renderers on your network. Searches only while the cast picker is open.</string>
-    <string name="settings_lan_remote_summary">Control Tempus on another device, or let one control this device. Listens only while the receiver is on, and searches only when you look for devices.</string>
-    <string name="settings_theme">Theme</string>
-    <string name="settings_dark_theme_style">Dark theme style</string>
-    <string name="settings_tile_size">Tiles size</string>
-    <string name="settings_title_data">Data</string>
-    <string name="settings_title_general">General</string>
-    <string name="settings_title_misc">Miscellaneous</string>
-    <string name="settings_title_players">Players</string>
-    <string name="settings_title_playlist">Playlist</string>
-    <string name="settings_title_rating">Rating</string>
-    <string name="settings_title_loudness">Loudness correction</string>
-    <string name="settings_loudness_preamp_title">Pre-amplification</string>
-    <string name="settings_loudness_preamp_summary">Set positive values for louder sounds.\nSet negative values for quieter sounds.</string>
-    <string name="settings_loudness_preamp_db">%1$d dB</string>
-    <string name="settings_title_replay_gain">Replay Gain</string>
-    <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
-    <string name="settings_replay_gain_prevent_clipping_summary">Reduce gain when the track or album peak tag indicates the signal would clip after applying ReplayGain.</string>
-    <string name="settings_title_scrobble">Scrobble</string>
-    <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Songs with a rating of:</string>
-    <string name="settings_title_share">Share</string>
-    <string name="settings_title_sound">Sound</string>
-    <string name="settings_title_syncing">Syncing</string>
-    <string name="settings_title_transcoding">Transcoding</string>
-    <string name="settings_title_transcoding_download">Transcoding Download</string>
-    <string name="settings_title_ui">UI</string>
-    <string name="settings_title_ui_landscape_items_per_row">Items per row on landscape</string>
-    <string name="settings_title_ui_landscape_items_per_row_dialog">Number of items per row</string>
-    <string name="settings_transcoded_download">Transcoded download</string>
-    <string name="settings_version_summary" translatable="false">3.1.0</string>
-    <string name="settings_version_title">Version</string>
-    <string name="settings_wifi_only_summary">Ask for user confirmation before streaming over mobile network.</string>
-    <string name="settings_wifi_only_title">Stream via Wi-Fi only alert</string>
-    <string name="settings_download_wifi_only_summary">Downloads will pause on mobile data and resume automatically on Wi-Fi.</string>
-    <string name="settings_download_wifi_only_title">Download only on Wi-Fi</string>
+    <!-- Share -->
     <string name="share_bottom_sheet_copy_link">Copy link</string>
     <string name="share_bottom_sheet_delete">Delete share</string>
     <string name="share_bottom_sheet_update">Update share</string>
-    <string name="share_subtitle_item">Expiration date: %1$s</string>
     <string name="share_no_expiration">Never</string>
+    <string name="share_subtitle_item">Expiration date: %1$s</string>
     <string name="share_unsupported_error">Sharing is not supported or not enabled</string>
-    <string name="toolbar_navigation_drawer_open">Navigation drawer open</string>
-    <string name="toolbar_navigation_drawer_closed">Navigation drawer closed</string>
-    <string name="favorite_icon_description">Favorite</string>
-
-    <string name="asset_link_clipboard_label">Tempus asset link</string>
-    <string name="asset_link_label_song">Song UID</string>
-    <string name="asset_link_label_album">Album UID</string>
-    <string name="asset_link_label_artist">Artist UID</string>
-    <string name="asset_link_label_playlist">Playlist UID</string>
-    <string name="asset_link_label_genre">Genre UID</string>
-    <string name="asset_link_label_year">Year UID</string>
-    <string name="asset_link_label_unknown">Asset UID</string>
-    <string name="asset_link_error_unsupported">Unsupported asset link</string>
-    <string name="asset_link_error_song">Song could not be opened</string>
-    <string name="asset_link_error_album">Album could not be opened</string>
-    <string name="asset_link_error_artist">Artist could not be opened</string>
-    <string name="asset_link_error_playlist">Playlist could not be opened</string>
-    <string name="asset_link_chip_text">%1$s • %2$s</string>
-    <string name="asset_link_copied_toast">Copied %1$s to clipboard</string>
-    <string name="asset_link_debug_toast">Asset link: %1$s</string>
     <string name="share_update_dialog_hint_description">Description</string>
     <string name="share_update_dialog_hint_expiration_date">Expiration date</string>
     <string name="share_update_dialog_negative_button">Cancel</string>
     <string name="share_update_dialog_positive_button">Save</string>
     <string name="share_update_dialog_title">Share</string>
-    <string name="song_bottom_sheet_add_to_playlist">Add to playlist</string>
-    <string name="song_bottom_sheet_add_to_queue">Add to queue</string>
-    <string name="song_bottom_sheet_download">Download</string>
-    <string name="song_bottom_sheet_error_retrieving_album">Error retrieving album</string>
-    <string name="song_bottom_sheet_error_retrieving_artist">Error retrieving artist</string>
-    <string name="song_bottom_sheet_go_to_album">Go to album</string>
-    <string name="song_bottom_sheet_go_to_artist">Go to artist</string>
-    <string name="song_bottom_sheet_instant_mix">Instant mix</string>
-    <string name="song_bottom_sheet_play_next">Play next</string>
-    <string name="song_bottom_sheet_rate">Rate</string>
-    <string name="song_bottom_sheet_remove">Remove from device</string>
-    <string name="song_bottom_sheet_remove_from_playlist">Remove from playlist</string>
-    <string name="song_bottom_sheet_undo">Undo</string>
-    <string name="song_bottom_sheet_undo_failure">Failed to put the song back</string>
-    <string name="song_bottom_sheet_share">Share</string>
-    <string name="song_list_page_downloaded">Downloaded</string>
-    <string name="song_list_page_most_played">Most played tracks</string>
-    <string name="song_list_page_recently_added">Recently added tracks</string>
-    <string name="song_list_page_recently_played">Recently played tracks</string>
-    <string name="song_list_page_starred">Starred tracks</string>
-    <string name="song_list_page_top">%1$s\'s top tracks</string>
-    <string name="song_list_page_year">Year %1$d</string>
-    <string name="song_subtitle_formatter">%1$s  •  %2$s  %3$s</string>
-    <string name="starred_sync_dialog_negative_button">Cancel</string>
-    <string name="starred_sync_dialog_neutral_button">Continue</string>
-    <string name="starred_sync_dialog_positive_button">Continue and download</string>
-    <string name="starred_sync_dialog_summary">Downloading starred tracks may require a large amount of data.</string>
-    <string name="starred_sync_dialog_title">Sync starred tracks</string>
-    <string name="starred_artist_sync_dialog_summary">Downloading starred artists may require a large amount of data.</string>
-    <string name="starred_artist_sync_dialog_title">Sync starred artists</string>
-    <string name="starred_album_sync_dialog_summary">Downloading starred albums may require a large amount of data.</string>
-    <string name="starred_album_sync_dialog_title">Sync starred albums</string>
-    <string name="streaming_cache_storage_dialog_sub_summary">For the changes to take effect, restart the app.</string>
-    <string name="streaming_cache_storage_dialog_summary">Changing the destination of cached files from one storage to another may result in the deletion of any previously cached files in the other storage.</string>
-    <string name="streaming_cache_storage_dialog_title">Select storage option</string>
-    <string name="streaming_cache_storage_external_dialog_positive_button">External</string>
-    <string name="streaming_cache_storage_internal_dialog_negative_button">Internal</string>
-    <string name="support_url" translatable="false">https://ko-fi.com/eddyizm</string>
-    <string name="track_info_album">Album</string>
-    <string name="track_info_artist">Artist</string>
-    <string name="track_info_bit_depth">Bit depth</string>
-    <string name="track_info_bitrate">Bitrate</string>
-    <string name="track_info_content_type">Content Type</string>
-    <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Track info</string>
-    <string name="track_info_disc_number">Disc number</string>
-    <string name="track_info_duration">Duration</string>
-    <string name="track_info_genre">Genre</string>
-    <string name="track_info_path">Path</string>
-    <string name="track_info_sampling_rate">Sampling rate</string>
-    <string name="track_info_size">Size</string>
-    <string name="track_info_suffix">Suffix</string>
-    <string name="track_info_summary_downloaded_file">The file has been downloaded using the Subsonic APIs. The codec and bitrate of the file remain unchanged from the source file.</string>
-    <string name="track_info_summary_full_transcode">The application will request the server to transcode the file and modify its bitrate. The user requested codec is %1$s, with a bitrate of %2$s. Any potential changes to the codec and bitrate of the file in the chosen format will be handled by the server, which may or may not support the operation.</string>
-    <string name="track_info_summary_original_file">The application will only read the original file as provided by the server. The app will explicitly request the server for the untranscoded file with the bitrate of the original source.</string>
-    <string name="track_info_summary_server_prioritized">The quality of the file to be played is left up to the server\'s decision. The app will not enforce the choice of codec and bitrate for any potential transcoding.</string>
-    <string name="track_info_summary_transcoding_bitrate">The application will request the server to modify the bitrate of the file. The user requested a bitrate of %1$s, while the codec of the source file will remain the same. Any changes to the bitrate of the file in the chosen format will be done by the server, which may or may not support the operation.</string>
-    <string name="track_info_summary_transcoding_codec">The application will request the server to transcode the file. The requested codec by the user is %1$s, while the bitrate will be the same as the source file. The potential transcoding of the file into the chosen format is dependent on the server, as it may or may not support the operation.</string>
-    <string name="track_info_title">Title</string>
-    <string name="track_info_track_number">Track number</string>
-    <string name="track_info_station">Station</string>
-    <string name="track_info_transcoded_content_type">Transcoded content type</string>
-    <string name="track_info_transcoded_suffix">Transcoded suffix</string>
-    <string name="track_info_year">Year</string>
-    <string name="undraw_page">unDraw</string>
-    <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
-    <string name="undraw_url" translatable="false">https://undraw.co/</string>
-    <string name="widget_label">Tempus Widget</string>
-    <string name="widget_not_playing">Not playing</string>
-    <string name="widget_placeholder_subtitle">Open Tempus</string>
-    <string name="widget_time_elapsed_placeholder">0:00</string>
-    <string name="widget_time_duration_placeholder">0:00</string>
-    <string name="widget_content_desc_album_art">Album artwork</string>
-    <string name="widget_content_desc_play_pause">Play or pause</string>
-    <string name="widget_content_desc_next">Next track</string>
-    <string name="widget_content_desc_prev">Previous track</string>
-    <string name="widget_content_desc_shuffle">Toggle shuffle</string>
-    <string name="widget_content_desc_repeat">Change repeat mode</string>
-    <plurals name="home_sync_starred_albums_count">
-        <item quantity="one">%d album to sync</item>
-        <item quantity="other">%d albums to sync</item>
-    </plurals>
-    <plurals name="home_sync_starred_artists_count">
-        <item quantity="one">%d artist to sync</item>
-        <item quantity="other">%d artists to sync</item>
-    </plurals>
-    <plurals name="songs_download_started">
-        <item quantity="one">Downloading %d song</item>
-        <item quantity="other">Downloading %d songs</item>
-    </plurals>
-    <plurals name="artist_download_waiting_for_network">
-        <item quantity="one">%d song queued. It will download when you\'re back online.</item>
-        <item quantity="other">%d songs queued. They\'ll download when you\'re back online.</item>
-    </plurals>
-    <string name="equalizer_fragment_title">Equalizer</string>
-    <string name="equalizer_reset">Reset</string>
-    <string name="equalizer_enable">Enable</string>
-    <string name="equalizer_managed_externally">Equalizer managed by system or third party app</string>
-    <string name="settings_app_equalizer">Built-in equalizer</string>
-    <string name="settings_app_equalizer_summary">Open the built-in equalizer</string>
-    <string name="settings_title_equalizer">Equalizer</string>
-    <string name="settings_equalizer_select">Select an equalizer to use</string>
-    <string name="settings_equalizer_dialog_title">Equalizers</string>
-    <string name="settings_parametric_eq_import">Import AutoEq profile</string>
-    <string name="settings_parametric_eq_import_summary">Pick a ParametricEQ.txt file from AutoEq</string>
-    <string name="settings_parametric_eq_summary">%1$s. Plays %2$s dB quieter. Cast output is not affected. For Bluetooth headphones, pick the profile for their noise cancelling mode and keep their own EQ flat.</string>
-    <string name="settings_parametric_eq_summary_louder">%1$s. Plays %2$s dB louder. Cast output is not affected. For Bluetooth headphones, pick the profile for their noise cancelling mode and keep their own EQ flat.</string>
-    <string name="settings_parametric_eq_imported">Imported %1$s</string>
-    <string name="settings_parametric_eq_invalid">Not a valid AutoEq ParametricEQ file</string>
-    <string name="settings_parametric_eq_per_ear">Two channel (per ear) profiles are not supported yet. Export it again with one channel.</string>
 
-    <string name="settings_album_detail">Show album detail</string>
-    <string name="settings_album_detail_summary">If enabled, show the album details like genre, song count etc. on the album page</string>
-    <string name="settings_artist_sort_by_album_count">Sort artists by album count</string>
-    <string name="settings_artist_sort_by_album_count_summary">If enabled, sort the artists by album count. Sort by name if disabled.</string>
+    <!-- Shortcut -->
+    <string name="shortcut_ask_open">Open</string>
+    <string name="shortcut_ask_play">Play</string>
+    <string name="shortcut_ask_shuffle">Shuffle</string>
+    <string name="shortcut_manage_save">Save</string>
+    <string name="shortcut_move">Move</string>
+    <string name="shortcut_remove">Remove</string>
+    <string name="shortcut_replace_title">All app shortcuts are pinned. Replace:</string>
+    <string name="shortcut_type_album">Album</string>
+    <string name="shortcut_type_playlist">Playlist</string>
 
-    <string name="folder_play_collecting">Collecting songs from folder…</string>
-    <string name="folder_play_playing">Playing %d songs</string>
-    <string name="folder_play_no_songs">No songs found in folder</string>
-
-    <string name="search_sort_title">Sort recent searches chronologically</string>
-    <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
-    <string name="search_all_songs_loading">Getting all songs ...</string>
-    <string name="search_all_songs">all %1$s songs</string>
-    <string name="search_all_songs_play">Play %1$s</string>
-
-    <string name="nav_drawer_index">Index</string>
-
-    <!-- Sleep timer -->
-    <string name="sleep_timer_dialog_title">Sleep Timer</string>
+    <!-- Sleep Timer -->
+    <string name="sleep_timer_custom_hint">Enter minutes</string>
+    <string name="sleep_timer_custom_set">Set</string>
     <string name="sleep_timer_dialog_active_message">Timer active — %1$s remaining</string>
     <string name="sleep_timer_dialog_cancel_timer">Cancel Timer</string>
     <string name="sleep_timer_dialog_close">Close</string>
-    <string name="sleep_timer_custom_hint">Enter minutes</string>
-    <string name="sleep_timer_custom_set">Set</string>
     <string name="sleep_timer_dialog_end_of_track_active">Stop after this song</string>
-    <string name="sleep_timer_end_of_track_label">End of track</string>
+    <string name="sleep_timer_dialog_title">Sleep Timer</string>
     <!-- Duration options shown in the sleep-timer picker.
          The order must match MINUTE_VALUES in SleepTimerDialog: 5,10,15,20,30,45,60,END_OF_TRACK,CUSTOM. -->
     <string-array name="sleep_timer_duration_labels">
@@ -832,152 +272,107 @@
         <item>@string/sleep_timer_end_of_track_label</item>
         <item>Custom\u2026</item>
     </string-array>
-    <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
-    <string name="playlist_error_not_found_title">Playlist not found</string>
-    <string name="playlist_error_not_found_message">This playlist could not be found on the server. It will be removed from your local cache.</string>
-    <string name="playlist_error_not_found_toast">Playlist removed from cache</string>
-    <string name="player_overflow_menu_add_to_playlist">Add to playlist</string>
+    <string name="sleep_timer_end_of_track_label">End of track</string>
 
-    <!-- Crash Activity -->
+    <!-- Song -->
+    <string name="song_bottom_sheet_add_to_playlist">Add to playlist</string>
+    <string name="song_bottom_sheet_add_to_queue">Add to queue</string>
+    <string name="song_bottom_sheet_download">Download</string>
+    <string name="song_bottom_sheet_error_retrieving_album">Error retrieving album</string>
+    <string name="song_bottom_sheet_error_retrieving_artist">Error retrieving artist</string>
+    <string name="song_bottom_sheet_go_to_album">Go to album</string>
+    <string name="song_bottom_sheet_go_to_artist">Go to artist</string>
+    <string name="song_bottom_sheet_instant_mix">Instant mix</string>
+    <string name="song_bottom_sheet_play_next">Play next</string>
+    <string name="song_bottom_sheet_rate">Rate</string>
+    <string name="song_bottom_sheet_remove">Remove from device</string>
+    <string name="song_bottom_sheet_remove_from_playlist">Remove from playlist</string>
+    <string name="song_bottom_sheet_share">Share</string>
+    <string name="song_bottom_sheet_undo">Undo</string>
+    <string name="song_bottom_sheet_undo_failure">Failed to put the song back</string>
+    <string name="song_list_page_downloaded">Downloaded</string>
+    <string name="song_list_page_most_played">Most played tracks</string>
+    <string name="song_list_page_recently_added">Recently added tracks</string>
+    <string name="song_list_page_recently_played">Recently played tracks</string>
+    <string name="song_list_page_starred">Starred tracks</string>
+    <string name="song_list_page_top">%1$s\'s top tracks</string>
+    <string name="song_list_page_year">Year %1$d</string>
+    <string name="song_subtitle_formatter">%1$s  •  %2$s  %3$s</string>
 
-    <string name="ca_info_label">Info</string>
-    <string name="ca_info_title">Tempus Crashed</string>
-    <string name="ca_info_device_info" translatable="false">Device Information</string>
-    <string name="ca_info_description">
-        Please open an issue on GitHub and include a copy of the crash report to address it.
-    </string>
-    <string name="ca_info_button_close">Close app</string>
-    <string name="ca_info_button_restart">Restart app</string>
+    <!-- Songs -->
+    <plurals name="songs_download_started">
+        <item quantity="one">Downloading %d song</item>
+        <item quantity="other">Downloading %d songs</item>
+    </plurals>
 
-    <string name="ca_logs_label">Logs</string>
-    <string name="ca_logs_title">Java Stack Trace</string>
-    <string name="ca_logs_description">
-        This is what went wrong.
-    </string>
-    <string name="ca_export_button_copy">Copy log</string>
-    <string name="ca_export_button_share">Share log</string>
-    <string name="ca_export_toast_log_copied_to_clipboard">Report copied to clipboard</string>
+    <!-- Starred -->
+    <string name="starred_album_sync_dialog_summary">Downloading starred albums may require a large amount of data.</string>
+    <string name="starred_album_sync_dialog_title">Sync starred albums</string>
+    <string name="starred_artist_sync_dialog_summary">Downloading starred artists may require a large amount of data.</string>
+    <string name="starred_artist_sync_dialog_title">Sync starred artists</string>
+    <string name="starred_sync_dialog_negative_button">Cancel</string>
+    <string name="starred_sync_dialog_neutral_button">Continue</string>
+    <string name="starred_sync_dialog_positive_button">Continue and download</string>
+    <string name="starred_sync_dialog_summary">Downloading starred tracks may require a large amount of data.</string>
+    <string name="starred_sync_dialog_title">Sync starred tracks</string>
 
-    <string name="ca_export_label">Export</string>
-    <string name="ca_export_title">Report retrival</string>
-    <string name="ca_export_description">
-        Device information is prepended to the exported report.\n\n
+    <!-- Streaming Cache Storage -->
+    <string name="streaming_cache_storage_dialog_sub_summary">For the changes to take effect, restart the app.</string>
+    <string name="streaming_cache_storage_dialog_summary">Changing the destination of cached files from one storage to another may result in the deletion of any previously cached files in the other storage.</string>
+    <string name="streaming_cache_storage_dialog_title">Select storage option</string>
+    <string name="streaming_cache_storage_external_dialog_positive_button">External</string>
+    <string name="streaming_cache_storage_internal_dialog_negative_button">Internal</string>
 
-        The data is not sent anywhere without your consent.
-    </string>
+    <!-- Support -->
+    <string name="support_url" translatable="false">https://ko-fi.com/eddyizm</string>
 
-    <!-- Login Activity  -->
+    <!-- Toolbar Navigation Drawer -->
+    <string name="toolbar_navigation_drawer_closed">Navigation drawer closed</string>
+    <string name="toolbar_navigation_drawer_open">Navigation drawer open</string>
 
-    <string name="la_tab_greeter">Welcome</string>
-    <string name="la_tab_permission">Permissions</string>
-    <string name="la_tab_backup">Backups</string>
-    <string name="la_tab_themes">Themes</string>
-    <string name="la_tab_server">Servers</string>
+    <!-- Track Info -->
+    <string name="track_info_album">Album</string>
+    <string name="track_info_artist">Artist</string>
+    <string name="track_info_bit_depth">Bit depth</string>
+    <string name="track_info_bitrate">Bitrate</string>
+    <string name="track_info_content_type">Content Type</string>
+    <string name="track_info_dialog_positive_button">OK</string>
+    <string name="track_info_dialog_title">Track info</string>
+    <string name="track_info_disc_number">Disc number</string>
+    <string name="track_info_duration">Duration</string>
+    <string name="track_info_genre">Genre</string>
+    <string name="track_info_path">Path</string>
+    <string name="track_info_sampling_rate">Sampling rate</string>
+    <string name="track_info_size">Size</string>
+    <string name="track_info_station">Station</string>
+    <string name="track_info_suffix">Suffix</string>
+    <string name="track_info_summary_downloaded_file">The file has been downloaded using the Subsonic APIs. The codec and bitrate of the file remain unchanged from the source file.</string>
+    <string name="track_info_summary_full_transcode">The application will request the server to transcode the file and modify its bitrate. The user requested codec is %1$s, with a bitrate of %2$s. Any potential changes to the codec and bitrate of the file in the chosen format will be handled by the server, which may or may not support the operation.</string>
+    <string name="track_info_summary_original_file">The application will only read the original file as provided by the server. The app will explicitly request the server for the untranscoded file with the bitrate of the original source.</string>
+    <string name="track_info_summary_server_prioritized">The quality of the file to be played is left up to the server\'s decision. The app will not enforce the choice of codec and bitrate for any potential transcoding.</string>
+    <string name="track_info_summary_transcoding_bitrate">The application will request the server to modify the bitrate of the file. The user requested a bitrate of %1$s, while the codec of the source file will remain the same. Any changes to the bitrate of the file in the chosen format will be done by the server, which may or may not support the operation.</string>
+    <string name="track_info_summary_transcoding_codec">The application will request the server to transcode the file. The requested codec by the user is %1$s, while the bitrate will be the same as the source file. The potential transcoding of the file into the chosen format is dependent on the server, as it may or may not support the operation.</string>
+    <string name="track_info_title">Title</string>
+    <string name="track_info_track_number">Track number</string>
+    <string name="track_info_transcoded_content_type">Transcoded content type</string>
+    <string name="track_info_transcoded_suffix">Transcoded suffix</string>
+    <string name="track_info_year">Year</string>
 
-    <string name="la_appbar_greeter_title">About</string>
-    <string name="la_appbar_permission_title">Permissions management</string>
-    <string name="la_appbar_backup_title">Backups management</string>
-    <string name="la_appbar_themes_title">Theme editor</string>
-    <string name="la_appbar_server_title">Server editor</string>
+    <!-- Undraw -->
+    <string name="undraw_page">unDraw</string>
+    <string name="undraw_thanks">A special thanks goes to unDraw without whose illustrations we could not have made this application more beautiful.</string>
+    <string name="undraw_url" translatable="false">https://undraw.co/</string>
 
-    <string name="la_greeting_description">Welcome to Tempus, an open-source music client for Subsonic, designed and built natively for Android.</string>
-
-    <string name="la_server_title">Server Setup</string>
-    <string name="la_server_field_server_empty_error">Mandatory field</string>
-    <string name="la_server_field_server_url_error">URL not valid</string>
-    <string name="la_server_field_server_name">Server name</string>
-    <string name="la_server_field_server_user">User name</string>
-    <string name="la_server_field_server_pass">Password</string>
-    <string name="la_server_field_server_public_url">Public URL</string>
-    <string name="la_server_field_server_local_url">Local URL</string>
-    <string name="la_server_field_server_cert">Client certificate (optional)</string>
-    <string name="la_server_field_plaintext_password_checkbox">Plaintext password</string>
-    <string name="la_server_button_create">Create</string>
-    <string name="la_server_button_update">Update</string>
-    <string name="la_server_button_delete">Delete</string>
-    <string name="la_server_button_test">Test</string>
-    <string name="la_server_button_login">Go to login</string>
-    <string name="la_server_dropdown_add_new">Add new server</string>
-    <string name="la_server_toast_created">Server created</string>
-    <string name="la_server_toast_updated">Server updated</string>
-    <string name="la_server_toast_deleted">Server deleted</string>
-    <string name="la_server_toast_connection_testing">Testing connection</string>
-    <string name="la_server_toast_connection_success">Connected Successfully!</string>
-    <string name="la_server_toast_connection_failure">Failed: Invalid server, URL, or credentials</string>
-    <string name="la_server_toast_connection_error">Network error:</string>
-    <string name="la_server_switch_plaintext_password">Plaintext passowrd (legacy servers)</string>
-    <string name="la_server_switch_local_url">Set a local URL</string>
-    <string name="la_server_switch_cert">Client certificate (mTLS)</string>
-    <string name="la_server_switch_headers">Custom HTTP headers</string>
-    <string name="la_server_field_server_headers">One per line, e.g. CF-Access-Client-Id: value</string>
-    <string name="error_custom_headers_invalid">Invalid header on line %1$s. Use Name: Value</string>
-
-    <string name="la_theme_title">Choose Accent Color</string>
-    <string name="la_theme_description">Style for your app\'s dynamic palette.</string>
-    <string name="la_theme_button_return">Go to home</string>
-    <string name="la_theme_switch_true_black">True black background for dark mode</string>
-    <string name="la_theme_switch_default_dynamic">Dynamic color accent from wallpaper</string>
-    <string name="la_theme_card_default">Default</string>
-    <string name="la_theme_card_flirt_red_description">Flirt red accent color</string>
-    <string name="la_theme_card_coral_red_description">Coral red accent color</string>
-    <string name="la_theme_card_emerald_green_description">Emerald green accent color</string>
-    <string name="la_theme_card_royal_blue_description">Royal blue accent color</string>
-    <string name="la_theme_card_purple_violet_description">Purple violet accent color</string>
-    <string name="la_theme_card_sunset_amber_description">Sunset amber accent color</string>
-    <string name="la_theme_card_teal_description">Teal accent color</string>
-    <string name="la_theme_card_slate_gray_description">Slate gray accent color</string>
-    <string name="la_theme_dialog_color_picker_title">Pick and accent color</string>
-
-    <string name="la_perms_title">Request Permissions</string>
-    <string name="la_perms_description">The required permissions and their usage are displayed below.</string>
-    <string name="la_perms_status_provided">Provided</string>
-    <string name="la_perms_status_not_provided">Request</string>
-    <string name="la_perms_internet_title">Internet</string>
-    <string name="la_perms_internet_description">Required to access your music server on the internet.</string>
-    <string name="la_perms_notifications_title">Notifications</string>
-    <string name="la_perms_notifications_description">Required to show download status and player controls.</string>
-    <string name="la_perms_access_local_network_title">Access Local Network</string>
-    <string name="la_perms_access_local_network_description">Required to access other deivces on the same LAN as your current device.</string>
-    <string name="la_perms_nearby_devices_title">Nearby Devices</string>
-    <string name="la_perms_nearby_devices_description">Required to discover other deivces through UPnP and Chromecast.</string>
-
-    <string name="menu_add_shortcut">Pin to app shortcuts</string>
-    <string name="menu_remove_shortcut">Unpin from app shortcuts</string>
-    <string name="shortcut_replace_title">All app shortcuts are pinned. Replace:</string>
-    <string name="settings_shortcuts_manage">Pinned app shortcuts</string>
-    <string name="settings_shortcuts_manage_empty">None yet. Pin playlists and albums from their menu.</string>
-    <string name="shortcut_manage_save">Save</string>
-    <string name="shortcut_type_playlist">Playlist</string>
-    <string name="shortcut_type_album">Album</string>
-    <string name="shortcut_move">Move</string>
-    <string name="shortcut_remove">Remove</string>
-    <string name="settings_shortcuts_recent_playlists">Recently played playlists as app shortcuts</string>
-    <string name="settings_shortcuts_recent_playlists_summary">Long-pressing the app icon offers the playlists you played last, after the playlists and albums you pinned.</string>
-    <string name="settings_shortcuts_play_mode">When an app shortcut is used</string>
-    <string name="settings_shortcuts_play_mode_open">Only open the playlist or album</string>
-    <string name="settings_shortcuts_play_mode_play">Play from the start</string>
-    <string name="settings_shortcuts_play_mode_shuffle">Play + Shuffle</string>
-    <string name="settings_shortcuts_play_mode_ask">Ask every time</string>
-    <string name="shortcut_ask_open">Open</string>
-    <string name="shortcut_ask_play">Play</string>
-    <string name="shortcut_ask_shuffle">Shuffle</string>
-    <string name="la_backups_section_manual_title">Manual Backup</string>
-    <string name="la_backups_section_manual_description">Export your app settings to a file or import from a previous backup. Login credentials are not included.</string>
-    <string name="la_backups_section_manual_button_export">Export</string>
-    <string name="la_backups_section_manual_button_import">Import</string>
-    <string name="la_backups_section_storage_title">Storage Directory</string>
-    <string name="la_backups_section_storage_description">Local folder where your backup files are currently saved.</string>
-    <string name="la_backups_section_storage_placeholder">/storage/emulated/0/Tempus/Backups</string>
-    <string name="la_backups_section_automatic_title">Automatic Backups</string>
-    <string name="la_backups_section_automatic_description">Backup your settings automatically in the background.</string>
-    <string name="la_backups_section_automatic_switch">Enable scheduled backups</string>
-    <string name="la_backups_section_automatic_dropdown_title">Frequency</string>
-    <string name="la_backups_section_automatic_dropdown_item_hourly">Hourly</string>
-    <string name="la_backups_section_automatic_dropdown_item_daily">Daily</string>
-    <string name="la_backups_section_automatic_dropdown_item_weekly">Weekly</string>
-    <string name="la_button_advanced_editor">Open server editor</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <!-- Widget -->
+    <string name="widget_content_desc_album_art">Album artwork</string>
+    <string name="widget_content_desc_next">Next track</string>
+    <string name="widget_content_desc_play_pause">Play or pause</string>
+    <string name="widget_content_desc_prev">Previous track</string>
+    <string name="widget_content_desc_repeat">Change repeat mode</string>
+    <string name="widget_content_desc_shuffle">Toggle shuffle</string>
+    <string name="widget_label">Tempus Widget</string>
+    <string name="widget_not_playing">Not playing</string>
+    <string name="widget_placeholder_subtitle">Open Tempus</string>
+    <string name="widget_time_duration_placeholder">0:00</string>
+    <string name="widget_time_elapsed_placeholder">0:00</string>
 </resources>

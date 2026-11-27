@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Copy log</string>
+    <string name="ca_export_button_share">Share log</string>
+    <string name="ca_export_description">
+        Device information is prepended to the exported report.\n\n
+
+        The data is not sent anywhere without your consent.
+    </string>
+    <string name="ca_export_label">Export</string>
+    <string name="ca_export_title">Report retrival</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Report copied to clipboard</string>
+    <string name="ca_info_button_close">Close app</string>
+    <string name="ca_info_button_restart">Restart app</string>
+    <string name="ca_info_description">
+        Please open an issue on GitHub and include a copy of the crash report to address it.
+    </string>
+    <string name="ca_info_device_info" translatable="false">Device Information</string>
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus Crashed</string>
+    <string name="ca_logs_description">
+        This is what went wrong.
+    </string>
+    <string name="ca_logs_label">Logs</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+</resources>
