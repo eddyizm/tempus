@@ -18,7 +18,6 @@
     <string name="player_overflow_menu_add_to_playlist">Dodaj do playlisty</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_all_downloaded">Pobrano już wszystkie piosenki</string>
-    <string name="player_queue_clean_all_button">Wyczyść kolejkę odtwarzania</string>
     <string name="player_queue_clear">Wyczyść</string>
     <string name="player_queue_download_all">Pobierz wszystkie</string>
     <string name="player_queue_downloaded">Pobrane</string>
@@ -49,7 +48,6 @@
     <string name="player_queue_playing_next">Następne odtwarzane</string>
     <string name="player_queue_remove">Usuń z kolejki</string>
     <string name="player_queue_reorder">Zmień kolejność</string>
-    <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
     <string name="player_queue_save_to_playlist">Zapisz kolejkę do playlisty</string>
     <string name="player_queue_shuffle_upcoming">Wymieszaj nadchodzące</string>
     <plurals name="player_queue_song_count">
@@ -59,8 +57,6 @@
             <item quantity="other">%d piosenek</item>
         </plurals>
     <string name="player_queue_starred">Oznaczone gwiazdką</string>
-    <string name="player_server_priority">Priorytet Serwerów</string>
     <string name="player_transcoding">Transkodowanie</string>
-    <string name="player_transcoding_requested">zażądane</string>
     <string name="player_unknown_format">Nieznany format</string>
 </resources>

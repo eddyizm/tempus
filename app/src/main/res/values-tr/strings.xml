@@ -21,9 +21,6 @@
     <string name="connection_alert_dialog_summary">Wi-Fi dışındaki bağlantılarda Subsonic sunucusuna erişim kısıtlandı. Bu uyarı penceresinin tekrar görünmemesi için, uygulama ayarlarından bağlantı denetimini devre dışı bırakın.</string>
     <string name="connection_alert_dialog_title">Wi-Fi bağlı değil</string>
 
-    <!-- Content Description -->
-    <string name="content_description_shuffle_button">Karıştır</string>
-
     <!-- Delete Download Storage Dialog -->
     <string name="delete_download_storage_dialog_negative_button">İptal</string>
     <string name="delete_download_storage_dialog_positive_button">Devam ettir</string>
@@ -44,7 +41,6 @@
     <string name="download_directory_dialog_title">Parçaları indir</string>
     <string name="download_info_empty_subtitle">Bir şarkı indirdiğinde burada görünecek</string>
     <string name="download_info_empty_title">Henüz indirme yok!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s öğe</string>
     <string name="download_item_single_subtitle_formatter">%1$s öğe</string>
     <string name="download_shuffle_all_subtitle">Tümünü karıştır</string>
     <string name="download_storage_dialog_sub_summary">Değişikliklerin geçerli olması için uygulamayı yeniden başlatın.</string>
@@ -66,7 +62,6 @@
 
     <!-- Error -->
     <string name="error_required">Zorunlu</string>
-    <string name="error_server_prefix">http veya https öneki gerekli</string>
 
     <!-- Exo -->
     <string name="exo_download_notification_channel_name">İndirilenler</string>
@@ -123,7 +118,6 @@
     <!-- Search -->
     <string name="search_description_empty_response">Sunucu yanıtınızı kontrol ettik ancak boştu.</string>
     <string name="search_hint">Başlık, sanatçı veya albüm ara</string>
-    <string name="search_info_minimum_characters">En az üç karakter girin</string>
     <string name="search_title_album">Albümler</string>
     <string name="search_title_artist">Sanatçılar</string>
     <string name="search_title_empty_response">Sonuç yok.</string>
@@ -198,7 +192,6 @@
     <string name="track_info_bitrate">Bit hızı</string>
     <string name="track_info_content_type">İçerik türü</string>
     <string name="track_info_dialog_positive_button">Tamam</string>
-    <string name="track_info_dialog_title">Parça bilgisi</string>
     <string name="track_info_disc_number">Disk numarası</string>
     <string name="track_info_duration">Süre</string>
     <string name="track_info_genre">Tür</string>

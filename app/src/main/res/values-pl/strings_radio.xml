@@ -20,14 +20,10 @@
     <string name="radio_search_add">Dodaj</string>
     <string name="radio_search_button">Szukaj</string>
     <string name="radio_search_country_hint">Kraj</string>
-    <string name="radio_search_dialog_title">Przeszukaj katalog stacji</string>
-    <string name="radio_search_directory_button">Katalog</string>
-    <string name="radio_search_duplicate">Stacja już istnieje</string>
     <string name="radio_search_empty_query">Wpisz nazwę stacji</string>
     <string name="radio_search_error">Wyszukiwanie nieudane: %s</string>
     <string name="radio_search_hint">Nazwa stacji</string>
     <string name="radio_search_no_results">Nie znaleziono stacji</string>
-    <string name="radio_search_station_added">Stacja dodana lokalnie</string>
     <string name="radio_search_use">Użyj</string>
     <string name="radio_station_info_empty_button">Naciśnij aby ukryć tę sekcję\nEfekty będą widoczne po restarcie</string>
     <string name="radio_station_info_empty_subtitle">Gdy dodasz stację radiową, znajdziesz ją tutaj</string>

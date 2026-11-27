@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">Pas de playlist</string>
     <string name="playlist_chooser_dialog_title">Ajouter à une playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Échec d\'ajout du titre à la playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Titre ajouté à la playlist</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Tous les titres ont été traités comme des doublons et ignorés</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Échec de la suppression du titre de la playlist</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Titre supprimé de la playlist</string>
-    <string name="playlist_chooser_dialog_visibility_private">Privé</string>
-    <string name="playlist_chooser_dialog_visibility_public">Publique</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">L\'activation de cette option rend la liste de lecture publique. Si vous la laissez telle quelle, la visibilité de la liste de lecture ne sera pas modifiée.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Rendre la playlist publique</string>
     <string name="playlist_counted_tracks">%1$d titres •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Durée  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Échec de suppression de la playlist</string>
     <string name="playlist_editor_dialog_action_delete_success">Playlist supprimée</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Appui long pour supprimer</string>
     <string name="playlist_editor_dialog_action_save_empty">Une liste de lecture doit contenir au moins un titre</string>
     <string name="playlist_editor_dialog_action_save_failure">Échec de sauvegarde de la playlist</string>
     <string name="playlist_editor_dialog_action_save_success">Playlist sauvegardée</string>

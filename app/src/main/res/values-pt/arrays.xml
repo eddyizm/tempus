@@ -190,31 +190,5 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Não transcodifique</item>
-        <item>Configurações do servidor</item>
-        <item>Formato de transcodificação para Wi-Fi</item>
-        <item>Formato de transcodificação para Rede Móvel</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>No mínimo 0 estrelas</item>
-        <item>No mínimo 1 estrela</item>
-        <item>No mínimo 2 estrelas</item>
-        <item>No mínimo 3 estrelas</item>
-        <item>No mínimo 4 estrelas</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
 </resources>

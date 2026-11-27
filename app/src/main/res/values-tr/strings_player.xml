@@ -2,10 +2,6 @@
 <resources>
     <!-- Player -->
     <string name="player_playback_speed">%1$.2fx</string>
-    <string name="player_queue_clean_all_button">Çalma sırasını temizle</string>
-    <string name="player_queue_save_queue_success">Kayıtlı oynatma sırası</string>
-    <string name="player_server_priority">Sunucu önceliği</string>
     <string name="player_transcoding">Dönüştürme</string>
-    <string name="player_transcoding_requested">talep edildi</string>
     <string name="player_unknown_format">Bilinmeyen format</string>
 </resources>

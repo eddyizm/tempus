@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Álbuns recém-reproduzidos</string>
     <string name="album_list_page_starred">Álbuns favoritos</string>
     <string name="album_list_page_title">Álbuns</string>
-    <string name="album_page_extra_info_button">Sugestões semelhantes</string>
     <string name="album_page_play_button">Reproduzir</string>
     <string name="album_page_shuffle_button">Aleatório</string>
 </resources>

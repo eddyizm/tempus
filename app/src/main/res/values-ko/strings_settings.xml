@@ -5,7 +5,6 @@
     <string name="settings_about_title">About</string>
     <string name="settings_audio_quality">오디오 품질 표시하기</string>
     <string name="settings_audio_quality_summary">오디오 트랙에 비트레이트와 포맷이 표시됩니다.</string>
-    <string name="settings_audio_transcode_download_format">트랜스코딩 포맷</string>
     <string name="settings_audio_transcode_download_priority_summary">활성화 시, 아래 트랜스코딩 설정으로 트랙 강제 다운로드를 하지 않습니다.</string>
     <string name="settings_audio_transcode_download_priority_title">다운로드 스트리밍에 사용할 서버 설정 우선순위 지정</string>
     <string name="settings_audio_transcode_download_summary">활성화 시, 트랜스코딩된 트랙을 다운로드합니다.</string>
@@ -15,7 +14,6 @@
     <string name="settings_audio_transcode_format_wifi">Wi-Fi 사용 시 트랜스코딩 포맷</string>
     <string name="settings_audio_transcode_priority_summary">활성화 시, 아래 트랜스코딩 설정으로 트랙 강제 스트리밍을 하지 않습니다.</string>
     <string name="settings_audio_transcode_priority_title">서버 트랜스코딩 우선순위 설정</string>
-    <string name="settings_audio_transcode_priority_toast">서버에 적용할 트랙 트랜스코딩 우선순위</string>
     <string name="settings_covers_cache">앨범 커버 캐시 크기</string>
     <string name="settings_data_saving_mode_summary">데이터 소비를 줄이려면 앨범 커버 다운로드를 피하세요.</string>
     <string name="settings_data_saving_mode_title">모바일 데이터 사용량 제한</string>
@@ -33,7 +31,6 @@
     <string name="settings_max_bitrate_download">다운로드 비트 전송률</string>
     <string name="settings_max_bitrate_mobile">데이터 사용 시 비트 전송률</string>
     <string name="settings_max_bitrate_wifi">Wi-Fi 사용 시 비트 전송률</string>
-    <string name="settings_media_cache">미디어 파일 캐시 크기</string>
     <string name="settings_music_directory">음악 디렉토리 보기</string>
     <string name="settings_music_directory_summary">활성화 시, 음악 디렉터리 섹션을 표시합니다. 폴더 탐색이 제대로 작동하려면 서버가 이 기능을 지원해야 합니다.</string>
     <string name="settings_podcast">팟캐스트 보기</string>
@@ -45,7 +42,6 @@
     <string name="settings_replay_gain">replay gain 모드 설정</string>
     <string name="settings_rounded_corner">모서리를 둥글게 하기</string>
     <string name="settings_rounded_corner_size">모서리 크기</string>
-    <string name="settings_rounded_corner_size_summary">모서리의 곡률 각도를 설정합니다.</string>
     <string name="settings_rounded_corner_summary">활성화 시, 렌더링된 모든 앨범 커버의 곡률 각도를 설정합니다. 다시 시작하면 적용됩니다.</string>
     <string name="settings_scan_title">라이브러리 스캔</string>
     <string name="settings_scrobble_title">음악 스크로블링 활성화</string>
@@ -63,7 +59,6 @@
     <string name="settings_summary_syncing">사용자의 재생목록의 상태를 반환합니다. 재생목록의 트랙, 현재 재생 중인 트랙, 트랙 번호가 포함됩니다. 서버가 이 기능을 지원해야 합니다.</string>
     <string name="settings_summary_transcoding">트랜스코딩 모드에 우선순위가 부여됩니다. \"직접 재생\"으로 설정하면 파일의 비트 전송률이 변경되지 않습니다.</string>
     <string name="settings_summary_transcoding_download">트랜스코딩된 미디어를 다운로드합니다. 활성화하면 다운로드 endpoint를 사용하지 않고 다음 설정이 사용됩니다. \n\n \"다운로드용 트랜스코딩 포맷\"이 \"직접 다운로드\"로 설정된 경우 파일의 비트 전송률은 변경되지 않습니다.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">파일이 즉시 트랜스코딩되면 일반적으로 트랙 길이를 표시하지 않습니다. 트랙의 재생시간을 추정하는 기능을 지원한다면 서버에 요청할 수 있지만 응답 시간이 필요할 수 있습니다.</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">활성화 시, 즐겨찾기 앨범을 오프라인으로 사용할 수 있도록 다운로드합니다.</string>
     <string name="settings_sync_starred_albums_for_offline_use_title">오프라인 사용을 위해 즐겨찾기 앨범 동기화</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">활성화 시, 즐겨찾기 트랙을 오프라인으로 사용할 수 있도록 다운로드합니다.</string>
@@ -74,17 +69,14 @@
     <string name="settings_theme">테마</string>
     <string name="settings_title_data">데이터</string>
     <string name="settings_title_general">일반</string>
-    <string name="settings_title_rating">별점</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_title_scrobble">스크로블링</string>
     <string name="settings_title_share">공유</string>
     <string name="settings_title_skip_min_star_rating">별점 기준으로 트랙 무시</string>
-    <string name="settings_title_skip_min_star_rating_dialog">음악 별점:</string>
     <string name="settings_title_syncing">동기화</string>
     <string name="settings_title_transcoding">트랜스코딩</string>
     <string name="settings_title_transcoding_download">트랜스코딩 다운로드</string>
     <string name="settings_title_ui">UI</string>
-    <string name="settings_transcoded_download">트랜스코딩된 다운로드</string>
     <string name="settings_version_title">버전</string>
     <string name="settings_wifi_only_summary">모바일 데이터로 스트리밍하려 할 시 확인창을 띄웁니다.</string>
     <string name="settings_wifi_only_title">Wi-Fi로만 스트리밍 확인창</string>

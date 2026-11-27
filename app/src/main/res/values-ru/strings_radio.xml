@@ -20,14 +20,10 @@
     <string name="radio_search_add">Добавить</string>
     <string name="radio_search_button">Поиск</string>
     <string name="radio_search_country_hint">Страна</string>
-    <string name="radio_search_dialog_title">Поиск радио</string>
-    <string name="radio_search_directory_button">Каталог</string>
-    <string name="radio_search_duplicate">Станция уже есть</string>
     <string name="radio_search_empty_query">Введите название</string>
     <string name="radio_search_error">Ошибка поиска: %s</string>
     <string name="radio_search_hint">Название станции</string>
     <string name="radio_search_no_results">Ничего не найдено</string>
-    <string name="radio_search_station_added">Станция добавлена локально</string>
     <string name="radio_search_use">Использовать</string>
     <string name="radio_station_info_empty_button">Нажмите, чтобы скрыть\n(потребуется перезапуск)</string>
     <string name="radio_station_info_empty_subtitle">Добавленные станции появятся здесь</string>

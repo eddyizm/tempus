@@ -12,7 +12,6 @@
     <string name="settings_always_on_display">Håll skärmen tänd</string>
     <string name="settings_androidauto">Android Auto</string>
     <string name="settings_androidauto_album_view">Rutnätsvy för album och artister</string>
-    <string name="settings_androidauto_artists_view">Visa artister efter album</string>
     <string name="settings_androidauto_first_tab">Innehåll på första fliken</string>
     <string name="settings_androidauto_fourth_tab">Innehåll på fjärde fliken</string>
     <string name="settings_androidauto_home_view">Rutnätsvy för startsidan</string>
@@ -22,7 +21,6 @@
     <string name="settings_androidauto_second_tab">Innehåll på andra fliken</string>
     <string name="settings_androidauto_shuffle_downloaded_tracks">Blanda hämtade låtar</string>
     <string name="settings_androidauto_shuffle_genre_songs">Blanda låtar inom genren</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Spela slumpmässiga låtar när du väljer en genre</string>
     <string name="settings_androidauto_shuffle_playlists">Blanda spellistor</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Blanda stjärnmärkta låtar</string>
     <string name="settings_androidauto_starred_for_made_for_you">Stjärnmärkt innehåll i mixen Skapat för dig</string>
@@ -33,7 +31,6 @@
     <string name="settings_artist_sort_by_album_count_summary">Sortera artister efter antal album. När detta är avstängt sorteras de efter namn.</string>
     <string name="settings_audio_quality">Visa ljudkvalitet</string>
     <string name="settings_audio_quality_summary">Bithastighet och ljudformat visas för varje låt.</string>
-    <string name="settings_audio_transcode_download_format">Omkodningsformat</string>
     <string name="settings_audio_transcode_download_priority_summary">När detta är aktiverat tvingar Tempus inte servern att använda omkodningsinställningarna nedan vid hämtning.</string>
     <string name="settings_audio_transcode_download_priority_title">Använd serverns strömningsinställningar vid hämtning</string>
     <string name="settings_audio_transcode_download_summary">När detta är aktiverat hämtar Tempus omkodade låtar.</string>
@@ -43,7 +40,6 @@
     <string name="settings_audio_transcode_format_wifi">Omkodningsformat för wifi</string>
     <string name="settings_audio_transcode_priority_summary">När detta är aktiverat tvingar Tempus inte servern att använda omkodningsinställningarna nedan vid strömning.</string>
     <string name="settings_audio_transcode_priority_title">Prioritera serverns omkodningsinställningar</string>
-    <string name="settings_audio_transcode_priority_toast">Serverns inställningar prioriteras vid omkodning av låten</string>
     <string name="settings_auto_download_lyrics">Hämta låttexter automatiskt</string>
     <string name="settings_auto_download_lyrics_summary">Spara tillgängliga låttexter automatiskt så att de kan visas offline.</string>
     <string name="settings_choose_download_folder">Välj en mapp för hämtade musikfiler</string>
@@ -53,7 +49,6 @@
     <string name="settings_covers_cache">Storlek på omslagscache</string>
     <string name="settings_custom_command_first_button">Första anpassade kommandot</string>
     <string name="settings_custom_command_second_button">Andra anpassade kommandot</string>
-    <string name="settings_dark_theme_style">Stil för mörkt tema</string>
     <string name="settings_data_saving_mode_summary">Undvik att hämta omslagsbilder för att minska dataförbrukningen.</string>
     <string name="settings_data_saving_mode_title">Begränsa användningen av mobildata</string>
     <string name="settings_delete_download_storage_summary">Om du fortsätter raderas alla sparade objekt permanent.</string>
@@ -82,13 +77,11 @@
     <string name="settings_item_rating_summary">Visa objektets betyg och om det är markerat som favorit.</string>
     <string name="settings_language">Språk</string>
     <string name="settings_logout_title">Logga ut</string>
-    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_loudness_preamp_summary">Ange positiva värden för starkare ljud.\nAnge negativa värden för svagare ljud.</string>
     <string name="settings_loudness_preamp_title">Förförstärkning</string>
     <string name="settings_max_bitrate_download">Bithastighet vid hämtning</string>
     <string name="settings_max_bitrate_mobile">Bithastighet för mobildata</string>
     <string name="settings_max_bitrate_wifi">Bithastighet för wifi</string>
-    <string name="settings_media_cache">Storlek på mediefilscache</string>
     <string name="settings_music_directory">Visa musikmappar</string>
     <string name="settings_music_directory_summary">Visa avsnittet för musikmappar. Servern måste ha stöd för mappnavigering för att funktionen ska fungera korrekt.</string>
     <string name="settings_music_library">Musikbibliotek</string>
@@ -114,7 +107,6 @@
     <string name="settings_replay_gain_prevent_clipping_title">Förhindra klippning</string>
     <string name="settings_rounded_corner">Rundade hörn</string>
     <string name="settings_rounded_corner_size">Hörnradie</string>
-    <string name="settings_rounded_corner_size_summary">Ange hur mycket hörnen ska rundas.</string>
     <string name="settings_rounded_corner_summary">Runda hörnen på alla omslagsbilder. Ändringen börjar gälla efter omstart.</string>
     <string name="settings_scan_result">Genomsöker: räknar %1$d låtar</string>
     <string name="settings_scan_title">Genomsök biblioteket</string>
@@ -122,8 +114,6 @@
     <string name="settings_search_hint">Sök i inställningar</string>
     <string name="settings_set_download_folder">Ange hämtningsmapp</string>
     <string name="settings_share_title">Aktivera musikdelning</string>
-    <string name="settings_show_mini_shuffle_button">Visa blandningsknapp</string>
-    <string name="settings_show_mini_shuffle_button_summary">Visa blandningsknappen i stället för hjärtat i minispelaren</string>
     <string name="settings_song_preload_buffer">Buffert för förinläsning av låtar</string>
     <string name="settings_song_preload_buffer_summary">Aktuellt värde: %1$s\nStarta om appen manuellt för att ändringen ska börja gälla.</string>
     <string name="settings_song_rating">Visa låtens stjärnbetyg</string>
@@ -131,7 +121,6 @@
     <string name="settings_streaming_cache_size">Storlek på strömningscache</string>
     <string name="settings_streaming_cache_storage_title">Lagringsplats för strömningscache</string>
     <string name="settings_sub_summary_scrobble">Scrobbling kräver även att servern är inställd på att ta emot dessa uppgifter.</string>
-    <string name="settings_summary_landscape_items_per_row">Gäller alla listor över album och artister. Standardvärdet är 4</string>
     <string name="settings_summary_loudness">Justerar ljudnivån för uppspelningsenheter, till exempel högtalare.\n\nFör ReplayGain rekommenderas -6 för att undvika konflikter med skyddet mot klippning.</string>
     <string name="settings_summary_replay_gain">Jämnar ut låtarnas ljudnivå. Filerna måste innehålla de metadata som krävs.</string>
     <string name="settings_summary_scrobble">Scrobbling gör att enheten kan skicka information om låtarna du lyssnar på till musikservern. Informationen används för att skapa personliga rekommendationer utifrån din musiksmak.</string>
@@ -141,7 +130,6 @@
     <string name="settings_summary_syncing">Återställer användarens uppspelningskö, inklusive låtarna i kön, den aktuella låten och uppspelningspositionen i låten. Servern måste ha stöd för funktionen.\n*Den här inställningen fungerar inte fullt ut på alla servrar och enheter.</string>
     <string name="settings_summary_transcoding">Prioriterat omkodningsläge. Om det är inställt på \"Direktuppspelning\" ändras inte filens bithastighet.</string>
     <string name="settings_summary_transcoding_download">Hämta omkodade mediefiler. När detta är aktiverat används inställningarna nedan i stället för serverns hämtningsfunktion. \n\n Om \"Omkodningsformat vid hämtning\" är inställt på \"Direkthämtning\" ändras inte filens bithastighet.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">När filen omkodas under uppspelningen visar klienten vanligtvis inte låtens längd. Servrar som stöder det kan uppskatta längden på låten som spelas, men det kan ge längre svarstider.</string>
     <string name="settings_support_summary">Delta i diskussioner och få hjälp från gemenskapen</string>
     <string name="settings_support_title">Användarsupport</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Hämta stjärnmärkta album för offlineanvändning.</string>
@@ -162,22 +150,17 @@
     <string name="settings_title_misc">Övrigt</string>
     <string name="settings_title_players">Spelare</string>
     <string name="settings_title_playlist">Spellista</string>
-    <string name="settings_title_rating">Betyg</string>
     <string name="settings_title_replay_gain">ReplayGain</string>
     <string name="settings_title_scrobble">Scrobbling</string>
     <string name="settings_title_share">Dela</string>
     <string name="settings_title_skip_min_star_rating">Hoppa över låtar utifrån betyg</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Låtar med betyget:</string>
     <string name="settings_title_sound">Ljud</string>
     <string name="settings_title_syncing">Synkronisering</string>
     <string name="settings_title_transcoding">Omkodning</string>
     <string name="settings_title_transcoding_download">Omkodning vid hämtning</string>
     <string name="settings_title_ui">Gränssnitt</string>
-    <string name="settings_title_ui_landscape_items_per_row">Objekt per rad i liggande läge</string>
-    <string name="settings_title_ui_landscape_items_per_row_dialog">Antal objekt per rad</string>
     <string name="settings_track_number">Visa låtnummer</string>
     <string name="settings_track_number_summary">Visa numret på låten som spelas.</string>
-    <string name="settings_transcoded_download">Omkodad hämtning</string>
     <string name="settings_version_title">Version</string>
     <string name="settings_wifi_only_summary">Be om bekräftelse innan musik strömmas via mobilnätet.</string>
     <string name="settings_wifi_only_title">Varna vid strömning utan wifi</string>

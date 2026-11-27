@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">No s\'ha creat cap llista de reproducció</string>
     <string name="playlist_chooser_dialog_title">Addició a una llista de reproducció</string>
     <string name="playlist_chooser_dialog_toast_add_failure">No s\'han pogut afegir les cançons a la llista de reproducció</string>
-    <string name="playlist_chooser_dialog_toast_add_success">S\'han afegit les cançons a la llista de reproducció</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">S\'han omès totes les cançons com a duplicades</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">No s\'ha pogut suprimir la cançó de la llista de reproducció</string>
     <string name="playlist_chooser_dialog_toast_remove_success">S\'ha suprimit la cançó de la llista de reproducció</string>
-    <string name="playlist_chooser_dialog_visibility_private">Privada</string>
-    <string name="playlist_chooser_dialog_visibility_public">Pública</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">En activar això, la llista de reproducció es fa pública. Si ho deixes tal qual, no canvia la visibilitat de la llista de reproducció.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Marca la llista de reproducció com a pública</string>
     <string name="playlist_counted_tracks">%1$d pistes •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Durada  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">No s\'ha pogut suprimir la llista de reproducció</string>
     <string name="playlist_editor_dialog_action_delete_success">S\'ha suprimit la llista de reproducció</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Manteniu-ho premut per a suprimir-ho</string>
     <string name="playlist_editor_dialog_action_save_empty">Una llista de reproducció ha de tenir almenys una pista</string>
     <string name="playlist_editor_dialog_action_save_failure">No s\'ha pogut desar la llista de reproducció</string>
     <string name="playlist_editor_dialog_action_save_success">S\'ha desat la llista de reproducció</string>

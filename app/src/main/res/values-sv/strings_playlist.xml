@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">Inga spellistor skapade</string>
     <string name="playlist_chooser_dialog_title">Lägg till i en spellista</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Kunde inte lägga till låtarna i spellistan</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Låtarna har lagts till i spellistan</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Alla låtar hoppades över eftersom de var dubbletter</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Kunde inte ta bort låten från spellistan</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Låten har tagits bort från spellistan</string>
-    <string name="playlist_chooser_dialog_visibility_private">Privat</string>
-    <string name="playlist_chooser_dialog_visibility_public">Offentlig</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Aktivera för att göra spellistan offentlig. Om du inte ändrar inställningen behåller spellistan sin synlighet.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Gör spellistan offentlig</string>
     <string name="playlist_counted_tracks">%1$d låtar •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Speltid  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Kunde inte radera spellistan</string>
     <string name="playlist_editor_dialog_action_delete_success">Spellistan har raderats</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Tryck länge för att radera</string>
     <string name="playlist_editor_dialog_action_save_empty">En spellista måste innehålla minst en låt</string>
     <string name="playlist_editor_dialog_action_save_failure">Kunde inte spara spellistan</string>
     <string name="playlist_editor_dialog_action_save_success">Spellistan har sparats</string>

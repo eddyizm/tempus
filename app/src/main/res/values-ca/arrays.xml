@@ -11,14 +11,6 @@
         <item>default</item>
     </string-array>
 
-    <string-array name="dark_theme_style_titles">
-        <item>Estàndard</item>
-        <item>AMOLED (negre pur)</item>
-    </string-array>
-    <string-array name="dark_theme_style_values">
-        <item>standard</item>
-        <item>amoled</item>
-    </string-array>
 
     <string-array name="pref_cache_size_titles">
         <item>Alta</item>
@@ -219,18 +211,6 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Sense transcodificació</item>
-        <item>Paràmetres del servidor</item>
-        <item>Format de transcodificació amb wifi</item>
-        <item>Format de transcodificació amb dades mòbils</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
     <string-array name="song_preload_buffer_titles">
         <item>5 segons</item>
@@ -263,34 +243,6 @@
     </string-array>
 
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>Mínim 0 estrelles</item>
-        <item>Mínim 1 estrella</item>
-        <item>Mínim 2 estrelles</item>
-        <item>Mínim 3 estrelles</item>
-        <item>Mínim 4 estrelles</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3&quot;</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
 		
     <string-array name="tile_size_titles">
         <item>Molt petita</item>

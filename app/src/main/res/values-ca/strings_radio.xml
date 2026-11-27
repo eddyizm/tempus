@@ -20,14 +20,10 @@
     <string name="radio_search_add">Afegeix</string>
     <string name="radio_search_button">Cerca</string>
     <string name="radio_search_country_hint">País</string>
-    <string name="radio_search_dialog_title">Cerca al directori de ràdio</string>
-    <string name="radio_search_directory_button">Carpeta</string>
-    <string name="radio_search_duplicate">L\'emissora ja existeix</string>
     <string name="radio_search_empty_query">Introduïu el nom d\'una emissora</string>
     <string name="radio_search_error">No s\'ha pogut cercar: %s</string>
     <string name="radio_search_hint">Nom de l\'emissora</string>
     <string name="radio_search_no_results">No s\'ha trobat cap emissora</string>
-    <string name="radio_search_station_added">S\'ha afegit l\'emissora localment</string>
     <string name="radio_search_use">Utilitza</string>
     <string name="radio_station_info_empty_button">Feu clic per a ocultar la secció.\nEls efectes seran visibles quan reinicieu l\'aplicació.</string>
     <string name="radio_station_info_empty_subtitle">Quan afegiu una emissora de ràdio, la trobareu aquí.</string>

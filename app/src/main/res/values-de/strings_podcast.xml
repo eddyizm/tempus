@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Der Server unterstützt keine Podcasts.</string>
     <string name="podcast_channel_page_title_description_section">Beschreibung</string>
     <string name="podcast_channel_page_title_episode_section">Episoden</string>
-    <string name="podcast_channel_page_title_no_episode_available">Keine Episoden verfügbar</string>
     <string name="podcast_episode_download_request_snackbar">Anfrage wurde an den Server gesendet.</string>
     <string name="podcast_info_empty_button">Hier tippen, um Bereich auszublenden (Neustart der App nötig)</string>
     <string name="podcast_info_empty_subtitle">Sobald du Podcasts hinzufügst, findest du sie hier</string>

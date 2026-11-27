@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">Pleylist yaradılmayıb</string>
     <string name="playlist_chooser_dialog_title">Pleylistə əlavə</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Mahnıları pleylistə əlavə etmək alınmadı</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Mahnılar pleylistə əlavə edildi</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Bütün mahnılar təkrarlandığı üçün ötürüldü</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Mahnını pleylistdən silmək alınmadı</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Mahnı pleylistdən silindi</string>
-    <string name="playlist_chooser_dialog_visibility_private">Şəxsi</string>
-    <string name="playlist_chooser_dialog_visibility_public">Açıq</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Bu seçimi aktivləşdirmək pleylisti hamıya açıq edir. Dəyişmədən saxlamaq pleylistin görünməsinə təsir etmir.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Pleylisti hamıya açıq et</string>
     <string name="playlist_counted_tracks">%1$d mahnı •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Müddət  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Pleylisti silmək alınmadı</string>
     <string name="playlist_editor_dialog_action_delete_success">Pleylist silindi</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Silmək üçün basıb saxlayın</string>
     <string name="playlist_editor_dialog_action_save_empty">Pleylistdə ən azı bir mahnı olmalıdır</string>
     <string name="playlist_editor_dialog_action_save_failure">Pleylisti saxlamaq alınmadı</string>
     <string name="playlist_editor_dialog_action_save_success">Pleylist saxlanıldı</string>

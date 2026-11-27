@@ -18,13 +18,11 @@
     <string name="la_perms_notifications_title">Benachrichtigungen</string>
     <string name="la_perms_status_not_provided">Anfordern</string>
     <string name="la_perms_status_provided">Gewährt</string>
-    <string name="la_perms_title">Berechtigungen anfordern</string>
     <string name="la_server_button_create">Erstellen</string>
     <string name="la_server_button_delete">Löschen</string>
     <string name="la_server_button_login">Zur Anmeldung</string>
     <string name="la_server_button_test">Testen</string>
     <string name="la_server_button_update">Aktualisieren</string>
-    <string name="la_server_dropdown_add_new">Neuen Server hinzufügen</string>
     <string name="la_server_field_plaintext_password_checkbox">Passwort im Klartext</string>
     <string name="la_server_field_server_cert">Client-Zertifikat (optional)</string>
     <string name="la_server_field_server_empty_error">Pflichtfeld</string>
@@ -36,8 +34,6 @@
     <string name="la_server_field_server_user">Benutzername</string>
     <string name="la_server_switch_cert">Client-Zertifikat (mTLS)</string>
     <string name="la_server_switch_local_url">Lokale URL festlegen</string>
-    <string name="la_server_switch_plaintext_password">Passwort im Klartext (alte Server)</string>
-    <string name="la_server_title">Server einrichten</string>
     <string name="la_server_toast_connection_error">Netzwerkfehler:</string>
     <string name="la_server_toast_connection_failure">Fehler: Ungültiger Server, ungültige URL oder ungültige Zugangsdaten</string>
     <string name="la_server_toast_connection_success">Erfolgreich verbunden!</string>
@@ -49,9 +45,7 @@
     <string name="la_tab_permission">Berechtigungen</string>
     <string name="la_tab_server">Server</string>
     <string name="la_tab_themes">Design</string>
-    <string name="la_theme_button_return">Zur Startseite</string>
     <string name="la_theme_card_coral_red_description">Korallenrote Akzentfarbe</string>
-    <string name="la_theme_card_default">Standard</string>
     <string name="la_theme_card_emerald_green_description">Smaragdgrüne Akzentfarbe</string>
     <string name="la_theme_card_flirt_red_description">Flirtrote Akzentfarbe</string>
     <string name="la_theme_card_purple_violet_description">Purpurviolette Akzentfarbe</string>

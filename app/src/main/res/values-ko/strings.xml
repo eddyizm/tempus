@@ -21,9 +21,6 @@
     <string name="connection_alert_dialog_summary">Wi-Fi가 연결되지 않은 상태에서 Subsonic 서버에 대한 액세스가 제한되었습니다. 이 경고를 다시 보지 않으려면 앱 설정에서 연결 확인을 비활성화 해주세요.</string>
     <string name="connection_alert_dialog_title">Wi-Fi가 연결되지 않음</string>
 
-    <!-- Content Description -->
-    <string name="content_description_shuffle_button">셔플</string>
-
     <!-- Delete Download Storage Dialog -->
     <string name="delete_download_storage_dialog_negative_button">취소</string>
     <string name="delete_download_storage_dialog_positive_button">계속</string>
@@ -44,7 +41,6 @@
     <string name="download_directory_dialog_title">트랙 다운로드</string>
     <string name="download_info_empty_subtitle">음악을 다운로드하면 여기 표시됩니다.</string>
     <string name="download_info_empty_title">다운로드 하지 않음</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s 항목</string>
     <string name="download_item_single_subtitle_formatter">%1$s 항목</string>
     <string name="download_shuffle_all_subtitle">모두 셔플</string>
     <string name="download_storage_dialog_sub_summary">변경 사항을 저장하려면 앱을 다시 시작하세요.</string>
@@ -66,7 +62,6 @@
 
     <!-- Error -->
     <string name="error_required">필수 항목</string>
-    <string name="error_server_prefix">http 또는 https 접두사가 필요합니다.</string>
 
     <!-- Exo -->
     <string name="exo_download_notification_channel_name">다운로드</string>
@@ -114,7 +109,6 @@
     <!-- Search -->
     <string name="search_description_empty_response">서버 응답을 확인했지만 비어 있었습니다.</string>
     <string name="search_hint">제목, 아티스트, 앨범 검색</string>
-    <string name="search_info_minimum_characters">3자 이상 입력하세요.</string>
     <string name="search_title_album">앨범</string>
     <string name="search_title_artist">아티스트</string>
     <string name="search_title_empty_response">결과 없음.</string>
@@ -185,7 +179,6 @@
     <string name="track_info_bitrate">비트 전송률</string>
     <string name="track_info_content_type">컨텐츠 타입</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">트랙 정보</string>
     <string name="track_info_disc_number">디스크 번호</string>
     <string name="track_info_duration">재생 시간</string>
     <string name="track_info_genre">장르</string>

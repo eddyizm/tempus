@@ -20,14 +20,10 @@
     <string name="radio_search_add">Ajouter</string>
     <string name="radio_search_button">Recherche</string>
     <string name="radio_search_country_hint">Pays</string>
-    <string name="radio_search_dialog_title">Chercher dans Radio Directory</string>
-    <string name="radio_search_directory_button">Directory</string>
-    <string name="radio_search_duplicate">La station existe déjà</string>
     <string name="radio_search_empty_query">Entrer un nom de station</string>
     <string name="radio_search_error">Échec de la recherche : %s</string>
     <string name="radio_search_hint">Nom de station</string>
     <string name="radio_search_no_results">Aucune station trouvée</string>
-    <string name="radio_search_station_added">Station ajoutée en local</string>
     <string name="radio_search_use">Ajouter</string>
     <string name="radio_station_info_empty_button">Cliquez pour cacher la section\nLes changements seront visibles au redémarrage de l\'app</string>
     <string name="radio_station_info_empty_subtitle">Dès que vous ajouterez une station radio, vous la retrouverez ici</string>

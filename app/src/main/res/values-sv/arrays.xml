@@ -6,10 +6,6 @@
         <item>Mörkt</item>
         <item>Systemstandard</item>
     </string-array>
-    <string-array name="dark_theme_style_titles">
-        <item>Standard</item>
-        <item>AMOLED (helsvart)</item>
-    </string-array>
     <string-array name="pref_cache_size_titles">
         <item>Stor</item>
         <item>Medelstor</item>
@@ -104,12 +100,6 @@
         <item>Album</item>
         <item>Automatiskt</item>
     </string-array>
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Ingen omkodning</item>
-        <item>Serverinställningar</item>
-        <item>Omkodningsformat för wifi</item>
-        <item>Omkodningsformat för mobildata</item>
-    </string-array>
     <string-array name="song_preload_buffer_titles">
         <item>5 sekunder</item>
         <item>30 sekunder</item>
@@ -123,13 +113,6 @@
         <item>Nästa 2 låtar</item>
         <item>Nästa 3 låtar</item>
         <item>Nästa 5 låtar</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_titles">
-        <item>Minst 0 stjärnor</item>
-        <item>Minst 1 stjärna</item>
-        <item>Minst 2 stjärnor</item>
-        <item>Minst 3 stjärnor</item>
-        <item>Minst 4 stjärnor</item>
     </string-array>
     <string-array name="tile_size_titles">
         <item>Mycket små</item>

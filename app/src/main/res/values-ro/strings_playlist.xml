@@ -8,13 +8,10 @@
     <string name="playlist_chooser_dialog_empty">Niciun playlist creat</string>
     <string name="playlist_chooser_dialog_title">Adăugați la un playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Eșec la adăugarea piese(lor) la playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Piesa(e) adăugată(e) la playlist</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Toate piesele au fost omise ca duplicate</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Activarea acestei opțiuni face lista de redare publică. Dacă este lăsată așa cum este, vizibilitatea listei de redare nu se va schimba.</string>
     <string name="playlist_counted_tracks">%1$d piese •  %2$s</string>
     <string name="playlist_details_dialog_title">Detaliile playlistului</string>
     <string name="playlist_duration">Durată  •  %1$s</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Apasă lung pentru a șterge</string>
     <string name="playlist_editor_dialog_action_save_empty">O listă de redare trebuie să conțină cel puțin o piesă</string>
     <string name="playlist_editor_dialog_hint_name">Nume Playlist</string>
     <string name="playlist_editor_dialog_negative_button">Anulati</string>

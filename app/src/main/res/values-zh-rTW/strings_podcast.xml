@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">此伺服器不支援播客。</string>
     <string name="podcast_channel_page_title_description_section">描述</string>
     <string name="podcast_channel_page_title_episode_section">劇集</string>
-    <string name="podcast_channel_page_title_no_episode_available">沒有可用的劇集</string>
     <string name="podcast_episode_download_request_snackbar">您的請求已發送至伺服器</string>
     <string name="podcast_info_empty_button">單擊以隱藏該部分\n重啟應用程式後生效</string>
     <string name="podcast_info_empty_subtitle">新增頻道後，您將在此處找到它</string>

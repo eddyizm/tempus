@@ -14,7 +14,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Tempus-objektlänk</string>
     <string name="asset_link_copied_toast">Kopierade %1$s till urklipp</string>
-    <string name="asset_link_debug_toast">Objektlänk: %1$s</string>
     <string name="asset_link_error_album">Kunde inte öppna albumet</string>
     <string name="asset_link_error_artist">Kunde inte öppna artisten</string>
     <string name="asset_link_error_playlist">Kunde inte öppna spellistan</string>
@@ -33,9 +32,8 @@
     <string name="battery_optimization_neutral_button">Fråga inte igen</string>
     <string name="battery_optimization_positive_button">Stäng av</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Skapar direktmix...</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Kunde inte hämta låtar från Subsonic-servern.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Läser in…</string>
@@ -47,9 +45,8 @@
     <string name="connection_alert_dialog_summary">Åtkomsten till Subsonic-servern har begränsats till wifi. Stäng av anslutningskontrollen i appens inställningar om du inte vill se den här dialogrutan igen.</string>
     <string name="connection_alert_dialog_title">Inte ansluten till wifi</string>
 
-    <!-- Content Description -->
+    <!-- Content -->
     <string name="content_description_more_options">Fler alternativ</string>
-    <string name="content_description_shuffle_button">Blanda</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus kraschade.</string>
@@ -75,7 +72,6 @@
     <string name="download_directory_set">Ange var hämtad musik ska sparas</string>
     <string name="download_info_empty_subtitle">När du har hämtat en låt hittar du den här</string>
     <string name="download_info_empty_title">Inget hämtat ännu!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s objekt</string>
     <string name="download_item_single_subtitle_formatter">%1$s objekt</string>
     <string name="download_refresh_button_content_description">Uppdatera hämtade objekt</string>
     <string name="download_refresh_no_changes">Inga saknade hämtningar hittades.</string>
@@ -111,15 +107,11 @@
 
     <!-- Error -->
     <string name="error_required">Obligatoriskt</string>
-    <string name="error_server_prefix">Adressen måste börja med http eller https</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Ta bort hjärtmarkering</string>
     <string name="exo_controls_heart_on_description">Lägg till hjärtmarkering</string>
     <string name="exo_download_notification_channel_name">Hämtningar</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Favorit</string>
 
     <!-- Filter -->
     <string name="filter_artist">Filtrera artister</string>
@@ -182,7 +174,6 @@
     <string name="notification_downloading_progress">Hämtar…</string>
     <string name="notification_downloading_title">Hämtar %1$s</string>
     <string name="notification_downloads_complete">Hämtningarna är klara</string>
-    <string name="notification_finalizing">Slutför…</string>
     <string name="notification_processing">Bearbetar…</string>
     <plurals name="notification_tracks_downloaded">
         <item quantity="one">1 låt hämtad</item>
@@ -208,7 +199,6 @@
     <string name="search_all_songs_play">Spela %1$s</string>
     <string name="search_description_empty_response">Serverns svar var tomt.</string>
     <string name="search_hint">Sök efter titel, artist eller album</string>
-    <string name="search_info_minimum_characters">Ange minst tre tecken</string>
     <string name="search_sort_summary">Sortera sökningar kronologiskt. När detta är avstängt sorteras de efter namn.</string>
     <string name="search_sort_title">Sortera senaste sökningarna kronologiskt</string>
     <string name="search_title_album">Album</string>
@@ -319,7 +309,6 @@
     <string name="track_info_bitrate">Bithastighet</string>
     <string name="track_info_content_type">Innehållstyp</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Låtinformation</string>
     <string name="track_info_disc_number">Skivnummer</string>
     <string name="track_info_duration">Speltid</string>
     <string name="track_info_genre">Genre</string>

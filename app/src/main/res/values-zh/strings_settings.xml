@@ -14,7 +14,6 @@
     <string name="settings_artist_sort_by_album_count_summary">启用后按专辑数量排序；关闭则按名称排序。</string>
     <string name="settings_audio_quality">显示音频质量</string>
     <string name="settings_audio_quality_summary">显示歌曲的码率和音频格式。</string>
-    <string name="settings_audio_transcode_download_format">转码格式</string>
     <string name="settings_audio_transcode_download_priority_summary">启用后 Tempus 将不会强制使用下面的转码设置下载歌曲。</string>
     <string name="settings_audio_transcode_download_priority_title">优先考虑服务器上用于流式传输的设置</string>
     <string name="settings_audio_transcode_download_summary">启用后 Tempus 将下载转码后的歌曲。</string>
@@ -24,7 +23,6 @@
     <string name="settings_audio_transcode_format_wifi">Wi-Fi 下的转码格式</string>
     <string name="settings_audio_transcode_priority_summary">启用后 Tempus 将不会强制使用下面的转码设置流式传输歌曲。</string>
     <string name="settings_audio_transcode_priority_title">优先考虑服务器转码设置</string>
-    <string name="settings_audio_transcode_priority_toast">歌曲转码设置优先级设置为服务器</string>
     <string name="settings_auto_download_lyrics">自动下载歌词</string>
     <string name="settings_auto_download_lyrics_summary">自动保存可用歌词，以便离线时查看。</string>
     <string name="settings_choose_download_folder">选择一个音乐下载目录</string>
@@ -53,7 +51,6 @@
     <string name="settings_max_bitrate_download">用于下载的码率</string>
     <string name="settings_max_bitrate_mobile">移动数据下的码率</string>
     <string name="settings_max_bitrate_wifi">Wi-Fi 下的码率</string>
-    <string name="settings_media_cache">媒体文件缓存大小</string>
     <string name="settings_music_directory">显示音乐目录</string>
     <string name="settings_music_directory_summary">启用后则显示音乐目录部分。 请注意，要使文件夹导航正常工作，服务器必须支持此功能。</string>
     <string name="settings_podcast">显示播客</string>
@@ -65,15 +62,12 @@
     <string name="settings_replay_gain">设置播放增益模式</string>
     <string name="settings_rounded_corner">圆角</string>
     <string name="settings_rounded_corner_size">圆角大小</string>
-    <string name="settings_rounded_corner_size_summary">设置圆角的大小。</string>
     <string name="settings_rounded_corner_summary">启用后则为所有渲染的封面设置圆角。更改将在应用重新启动后生效。</string>
     <string name="settings_scan_result">正在扫描：已发现 %1$d 首歌曲</string>
     <string name="settings_scan_title">扫描曲库</string>
     <string name="settings_scrobble_title">启用音乐记录</string>
     <string name="settings_set_download_folder">设置下载文件夹</string>
     <string name="settings_share_title">启用音乐共享</string>
-    <string name="settings_show_mini_shuffle_button">显示随机按钮</string>
-    <string name="settings_show_mini_shuffle_button_summary">启用后，在迷你播放器中显示随机播放按钮，并移除收藏按钮。</string>
     <string name="settings_song_rating">显示歌曲评分</string>
     <string name="settings_song_rating_summary">启用后歌曲详情页将显示五星评分。\n\n*需重启应用后生效</string>
     <string name="settings_streaming_cache_size">播放缓存大小</string>
@@ -87,7 +81,6 @@
     <string name="settings_summary_syncing">返回当前用户的播放队列状态。 这包括播放队列中的歌曲、正在播放的歌曲以及歌曲播放进度。需要服务器支持此功能。</string>
     <string name="settings_summary_transcoding">转码模式优先级设置。 如果设置为“播放原始”，文件的码率将不会更改。</string>
     <string name="settings_summary_transcoding_download">下载转码后的媒体。 启用后将不会下载原始数据，而是使用以下设置。\n如果“用于下载的转码格式”设置为“下载原始”，则文件的码率不会更改。</string>
-    <string name="settings_summary_transcoding_estimate_content_length">当文件即时转码时，客户端通常不会显示歌曲长度。 可以向支持该功能的服务器发送请求，估计正在播放的歌曲的持续时间，但可能响应变慢。</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">加入社区讨论并获取帮助</string>
     <string name="settings_support_title">用户支持</string>
@@ -104,17 +97,14 @@
     <string name="settings_title_data">数据</string>
     <string name="settings_title_general">通用</string>
     <string name="settings_title_playlist">播放列表</string>
-    <string name="settings_title_rating">评分</string>
     <string name="settings_title_replay_gain">播放增益</string>
     <string name="settings_title_scrobble">音乐记录</string>
     <string name="settings_title_share">分享</string>
     <string name="settings_title_skip_min_star_rating">根据评分忽略歌曲</string>
-    <string name="settings_title_skip_min_star_rating_dialog">根据歌曲评分筛选：</string>
     <string name="settings_title_syncing">同步</string>
     <string name="settings_title_transcoding">转码</string>
     <string name="settings_title_transcoding_download">转码下载</string>
     <string name="settings_title_ui">界面</string>
-    <string name="settings_transcoded_download">转码下载</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
     <string name="settings_version_title">版本</string>
     <string name="settings_wifi_only_summary">在通过移动网络进行流式传输之前请求用户确认。</string>

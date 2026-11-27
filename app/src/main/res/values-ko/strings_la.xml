@@ -12,6 +12,5 @@
     <string name="la_perms_notifications_title">알림</string>
     <string name="la_perms_status_not_provided">요청</string>
     <string name="la_perms_status_provided">허용됨</string>
-    <string name="la_perms_title">권한 요청</string>
     <string name="la_theme_card_emerald_green_description">에메랄드 그린 강조 색상</string>
 </resources>

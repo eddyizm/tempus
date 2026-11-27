@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Tempus-eko esteka</string>
     <string name="asset_link_copied_toast">%1$s arbelera kopiatu da</string>
-    <string name="asset_link_debug_toast">Esteka: %1$s</string>
     <string name="asset_link_error_album">Ezin izan da diskoa ireki</string>
     <string name="asset_link_error_artist">Ezin izan da artista ireki</string>
     <string name="asset_link_error_playlist">Ezin izan da zerrenda ireki</string>
@@ -32,9 +31,8 @@
     <string name="battery_optimization_neutral_button">Ez galdetu berriro</string>
     <string name="battery_optimization_positive_button">Desgaitu</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Berehalako nahasketa sortzen...</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Ezin izan dira abestiak eskuratu subsonic zerbitzaritik.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Kargatzen…</string>
@@ -46,9 +44,8 @@
     <string name="connection_alert_dialog_summary">Wi-Fi ez den konexio bidez Subsonic zerbitzarirako sarbidea murriztuta dago. Elkarrizketa-koadro hau berriz ez agertzeko, desgaitu konexio-egiaztapena aplikazioaren ezarpenetan.</string>
     <string name="connection_alert_dialog_title">Wi-Fi konektatu gabe</string>
 
-    <!-- Content Description -->
+    <!-- Content -->
     <string name="content_description_more_options">Aukera gehiago</string>
-    <string name="content_description_shuffle_button">Nahastu</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus kraskatu da.</string>
@@ -74,7 +71,6 @@
     <string name="download_directory_set">Musika non deskargatuko den ezarri</string>
     <string name="download_info_empty_subtitle">Abesti bat deskargatzen duzunean, hemen aurkituko duzu</string>
     <string name="download_info_empty_title">Oraindik ez dago deskargarik!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s elementu</string>
     <string name="download_item_single_subtitle_formatter">%1$s elementu</string>
     <string name="download_refresh_button_content_description">Deskargatutako elementuak eguneratu</string>
     <string name="download_refresh_no_changes">Ez da falta den deskargarik aurkitu.</string>
@@ -111,15 +107,11 @@
     <!-- Error -->
     <string name="error_custom_headers_invalid">Goiburu baliogabea %1$s. lerroan. Erabili Izena: Balioa</string>
     <string name="error_required">Beharrezkoa</string>
-    <string name="error_server_prefix">http edo https aurrizkia beharrezkoa da</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Bihotza desaktibatu</string>
     <string name="exo_controls_heart_on_description">Bihotza aktibatu</string>
     <string name="exo_download_notification_channel_name">Deskargak</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Gogokoa</string>
 
     <!-- Filter -->
     <string name="filter_artist">Artistak iragazi</string>
@@ -186,7 +178,6 @@
     <string name="notification_downloading_progress">Deskargatzen…</string>
     <string name="notification_downloading_title">%1$s deskargatzen</string>
     <string name="notification_downloads_complete">Deskargak osatu dira</string>
-    <string name="notification_finalizing">Amaitzen…</string>
     <string name="notification_processing">Prozesatzen…</string>
     <plurals name="notification_tracks_downloaded">
         <item quantity="one">Abesti 1 deskargatu da</item>
@@ -212,7 +203,6 @@
     <string name="search_all_songs_play">%1$s erreproduzitu</string>
     <string name="search_description_empty_response">Zure zerbitzariaren erantzuna egiaztatu dugu, baina hutsik zegoen.</string>
     <string name="search_hint">Bilatu titulua, artistak edo diskak</string>
-    <string name="search_info_minimum_characters">Idatzi gutxienez hiru karaktere</string>
     <string name="search_sort_summary">Gaituta badago, bilaketak kronologikoki ordenatzen dira. Desgaituta badago, izenaren arabera ordenatzen dira.</string>
     <string name="search_sort_title">Azken bilaketak kronologikoki ordenatu</string>
     <string name="search_title_album">Diskak</string>
@@ -326,7 +316,6 @@
     <string name="track_info_bitrate">Bit-emaria</string>
     <string name="track_info_content_type">Eduki mota</string>
     <string name="track_info_dialog_positive_button">Ados</string>
-    <string name="track_info_dialog_title">Abestiaren informazioa</string>
     <string name="track_info_disc_number">Disko zenbakia</string>
     <string name="track_info_duration">Iraupena</string>
     <string name="track_info_genre">Generoa</string>

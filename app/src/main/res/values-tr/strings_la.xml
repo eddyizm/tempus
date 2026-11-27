@@ -12,6 +12,5 @@
     <string name="la_perms_notifications_title">Bildirimler</string>
     <string name="la_perms_status_not_provided">İste</string>
     <string name="la_perms_status_provided">Verildi</string>
-    <string name="la_perms_title">İzin iste</string>
     <string name="la_theme_card_emerald_green_description">Zümrüt yeşili vurgu rengi</string>
 </resources>

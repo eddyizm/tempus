@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">No playlists created</string>
     <string name="playlist_chooser_dialog_title">Add to a playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Failed to add song(s) to playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Added song(s) to playlist</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">All songs were skipped as duplicates</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Failed to remove song from playlist</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Removed song from playlist</string>
-    <string name="playlist_chooser_dialog_visibility_private">Private</string>
-    <string name="playlist_chooser_dialog_visibility_public">Public</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Turning this on marks the playlist public. Leaving it alone does not change the playlist visibility.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Mark the playlist as public</string>
     <string name="playlist_counted_tracks">%1$d tracks •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Duration  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Failed to delete playlist</string>
     <string name="playlist_editor_dialog_action_delete_success">Playlist deleted</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Long press to delete</string>
     <string name="playlist_editor_dialog_action_save_empty">A playlist has to keep at least one track</string>
     <string name="playlist_editor_dialog_action_save_failure">Failed to save playlist</string>
     <string name="playlist_editor_dialog_action_save_success">Playlist saved</string>

@@ -14,7 +14,6 @@
     <string name="settings_artist_sort_by_album_count_summary">啟用後按專輯數量排序；關閉則按名稱排序。</string>
     <string name="settings_audio_quality">顯示音訊品質</string>
     <string name="settings_audio_quality_summary">顯示歌曲的位元率和音訊格式。</string>
-    <string name="settings_audio_transcode_download_format">轉碼格式</string>
     <string name="settings_audio_transcode_download_priority_summary">啟用後 Tempus 將不會強制使用下面的轉碼設定下載歌曲。</string>
     <string name="settings_audio_transcode_download_priority_title">優先考慮伺服器上用於流式傳輸的設定</string>
     <string name="settings_audio_transcode_download_summary">啟用後 Tempus 將下載轉碼後的歌曲。</string>
@@ -24,7 +23,6 @@
     <string name="settings_audio_transcode_format_wifi">Wi-Fi 下的轉碼格式</string>
     <string name="settings_audio_transcode_priority_summary">啟用後 Tempus 將不會強制使用下面的轉碼設定流式傳輸歌曲。</string>
     <string name="settings_audio_transcode_priority_title">優先考慮伺服器轉碼設定</string>
-    <string name="settings_audio_transcode_priority_toast">歌曲轉碼設定優先級設定為伺服器</string>
     <string name="settings_auto_download_lyrics">自動下載歌詞</string>
     <string name="settings_auto_download_lyrics_summary">自動儲存可用歌詞，以便離線時查看。</string>
     <string name="settings_choose_download_folder">選擇一個音樂下載目錄</string>
@@ -53,7 +51,6 @@
     <string name="settings_max_bitrate_download">用於下載的位元率</string>
     <string name="settings_max_bitrate_mobile">行動資料下的位元率</string>
     <string name="settings_max_bitrate_wifi">Wi-Fi 下的位元率</string>
-    <string name="settings_media_cache">媒體檔案快取大小</string>
     <string name="settings_music_directory">顯示音樂目錄</string>
     <string name="settings_music_directory_summary">啟用後則顯示音樂目錄部分。 請注意，要使資料夾導航正常工作，伺服器必須支援此功能。</string>
     <string name="settings_podcast">顯示播客</string>
@@ -65,15 +62,12 @@
     <string name="settings_replay_gain">設定播放增益模式</string>
     <string name="settings_rounded_corner">圓角</string>
     <string name="settings_rounded_corner_size">圓角大小</string>
-    <string name="settings_rounded_corner_size_summary">設定圓角的大小。</string>
     <string name="settings_rounded_corner_summary">啟用後則為所有渲染的封面設定圓角。更改將在應用程式重新啟動後生效。</string>
     <string name="settings_scan_result">正在掃描：已發現 %1$d 首歌曲</string>
     <string name="settings_scan_title">掃描曲庫</string>
     <string name="settings_scrobble_title">啟用音樂記錄</string>
     <string name="settings_set_download_folder">設定下載資料夾</string>
     <string name="settings_share_title">啟用音樂共享</string>
-    <string name="settings_show_mini_shuffle_button">顯示隨機按鈕</string>
-    <string name="settings_show_mini_shuffle_button_summary">啟用後，在迷你播放器中顯示隨機播放按鈕，並移除收藏按鈕。</string>
     <string name="settings_song_rating">顯示歌曲評分</string>
     <string name="settings_song_rating_summary">啟用後歌曲詳情頁將顯示五星評分。\n\n*需重啟應用程式後生效</string>
     <string name="settings_streaming_cache_size">播放快取大小</string>
@@ -87,7 +81,6 @@
     <string name="settings_summary_syncing">返回當前使用者的播放序列狀態。 這包括播放序列中的歌曲、正在播放的歌曲以及歌曲播放進度。需要伺服器支援此功能。</string>
     <string name="settings_summary_transcoding">轉碼模式優先級設定。 如果設定為「播放原始」，檔案的位元率將不會更改。</string>
     <string name="settings_summary_transcoding_download">下載轉碼後的媒體。 啟用後將不會下載原始資料，而是使用以下設定。\n如果「用於下載的轉碼格式」設定為「下載原始」，則檔案的位元率不會更改。</string>
-    <string name="settings_summary_transcoding_estimate_content_length">當檔案即時轉碼時，客戶端通常不會顯示歌曲長度。 可以向支援該功能的伺服器發送請求，大概正在播放的歌曲的持續時間，但可能回應變慢。</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">加入社群討論並取得幫助</string>
     <string name="settings_support_title">使用者支援</string>
@@ -104,17 +97,14 @@
     <string name="settings_title_data">資料</string>
     <string name="settings_title_general">通用</string>
     <string name="settings_title_playlist">播放清單</string>
-    <string name="settings_title_rating">評分</string>
     <string name="settings_title_replay_gain">播放增益</string>
     <string name="settings_title_scrobble">音樂記錄</string>
     <string name="settings_title_share">分享</string>
     <string name="settings_title_skip_min_star_rating">根據評分忽略歌曲</string>
-    <string name="settings_title_skip_min_star_rating_dialog">根據歌曲評分篩選：</string>
     <string name="settings_title_syncing">同步</string>
     <string name="settings_title_transcoding">轉碼</string>
     <string name="settings_title_transcoding_download">轉碼下載</string>
     <string name="settings_title_ui">界面</string>
-    <string name="settings_transcoded_download">轉碼下載</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
     <string name="settings_version_title">版本</string>
     <string name="settings_wifi_only_summary">在通過行動網路進行流式傳輸之前請求使用者確認。</string>

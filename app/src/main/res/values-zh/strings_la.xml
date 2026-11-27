@@ -12,6 +12,5 @@
     <string name="la_perms_notifications_title">通知</string>
     <string name="la_perms_status_not_provided">请求</string>
     <string name="la_perms_status_provided">已授予</string>
-    <string name="la_perms_title">请求权限</string>
     <string name="la_theme_card_emerald_green_description">祖母绿强调色</string>
 </resources>

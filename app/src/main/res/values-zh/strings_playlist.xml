@@ -8,13 +8,10 @@
     <string name="playlist_chooser_dialog_empty">尚未创建播放列表</string>
     <string name="playlist_chooser_dialog_title">添加到播放列表</string>
     <string name="playlist_chooser_dialog_toast_add_failure">未能将歌曲添加到播放列表</string>
-    <string name="playlist_chooser_dialog_toast_add_success">将歌曲添加到播放列表</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">所有歌曲已存在，无需重复添加</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">开启此选项会将播放列表设为公开。保持原样不会改变播放列表的可见性。</string>
     <string name="playlist_counted_tracks">%1$d 首歌曲 • %2$s</string>
     <string name="playlist_details_dialog_title">播放列表详情</string>
     <string name="playlist_duration">时长 • %1$s</string>
-    <string name="playlist_editor_dialog_action_delete_toast">长按删除</string>
     <string name="playlist_editor_dialog_action_save_empty">播放列表必须至少保留一首曲目</string>
     <string name="playlist_editor_dialog_hint_name">播放列表名称</string>
     <string name="playlist_editor_dialog_negative_button">取消</string>

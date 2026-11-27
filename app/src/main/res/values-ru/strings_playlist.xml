@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">Нет плейлистов</string>
     <string name="playlist_chooser_dialog_title">Добавить в плейлист</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Ошибка добавления</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Треки добавлены</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Все треки пропущены (дубликаты)</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Ошибка удаления</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Трек удалён</string>
-    <string name="playlist_chooser_dialog_visibility_private">Приватный</string>
-    <string name="playlist_chooser_dialog_visibility_public">Публичный</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Вкл: плейлист станет публичным. Выкл: видимость не изменится.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Сделать публичным</string>
     <string name="playlist_counted_tracks">%1$d треков • %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Длительность • %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Ошибка удаления</string>
     <string name="playlist_editor_dialog_action_delete_success">Плейлист удалён</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Удерживайте для удаления</string>
     <string name="playlist_editor_dialog_action_save_empty">Плейлист не может быть пустым</string>
     <string name="playlist_editor_dialog_action_save_failure">Ошибка сохранения</string>
     <string name="playlist_editor_dialog_action_save_success">Плейлист сохранён</string>

@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Недавно прослушанные</string>
     <string name="album_list_page_starred">Избранные альбомы</string>
     <string name="album_list_page_title">Альбомы</string>
-    <string name="album_page_extra_info_button">Ещё похожее</string>
     <string name="album_page_play_button">Играть</string>
     <string name="album_page_release_date_label">Релиз: %1$s</string>
     <string name="album_page_release_dates_label">Релиз: %1$s (ориг. %2$s)</string>

@@ -17,12 +17,8 @@
     <string name="player_lyrics_downloaded_content_description">Mahnı sözləri oflayn səsləndirmə üçün yüklənib</string>
     <string name="player_overflow_menu_add_to_playlist">Pleylistə əlavə et</string>
     <string name="player_playback_speed">%1$.2fx</string>
-    <string name="player_queue_clean_all_button">Səsləndirmə növbəsini təmizlə</string>
     <string name="player_queue_load_queue">Növbəni aç</string>
-    <string name="player_queue_save_queue_success">Səsləndirmə növbəsi saxlanıldı</string>
     <string name="player_queue_save_to_playlist">Növbəni pleylistdə yadda saxla</string>
-    <string name="player_server_priority">Serverin üstünlüyü</string>
     <string name="player_transcoding">Transkodlaşdırma</string>
-    <string name="player_transcoding_requested">istənilib</string>
     <string name="player_unknown_format">Naməlum format</string>
 </resources>

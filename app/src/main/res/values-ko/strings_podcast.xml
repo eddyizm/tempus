@@ -13,7 +13,6 @@
     <string name="podcast_channel_editor_dialog_title">팟캐스트 채널</string>
     <string name="podcast_channel_page_title_description_section">설명</string>
     <string name="podcast_channel_page_title_episode_section">에피소드</string>
-    <string name="podcast_channel_page_title_no_episode_available">가능한 에피소드가 없습니다.</string>
     <string name="podcast_episode_download_request_snackbar">요청이 서버로 전송되었습니다.</string>
     <string name="podcast_info_empty_button">섹션을 숨기려면 클릭하세요.\n다시 시작하면 적용됩니다.</string>
     <string name="podcast_info_empty_subtitle">채널을 추가하면 표시됩니다.</string>

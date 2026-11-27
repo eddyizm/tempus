@@ -6,14 +6,11 @@
     <string name="artist_bottom_sheet_shuffle">Aleatório</string>
     <string name="artist_catalogue_title">Artistas</string>
     <string name="artist_catalogue_title_expanded">Navegar pelos Artistas</string>
-    <string name="artist_error_retrieving_radio">Erro ao recuperar rádio do artista</string>
-    <string name="artist_error_retrieving_tracks">Erro ao recuperar faixas do artista</string>
     <string name="artist_list_page_downloaded">Artistas baixados</string>
     <string name="artist_list_page_starred">Artistas favoritos</string>
     <string name="artist_list_page_title">Artistas</string>
     <string name="artist_page_radio_button">Rádio</string>
     <string name="artist_page_shuffle_button">Aleatório</string>
-    <string name="artist_page_switch_layout_button">Alternar layout</string>
     <string name="artist_page_title_album_more_like_this_button">Sugestões semelhantes</string>
     <string name="artist_page_title_album_section">Álbuns</string>
     <string name="artist_page_title_biography_more_button">Mais</string>

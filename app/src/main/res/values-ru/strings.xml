@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Ссылка Tempus</string>
     <string name="asset_link_copied_toast">%1$s скопировано</string>
-    <string name="asset_link_debug_toast">Ссылка: %1$s</string>
     <string name="asset_link_error_album">Не удалось открыть альбом</string>
     <string name="asset_link_error_artist">Не удалось открыть исполнителя</string>
     <string name="asset_link_error_playlist">Не удалось открыть плейлист</string>
@@ -32,9 +31,8 @@
     <string name="battery_optimization_neutral_button">Больше не спрашивать</string>
     <string name="battery_optimization_positive_button">Отключить</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Создание микса…</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Не удалось получить треки с сервера.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Загрузка…</string>
@@ -46,9 +44,8 @@
     <string name="connection_alert_dialog_summary">Доступ к серверу вне Wi-Fi ограничен. Чтобы отключить это предупреждение, снимите галочку проверки сети в настройках.</string>
     <string name="connection_alert_dialog_title">Нет подключения к Wi-Fi</string>
 
-    <!-- Content Description -->
+    <!-- Content -->
     <string name="content_description_more_options">Ещё</string>
-    <string name="content_description_shuffle_button">Перемешать</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">В Tempus произошёл сбой.</string>
@@ -74,7 +71,6 @@
     <string name="download_directory_set">Указать папку для скачивания</string>
     <string name="download_info_empty_subtitle">Скачанные треки появятся здесь</string>
     <string name="download_info_empty_title">Загрузок пока нет</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s • %2$s эл.</string>
     <string name="download_item_single_subtitle_formatter">%1$s эл.</string>
     <string name="download_refresh_button_content_description">Обновить загрузки</string>
     <string name="download_refresh_no_changes">Отсутствующих файлов нет.</string>
@@ -112,15 +108,11 @@
 
     <!-- Error -->
     <string name="error_required">Обязательно</string>
-    <string name="error_server_prefix">Требуется http или https</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Убрать из избранного</string>
     <string name="exo_controls_heart_on_description">Добавить в избранное</string>
     <string name="exo_download_notification_channel_name">Загрузки</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Избранное</string>
 
     <!-- Filter -->
     <string name="filter_artist">Фильтр исполнителей</string>
@@ -187,7 +179,6 @@
     <string name="notification_downloading_progress">Загрузка…</string>
     <string name="notification_downloading_title">Загрузка %1$s</string>
     <string name="notification_downloads_complete">Загрузка завершена</string>
-    <string name="notification_finalizing">Завершение…</string>
     <string name="notification_processing">Обработка…</string>
     <plurals name="notification_tracks_downloaded">
         <item quantity="one">Загружен %d трек</item>
@@ -219,7 +210,6 @@
     <string name="search_all_songs_play">Играть %1$s</string>
     <string name="search_description_empty_response">Сервер вернул пустой ответ.</string>
     <string name="search_hint">Название, исполнитель или альбом</string>
-    <string name="search_info_minimum_characters">Минимум 3 символа</string>
     <string name="search_sort_summary">Сортировать поисковые запросы хронологически (иначе по алфавиту).</string>
     <string name="search_sort_title">Сортировать историю по дате</string>
     <string name="search_title_album">Альбомы</string>
@@ -335,7 +325,6 @@
     <string name="track_info_bitrate">Битрейт</string>
     <string name="track_info_content_type">Тип контента</string>
     <string name="track_info_dialog_positive_button">ОК</string>
-    <string name="track_info_dialog_title">О треке</string>
     <string name="track_info_disc_number">Номер диска</string>
     <string name="track_info_duration">Длительность</string>
     <string name="track_info_genre">Жанр</string>

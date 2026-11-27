@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">Ez da zerrendarik sortu</string>
     <string name="playlist_chooser_dialog_title">Zerrenda batera gehitu</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Ezin izan da/dira abestia(k) zerrendara gehitu</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Abestia(k) zerrendara gehitu da/dira</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Abesti guztiak saltatu dira bikoiztuak zirelako</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Ezin izan da abestia zerrendatik kendu</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Abestia zerrendatik kendu da</string>
-    <string name="playlist_chooser_dialog_visibility_private">Pribatua</string>
-    <string name="playlist_chooser_dialog_visibility_public">Publikoa</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Hau aktibatuz gero, erreprodukzio-zerrenda publikoa izango da. Bere horretan utziz gero, ez da erreprodukzio-zerrendaren ikusgarritasuna aldatzen.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Zerrenda publiko gisa markatu</string>
     <string name="playlist_counted_tracks">%1$d abesti •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Iraupena  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Ezin izan da zerrenda ezabatu</string>
     <string name="playlist_editor_dialog_action_delete_success">Zerrenda ezabatu da</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Sakatu luze ezabatzeko</string>
     <string name="playlist_editor_dialog_action_save_empty">Erreprodukzio-zerrenda batek gutxienez pista bat izan behar du</string>
     <string name="playlist_editor_dialog_action_save_failure">Ezin izan da zerrenda gorde</string>
     <string name="playlist_editor_dialog_action_save_success">Zerrenda gorde da</string>

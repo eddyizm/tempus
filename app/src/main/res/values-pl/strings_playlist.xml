@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">Nie utworzono playlist</string>
     <string name="playlist_chooser_dialog_title">Dodaj do playlisty</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Nie udało się dodać piosenek do playlisty</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Dodano piosenki do playlisty</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Pominięto wszystkie piosenki jako duplikaty</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Nie udało się usunąć piosenki z playlisty</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Usunięto piosenkę z playlisty</string>
-    <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
-    <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Włączenie tego oznacza playlistę jako publiczną. Nie zmienienie tego ustawienia, nie zmienia widoczności playlisty.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Oznacz playlistę jako publiczną</string>
     <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Długość  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
     <string name="playlist_editor_dialog_action_delete_success">Playlista usunięta</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
     <string name="playlist_editor_dialog_action_save_empty">Playlista musi mieć co najmniej jeden utwór</string>
     <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
     <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>

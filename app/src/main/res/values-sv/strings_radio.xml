@@ -20,14 +20,10 @@
     <string name="radio_search_add">Lägg till</string>
     <string name="radio_search_button">Sök</string>
     <string name="radio_search_country_hint">Land</string>
-    <string name="radio_search_dialog_title">Sök i radiokatalogen</string>
-    <string name="radio_search_directory_button">Katalog</string>
-    <string name="radio_search_duplicate">Stationen finns redan</string>
     <string name="radio_search_empty_query">Ange ett stationsnamn</string>
     <string name="radio_search_error">Sökningen misslyckades: %s</string>
     <string name="radio_search_hint">Stationens namn</string>
     <string name="radio_search_no_results">Inga stationer hittades</string>
-    <string name="radio_search_station_added">Stationen har lagts till lokalt</string>
     <string name="radio_search_use">Använd</string>
     <string name="radio_station_info_empty_button">Tryck för att dölja sektionen\nÄndringen syns efter omstart</string>
     <string name="radio_station_info_empty_subtitle">När du har lagt till en radiostation hittar du den här</string>

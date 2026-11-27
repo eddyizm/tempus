@@ -10,14 +10,6 @@
         <item>default</item>
     </string-array>
 
-    <string-array name="dark_theme_style_titles">
-        <item>Estándar</item>
-        <item>AMOLED (Negro puro)</item>
-    </string-array>
-    <string-array name="dark_theme_style_values">
-        <item>standard</item>
-        <item>amoled</item>
-    </string-array>
 
     <string-array name="pref_cache_size_titles">
         <item>Alto</item>
@@ -218,18 +210,6 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Sin transcodificar</item>
-        <item>Dejar que el servidor decida</item>
-        <item>Formato de transcodificación en Wi-Fi</item>
-        <item>Formato de transcodificación en Datos Móviles</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
     <string-array name="song_preload_buffer_titles">
         <item>5 segundos</item>
@@ -262,34 +242,6 @@
     </string-array>
 
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>0 estrellas mínimo</item>
-        <item>1 estrella mínimo</item>
-        <item>2 estrellas mínimo</item>
-        <item>3 estrellas mínimo</item>
-        <item>4 estrellas mínimo</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
-    <string-array name="landscape_items_per_row">
-        <item>3"</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
-    <string-array name="landscape_items_per_row_values">
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-    </string-array>
 
     <string-array name="tile_size_titles">
         <item>Muy pequeño</item>

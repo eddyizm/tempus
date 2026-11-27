@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Àlbums reproduïts recentment</string>
     <string name="album_list_page_starred">Àlbums amb estrelles</string>
     <string name="album_list_page_title">Àlbums</string>
-    <string name="album_page_extra_info_button">Més com això</string>
     <string name="album_page_play_button">Reprodueix</string>
     <string name="album_page_release_date_label">Publicació: %1$s</string>
     <string name="album_page_release_dates_label">Publicació: %1$s, originalment: %2$s</string>

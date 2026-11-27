@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Zerbitzari honek ez du podcastik onartzen.</string>
     <string name="podcast_channel_page_title_description_section">Deskribapena</string>
     <string name="podcast_channel_page_title_episode_section">Atalak</string>
-    <string name="podcast_channel_page_title_no_episode_available">Ez dago atalik erabilgarri</string>
     <string name="podcast_episode_download_request_snackbar">Zure eskaera zerbitzariari bidali zaio</string>
     <string name="podcast_info_empty_button">Sakatu atala ezkutatzeko\nEfektuak berrabiaraztean ikusiko dira</string>
     <string name="podcast_info_empty_subtitle">Kanal bat gehitzen duzunean, hemen aurkituko duzu</string>

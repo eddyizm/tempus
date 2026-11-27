@@ -8,9 +8,6 @@
     <string name="playlist_chooser_dialog_empty">Nenhuma playlist criada</string>
     <string name="playlist_chooser_dialog_title">Adicionar a uma playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Falha ao adicionar uma playlist de reprodução</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Adicionada playlist de reprodução</string>
-    <string name="playlist_chooser_dialog_visibility_private">Privada</string>
-    <string name="playlist_chooser_dialog_visibility_public">Pública</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Ativar isso torna a playlist pública. Deixá-lo como está não altera a visibilidade da playlist.</string>
     <string name="playlist_counted_tracks">%1$d faixas •  %2$s</string>
     <string name="playlist_details_dialog_title">Detalhes da playlist</string>

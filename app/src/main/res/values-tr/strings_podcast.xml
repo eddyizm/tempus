@@ -13,7 +13,6 @@
     <string name="podcast_channel_editor_dialog_title">Podcast Kanalı</string>
     <string name="podcast_channel_page_title_description_section">Açıklama</string>
     <string name="podcast_channel_page_title_episode_section">Bölümler</string>
-    <string name="podcast_channel_page_title_no_episode_available">Bölüm mevcut değil</string>
     <string name="podcast_episode_download_request_snackbar">İsteğiniz sunucuya gönderildi</string>
     <string name="podcast_info_empty_button">Bölümü gizlemek için tıklayın\nDeğişiklikler yeniden başlatıldığında görülecek</string>
     <string name="podcast_info_empty_subtitle">Bir kanal eklediğinizde burada göreceksiniz</string>

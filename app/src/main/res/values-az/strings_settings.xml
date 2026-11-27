@@ -12,7 +12,6 @@
     <string name="settings_always_on_display">Ekran həmişə açıq</string>
     <string name="settings_androidauto">Android Auto</string>
     <string name="settings_androidauto_album_view">Albom və ifaçılar üçün tor görünüşü</string>
-    <string name="settings_androidauto_artists_view">İfaçılar alboma görə göstərilir</string>
     <string name="settings_androidauto_first_tab">Birinci vərəqin görünüşü</string>
     <string name="settings_androidauto_fourth_tab">Dördüncü vərəqin görünüşü</string>
     <string name="settings_androidauto_home_view">Ana səhifə üçün tor görünüşü</string>
@@ -22,7 +21,6 @@
     <string name="settings_androidauto_second_tab">İkinci vərəqin görünüşü</string>
     <string name="settings_androidauto_shuffle_downloaded_tracks">Yüklənmiş mahnıları qarışdır</string>
     <string name="settings_androidauto_shuffle_genre_songs">Janrın mahnılarını qarışdır</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Janr seçildikdə təsadüfi mahnılar səsləndir</string>
     <string name="settings_androidauto_shuffle_playlists">Pleylistləri qarışdır</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Ulduzlu mahnıları qarışdır</string>
     <string name="settings_androidauto_starred_for_made_for_you">Sizin üçün hazırlanmış qarışıqda ulduzlu mahnılar</string>
@@ -33,7 +31,6 @@
     <string name="settings_artist_sort_by_album_count_summary">Aktiv olduqda ifaçıları albom sayına görə sıralayır. Söndürüldükdə ada görə sıralayır.</string>
     <string name="settings_audio_quality">Səs keyfiyyətini göstər</string>
     <string name="settings_audio_quality_summary">Hər mahnının bitreyti və səs formatı göstəriləcək.</string>
-    <string name="settings_audio_transcode_download_format">Transkodlaşdırma formatı</string>
     <string name="settings_audio_transcode_download_priority_summary">Aktiv olduqda Tempus mahnının aşağıdakı transkodlaşdırma parametrləri ilə yüklənməsini məcbur etməyəcək.</string>
     <string name="settings_audio_transcode_download_priority_title">Yükləmələrdə serverin yayım parametrlərinə üstünlük ver</string>
     <string name="settings_audio_transcode_download_summary">Aktiv olduqda Tempus transkodlaşdırılmış mahnıları yükləyəcək.</string>
@@ -43,7 +40,6 @@
     <string name="settings_audio_transcode_format_wifi">Wi-Fi şəbəkəsində transkodlaşdırma formatı</string>
     <string name="settings_audio_transcode_priority_summary">Aktiv olduqda Tempus mahnının aşağıdakı transkodlaşdırma parametrləri ilə yayımlanmasını məcbur etməyəcək.</string>
     <string name="settings_audio_transcode_priority_title">Serverin transkodlaşdırma parametrlərinə üstünlük ver</string>
-    <string name="settings_audio_transcode_priority_toast">Mahnının transkodlaşdırılmasında serverə üstünlük verildi</string>
     <string name="settings_auto_download_lyrics">Mahnı sözlərini avtomatik yüklə</string>
     <string name="settings_auto_download_lyrics_summary">Mahnı sözləri mövcud olduqda onları avtomatik saxlayır ki, oflayn rejimdə də göstərilə bilsin.</string>
     <string name="settings_choose_download_folder">Yüklənmiş musiqi faylları üçün qovluq seç</string>
@@ -53,7 +49,6 @@
     <string name="settings_covers_cache">Üz qabığı keşinin ölçüsü</string>
     <string name="settings_custom_command_first_button">Birinci fərdi əmr</string>
     <string name="settings_custom_command_second_button">İkinci fərdi əmr</string>
-    <string name="settings_dark_theme_style">Tünd tema üslubu</string>
     <string name="settings_data_saving_mode_summary">İnternet trafikinə qənaət etmək üçün üz qabıqlarını yükləməyin.</string>
     <string name="settings_data_saving_mode_title">Mobil internet istifadəsini məhdudlaşdır</string>
     <string name="settings_delete_download_storage_summary">Davam etsəniz, saxlanılmış bütün elementlər həmişəlik silinəcək.</string>
@@ -82,13 +77,11 @@
     <string name="settings_item_rating_summary">Aktiv olduqda elementin qiyməti və sevimli kimi işarələnib-işarələnmədiyi göstəriləcək.</string>
     <string name="settings_language">Dil</string>
     <string name="settings_logout_title">Çıxış et</string>
-    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_loudness_preamp_summary">Daha yüksək səs üçün müsbət dəyərlər təyin edin.\nDaha alçaq səs üçün mənfi dəyərlər təyin edin.</string>
     <string name="settings_loudness_preamp_title">İlkin gücləndirmə</string>
     <string name="settings_max_bitrate_download">Yükləmələr üçün bitreyt</string>
     <string name="settings_max_bitrate_mobile">Mobil şəbəkədə bitreyt</string>
     <string name="settings_max_bitrate_wifi">Wi-Fi şəbəkəsində bitreyt</string>
-    <string name="settings_media_cache">Media faylları keşinin ölçüsü</string>
     <string name="settings_music_directory">Musiqi qovluqlarını göstər</string>
     <string name="settings_music_directory_summary">Aktiv olduqda musiqi qovluqları bölməsini göstərir. Qovluqlar arasında keçidin düzgün işləməsi üçün server bu funksiyanı dəstəkləməlidir.</string>
     <string name="settings_music_library">Musiqi kitabxanası</string>
@@ -114,7 +107,6 @@
     <string name="settings_replay_gain_prevent_clipping_title">Siqnalın kəsilməsinin qarşısını al</string>
     <string name="settings_rounded_corner">Yuvarlaq künclər</string>
     <string name="settings_rounded_corner_size">Künclərin ölçüsü</string>
-    <string name="settings_rounded_corner_size_summary">Əyrilik bucağının ölçüsünü təyin edir.</string>
     <string name="settings_rounded_corner_summary">Aktiv olduqda göstərilən bütün üz qabıqlarının künclərini yuvarlaqlaşdırır. Dəyişikliklər yenidən başladıqdan sonra qüvvəyə minəcək.</string>
     <string name="settings_scan_result">Taranır: %1$d mahnı sayılır</string>
     <string name="settings_scan_title">Kitabxananı tara</string>
@@ -122,8 +114,6 @@
     <string name="settings_search_hint">Parametrlərdə axtar</string>
     <string name="settings_set_download_folder">Yükləmə qovluğunu təyin et</string>
     <string name="settings_share_title">Musiqi paylaşımını aktivləşdir</string>
-    <string name="settings_show_mini_shuffle_button">Qarışdır düyməsini göstər</string>
-    <string name="settings_show_mini_shuffle_button_summary">Aktiv olduqda kiçik pleyerdə ürək işarəsinin yerinə qarışdır düyməsini göstərir</string>
     <string name="settings_song_preload_buffer">Mahnının əvvəlcədən yükləmə buferi</string>
     <string name="settings_song_preload_buffer_summary">Cari dəyər: %1$s\nDəyişikliyin qüvvəyə minməsi üçün tətbiqi əl ilə yenidən başlatmalısınız.</string>
     <string name="settings_song_rating">Mahnının ulduz qiymətini göstər</string>
@@ -131,7 +121,6 @@
     <string name="settings_streaming_cache_size">Yayım keşinin ölçüsü</string>
     <string name="settings_streaming_cache_storage_title">Yayım keşinin yaddaşı</string>
     <string name="settings_sub_summary_scrobble">Dinləmə tarixçəsinin göndərilməsi üçün serverin də bu məlumatları qəbul etməsi aktivləşdirilməlidir.</string>
-    <string name="settings_summary_landscape_items_per_row">Bütün albom və ifaçı siyahılarına tətbiq olunur. Standart dəyər 4-dür</string>
     <string name="settings_summary_loudness">Səs cihazlarının (məsələn, səsgücləndiricilərin) səs səviyyəsini düzəltməyə imkan verir.\n\nSiqnalın kəsilməsinin qarşısını alan funksiya ilə ziddiyyət yaranmaması üçün ReplayGain dəyərinin -6 olması tövsiyə edilir.</string>
     <string name="settings_summary_replay_gain">Mahnıların səs səviyyəsini bərabərləşdirir. Fayllarda lazımi metaməlumatlar olmalıdır.</string>
     <string name="settings_summary_scrobble">Dinləmə tarixçəsinin göndərilməsi cihazınızın dinlədiyiniz mahnılar haqqında məlumatı musiqi serverinə ötürməsinə imkan verir. Bu məlumat musiqi zövqünüzə uyğun fərdi tövsiyələr hazırlamağa kömək edir.</string>
@@ -141,7 +130,6 @@
     <string name="settings_summary_syncing">Bu istifadəçinin səsləndirmə növbəsinin vəziyyətini qaytarır. Buraya növbədəki mahnılar, hazırda səsləndirilən mahnı və həmin mahnıdakı mövqe daxildir. Server bu funksiyanı dəstəkləməlidir.\n*Bu parametr bütün server və cihazlarda 100% işləmir.</string>
     <string name="settings_summary_transcoding">Transkodlaşdırma rejiminə üstünlük verilir. \"Birbaşa səsləndirmə\" seçilərsə, faylın bitreyti dəyişməyəcək.</string>
     <string name="settings_summary_transcoding_download">Transkodlaşdırılmış medianı yükləyir. Aktiv olduqda yükləmə son nöqtəsinin əvəzinə aşağıdakı parametrlər istifadə olunacaq. \n\n \"Yükləmələr üçün transkodlaşdırma formatı\" olaraq \"Birbaşa yükləmə\" seçilərsə, faylın bitreyti dəyişməyəcək.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">Fayl səsləndirmə zamanı transkodlaşdırıldıqda tətbiq adətən mahnının müddətini göstərmir. Bu funksiyanı dəstəkləyən serverlərdən səsləndirilən mahnının təxmini müddətini istəmək mümkündür, lakin cavab daha gec gələ bilər.</string>
     <string name="settings_support_summary">İcma müzakirələrinə və dəstəyə qoşul</string>
     <string name="settings_support_title">İstifadəçi dəstəyi</string>
     <string name="settings_sync_starred_albums_for_offline_use_summary">Aktiv olduqda ulduzlu albomlar oflayn istifadə üçün yüklənəcək.</string>
@@ -162,22 +150,17 @@
     <string name="settings_title_misc">Digər</string>
     <string name="settings_title_players">Pleyerlər</string>
     <string name="settings_title_playlist">Pleylist</string>
-    <string name="settings_title_rating">Qiymətləndirmə</string>
     <string name="settings_title_replay_gain">ReplayGain</string>
     <string name="settings_title_scrobble">Dinləmə tarixçəsinin göndərilməsi</string>
     <string name="settings_title_share">Paylaşım</string>
     <string name="settings_title_skip_min_star_rating">Mahnıları qiymətinə görə ötür</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Bu qiymətə malik mahnılar:</string>
     <string name="settings_title_sound">Səs</string>
     <string name="settings_title_syncing">Sinxronlaşdırma</string>
     <string name="settings_title_transcoding">Transkodlaşdırma</string>
     <string name="settings_title_transcoding_download">Transkodlaşdırılaraq yükləmə</string>
     <string name="settings_title_ui">İnterfeys</string>
-    <string name="settings_title_ui_landscape_items_per_row">Üfüqi görünüşdə hər sətirdəki element sayı</string>
-    <string name="settings_title_ui_landscape_items_per_row_dialog">Hər sətirdəki element sayı</string>
     <string name="settings_track_number">Mahnı nömrəsini göstər</string>
     <string name="settings_track_number_summary">Aktiv olduqda səsləndirilən mahnının nömrəsini göstərir.</string>
-    <string name="settings_transcoded_download">Transkodlaşdırılmış yükləmə</string>
     <string name="settings_version_title">Versiya</string>
     <string name="settings_wifi_only_summary">Mobil şəbəkə üzərindən yayımdan əvvəl istifadəçidən təsdiq istəyir.</string>
     <string name="settings_wifi_only_title">Yalnız Wi-Fi ilə yayım xəbərdarlığı</string>

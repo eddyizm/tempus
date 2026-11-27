@@ -20,14 +20,10 @@
     <string name="radio_search_add">Gehitu</string>
     <string name="radio_search_button">Bilatu</string>
     <string name="radio_search_country_hint">Herrialdea</string>
-    <string name="radio_search_dialog_title">Irrati-direktorioan bilatu</string>
-    <string name="radio_search_directory_button">Direktorioa</string>
-    <string name="radio_search_duplicate">Irratia jadanik badago</string>
     <string name="radio_search_empty_query">Idatzi irratiaren izena</string>
     <string name="radio_search_error">Bilaketak huts egin du: %s</string>
     <string name="radio_search_hint">Irratiaren izena</string>
     <string name="radio_search_no_results">Ez da irratirik aurkitu</string>
-    <string name="radio_search_station_added">Irratia lokalean gehitu da</string>
     <string name="radio_search_use">Erabili</string>
     <string name="radio_station_info_empty_button">Sakatu atala ezkutatzeko\nEfektuak berrabiaraztean ikusiko dira</string>
     <string name="radio_station_info_empty_subtitle">Irrati-uhin bat gehitzen duzunean, hemen aurkituko duzu</string>

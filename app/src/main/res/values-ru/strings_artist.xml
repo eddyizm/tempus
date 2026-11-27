@@ -10,15 +10,12 @@
     <string name="artist_bottom_sheet_shuffle">Перемешать</string>
     <string name="artist_catalogue_title">Исполнители</string>
     <string name="artist_catalogue_title_expanded">Обзор исполнителей</string>
-    <string name="artist_error_retrieving_radio">Ошибка получения радио</string>
-    <string name="artist_error_retrieving_tracks">Ошибка получения треков</string>
     <string name="artist_list_page_downloaded">Скачанные исполнители</string>
     <string name="artist_list_page_starred">Избранные исполнители</string>
     <string name="artist_list_page_title">Исполнители</string>
     <string name="artist_no_artist_info_toast">Нет доп. информации</string>
     <string name="artist_page_radio_button">Радио</string>
     <string name="artist_page_shuffle_button">Перемешать</string>
-    <string name="artist_page_switch_layout_button">Сменить вид</string>
     <string name="artist_page_title_album_more_like_this_button">Похожие</string>
     <string name="artist_page_title_album_section">Альбомы</string>
     <string name="artist_page_title_appears_on_section">Участие в альбомах</string>

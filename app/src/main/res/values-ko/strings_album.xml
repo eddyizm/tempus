@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">최근 재생한 앨범</string>
     <string name="album_list_page_starred">즐겨찾기한 앨범</string>
     <string name="album_list_page_title">앨범</string>
-    <string name="album_page_extra_info_button">유사항목 더 보기</string>
     <string name="album_page_play_button">재생</string>
     <string name="album_page_release_date_label">%1$s에 발매됨</string>
     <string name="album_page_release_dates_label">%1$s에 발매, %2$s에 최초 발매됨</string>

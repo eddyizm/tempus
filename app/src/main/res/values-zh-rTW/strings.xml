@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Tempus 資源連結</string>
     <string name="asset_link_copied_toast">已將 %1$s 複製到剪貼簿</string>
-    <string name="asset_link_debug_toast">資源連結：%1$s</string>
     <string name="asset_link_error_album">無法開啟該專輯</string>
     <string name="asset_link_error_artist">無法開啟該藝術家頁</string>
     <string name="asset_link_error_playlist">無法開啟該播放清單</string>
@@ -42,9 +41,6 @@
     <string name="connection_alert_dialog_summary">已限制通過 Wi-Fi 以外的連接存取 Subsonic 伺服器。 欲阻止此警告對話框再次出現，請在應用程式設定中禁用連接檢查。</string>
     <string name="connection_alert_dialog_title">Wi-Fi 網路未連接</string>
 
-    <!-- Content Description -->
-    <string name="content_description_shuffle_button">隨機</string>
-
     <!-- Delete Download Storage Dialog -->
     <string name="delete_download_storage_dialog_negative_button">取消</string>
     <string name="delete_download_storage_dialog_positive_button">繼續</string>
@@ -66,7 +62,6 @@
     <string name="download_directory_set">設定歌曲下載位置</string>
     <string name="download_info_empty_subtitle">下載歌曲後，您可以在這裡找到它</string>
     <string name="download_info_empty_title">還沒有下載！</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s • %2$s 個項目</string>
     <string name="download_item_single_subtitle_formatter">%1$s 個項目</string>
     <string name="download_refresh_button_content_description">刷新下載項</string>
     <string name="download_refresh_no_changes">沒有遺漏的下載項。</string>
@@ -102,7 +97,6 @@
 
     <!-- Error -->
     <string name="error_required">必需</string>
-    <string name="error_server_prefix">必須是 http 或 https 前綴</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">取消收藏</string>
@@ -166,7 +160,6 @@
     <!-- Search -->
     <string name="search_description_empty_response">我們檢查了您的伺服器回應，但它是空的。</string>
     <string name="search_hint">搜尋標題、藝術家或專輯</string>
-    <string name="search_info_minimum_characters">輸入至少三個字符</string>
     <string name="search_sort_summary">啟用後將按時間排序搜尋，關閉則按名稱排序。</string>
     <string name="search_sort_title">按時間排序最近搜尋</string>
     <string name="search_title_album">專輯</string>
@@ -250,7 +243,6 @@
     <string name="track_info_bitrate">位元率</string>
     <string name="track_info_content_type">內容類型</string>
     <string name="track_info_dialog_positive_button">確定</string>
-    <string name="track_info_dialog_title">歌曲資訊</string>
     <string name="track_info_disc_number">碟片編號</string>
     <string name="track_info_duration">持續時間</string>
     <string name="track_info_genre">流派</string>

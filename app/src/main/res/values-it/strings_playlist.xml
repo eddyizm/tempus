@@ -8,17 +8,12 @@
     <string name="playlist_chooser_dialog_empty">Nessuna playlist creata</string>
     <string name="playlist_chooser_dialog_title">Aggiungi a una playlist</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Impossibile aggiungere un brano alla playlist</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Aggiunta di un brano alla playlist</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Tutte le canzoni sono state saltate perché duplicate</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Impossibile rimuovere la canzone dalla playlist</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Canzone rimossa dalla playlist</string>
-    <string name="playlist_chooser_dialog_visibility_private">Privato</string>
-    <string name="playlist_chooser_dialog_visibility_public">Pubblico</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Attivando questa opzione, la playlist diventa pubblica. Lasciandola inalterata, la visibilità della playlist non cambia.</string>
     <string name="playlist_counted_tracks">%1$d brani • %2$s</string>
     <string name="playlist_details_dialog_title">Dettagli playlist</string>
     <string name="playlist_duration">Durata  •  %1$s</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Premi a lungo per eliminare</string>
     <string name="playlist_editor_dialog_action_save_empty">Una playlist deve avere almeno un brano</string>
     <string name="playlist_editor_dialog_hint_name">Nome della playlist</string>
     <string name="playlist_editor_dialog_negative_button">Annulla</string>

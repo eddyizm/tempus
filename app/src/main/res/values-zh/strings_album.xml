@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">最近播放的专辑</string>
     <string name="album_list_page_starred">收藏的专辑</string>
     <string name="album_list_page_title">专辑</string>
-    <string name="album_page_extra_info_button">更多相似</string>
     <string name="album_page_play_button">播放</string>
     <string name="album_page_release_date_label">发行日期：%1$s</string>
     <string name="album_page_release_dates_label">发行日期：%1$s（原版发行于 %2$s）</string>

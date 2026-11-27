@@ -9,12 +9,8 @@
     <string name="playlist_chooser_dialog_empty">Keine Wiedergabelisten erstellt</string>
     <string name="playlist_chooser_dialog_title">Zu Wiedergabeliste hinzufügen</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Titel konnten nicht zu Wiedergabeliste hinzugefügt werden</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Titel zu Wiedergabeliste hinzugefügt</string>
-    <string name="playlist_chooser_dialog_toast_all_skipped">Alle Titel als Duplikate übersprungen</string>
     <string name="playlist_chooser_dialog_toast_remove_failure">Titel konnte nicht aus Wiedergabeliste entfernt werden</string>
     <string name="playlist_chooser_dialog_toast_remove_success">Titel aus Wiedergabeliste entfernt</string>
-    <string name="playlist_chooser_dialog_visibility_private">Privat</string>
-    <string name="playlist_chooser_dialog_visibility_public">Öffentlich</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Wenn diese Option aktiviert ist, wird die Wiedergabeliste öffentlich. Wenn sie in Ruhe gelassen wird, ändert sich die Sichtbarkeit der Wiedergabeliste nicht.</string>
     <string name="playlist_chooser_dialog_visibility_switch_label">Wiedergabeliste als öffentlich markieren</string>
     <string name="playlist_counted_tracks">%1$d Titel •  %2$s</string>
@@ -22,7 +18,6 @@
     <string name="playlist_duration">Laufzeit  •  %1$s</string>
     <string name="playlist_editor_dialog_action_delete_failure">Wiedergabeliste konnte nicht gelöscht werden</string>
     <string name="playlist_editor_dialog_action_delete_success">Wiedergabeliste gelöscht</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Halten um zu löschen</string>
     <string name="playlist_editor_dialog_action_save_empty">Eine Wiedergabeliste muss mindestens einen Titel enthalten</string>
     <string name="playlist_editor_dialog_action_save_failure">Wiedergabeliste konnte nicht gespeichert werden</string>
     <string name="playlist_editor_dialog_action_save_success">Wiedergabeliste gespeichert</string>

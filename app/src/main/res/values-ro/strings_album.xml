@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Albume redate recent</string>
     <string name="album_list_page_starred">Albume marcate</string>
     <string name="album_list_page_title">Albume</string>
-    <string name="album_page_extra_info_button">Mai mult ca aceasta</string>
     <string name="album_page_play_button">Redare</string>
     <string name="album_page_release_date_label">Lansat pe %1$s</string>
     <string name="album_page_release_dates_label">Lansat pe %1$s, inițial %2$s</string>

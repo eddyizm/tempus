@@ -8,12 +8,8 @@
     <string name="player_lyrics_download_success">S\'han desat les lletres per a la reproducció fora de línia.</string>
     <string name="player_lyrics_downloaded_content_description">Lletres baixades per a la reproducció fora de línia</string>
     <string name="player_playback_speed">%1$.2fx</string>
-    <string name="player_queue_clean_all_button">Esborra la cua de reproducció</string>
     <string name="player_queue_load_queue">Carrega la cua</string>
-    <string name="player_queue_save_queue_success">S\'ha desat la cua de reproducció</string>
     <string name="player_queue_save_to_playlist">Desa la cua en una llista de reproducció</string>
-    <string name="player_server_priority">Prioritat dels servidors</string>
     <string name="player_transcoding">Transcodificació</string>
-    <string name="player_transcoding_requested">sol·licitat</string>
     <string name="player_unknown_format">Format desconegut</string>
 </resources>

@@ -18,7 +18,6 @@
     <string name="player_overflow_menu_add_to_playlist">Zerrendara gehitu</string>
     <string name="player_playback_speed">%1$.2fx</string>
     <string name="player_queue_all_downloaded">Abesti guztiak deskargatuta daude dagoeneko</string>
-    <string name="player_queue_clean_all_button">Erreprodukzio-ilara garbitu</string>
     <string name="player_queue_clear">Garbitu</string>
     <string name="player_queue_download_all">Denak deskargatu</string>
     <string name="player_queue_downloaded">Deskargatuak</string>
@@ -43,7 +42,6 @@
     <string name="player_queue_playing_next">Hurrengoak</string>
     <string name="player_queue_remove">Ilaratik kendu</string>
     <string name="player_queue_reorder">Berrordenatu</string>
-    <string name="player_queue_save_queue_success">Erreprodukzio-ilara gorde da</string>
     <string name="player_queue_save_to_playlist">Ilara zerrenda gisa gorde</string>
     <string name="player_queue_shuffle_upcoming">Hurrengoak nahastu</string>
     <plurals name="player_queue_song_count">
@@ -51,8 +49,6 @@
         <item quantity="other">%d abesti</item>
     </plurals>
     <string name="player_queue_starred">Gogokoak</string>
-    <string name="player_server_priority">Zerbitzariaren lehentasuna</string>
     <string name="player_transcoding">Transkodetzen</string>
-    <string name="player_transcoding_requested">eskatua</string>
     <string name="player_unknown_format">Formatu ezezaguna</string>
 </resources>

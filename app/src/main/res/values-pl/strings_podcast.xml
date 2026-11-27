@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Podcasty nie są obsługiwane przez ten serwer.</string>
     <string name="podcast_channel_page_title_description_section">Opis</string>
     <string name="podcast_channel_page_title_episode_section">Odcinki</string>
-    <string name="podcast_channel_page_title_no_episode_available">Brak dostępnych odcinków</string>
     <string name="podcast_episode_download_request_snackbar">Twoje zapytanie zostało wysłane do serwera</string>
     <string name="podcast_info_empty_button">Naciśnij aby ukryć tę sekcję\nEfekty będą widoczne po restarcie</string>
     <string name="podcast_info_empty_subtitle">Gdy dodasz kanał, znajdziesz go tutaj</string>

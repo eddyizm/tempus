@@ -209,31 +209,5 @@
         <item>otomatik</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Format dönüştürme yapma</item>
-        <item>Sunucu ayarları</item>
-        <item>Wi-fi dönüştürme ayarları</item>
-        <item>Mobil dönüştürme formatı</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>En az 0 yıldız</item>
-        <item>En az 1 yıldız</item>
-        <item>En az 2 yıldız</item>
-        <item>En az 3 yıldız</item>
-        <item>En az 4 yıldız</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
 </resources>

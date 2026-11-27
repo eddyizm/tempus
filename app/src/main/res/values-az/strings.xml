@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Tempus element keçidi</string>
     <string name="asset_link_copied_toast">Buferə köçürüldü: %1$s</string>
-    <string name="asset_link_debug_toast">Element keçidi: %1$s</string>
     <string name="asset_link_error_album">Albomu açmaq mümkün olmadı</string>
     <string name="asset_link_error_artist">İfaçını açmaq mümkün olmadı</string>
     <string name="asset_link_error_playlist">Pleylisti açmaq mümkün olmadı</string>
@@ -32,9 +31,8 @@
     <string name="battery_optimization_neutral_button">Bir daha soruşma</string>
     <string name="battery_optimization_positive_button">Söndür</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Ani qarışıq hazırlanır...</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Subsonic serverindən mahnıları almaq mümkün olmadı.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Yüklənir…</string>
@@ -46,9 +44,8 @@
     <string name="connection_alert_dialog_summary">Wi-Fi xaricindəki şəbəkələrdən Subsonic serverinə giriş məhdudlaşdırılıb. Bu xəbərdarlığın yenidən görünməməsi üçün tətbiqin parametrlərində şəbəkə yoxlamasını söndürün.</string>
     <string name="connection_alert_dialog_title">Wi-Fi şəbəkəsinə qoşulmayıb</string>
 
-    <!-- Content Description -->
+    <!-- Content -->
     <string name="content_description_more_options">Əlavə seçimlər</string>
-    <string name="content_description_shuffle_button">Qarışdır</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus qəza ilə dayandı.</string>
@@ -74,7 +71,6 @@
     <string name="download_directory_set">Musiqinin yüklənəcəyi yeri təyin et</string>
     <string name="download_info_empty_subtitle">Mahnı yüklədikdən sonra onu burada görəcəksiniz</string>
     <string name="download_info_empty_title">Hələ yükləmə yoxdur!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s element</string>
     <string name="download_item_single_subtitle_formatter">%1$s element</string>
     <string name="download_refresh_button_content_description">Yüklənmiş elementləri yenilə</string>
     <string name="download_refresh_no_changes">Çatışmayan yükləmə tapılmadı.</string>
@@ -110,15 +106,11 @@
 
     <!-- Error -->
     <string name="error_required">Tələb olunur</string>
-    <string name="error_server_prefix">http və ya https prefiksi tələb olunur</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Sevimlilərdən çıxar</string>
     <string name="exo_controls_heart_on_description">Sevimlilərə əlavə et</string>
     <string name="exo_download_notification_channel_name">Yükləmələr</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Sevimli</string>
 
     <!-- Filter -->
     <string name="filter_artist">İfaçıları süzgəcdən keçir</string>
@@ -181,7 +173,6 @@
     <string name="notification_downloading_progress">Yüklənir…</string>
     <string name="notification_downloading_title">Yüklənir: %1$s</string>
     <string name="notification_downloads_complete">Yükləmələr tamamlandı</string>
-    <string name="notification_finalizing">Yekunlaşdırılır…</string>
     <string name="notification_processing">Emal edilir…</string>
     <plurals name="notification_tracks_downloaded">
         <item quantity="one">1 mahnı yükləndi</item>
@@ -207,7 +198,6 @@
     <string name="search_all_songs_play">Səsləndir: %1$s</string>
     <string name="search_description_empty_response">Serverin cavabı yoxlanıldı, lakin boş idi.</string>
     <string name="search_hint">Ad, ifaçı və ya albom axtar</string>
-    <string name="search_info_minimum_characters">Ən azı üç simvol daxil edin</string>
     <string name="search_sort_summary">Aktiv olduqda axtarışları tarixə görə sıralayır. Söndürüldükdə ada görə sıralayır.</string>
     <string name="search_sort_title">Son axtarışları tarixə görə sırala</string>
     <string name="search_title_album">Albomlar</string>
@@ -318,7 +308,6 @@
     <string name="track_info_bitrate">Bitreyt</string>
     <string name="track_info_content_type">Məzmun növü</string>
     <string name="track_info_dialog_positive_button">Oldu</string>
-    <string name="track_info_dialog_title">Mahnı məlumatları</string>
     <string name="track_info_disc_number">Disk nömrəsi</string>
     <string name="track_info_duration">Müddət</string>
     <string name="track_info_genre">Janr</string>

@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Link zasobu Tempus</string>
     <string name="asset_link_copied_toast">Skopiowano %1$s do schowka</string>
-    <string name="asset_link_debug_toast">Link zasobu: %1$s</string>
     <string name="asset_link_error_album">Album nie mógł zostać otwarty</string>
     <string name="asset_link_error_artist">Wykonawca nie mógł zostać otwarty</string>
     <string name="asset_link_error_playlist">Playlista nie mogła zostać otwarta</string>
@@ -32,9 +31,8 @@
     <string name="battery_optimization_neutral_button">Nie pytaj ponownie</string>
     <string name="battery_optimization_positive_button">Wyłącz</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Generowanie natychmiastowego mixu...</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Nie udało się pobrać utworów z serwera subsonic.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Ładowanie…</string>
@@ -46,9 +44,8 @@
     <string name="connection_alert_dialog_summary">Dostęp do serwera Subsonic na połaczeniach innych niż Wi-Fi został ograniczony. Aby zapobiec ponownemu pojawieniu się tej informacji, wyłącz sprawdzanie połączenia w ustawieniach aplikacji.</string>
     <string name="connection_alert_dialog_title">Nie połączono z Wi-Fi</string>
 
-    <!-- Content Description -->
+    <!-- Content -->
     <string name="content_description_more_options">Więcej opcji</string>
-    <string name="content_description_shuffle_button">Odtwarzanie losowe</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus przestał działać.</string>
@@ -73,7 +70,6 @@
     <string name="download_directory_dialog_title">Pobierz utwory</string>
     <string name="download_info_empty_subtitle">Gdy pobierzesz piosenkę, znajdziesz ją tutaj</string>
     <string name="download_info_empty_title">Narazie brak pobranych!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s elementów</string>
     <string name="download_item_single_subtitle_formatter">%1$s element</string>
     <string name="download_refresh_no_changes">Nie znaleziono brakujących pobrań.</string>
     <string name="download_refresh_no_directory">Ustaw folder pobierania do odświeżania twoich pobrań.</string>
@@ -111,15 +107,11 @@
     <!-- Error -->
     <string name="error_custom_headers_invalid">Nieprawidłowy nagłówek na linii %1$s. Użyj Nazwa: wartość</string>
     <string name="error_required">Wymagane</string>
-    <string name="error_server_prefix">wymagany jest prefiks http lub https</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Wyłącz serce</string>
     <string name="exo_controls_heart_on_description">Włącz serce</string>
     <string name="exo_download_notification_channel_name">Pobieranie</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Polub</string>
 
     <!-- Filter -->
     <string name="filter_artist">Filtruj wykonawców</string>
@@ -186,7 +178,6 @@
     <string name="notification_downloading_progress">Pobieranie…</string>
     <string name="notification_downloading_title">Trwa pobieranie %1$s</string>
     <string name="notification_downloads_complete">Pobierania ukończone</string>
-    <string name="notification_finalizing">Kończenie…</string>
     <string name="notification_processing">Przetwarzanie…</string>
     <plurals name="notification_tracks_downloaded">
             <item quantity="one">Pobrano 1  utwór</item>
@@ -218,7 +209,6 @@
     <string name="search_all_songs_play">Odtwórz %1$s</string>
     <string name="search_description_empty_response">Sprawdziliśmy odpowiedź twojego serwera, ale była pusta.</string>
     <string name="search_hint">Wyszukaj tytuł, wykonawców lub albumy</string>
-    <string name="search_info_minimum_characters">Wpisz co najmniej trzy znaki</string>
     <string name="search_sort_summary">Jeżeli włączone, sortuje wyszukiwania chronologicznie. Sortuje po naziwe jeżeli wyłączone.</string>
     <string name="search_sort_title">Sortuj ostatnie wyszukiwania chronologicznie</string>
     <string name="search_title_album">Albumy</string>
@@ -334,7 +324,6 @@
     <string name="track_info_bitrate">Bitrate</string>
     <string name="track_info_content_type">Typ Treści</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Informacje o utworze</string>
     <string name="track_info_disc_number">Numer płyty</string>
     <string name="track_info_duration">Długość</string>
     <string name="track_info_genre">Gatunek</string>

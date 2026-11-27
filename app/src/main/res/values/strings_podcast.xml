@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Podcasts are not supported by this server.</string>
     <string name="podcast_channel_page_title_description_section">Description</string>
     <string name="podcast_channel_page_title_episode_section">Episodes</string>
-    <string name="podcast_channel_page_title_no_episode_available">No episodes available</string>
     <string name="podcast_episode_download_request_snackbar">Your request has been sent to the server</string>
     <string name="podcast_info_empty_button">Click to hide the section\nThe effects will be visible on restart</string>
     <string name="podcast_info_empty_subtitle">Once you add a channel, you\'ll find it here</string>

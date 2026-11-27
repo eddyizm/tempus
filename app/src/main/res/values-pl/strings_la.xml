@@ -17,13 +17,11 @@
     <string name="la_perms_notifications_title">Powiadomienia</string>
     <string name="la_perms_status_not_provided">Poproś</string>
     <string name="la_perms_status_provided">Udzielone</string>
-    <string name="la_perms_title">Poproś o uprawnienia</string>
     <string name="la_server_button_create">Utwórz</string>
     <string name="la_server_button_delete">Usuń</string>
     <string name="la_server_button_login">Przejdź do logowania</string>
     <string name="la_server_button_test">Testuj</string>
     <string name="la_server_button_update">Uaktualnij</string>
-    <string name="la_server_dropdown_add_new">Dodaj nowy serwer</string>
     <string name="la_server_field_plaintext_password_checkbox">Hasło jako zwykłý tekst</string>
     <string name="la_server_field_server_cert">Certyfikat klienta (opcjonalny)</string>
     <string name="la_server_field_server_empty_error">Wymagane pole</string>
@@ -37,8 +35,6 @@
     <string name="la_server_switch_cert">Certyfikat klienta (mTLS)</string>
     <string name="la_server_switch_headers">Niestandardowe nagłówki HTTP</string>
     <string name="la_server_switch_local_url">Ustaw lokalny adres URL</string>
-    <string name="la_server_switch_plaintext_password">Hasło jako zwykły tekst (stare serwery)</string>
-    <string name="la_server_title">Konfiguracja serwera</string>
     <string name="la_server_toast_connection_error">Błąd sieci:</string>
     <string name="la_server_toast_connection_failure">Niepowodzenie: Nieprawidłowy serwer, adres URL, lub dane logowania</string>
     <string name="la_server_toast_connection_success">Połączono pomyślnie!</string>
@@ -50,9 +46,7 @@
     <string name="la_tab_permission">Uprawnienia</string>
     <string name="la_tab_server">Serwery</string>
     <string name="la_tab_themes">Motywy</string>
-    <string name="la_theme_button_return">Wróć</string>
     <string name="la_theme_card_coral_red_description">Koralowa czerwień kolor akcentu</string>
-    <string name="la_theme_card_default">Domyślny</string>
     <string name="la_theme_card_emerald_green_description">Szmaragdowa zieleń kolor akcentu</string>
     <string name="la_theme_card_flirt_red_description">Czerwony kolor akcentu</string>
     <string name="la_theme_card_purple_violet_description">Fioletowy kolor akcentu</string>

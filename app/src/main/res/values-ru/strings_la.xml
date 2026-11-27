@@ -17,13 +17,11 @@
     <string name="la_perms_notifications_title">Уведомления</string>
     <string name="la_perms_status_not_provided">Запросить</string>
     <string name="la_perms_status_provided">Предоставлено</string>
-    <string name="la_perms_title">Запрос разрешений</string>
     <string name="la_server_button_create">Создать</string>
     <string name="la_server_button_delete">Удалить</string>
     <string name="la_server_button_login">Ко входу</string>
     <string name="la_server_button_test">Тест</string>
     <string name="la_server_button_update">Обновить</string>
-    <string name="la_server_dropdown_add_new">Добавить новый сервер</string>
     <string name="la_server_field_plaintext_password_checkbox">Передавать пароль открытым текстом</string>
     <string name="la_server_field_server_cert">Клиентский сертификат (опц.)</string>
     <string name="la_server_field_server_empty_error">Обязательное поле</string>
@@ -35,8 +33,6 @@
     <string name="la_server_field_server_user">Логин</string>
     <string name="la_server_switch_cert">Клиентский сертификат (mTLS)</string>
     <string name="la_server_switch_local_url">Указать локальный URL</string>
-    <string name="la_server_switch_plaintext_password">Передавать пароль открытым текстом (для старых серверов)</string>
-    <string name="la_server_title">Настройка сервера</string>
     <string name="la_server_toast_connection_error">Ошибка сети:</string>
     <string name="la_server_toast_connection_failure">Ошибка: неверный сервер, URL или учётные данные</string>
     <string name="la_server_toast_connection_success">Успешно подключено!</string>
@@ -48,9 +44,7 @@
     <string name="la_tab_permission">Разрешения</string>
     <string name="la_tab_server">Серверы</string>
     <string name="la_tab_themes">Темы</string>
-    <string name="la_theme_button_return">На главную</string>
     <string name="la_theme_card_coral_red_description">Акцент: коралловый красный</string>
-    <string name="la_theme_card_default">По умолчанию</string>
     <string name="la_theme_card_emerald_green_description">Акцент: изумрудно-зелёный</string>
     <string name="la_theme_card_flirt_red_description">Акцент: кокетливый красный</string>
     <string name="la_theme_card_purple_violet_description">Акцент: пурпурный</string>

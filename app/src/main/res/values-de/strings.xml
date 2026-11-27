@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Tempus-Inhaltslink</string>
     <string name="asset_link_copied_toast">%1$s in Zwischenablage kopiert</string>
-    <string name="asset_link_debug_toast">Inhaltslink: %1$s</string>
     <string name="asset_link_error_album">Album konnte nicht geöffnet werden</string>
     <string name="asset_link_error_artist">Interpret konnte nicht geöffnet werden</string>
     <string name="asset_link_error_playlist">Wiedergabeliste konnte nicht geöffnet werden</string>
@@ -32,9 +31,8 @@
     <string name="battery_optimization_neutral_button">Nicht mehr fragen</string>
     <string name="battery_optimization_positive_button">Deaktivieren</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Erstelle Sofort-Mix…</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Titel konnten nicht vom Server abgerufen werden.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Laden…</string>
@@ -46,9 +44,8 @@
     <string name="connection_alert_dialog_summary">Zugriff auf den Server ohne aktive WLAN-Verbindung wurde eingeschränkt. Um diesen Warnhinweis nicht erneut anzuzeigen, deaktiviere die Verbindungsprüfung in den App-Einstellungen.</string>
     <string name="connection_alert_dialog_title">Nicht mit WLAN verbunden</string>
 
-    <!-- Content Description -->
+    <!-- Content -->
     <string name="content_description_more_options">Weitere Optionen</string>
-    <string name="content_description_shuffle_button">Zufall</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus ist abgestürzt.</string>
@@ -74,7 +71,6 @@
     <string name="download_directory_set">Speicherort festlegen</string>
     <string name="download_info_empty_subtitle">Hier erscheinen Lieder, die du heruntergeladen hast!</string>
     <string name="download_info_empty_title">Noch nichts heruntergeladen!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s Elemente</string>
     <string name="download_item_single_subtitle_formatter">%1$s Elemente</string>
     <string name="download_refresh_button_content_description">Downloads aktualisieren</string>
     <string name="download_refresh_no_changes">Keine fehlenden Downloads gefunden.</string>
@@ -110,15 +106,11 @@
 
     <!-- Error -->
     <string name="error_required">Erforderlich</string>
-    <string name="error_server_prefix">Adresse muss mit http oder https beginnen</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Herz ausschalten</string>
     <string name="exo_controls_heart_on_description">Herz einschalten</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Favorit</string>
 
     <!-- Filter -->
     <string name="filter_artist">Interpreten filtern</string>
@@ -185,7 +177,6 @@
     <string name="notification_downloading_progress">Wird heruntergeladen…</string>
     <string name="notification_downloading_title">%1$s wird heruntergeladen</string>
     <string name="notification_downloads_complete">Downloads abgeschlossen</string>
-    <string name="notification_finalizing">Wird abgeschlossen…</string>
     <string name="notification_processing">Wird verarbeitet…</string>
     <plurals name="notification_tracks_downloaded">
         <item quantity="one">1 Titel heruntergeladen</item>
@@ -211,7 +202,6 @@
     <string name="search_all_songs_play">Spiele %1$s</string>
     <string name="search_description_empty_response">Wir haben Ihre Serverantwort überprüft, aber sie war leer.</string>
     <string name="search_hint">Suche nach Titel, Interpreten oder Alben</string>
-    <string name="search_info_minimum_characters">Mindestens drei Zeichen eingeben</string>
     <string name="search_sort_summary">Sortiert Suchanfragen chronologisch, statt alphabetisch</string>
     <string name="search_sort_title">Suchanfragen chronologisch sortieren</string>
     <string name="search_title_album">Alben</string>
@@ -336,7 +326,6 @@
     <string name="track_info_bitrate">Bitrate</string>
     <string name="track_info_content_type">Inhaltstyp</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Titelinformationen</string>
     <string name="track_info_disc_number">CD-Nummer</string>
     <string name="track_info_duration">Dauer</string>
     <string name="track_info_genre">Genre</string>

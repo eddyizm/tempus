@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Den här servern stöder inte poddar.</string>
     <string name="podcast_channel_page_title_description_section">Beskrivning</string>
     <string name="podcast_channel_page_title_episode_section">Avsnitt</string>
-    <string name="podcast_channel_page_title_no_episode_available">Inga avsnitt tillgängliga</string>
     <string name="podcast_episode_download_request_snackbar">Din begäran har skickats till servern</string>
     <string name="podcast_info_empty_button">Tryck för att dölja sektionen\nÄndringen syns efter omstart</string>
     <string name="podcast_info_empty_subtitle">När du har lagt till en kanal hittar du den här</string>

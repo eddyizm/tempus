@@ -210,31 +210,5 @@
         <item>auto</item>
     </string-array>
 
-    <string-array name="transcoded_download_option_list_titles">
-        <item>Nu transcodaţi</item>
-        <item>Setări server</item>
-        <item>Format transcodare Wi-Fi</item>
-        <item>Format transcodare mobil</item>
-    </string-array>
-    <string-array name="transcoded_download_option_list_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
 
-    <string-array name="skip_min_star_rating_titles">
-        <item>0 stele minim</item>
-        <item>1 stea minim</item>
-        <item>2 stele minim</item>
-        <item>3 stele minim</item>
-        <item>4 stele minim</item>
-    </string-array>
-    <string-array name="skip_min_star_rating_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-    </string-array>
 </resources>

@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Lien ressource Tempus</string>
     <string name="asset_link_copied_toast">%1$s ressource(s) copiée(s) dans le presse-papier</string>
-    <string name="asset_link_debug_toast">Lien ressource : %1$s</string>
     <string name="asset_link_error_album">Échec d\'accès à l\'album</string>
     <string name="asset_link_error_artist">Échec d\'accès à l\'artiste</string>
     <string name="asset_link_error_playlist">Échec d\'accès à la playlist</string>
@@ -32,9 +31,8 @@
     <string name="battery_optimization_neutral_button">Ne pas me redemander</string>
     <string name="battery_optimization_positive_button">Désactiver</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Génération du mix instantané…</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Échec de récupération de pistes du serveur Subsonic.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Chargement…</string>
@@ -45,9 +43,6 @@
     <string name="connection_alert_dialog_positive_button">OK</string>
     <string name="connection_alert_dialog_summary">L\'accès au serveur Subsonic sur des connexions autres que le Wi-Fi a été bloqué. Pour empêcher cette alerte de réapparaître, désactiver la vérification de la connexion dans les paramètres de l\'app.</string>
     <string name="connection_alert_dialog_title">Wi-Fi déconnecté</string>
-
-    <!-- Content Description -->
-    <string name="content_description_shuffle_button">Mélanger</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus a planté.</string>
@@ -73,7 +68,6 @@
     <string name="download_directory_set">Répertoire de téléchargement de la musique</string>
     <string name="download_info_empty_subtitle">Dès que vous téléchargerez une musique, vous la trouverez ici</string>
     <string name="download_info_empty_title">Aucun téléchargement pour l\'instant</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s éléments</string>
     <string name="download_item_single_subtitle_formatter">%1$s éléments</string>
     <string name="download_refresh_button_content_description">Rafraîchir les téléchargements</string>
     <string name="download_refresh_no_changes">Aucun téléchargement manquant détecté.</string>
@@ -109,15 +103,11 @@
 
     <!-- Error -->
     <string name="error_required">Requis</string>
-    <string name="error_server_prefix">préfixe http ou https requis</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Désactiver les boutons Cœur</string>
     <string name="exo_controls_heart_on_description">Activer les boutons Cœur</string>
     <string name="exo_download_notification_channel_name">Téléchargements</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Favori</string>
 
     <!-- Filter -->
     <string name="filter_artist">Filtrer par artiste</string>
@@ -179,7 +169,6 @@
     <string name="search_all_songs_play">Jouer %1$s</string>
     <string name="search_description_empty_response">Nous avons vérifié la réponse de votre serveur, mais elle était vide.</string>
     <string name="search_hint">Rechercher des titres, artistes ou albums</string>
-    <string name="search_info_minimum_characters">Entrez 3 caractères minimum</string>
     <string name="search_sort_summary">Si activé, les recherches récentes seront triées par ordre chronologique. Si désactivé, elles le seront par ordre alphabétique.</string>
     <string name="search_sort_title">Trier les recherches récentes par ordre chronologique</string>
     <string name="search_title_album">Albums</string>
@@ -290,7 +279,6 @@
     <string name="track_info_bitrate">Débit binaire</string>
     <string name="track_info_content_type">Type de contenu</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Infos piste</string>
     <string name="track_info_disc_number">Numéro de disque</string>
     <string name="track_info_duration">Durée</string>
     <string name="track_info_genre">Genre</string>

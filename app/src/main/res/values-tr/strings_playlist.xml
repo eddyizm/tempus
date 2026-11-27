@@ -8,12 +8,10 @@
     <string name="playlist_chooser_dialog_empty">Henüz çalma listesi oluşturulmadı</string>
     <string name="playlist_chooser_dialog_title">Çalma listesine ekle</string>
     <string name="playlist_chooser_dialog_toast_add_failure">Şarkı çalma listesine eklenemedi</string>
-    <string name="playlist_chooser_dialog_toast_add_success">Şarkı çalma listesine eklendi</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">Bunu açtığınızda çalma listesi herkese açık hale gelir. Kendi haline bıraktığınızda çalma listesinin görünürlüğü değişmez.</string>
     <string name="playlist_counted_tracks">%1$d parça • %2$s</string>
     <string name="playlist_details_dialog_title">Çalma listesi ayrıntıları</string>
     <string name="playlist_duration">Süre  •  %1$s</string>
-    <string name="playlist_editor_dialog_action_delete_toast">Silmek için uzun basın</string>
     <string name="playlist_editor_dialog_action_save_empty">Bir çalma listesi en az bir parça içermelidir</string>
     <string name="playlist_editor_dialog_hint_name">Çalma listesi adı</string>
     <string name="playlist_editor_dialog_negative_button">İptal</string>

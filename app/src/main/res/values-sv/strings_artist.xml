@@ -10,15 +10,12 @@
     <string name="artist_bottom_sheet_shuffle">Blanda</string>
     <string name="artist_catalogue_title">Artister</string>
     <string name="artist_catalogue_title_expanded">Bläddra bland artister</string>
-    <string name="artist_error_retrieving_radio">Kunde inte hämta artistens radio</string>
-    <string name="artist_error_retrieving_tracks">Kunde inte hämta artistens låtar</string>
     <string name="artist_list_page_downloaded">Hämtade artister</string>
     <string name="artist_list_page_starred">Stjärnmärkta artister</string>
     <string name="artist_list_page_title">Artister</string>
     <string name="artist_no_artist_info_toast">Ingen ytterligare artistinformation</string>
     <string name="artist_page_radio_button">Radio</string>
     <string name="artist_page_shuffle_button">Blanda</string>
-    <string name="artist_page_switch_layout_button">Byt layout</string>
     <string name="artist_page_title_album_more_like_this_button">Mer som detta</string>
     <string name="artist_page_title_album_section">Album</string>
     <string name="artist_page_title_appears_on_section">Medverkar på</string>

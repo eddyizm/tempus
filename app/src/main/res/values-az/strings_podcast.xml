@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Bu server podkastları dəstəkləmir.</string>
     <string name="podcast_channel_page_title_description_section">Təsvir</string>
     <string name="podcast_channel_page_title_episode_section">Epizodlar</string>
-    <string name="podcast_channel_page_title_no_episode_available">Epizod yoxdur</string>
     <string name="podcast_episode_download_request_snackbar">Sorğunuz serverə göndərildi</string>
     <string name="podcast_info_empty_button">Bölməni gizlətmək üçün toxunun\nDəyişiklik yenidən başladıqdan sonra görünəcək</string>
     <string name="podcast_info_empty_subtitle">Kanal əlavə etdikdən sonra onu burada görəcəksiniz</string>

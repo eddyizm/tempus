@@ -14,7 +14,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Link activ Tempus</string>
     <string name="asset_link_copied_toast">Copiat %1$s în clipboard</string>
-    <string name="asset_link_debug_toast">Link activ: %1$s</string>
     <string name="asset_link_error_album">Albumul nu a putut fi deschis</string>
     <string name="asset_link_error_artist">Artistul nu a putut fi deschis</string>
     <string name="asset_link_error_playlist">Playlistul nu a putut fi deschis</string>
@@ -33,9 +32,8 @@
     <string name="battery_optimization_neutral_button">Nu mai întreba</string>
     <string name="battery_optimization_positive_button">Dezactivaţi</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Se generează mix instant...</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Nu s-au putut prelua cântecele din serverul subsonic.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Se încarcă…</string>
@@ -46,9 +44,6 @@
     <string name="connection_alert_dialog_positive_button">OK</string>
     <string name="connection_alert_dialog_summary">Accesul la serverul Subsonic pe conexiuni alte decât Wi-Fi a fost restricționat. Pentru a preveni reapariția acestui dialog, dezactivați verificarea conexiunii în setările aplicației.</string>
     <string name="connection_alert_dialog_title">Wi-Fi nu este conectat</string>
-
-    <!-- Content Description -->
-    <string name="content_description_shuffle_button">Amestecare</string>
 
     <!-- Delete Download Storage Dialog -->
     <string name="delete_download_storage_dialog_negative_button">Anulati</string>
@@ -71,7 +66,6 @@
     <string name="download_directory_set">Setați unde sunt descărcate muzica</string>
     <string name="download_info_empty_subtitle">Odată ce descărcați o cântec, o veți găsi aici</string>
     <string name="download_info_empty_title">Nicio descărcare încă!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s articole</string>
     <string name="download_item_single_subtitle_formatter">%1$s articole</string>
     <string name="download_refresh_button_content_description">Reîmprospătați articolele descărcate</string>
     <string name="download_refresh_no_changes">Nu au fost găsite descărcări lipsă.</string>
@@ -107,7 +101,6 @@
 
     <!-- Error -->
     <string name="error_required">Necesar</string>
-    <string name="error_server_prefix">Prefixul http sau https este necesar</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Comutați inima în stare inactivă</string>
@@ -171,7 +164,6 @@
     <!-- Search -->
     <string name="search_description_empty_response">Am verificat răspunsul serverului, dar era gol.</string>
     <string name="search_hint">Căutare titlu, artiști sau albume</string>
-    <string name="search_info_minimum_characters">Introduceți cel puțin trei caractere</string>
     <string name="search_sort_summary">Dacă este activat, sortează căutările cronologic. Sortează după nume dacă este dezactivat.</string>
     <string name="search_sort_title">Sortaţi căutările recente cronologic</string>
     <string name="search_title_album">Albume</string>
@@ -257,7 +249,6 @@
     <string name="track_info_bitrate">Bitrate</string>
     <string name="track_info_content_type">Tip conținut</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Informații piesă</string>
     <string name="track_info_disc_number">Număr disc</string>
     <string name="track_info_duration">Durată</string>
     <string name="track_info_genre">Gen</string>

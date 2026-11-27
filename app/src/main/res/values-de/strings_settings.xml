@@ -12,7 +12,6 @@
     <string name="settings_always_on_display">Bildschirmsperre aussetzen</string>
     <string name="settings_androidauto">Android Auto</string>
     <string name="settings_androidauto_album_view">Kachelansicht für Alben</string>
-    <string name="settings_androidauto_artists_view">Interpreten werden nach Alben angezeigt</string>
     <string name="settings_androidauto_first_tab">Erstes Tab</string>
     <string name="settings_androidauto_fourth_tab">Viertes Tab</string>
     <string name="settings_androidauto_home_view">Kachelansicht für Start</string>
@@ -22,7 +21,6 @@
     <string name="settings_androidauto_second_tab">Zweites Tab</string>
     <string name="settings_androidauto_shuffle_downloaded_tracks">Heruntergeladene Titel zufällig abspielen</string>
     <string name="settings_androidauto_shuffle_genre_songs">Zufallslieder aus Genres</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Bei Auswahl eines Genres werden Lieder daraus zufällig gewählt</string>
     <string name="settings_androidauto_shuffle_playlists">Wiedergabelisten zufällig abspielen</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Lieblingstitel zufällig abspielen</string>
     <string name="settings_androidauto_starred_for_made_for_you">Favoriten für den „Für dich“-Mix</string>
@@ -33,7 +31,6 @@
     <string name="settings_artist_sort_by_album_count_summary">Sortiert Interpreten nach der Anzahl ihrer Alben, statt Name</string>
     <string name="settings_audio_quality">Audioqualität zeigen</string>
     <string name="settings_audio_quality_summary">Zeigt Audioformat und Bitrate des aktuellen Titels</string>
-    <string name="settings_audio_transcode_download_format">Format für Umwandlung</string>
     <string name="settings_audio_transcode_download_priority_summary">Vom Server vorgegebenes Format für Downloads verwenden</string>
     <string name="settings_audio_transcode_download_priority_title">Format-Einstellung des Servers bevorzugen</string>
     <string name="settings_audio_transcode_download_summary">Titel werden vor dem Herunterladen umgewandelt</string>
@@ -43,7 +40,6 @@
     <string name="settings_audio_transcode_format_wifi">Format im WLAN</string>
     <string name="settings_audio_transcode_priority_summary">Vom Server vorgegebenes Format für Streams verwenden</string>
     <string name="settings_audio_transcode_priority_title">Format-Einstellung des Servers bevorzugen</string>
-    <string name="settings_audio_transcode_priority_toast">Priorität für Umwandlung des Titels an Server übergeben</string>
     <string name="settings_auto_download_lyrics">Liedtexte automatisch laden</string>
     <string name="settings_auto_download_lyrics_summary">Verfügbare Liedtexte automatisch herunterladen, um sie offline verfügbar zu machen</string>
     <string name="settings_choose_download_folder">Order für heruntergeladene Dateien wählen</string>
@@ -53,7 +49,6 @@
     <string name="settings_covers_cache">Zwischenspeicher für Albumcover</string>
     <string name="settings_custom_command_first_button">Erster eigener Befehl</string>
     <string name="settings_custom_command_second_button">Zweiter eigener Befehl</string>
-    <string name="settings_dark_theme_style">Stil für dunkles Design</string>
     <string name="settings_data_saving_mode_summary">Keine Albumcover herunterladen, um Daten zu sparen</string>
     <string name="settings_data_saving_mode_title">Mobile Datennutzung begrenzen</string>
     <string name="settings_delete_download_storage_summary">Alle heruntergeladenen Inhalte aus dem Gerätespeicher löschen</string>
@@ -82,13 +77,11 @@
     <string name="settings_item_rating_summary">Zeigt die Sterne-Bewertung und Favorit-Markierung neben Titeln an</string>
     <string name="settings_language">Sprache</string>
     <string name="settings_logout_title">Abmelden</string>
-    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_loudness_preamp_summary">Positive Werte sorgen für mehr Lautstärke.\nNegative Werte für weniger Lautstärke.</string>
     <string name="settings_loudness_preamp_title">Vorverstärkung</string>
     <string name="settings_max_bitrate_download">Bitrate für Downloads</string>
     <string name="settings_max_bitrate_mobile">Bitrate bei Mobilfunk</string>
     <string name="settings_max_bitrate_wifi">Bitrate im WLAN</string>
-    <string name="settings_media_cache">Zwischenspeichergröße für Mediendateien</string>
     <string name="settings_music_directory">Musik-Verzeichnis zeigen</string>
     <string name="settings_music_directory_summary">Ordnernavigation in Sammlungsansicht aktivieren, falls der Server dies unterstützt</string>
     <string name="settings_music_library">Musikbibliothek</string>
@@ -115,7 +108,6 @@
     <string name="settings_replay_gain_prevent_clipping_title">Übersteuerung verhindern</string>
     <string name="settings_rounded_corner">Abgerundete Ecken</string>
     <string name="settings_rounded_corner_size">Eckenradius</string>
-    <string name="settings_rounded_corner_size_summary">Legt die Größe des Eckenradius fest.</string>
     <string name="settings_rounded_corner_summary">Rundet die Ecken von Albumcovern ab (Neustart der App nötig)</string>
     <string name="settings_scan_result">Einlesen: zähle %1$d Titel</string>
     <string name="settings_scan_title">Mediathek einlesen</string>
@@ -132,8 +124,6 @@
     <string name="settings_shortcuts_play_mode_shuffle">Zufällig wiedergeben</string>
     <string name="settings_shortcuts_recent_playlists">Zuletzt gespielte Wiedergabelisten als App-Verknüpfungen</string>
     <string name="settings_shortcuts_recent_playlists_summary">Langes Drücken auf das App-Symbol zeigt die zuletzt gespielten Wiedergabelisten, nach den angehefteten Wiedergabelisten und Alben.</string>
-    <string name="settings_show_mini_shuffle_button">Zufallswiedergabe zeigen</string>
-    <string name="settings_show_mini_shuffle_button_summary">Tauscht den Favoriten-Button gegen den Zufallswiedergabe-Button im Mini-Player aus</string>
     <string name="settings_song_preload_buffer">Puffer für das Vorladen von Titeln</string>
     <string name="settings_song_preload_buffer_summary">Aktueller Wert: %1$s\nDamit die Änderung wirksam wird, starte die App bitte manuell neu.</string>
     <string name="settings_song_rating">Sternbewertung von Liedern zeigen</string>
@@ -141,7 +131,6 @@
     <string name="settings_streaming_cache_size">Größe des Zwischenspeichers</string>
     <string name="settings_streaming_cache_storage_title">Zwischenspeicher</string>
     <string name="settings_sub_summary_scrobble">Scrobbeln funktioniert nur, wenn der Server für den Empfang dieser Daten eingerichtet ist.</string>
-    <string name="settings_summary_landscape_items_per_row">Gilt für alle Album- und Interpretenlisten. Standardwert ist 4</string>
     <string name="settings_summary_loudness">Erlaubt die Korrektur der Lautstärke von Audiowiedergabegeräten (z. B. Lautsprechern).\n\nFür ReplayGain wird -6 empfohlen, um Konflikte mit der Clipping-Vermeidung zu vermeiden.</string>
     <string name="settings_summary_replay_gain">Replay Gain passt die Lautstärke deiner Musik automatisch an, damit sie zwischen Titeln möglichst konstant bleibt. Titel müssen die erforderlichen Metadaten enthalten, damit dies einen Effekt hat.</string>
     <string name="settings_summary_scrobble">Beim Scrobbeln sendet dein Gerät Informationen über die Musik, die du hörst, an den Musikserver, um dir personalisierte Empfehlungen anhand deines Musikgeschmacks zu erstellen.</string>
@@ -151,7 +140,6 @@
     <string name="settings_summary_syncing">Gleicht die Warteschlange mit dem Server ab. Dazu zählen die Titel in der Warteschlange, der aktuell abgespielte Titel und die Position innerhalb des Titels. Der Server muss diese Funktion unterstützen.\n\nFunktioniert evtl. nicht zu 100% mit allen Servern/Geräten.</string>
     <string name="settings_summary_transcoding">Format-Einstellungen für Streams anpassen.\n\nWenn das Format auf \"Original\" eingestellt ist, hat die Änderung der Bitrate keinen Effekt.</string>
     <string name="settings_summary_transcoding_download">Format-Einstellungen für Downloads anpassen.\n\nWenn das Format auf \"Original\" eingestellt ist, hat die Änderung der Bitrate keinen Effekt.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">Wenn Dateien auf Anfrage umgewandelt werden, wird die Dauer des Titels meist nicht angezeigt. Der Server kann gebeten werden, die Dauer des aktuellen Titels zu schätzen, sofern er dies unterstützt. Unter Umständen steigt dabei die Antwortzeit.</string>
     <string name="settings_support_discussion_link" translatable="false">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">An Community-Diskussionen teilnehmen und Unterstützung erhalten</string>
     <string name="settings_support_title">Benutzersupport</string>
@@ -173,22 +161,17 @@
     <string name="settings_title_misc">Sonstiges</string>
     <string name="settings_title_players">Player</string>
     <string name="settings_title_playlist">Wiedergabelisten</string>
-    <string name="settings_title_rating">Bewertung</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_title_scrobble">Scrobbeln</string>
     <string name="settings_title_share">Teilen</string>
     <string name="settings_title_skip_min_star_rating">Mindest-Bewertung</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Titel mit einer Bewertung von:</string>
     <string name="settings_title_sound">Sound</string>
     <string name="settings_title_syncing">Synchronisierung</string>
     <string name="settings_title_transcoding">Umwandeln</string>
     <string name="settings_title_transcoding_download">Umwandeln von Downloads</string>
     <string name="settings_title_ui">Oberfläche</string>
-    <string name="settings_title_ui_landscape_items_per_row">Elemente pro Zeile im Querformat</string>
-    <string name="settings_title_ui_landscape_items_per_row_dialog">Elemente pro Zeile</string>
     <string name="settings_track_number">Titelnummer anzeigen</string>
     <string name="settings_track_number_summary">Wenn aktiviert, wird die Titelnummer des aktuell gespielten Titels angezeigt.</string>
-    <string name="settings_transcoded_download">Umgewandelte Downloads</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>
     <string name="settings_version_title">Version</string>
     <string name="settings_wifi_only_summary">Warnung anzeigen, wenn über Mobilfunk gestreamt wird</string>

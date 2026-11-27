@@ -8,8 +8,6 @@
     <string name="la_appbar_themes_title">Theme editor</string>
     <string name="la_backups_section_automatic_description">Backup your settings automatically in the background.</string>
     <string name="la_backups_section_automatic_dropdown_item_daily">Daily</string>
-    <string name="la_backups_section_automatic_dropdown_item_hourly">Hourly</string>
-    <string name="la_backups_section_automatic_dropdown_item_weekly">Weekly</string>
     <string name="la_backups_section_automatic_dropdown_title">Frequency</string>
     <string name="la_backups_section_automatic_switch">Enable scheduled backups</string>
     <string name="la_backups_section_automatic_title">Automatic Backups</string>
@@ -37,13 +35,11 @@
     <string name="la_perms_notifications_title">Notifications</string>
     <string name="la_perms_status_not_provided">Request</string>
     <string name="la_perms_status_provided">Provided</string>
-    <string name="la_perms_title">Request Permissions</string>
     <string name="la_server_button_create">Create</string>
     <string name="la_server_button_delete">Delete</string>
     <string name="la_server_button_login">Go to login</string>
     <string name="la_server_button_test">Test</string>
     <string name="la_server_button_update">Update</string>
-    <string name="la_server_dropdown_add_new">Add new server</string>
     <string name="la_server_field_plaintext_password_checkbox">Plaintext password</string>
     <string name="la_server_field_server_cert">Client certificate (optional)</string>
     <string name="la_server_field_server_empty_error">Mandatory field</string>
@@ -57,8 +53,6 @@
     <string name="la_server_switch_cert">Client certificate (mTLS)</string>
     <string name="la_server_switch_headers">Custom HTTP headers</string>
     <string name="la_server_switch_local_url">Set a local URL</string>
-    <string name="la_server_switch_plaintext_password">Plaintext passowrd (legacy servers)</string>
-    <string name="la_server_title">Server Setup</string>
     <string name="la_server_toast_connection_error">Network error:</string>
     <string name="la_server_toast_connection_failure">Failed: Invalid server, URL, or credentials</string>
     <string name="la_server_toast_connection_success">Connected Successfully!</string>
@@ -71,9 +65,7 @@
     <string name="la_tab_permission">Permissions</string>
     <string name="la_tab_server">Servers</string>
     <string name="la_tab_themes">Themes</string>
-    <string name="la_theme_button_return">Go to home</string>
     <string name="la_theme_card_coral_red_description">Coral red accent color</string>
-    <string name="la_theme_card_default">Default</string>
     <string name="la_theme_card_emerald_green_description">Emerald green accent color</string>
     <string name="la_theme_card_flirt_red_description">Flirt red accent color</string>
     <string name="la_theme_card_purple_violet_description">Purple violet accent color</string>

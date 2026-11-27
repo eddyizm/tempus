@@ -20,14 +20,10 @@
     <string name="radio_search_add">Əlavə et</string>
     <string name="radio_search_button">Axtar</string>
     <string name="radio_search_country_hint">Ölkə</string>
-    <string name="radio_search_dialog_title">Radio kataloqunda axtarış</string>
-    <string name="radio_search_directory_button">Kataloq</string>
-    <string name="radio_search_duplicate">Stansiya artıq mövcuddur</string>
     <string name="radio_search_empty_query">Stansiya adını daxil edin</string>
     <string name="radio_search_error">Axtarış alınmadı: %s</string>
     <string name="radio_search_hint">Stansiya adı</string>
     <string name="radio_search_no_results">Stansiya tapılmadı</string>
-    <string name="radio_search_station_added">Stansiya yerli olaraq əlavə edildi</string>
     <string name="radio_search_use">İstifadə et</string>
     <string name="radio_station_info_empty_button">Bölməni gizlətmək üçün toxunun\nDəyişiklik yenidən başladıqdan sonra görünəcək</string>
     <string name="radio_station_info_empty_subtitle">Radio stansiyası əlavə etdikdən sonra onu burada görəcəksiniz</string>

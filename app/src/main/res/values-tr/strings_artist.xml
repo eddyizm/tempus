@@ -6,14 +6,11 @@
     <string name="artist_bottom_sheet_shuffle">Karıştır</string>
     <string name="artist_catalogue_title">Sanatçılar</string>
     <string name="artist_catalogue_title_expanded">Sanatçılara göz at</string>
-    <string name="artist_error_retrieving_radio">Sanatçının radyosu alınırken hata oluştu</string>
-    <string name="artist_error_retrieving_tracks">Sanatçının parçaları alınırken hata oluştu</string>
     <string name="artist_list_page_downloaded">İndirilen sanatçılar</string>
     <string name="artist_list_page_starred">Yıldızlı sanatçılar</string>
     <string name="artist_list_page_title">Sanatçılar</string>
     <string name="artist_page_radio_button">Radyo</string>
     <string name="artist_page_shuffle_button">Karıştır</string>
-    <string name="artist_page_switch_layout_button">Düzeni değiştir</string>
     <string name="artist_page_title_album_more_like_this_button">Buna benzer daha fazla</string>
     <string name="artist_page_title_album_section">Albümler</string>
     <string name="artist_page_title_biography_more_button">Daha fazla</string>

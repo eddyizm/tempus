@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Son dinlənilmiş albomlar</string>
     <string name="album_list_page_starred">Ulduzlu albomlar</string>
     <string name="album_list_page_title">Albomlar</string>
-    <string name="album_page_extra_info_button">Bənzərlərini göstər</string>
     <string name="album_page_play_button">Səsləndir</string>
     <string name="album_page_release_date_label">Buraxılış tarixi: %1$s</string>
     <string name="album_page_release_dates_label">Buraxılış tarixi: %1$s, ilk buraxılış: %2$s</string>

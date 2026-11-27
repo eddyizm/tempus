@@ -12,7 +12,6 @@
     <string name="settings_always_on_display">Always on display</string>
     <string name="settings_androidauto">Android Auto</string>
     <string name="settings_androidauto_album_view">Grid view for albums and artists</string>
-    <string name="settings_androidauto_artists_view">Artists are displayed by album</string>
     <string name="settings_androidauto_first_tab">First tab display</string>
     <string name="settings_androidauto_fourth_tab">Fourth tab display</string>
     <string name="settings_androidauto_home_view">Grid view for home</string>
@@ -22,7 +21,6 @@
     <string name="settings_androidauto_second_tab">Second tab display</string>
     <string name="settings_androidauto_shuffle_downloaded_tracks">Shuffle downloaded tracks</string>
     <string name="settings_androidauto_shuffle_genre_songs">Shuffle genre songs</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Play random songs when selecting a genre</string>
     <string name="settings_androidauto_shuffle_playlists">Shuffle playlists</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Shuffle starred tracks</string>
     <string name="settings_androidauto_starred_for_made_for_you">Starred for Made For You mix</string>
@@ -33,7 +31,6 @@
     <string name="settings_artist_sort_by_album_count_summary">If enabled, sort the artists by album count. Sort by name if disabled.</string>
     <string name="settings_audio_quality">Show audio quality</string>
     <string name="settings_audio_quality_summary">The bitrate and audio format will be shown for each audio track.</string>
-    <string name="settings_audio_transcode_download_format">Transcode format</string>
     <string name="settings_audio_transcode_download_priority_summary">If enabled, Tempus will not force download the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_download_priority_title">Prioritize server settings used for streaming in downloads</string>
     <string name="settings_audio_transcode_download_summary">If enabled, Tempus will download transcoded tracks.</string>
@@ -43,7 +40,6 @@
     <string name="settings_audio_transcode_format_wifi">Transcode format in Wi-Fi</string>
     <string name="settings_audio_transcode_priority_summary">If enabled, Tempus will not force stream the track with the transcode settings below.</string>
     <string name="settings_audio_transcode_priority_title">Prioritize server transcode settings</string>
-    <string name="settings_audio_transcode_priority_toast">Priority on transcoding of track given to server</string>
     <string name="settings_auto_download_lyrics">Auto download lyrics</string>
     <string name="settings_auto_download_lyrics_summary">Automatically save lyrics when they are available so they can be shown while offline.</string>
     <string name="settings_auto_download_played_tracks_summary">Automatically save played songs for offline playback using current streaming quality settings (download quality settings are ignored to avoid extra data usage).</string>
@@ -56,7 +52,6 @@
     <string name="settings_covers_cache">Size of artwork cache</string>
     <string name="settings_custom_command_first_button">First custom command</string>
     <string name="settings_custom_command_second_button">Second custom command</string>
-    <string name="settings_dark_theme_style">Dark theme style</string>
     <string name="settings_data_saving_mode_summary">In order to reduce data consumption, avoid downloading covers.</string>
     <string name="settings_data_saving_mode_title">Limit mobile data usage</string>
     <string name="settings_delete_download_storage_summary">Proceeding will result in the irreversible deletion of all saved items.</string>
@@ -86,13 +81,11 @@
     <string name="settings_lan_remote_summary">Control Tempus on another device, or let one control this device. Listens only while the receiver is on, and searches only when you look for devices.</string>
     <string name="settings_language">Language</string>
     <string name="settings_logout_title">Log out</string>
-    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_loudness_preamp_summary">Set positive values for louder sounds.\nSet negative values for quieter sounds.</string>
     <string name="settings_loudness_preamp_title">Pre-amplification</string>
     <string name="settings_max_bitrate_download">Bitrate for downloads</string>
     <string name="settings_max_bitrate_mobile">Bitrate in mobile</string>
     <string name="settings_max_bitrate_wifi">Bitrate in Wi-Fi</string>
-    <string name="settings_media_cache">Size of media file cache</string>
     <string name="settings_music_directory">Show music directories</string>
     <string name="settings_music_directory_summary">If enabled, show the music directory section. Please note that for folder navigation to work properly, the server must support this feature.</string>
     <string name="settings_music_library">Music library</string>
@@ -127,7 +120,6 @@
     <string name="settings_replay_gain_prevent_clipping_title">Prevent clipping</string>
     <string name="settings_rounded_corner">Rounded corners</string>
     <string name="settings_rounded_corner_size">Corners size</string>
-    <string name="settings_rounded_corner_size_summary">Sets the magnitude of the curvature angle.</string>
     <string name="settings_rounded_corner_summary">If enabled, sets a curvature angle for all rendered covers. The changes will take effect on restart.</string>
     <string name="settings_scan_result">Scanning: counting %1$d tracks</string>
     <string name="settings_scan_title">Scan library</string>
@@ -144,8 +136,6 @@
     <string name="settings_shortcuts_play_mode_shuffle">Play + Shuffle</string>
     <string name="settings_shortcuts_recent_playlists">Recently played playlists as app shortcuts</string>
     <string name="settings_shortcuts_recent_playlists_summary">Long-pressing the app icon offers the playlists you played last, after the playlists and albums you pinned.</string>
-    <string name="settings_show_mini_shuffle_button">Show Shuffle button</string>
-    <string name="settings_show_mini_shuffle_button_summary">If enabled, show the shuffle button, remove the heart in the mini player</string>
     <string name="settings_song_preload_buffer">Song preload buffer</string>
     <string name="settings_song_preload_buffer_summary">Current value: %1$s\nFor the change to take effect you must manually restart the app.</string>
     <string name="settings_song_rating">Show song star rating</string>
@@ -153,7 +143,6 @@
     <string name="settings_streaming_cache_size">Size of streaming cache</string>
     <string name="settings_streaming_cache_storage_title">Streaming cache storage</string>
     <string name="settings_sub_summary_scrobble">It\'s important to note that scrobbling also relies on the server being enabled to receive this data.</string>
-    <string name="settings_summary_landscape_items_per_row">Applies to all album and artist listings. Defaults to 4</string>
     <string name="settings_summary_loudness">Allows to correct the volume of audio playback devices (e.g. speakers).\n\nFor ReplayGain -6 is recommended, this is to avoid conflicts with clipping prevention.</string>
     <string name="settings_summary_replay_gain">Normalizes the volume level of audio tracks. Files must contain the necessary metadata.</string>
     <string name="settings_summary_scrobble">Scrobbling is a feature that allows your device to send information about the songs you listen to the music server. This information helps create personalized recommendations based on your music preferences.</string>
@@ -163,7 +152,6 @@
     <string name="settings_summary_syncing">Returns the state of the play queue for this user. This includes the tracks in the play queue, the currently playing track, and the position within this track. The server must support this feature.\n*This setting is not 100% working on all servers/devices.</string>
     <string name="settings_summary_transcoding">Priority given to the transcoding mode. If set to \"Direct play\" the bitrate of the file will not be changed.</string>
     <string name="settings_summary_transcoding_download">Download transcoded media. If enabled, the download endpoint will not be used, but the following settings. \n\n If \"Transcode format for downloads\" is set to \"Direct download\" the bitrate of the file will not be changed.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">When the file is transcoded on the fly, the client usually does not show the track length. It is possible to request the servers that support the functionality to estimate the duration of the track being played, but the response times may take longer.</string>
     <string name="settings_support_discussion_link" translatable="false">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">Join community discussions and support</string>
     <string name="settings_support_title">User support</string>
@@ -185,22 +173,17 @@
     <string name="settings_title_misc">Miscellaneous</string>
     <string name="settings_title_players">Players</string>
     <string name="settings_title_playlist">Playlist</string>
-    <string name="settings_title_rating">Rating</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_share">Share</string>
     <string name="settings_title_skip_min_star_rating">Ignore tracks based on rating</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Songs with a rating of:</string>
     <string name="settings_title_sound">Sound</string>
     <string name="settings_title_syncing">Syncing</string>
     <string name="settings_title_transcoding">Transcoding</string>
     <string name="settings_title_transcoding_download">Transcoding Download</string>
     <string name="settings_title_ui">UI</string>
-    <string name="settings_title_ui_landscape_items_per_row">Items per row on landscape</string>
-    <string name="settings_title_ui_landscape_items_per_row_dialog">Number of items per row</string>
     <string name="settings_track_number">Show track number</string>
     <string name="settings_track_number_summary">If enabled, shows the track number of the song being played.</string>
-    <string name="settings_transcoded_download">Transcoded download</string>
     <string name="settings_upnp_summary">Find and play to UPnP and DLNA renderers on your network. Searches only while the cast picker is open.</string>
     <string name="settings_upnp_title">UPnP / DLNA renderers</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>

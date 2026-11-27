@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Сервер не поддерживает подкасты.</string>
     <string name="podcast_channel_page_title_description_section">Описание</string>
     <string name="podcast_channel_page_title_episode_section">Эпизоды</string>
-    <string name="podcast_channel_page_title_no_episode_available">Нет эпизодов</string>
     <string name="podcast_episode_download_request_snackbar">Запрос отправлен на сервер</string>
     <string name="podcast_info_empty_button">Нажмите, чтобы скрыть\n(потребуется перезапуск)</string>
     <string name="podcast_info_empty_subtitle">Добавленные каналы появятся здесь</string>

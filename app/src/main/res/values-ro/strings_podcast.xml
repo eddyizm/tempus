@@ -14,7 +14,6 @@
     <string name="podcast_channel_not_supported_snackbar">Podcasturile nu sunt acceptate de acest server.</string>
     <string name="podcast_channel_page_title_description_section">Descriere</string>
     <string name="podcast_channel_page_title_episode_section">Episoade</string>
-    <string name="podcast_channel_page_title_no_episode_available">Nu sunt episoade disponibile</string>
     <string name="podcast_episode_download_request_snackbar">Solicitarea dvs. a fost trimisă la server</string>
     <string name="podcast_info_empty_button">Faceți clic pentru a ascunde secțiunea\nEfectele vor fi vizibile la restart</string>
     <string name="podcast_info_empty_subtitle">Odată ce adăugați un canal, îl veți găsi aici</string>

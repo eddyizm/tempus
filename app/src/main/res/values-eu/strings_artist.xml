@@ -10,15 +10,12 @@
     <string name="artist_bottom_sheet_shuffle">Nahastu</string>
     <string name="artist_catalogue_title">Artistak</string>
     <string name="artist_catalogue_title_expanded">Artistak arakatu</string>
-    <string name="artist_error_retrieving_radio">Errorea artistaren irratia eskuratzean</string>
-    <string name="artist_error_retrieving_tracks">Errorea artistaren abestiak eskuratzean</string>
     <string name="artist_list_page_downloaded">Deskargatutako artistak</string>
     <string name="artist_list_page_starred">Gogoko artistak</string>
     <string name="artist_list_page_title">Artistak</string>
     <string name="artist_no_artist_info_toast">Ez dago artistari buruzko informazio gehiagorik</string>
     <string name="artist_page_radio_button">Irratia</string>
     <string name="artist_page_shuffle_button">Nahastu</string>
-    <string name="artist_page_switch_layout_button">Diseinua aldatu</string>
     <string name="artist_page_title_album_more_like_this_button">Antzeko gehiago</string>
     <string name="artist_page_title_album_section">Diskak</string>
     <string name="artist_page_title_appears_on_section">Honetan ere agertzen da</string>

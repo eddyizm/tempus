@@ -12,7 +12,6 @@
     <string name="settings_always_on_display">Always on display</string>
     <string name="settings_androidauto">Android Auto</string>
     <string name="settings_androidauto_album_view">Układ siatki dla albumów i wykonawców</string>
-    <string name="settings_androidauto_artists_view">Wykonawcy są wyświetlani według albumu</string>
     <string name="settings_androidauto_first_tab">Pierwsza zakładka</string>
     <string name="settings_androidauto_fourth_tab">Czwarta zakładka</string>
     <string name="settings_androidauto_home_view">Układ siatki dla strony głównej</string>
@@ -22,7 +21,6 @@
     <string name="settings_androidauto_second_tab">Druga zakładka</string>
     <string name="settings_androidauto_shuffle_downloaded_tracks">Odtwarzaj losowo pobrane utwory</string>
     <string name="settings_androidauto_shuffle_genre_songs">Odtwarzanie losowe według gatunku</string>
-    <string name="settings_androidauto_shuffle_genre_songs_summary">Odtwórz losowe piosenki po wybraniu gatunku</string>
     <string name="settings_androidauto_shuffle_playlists">Odtarzaj losowo z playlisty</string>
     <string name="settings_androidauto_shuffle_starred_tracks">Odtwarzaj losowo utwory oznaczone gwiazdką</string>
     <string name="settings_androidauto_starred_for_made_for_you">Oznaczone gwiazdką do mixu stworzonego dla ciebie</string>
@@ -33,7 +31,6 @@
     <string name="settings_artist_sort_by_album_count_summary">Jeżeli włączone, sortuje wykonawców po ilości albumów. Jeżeli wyłączone, sortuje albumy po nazwach.</string>
     <string name="settings_audio_quality">Pokaż jakość audio</string>
     <string name="settings_audio_quality_summary">Bitrate i format audio będzie pokazywany dla każdego utworu.</string>
-    <string name="settings_audio_transcode_download_format">Format transkodowania</string>
     <string name="settings_audio_transcode_download_priority_summary">Jeżeli włączone, Tempus nie będzię wymuszał pobierania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
     <string name="settings_audio_transcode_download_priority_title">Priorytetyzuj ustawienia serwera używanego do strumieniowania w pobieraniach</string>
     <string name="settings_audio_transcode_download_summary">Jeżeli włączone, Tempus będzie pobierał transkodowane utwory.</string>
@@ -43,7 +40,6 @@
     <string name="settings_audio_transcode_format_wifi">Format transkodowania w sieci Wi-Fi</string>
     <string name="settings_audio_transcode_priority_summary">Jeżeli włączone, Tempus nie będzie wymuszał strumieniowania utworu z ustawieniami transkodowania wybranymi poniżej.</string>
     <string name="settings_audio_transcode_priority_title">Priorytetyzuj ustawienia transkodowania serwera</string>
-    <string name="settings_audio_transcode_priority_toast">Priorytet przy transkodowaniu utworu danego serwerowi</string>
     <string name="settings_auto_download_lyrics">Automatyczne pobieranie tesktów</string>
     <string name="settings_auto_download_lyrics_summary">Automatycznie zapisuj teksty jeżeli, są dostępne aby, mogły być wyświetlane offline.</string>
     <string name="settings_choose_download_folder">Wybierz folder dla pobranych plików muzycznych</string>
@@ -53,7 +49,6 @@
     <string name="settings_covers_cache">Rozmiar cache dla okładek</string>
     <string name="settings_custom_command_first_button">Pierwsza niestandardowa komenda</string>
     <string name="settings_custom_command_second_button">Druga niestandardowa komenda</string>
-    <string name="settings_dark_theme_style">Styl ciemnego motywu</string>
     <string name="settings_data_saving_mode_summary">Aby zmniejszyć zużycie danych, unikaj pobierania okładek.</string>
     <string name="settings_data_saving_mode_title">Ogranicz zużycie danych komórkowych</string>
     <string name="settings_delete_download_storage_summary">Zatwierdzenie nieodwracalnie usunie wszystkie zapisane elementy</string>
@@ -83,13 +78,11 @@
     <string name="settings_lan_remote_summary">Steruj aplikacją Tempus na innym urządzeniu, lub pozwól jej kontrolować to urządzenie. Nasłuchuje tylko gdy odbiornik jest włączony, i szuka tylko gdy ty szukasz urządzeń.</string>
     <string name="settings_language">Język</string>
     <string name="settings_logout_title">Wyloguj</string>
-    <string name="settings_loudness_preamp_db">%1$d dB</string>
     <string name="settings_loudness_preamp_summary">Ustaw wartości pozytywne dla głośniejszych dźwięków.\nUstaw wartości negatywne dla cichszych dźwięków.</string>
     <string name="settings_loudness_preamp_title">Wstępne wzmocnienie</string>
     <string name="settings_max_bitrate_download">Bitrate dla pobierania</string>
     <string name="settings_max_bitrate_mobile">Bitrate dla danych komórkowych</string>
     <string name="settings_max_bitrate_wifi">Bitrate dla Wi-Fi</string>
-    <string name="settings_media_cache">Rozmiar plików cache dla mediów</string>
     <string name="settings_music_directory">Pokaż foldery z muzyką</string>
     <string name="settings_music_directory_summary">Jeżeli włączone, widoczna będzie sekcja z folderami z muzyką. Weź pod uwagę że żeby funkcja nawigacji po folderach działała poprawnie, serwer musi wspierać tę funkcję.</string>
     <string name="settings_music_library">Biblioteka muzyki</string>
@@ -124,7 +117,6 @@
     <string name="settings_replay_gain_prevent_clipping_title">Powstrzymuj przycinanie</string>
     <string name="settings_rounded_corner">Zaokrąglone rogi</string>
     <string name="settings_rounded_corner_size">Rozmiar rogów</string>
-    <string name="settings_rounded_corner_size_summary">Ustawia wielkość krzywizny kąta.</string>
     <string name="settings_rounded_corner_summary">Jeżeli włączone, ustawia  kąt krzywizny dla wszystkich renderowanych okładek. Zmiany przyniosą efekt po restarcie.</string>
     <string name="settings_scan_result">Skanowanie: naliczono %1$d utworów</string>
     <string name="settings_scan_title">Skanuj bibliotekę</string>
@@ -132,8 +124,6 @@
     <string name="settings_search_hint">Szukaj w ustawieniach</string>
     <string name="settings_set_download_folder">Ustaw folder pobierania</string>
     <string name="settings_share_title">Włącz udostępnianie muzyki</string>
-    <string name="settings_show_mini_shuffle_button">Pokaż przycisk odtwarzania losowego</string>
-    <string name="settings_show_mini_shuffle_button_summary">Jeżeli włączone, pokazuje przycisk losowego odtwarzania, i usuwa przycisk serca w mini odtwarzaczu</string>
     <string name="settings_song_preload_buffer">Bufor wstępnego ładowania piosenek</string>
     <string name="settings_song_preload_buffer_summary">Aktualna wartość: %1$s\nAby zmiany przyniosły efekt musisz zrestartować aplikację ręcznie.</string>
     <string name="settings_song_rating">Pokaż ocenę piosenek w gwiazdkach</string>
@@ -141,7 +131,6 @@
     <string name="settings_streaming_cache_size">Rozmiar cache dla strumieniowania</string>
     <string name="settings_streaming_cache_storage_title">Pamięć cache dla strumieniowania</string>
     <string name="settings_sub_summary_scrobble">Ważne jest to że scrobbling polega też na byciu włączonym na serwerze aby otrzymywać te dane.</string>
-    <string name="settings_summary_landscape_items_per_row">Ma zastosowanie do wszystkich list albumów i wykonawców. Domyślnie to 4</string>
     <string name="settings_summary_loudness">Pozwala poprawić głośność urządzenia odtwarzającego dźwięk (np. głośników).\n\nJest zalecane dla ReplayGain -6, to pomoże uniknąć konfliktów z powstrzymywaniem przycinania.</string>
     <string name="settings_summary_replay_gain">Normalizuje poziom głośności utworów. Pliki muszą zawierać odpowiednie metadane.</string>
     <string name="settings_summary_scrobble">Scrobbling jest funkcją która pozwala twojemu urządzeniu na wysyłanie informacji na temat piosenek których słuchasz do serwera muzyki. Te informacje pomagają tworzyć spersonalizowane rekomendacje na podstawie twojego gustu muzycznego.</string>
@@ -151,7 +140,6 @@
     <string name="settings_summary_syncing">Przywraca stan kolejki odtwarzania dla tego użytkownika. Zawiera utwory w kolejce, aktualnie odtwarzany utwór i pozycję w nim. Serwer musi wspierać tę funkcję.\n*To ustawienie nie działa na 100% na wszystkich serwerach/urządzeniach.</string>
     <string name="settings_summary_transcoding">Priorytet dawany trybowi transkodowania. Jeżeli ustawiony na \"Odtwarzanie bezpośrednie\" bitrate pliku nie zostanie zmieniony.</string>
     <string name="settings_summary_transcoding_download">Pobieraj transkdowane media. Jeżeli włączone, endpoint pobierania nie będzie używnany, poza następującymi ustawieniami. \n\n Jeżeli \"Format transkodowania dla pobierania\" jest ustawiony na \"Pobieranie bezpośrednie\" bitrate pliku nie zostanie zmieniony.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">Kiedy plik jest transkodowany w locie, klient nie pokazuje zwykle długości utworu.Jest możliwe odpytanie serwera który wspiera tą funkcjonalność aby oszacował długość odtwarzanego utworu, ale czasy odpowiedzi mogą być dłuższe.</string>
     <string name="settings_support_discussion_link">https://github.com/eddyizm/tempus/discussions</string>
     <string name="settings_support_summary">Dołącz do dyskusji i wsparcia społeczności</string>
     <string name="settings_support_title">Wsparcie użytkowników</string>
@@ -173,22 +161,17 @@
     <string name="settings_title_misc">Różne</string>
     <string name="settings_title_players">Odtwarzanie</string>
     <string name="settings_title_playlist">Playlisty</string>
-    <string name="settings_title_rating">Oceny</string>
     <string name="settings_title_replay_gain">Wzmocnienie głośności przy ponownym odtwarzaniu</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_share">Udostępnianie</string>
     <string name="settings_title_skip_min_star_rating">Ignoruj utwory na podstawie oceny</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Piosenki z oceną:</string>
     <string name="settings_title_sound">Dźwięk</string>
     <string name="settings_title_syncing">Synchronizacja</string>
     <string name="settings_title_transcoding">Transkodowanie</string>
     <string name="settings_title_transcoding_download">Transkodowanie Pobrań</string>
     <string name="settings_title_ui">Interfejs</string>
-    <string name="settings_title_ui_landscape_items_per_row">Elementów na wiersz w poziomie</string>
-    <string name="settings_title_ui_landscape_items_per_row_dialog">Liczba elementów na wiersz</string>
     <string name="settings_track_number">Pokaż numer utworu</string>
     <string name="settings_track_number_summary">Jeżeli włączone, pokazuje numer utworu piosenki która jest odtwarzana.</string>
-    <string name="settings_transcoded_download">Transkodowane pobieranie</string>
     <string name="settings_upnp_summary">Znajdź i odtwarzaj na odtwarzaczach UPnP i DLNA w twojej sieci. Szuka tylko wtedy gdy, wybieranie urządzenia jest otwarte.</string>
     <string name="settings_upnp_title">Odtwarzacze UPnP / DLNA</string>
     <string name="settings_version_summary" translatable="false">3.1.0</string>

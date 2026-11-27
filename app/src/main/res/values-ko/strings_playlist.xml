@@ -8,12 +8,10 @@
     <string name="playlist_chooser_dialog_empty">플레이리스트가 없습니다.</string>
     <string name="playlist_chooser_dialog_title">플레이리스트 추가</string>
     <string name="playlist_chooser_dialog_toast_add_failure">재생 목록에 음악을 추가하지 못했습니다.</string>
-    <string name="playlist_chooser_dialog_toast_add_success">재생 목록에 음악 추가</string>
     <string name="playlist_chooser_dialog_visibility_summary_v2">이것을 켜면 재생목록이 공개됩니다. 그대로 두면 재생목록의 공개 상태가 변경되지 않습니다.</string>
     <string name="playlist_counted_tracks">%1$d 트랙 •  %2$s</string>
     <string name="playlist_details_dialog_title">플레이리스트 세부정보</string>
     <string name="playlist_duration">재생시간  •  %1$s</string>
-    <string name="playlist_editor_dialog_action_delete_toast">길게 눌러 삭제하기</string>
     <string name="playlist_editor_dialog_action_save_empty">재생목록에는 하나 이상의 트랙이 있어야 합니다</string>
     <string name="playlist_editor_dialog_hint_name">플레이리스트 이름</string>
     <string name="playlist_editor_dialog_negative_button">취소</string>

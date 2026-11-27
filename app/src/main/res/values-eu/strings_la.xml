@@ -18,13 +18,11 @@
     <string name="la_perms_notifications_title">Jakinarazpenak</string>
     <string name="la_perms_status_not_provided">Eskatu</string>
     <string name="la_perms_status_provided">Emana</string>
-    <string name="la_perms_title">Eskatu baimenak</string>
     <string name="la_server_button_create">Sortu</string>
     <string name="la_server_button_delete">Ezabatu</string>
     <string name="la_server_button_login">Saioa hastera joan</string>
     <string name="la_server_button_test">Probatu</string>
     <string name="la_server_button_update">Eguneratu</string>
-    <string name="la_server_dropdown_add_new">Zerbitzari berria gehitu</string>
     <string name="la_server_field_plaintext_password_checkbox">Testu arrunteko pasahitza</string>
     <string name="la_server_field_server_cert">Bezero-ziurtagiria (aukerakoa)</string>
     <string name="la_server_field_server_empty_error">Derrigorrezko eremua</string>
@@ -38,8 +36,6 @@
     <string name="la_server_switch_cert">Bezero-ziurtagiria (mTLS)</string>
     <string name="la_server_switch_headers">HTTP goiburu pertsonalizatuak</string>
     <string name="la_server_switch_local_url">URL lokala ezarri</string>
-    <string name="la_server_switch_plaintext_password">Testu arrunteko pasahitza (zerbitzari zaharrak)</string>
-    <string name="la_server_title">Zerbitzariaren konfigurazioa</string>
     <string name="la_server_toast_connection_error">Sare-errorea:</string>
     <string name="la_server_toast_connection_failure">Huts egin du: zerbitzari, URL edo kredentzial baliogabeak</string>
     <string name="la_server_toast_connection_success">Ondo konektatu da!</string>
@@ -51,9 +47,7 @@
     <string name="la_tab_permission">Baimenak</string>
     <string name="la_tab_server">Zerbitzariak</string>
     <string name="la_tab_themes">Itxurak</string>
-    <string name="la_theme_button_return">Hasierara joan</string>
     <string name="la_theme_card_coral_red_description">Koral gorriaren azentu-kolorea</string>
-    <string name="la_theme_card_default">Lehenetsia</string>
     <string name="la_theme_card_emerald_green_description">Esmeralda berdearen azentu-kolorea</string>
     <string name="la_theme_card_flirt_red_description">Flirt gorriaren azentu-kolorea</string>
     <string name="la_theme_card_purple_violet_description">Bioleta-morearen azentu-kolorea</string>

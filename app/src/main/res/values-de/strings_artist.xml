@@ -10,15 +10,12 @@
     <string name="artist_bottom_sheet_shuffle">Zufällig wiedergeben</string>
     <string name="artist_catalogue_title">Interpreten</string>
     <string name="artist_catalogue_title_expanded">Interpreten durchsuchen</string>
-    <string name="artist_error_retrieving_radio">Fehler bei Abruf von Interpreten-Radio</string>
-    <string name="artist_error_retrieving_tracks">Fehler bei Abruf von Interpreten-Titeln</string>
     <string name="artist_list_page_downloaded">Heruntergeladene Interpreten</string>
     <string name="artist_list_page_starred">Lieblingsinterpreten</string>
     <string name="artist_list_page_title">Interpreten</string>
     <string name="artist_no_artist_info_toast">Keine weiteren Infos zu Interpret</string>
     <string name="artist_page_radio_button">Radio</string>
     <string name="artist_page_shuffle_button">Zufall</string>
-    <string name="artist_page_switch_layout_button">Layout wechseln</string>
     <string name="artist_page_title_album_more_like_this_button">Ähnliches</string>
     <string name="artist_page_title_album_section">Alben</string>
     <string name="artist_page_title_appears_on_section">Erschienen auf</string>

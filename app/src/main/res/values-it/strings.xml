@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Link asset Tempus</string>
     <string name="asset_link_copied_toast">Copiato %1$s negli appunti</string>
-    <string name="asset_link_debug_toast">Link asset: %1$s</string>
     <string name="asset_link_error_album">Impossibile aprire l\'album</string>
     <string name="asset_link_error_artist">Impossibile aprire l\'artista</string>
     <string name="asset_link_error_playlist">Impossibile aprire la playlist</string>
@@ -42,9 +41,6 @@
     <string name="connection_alert_dialog_summary">L\'accesso al server Subsonic è stato limitato alle connessioni Wi-Fi. Per evitare che questo avviso riappaia, disabilita il controllo connessione nelle impostazioni dell\'app.</string>
     <string name="connection_alert_dialog_title">Wi-Fi non connesso</string>
 
-    <!-- Content Description -->
-    <string name="content_description_shuffle_button">Riproduzione casuale</string>
-
     <!-- Delete Download Storage Dialog -->
     <string name="delete_download_storage_dialog_negative_button">Annulla</string>
     <string name="delete_download_storage_dialog_positive_button">Continua</string>
@@ -66,7 +62,6 @@
     <string name="download_directory_set">Imposta dove scaricare la musica</string>
     <string name="download_info_empty_subtitle">Una volta scaricato un brano, lo troverai qui</string>
     <string name="download_info_empty_title">Ancora nessun download!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s elementi</string>
     <string name="download_item_single_subtitle_formatter">%1$s elementi</string>
     <string name="download_refresh_button_content_description">Aggiorna gli elementi scaricati</string>
     <string name="download_refresh_no_changes">Nessun download mancante trovato.</string>
@@ -102,7 +97,6 @@
 
     <!-- Error -->
     <string name="error_required">Obbligatorio</string>
-    <string name="error_server_prefix">Prefisso http o https richiesto</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Aggiungi ai preferiti</string>
@@ -161,7 +155,6 @@
     <!-- Search -->
     <string name="search_description_empty_response">Abbiamo controllato la risposta del server ma era vuota.</string>
     <string name="search_hint">Cerca titolo, artisti o album</string>
-    <string name="search_info_minimum_characters">Inserisci almeno tre caratteri</string>
     <string name="search_title_album">Album</string>
     <string name="search_title_artist">Artisti</string>
     <string name="search_title_empty_response">Nessun risultato.</string>
@@ -246,7 +239,6 @@
     <string name="track_info_bitrate">Bitrate</string>
     <string name="track_info_content_type">Tipo di contenuto</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Info traccia</string>
     <string name="track_info_disc_number">Numero del disco</string>
     <string name="track_info_duration">Durata</string>
     <string name="track_info_genre">Genere</string>

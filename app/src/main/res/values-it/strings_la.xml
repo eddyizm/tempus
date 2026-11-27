@@ -12,6 +12,5 @@
     <string name="la_perms_notifications_title">Notifiche</string>
     <string name="la_perms_status_not_provided">Richiedi</string>
     <string name="la_perms_status_provided">Concessa</string>
-    <string name="la_perms_title">Richiedi autorizzazioni</string>
     <string name="la_theme_card_emerald_green_description">Colore di accento verde smeraldo</string>
 </resources>

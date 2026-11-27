@@ -6,14 +6,11 @@
     <string name="artist_bottom_sheet_shuffle">隨機播放</string>
     <string name="artist_catalogue_title">藝術家</string>
     <string name="artist_catalogue_title_expanded">瀏覽藝術家</string>
-    <string name="artist_error_retrieving_radio">檢索藝術家的電臺時出錯</string>
-    <string name="artist_error_retrieving_tracks">檢索藝術家歌曲時出錯</string>
     <string name="artist_list_page_downloaded">已下載的藝術家</string>
     <string name="artist_list_page_starred">收藏的藝術家</string>
     <string name="artist_list_page_title">藝術家</string>
     <string name="artist_page_radio_button">電臺</string>
     <string name="artist_page_shuffle_button">隨機播放</string>
-    <string name="artist_page_switch_layout_button">切換佈局</string>
     <string name="artist_page_title_album_more_like_this_button">更多類似</string>
     <string name="artist_page_title_album_section">專輯</string>
     <string name="artist_page_title_biography_more_button">更多</string>

@@ -13,7 +13,6 @@
     <string name="podcast_channel_editor_dialog_title">Canale Podcast</string>
     <string name="podcast_channel_page_title_description_section">Descrizione</string>
     <string name="podcast_channel_page_title_episode_section">Episodi</string>
-    <string name="podcast_channel_page_title_no_episode_available">Nessun episodio disponibile</string>
     <string name="podcast_episode_download_request_snackbar">La tua richiesta è stata inviata al server</string>
     <string name="podcast_info_empty_button">Clicca per nascondere la sezione\nGli effetti saranno visibili al riavvio</string>
     <string name="podcast_info_empty_subtitle">Una volta aggiunto un canale, lo troverai qui</string>

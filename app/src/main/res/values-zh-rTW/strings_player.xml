@@ -6,12 +6,8 @@
     <string name="player_lyrics_download_success">離線歌詞已儲存。</string>
     <string name="player_lyrics_downloaded_content_description">已下載的離線歌詞</string>
     <string name="player_playback_speed">%1$.2fx</string>
-    <string name="player_queue_clean_all_button">清空序列</string>
     <string name="player_queue_load_queue">載入序列</string>
-    <string name="player_queue_save_queue_success">儲存序列</string>
     <string name="player_queue_save_to_playlist">儲存序列到播放清單</string>
-    <string name="player_server_priority">伺服器優先級</string>
     <string name="player_transcoding">正在轉碼</string>
-    <string name="player_transcoding_requested">已請求轉碼</string>
     <string name="player_unknown_format">未知格式</string>
 </resources>

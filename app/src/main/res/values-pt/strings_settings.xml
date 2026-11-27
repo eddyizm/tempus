@@ -4,7 +4,6 @@
     <string name="settings_about_summary">O Tempus é um cliente de música leve e de código aberto para Subsonic, projetado e desenvolvido nativamente para Android.</string>
     <string name="settings_about_title">Sobre</string>
     <string name="settings_always_on_display">Tela sempre ativa</string>
-    <string name="settings_audio_transcode_download_format">Formato de transcodificação</string>
     <string name="settings_audio_transcode_download_priority_summary">Se ativado, Tempus não forçará o download da faixa com as configurações de transcodificação abaixo.</string>
     <string name="settings_audio_transcode_download_priority_title">Priorizar as configurações do servidor usadas para streaming nos downloads</string>
     <string name="settings_audio_transcode_download_summary">Se ativado, Tempus irá baixar faixas transcodificadas.</string>
@@ -14,7 +13,6 @@
     <string name="settings_audio_transcode_format_wifi">Formato de transcodificação no Wi-Fi</string>
     <string name="settings_audio_transcode_priority_summary">Se ativado, Tempus não forçará a transmissão da faixa com as configurações de transcodificação abaixo.</string>
     <string name="settings_audio_transcode_priority_title">Priorizar configurações de transcodificação do servidor</string>
-    <string name="settings_audio_transcode_priority_toast">Prioridade na transcodificação da faixa fornecida pelo servidor</string>
     <string name="settings_covers_cache">Tamanho do cache das capas</string>
     <string name="settings_data_saving_mode_summary">Para reduzir o consumo de dados, evite baixar capas de álbum.</string>
     <string name="settings_data_saving_mode_title">Limitar uso de dados móveis</string>
@@ -30,7 +28,6 @@
     <string name="settings_max_bitrate_download">Taxa de bits para os downloads</string>
     <string name="settings_max_bitrate_mobile">Taxa de bits para a rede móvel</string>
     <string name="settings_max_bitrate_wifi">Bitrate no Wi-Fi</string>
-    <string name="settings_media_cache">Tamanho do cache dos arquivos de mídia</string>
     <string name="settings_music_directory">Mostrar diretórios de música</string>
     <string name="settings_music_directory_summary">Se ativado, mostrará a seção do diretório de música. Observe que, para que a navegação na pasta funcione corretamente, o servidor deve oferecer suporte a esse recurso.</string>
     <string name="settings_podcast">Mostrar podcast</string>
@@ -42,7 +39,6 @@
     <string name="settings_replay_gain">Habilitar o modo Replay Gain</string>
     <string name="settings_rounded_corner">Cantos arredondados</string>
     <string name="settings_rounded_corner_size">Tamanho dos cantos</string>
-    <string name="settings_rounded_corner_size_summary">Define a magnitude do ângulo de curvatura.</string>
     <string name="settings_rounded_corner_summary">Se ativado, define um ângulo de curvatura para todas as capas renderizadas. As alterações terão efeito ao reiniciar.</string>
     <string name="settings_scan_title">Escanear biblioteca</string>
     <string name="settings_scrobble_title">Habilitar scrobbling</string>
@@ -55,7 +51,6 @@
     <string name="settings_summary_syncing">Retorna o estado da fila de reprodução para esse usuário. Isso inclui as faixas na fila de reprodução, a faixa sendo reproduzida e a posição nesta faixa. O servidor deve suportar este recurso.</string>
     <string name="settings_summary_transcoding">Prioridade dada ao modo de transcodificação. Se definido para \"Reprodução direta\" a taxa de bits do arquivo não será alterada.</string>
     <string name="settings_summary_transcoding_download">Baixar mídia transcodificada. Se ativado, o endpoint de download não será usado, e sim, as seguintes configurações. \n\n Se \"Formato de transcodificação para downloads\" estiver definido como \"Download direto\" a taxa de bits do arquivo não será alterada.</string>
-    <string name="settings_summary_transcoding_estimate_content_length">Quando o arquivo é transcodificado em Tempus real, o cliente geralmente não mostra a duração da faixa. É possível solicitar aos servidores que suportam a funcionalidade, que informem a duração da faixa que está sendo reproduzida, porém, os Tempuss de resposta podem ser mais longos.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_summary">Se ativado, as faixas favoritadas serão baixadas para uso offline.</string>
     <string name="settings_sync_starred_tracks_for_offline_use_title">Sincronizar faixas favoritas para uso offline</string>
     <string name="settings_system_equalizer_summary">Ajustar configurações de áudio</string>
@@ -63,17 +58,14 @@
     <string name="settings_theme">Tema</string>
     <string name="settings_title_data">Dados</string>
     <string name="settings_title_general">Geral</string>
-    <string name="settings_title_rating">Classificação</string>
     <string name="settings_title_replay_gain">Replay Gain</string>
     <string name="settings_title_scrobble">Scrobble</string>
     <string name="settings_title_share">Compartilhar</string>
     <string name="settings_title_skip_min_star_rating">Ignorar faixas baseadas na classificação</string>
-    <string name="settings_title_skip_min_star_rating_dialog">Músicas com uma classificação de:</string>
     <string name="settings_title_syncing">Sincronizando</string>
     <string name="settings_title_transcoding">Transcodificação</string>
     <string name="settings_title_transcoding_download">Transcodificação dos Downloads</string>
     <string name="settings_title_ui">UI</string>
-    <string name="settings_transcoded_download">Transcodificação dos Downloads</string>
     <string name="settings_version_title">Versão</string>
     <string name="settings_wifi_only_summary">Solicitar confirmação do usuário antes de fazer streaming através da rede móvel.</string>
     <string name="settings_wifi_only_title">Alerta de transmissão somente via Wi-Fi</string>

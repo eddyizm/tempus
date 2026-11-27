@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Albumy odtwarzane niedawno</string>
     <string name="album_list_page_starred">Albumy oznaczone gwiazdką</string>
     <string name="album_list_page_title">Albumy</string>
-    <string name="album_page_extra_info_button">Więcej podobnych</string>
     <string name="album_page_play_button">Odtwarzaj</string>
     <string name="album_page_release_date_label">Wydane %1$s</string>
     <string name="album_page_release_dates_label">Wydane %1$s, oryginalnie %2$s</string>

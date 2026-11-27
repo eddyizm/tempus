@@ -37,7 +37,6 @@
     <string name="download_directory_dialog_title">Baixar as músicas</string>
     <string name="download_info_empty_subtitle">Ao baixar uma música, você a encontrará aqui</string>
     <string name="download_info_empty_title">Ainda não há downloads!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s itens</string>
     <string name="download_item_single_subtitle_formatter">%1$s itens</string>
     <string name="download_shuffle_all_subtitle">Aleatório</string>
     <string name="download_storage_dialog_sub_summary">Para que as alterações tenham efeito, reinicie o aplicativo.</string>
@@ -59,7 +58,6 @@
 
     <!-- Error -->
     <string name="error_required">Obrigatório</string>
-    <string name="error_server_prefix">É necessário que o método seja http ou https</string>
 
     <!-- Exo -->
     <string name="exo_download_notification_channel_name">Downloads</string>
@@ -100,7 +98,6 @@
     <!-- Search -->
     <string name="search_description_empty_response">Verificamos a resposta do seu servidor, mas estava vazia.</string>
     <string name="search_hint">Pesquisar por título, artistas ou álbuns</string>
-    <string name="search_info_minimum_characters">Insira pelo menos três caracteres</string>
     <string name="search_title_album">Álbuns</string>
     <string name="search_title_artist">Artistas</string>
     <string name="search_title_empty_response">Sem resultados.</string>
@@ -162,7 +159,6 @@
     <string name="track_info_bitrate">Taxa de bits</string>
     <string name="track_info_content_type">Tipo de Conteúdo</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Informações da música</string>
     <string name="track_info_disc_number">Número do disco</string>
     <string name="track_info_duration">Duração</string>
     <string name="track_info_genre">Gênero</string>

@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Nyligen spelade album</string>
     <string name="album_list_page_starred">Stjärnmärkta album</string>
     <string name="album_list_page_title">Album</string>
-    <string name="album_page_extra_info_button">Mer som detta</string>
     <string name="album_page_play_button">Spela</string>
     <string name="album_page_release_date_label">Utgivet %1$s</string>
     <string name="album_page_release_dates_label">Utgivet %1$s, ursprungligen %2$s</string>

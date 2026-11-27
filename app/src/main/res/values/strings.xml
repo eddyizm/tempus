@@ -13,7 +13,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Tempus asset link</string>
     <string name="asset_link_copied_toast">Copied %1$s to clipboard</string>
-    <string name="asset_link_debug_toast">Asset link: %1$s</string>
     <string name="asset_link_error_album">Album could not be opened</string>
     <string name="asset_link_error_artist">Artist could not be opened</string>
     <string name="asset_link_error_playlist">Playlist could not be opened</string>
@@ -32,9 +31,8 @@
     <string name="battery_optimization_neutral_button">Don\'t ask again</string>
     <string name="battery_optimization_positive_button">Disable</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">Generating instant mix...</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">Could not retrieve tracks from subsonic server.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">Loading…</string>
@@ -46,9 +44,8 @@
     <string name="connection_alert_dialog_summary">Access to the Subsonic server on connections other than Wi-Fi has been restricted. To prevent this alert dialog from reappearing, disable the connection check in the app settings.</string>
     <string name="connection_alert_dialog_title">Wi-Fi not connected</string>
 
-    <!-- Content Description -->
+    <!-- Content -->
     <string name="content_description_more_options">More options</string>
-    <string name="content_description_shuffle_button">Shuffle</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">Tempus crashed.</string>
@@ -74,7 +71,6 @@
     <string name="download_directory_set">Set where music is downloaded</string>
     <string name="download_info_empty_subtitle">Once you download a song, you\'ll find it here</string>
     <string name="download_info_empty_title">No downloads yet!</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s items</string>
     <string name="download_item_single_subtitle_formatter">%1$s items</string>
     <string name="download_refresh_button_content_description">Refresh downloaded items</string>
     <string name="download_refresh_no_changes">No missing downloads found.</string>
@@ -111,15 +107,11 @@
     <!-- Error -->
     <string name="error_custom_headers_invalid">Invalid header on line %1$s. Use Name: Value</string>
     <string name="error_required">Required</string>
-    <string name="error_server_prefix">http or https prefix required</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Toggle Heart off</string>
     <string name="exo_controls_heart_on_description">Toggle Heart on</string>
     <string name="exo_download_notification_channel_name">Downloads</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Favorite</string>
 
     <!-- Filter -->
     <string name="filter_artist">Filter artists</string>
@@ -186,7 +178,6 @@
     <string name="notification_downloading_progress">Downloading…</string>
     <string name="notification_downloading_title">Downloading %1$s</string>
     <string name="notification_downloads_complete">Downloads complete</string>
-    <string name="notification_finalizing">Finalizing…</string>
     <string name="notification_processing">Processing…</string>
     <plurals name="notification_tracks_downloaded">
         <item quantity="one">1 track downloaded</item>
@@ -212,7 +203,6 @@
     <string name="search_all_songs_play">Play %1$s</string>
     <string name="search_description_empty_response">We checked your server response but it was empty.</string>
     <string name="search_hint">Search title, artists or albums</string>
-    <string name="search_info_minimum_characters">Enter at least three characters</string>
     <string name="search_sort_summary">If enabled, sort searches chronologically. Sort by name if disabled.</string>
     <string name="search_sort_title">Sort recent searches chronologically</string>
     <string name="search_title_album">Albums</string>
@@ -337,7 +327,6 @@
     <string name="track_info_bitrate">Bitrate</string>
     <string name="track_info_content_type">Content Type</string>
     <string name="track_info_dialog_positive_button">OK</string>
-    <string name="track_info_dialog_title">Track info</string>
     <string name="track_info_disc_number">Disc number</string>
     <string name="track_info_duration">Duration</string>
     <string name="track_info_genre">Genre</string>

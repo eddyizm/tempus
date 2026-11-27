@@ -17,13 +17,11 @@
     <string name="la_perms_notifications_title">Bildirişlər</string>
     <string name="la_perms_status_not_provided">Tələb et</string>
     <string name="la_perms_status_provided">Verilib</string>
-    <string name="la_perms_title">İcazələr tələb et</string>
     <string name="la_server_button_create">Yarat</string>
     <string name="la_server_button_delete">Sil</string>
     <string name="la_server_button_login">Girişə keç</string>
     <string name="la_server_button_test">Yoxla</string>
     <string name="la_server_button_update">Yenilə</string>
-    <string name="la_server_dropdown_add_new">Yeni server əlavə et</string>
     <string name="la_server_field_plaintext_password_checkbox">Açıq mətnli parol</string>
     <string name="la_server_field_server_cert">Müştəri sertifikatı (istəyə bağlı)</string>
     <string name="la_server_field_server_empty_error">Məcburi sahə</string>
@@ -35,8 +33,6 @@
     <string name="la_server_field_server_user">İstifadəçi adı</string>
     <string name="la_server_switch_cert">Müştəri sertifikatı (mTLS)</string>
     <string name="la_server_switch_local_url">Yerli URL təyin et</string>
-    <string name="la_server_switch_plaintext_password">Açıq mətnli parol (köhnə serverlər)</string>
-    <string name="la_server_title">Serverin qurulması</string>
     <string name="la_server_toast_connection_error">Şəbəkə xətası:</string>
     <string name="la_server_toast_connection_failure">Alınmadı: server, URL və ya giriş məlumatları etibarsızdır</string>
     <string name="la_server_toast_connection_success">Uğurla qoşuldu!</string>
@@ -48,9 +44,7 @@
     <string name="la_tab_permission">İcazələr</string>
     <string name="la_tab_server">Serverlər</string>
     <string name="la_tab_themes">Temalar</string>
-    <string name="la_theme_button_return">Ana səhifəyə keç</string>
     <string name="la_theme_card_coral_red_description">Mərcan qırmızısı vurğu rəngi</string>
-    <string name="la_theme_card_default">Standart</string>
     <string name="la_theme_card_emerald_green_description">Zümrüd yaşıl vurğu rəngi</string>
     <string name="la_theme_card_flirt_red_description">Flirt qırmızısı vurğu rəngi</string>
     <string name="la_theme_card_purple_violet_description">Bənövşəyi vurğu rəngi</string>

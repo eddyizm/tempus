@@ -14,7 +14,6 @@
     <string name="asset_link_chip_text">%1$s • %2$s</string>
     <string name="asset_link_clipboard_label">Enllaç a recursos del Tempus</string>
     <string name="asset_link_copied_toast">S\'ha copiat %1$s al porta-retalls</string>
-    <string name="asset_link_debug_toast">Enllaç al recurs: %1$s</string>
     <string name="asset_link_error_album">No s\'ha pogut obrir l\'àlbum</string>
     <string name="asset_link_error_artist">No s\'ha pogut obrir l\'artista</string>
     <string name="asset_link_error_playlist">No s\'ha pogut obrir la llista de reproducció</string>
@@ -33,9 +32,8 @@
     <string name="battery_optimization_neutral_button">No ho tornis a preguntar</string>
     <string name="battery_optimization_positive_button">Inhabilita</string>
 
-    <!-- Bottom Sheet -->
+    <!-- Bottom -->
     <string name="bottom_sheet_generating_instant_mix">S\'està generant la mescla instantània...</string>
-    <string name="bottom_sheet_problem_generating_instant_mix">No s\'han pogut recuperar les pistes del servidor del Subsonic.</string>
 
     <!-- Cast -->
     <string name="cast_expanded_controller_loading">S\'està carregant...</string>
@@ -46,9 +44,6 @@
     <string name="connection_alert_dialog_positive_button">D\'acord</string>
     <string name="connection_alert_dialog_summary">S\'ha restringit l\'accés al servidor del Subsonic en connexions que no són wifi. Per a impedir que torni a aparèixer aquesta alerta, inhabiliteu la comprovació de la connexió als paràmetres de l\'aplicació.</string>
     <string name="connection_alert_dialog_title">Xarxa wifi no connectada</string>
-
-    <!-- Content Description -->
-    <string name="content_description_shuffle_button">Reprodueix aleatòriament</string>
 
     <!-- Customactivityoncrash -->
     <string name="customactivityoncrash_error_activity_error_occurred_explanation">El Tempus ha fallat.</string>
@@ -74,7 +69,6 @@
     <string name="download_directory_set">Defineix on es baixa la música</string>
     <string name="download_info_empty_subtitle">Quan baixeu una cançó, la trobareu aquí.</string>
     <string name="download_info_empty_title">Encara no hi ha cap baixada.</string>
-    <string name="download_item_multiple_subtitle_formatter">%1$s  •  %2$s elements</string>
     <string name="download_item_single_subtitle_formatter">%1$s elements</string>
     <string name="download_refresh_button_content_description">Actualitza els elements baixats</string>
     <string name="download_refresh_no_changes">No s\'ha trobat cap baixada que falti.</string>
@@ -110,15 +104,11 @@
 
     <!-- Error -->
     <string name="error_required">Obligatori</string>
-    <string name="error_server_prefix">El prefix «http» o «https» és obligatori</string>
 
     <!-- Exo -->
     <string name="exo_controls_heart_off_description">Treu el cor</string>
     <string name="exo_controls_heart_on_description">Posa un cor</string>
     <string name="exo_download_notification_channel_name">Baixades</string>
-
-    <!-- Favorite -->
-    <string name="favorite_icon_description">Preferit</string>
 
     <!-- Filter -->
     <string name="filter_artist">Filtra per artistes</string>
@@ -184,7 +174,6 @@
     <string name="search_all_songs_play">Reprodueix %1$s</string>
     <string name="search_description_empty_response">Hem comprovat la resposta del servidor però estava buida.</string>
     <string name="search_hint">Cerqueu títols, artistes o àlbums</string>
-    <string name="search_info_minimum_characters">Introduïu com a mínim tres caràcters</string>
     <string name="search_sort_summary">Si s\'habilita, les cerques recents s\'ordenen cronològicament. Si no, s\'ordenen per nom.</string>
     <string name="search_sort_title">Ordena les cerques recents cronològicament</string>
     <string name="search_title_album">Àlbums</string>
@@ -298,7 +287,6 @@
     <string name="track_info_bitrate">Taxa de bits</string>
     <string name="track_info_content_type">Tipus de contingut</string>
     <string name="track_info_dialog_positive_button">D\'acord</string>
-    <string name="track_info_dialog_title">Informació de la pista</string>
     <string name="track_info_disc_number">Número de disc</string>
     <string name="track_info_duration">Durada</string>
     <string name="track_info_genre">Gènere</string>

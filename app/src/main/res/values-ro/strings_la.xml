@@ -12,6 +12,5 @@
     <string name="la_perms_notifications_title">Notificări</string>
     <string name="la_perms_status_not_provided">Solicită</string>
     <string name="la_perms_status_provided">Acordată</string>
-    <string name="la_perms_title">Solicită permisiuni</string>
     <string name="la_theme_card_emerald_green_description">Culoare de accent verde smarald</string>
 </resources>

@@ -20,7 +20,6 @@
     <string name="album_list_page_recently_played">Kürzlich gespielte Alben</string>
     <string name="album_list_page_starred">Lieblingsalben</string>
     <string name="album_list_page_title">Alben</string>
-    <string name="album_page_extra_info_button">Ähnliches</string>
     <string name="album_page_play_button">Wiedergabe</string>
     <string name="album_page_release_date_label">Veröffentlicht %1$s</string>
     <string name="album_page_release_dates_label">Veröffentlicht %1$s, ursprünglich %2$s</string>

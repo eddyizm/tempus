@@ -17,13 +17,11 @@
     <string name="la_perms_notifications_title">Aviseringar</string>
     <string name="la_perms_status_not_provided">Begär</string>
     <string name="la_perms_status_provided">Beviljad</string>
-    <string name="la_perms_title">Begär behörigheter</string>
     <string name="la_server_button_create">Skapa</string>
     <string name="la_server_button_delete">Radera</string>
     <string name="la_server_button_login">Gå till inloggning</string>
     <string name="la_server_button_test">Testa</string>
     <string name="la_server_button_update">Uppdatera</string>
-    <string name="la_server_dropdown_add_new">Lägg till ny server</string>
     <string name="la_server_field_plaintext_password_checkbox">Lösenord i klartext</string>
     <string name="la_server_field_server_cert">Klientcertifikat (valfritt)</string>
     <string name="la_server_field_server_empty_error">Obligatoriskt fält</string>
@@ -35,8 +33,6 @@
     <string name="la_server_field_server_user">Användarnamn</string>
     <string name="la_server_switch_cert">Klientcertifikat (mTLS)</string>
     <string name="la_server_switch_local_url">Ange en lokal adress</string>
-    <string name="la_server_switch_plaintext_password">Lösenord i klartext (äldre servrar)</string>
-    <string name="la_server_title">Serverinställningar</string>
     <string name="la_server_toast_connection_error">Nätverksfel:</string>
     <string name="la_server_toast_connection_failure">Misslyckades: ogiltig server, adress eller inloggningsuppgifter</string>
     <string name="la_server_toast_connection_success">Anslutningen lyckades!</string>
@@ -48,9 +44,7 @@
     <string name="la_tab_permission">Behörigheter</string>
     <string name="la_tab_server">Servrar</string>
     <string name="la_tab_themes">Teman</string>
-    <string name="la_theme_button_return">Gå till startsidan</string>
     <string name="la_theme_card_coral_red_description">Korallröd accentfärg</string>
-    <string name="la_theme_card_default">Standard</string>
     <string name="la_theme_card_emerald_green_description">Smaragdgrön accentfärg</string>
     <string name="la_theme_card_flirt_red_description">Ceriseröd accentfärg</string>
     <string name="la_theme_card_purple_violet_description">Purpurviolett accentfärg</string>
