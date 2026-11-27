@@ -78,7 +78,7 @@ class ResumingDataSource(
                 Log.w(TAG, "Resume attempt $attempt of $maxAttempts at byte $bytesRead failed: $e")
                 continue
             }
-            if (upstream.responseHeaders.keys.any { "Content-Range".equals(it, ignoreCase = true) }) {
+            if (upstream.responseHeaders.hasContentRange()) {
                 Log.i(TAG, "Resumed at byte $bytesRead on attempt $attempt")
                 return true
             }
