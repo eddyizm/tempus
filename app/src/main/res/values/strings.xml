@@ -704,6 +704,8 @@
     <string name="song_list_page_added_to_queue">Added to queue</string>
     <string name="song_list_page_all">All songs</string>
     <string name="song_list_page_all_empty">No songs found. Your server may not support listing every song with an empty search.</string>
+    <string name="song_list_page_all_by_artist">All songs by %1$s</string>
+    <string name="song_list_page_all_by_artist_empty">No songs found for this artist.</string>
     <string name="song_list_page_downloaded">Downloaded</string>
     <string name="song_list_page_most_played">Most played tracks</string>
     <string name="song_list_page_recently_added">Recently added tracks</string>

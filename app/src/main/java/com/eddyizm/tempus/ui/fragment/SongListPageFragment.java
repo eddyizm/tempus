@@ -131,6 +131,16 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
             songListPageViewModel.title = Constants.MEDIA_ALL;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_all);
             bind.pageTitleLabel.setText(R.string.song_list_page_all);
+        } else if (args.getString(Constants.MEDIA_ALL_BY_ARTIST) != null) {
+            songListPageViewModel.title = Constants.MEDIA_ALL_BY_ARTIST;
+            songListPageViewModel.artist = args.getParcelable(Constants.ARTIST_OBJECT);
+            String artistName = songListPageViewModel.artist != null
+                    ? songListPageViewModel.artist.getName()
+                    : null;
+            songListPageViewModel.toolbarTitle = artistName == null
+                    ? getString(R.string.song_list_page_all)
+                    : getString(R.string.song_list_page_all_by_artist, artistName);
+            bind.pageTitleLabel.setText(songListPageViewModel.toolbarTitle);
         } else if (args.getString(Constants.MEDIA_RECENTLY_PLAYED) != null) {
             songListPageViewModel.title = Constants.MEDIA_RECENTLY_PLAYED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_recently_played);
@@ -351,6 +361,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
                         getString(R.string.generic_list_page_count_unknown, songListPageViewModel.maxNumberByYear)
                 );
                 break;
+            case Constants.MEDIA_ALL_BY_ARTIST:
             case Constants.MEDIA_BY_ARTIST:
             case Constants.MEDIA_BY_GENRES:
             case Constants.MEDIA_STARRED:
@@ -361,9 +372,14 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
 
     private void updateEmptyState(List<Child> songs) {
         if (bind == null) return;
-        boolean show = Constants.MEDIA_ALL.equals(songListPageViewModel.title)
+        boolean isAllSongs = Constants.MEDIA_ALL.equals(songListPageViewModel.title)
+                || Constants.MEDIA_ALL_BY_ARTIST.equals(songListPageViewModel.title);
+        boolean show = isAllSongs
                 && (songs == null || songs.isEmpty())
                 && !Boolean.TRUE.equals(songListPageViewModel.getRefreshing().getValue());
+        bind.songListEmptyLabel.setText(Constants.MEDIA_ALL_BY_ARTIST.equals(songListPageViewModel.title)
+                ? R.string.song_list_page_all_by_artist_empty
+                : R.string.song_list_page_all_empty);
         bind.songListEmptyLabel.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
@@ -374,6 +390,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
                 bind.songListSortImageView.setVisibility(View.GONE);
                 break;
             case Constants.MEDIA_ALL:
+            case Constants.MEDIA_ALL_BY_ARTIST:
             case Constants.MEDIA_BY_ARTIST:
             case Constants.MEDIA_BY_GENRES:
             case Constants.MEDIA_STARRED:

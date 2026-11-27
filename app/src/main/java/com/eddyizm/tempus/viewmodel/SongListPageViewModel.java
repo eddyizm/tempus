@@ -122,6 +122,15 @@ public class SongListPageViewModel extends AndroidViewModel {
             case Constants.MEDIA_ALL:
                 searchingRepository.fetchAllSongsPage(0, PAGE_SIZE, onResult);
                 break;
+            case Constants.MEDIA_ALL_BY_ARTIST:
+                if (artist == null || artist.getId() == null) {
+                    songList.setValue(new ArrayList<>());
+                    refreshing.setValue(false);
+                    break;
+                }
+                artistRepository.getArtistAllSongs(artist.getId(),
+                        songs -> onResult.accept(uniqueSongs(songs)));
+                break;
             case Constants.MEDIA_BY_GENRE:
                 songRepository.fetchSongsByGenrePage(genre.getGenre(), 0, PAGE_SIZE, onResult);
                 break;
@@ -184,6 +193,18 @@ public class SongListPageViewModel extends AndroidViewModel {
             loadingMore.setValue(false);
             hasMore = false;
         }
+    }
+
+    /** Deduplicates a complete list while keeping the order returned by the repository. */
+    static List<Child> uniqueSongs(List<Child> songs) {
+        if (songs == null || songs.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Map<String, Child> unique = new LinkedHashMap<>();
+        for (Child song : songs) {
+            unique.put(song.getId(), song);
+        }
+        return new ArrayList<>(unique.values());
     }
 
     private void appendUnique(List<Child> page) {

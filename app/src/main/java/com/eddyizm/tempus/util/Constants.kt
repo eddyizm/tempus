@@ -88,6 +88,7 @@ object Constants {
     const val MEDIA_CHRONOLOGY = "MEDIA_CHRONOLOGY"
     const val MEDIA_BEST_OF = "MEDIA_BEST_OF"
     const val MEDIA_ALL = "MEDIA_ALL"
+    const val MEDIA_ALL_BY_ARTIST = "MEDIA_ALL_BY_ARTIST"
     const val MEDIA_BY_TITLE = "MEDIA_BY_TITLE"
     const val SORT_BY_ARTIST = "SORT_BY_ARTIST"
     const val SORT_BY_ALBUM = "SORT_BY_ALBUM"
