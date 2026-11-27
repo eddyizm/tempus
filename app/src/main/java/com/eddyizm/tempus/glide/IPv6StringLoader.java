@@ -12,12 +12,12 @@ import com.bumptech.glide.load.model.ModelLoader;
 import com.bumptech.glide.load.model.ModelLoaderFactory;
 import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 import com.bumptech.glide.signature.ObjectKey;
+import com.eddyizm.tempus.subsonic.utils.StringUtil;
 import com.eddyizm.tempus.util.ClientCertManager;
 import com.eddyizm.tempus.util.ServerHeaders;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -36,13 +36,7 @@ public class IPv6StringLoader implements ModelLoader<String, InputStream> {
 
     @Override
     public boolean handles(@NonNull String model) {
-        return isHttpUrl(model);
-    }
-
-    /** Scheme matching is intentionally case-insensitive: keyboards capitalise the first letter. */
-    static boolean isHttpUrl(@NonNull String model) {
-        String lower = model.toLowerCase(Locale.ROOT);
-        return lower.startsWith("http://") || lower.startsWith("https://");
+        return StringUtil.isHttpUrl(model);
     }
 
     @Override

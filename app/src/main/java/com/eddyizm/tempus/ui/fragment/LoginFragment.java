@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eddyizm.tempus.App;
 import com.eddyizm.tempus.R;
+import com.eddyizm.tempus.subsonic.utils.StringUtil;
 import com.eddyizm.tempus.ui.login.LoginActivity;
 import com.eddyizm.tempus.ui.adapter.ServerAdapter;
 import com.eddyizm.tempus.databinding.FragmentLoginBinding;
@@ -174,17 +175,19 @@ public class LoginFragment extends Fragment implements ClickCallback {
     }
 
     private void saveServerPreference(String serverId, String server, String localAddress, String user, String password, boolean isLowSecurity, String clientCert, String customHeaders) {
+        String normalizedServer = StringUtil.normalizeScheme(server);
+        String normalizedLocalAddress = StringUtil.normalizeScheme(localAddress);
         // Written only when the stored address belongs to another server. Tapping the same one
         // again has to keep the flip onError made, which is how a second attempt reaches the local
         // address. The server id cannot be the test, because onError clears it.
         String inUseAddress = Preferences.getInUseServerAddress();
-        boolean addressIsThisServers = java.util.Objects.equals(inUseAddress, server)
-                || java.util.Objects.equals(inUseAddress, localAddress);
+        boolean addressIsThisServers = java.util.Objects.equals(inUseAddress, normalizedServer)
+                || java.util.Objects.equals(inUseAddress, normalizedLocalAddress);
 
         Preferences.setServerId(serverId);
-        Preferences.setServer(server);
-        Preferences.setLocalAddress(localAddress);
-        if (!addressIsThisServers) Preferences.setInUseServerAddress(server);
+        Preferences.setServer(normalizedServer);
+        Preferences.setLocalAddress(normalizedLocalAddress);
+        if (!addressIsThisServers) Preferences.setInUseServerAddress(normalizedServer);
         Preferences.setUser(user);
         Preferences.setPassword(password);
         Preferences.setLowSecurity(isLowSecurity);

@@ -21,6 +21,7 @@ import com.eddyizm.tempus.model.Server
 import com.eddyizm.tempus.repository.PlaylistRepository
 import com.eddyizm.tempus.repository.SystemRepository
 import com.eddyizm.tempus.subsonic.utils.CacheUtil
+import com.eddyizm.tempus.subsonic.utils.StringUtil
 import com.eddyizm.tempus.ui.activity.MainActivity
 import com.eddyizm.tempus.util.CustomHeaders
 import com.eddyizm.tempus.viewmodel.ServerViewModel
@@ -296,11 +297,11 @@ class LoginServerFragment : Fragment() {
         val s: Server = serverList[selectedServerPosition]
 
         val serverId: String = s.serverId
-        val server: String = s.address
+        val server: String = StringUtil.normalizeScheme(s.address)
         val user: String = s.username
         val password: String = s.password
-        val address: String = s.address
-        val localAddress: String = s.localAddress ?: s.address
+        val address: String = StringUtil.normalizeScheme(s.address)
+        val localAddress: String = StringUtil.normalizeScheme(s.localAddress ?: s.address)
         val clientCert: String = s.clientCert ?: ""
         val customHeaders: String = s.customHeaders ?: ""
 
@@ -335,8 +336,8 @@ class LoginServerFragment : Fragment() {
                 serverName = binding.serverNameField.text.toString(),
                 username = binding.serverUserField.text.toString(),
                 password = binding.serverPasswordField.text.toString(),
-                address = binding.serverPublicUrlField.text.toString(),
-                localAddress = binding.serverLocalUrlField.text.toString(),
+                address = StringUtil.normalizeScheme(binding.serverPublicUrlField.text.toString()),
+                localAddress = StringUtil.normalizeScheme(binding.serverLocalUrlField.text.toString()),
                 timestamp = System.currentTimeMillis(),
                 isLowSecurity = binding.serverPlaintextPassowrd.isChecked,
                 clientCert = binding.serverCertField.text.toString(),
