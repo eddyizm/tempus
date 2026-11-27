@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">%1$s\'de devam et</string>
+    <string name="home_option_reorganize">Yeniden düzenle</string>
+    <string name="home_rearrangement_dialog_negative_button">İptal</string>
+    <string name="home_rearrangement_dialog_neutral_button">Sıfırla</string>
+    <string name="home_rearrangement_dialog_positive_button">Kaydet</string>
+    <string name="home_rearrangement_dialog_subtitle">Yapılan değişikliklerin etkili olması için uygulamayı yeniden başlatmanız gerekir.</string>
+    <string name="home_rearrangement_dialog_title">Ana sayfayı düzenle</string>
+    <string name="home_section_music">Müzik</string>
+    <string name="home_section_podcast">Podcast</string>
+    <string name="home_section_radio">Radyo</string>
+    <string name="home_subtitle_best_of">Favori sanatçılarının en iyi şarkıları</string>
+    <string name="home_subtitle_made_for_you">Beğendiğin bir şarkıdan karışım başlat</string>
+    <string name="home_subtitle_new_internet_radio_station">Yeni radyo ekle</string>
+    <string name="home_subtitle_new_podcast_channel">Yeni podcast kanalı ekle</string>
+    <string name="home_sync_starred_albums_subtitle">Yıldız ile işaretlenen albümler çevrimdışı kullanılabilir olacak</string>
+    <string name="home_sync_starred_albums_title">Yıldızlı Albümleri Senkronize Et</string>
+    <string name="home_sync_starred_cancel">İptal</string>
+    <string name="home_sync_starred_download">İndir</string>
+    <string name="home_sync_starred_subtitle">Bu parçaların indirilmesi önemli miktarda veri kullanabilir</string>
+    <string name="home_sync_starred_title">Eşitlenecek bazı yıldızlı parçalar var gibi görünüyor</string>
+    <string name="home_title_best_of">En iyiler</string>
+    <string name="home_title_continue_listening">Dinlemeye devam et</string>
+    <string name="home_title_discovery">Keşfet</string>
+    <string name="home_title_discovery_shuffle_all_button">Tümünü karıştır</string>
+    <string name="home_title_flashback">Geçmişe dönüş</string>
+    <string name="home_title_internet_radio_station">İnternet radyo istasyonları</string>
+    <string name="home_title_last_month">Geçen ay</string>
+    <string name="home_title_last_played">Son çalınanlar</string>
+    <string name="home_title_last_played_see_all_button">Tümünü gör</string>
+    <string name="home_title_last_week">Geçen hafta</string>
+    <string name="home_title_last_year">Geçen yıl</string>
+    <string name="home_title_made_for_you">Senin için</string>
+    <string name="home_title_most_played">En çok çalınanlar</string>
+    <string name="home_title_most_played_see_all_button">Tümünü gör</string>
+    <string name="home_title_new_releases">Yeni çıkışlar</string>
+    <string name="home_title_newest_podcasts">En yeni podcastler</string>
+    <string name="home_title_pinned_playlists">Çalma listeleri</string>
+    <string name="home_title_podcast_channels">Kanallar</string>
+    <string name="home_title_podcast_channels_see_all_button">Tümünü gör</string>
+    <string name="home_title_radio_station">Radyo istasyonları</string>
+    <string name="home_title_recently_added">Son eklenenler</string>
+    <string name="home_title_recently_added_see_all_button">Tümünü gör</string>
+    <string name="home_title_shares">Paylaşımlar</string>
+    <string name="home_title_starred_albums">★ Yıldızlı albümler</string>
+    <string name="home_title_starred_albums_see_all_button">Tümünü gör</string>
+    <string name="home_title_starred_artists">★ Yıldızlı sanatçılar</string>
+    <string name="home_title_starred_artists_see_all_button">Tümünü gör</string>
+    <string name="home_title_starred_tracks">★ Yıldızlı parçalar</string>
+    <string name="home_title_starred_tracks_see_all_button">Tümünü gör</string>
+    <string name="home_title_top_songs">En iyi şarkıların</string>
+</resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">新增到播放清單</string>
+    <string name="menu_download_all_button">全部下載</string>
+    <string name="menu_download_label">下載</string>
+    <string name="menu_filter_all">全部</string>
+    <string name="menu_filter_download">已下載</string>
+    <string name="menu_group_by_album">專輯</string>
+    <string name="menu_group_by_artist">藝術家</string>
+    <string name="menu_group_by_genre">流派</string>
+    <string name="menu_group_by_track">歌曲</string>
+    <string name="menu_group_by_year">年份</string>
+    <string name="menu_home_label">首頁</string>
+    <string name="menu_last_month_name">上月</string>
+    <string name="menu_last_week_name">上週</string>
+    <string name="menu_last_year_name">去年</string>
+    <string name="menu_library_label">曲庫</string>
+    <string name="menu_pin_button">新增到首頁</string>
+    <string name="menu_rate_album">專輯評分</string>
+    <string name="menu_search_button">搜尋</string>
+    <string name="menu_settings_button">設定</string>
+    <string name="menu_sort_album_count">專輯數量</string>
+    <string name="menu_sort_artist">藝術家</string>
+    <string name="menu_sort_least_recently_starred">最早收藏</string>
+    <string name="menu_sort_most_played">最多播放</string>
+    <string name="menu_sort_most_recently_starred">最近收藏</string>
+    <string name="menu_sort_name">名稱</string>
+    <string name="menu_sort_random">隨機</string>
+    <string name="menu_sort_recently_added">最近新增</string>
+    <string name="menu_sort_recently_played">最近播放</string>
+    <string name="menu_sort_year">年份</string>
+    <string name="menu_unpin_button">從首頁移除</string>
+</resources>

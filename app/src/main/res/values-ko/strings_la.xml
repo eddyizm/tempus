@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Login Activity -->
+    <string name="la_perms_access_local_network_description">현재 기기와 동일한 LAN에 연결된 다른 기기에 접근하는 데 필요합니다.</string>
+    <string name="la_perms_access_local_network_title">로컬 네트워크 접근</string>
+    <string name="la_perms_description">필요한 권한과 사용 목적이 아래에 표시됩니다.</string>
+    <string name="la_perms_internet_description">인터넷을 통해 음악 서버에 접속하는 데 필요합니다.</string>
+    <string name="la_perms_internet_title">인터넷</string>
+    <string name="la_perms_nearby_devices_description">UPnP와 Chromecast를 통해 다른 기기를 검색하는 데 필요합니다.</string>
+    <string name="la_perms_nearby_devices_title">주변 기기</string>
+    <string name="la_perms_notifications_description">다운로드 상태와 플레이어 컨트롤을 표시하는 데 필요합니다.</string>
+    <string name="la_perms_notifications_title">알림</string>
+    <string name="la_perms_status_not_provided">요청</string>
+    <string name="la_perms_status_provided">허용됨</string>
+    <string name="la_perms_title">권한 요청</string>
+    <string name="la_theme_card_emerald_green_description">에메랄드 그린 강조 색상</string>
+</resources>

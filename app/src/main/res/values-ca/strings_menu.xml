@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Afegeix a la llista de reproducció</string>
+    <string name="menu_add_to_queue_button">Afegeix a la cua</string>
+    <string name="menu_download_all_button">Baixa-ho tot</string>
+    <string name="menu_download_label">Baixa</string>
+    <string name="menu_edit_playlist_button">Edició de la llista de reproducció</string>
+    <string name="menu_edit_playlist_details_button">Edita els detalls</string>
+    <string name="menu_filter_all">Tot</string>
+    <string name="menu_filter_download">Baixades</string>
+    <string name="menu_go_to_playlist_button">Reprodueix</string>
+    <string name="menu_group_by_album">Àlbum</string>
+    <string name="menu_group_by_artist">Artista</string>
+    <string name="menu_group_by_genre">Gènere</string>
+    <string name="menu_group_by_playlist">Llista de reproducció</string>
+    <string name="menu_group_by_track">Pista</string>
+    <string name="menu_group_by_year">Any</string>
+    <string name="menu_home_label">Inici</string>
+    <string name="menu_keep_synced_button">Mantén sincronitzada</string>
+    <string name="menu_last_month_name">El mes passat</string>
+    <string name="menu_last_week_name">La setmana passada</string>
+    <string name="menu_last_year_name">L\'any passat</string>
+    <string name="menu_library_label">Biblioteca</string>
+    <string name="menu_pin_button">Afegeix als preferits</string>
+    <string name="menu_play_shuffle_button">Reprodueix aleatòriament</string>
+    <string name="menu_rate_album">Valora l\'àlbum</string>
+    <string name="menu_search_button">Cerca</string>
+    <string name="menu_settings_button">Paràmetres</string>
+    <string name="menu_sort_album_count">Nombre d\'àlbums</string>
+    <string name="menu_sort_artist">Artista</string>
+    <string name="menu_sort_date_created">Data de creació</string>
+    <string name="menu_sort_least_recently_starred">Estrelles menys recents</string>
+    <string name="menu_sort_most_played">Més reproduccions</string>
+    <string name="menu_sort_most_recently_starred">Estrelles més recents</string>
+    <string name="menu_sort_name">Nom</string>
+    <string name="menu_sort_random">Aleatori</string>
+    <string name="menu_sort_recently_added">Addicions recents</string>
+    <string name="menu_sort_recently_played">Reproduccions recents</string>
+    <string name="menu_sort_song_count">Nombre de cançons</string>
+    <string name="menu_sort_year">Any</string>
+    <string name="menu_unpin_button">Suprimeix dels preferits</string>
+</resources>

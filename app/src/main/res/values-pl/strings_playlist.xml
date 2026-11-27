@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">Playlista dodana do kolejki</string>
+    <string name="playlist_catalogue_title">Katalog Playlist</string>
+    <string name="playlist_catalogue_title_expanded">Przeglądaj Playlisty</string>
+    <string name="playlist_chooser_dialog_cancel_button">Anuluj</string>
+    <string name="playlist_chooser_dialog_create_button">Utwórz</string>
+    <string name="playlist_chooser_dialog_empty">Nie utworzono playlist</string>
+    <string name="playlist_chooser_dialog_title">Dodaj do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Nie udało się dodać piosenek do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_add_success">Dodano piosenki do playlisty</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">Pominięto wszystkie piosenki jako duplikaty</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Nie udało się usunąć piosenki z playlisty</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Usunięto piosenkę z playlisty</string>
+    <string name="playlist_chooser_dialog_visibility_private">Prywatna</string>
+    <string name="playlist_chooser_dialog_visibility_public">Publiczna</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Włączenie tego oznacza playlistę jako publiczną. Nie zmienienie tego ustawienia, nie zmienia widoczności playlisty.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Oznacz playlistę jako publiczną</string>
+    <string name="playlist_counted_tracks">%1$d utworów •  %2$s</string>
+    <string name="playlist_details_dialog_title">Szczegóły playlisty</string>
+    <string name="playlist_duration">Długość  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Nie udało się usunąć playlisty</string>
+    <string name="playlist_editor_dialog_action_delete_success">Playlista usunięta</string>
+    <string name="playlist_editor_dialog_action_delete_toast">Przytrzymaj aby usunąć</string>
+    <string name="playlist_editor_dialog_action_save_empty">Playlista musi mieć co najmniej jeden utwór</string>
+    <string name="playlist_editor_dialog_action_save_failure">Nie udało się zapisać playlisty</string>
+    <string name="playlist_editor_dialog_action_save_success">Playlista zapisana</string>
+    <string name="playlist_editor_dialog_hint_name">Nazwa Playlisty</string>
+    <string name="playlist_editor_dialog_negative_button">Anuluj</string>
+    <string name="playlist_editor_dialog_neutral_button">Usuń</string>
+    <string name="playlist_editor_dialog_positive_button">Zapisz</string>
+    <string name="playlist_editor_dialog_title">Edytuj playlistę</string>
+    <string name="playlist_editor_drag_track">Przesuń, aby zmienić kolejność</string>
+    <string name="playlist_editor_hint">Przesuń uchwyt, aby zmienić kolejność, naciśnij na kosz, aby usunąć. Nic nie jest wysyłane dopóki nie jest zapisywane.</string>
+    <string name="playlist_editor_load_failure">Nie udało się załadować playlisty</string>
+    <string name="playlist_editor_remove_track">Usuń utwór</string>
+    <string name="playlist_editor_removed_track">Usunięto z listy</string>
+    <string name="playlist_error_not_found_message">Tej playlisty nie udało się odnaleźć na serwerze. Zostanie ona usunięta z twojej lokalnej pamięci podręcznej.</string>
+    <string name="playlist_error_not_found_title">Playlista nie odnaleziona</string>
+    <string name="playlist_error_not_found_toast">Playlista usunięta z pamięci podręcznej</string>
+    <string name="playlist_page_empty">Brak piosenek w tej playliście</string>
+    <string name="playlist_page_play_button">Odtwórz</string>
+    <string name="playlist_page_shuffle_button">Odtwarzaj losowo</string>
+    <string name="playlist_song_count">Playlista  •  %1$d piosenek</string>
+    <string name="playlist_sort_both">Ostatnio aktywne</string>
+    <string name="playlist_sort_last_played">Ostatnio odtwarzane</string>
+    <string name="playlist_sort_last_updated">Ostatnio zaktualizowane</string>
+    <string name="playlist_sort_pinned">Ulubione</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Pobieranie %d utworu</item>
+        <item quantity="other">Pobieranie %d utworów</item>
+    </plurals>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Zerrendara gehitu</string>
+    <string name="menu_add_to_queue_button">Ilarara gehitu</string>
+    <string name="menu_download_all_button">Denak deskargatu</string>
+    <string name="menu_download_label">Deskargatu</string>
+    <string name="menu_edit_playlist_button">Zerrenda editatu</string>
+    <string name="menu_edit_playlist_details_button">Editatu xehetasunak</string>
+    <string name="menu_filter_all">Denak</string>
+    <string name="menu_filter_download">Deskargatuak</string>
+    <string name="menu_go_to_playlist_button">Zerrendara joan</string>
+    <string name="menu_group_by_album">Diskoa</string>
+    <string name="menu_group_by_artist">Artista</string>
+    <string name="menu_group_by_genre">Generoa</string>
+    <string name="menu_group_by_playlist">Zerrenda</string>
+    <string name="menu_group_by_track">Abestia</string>
+    <string name="menu_group_by_year">Urtea</string>
+    <string name="menu_home_label">Hasiera</string>
+    <string name="menu_keep_synced_button">Sinkronizatuta mantendu</string>
+    <string name="menu_last_month_name">Azken hilabetea</string>
+    <string name="menu_last_week_name">Azken astea</string>
+    <string name="menu_last_year_name">Azken urtea</string>
+    <string name="menu_library_label">Liburutegia</string>
+    <string name="menu_login_button">Hasi saioa</string>
+    <string name="menu_pin_button">Ainguratu</string>
+    <string name="menu_play_shuffle_button">Nahastuta erreproduzitu</string>
+    <string name="menu_rate_album">Diskoa baloratu</string>
+    <string name="menu_search_button">Bilatu</string>
+    <string name="menu_settings_button">Ezarpenak</string>
+    <string name="menu_sort_album_count">Disko kopurua</string>
+    <string name="menu_sort_artist">Artista</string>
+    <string name="menu_sort_date_created">Sortze data</string>
+    <string name="menu_sort_least_recently_starred">Gogoko zaharrenak</string>
+    <string name="menu_sort_most_played">Gehien entzunak</string>
+    <string name="menu_sort_most_recently_starred">Gogoko azkenak</string>
+    <string name="menu_sort_name">Izena</string>
+    <string name="menu_sort_random">Ausazkoa</string>
+    <string name="menu_sort_recently_added">Azken gehituak</string>
+    <string name="menu_sort_recently_played">Azken entzunak</string>
+    <string name="menu_sort_song_count">Abesti kopurua</string>
+    <string name="menu_sort_year">Urtea</string>
+    <string name="menu_unpin_button">Ainguraketa kendu</string>
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Aggiungi alla playlist</string>
+    <string name="menu_download_all_button">Scarica tutto</string>
+    <string name="menu_download_label">Scarica</string>
+    <string name="menu_edit_playlist_details_button">Modifica dettagli</string>
+    <string name="menu_filter_all">Tutti</string>
+    <string name="menu_filter_download">Scaricati</string>
+    <string name="menu_group_by_album">Album</string>
+    <string name="menu_group_by_artist">Artista</string>
+    <string name="menu_group_by_genre">Genere</string>
+    <string name="menu_group_by_track">Brano</string>
+    <string name="menu_group_by_year">Anno</string>
+    <string name="menu_home_label">Home</string>
+    <string name="menu_keep_synced_button">Mantieni sincronizzata</string>
+    <string name="menu_last_month_name">Il mese scorso</string>
+    <string name="menu_last_week_name">La scorsa settimana</string>
+    <string name="menu_last_year_name">L\'anno scorso</string>
+    <string name="menu_library_label">Libreria</string>
+    <string name="menu_pin_button">Aggiungi alla schermata home</string>
+    <string name="menu_rate_album">Valuta l\'album</string>
+    <string name="menu_search_button">Cerca</string>
+    <string name="menu_settings_button">Impostazioni</string>
+    <string name="menu_sort_album_count">Numero di Album</string>
+    <string name="menu_sort_artist">Artista</string>
+    <string name="menu_sort_least_recently_starred">Preferiti meno recentemente</string>
+    <string name="menu_sort_most_played">Più riprodotti</string>
+    <string name="menu_sort_most_recently_starred">Preferiti più recentemente</string>
+    <string name="menu_sort_name">Nome</string>
+    <string name="menu_sort_random">Casuale</string>
+    <string name="menu_sort_recently_added">Aggiunti di recente</string>
+    <string name="menu_sort_recently_played">Riprodotti di recente</string>
+    <string name="menu_sort_year">Anno</string>
+    <string name="menu_unpin_button">Rimuovi dalla schermata home</string>
+</resources>

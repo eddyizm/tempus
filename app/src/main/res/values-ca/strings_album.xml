@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Afegeix a la llista de reproducció</string>
+    <string name="album_bottom_sheet_add_to_queue">Afegeix a la cua</string>
+    <string name="album_bottom_sheet_download_all">Baixa-ho tot</string>
+    <string name="album_bottom_sheet_go_to_artist">Ves a l\'artista</string>
+    <string name="album_bottom_sheet_instant_mix">Mescla instantània</string>
+    <string name="album_bottom_sheet_play_next">Reprodueix a continuació</string>
+    <string name="album_bottom_sheet_remove_all">Suprimeix-ho tot</string>
+    <string name="album_bottom_sheet_share">Comparteix</string>
+    <string name="album_bottom_sheet_shuffle">Reprodueix aleatòriament</string>
+    <string name="album_catalogue_title">Àlbums</string>
+    <string name="album_catalogue_title_expanded">Exploració d\'àlbums</string>
+    <string name="album_error_retrieving_artist">S\'ha produït un error en recuperar l\'artista</string>
+    <string name="album_list_page_downloaded">Àlbums baixats</string>
+    <string name="album_list_page_most_played">Àlbums més reproduïts</string>
+    <string name="album_list_page_new_releases">Llançaments nous</string>
+    <string name="album_list_page_recently_added">Àlbums afegits recentment</string>
+    <string name="album_list_page_recently_played">Àlbums reproduïts recentment</string>
+    <string name="album_list_page_starred">Àlbums amb estrelles</string>
+    <string name="album_list_page_title">Àlbums</string>
+    <string name="album_page_extra_info_button">Més com això</string>
+    <string name="album_page_play_button">Reprodueix</string>
+    <string name="album_page_release_date_label">Publicació: %1$s</string>
+    <string name="album_page_release_dates_label">Publicació: %1$s, originalment: %2$s</string>
+    <string name="album_page_shuffle_button">Reprodueix aleatòriament</string>
+    <string name="album_page_tracks_count_and_duration">%1$d cançons  •  %2$d minuts</string>
+</resources>

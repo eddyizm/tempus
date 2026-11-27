@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android Auto -->
+    <string name="aa_album_most_played">Ən çox dinlənilən albomlar</string>
+    <string name="aa_album_recently_added">Əlavə edilmiş albomlar</string>
+    <string name="aa_albums">Albomlar</string>
+    <string name="aa_artists">İfaçılar</string>
+    <string name="aa_discovery_mix">Kəşf qarışığı</string>
+    <string name="aa_genres">Janrlar</string>
+    <string name="aa_home">Ana səhifə</string>
+    <string name="aa_instant_mix">Ani qarışıq</string>
+    <string name="aa_made_for_you">Sizin üçün</string>
+    <string name="aa_more">Daha çox</string>
+    <string name="aa_music_folder">Qovluq</string>
+    <string name="aa_my_mix">Mənim qarışığım</string>
+    <string name="aa_playlists">Pleylistlər</string>
+    <string name="aa_podcast">Podkast</string>
+    <string name="aa_quick_mix">Sürətli qarışıq</string>
+    <string name="aa_radio">Radio</string>
+    <string name="aa_random">Təsadüfi</string>
+    <string name="aa_recent_albums">Sonuncular</string>
+    <string name="aa_song_recently_played">Dinlənilmiş mahnılar</string>
+    <string name="aa_starred">Ulduzlu</string>
+    <string name="aa_starred_albums">★ Albomlar</string>
+    <string name="aa_starred_artists">★ İfaçılar</string>
+    <string name="aa_starred_tracks">★ Mahnılar</string>
+    <string name="aa_tracks">Mahnılar</string>
+    <string name="aa_view_by_albums">Albomlara görə göstər</string>
+</resources>

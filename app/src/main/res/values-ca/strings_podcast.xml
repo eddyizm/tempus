@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Afegeix a la cua</string>
+    <string name="podcast_bottom_sheet_delete">Suprimeix</string>
+    <string name="podcast_bottom_sheet_download">Baixa</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Ves al canal</string>
+    <string name="podcast_bottom_sheet_play_next">Reprodueix a continuació</string>
+    <string name="podcast_bottom_sheet_remove">Suprimeix</string>
+    <string name="podcast_channel_catalogue_title">Canals</string>
+    <string name="podcast_channel_catalogue_title_expanded">Exploració de canals</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">URL de l\'RSS</string>
+    <string name="podcast_channel_editor_dialog_title">Canal de pòdcast</string>
+    <string name="podcast_channel_not_supported_snackbar">Aquest servidor no és compatible amb els pòdcasts.</string>
+    <string name="podcast_channel_page_title_description_section">Descripció</string>
+    <string name="podcast_channel_page_title_episode_section">Episodis</string>
+    <string name="podcast_channel_page_title_no_episode_available">No hi ha cap episodi disponible</string>
+    <string name="podcast_episode_download_request_snackbar">S\'ha enviat la sol·licitud al servidor</string>
+    <string name="podcast_info_empty_button">Feu clic per a ocultar la secció.\nEls efectes seran visibles quan reinicieu l\'aplicació.</string>
+    <string name="podcast_info_empty_subtitle">Quan afegiu un canal, el trobareu aquí.</string>
+    <string name="podcast_info_empty_title">No s\'ha trobat cap pòdcast.</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+</resources>

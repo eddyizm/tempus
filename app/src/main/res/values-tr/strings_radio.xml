@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_editor_dialog_hint_homepage_url">Radyo Anasayfa URL’si</string>
+    <string name="radio_editor_dialog_hint_name">Radyo Adı</string>
+    <string name="radio_editor_dialog_hint_stream_url">Radyo Yayın URL’si</string>
+    <string name="radio_editor_dialog_negative_button">İptal</string>
+    <string name="radio_editor_dialog_neutral_button">Sil</string>
+    <string name="radio_editor_dialog_positive_button">Kaydet</string>
+    <string name="radio_editor_dialog_title">İnternet Radyo İstasyonu</string>
+    <string name="radio_station_info_empty_button">Bölümü gizlemek için tıklayın\nDeğişiklikler yeniden başlatıldığında görülecek</string>
+    <string name="radio_station_info_empty_subtitle">Bir radyo istasyonu eklediğinizde burada göreceksiniz</string>
+    <string name="radio_station_info_empty_title">İstasyon bulunamadı!</string>
+</resources>

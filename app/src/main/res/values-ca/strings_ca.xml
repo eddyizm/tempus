@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Copia el registre</string>
+    <string name="ca_export_button_share">Comparteix el registre</string>
+    <string name="ca_export_description">        Un APK de depuració (prellançament) proporciona un registre més extens i ens ajuda
+        a entendre què ha fallat dins de l\'aplicació.\n\n
+
+        Les dades no s\'envien enlloc sense el vostre consentiment.
+    </string>
+    <string name="ca_export_label">Exporta</string>
+    <string name="ca_export_title">Recuperació de registres</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">S\'ha copiat el registre al porta-retalls</string>
+    <string name="ca_info_button_close">Tanca l\'aplicació</string>
+    <string name="ca_info_button_restart">Reinicia l\'aplicació</string>
+    <string name="ca_info_description">        Obriu una incidència a GitHub i incloeu-hi una còpia dels registres perquè investiguem la fallada.
+    </string>
+    <string name="ca_info_label">Informació</string>
+    <string name="ca_info_title">El Tempus ha fallat</string>
+    <string name="ca_logs_description">        Això és el que ha fallat.
+    </string>
+    <string name="ca_logs_label">Registres</string>
+    <string name="ca_logs_title">Traça de la pila del Java</string>
+</resources>

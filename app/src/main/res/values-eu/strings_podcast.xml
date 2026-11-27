@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Ilarara gehitu</string>
+    <string name="podcast_bottom_sheet_delete">Ezabatu</string>
+    <string name="podcast_bottom_sheet_download">Deskargatu</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Kanalera joan</string>
+    <string name="podcast_bottom_sheet_play_next">Hurrengoan erreproduzitu</string>
+    <string name="podcast_bottom_sheet_remove">Kendu</string>
+    <string name="podcast_channel_catalogue_title">Kanalak</string>
+    <string name="podcast_channel_catalogue_title_expanded">Kanalak arakatu</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">RSS URLa</string>
+    <string name="podcast_channel_editor_dialog_title">Podcast kanala</string>
+    <string name="podcast_channel_not_supported_snackbar">Zerbitzari honek ez du podcastik onartzen.</string>
+    <string name="podcast_channel_page_title_description_section">Deskribapena</string>
+    <string name="podcast_channel_page_title_episode_section">Atalak</string>
+    <string name="podcast_channel_page_title_no_episode_available">Ez dago atalik erabilgarri</string>
+    <string name="podcast_episode_download_request_snackbar">Zure eskaera zerbitzariari bidali zaio</string>
+    <string name="podcast_info_empty_button">Sakatu atala ezkutatzeko\nEfektuak berrabiaraztean ikusiko dira</string>
+    <string name="podcast_info_empty_subtitle">Kanal bat gehitzen duzunean, hemen aurkituko duzu</string>
+    <string name="podcast_info_empty_title">Ez da podcastik aurkitu!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+    <string name="podcast_release_no_date">Datarik gabe</string>
+    <string name="podcast_release_unknown_duration">Iraupen ezezaguna</string>
+</resources>

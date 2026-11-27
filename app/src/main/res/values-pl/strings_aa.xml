@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android Auto -->
+    <string name="aa_album_most_played">Najczęściej odtwarzane albumy</string>
+    <string name="aa_album_recently_added">Dodane albumy</string>
+    <string name="aa_albums">Albumy</string>
+    <string name="aa_artists">Wykonawcy</string>
+    <string name="aa_discovery_mix">Mix odkrywania</string>
+    <string name="aa_genres">Gatunki</string>
+    <string name="aa_home">Strona główna</string>
+    <string name="aa_instant_mix">Natychmiastowy mix</string>
+    <string name="aa_made_for_you">Dla ciebie</string>
+    <string name="aa_more">Więcej</string>
+    <string name="aa_music_folder">Foldery</string>
+    <string name="aa_my_mix">Mój mix</string>
+    <string name="aa_playlists">Playlisty</string>
+    <string name="aa_podcast">Podcasty</string>
+    <string name="aa_quick_mix">Szybki mix</string>
+    <string name="aa_radio">Radio</string>
+    <string name="aa_random">Losowe</string>
+    <string name="aa_recent_albums">Ostatnie</string>
+    <string name="aa_song_recently_played">Odtwarzane utwory</string>
+    <string name="aa_starred">Oznaczone gwiazdką</string>
+    <string name="aa_starred_albums">★ Albumy</string>
+    <string name="aa_starred_artists">★ Wykonawcy</string>
+    <string name="aa_starred_tracks">★ Utwory</string>
+    <string name="aa_tracks">Utwory</string>
+    <string name="aa_view_by_albums">Wyświetlaj według albumów</string>
+</resources>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Davam et %1$s</string>
+    <string name="home_option_reorganize">Yenidən düzənlə</string>
+    <string name="home_rearrangement_dialog_negative_button">Ləğv et</string>
+    <string name="home_rearrangement_dialog_neutral_button">Sıfırla</string>
+    <string name="home_rearrangement_dialog_positive_button">Yadda saxla</string>
+    <string name="home_rearrangement_dialog_subtitle">Edilmiş dəyişikliklərin qüvvəyə minməsi üçün tətbiqi yenidən başlatmaq lazımdır.</string>
+    <string name="home_rearrangement_dialog_title">Ana səhifənin düzülüşü</string>
+    <string name="home_section_music">Musiqi</string>
+    <string name="home_section_podcast">Podkast</string>
+    <string name="home_section_radio">Radio</string>
+    <string name="home_subtitle_best_of">Sevimli ifaçılarınızın ən populyar mahnıları</string>
+    <string name="home_subtitle_made_for_you">Bəyəndiyin mahnıdan qarışıq başlat</string>
+    <string name="home_subtitle_new_internet_radio_station">Yeni radio əlavə et</string>
+    <string name="home_subtitle_new_podcast_channel">Yeni podkast kanalı əlavə et</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">Sinxronlaşdırılacaq %d albom</item>
+        <item quantity="other">Sinxronlaşdırılacaq %d albom</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Ulduzla işarələnmiş albomlar oflayn əlçatan olacaq</string>
+    <string name="home_sync_starred_albums_title">Ulduzlu albomların sinxronlaşdırılması</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">Sinxronlaşdırılacaq %d ifaçı</item>
+        <item quantity="other">Sinxronlaşdırılacaq %d ifaçı</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">Ulduzlu ifaçılarınızın yüklənməmiş musiqiləri var</string>
+    <string name="home_sync_starred_artists_title">Ulduzlu ifaçıların sinxronlaşdırılması</string>
+    <string name="home_sync_starred_cancel">Ləğv et</string>
+    <string name="home_sync_starred_download">Yüklə</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d mahnı sinxronlaşdırılmalıdır</item>
+        <item quantity="other">%d mahnı sinxronlaşdırılmalıdır</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Bu mahnıların yüklənməsi çoxlu internet trafiki sərf edə bilər</string>
+    <string name="home_sync_starred_title">Sinxronlaşdırılacaq ulduzlu mahnılar</string>
+    <string name="home_title_best_of">Ən yaxşılar</string>
+    <string name="home_title_continue_listening">Dinləməyə davam et</string>
+    <string name="home_title_discovery">Kəşf</string>
+    <string name="home_title_discovery_shuffle_all_button">Hamısını qarışdır</string>
+    <string name="home_title_flashback">Xatirələr</string>
+    <string name="home_title_internet_radio_station">İnternet radio stansiyaları</string>
+    <string name="home_title_last_month">Keçən ay</string>
+    <string name="home_title_last_played">Son dinlənilənlər</string>
+    <string name="home_title_last_played_see_all_button">Hamısına bax</string>
+    <string name="home_title_last_week">Keçən həftə</string>
+    <string name="home_title_last_year">Keçən il</string>
+    <string name="home_title_made_for_you">Sizin üçün hazırlanıb</string>
+    <string name="home_title_most_played">Ən çox dinlənilənlər</string>
+    <string name="home_title_most_played_see_all_button">Hamısına bax</string>
+    <string name="home_title_new_releases">Yeni buraxılışlar</string>
+    <string name="home_title_newest_podcasts">Ən yeni podkastlar</string>
+    <string name="home_title_pinned_playlists">Pleylistlər</string>
+    <string name="home_title_podcast_channels">Kanallar</string>
+    <string name="home_title_podcast_channels_see_all_button">Hamısına bax</string>
+    <string name="home_title_radio_station">Radio stansiyaları</string>
+    <string name="home_title_recently_added">Son əlavə edilənlər</string>
+    <string name="home_title_recently_added_see_all_button">Hamısına bax</string>
+    <string name="home_title_shares">Paylaşımlar</string>
+    <string name="home_title_starred_albums">★ Ulduzlu albomlar</string>
+    <string name="home_title_starred_albums_see_all_button">Hamısına bax</string>
+    <string name="home_title_starred_artists">★ Ulduzlu ifaçılar</string>
+    <string name="home_title_starred_artists_see_all_button">Hamısına bax</string>
+    <string name="home_title_starred_tracks">★ Ulduzlu mahnılar</string>
+    <string name="home_title_starred_tracks_see_all_button">Hamısına bax</string>
+    <string name="home_title_top_songs">Ən çox dinlədiyiniz mahnılar</string>
+</resources>

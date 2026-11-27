@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Artist -->
+    <string name="artist_adapter_radio_station_starting">Axtarılır…</string>
+    <string name="artist_bottom_sheet_add_to_playlist">Pleylistə əlavə et</string>
+    <string name="artist_bottom_sheet_add_to_queue">Növbəyə əlavə et</string>
+    <string name="artist_bottom_sheet_instant_mix">Ani qarışıq yarat</string>
+    <string name="artist_bottom_sheet_loading_tracks">Mahnılar yüklənir\u2026</string>
+    <string name="artist_bottom_sheet_play_next">Növbəti səsləndir</string>
+    <string name="artist_bottom_sheet_shuffle">Qarışdır</string>
+    <string name="artist_catalogue_title">İfaçılar</string>
+    <string name="artist_catalogue_title_expanded">İfaçılara baxış</string>
+    <string name="artist_error_retrieving_radio">İfaçının radiosu alınarkən xəta baş verdi</string>
+    <string name="artist_error_retrieving_tracks">İfaçının mahnıları alınarkən xəta baş verdi</string>
+    <string name="artist_list_page_downloaded">Yüklənmiş ifaçılar</string>
+    <string name="artist_list_page_starred">Ulduzlu ifaçılar</string>
+    <string name="artist_list_page_title">İfaçılar</string>
+    <string name="artist_no_artist_info_toast">İfaçı haqqında əlavə məlumat yoxdur</string>
+    <string name="artist_page_radio_button">Radio</string>
+    <string name="artist_page_shuffle_button">Qarışdır</string>
+    <string name="artist_page_switch_layout_button">Düzülüşü dəyiş</string>
+    <string name="artist_page_title_album_more_like_this_button">Bənzərlərini göstər</string>
+    <string name="artist_page_title_album_section">Albomlar</string>
+    <string name="artist_page_title_appears_on_section">İştirak etdiyi albomlar</string>
+    <string name="artist_page_title_biography_more_button">Daha çox göstər</string>
+    <string name="artist_page_title_biography_section">Tərcümeyi-hal</string>
+    <string name="artist_page_title_compilation_section">Toplular</string>
+    <string name="artist_page_title_ep_section">Minialbomlar</string>
+    <string name="artist_page_title_live_section">Canlı ifalar</string>
+    <string name="artist_page_title_most_streamed_song_section">Ən populyar mahnılar</string>
+    <string name="artist_page_title_most_streamed_song_see_all_button">Hamısına bax</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">Populyar mahnılar yoxdur\n\nGizlətmək üçün toxunun</string>
+    <string name="artist_page_title_remix_section">Remikslər</string>
+    <string name="artist_page_title_single_section">Sinqllar</string>
+    <string name="artist_page_title_soundtrack_section">Film musiqiləri</string>
+</resources>

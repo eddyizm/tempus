@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_editor_dialog_hint_homepage_url">URL da Página Inicial da Rádio</string>
+    <string name="radio_editor_dialog_hint_name">Nome da Rádio</string>
+    <string name="radio_editor_dialog_hint_stream_url">URL de Stream da Rádio</string>
+    <string name="radio_editor_dialog_negative_button">Cancelar</string>
+    <string name="radio_editor_dialog_neutral_button">Excluir</string>
+    <string name="radio_editor_dialog_positive_button">Salvar</string>
+    <string name="radio_editor_dialog_title">Estação de rádio via internet</string>
+    <string name="radio_station_info_empty_button">Clique para ocultar a seção\nOs efeitos serão visíveis ao reiniciar</string>
+    <string name="radio_station_info_empty_subtitle">Ao adicionar uma estação de rádio, você a encontrará aqui</string>
+    <string name="radio_station_info_empty_title">Nenhuma estação encontrada!</string>
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">В плейлист</string>
+    <string name="menu_add_to_queue_button">В очередь</string>
+    <string name="menu_download_all_button">Скачать всё</string>
+    <string name="menu_download_label">Скачать</string>
+    <string name="menu_edit_playlist_button">Изменить</string>
+    <string name="menu_edit_playlist_details_button">Редактировать сведения</string>
+    <string name="menu_filter_all">Все</string>
+    <string name="menu_filter_download">Скачанные</string>
+    <string name="menu_go_to_playlist_button">Играть</string>
+    <string name="menu_group_by_album">Альбом</string>
+    <string name="menu_group_by_artist">Исполнитель</string>
+    <string name="menu_group_by_genre">Жанр</string>
+    <string name="menu_group_by_playlist">Плейлист</string>
+    <string name="menu_group_by_track">Трек</string>
+    <string name="menu_group_by_year">Год</string>
+    <string name="menu_home_label">Главная</string>
+    <string name="menu_keep_synced_button">Сохранять синхронизацию</string>
+    <string name="menu_last_month_name">Прошлый месяц</string>
+    <string name="menu_last_week_name">Прошлая неделя</string>
+    <string name="menu_last_year_name">Прошлый год</string>
+    <string name="menu_library_label">Библиотека</string>
+    <string name="menu_pin_button">В избранное</string>
+    <string name="menu_play_shuffle_button">Играть вперемешку</string>
+    <string name="menu_rate_album">Оценить</string>
+    <string name="menu_search_button">Поиск</string>
+    <string name="menu_settings_button">Настройки</string>
+    <string name="menu_sort_album_count">Кол-во альбомов</string>
+    <string name="menu_sort_artist">Исполнитель</string>
+    <string name="menu_sort_date_created">Дата создания</string>
+    <string name="menu_sort_least_recently_starred">Давно в избранном</string>
+    <string name="menu_sort_most_played">Часто слушаемые</string>
+    <string name="menu_sort_most_recently_starred">Недавно в избранном</string>
+    <string name="menu_sort_name">Имя</string>
+    <string name="menu_sort_random">Случайно</string>
+    <string name="menu_sort_recently_added">Недавно добавленные</string>
+    <string name="menu_sort_recently_played">Недавно играно</string>
+    <string name="menu_sort_song_count">Кол-во треков</string>
+    <string name="menu_sort_year">Год</string>
+    <string name="menu_unpin_button">Из избранного</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_clean_all_button">Limpar fila de reprodução</string>
+    <string name="player_server_priority">Prioridade do Servidor</string>
+</resources>

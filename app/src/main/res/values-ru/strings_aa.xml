@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android Auto -->
+    <string name="aa_album_most_played">Часто слушаемые альбомы</string>
+    <string name="aa_album_recently_added">Недавно добавленные альбомы</string>
+    <string name="aa_albums">Альбомы</string>
+    <string name="aa_artists">Исполнители</string>
+    <string name="aa_discovery_mix">Микс "Открытия"</string>
+    <string name="aa_genres">Жанры</string>
+    <string name="aa_home">Главная</string>
+    <string name="aa_instant_mix">Мгновенный микс</string>
+    <string name="aa_made_for_you">Для вас</string>
+    <string name="aa_more">Ещё</string>
+    <string name="aa_music_folder">Папка</string>
+    <string name="aa_my_mix">Мой микс</string>
+    <string name="aa_playlists">Плейлисты</string>
+    <string name="aa_podcast">Подкасты</string>
+    <string name="aa_quick_mix">Быстрый микс</string>
+    <string name="aa_radio">Радио</string>
+    <string name="aa_random">Перемешать</string>
+    <string name="aa_recent_albums">Недавнее</string>
+    <string name="aa_song_recently_played">Недавно прослушанные треки</string>
+    <string name="aa_starred">Избранное</string>
+    <string name="aa_starred_albums">★ Избранные альбомы</string>
+    <string name="aa_starred_artists">★ Избранные исполнители</string>
+    <string name="aa_starred_tracks">★ Избранные треки</string>
+    <string name="aa_tracks">Треки</string>
+    <string name="aa_view_by_albums">Группировать по альбомам</string>
+</resources>

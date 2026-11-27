@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Продолжить с %1$s</string>
+    <string name="home_option_reorganize">Настроить</string>
+    <string name="home_rearrangement_dialog_negative_button">Отмена</string>
+    <string name="home_rearrangement_dialog_neutral_button">Сброс</string>
+    <string name="home_rearrangement_dialog_positive_button">Сохранить</string>
+    <string name="home_rearrangement_dialog_subtitle">Для применения изменений потребуется перезапуск приложения.</string>
+    <string name="home_rearrangement_dialog_title">Настройка главной</string>
+    <string name="home_section_music">Музыка</string>
+    <string name="home_section_podcast">Подкасты</string>
+    <string name="home_section_radio">Радио</string>
+    <string name="home_subtitle_best_of">Лучшие треки любимых исполнителей</string>
+    <string name="home_subtitle_made_for_you">Микс на основе понравившихся треков</string>
+    <string name="home_subtitle_new_internet_radio_station">Добавить радиостанцию</string>
+    <string name="home_subtitle_new_podcast_channel">Добавить подкаст</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">%d альбом для синхронизации</item>
+        <item quantity="few">%d альбома для синхронизации</item>
+        <item quantity="many">%d альбомов для синхронизации</item>
+        <item quantity="other">%d альбомов для синхронизации</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Избранные альбомы будут доступны офлайн</string>
+    <string name="home_sync_starred_albums_title">Синхронизация избранных альбомов</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d исполнитель для синхронизации</item>
+        <item quantity="few">%d исполнителя для синхронизации</item>
+        <item quantity="many">%d исполнителей для синхронизации</item>
+        <item quantity="other">%d исполнителей для синхронизации</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">У вас есть избранные исполнители без скачанных треков</string>
+    <string name="home_sync_starred_artists_title">Синхронизация избранных исполнителей</string>
+    <string name="home_sync_starred_cancel">Отмена</string>
+    <string name="home_sync_starred_download">Скачать</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d трек требует синхронизации</item>
+        <item quantity="few">%d трека требуют синхронизации</item>
+        <item quantity="many">%d треков требуют синхронизации</item>
+        <item quantity="other">%d треков требуют синхронизации</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Скачивание может потребовать много трафика</string>
+    <string name="home_sync_starred_title">Найдены избранные треки для синхронизации</string>
+    <string name="home_title_best_of">Лучшее</string>
+    <string name="home_title_continue_listening">Продолжить прослушивание</string>
+    <string name="home_title_discovery">Открытия</string>
+    <string name="home_title_discovery_shuffle_all_button">Перемешать всё</string>
+    <string name="home_title_flashback">Взгляд в прошлое</string>
+    <string name="home_title_internet_radio_station">Интернет-радио</string>
+    <string name="home_title_last_month">Прошлый месяц</string>
+    <string name="home_title_last_played">Недавно играно</string>
+    <string name="home_title_last_played_see_all_button">Все</string>
+    <string name="home_title_last_week">Прошлая неделя</string>
+    <string name="home_title_last_year">Прошлый год</string>
+    <string name="home_title_made_for_you">Для вас</string>
+    <string name="home_title_most_played">Часто слушаемое</string>
+    <string name="home_title_most_played_see_all_button">Все</string>
+    <string name="home_title_new_releases">Новые релизы</string>
+    <string name="home_title_newest_podcasts">Новые подкасты</string>
+    <string name="home_title_pinned_playlists">Плейлисты</string>
+    <string name="home_title_podcast_channels">Каналы</string>
+    <string name="home_title_podcast_channels_see_all_button">Все</string>
+    <string name="home_title_radio_station">Радиостанции</string>
+    <string name="home_title_recently_added">Недавно добавленное</string>
+    <string name="home_title_recently_added_see_all_button">Все</string>
+    <string name="home_title_shares">Общие ссылки</string>
+    <string name="home_title_starred_albums">★ Избранные альбомы</string>
+    <string name="home_title_starred_albums_see_all_button">Все</string>
+    <string name="home_title_starred_artists">★ Избранные исполнители</string>
+    <string name="home_title_starred_artists_see_all_button">Все</string>
+    <string name="home_title_starred_tracks">★ Избранные треки</string>
+    <string name="home_title_starred_tracks_see_all_button">Все</string>
+    <string name="home_title_top_songs">Ваши топ-треки</string>
+</resources>

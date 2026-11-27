@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Pleylistə əlavə et</string>
+    <string name="menu_add_to_queue_button">Növbəyə əlavə et</string>
+    <string name="menu_download_all_button">Hamısını yüklə</string>
+    <string name="menu_download_label">Yüklə</string>
+    <string name="menu_edit_playlist_button">Pleylisti redaktə et</string>
+    <string name="menu_edit_playlist_details_button">Təfərrüatları redaktə et</string>
+    <string name="menu_filter_all">Hamısı</string>
+    <string name="menu_filter_download">Yüklənmiş</string>
+    <string name="menu_go_to_playlist_button">Səsləndir</string>
+    <string name="menu_group_by_album">Albom</string>
+    <string name="menu_group_by_artist">İfaçı</string>
+    <string name="menu_group_by_genre">Janr</string>
+    <string name="menu_group_by_playlist">Pleylist</string>
+    <string name="menu_group_by_track">Mahnı</string>
+    <string name="menu_group_by_year">İl</string>
+    <string name="menu_home_label">Ana səhifə</string>
+    <string name="menu_keep_synced_button">Sinxronizasiyanı saxla</string>
+    <string name="menu_last_month_name">Keçən ay</string>
+    <string name="menu_last_week_name">Keçən həftə</string>
+    <string name="menu_last_year_name">Keçən il</string>
+    <string name="menu_library_label">Kitabxana</string>
+    <string name="menu_pin_button">Sevimlilərə əlavə et</string>
+    <string name="menu_play_shuffle_button">Qarışdıraraq səsləndir</string>
+    <string name="menu_rate_album">Albomu qiymətləndir</string>
+    <string name="menu_search_button">Axtar</string>
+    <string name="menu_settings_button">Parametrlər</string>
+    <string name="menu_sort_album_count">Albom sayı</string>
+    <string name="menu_sort_artist">İfaçı</string>
+    <string name="menu_sort_date_created">Yaradılma tarixi</string>
+    <string name="menu_sort_least_recently_starred">Ən əvvəl ulduzlananlar</string>
+    <string name="menu_sort_most_played">Ən çox dinlənilənlər</string>
+    <string name="menu_sort_most_recently_starred">Ən son ulduzlananlar</string>
+    <string name="menu_sort_name">Ad</string>
+    <string name="menu_sort_random">Təsadüfi</string>
+    <string name="menu_sort_recently_added">Son əlavə edilənlər</string>
+    <string name="menu_sort_recently_played">Son dinlənilənlər</string>
+    <string name="menu_sort_song_count">Mahnı sayı</string>
+    <string name="menu_sort_year">İl</string>
+    <string name="menu_unpin_button">Sevimlilərdən çıxar</string>
+</resources>

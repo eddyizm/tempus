@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android Auto -->
+    <string name="aa_album_most_played">Mest spelade album</string>
+    <string name="aa_album_recently_added">Tillagda album</string>
+    <string name="aa_albums">Album</string>
+    <string name="aa_artists">Artister</string>
+    <string name="aa_discovery_mix">Upptäckarmix</string>
+    <string name="aa_genres">Genrer</string>
+    <string name="aa_home">Hem</string>
+    <string name="aa_instant_mix">Direktmix</string>
+    <string name="aa_made_for_you">För dig</string>
+    <string name="aa_more">Mer</string>
+    <string name="aa_music_folder">Mapp</string>
+    <string name="aa_my_mix">Min mix</string>
+    <string name="aa_playlists">Spellistor</string>
+    <string name="aa_podcast">Poddar</string>
+    <string name="aa_quick_mix">Snabbmix</string>
+    <string name="aa_radio">Radio</string>
+    <string name="aa_random">Slumpmässigt</string>
+    <string name="aa_recent_albums">Senaste</string>
+    <string name="aa_song_recently_played">Spelade låtar</string>
+    <string name="aa_starred">Stjärnmärkta</string>
+    <string name="aa_starred_albums">★ Album</string>
+    <string name="aa_starred_artists">★ Artister</string>
+    <string name="aa_starred_tracks">★ Låtar</string>
+    <string name="aa_tracks">Låtar</string>
+    <string name="aa_view_by_albums">Visa efter album</string>
+</resources>

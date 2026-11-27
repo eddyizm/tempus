@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Wznów na %1$s</string>
+    <string name="home_option_reorganize">Zmiana układu</string>
+    <string name="home_rearrangement_dialog_negative_button">Anuluj</string>
+    <string name="home_rearrangement_dialog_neutral_button">Reset</string>
+    <string name="home_rearrangement_dialog_positive_button">Zapisz</string>
+    <string name="home_rearrangement_dialog_subtitle">Weź pod uwagę to że, żeby zmiany nastąpiły, musisz zrestartować aplikację.</string>
+    <string name="home_rearrangement_dialog_title">Zmień układ strony głównej</string>
+    <string name="home_section_music">Muzyka</string>
+    <string name="home_section_podcast">Podcasty</string>
+    <string name="home_section_radio">Radio</string>
+    <string name="home_subtitle_best_of">Top piosenki od twoich ulubionych wykonawców</string>
+    <string name="home_subtitle_made_for_you">Stwórz miks z piosenki którą lubisz</string>
+    <string name="home_subtitle_new_internet_radio_station">Dodaj nowe radio</string>
+    <string name="home_subtitle_new_podcast_channel">Dodaj nowy kanał podcastów</string>
+    <plurals name="home_sync_starred_albums_count">
+            <item quantity="one">%d album do zsynchronizowania </item>
+    		<item quantity="few">%d albumy do zsynchronizowania</item>
+            <item quantity="many">%d albumów do zsynchronizowania</item>
+            <item quantity="other">%d albumów do zsynchronizowania</item>
+        </plurals>
+    <string name="home_sync_starred_albums_subtitle">Albumy oznaczone gwiazdką będą dostępne offline</string>
+    <string name="home_sync_starred_albums_title">Synchronizacja albumów oznaczonych gwiazdką</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d wykonawca do zsynchronizowania</item>
+        <item quantity="other">%d wykonawców do zsynchronizowania</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">Masz wykonawców oznaczonych gwiazdką, bez pobranej muzyki</string>
+    <string name="home_sync_starred_artists_title">Synchronizacja wykonawców oznaczonych gwiazdką</string>
+    <string name="home_sync_starred_cancel">Anuluj</string>
+    <string name="home_sync_starred_download">Pobierz</string>
+    <plurals name="home_sync_starred_songs_count">
+            <item quantity="one">%d piosenka wymaga synchronizacji</item>
+    		<item quantity="few">%d piosenki wymagają synchronizacji</item>
+            <item quantity="many">%d piosenek wymaga synchronizacji</item>
+            <item quantity="other">%d piosenek wymaga synchronizacji</item>
+        </plurals>
+    <string name="home_sync_starred_subtitle">Pobieranie tych utworów może zużyć dużo danych</string>
+    <string name="home_sync_starred_title">Wygląda na to że, są utwory oznaczone gwiazdką</string>
+    <string name="home_title_best_of">Najlepsze</string>
+    <string name="home_title_continue_listening">Kontynuuj słuchanie</string>
+    <string name="home_title_discovery">Odkrywanie</string>
+    <string name="home_title_discovery_shuffle_all_button">Odtwórz wszystkie losowo</string>
+    <string name="home_title_flashback">Podróż w czasie</string>
+    <string name="home_title_internet_radio_station">Internetowe stacje radiowe</string>
+    <string name="home_title_last_month">Ostatni miesiąc</string>
+    <string name="home_title_last_played">Ostatnio odtwarzane</string>
+    <string name="home_title_last_played_see_all_button">Zobacz wszystkie</string>
+    <string name="home_title_last_week">Ostatni tydzień</string>
+    <string name="home_title_last_year">Ostatni rok</string>
+    <string name="home_title_made_for_you">Stworzone dla ciebie</string>
+    <string name="home_title_most_played">Najczęściej odtwarzane</string>
+    <string name="home_title_most_played_see_all_button">Zobacz wszystkie</string>
+    <string name="home_title_new_releases">Nowe wydania</string>
+    <string name="home_title_newest_podcasts">Najnowsze podcasty</string>
+    <string name="home_title_pinned_playlists">Playlisty</string>
+    <string name="home_title_podcast_channels">Kanały</string>
+    <string name="home_title_podcast_channels_see_all_button">Zobacz wszystkie</string>
+    <string name="home_title_radio_station">Stacje radiowe</string>
+    <string name="home_title_recently_added">Ostatnio dodane</string>
+    <string name="home_title_recently_added_see_all_button">Zobacz wszystkie</string>
+    <string name="home_title_shares">Udostępnienia</string>
+    <string name="home_title_starred_albums">★ Albumy oznaczone gwiazdką</string>
+    <string name="home_title_starred_albums_see_all_button">Zobacz wszystkie</string>
+    <string name="home_title_starred_artists">★ Wykonawcy oznaczeni gwiazdką</string>
+    <string name="home_title_starred_artists_see_all_button">Zobacz wszystkich</string>
+    <string name="home_title_starred_tracks">★ Utwory oznaczone gwiazdką</string>
+    <string name="home_title_starred_tracks_see_all_button">Zobacz wszystkie</string>
+    <string name="home_title_top_songs">Twoje top piosenki</string>
+</resources>

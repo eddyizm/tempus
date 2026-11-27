@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Zerrendara gehitu</string>
+    <string name="album_bottom_sheet_add_to_queue">Ilarara gehitu</string>
+    <string name="album_bottom_sheet_download_all">Denak deskargatu</string>
+    <string name="album_bottom_sheet_go_to_artist">Artistara joan</string>
+    <string name="album_bottom_sheet_instant_mix">Berehalako nahasketa</string>
+    <string name="album_bottom_sheet_play_next">Hurrengoan erreproduzitu</string>
+    <string name="album_bottom_sheet_remove_all">Denak kendu</string>
+    <string name="album_bottom_sheet_share">Partekatu</string>
+    <string name="album_bottom_sheet_shuffle">Nahastu</string>
+    <string name="album_catalogue_title">Diskak</string>
+    <string name="album_catalogue_title_expanded">Diskak arakatu</string>
+    <string name="album_error_retrieving_artist">Errorea artista eskuratzean</string>
+    <string name="album_list_page_downloaded">Deskargatutako diskak</string>
+    <string name="album_list_page_most_played">Gehien entzundako diskak</string>
+    <string name="album_list_page_new_releases">Argitalpen berriak</string>
+    <string name="album_list_page_recently_added">Gehitutako azken diskak</string>
+    <string name="album_list_page_recently_played">Entzundako azken diskak</string>
+    <string name="album_list_page_starred">Gogoko diskak</string>
+    <string name="album_list_page_title">Diskak</string>
+    <string name="album_page_extra_info_button">Antzeko gehiago</string>
+    <string name="album_page_play_button">Erreproduzitu</string>
+    <string name="album_page_release_date_label">%1$s argitaratua</string>
+    <string name="album_page_release_dates_label">%1$s argitaratua, jatorriz %2$s</string>
+    <string name="album_page_shuffle_button">Nahastu</string>
+    <string name="album_page_tracks_count_and_duration">%1$d abesti  •  %2$d minutu</string>
+</resources>

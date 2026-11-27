@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Continuar em %1$s</string>
+    <string name="home_subtitle_best_of">Músicas populares dos seus artistas favoritos</string>
+    <string name="home_subtitle_made_for_you">Comece a mixagem de uma música que você favoritou</string>
+    <string name="home_subtitle_new_internet_radio_station">Adicionar um novo rádio</string>
+    <string name="home_subtitle_new_podcast_channel">Adicionar um novo canal de podcast</string>
+    <string name="home_sync_starred_cancel">Cancelar</string>
+    <string name="home_sync_starred_download">Download</string>
+    <string name="home_sync_starred_subtitle">O download dessas faixas pode envolver um uso significativo de dados</string>
+    <string name="home_sync_starred_title">Parece que existem algumas faixas favoritas para sincronizar</string>
+    <string name="home_title_best_of">Melhor de</string>
+    <string name="home_title_continue_listening">Continuar a ouvir</string>
+    <string name="home_title_discovery">Descobrir</string>
+    <string name="home_title_discovery_shuffle_all_button">Aleatório</string>
+    <string name="home_title_flashback">Flashback</string>
+    <string name="home_title_internet_radio_station">Estações de rádio via internet</string>
+    <string name="home_title_last_played">Reproduções recentes</string>
+    <string name="home_title_last_played_see_all_button">Ver todos</string>
+    <string name="home_title_last_week">Semana passada</string>
+    <string name="home_title_made_for_you">Feito para você</string>
+    <string name="home_title_most_played">Mais reproduzidas</string>
+    <string name="home_title_most_played_see_all_button">Ver todos</string>
+    <string name="home_title_new_releases">Novos lançamentos</string>
+    <string name="home_title_newest_podcasts">Podcasts mais recentes</string>
+    <string name="home_title_podcast_channels">Canais</string>
+    <string name="home_title_podcast_channels_see_all_button">Ver todos</string>
+    <string name="home_title_radio_station">Estações de rádio</string>
+    <string name="home_title_recently_added">Adicionado recentemente</string>
+    <string name="home_title_recently_added_see_all_button">Ver todos</string>
+    <string name="home_title_shares">Compartilhamentos</string>
+    <string name="home_title_starred_albums">★ Álbuns favoritos</string>
+    <string name="home_title_starred_albums_see_all_button">Ver todos</string>
+    <string name="home_title_starred_artists">★ Artistas favoritos</string>
+    <string name="home_title_starred_artists_see_all_button">Ver todos</string>
+    <string name="home_title_starred_tracks">★ Músicas favoritas</string>
+    <string name="home_title_starred_tracks_see_all_button">Ver todos</string>
+    <string name="home_title_top_songs">Suas músicas mais ouvidas</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Копировать лог</string>
+    <string name="ca_export_button_share">Поделиться логом</string>
+    <string name="ca_export_description">Информация об устройстве добавляется к отчёту.\n\nДанные никуда не отправляются без вашего согласия.</string>
+    <string name="ca_export_label">Экспорт</string>
+    <string name="ca_export_title">Получение отчёта</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Отчёт скопирован</string>
+    <string name="ca_info_button_close">Закрыть приложение</string>
+    <string name="ca_info_button_restart">Перезапустить</string>
+    <string name="ca_info_description">Пожалуйста, создайте issue на GitHub и приложите отчёт о сбое.</string>
+    <string name="ca_info_device_info" translatable="false">Device Information</string>
+    <string name="ca_info_label">Инфо</string>
+    <string name="ca_info_title">Сбой Tempus</string>
+    <string name="ca_logs_description">Что пошло не так.</string>
+    <string name="ca_logs_label">Логи</string>
+    <string name="ca_logs_title">Java Stack Trace</string>
+</resources>

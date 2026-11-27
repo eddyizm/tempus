@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">Pleylist növbəyə əlavə edildi</string>
+    <string name="playlist_catalogue_title">Pleylist kataloqu</string>
+    <string name="playlist_catalogue_title_expanded">Pleylistlərə baxış</string>
+    <string name="playlist_chooser_dialog_cancel_button">Ləğv et</string>
+    <string name="playlist_chooser_dialog_create_button">Yarat</string>
+    <string name="playlist_chooser_dialog_empty">Pleylist yaradılmayıb</string>
+    <string name="playlist_chooser_dialog_title">Pleylistə əlavə</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Mahnıları pleylistə əlavə etmək alınmadı</string>
+    <string name="playlist_chooser_dialog_toast_add_success">Mahnılar pleylistə əlavə edildi</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">Bütün mahnılar təkrarlandığı üçün ötürüldü</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Mahnını pleylistdən silmək alınmadı</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Mahnı pleylistdən silindi</string>
+    <string name="playlist_chooser_dialog_visibility_private">Şəxsi</string>
+    <string name="playlist_chooser_dialog_visibility_public">Açıq</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Bu seçimi aktivləşdirmək pleylisti hamıya açıq edir. Dəyişmədən saxlamaq pleylistin görünməsinə təsir etmir.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Pleylisti hamıya açıq et</string>
+    <string name="playlist_counted_tracks">%1$d mahnı •  %2$s</string>
+    <string name="playlist_details_dialog_title">Pleylist təfərrüatları</string>
+    <string name="playlist_duration">Müddət  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Pleylisti silmək alınmadı</string>
+    <string name="playlist_editor_dialog_action_delete_success">Pleylist silindi</string>
+    <string name="playlist_editor_dialog_action_delete_toast">Silmək üçün basıb saxlayın</string>
+    <string name="playlist_editor_dialog_action_save_empty">Pleylistdə ən azı bir mahnı olmalıdır</string>
+    <string name="playlist_editor_dialog_action_save_failure">Pleylisti saxlamaq alınmadı</string>
+    <string name="playlist_editor_dialog_action_save_success">Pleylist saxlanıldı</string>
+    <string name="playlist_editor_dialog_hint_name">Pleylist adı</string>
+    <string name="playlist_editor_dialog_negative_button">Ləğv et</string>
+    <string name="playlist_editor_dialog_neutral_button">Sil</string>
+    <string name="playlist_editor_dialog_positive_button">Yadda saxla</string>
+    <string name="playlist_editor_dialog_title">Pleylist redaktoru</string>
+    <string name="playlist_editor_drag_track">Yenidən sıralamaq üçün sürükləyin</string>
+    <string name="playlist_editor_hint">Yenidən sıralamaq üçün tutacağı sürükləyin, silmək üçün zibil qutusuna toxunun. Yadda saxlayana qədər heç nə göndərilmir.</string>
+    <string name="playlist_editor_load_failure">Pleylisti yükləmək mümkün olmadı</string>
+    <string name="playlist_editor_remove_track">Treki sil</string>
+    <string name="playlist_editor_removed_track">Siyahıdan silindi</string>
+    <string name="playlist_error_not_found_message">Bu pleylist serverdə tapılmadı. O, yerli keşinizdən silinəcək.</string>
+    <string name="playlist_error_not_found_title">Pleylist tapılmadı</string>
+    <string name="playlist_error_not_found_toast">Pleylist keşdən silindi</string>
+    <string name="playlist_page_empty">Bu pleylistdə mahnı yoxdur</string>
+    <string name="playlist_page_play_button">Səsləndir</string>
+    <string name="playlist_page_shuffle_button">Qarışdır</string>
+    <string name="playlist_song_count">Pleylist  •  %1$d mahnı</string>
+    <string name="playlist_sort_both">Son aktiv olanlar</string>
+    <string name="playlist_sort_last_played">Son dinlənilənlər</string>
+    <string name="playlist_sort_last_updated">Son yenilənənlər</string>
+    <string name="playlist_sort_pinned">Sevimlilər</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">%d trek endirilir</item>
+        <item quantity="other">%d trek endirilir</item>
+    </plurals>
+</resources>

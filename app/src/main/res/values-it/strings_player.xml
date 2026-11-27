@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="player_lyrics_download_content_description">Scarica i testi delle canzoni per riprodurli offline</string>
+    <string name="player_lyrics_download_failure">I testi non sono disponibili per il download.</string>
+    <string name="player_lyrics_download_success">Testi salvati per la riproduzione offline.</string>
+    <string name="player_lyrics_downloaded_content_description">Testi scaricati per la riproduzione offline</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_clean_all_button">Svuota coda di riproduzione</string>
+    <string name="player_queue_save_queue_success">Salvato</string>
+    <string name="player_server_priority">Priorità server</string>
+    <string name="player_transcoding">Transcodifica</string>
+    <string name="player_transcoding_requested">richiesto</string>
+    <string name="player_unknown_format">Formato sconosciuto</string>
+</resources>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">Wiedergabeliste zur Warteschlange hinzugefügt</string>
+    <string name="playlist_catalogue_title">Wiedergabelisten</string>
+    <string name="playlist_catalogue_title_expanded">Wiedergabelisten durchsuchen</string>
+    <string name="playlist_chooser_dialog_cancel_button">Abbrechen</string>
+    <string name="playlist_chooser_dialog_create_button">Erstellen</string>
+    <string name="playlist_chooser_dialog_empty">Keine Wiedergabelisten erstellt</string>
+    <string name="playlist_chooser_dialog_title">Zu Wiedergabeliste hinzufügen</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Titel konnten nicht zu Wiedergabeliste hinzugefügt werden</string>
+    <string name="playlist_chooser_dialog_toast_add_success">Titel zu Wiedergabeliste hinzugefügt</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">Alle Titel als Duplikate übersprungen</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Titel konnte nicht aus Wiedergabeliste entfernt werden</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Titel aus Wiedergabeliste entfernt</string>
+    <string name="playlist_chooser_dialog_visibility_private">Privat</string>
+    <string name="playlist_chooser_dialog_visibility_public">Öffentlich</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Wenn diese Option aktiviert ist, wird die Wiedergabeliste öffentlich. Wenn sie in Ruhe gelassen wird, ändert sich die Sichtbarkeit der Wiedergabeliste nicht.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Wiedergabeliste als öffentlich markieren</string>
+    <string name="playlist_counted_tracks">%1$d Titel •  %2$s</string>
+    <string name="playlist_details_dialog_title">Wiedergabelistendetails</string>
+    <string name="playlist_duration">Laufzeit  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Wiedergabeliste konnte nicht gelöscht werden</string>
+    <string name="playlist_editor_dialog_action_delete_success">Wiedergabeliste gelöscht</string>
+    <string name="playlist_editor_dialog_action_delete_toast">Halten um zu löschen</string>
+    <string name="playlist_editor_dialog_action_save_empty">Eine Wiedergabeliste muss mindestens einen Titel enthalten</string>
+    <string name="playlist_editor_dialog_action_save_failure">Wiedergabeliste konnte nicht gespeichert werden</string>
+    <string name="playlist_editor_dialog_action_save_success">Wiedergabeliste gespeichert</string>
+    <string name="playlist_editor_dialog_hint_name">Name der Wiedergabeliste</string>
+    <string name="playlist_editor_dialog_negative_button">Abbrechen</string>
+    <string name="playlist_editor_dialog_neutral_button">Löschen</string>
+    <string name="playlist_editor_dialog_positive_button">Speichern</string>
+    <string name="playlist_editor_dialog_title">Wiedergabeliste bearbeiten</string>
+    <string name="playlist_editor_drag_track">Ziehen zum Neuordnen</string>
+    <string name="playlist_editor_hint">Am Griff ziehen zum Neuordnen, auf den Papierkorb tippen zum Entfernen. Die Änderungen werden erst beim Speichern gesendet.</string>
+    <string name="playlist_editor_load_failure">Wiedergabeliste konnte nicht geladen werden</string>
+    <string name="playlist_editor_remove_track">Titel entfernen</string>
+    <string name="playlist_editor_removed_track">Aus Liste entfernt</string>
+    <string name="playlist_error_not_found_message">Diese Wiedergabeliste wurde auf dem Server nicht gefunden. Sie wird aus dem lokalen Zwischenspeicher entfernt.</string>
+    <string name="playlist_error_not_found_title">Wiedergabeliste nicht gefunden</string>
+    <string name="playlist_error_not_found_toast">Wiedergabeliste aus dem Zwischenspeicher entfernt</string>
+    <string name="playlist_page_empty">Keine Titel in dieser Wiedergabeliste</string>
+    <string name="playlist_page_play_button">Wiedergabe</string>
+    <string name="playlist_page_shuffle_button">Zufall</string>
+    <string name="playlist_song_count">Wiedergabeliste  •  %1$d Titel</string>
+    <string name="playlist_sort_both">Zuletzt aktiv</string>
+    <string name="playlist_sort_last_played">Zuletzt gespielt</string>
+    <string name="playlist_sort_last_updated">Zuletzt aktualisiert</string>
+    <string name="playlist_sort_pinned">Favoriten</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Lade %d Titel herunter</item>
+        <item quantity="other">Lade %d Titel herunter</item>
+    </plurals>
+</resources>

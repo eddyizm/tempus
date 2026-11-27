@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Ajouter à une playlist</string>
+    <string name="menu_add_to_queue_button">Ajouter à la file d\'attente</string>
+    <string name="menu_download_all_button">Télécharger tout</string>
+    <string name="menu_download_label">Téléchargé</string>
+    <string name="menu_edit_playlist_button">Modifier la playlist</string>
+    <string name="menu_edit_playlist_details_button">Modifier les détails</string>
+    <string name="menu_filter_all">Tout</string>
+    <string name="menu_filter_download">Téléchargé</string>
+    <string name="menu_go_to_playlist_button">Lire</string>
+    <string name="menu_group_by_album">Album</string>
+    <string name="menu_group_by_artist">Artiste</string>
+    <string name="menu_group_by_genre">Genre</string>
+    <string name="menu_group_by_playlist">Playlist</string>
+    <string name="menu_group_by_track">Piste</string>
+    <string name="menu_group_by_year">Année</string>
+    <string name="menu_home_label">Accueil</string>
+    <string name="menu_keep_synced_button">Garder synchronisée</string>
+    <string name="menu_last_month_name">Sur le dernier mois</string>
+    <string name="menu_last_week_name">Sur la dernière semaine</string>
+    <string name="menu_last_year_name">Sur la dernière année</string>
+    <string name="menu_library_label">Bibliothèque</string>
+    <string name="menu_pin_button">Épingler à l\'écran d\'accueil</string>
+    <string name="menu_play_shuffle_button">Lire dans le désordre</string>
+    <string name="menu_rate_album">Noter l\'album</string>
+    <string name="menu_search_button">Rechercher</string>
+    <string name="menu_settings_button">Paramètres</string>
+    <string name="menu_sort_album_count">Nombre d\'albums</string>
+    <string name="menu_sort_artist">Artiste</string>
+    <string name="menu_sort_date_created">Date de création</string>
+    <string name="menu_sort_least_recently_starred">Favoris les plus anciens</string>
+    <string name="menu_sort_most_played">Plus lus</string>
+    <string name="menu_sort_most_recently_starred">Favoris les plus récents</string>
+    <string name="menu_sort_name">Nom</string>
+    <string name="menu_sort_random">Aléatoire</string>
+    <string name="menu_sort_recently_added">Récemment ajoutés</string>
+    <string name="menu_sort_recently_played">Récemment lus</string>
+    <string name="menu_sort_song_count">Nombres de titres</string>
+    <string name="menu_sort_year">Année</string>
+    <string name="menu_unpin_button">Désépingler de l\'écran d\'accueil</string>
+</resources>

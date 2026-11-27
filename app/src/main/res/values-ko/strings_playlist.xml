@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_catalogue_title">플레이리스트 카탈로그</string>
+    <string name="playlist_catalogue_title_expanded">플레이리스트 찾아보기</string>
+    <string name="playlist_chooser_dialog_cancel_button">취소</string>
+    <string name="playlist_chooser_dialog_create_button">생성</string>
+    <string name="playlist_chooser_dialog_empty">플레이리스트가 없습니다.</string>
+    <string name="playlist_chooser_dialog_title">플레이리스트 추가</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">재생 목록에 음악을 추가하지 못했습니다.</string>
+    <string name="playlist_chooser_dialog_toast_add_success">재생 목록에 음악 추가</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">이것을 켜면 재생목록이 공개됩니다. 그대로 두면 재생목록의 공개 상태가 변경되지 않습니다.</string>
+    <string name="playlist_counted_tracks">%1$d 트랙 •  %2$s</string>
+    <string name="playlist_details_dialog_title">플레이리스트 세부정보</string>
+    <string name="playlist_duration">재생시간  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_toast">길게 눌러 삭제하기</string>
+    <string name="playlist_editor_dialog_action_save_empty">재생목록에는 하나 이상의 트랙이 있어야 합니다</string>
+    <string name="playlist_editor_dialog_hint_name">플레이리스트 이름</string>
+    <string name="playlist_editor_dialog_negative_button">취소</string>
+    <string name="playlist_editor_dialog_neutral_button">삭제</string>
+    <string name="playlist_editor_dialog_positive_button">저장</string>
+    <string name="playlist_editor_dialog_title">플레이리스트 수정</string>
+    <string name="playlist_editor_drag_track">끌어서 순서 변경</string>
+    <string name="playlist_editor_hint">핸들을 끌어 순서를 변경하고 휴지통을 눌러 제거하세요. 저장하기 전까지는 아무것도 전송되지 않습니다.</string>
+    <string name="playlist_editor_load_failure">플레이리스트를 불러오지 못했습니다</string>
+    <string name="playlist_editor_remove_track">트랙 제거</string>
+    <string name="playlist_editor_removed_track">목록에서 제거됨</string>
+    <string name="playlist_page_play_button">재생</string>
+    <string name="playlist_page_shuffle_button">셔플</string>
+    <string name="playlist_song_count">플레이리스트  •  %1$d 곡</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="other">트랙 %d개 다운로드 중</item>
+    </plurals>
+</resources>

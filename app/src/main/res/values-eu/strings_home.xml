@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Jarraitu %1$s-tan</string>
+    <string name="home_option_reorganize">Berrantolatu</string>
+    <string name="home_rearrangement_dialog_negative_button">Utzi</string>
+    <string name="home_rearrangement_dialog_neutral_button">Berrezarri</string>
+    <string name="home_rearrangement_dialog_positive_button">Gorde</string>
+    <string name="home_rearrangement_dialog_subtitle">Kontuan izan egindako aldaketek eragina izan dezaten aplikazioa berrabiarazi behar dela.</string>
+    <string name="home_rearrangement_dialog_title">Hasiera berrantolatu</string>
+    <string name="home_section_music">Musika</string>
+    <string name="home_section_podcast">Podcasta</string>
+    <string name="home_section_radio">Irratia</string>
+    <string name="home_subtitle_best_of">Zure gogoko artisten abesti onenak</string>
+    <string name="home_subtitle_made_for_you">Hasi nahasketa gustatu zaizun abesti batetik</string>
+    <string name="home_subtitle_new_internet_radio_station">Irrati berria gehitu</string>
+    <string name="home_subtitle_new_podcast_channel">Podcast-kanal berria gehitu</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">Disko %d sinkronizatu behar da</item>
+        <item quantity="other">%d disko sinkronizatu behar dira</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Izarra duten diskak lineaz kanpo erabilgarri egongo dira</string>
+    <string name="home_sync_starred_albums_title">Gogoko diskak sinkronizatu</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">Artista %d sinkronizatu behar da</item>
+        <item quantity="other">%d artista sinkronizatu behar dira</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">Deskargatu gabeko musika duten gogoko artistak dituzu</string>
+    <string name="home_sync_starred_artists_title">Gogoko artistak sinkronizatu</string>
+    <string name="home_sync_starred_cancel">Utzi</string>
+    <string name="home_sync_starred_download">Deskargatu</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">Abesti %d sinkronizatu behar da</item>
+        <item quantity="other">%d abesti sinkronizatu behar dira</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Abesti hauek deskargatzeak datu-erabilera handia eragin dezake</string>
+    <string name="home_sync_starred_title">Badirudi gogoko abesti batzuk sinkronizatzeko daudela</string>
+    <string name="home_title_best_of">Onenak</string>
+    <string name="home_title_continue_listening">Entzuten jarraitu</string>
+    <string name="home_title_discovery">Aurkikuntza</string>
+    <string name="home_title_discovery_shuffle_all_button">Denak nahastu</string>
+    <string name="home_title_flashback">Atzera begira</string>
+    <string name="home_title_internet_radio_station">Interneteko irrati-uhinak</string>
+    <string name="home_title_last_month">Azken hilabetea</string>
+    <string name="home_title_last_played">Azken entzunaldia</string>
+    <string name="home_title_last_played_see_all_button">Denak ikusi</string>
+    <string name="home_title_last_week">Azken astea</string>
+    <string name="home_title_last_year">Azken urtea</string>
+    <string name="home_title_made_for_you">Zuretzat egina</string>
+    <string name="home_title_most_played">Gehien entzunak</string>
+    <string name="home_title_most_played_see_all_button">Denak ikusi</string>
+    <string name="home_title_new_releases">Argitalpen berriak</string>
+    <string name="home_title_newest_podcasts">Podcast berrienak</string>
+    <string name="home_title_pinned_playlists">Zerrendak</string>
+    <string name="home_title_podcast_channels">Kanalak</string>
+    <string name="home_title_podcast_channels_see_all_button">Denak ikusi</string>
+    <string name="home_title_radio_station">Irrati-uhinak</string>
+    <string name="home_title_recently_added">Gehitutako berrienak</string>
+    <string name="home_title_recently_added_see_all_button">Denak ikusi</string>
+    <string name="home_title_shares">Partekatzeak</string>
+    <string name="home_title_starred_albums">★ Gogoko diskak</string>
+    <string name="home_title_starred_albums_see_all_button">Denak ikusi</string>
+    <string name="home_title_starred_artists">★ Gogoko artistak</string>
+    <string name="home_title_starred_artists_see_all_button">Denak ikusi</string>
+    <string name="home_title_starred_tracks">★ Gogoko abestiak</string>
+    <string name="home_title_starred_tracks_see_all_button">Denak ikusi</string>
+    <string name="home_title_top_songs">Zure abesti onenak</string>
+</resources>

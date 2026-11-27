@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_catalogue_title">播放列表目录</string>
+    <string name="playlist_catalogue_title_expanded">浏览播放列表</string>
+    <string name="playlist_chooser_dialog_cancel_button">取消</string>
+    <string name="playlist_chooser_dialog_create_button">新建</string>
+    <string name="playlist_chooser_dialog_empty">尚未创建播放列表</string>
+    <string name="playlist_chooser_dialog_title">添加到播放列表</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">未能将歌曲添加到播放列表</string>
+    <string name="playlist_chooser_dialog_toast_add_success">将歌曲添加到播放列表</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">所有歌曲已存在，无需重复添加</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">开启此选项会将播放列表设为公开。保持原样不会改变播放列表的可见性。</string>
+    <string name="playlist_counted_tracks">%1$d 首歌曲 • %2$s</string>
+    <string name="playlist_details_dialog_title">播放列表详情</string>
+    <string name="playlist_duration">时长 • %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_toast">长按删除</string>
+    <string name="playlist_editor_dialog_action_save_empty">播放列表必须至少保留一首曲目</string>
+    <string name="playlist_editor_dialog_hint_name">播放列表名称</string>
+    <string name="playlist_editor_dialog_negative_button">取消</string>
+    <string name="playlist_editor_dialog_neutral_button">删除</string>
+    <string name="playlist_editor_dialog_positive_button">保存</string>
+    <string name="playlist_editor_dialog_title">编辑播放列表</string>
+    <string name="playlist_editor_drag_track">拖动以重新排序</string>
+    <string name="playlist_editor_hint">拖动手柄可调整顺序，点击垃圾桶可移除曲目。点击“保存”前不会发送任何内容。</string>
+    <string name="playlist_editor_load_failure">无法加载播放列表</string>
+    <string name="playlist_editor_remove_track">移除曲目</string>
+    <string name="playlist_editor_removed_track">已从列表中移除</string>
+    <string name="playlist_page_play_button">播放</string>
+    <string name="playlist_page_shuffle_button">随机播放</string>
+    <string name="playlist_song_count">播放列表 • %1$d 首歌曲</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="other">正在下载 %d 首曲目</item>
+    </plurals>
+</resources>

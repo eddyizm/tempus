@@ -1,4 +1,3 @@
-<!-- Local preview: English fallback is intentional until community translations are available. -->
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="lan_title">Remote player</string>
     <string name="lan_choose_device">Choose a remote player</string>

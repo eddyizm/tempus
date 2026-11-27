@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">添加到播放列表</string>
+    <string name="album_bottom_sheet_add_to_queue">添加到队列</string>
+    <string name="album_bottom_sheet_download_all">全部下载</string>
+    <string name="album_bottom_sheet_go_to_artist">查看该艺术家</string>
+    <string name="album_bottom_sheet_instant_mix">即时混听</string>
+    <string name="album_bottom_sheet_play_next">下一首播放</string>
+    <string name="album_bottom_sheet_remove_all">移除所有</string>
+    <string name="album_bottom_sheet_share">分享</string>
+    <string name="album_bottom_sheet_shuffle">随机播放</string>
+    <string name="album_catalogue_title">专辑</string>
+    <string name="album_catalogue_title_expanded">浏览专辑</string>
+    <string name="album_error_retrieving_artist">检索艺术家时出错</string>
+    <string name="album_list_page_downloaded">已下载的专辑</string>
+    <string name="album_list_page_most_played">最常播放的专辑</string>
+    <string name="album_list_page_new_releases">新发行的专辑</string>
+    <string name="album_list_page_recently_added">最近添加的专辑</string>
+    <string name="album_list_page_recently_played">最近播放的专辑</string>
+    <string name="album_list_page_starred">收藏的专辑</string>
+    <string name="album_list_page_title">专辑</string>
+    <string name="album_page_extra_info_button">更多相似</string>
+    <string name="album_page_play_button">播放</string>
+    <string name="album_page_release_date_label">发行日期：%1$s</string>
+    <string name="album_page_release_dates_label">发行日期：%1$s（原版发行于 %2$s）</string>
+    <string name="album_page_shuffle_button">随机播放</string>
+    <string name="album_page_tracks_count_and_duration">%1$d 首歌曲 • %2$d 分钟</string>
+</resources>

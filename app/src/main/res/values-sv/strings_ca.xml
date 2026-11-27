@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Kopiera logg</string>
+    <string name="ca_export_button_share">Dela logg</string>
+    <string name="ca_export_description">Enhetsinformation läggs till i början av den exporterade rapporten.\n\nUppgifterna skickas inte någonstans utan ditt samtycke.</string>
+    <string name="ca_export_label">Export</string>
+    <string name="ca_export_title">Hämta rapport</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Rapporten har kopierats till urklipp</string>
+    <string name="ca_info_button_close">Stäng appen</string>
+    <string name="ca_info_button_restart">Starta om appen</string>
+    <string name="ca_info_description">Öppna ett ärende på GitHub och bifoga en kopia av kraschrapporten så att felet kan åtgärdas.</string>
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus kraschade</string>
+    <string name="ca_logs_description">Det här gick fel.</string>
+    <string name="ca_logs_label">Loggar</string>
+    <string name="ca_logs_title">Stackspårning för Java</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Artist -->
+    <string name="artist_adapter_radio_station_starting">탐색 중…</string>
+    <string name="artist_bottom_sheet_instant_mix">인스턴트 믹스</string>
+    <string name="artist_bottom_sheet_shuffle">셔플</string>
+    <string name="artist_catalogue_title">아티스트</string>
+    <string name="artist_catalogue_title_expanded">아티스트 찾아보기</string>
+    <string name="artist_error_retrieving_radio">아티스트의 라디오를 검색하는 중에 오류가 발생했습니다.</string>
+    <string name="artist_error_retrieving_tracks">아티스트의 트랙을 검색하는 중에 오류가 발생했습니다.</string>
+    <string name="artist_list_page_downloaded">다운로드한 아티스트</string>
+    <string name="artist_list_page_starred">즐겨찾기한 아티스트</string>
+    <string name="artist_list_page_title">아티스트</string>
+    <string name="artist_page_radio_button">라디오</string>
+    <string name="artist_page_shuffle_button">셔플</string>
+    <string name="artist_page_switch_layout_button">레이아웃 전환</string>
+    <string name="artist_page_title_album_more_like_this_button">유사한 항목 더 보기</string>
+    <string name="artist_page_title_album_section">앨범</string>
+    <string name="artist_page_title_biography_more_button">더 보기</string>
+    <string name="artist_page_title_biography_section">약력</string>
+    <string name="artist_page_title_most_streamed_song_section">가장 많이 스트리밍한 음악</string>
+    <string name="artist_page_title_most_streamed_song_see_all_button">모두 보기</string>
+</resources>

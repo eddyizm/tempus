@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android Auto -->
+    <string name="aa_album_most_played">Gehien entzundako diskak</string>
+    <string name="aa_album_recently_added">Gehitutako diskak</string>
+    <string name="aa_albums">Diskak</string>
+    <string name="aa_artists">Artistak</string>
+    <string name="aa_discovery_mix">Aurkikuntza-nahasketa</string>
+    <string name="aa_genres">Generoak</string>
+    <string name="aa_home">Hasiera</string>
+    <string name="aa_instant_mix">Berehalako nahasketa</string>
+    <string name="aa_made_for_you">Zuretzat</string>
+    <string name="aa_more">Gehiago</string>
+    <string name="aa_music_folder">Karpeta</string>
+    <string name="aa_my_mix">Nire nahasketa</string>
+    <string name="aa_playlists">Zerrendak</string>
+    <string name="aa_podcast">Podcasta</string>
+    <string name="aa_quick_mix">Nahasketa azkarra</string>
+    <string name="aa_radio">Irratia</string>
+    <string name="aa_random">Ausazkoa</string>
+    <string name="aa_recent_albums">Berrienak</string>
+    <string name="aa_song_recently_played">Entzundako abestiak</string>
+    <string name="aa_starred">Gogokoak</string>
+    <string name="aa_starred_albums">★ Diskak</string>
+    <string name="aa_starred_artists">★ Artistak</string>
+    <string name="aa_starred_tracks">★ Abestiak</string>
+    <string name="aa_tracks">Abestiak</string>
+    <string name="aa_view_by_albums">Diskaka ikusi</string>
+</resources>

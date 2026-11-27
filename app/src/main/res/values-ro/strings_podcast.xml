@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Podcast -->
+    <string name="podcast_bottom_sheet_add_to_queue">Adăugați la coadă</string>
+    <string name="podcast_bottom_sheet_delete">Ștergeţi</string>
+    <string name="podcast_bottom_sheet_download">Descarcaţi</string>
+    <string name="podcast_bottom_sheet_go_to_channel">Mergeți la canal</string>
+    <string name="podcast_bottom_sheet_play_next">Redați următoarea</string>
+    <string name="podcast_bottom_sheet_remove">Eliminaţi</string>
+    <string name="podcast_channel_catalogue_title">Canale</string>
+    <string name="podcast_channel_catalogue_title_expanded">Răsfoiți Canale</string>
+    <string name="podcast_channel_editor_dialog_hint_rss_url">URL RSS</string>
+    <string name="podcast_channel_editor_dialog_title">Canal Podcast</string>
+    <string name="podcast_channel_not_supported_snackbar">Podcasturile nu sunt acceptate de acest server.</string>
+    <string name="podcast_channel_page_title_description_section">Descriere</string>
+    <string name="podcast_channel_page_title_episode_section">Episoade</string>
+    <string name="podcast_channel_page_title_no_episode_available">Nu sunt episoade disponibile</string>
+    <string name="podcast_episode_download_request_snackbar">Solicitarea dvs. a fost trimisă la server</string>
+    <string name="podcast_info_empty_button">Faceți clic pentru a ascunde secțiunea\nEfectele vor fi vizibile la restart</string>
+    <string name="podcast_info_empty_subtitle">Odată ce adăugați un canal, îl veți găsi aici</string>
+    <string name="podcast_info_empty_title">Nu au fost găsite podcasturi!</string>
+    <string name="podcast_release_date_duration_formatter">%1$s  •  %2$s</string>
+</resources>

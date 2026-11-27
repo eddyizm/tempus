@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Artist -->
+    <string name="artist_adapter_radio_station_starting">Поиск…</string>
+    <string name="artist_bottom_sheet_add_to_playlist">В плейлист</string>
+    <string name="artist_bottom_sheet_add_to_queue">В очередь</string>
+    <string name="artist_bottom_sheet_instant_mix">Мгновенный микс</string>
+    <string name="artist_bottom_sheet_loading_tracks">Загрузка треков…</string>
+    <string name="artist_bottom_sheet_play_next">Играть следующим</string>
+    <string name="artist_bottom_sheet_shuffle">Перемешать</string>
+    <string name="artist_catalogue_title">Исполнители</string>
+    <string name="artist_catalogue_title_expanded">Обзор исполнителей</string>
+    <string name="artist_error_retrieving_radio">Ошибка получения радио</string>
+    <string name="artist_error_retrieving_tracks">Ошибка получения треков</string>
+    <string name="artist_list_page_downloaded">Скачанные исполнители</string>
+    <string name="artist_list_page_starred">Избранные исполнители</string>
+    <string name="artist_list_page_title">Исполнители</string>
+    <string name="artist_no_artist_info_toast">Нет доп. информации</string>
+    <string name="artist_page_radio_button">Радио</string>
+    <string name="artist_page_shuffle_button">Перемешать</string>
+    <string name="artist_page_switch_layout_button">Сменить вид</string>
+    <string name="artist_page_title_album_more_like_this_button">Похожие</string>
+    <string name="artist_page_title_album_section">Альбомы</string>
+    <string name="artist_page_title_appears_on_section">Участие в альбомах</string>
+    <string name="artist_page_title_biography_more_button">Подробнее</string>
+    <string name="artist_page_title_biography_section">Биография</string>
+    <string name="artist_page_title_compilation_section">Сборники</string>
+    <string name="artist_page_title_ep_section">EP</string>
+    <string name="artist_page_title_live_section">Концерты</string>
+    <string name="artist_page_title_most_streamed_song_section">Популярные треки</string>
+    <string name="artist_page_title_most_streamed_song_see_all_button">Все</string>
+    <string name="artist_page_title_most_streamed_song_unavailable">Нет популярных треков\n\nНажмите, чтобы скрыть</string>
+    <string name="artist_page_title_remix_section">Ремиксы</string>
+    <string name="artist_page_title_single_section">Синглы</string>
+    <string name="artist_page_title_soundtrack_section">Саундтреки</string>
+</resources>

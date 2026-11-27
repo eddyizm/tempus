@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Menu -->
+    <string name="menu_add_to_playlist_button">Lägg till i spellista</string>
+    <string name="menu_add_to_queue_button">Lägg till i kön</string>
+    <string name="menu_download_all_button">Hämta alla</string>
+    <string name="menu_download_label">Hämta</string>
+    <string name="menu_edit_playlist_button">Redigera spellista</string>
+    <string name="menu_edit_playlist_details_button">Redigera information</string>
+    <string name="menu_filter_all">Alla</string>
+    <string name="menu_filter_download">Hämtat</string>
+    <string name="menu_go_to_playlist_button">Spela</string>
+    <string name="menu_group_by_album">Album</string>
+    <string name="menu_group_by_artist">Artist</string>
+    <string name="menu_group_by_genre">Genre</string>
+    <string name="menu_group_by_playlist">Spellista</string>
+    <string name="menu_group_by_track">Låt</string>
+    <string name="menu_group_by_year">År</string>
+    <string name="menu_home_label">Hem</string>
+    <string name="menu_keep_synced_button">Håll synkroniserad</string>
+    <string name="menu_last_month_name">Senaste månaden</string>
+    <string name="menu_last_week_name">Senaste veckan</string>
+    <string name="menu_last_year_name">Senaste året</string>
+    <string name="menu_library_label">Bibliotek</string>
+    <string name="menu_pin_button">Lägg till i favoriter</string>
+    <string name="menu_play_shuffle_button">Spela i slumpmässig ordning</string>
+    <string name="menu_rate_album">Betygsätt album</string>
+    <string name="menu_search_button">Sök</string>
+    <string name="menu_settings_button">Inställningar</string>
+    <string name="menu_sort_album_count">Antal album</string>
+    <string name="menu_sort_artist">Artist</string>
+    <string name="menu_sort_date_created">Skapad</string>
+    <string name="menu_sort_least_recently_starred">Tidigast stjärnmärkt</string>
+    <string name="menu_sort_most_played">Mest spelat</string>
+    <string name="menu_sort_most_recently_starred">Senast stjärnmärkt</string>
+    <string name="menu_sort_name">Namn</string>
+    <string name="menu_sort_random">Slumpmässigt</string>
+    <string name="menu_sort_recently_added">Nyligen tillagt</string>
+    <string name="menu_sort_recently_played">Nyligen spelat</string>
+    <string name="menu_sort_song_count">Antal låtar</string>
+    <string name="menu_sort_year">År</string>
+    <string name="menu_unpin_button">Ta bort från favoriter</string>
+</resources>

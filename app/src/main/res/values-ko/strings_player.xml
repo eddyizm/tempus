@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_clean_all_button">재생목록 비우기</string>
+    <string name="player_server_priority">서버 우선순위</string>
+    <string name="player_transcoding">트랜스코딩</string>
+    <string name="player_unknown_format">즐겨찾기 오래된순</string>
+</resources>

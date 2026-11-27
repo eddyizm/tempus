@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">플레이리스트에 추가</string>
+    <string name="album_bottom_sheet_add_to_queue">재생목록에 추가</string>
+    <string name="album_bottom_sheet_download_all">모두 다운로드</string>
+    <string name="album_bottom_sheet_go_to_artist">아티스트로 이동</string>
+    <string name="album_bottom_sheet_instant_mix">인스턴트 믹스</string>
+    <string name="album_bottom_sheet_play_next">다음 재생</string>
+    <string name="album_bottom_sheet_remove_all">모두 제거</string>
+    <string name="album_bottom_sheet_share">공유</string>
+    <string name="album_bottom_sheet_shuffle">셔플</string>
+    <string name="album_catalogue_title">앨범</string>
+    <string name="album_catalogue_title_expanded">앨범 찾아보기</string>
+    <string name="album_error_retrieving_artist">아티스트를 검색하던 중 오류가 발생했습니다.</string>
+    <string name="album_list_page_downloaded">다운로드한 앨범</string>
+    <string name="album_list_page_most_played">가장 많이 재생한 앨범</string>
+    <string name="album_list_page_new_releases">New releases</string>
+    <string name="album_list_page_recently_added">최근 추가한 앨범</string>
+    <string name="album_list_page_recently_played">최근 재생한 앨범</string>
+    <string name="album_list_page_starred">즐겨찾기한 앨범</string>
+    <string name="album_list_page_title">앨범</string>
+    <string name="album_page_extra_info_button">유사항목 더 보기</string>
+    <string name="album_page_play_button">재생</string>
+    <string name="album_page_release_date_label">%1$s에 발매됨</string>
+    <string name="album_page_release_dates_label">%1$s에 발매, %2$s에 최초 발매됨</string>
+    <string name="album_page_shuffle_button">셔플</string>
+    <string name="album_page_tracks_count_and_duration">%1$d 곡  •  %2$d 분</string>
+</resources>

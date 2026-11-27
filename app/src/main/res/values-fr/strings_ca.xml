@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Crash Activity -->
+    <string name="ca_export_button_copy">Copier le rapport</string>
+    <string name="ca_export_button_share">Partager le rapport</string>
+    <string name="ca_export_description">
+    		Un APK de débogage (version préliminaire) fournit des rapports plus détaillés
+    		qui nous aident à comprendre le dysfonctionnement de l\'app.\n\n
+
+            Ces données ne seront envoyées nulle part sans votre consentement.
+        </string>
+    <string name="ca_export_label">Exporter</string>
+    <string name="ca_export_title">Récupération des rapports</string>
+    <string name="ca_export_toast_log_copied_to_clipboard">Rapport copié dans le presse-papiers</string>
+    <string name="ca_info_button_close">Fermer l\'app</string>
+    <string name="ca_info_button_restart">Redémarrer l\'app</string>
+    <string name="ca_info_description">
+        Veuillez créer une fiche problème sur GitHub en incluant une copie des rapports pour signaler ce plantage.
+    </string>
+    <string name="ca_info_label">Info</string>
+    <string name="ca_info_title">Tempus a planté</string>
+    <string name="ca_logs_description">
+        Voici ce qui a mal fonctionné.
+    </string>
+    <string name="ca_logs_label">Rapports</string>
+    <string name="ca_logs_title">Trace d\'appels Java</string>
+</resources>

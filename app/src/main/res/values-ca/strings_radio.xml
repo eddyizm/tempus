@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">Aquest servidor no és compatible amb la gestió de ràdio per Internet.</string>
+    <string name="radio_editor_dialog_added">S\'ha afegit l\'emissora de ràdio</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">URL de la caràtula (opcional)</string>
+    <string name="radio_editor_dialog_hint_homepage_url">URL de la pàgina d\'inici de la ràdio</string>
+    <string name="radio_editor_dialog_hint_name">Nom de la ràdio</string>
+    <string name="radio_editor_dialog_hint_stream_url">URL de la transmissió de la ràdio</string>
+    <string name="radio_editor_dialog_negative_button">Cancel·la</string>
+    <string name="radio_editor_dialog_neutral_button">Suprimeix</string>
+    <string name="radio_editor_dialog_positive_button">Desa</string>
+    <string name="radio_editor_dialog_title">Emissora de ràdio per Internet</string>
+    <string name="radio_editor_dialog_updated">S\'ha actualitzat l\'emissora de ràdio</string>
+    <string name="radio_editor_search_directory">Cerca al directori</string>
+    <string name="radio_editor_source_label">Desa a</string>
+    <string name="radio_editor_source_local">Local</string>
+    <string name="radio_editor_source_server">Servidor</string>
+    <string name="radio_local_badge">LOCAL</string>
+    <string name="radio_search_add">Afegeix</string>
+    <string name="radio_search_button">Cerca</string>
+    <string name="radio_search_country_hint">País</string>
+    <string name="radio_search_dialog_title">Cerca al directori de ràdio</string>
+    <string name="radio_search_directory_button">Carpeta</string>
+    <string name="radio_search_duplicate">L\'emissora ja existeix</string>
+    <string name="radio_search_empty_query">Introduïu el nom d\'una emissora</string>
+    <string name="radio_search_error">No s\'ha pogut cercar: %s</string>
+    <string name="radio_search_hint">Nom de l\'emissora</string>
+    <string name="radio_search_no_results">No s\'ha trobat cap emissora</string>
+    <string name="radio_search_station_added">S\'ha afegit l\'emissora localment</string>
+    <string name="radio_search_use">Utilitza</string>
+    <string name="radio_station_info_empty_button">Feu clic per a ocultar la secció.\nEls efectes seran visibles quan reinicieu l\'aplicació.</string>
+    <string name="radio_station_info_empty_subtitle">Quan afegiu una emissora de ràdio, la trobareu aquí.</string>
+    <string name="radio_station_info_empty_title">No s\'ha trobat cap emissora.</string>
+</resources>

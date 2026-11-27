@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">Zarządzanie internetowymi stacjami radiowymi nie jest obsługiwane przez ten serwer.</string>
+    <string name="radio_editor_dialog_added">Dodano stację radiową</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">Adres URL okładki (opcjonalny)</string>
+    <string name="radio_editor_dialog_hint_homepage_url">Adres URL strony stacji</string>
+    <string name="radio_editor_dialog_hint_name">Nazwa stacji radiowej</string>
+    <string name="radio_editor_dialog_hint_stream_url">Adres URL z strumieniem stacji</string>
+    <string name="radio_editor_dialog_negative_button">Anuluj</string>
+    <string name="radio_editor_dialog_neutral_button">Usuń</string>
+    <string name="radio_editor_dialog_positive_button">Zapisz</string>
+    <string name="radio_editor_dialog_title">Internetowa Stacja Radiowa</string>
+    <string name="radio_editor_dialog_updated">Stacja radiowa uaktualniona</string>
+    <string name="radio_editor_search_directory">Katalog wyszukiwania</string>
+    <string name="radio_editor_source_label">Zapisz na</string>
+    <string name="radio_editor_source_local">Lokalnie</string>
+    <string name="radio_editor_source_server">Serwerze</string>
+    <string name="radio_local_badge">LOKALNA</string>
+    <string name="radio_search_add">Dodaj</string>
+    <string name="radio_search_button">Szukaj</string>
+    <string name="radio_search_country_hint">Kraj</string>
+    <string name="radio_search_dialog_title">Przeszukaj katalog stacji</string>
+    <string name="radio_search_directory_button">Katalog</string>
+    <string name="radio_search_duplicate">Stacja już istnieje</string>
+    <string name="radio_search_empty_query">Wpisz nazwę stacji</string>
+    <string name="radio_search_error">Wyszukiwanie nieudane: %s</string>
+    <string name="radio_search_hint">Nazwa stacji</string>
+    <string name="radio_search_no_results">Nie znaleziono stacji</string>
+    <string name="radio_search_station_added">Stacja dodana lokalnie</string>
+    <string name="radio_search_use">Użyj</string>
+    <string name="radio_station_info_empty_button">Naciśnij aby ukryć tę sekcję\nEfekty będą widoczne po restarcie</string>
+    <string name="radio_station_info_empty_subtitle">Gdy dodasz stację radiową, znajdziesz ją tutaj</string>
+    <string name="radio_station_info_empty_title">Nie znaleziono stacji!</string>
+</resources>

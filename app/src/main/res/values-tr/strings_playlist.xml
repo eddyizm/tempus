@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_catalogue_title">Çalma Listesi Kataloğu</string>
+    <string name="playlist_catalogue_title_expanded">Çalma listelerine göz at</string>
+    <string name="playlist_chooser_dialog_cancel_button">İptal</string>
+    <string name="playlist_chooser_dialog_create_button">Oluştur</string>
+    <string name="playlist_chooser_dialog_empty">Henüz çalma listesi oluşturulmadı</string>
+    <string name="playlist_chooser_dialog_title">Çalma listesine ekle</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Şarkı çalma listesine eklenemedi</string>
+    <string name="playlist_chooser_dialog_toast_add_success">Şarkı çalma listesine eklendi</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Bunu açtığınızda çalma listesi herkese açık hale gelir. Kendi haline bıraktığınızda çalma listesinin görünürlüğü değişmez.</string>
+    <string name="playlist_counted_tracks">%1$d parça • %2$s</string>
+    <string name="playlist_details_dialog_title">Çalma listesi ayrıntıları</string>
+    <string name="playlist_duration">Süre  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_toast">Silmek için uzun basın</string>
+    <string name="playlist_editor_dialog_action_save_empty">Bir çalma listesi en az bir parça içermelidir</string>
+    <string name="playlist_editor_dialog_hint_name">Çalma listesi adı</string>
+    <string name="playlist_editor_dialog_negative_button">İptal</string>
+    <string name="playlist_editor_dialog_neutral_button">Sil</string>
+    <string name="playlist_editor_dialog_positive_button">Kaydet</string>
+    <string name="playlist_editor_dialog_title">Çalma listesini düzenle</string>
+    <string name="playlist_editor_drag_track">Yeniden sıralamak için sürükleyin</string>
+    <string name="playlist_editor_hint">Yeniden sıralamak için tutamacı sürükleyin, kaldırmak için çöp kutusuna dokunun. Siz Kaydet\'e dokunana kadar hiçbir şey gönderilmez.</string>
+    <string name="playlist_editor_load_failure">Çalma listesi yüklenemedi</string>
+    <string name="playlist_editor_remove_track">Parçayı kaldır</string>
+    <string name="playlist_editor_removed_track">Listeden kaldırıldı</string>
+    <string name="playlist_page_play_button">Çal</string>
+    <string name="playlist_page_shuffle_button">Karıştır</string>
+    <string name="playlist_song_count">Çalma listesi • %1$d şarkı</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">%d parça indiriliyor</item>
+        <item quantity="other">%d parça indiriliyor</item>
+    </plurals>
+</resources>

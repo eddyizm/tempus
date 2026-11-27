@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home -->
+    <string name="home_continue_listening_resume_at">Weiter bei %1$s</string>
+    <string name="home_option_reorganize">Neu anordnen</string>
+    <string name="home_rearrangement_dialog_negative_button">Abbrechen</string>
+    <string name="home_rearrangement_dialog_neutral_button">Zurücksetzen</string>
+    <string name="home_rearrangement_dialog_positive_button">Speichern</string>
+    <string name="home_rearrangement_dialog_subtitle">Änderungen werden erst nach einem Neustart der App wirksam.</string>
+    <string name="home_rearrangement_dialog_title">Startseite neu anordnen</string>
+    <string name="home_section_music">Musik</string>
+    <string name="home_section_podcast">Podcasts</string>
+    <string name="home_section_radio">Radio</string>
+    <string name="home_subtitle_best_of">Meistgehörte Titel deiner Lieblingsinterpreten</string>
+    <string name="home_subtitle_made_for_you">Starte einen Mix mit einem deiner Lieblingslieder</string>
+    <string name="home_subtitle_new_internet_radio_station">Radiosender hinzufügen</string>
+    <string name="home_subtitle_new_podcast_channel">Podcastkanal hinzufügen</string>
+    <plurals name="home_sync_starred_albums_count">
+        <item quantity="one">%d Album zu synchronisieren</item>
+        <item quantity="other">%d Alben zu synchronisieren</item>
+    </plurals>
+    <string name="home_sync_starred_albums_subtitle">Lieblingsalben offline verfügbar machen</string>
+    <string name="home_sync_starred_albums_title">Lieblingsalben synchronisieren</string>
+    <plurals name="home_sync_starred_artists_count">
+        <item quantity="one">%d Interpret zu synchronisieren</item>
+        <item quantity="other">%d Interpreten zu synchronisieren</item>
+    </plurals>
+    <string name="home_sync_starred_artists_subtitle">Lieblingsinterpreten offline verfügbar machen</string>
+    <string name="home_sync_starred_artists_title">Lieblingsinterpreten synchronisieren</string>
+    <string name="home_sync_starred_cancel">Abbrechen</string>
+    <string name="home_sync_starred_download">Herunterladen</string>
+    <plurals name="home_sync_starred_songs_count">
+        <item quantity="one">%d Lied zu synchronisieren</item>
+        <item quantity="other">%d Lieder zu synchronisieren</item>
+    </plurals>
+    <string name="home_sync_starred_subtitle">Das Herunterladen dieser Titel kann erheblichen Datenverbrauch verursachen!</string>
+    <string name="home_sync_starred_title">Es gibt Lieblingstitel zum Herunterladen</string>
+    <string name="home_title_best_of">Das Beste von</string>
+    <string name="home_title_continue_listening">Weiterhören</string>
+    <string name="home_title_discovery">Entdecken</string>
+    <string name="home_title_discovery_shuffle_all_button">Alles zufällig spielen</string>
+    <string name="home_title_flashback">Rückblende</string>
+    <string name="home_title_internet_radio_station">Internet-Radiosender</string>
+    <string name="home_title_last_month">Letzter Monat</string>
+    <string name="home_title_last_played">Zuletzt gespielt</string>
+    <string name="home_title_last_played_see_all_button">Alle zeigen</string>
+    <string name="home_title_last_week">Letzte Woche</string>
+    <string name="home_title_last_year">Letztes Jahr</string>
+    <string name="home_title_made_for_you">Nur für dich</string>
+    <string name="home_title_most_played">Oft gespielt</string>
+    <string name="home_title_most_played_see_all_button">Alle zeigen</string>
+    <string name="home_title_new_releases">Neu veröffentlicht</string>
+    <string name="home_title_newest_podcasts">Neuste Podcasts</string>
+    <string name="home_title_pinned_playlists">Wiedergabelisten</string>
+    <string name="home_title_podcast_channels">Kanäle</string>
+    <string name="home_title_podcast_channels_see_all_button">Alle zeigen</string>
+    <string name="home_title_radio_station">Radiosender</string>
+    <string name="home_title_recently_added">Kürzlich hinzugefügt</string>
+    <string name="home_title_recently_added_see_all_button">Alle zeigen</string>
+    <string name="home_title_shares">Geteiltes</string>
+    <string name="home_title_starred_albums">★ Lieblingsalben</string>
+    <string name="home_title_starred_albums_see_all_button">Alle zeigen</string>
+    <string name="home_title_starred_artists">★ Lieblingsinterpreten</string>
+    <string name="home_title_starred_artists_see_all_button">Alle zeigen</string>
+    <string name="home_title_starred_tracks">★ Lieblingstitel</string>
+    <string name="home_title_starred_tracks_see_all_button">Alle zeigen</string>
+    <string name="home_title_top_songs">Deine Lieblingslieder</string>
+</resources>

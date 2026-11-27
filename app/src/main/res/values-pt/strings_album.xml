@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Album -->
+    <string name="album_bottom_sheet_add_to_playlist">Adicionar a uma playlist</string>
+    <string name="album_bottom_sheet_add_to_queue">Adicionar à fila</string>
+    <string name="album_bottom_sheet_download_all">Baixar todos</string>
+    <string name="album_bottom_sheet_go_to_artist">Ir para o(a) artista</string>
+    <string name="album_bottom_sheet_instant_mix">Mixagem instantânea</string>
+    <string name="album_bottom_sheet_play_next">Tocar em seguida</string>
+    <string name="album_bottom_sheet_remove_all">Remover todos</string>
+    <string name="album_bottom_sheet_share">Compartilhar</string>
+    <string name="album_bottom_sheet_shuffle">Aleatório</string>
+    <string name="album_catalogue_title">Álbuns</string>
+    <string name="album_catalogue_title_expanded">Navegar pelos Álbuns</string>
+    <string name="album_error_retrieving_artist">Erro ao recuperar artista</string>
+    <string name="album_list_page_downloaded">Álbuns baixados</string>
+    <string name="album_list_page_most_played">Álbuns mais reproduzidos</string>
+    <string name="album_list_page_new_releases">Novos lançamentos</string>
+    <string name="album_list_page_recently_added">Álbuns recém-adicionados</string>
+    <string name="album_list_page_recently_played">Álbuns recém-reproduzidos</string>
+    <string name="album_list_page_starred">Álbuns favoritos</string>
+    <string name="album_list_page_title">Álbuns</string>
+    <string name="album_page_extra_info_button">Sugestões semelhantes</string>
+    <string name="album_page_play_button">Reproduzir</string>
+    <string name="album_page_shuffle_button">Aleatório</string>
+</resources>

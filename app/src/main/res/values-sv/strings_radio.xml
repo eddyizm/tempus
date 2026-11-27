@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Radio -->
+    <string name="radio_dialog_not_supported_snackbar">Den här servern stöder inte hantering av internetradio.</string>
+    <string name="radio_editor_dialog_added">Radiostationen har lagts till</string>
+    <string name="radio_editor_dialog_hint_cover_art_url">Omslagsbildens adress (valfritt)</string>
+    <string name="radio_editor_dialog_hint_homepage_url">Radiostationens webbplats</string>
+    <string name="radio_editor_dialog_hint_name">Radiostationens namn</string>
+    <string name="radio_editor_dialog_hint_stream_url">Radioströmmens adress</string>
+    <string name="radio_editor_dialog_negative_button">Avbryt</string>
+    <string name="radio_editor_dialog_neutral_button">Radera</string>
+    <string name="radio_editor_dialog_positive_button">Spara</string>
+    <string name="radio_editor_dialog_title">Internetradiostation</string>
+    <string name="radio_editor_dialog_updated">Radiostationen har uppdaterats</string>
+    <string name="radio_editor_search_directory">Sök i katalogen</string>
+    <string name="radio_editor_source_label">Spara på</string>
+    <string name="radio_editor_source_local">Lokalt</string>
+    <string name="radio_editor_source_server">Server</string>
+    <string name="radio_local_badge">LOKALT</string>
+    <string name="radio_search_add">Lägg till</string>
+    <string name="radio_search_button">Sök</string>
+    <string name="radio_search_country_hint">Land</string>
+    <string name="radio_search_dialog_title">Sök i radiokatalogen</string>
+    <string name="radio_search_directory_button">Katalog</string>
+    <string name="radio_search_duplicate">Stationen finns redan</string>
+    <string name="radio_search_empty_query">Ange ett stationsnamn</string>
+    <string name="radio_search_error">Sökningen misslyckades: %s</string>
+    <string name="radio_search_hint">Stationens namn</string>
+    <string name="radio_search_no_results">Inga stationer hittades</string>
+    <string name="radio_search_station_added">Stationen har lagts till lokalt</string>
+    <string name="radio_search_use">Använd</string>
+    <string name="radio_station_info_empty_button">Tryck för att dölja sektionen\nÄndringen syns efter omstart</string>
+    <string name="radio_station_info_empty_subtitle">När du har lagt till en radiostation hittar du den här</string>
+    <string name="radio_station_info_empty_title">Inga stationer hittades!</string>
+</resources>

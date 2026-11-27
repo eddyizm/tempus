@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_added_to_queue">Spellistan har lagts till i kön</string>
+    <string name="playlist_catalogue_title">Spellistekatalog</string>
+    <string name="playlist_catalogue_title_expanded">Bläddra bland spellistor</string>
+    <string name="playlist_chooser_dialog_cancel_button">Avbryt</string>
+    <string name="playlist_chooser_dialog_create_button">Skapa</string>
+    <string name="playlist_chooser_dialog_empty">Inga spellistor skapade</string>
+    <string name="playlist_chooser_dialog_title">Lägg till i en spellista</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">Kunde inte lägga till låtarna i spellistan</string>
+    <string name="playlist_chooser_dialog_toast_add_success">Låtarna har lagts till i spellistan</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">Alla låtar hoppades över eftersom de var dubbletter</string>
+    <string name="playlist_chooser_dialog_toast_remove_failure">Kunde inte ta bort låten från spellistan</string>
+    <string name="playlist_chooser_dialog_toast_remove_success">Låten har tagits bort från spellistan</string>
+    <string name="playlist_chooser_dialog_visibility_private">Privat</string>
+    <string name="playlist_chooser_dialog_visibility_public">Offentlig</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">Aktivera för att göra spellistan offentlig. Om du inte ändrar inställningen behåller spellistan sin synlighet.</string>
+    <string name="playlist_chooser_dialog_visibility_switch_label">Gör spellistan offentlig</string>
+    <string name="playlist_counted_tracks">%1$d låtar •  %2$s</string>
+    <string name="playlist_details_dialog_title">Spellisteinformation</string>
+    <string name="playlist_duration">Speltid  •  %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_failure">Kunde inte radera spellistan</string>
+    <string name="playlist_editor_dialog_action_delete_success">Spellistan har raderats</string>
+    <string name="playlist_editor_dialog_action_delete_toast">Tryck länge för att radera</string>
+    <string name="playlist_editor_dialog_action_save_empty">En spellista måste innehålla minst en låt</string>
+    <string name="playlist_editor_dialog_action_save_failure">Kunde inte spara spellistan</string>
+    <string name="playlist_editor_dialog_action_save_success">Spellistan har sparats</string>
+    <string name="playlist_editor_dialog_hint_name">Spellistans namn</string>
+    <string name="playlist_editor_dialog_negative_button">Avbryt</string>
+    <string name="playlist_editor_dialog_neutral_button">Radera</string>
+    <string name="playlist_editor_dialog_positive_button">Spara</string>
+    <string name="playlist_editor_dialog_title">Redigera spellista</string>
+    <string name="playlist_editor_drag_track">Dra för att ändra ordningen</string>
+    <string name="playlist_editor_hint">Dra i handtaget för att ändra ordningen och tryck på papperskorgen för att ta bort en låt. Inget skickas förrän du trycker på Spara.</string>
+    <string name="playlist_editor_load_failure">Kunde inte läsa in spellistan</string>
+    <string name="playlist_editor_remove_track">Ta bort låt</string>
+    <string name="playlist_editor_removed_track">Borttagen från listan</string>
+    <string name="playlist_error_not_found_message">Den här spellistan hittades inte på servern. Den tas bort från din lokala cache.</string>
+    <string name="playlist_error_not_found_title">Spellistan hittades inte</string>
+    <string name="playlist_error_not_found_toast">Spellistan har tagits bort från cachen</string>
+    <string name="playlist_page_empty">Inga låtar i den här spellistan</string>
+    <string name="playlist_page_play_button">Spela</string>
+    <string name="playlist_page_shuffle_button">Blanda</string>
+    <string name="playlist_song_count">Spellista  •  %1$d låtar</string>
+    <string name="playlist_sort_both">Nyligen aktivt</string>
+    <string name="playlist_sort_last_played">Senast spelat</string>
+    <string name="playlist_sort_last_updated">Senast uppdaterat</string>
+    <string name="playlist_sort_pinned">Favoriter</string>
+    <plurals name="playlist_sync_downloading">
+        <item quantity="one">Hämtar %d låt</item>
+        <item quantity="other">Hämtar %d låtar</item>
+    </plurals>
+</resources>

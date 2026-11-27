@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Playlist -->
+    <string name="playlist_catalogue_title">播放清單目錄</string>
+    <string name="playlist_catalogue_title_expanded">瀏覽播放清單</string>
+    <string name="playlist_chooser_dialog_cancel_button">取消</string>
+    <string name="playlist_chooser_dialog_create_button">新建</string>
+    <string name="playlist_chooser_dialog_empty">尚未建立播放清單</string>
+    <string name="playlist_chooser_dialog_title">新增到播放清單</string>
+    <string name="playlist_chooser_dialog_toast_add_failure">未能將歌曲新增到播放清單</string>
+    <string name="playlist_chooser_dialog_toast_add_success">將歌曲新增到播放清單</string>
+    <string name="playlist_chooser_dialog_toast_all_skipped">所有歌曲已存在，無需重複新增</string>
+    <string name="playlist_chooser_dialog_visibility_summary_v2">開啟此選項會將播放清單設為公開。保持原樣不會改變播放清單的可見性。</string>
+    <string name="playlist_counted_tracks">%1$d 首歌曲 • %2$s</string>
+    <string name="playlist_duration">時長 • %1$s</string>
+    <string name="playlist_editor_dialog_action_delete_toast">長按刪除</string>
+    <string name="playlist_editor_dialog_action_save_empty">播放清單必須至少保留一首曲目</string>
+    <string name="playlist_editor_dialog_hint_name">播放清單名稱</string>
+    <string name="playlist_editor_dialog_negative_button">取消</string>
+    <string name="playlist_editor_dialog_neutral_button">刪除</string>
+    <string name="playlist_editor_dialog_positive_button">儲存</string>
+    <string name="playlist_editor_dialog_title">編輯播放清單</string>
+    <string name="playlist_page_play_button">播放</string>
+    <string name="playlist_page_shuffle_button">隨機播放</string>
+    <string name="playlist_song_count">播放清單 • %1$d 首歌曲</string>
+</resources>

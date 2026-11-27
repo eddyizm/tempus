@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Player -->
+    <string name="playback_speed_decrease_button_content_description">Zmniejsz prędkość odtwarzania</string>
+    <string name="playback_speed_dialog_negative_button">Anuluj</string>
+    <string name="playback_speed_dialog_reset_button">Reset</string>
+    <string name="playback_speed_dialog_title">Prędkość odtwarzania</string>
+    <string name="playback_speed_increase_button_content_description">Zwiększ prędkość odtwarzania</string>
+    <string name="playback_speed_manual_pitch_decrease_button_content_description">Zmniejsz wysokość dźwięku</string>
+    <string name="playback_speed_manual_pitch_increase_button_content_description">Zwiększ wysokość dźwięku</string>
+    <string name="playback_speed_manual_pitch_switch_title">Ręczna wysokość dźwięku</string>
+    <string name="playback_speed_manual_pitch_value">%1$.0f%%</string>
+    <string name="playback_speed_pitch_switch_title">Preserve pitch Utrzymaj wysokość dźwięku</string>
+    <string name="player_lyrics_download_content_description">Pobierz teksty do odtwarzania offline</string>
+    <string name="player_lyrics_download_failure">Tekst nie jest dostępny do pobrania.</string>
+    <string name="player_lyrics_download_success">Zapisano tekst do odtwarzania offline.</string>
+    <string name="player_lyrics_downloaded_content_description">Teksty pobrane do odtwarzania offline</string>
+    <string name="player_overflow_menu_add_to_playlist">Dodaj do playlisty</string>
+    <string name="player_playback_speed">%1$.2fx</string>
+    <string name="player_queue_all_downloaded">Pobrano już wszystkie piosenki</string>
+    <string name="player_queue_clean_all_button">Wyczyść kolejkę odtwarzania</string>
+    <string name="player_queue_clear">Wyczyść</string>
+    <string name="player_queue_download_all">Pobierz wszystkie</string>
+    <string name="player_queue_downloaded">Pobrane</string>
+    <plurals name="player_queue_duration_hours">
+            <item quantity="one">%d godzina</item>
+    		<item quantity="few">%d godziny</item>
+            <item quantity="many">%d godzin</item>
+            <item quantity="other">%d godziny</item>
+        </plurals>
+    <plurals name="player_queue_duration_minutes">
+            <item quantity="one">%d minuta</item>
+    		<item quantity="few">%d minuty</item>
+            <item quantity="many">%d minut</item>
+            <item quantity="other">%d minuty</item>
+        </plurals>
+    <plurals name="player_queue_duration_seconds">
+            <item quantity="one">%d sekunda</item>
+    		<item quantity="few">%d sekundy</item>
+            <item quantity="many">%d sekund</item>
+            <item quantity="other">%d sekundy</item>
+        </plurals>
+    <string name="player_queue_empty">Kolejka jest pusta</string>
+    <string name="player_queue_load_queue">Wczytaj kolejkę</string>
+    <string name="player_queue_loaded">Kolejka załadowana</string>
+    <string name="player_queue_no_saved_queue">Nie znaleziono zapisanej kolejki</string>
+    <string name="player_queue_pause">Pauza</string>
+    <string name="player_queue_play">Odtwarzaj</string>
+    <string name="player_queue_playing_next">Następne odtwarzane</string>
+    <string name="player_queue_remove">Usuń z kolejki</string>
+    <string name="player_queue_reorder">Zmień kolejność</string>
+    <string name="player_queue_save_queue_success">Zapisano kolejkę odtwarzania</string>
+    <string name="player_queue_save_to_playlist">Zapisz kolejkę do playlisty</string>
+    <string name="player_queue_shuffle_upcoming">Wymieszaj nadchodzące</string>
+    <plurals name="player_queue_song_count">
+            <item quantity="one">%d piosenka</item>
+    		<item quantity="few">%d piosenki</item>
+            <item quantity="many">%d piosenek</item>
+            <item quantity="other">%d piosenek</item>
+        </plurals>
+    <string name="player_queue_starred">Oznaczone gwiazdką</string>
+    <string name="player_server_priority">Priorytet Serwerów</string>
+    <string name="player_transcoding">Transkodowanie</string>
+    <string name="player_transcoding_requested">zażądane</string>
+    <string name="player_unknown_format">Nieznany format</string>
+</resources>
