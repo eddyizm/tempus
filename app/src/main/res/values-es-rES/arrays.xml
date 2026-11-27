@@ -231,6 +231,36 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="song_preload_buffer_titles">
+        <item>5 segundos</item>
+        <item>30 segundos</item>
+        <item>1 minuto</item>
+        <item>3 minutos</item>
+        <item>5 minutos</item>
+    </string-array>
+    <string-array name="song_preload_buffer_values">
+        <item>5</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>600</item>
+    </string-array>
+
+    <string-array name="precache_tracks_titles">
+        <item>Desactivado</item>
+        <item>Siguiente pista</item>
+        <item>Siguientes 2 pistas</item>
+        <item>Siguientes 3 pistas</item>
+        <item>Siguientes 5 pistas</item>
+    </string-array>
+    <string-array name="precache_tracks_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+    </string-array>
+
     <string-array name="playlist_sort_option_titles">
         <item>Por nombre</item>
         <item>Aleatoriamente</item>
@@ -282,6 +312,19 @@
         <item>4</item>
         <item>3</item>
         <item>2</item>
+    </string-array>
+
+    <string-array name="selected_equalizer_entries">
+        <item>Predeterminado</item>
+        <item>Integrado</item>
+        <item>Externo</item>
+        <item>Paramétrico (AutoEq)</item>
+    </string-array>
+    <string-array name="selected_equalizer_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="aa_tab_titles">
