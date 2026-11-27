@@ -249,7 +249,15 @@ object Preferences {
 
     @JvmStatic
     fun setServer(server: String?) {
-        App.getInstance().preferences.edit().putString(SERVER, server).apply()
+        App.getInstance().preferences.edit().putString(SERVER, normalizeScheme(server)).apply()
+    }
+
+    /** Keyboards capitalise the first letter, and the cover-art loader matches the scheme exactly. */
+    private fun normalizeScheme(url: String?): String? {
+        val trimmed = url?.trim() ?: return null
+        val schemeEnd = trimmed.indexOf("://")
+        if (schemeEnd <= 0) return trimmed
+        return trimmed.substring(0, schemeEnd).lowercase() + trimmed.substring(schemeEnd)
     }
 
     /**
@@ -420,7 +428,7 @@ object Preferences {
 
     @JvmStatic
     fun setLocalAddress(address: String?) {
-        App.getInstance().preferences.edit().putString(LOCAL_ADDRESS, address).apply()
+        App.getInstance().preferences.edit().putString(LOCAL_ADDRESS, normalizeScheme(address)).apply()
     }
 
     @JvmStatic
@@ -432,7 +440,7 @@ object Preferences {
 
     @JvmStatic
     fun setInUseServerAddress(address: String?) {
-        App.getInstance().preferences.edit().putString(IN_USE_SERVER_ADDRESS, address).apply()
+        App.getInstance().preferences.edit().putString(IN_USE_SERVER_ADDRESS, normalizeScheme(address)).apply()
     }
 
     @JvmStatic
