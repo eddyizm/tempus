@@ -31,7 +31,7 @@
         app:layout_constraintStart_toEndOf="@+id/music_index_cover_image_view"
         app:layout_constraintTop_toTopOf="@+id/music_index_cover_image_view" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/music_index_title_text_view"
         style="@style/LabelMedium"
         android:layout_width="0dp"

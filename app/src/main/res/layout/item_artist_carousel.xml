@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearanceOverlay="@style/CircleShapeAppearance" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/artist_name_label"
         style="@style/LabelMedium"
         android:layout_width="0dp"

@@ -39,7 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/downloaded_item_title_text_view"
         style="@style/LabelMedium"
         android:layout_width="0dp"
@@ -54,7 +54,7 @@
         app:layout_constraintTop_toTopOf="@+id/item_cover_image_view"
         app:layout_constraintBottom_toTopOf="@id/downloaded_item_subtitle_text_view"/>
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/downloaded_item_subtitle_text_view"
         style="@style/LabelSmall"
         android:layout_width="0dp"
@@ -67,7 +67,7 @@
         app:layout_constraintTop_toBottomOf="@id/downloaded_item_title_text_view"
         app:layout_constraintEnd_toStartOf="@+id/downloaded_item_more_button"
         app:layout_constraintStart_toStartOf="@+id/downloaded_item_title_text_view"
-        app:layout_constraintBottom_toBottomOf="@+id/item_cover_image_view" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <FrameLayout
         android:id="@+id/downloaded_item_more_button"

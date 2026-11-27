@@ -45,7 +45,7 @@
         app:layout_constraintStart_toEndOf="@+id/internet_radio_station_cover_image_view"
         app:layout_constraintTop_toTopOf="@+id/internet_radio_station_cover_image_view" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/internet_radio_station_title_text_view"
         style="@style/LabelMedium"
         android:layout_width="0dp"
@@ -60,7 +60,7 @@
         app:layout_constraintTop_toTopOf="@+id/internet_radio_station_cover_image_view"
         app:layout_constraintVertical_chainStyle="packed" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/internet_radio_station_subtitle_text_view"
         style="@style/LabelSmall"
         android:layout_width="0dp"
@@ -69,7 +69,7 @@
         android:paddingEnd="12dp"
         android:singleLine="true"
         android:text="@string/label_placeholder"
-        app:layout_constraintBottom_toBottomOf="@+id/internet_radio_station_cover_image_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/internet_radio_station_more_button"
         app:layout_constraintStart_toEndOf="@+id/cover_image_separator"
         app:layout_constraintTop_toBottomOf="@+id/internet_radio_station_title_text_view" />

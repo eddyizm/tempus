@@ -149,6 +149,12 @@
             android:key="album_detail" />
 
         <SwitchPreference
+            android:title="@string/settings_wrap_long_text"
+            android:defaultValue="false"
+            android:summary="@string/settings_wrap_long_text_summary"
+            android:key="wrap_long_text" />
+
+        <SwitchPreference
             android:title="@string/settings_artist_sort_by_album_count"
             android:defaultValue="false"
             android:summary="@string/settings_artist_sort_by_album_count_summary"

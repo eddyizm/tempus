@@ -13,7 +13,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/podcast_channel_title_label"
         style="@style/LabelMedium"
         android:layout_width="0dp"
