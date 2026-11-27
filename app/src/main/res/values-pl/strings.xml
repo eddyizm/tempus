@@ -936,6 +936,26 @@
     <string name="la_perms_nearby_devices_title">Urządzenia w pobliżu</string>
     <string name="la_perms_nearby_devices_description">Wymagane do znajdowania urządzeń przez UPnP i Chromecast.</string>
 
+	<string name="menu_add_shortcut">Przypnij do skrótów aplikacji</string>
+    <string name="menu_remove_shortcut">Odepnij z skrótów aplikacji</string>
+    <string name="shortcut_replace_title">Wszystkie skróty aplikacji są przypięte. Zamienić:</string>
+    <string name="settings_shortcuts_manage">Przypięte skróty aplikacji</string>
+    <string name="settings_shortcuts_manage_empty">Na razie brak. Przypnij playlisty i albumy z ich menu.</string>
+    <string name="shortcut_manage_save">Zapisz</string>
+    <string name="shortcut_type_playlist">Playlista</string>
+    <string name="shortcut_type_album">Album</string>
+    <string name="shortcut_move">Przenieś</string>
+    <string name="shortcut_remove">Usuń</string>
+    <string name="settings_shortcuts_recent_playlists">Ostatnio odtwarzane playlisty jako skróty aplikacji</string>
+    <string name="settings_shortcuts_recent_playlists_summary">Długie przytrzymanie ikony aplikacji pokaże ostatnio odtwarzane playlistyt, zaraz po przypiętych playlistach i albumach.</string>
+    <string name="settings_shortcuts_play_mode">Gdy użyty zostanie skrót aplikacji</string>
+    <string name="settings_shortcuts_play_mode_open">Tylko otwórz playlistę lub album</string>
+    <string name="settings_shortcuts_play_mode_play">Odtwórz od początku</string>
+    <string name="settings_shortcuts_play_mode_shuffle">Odtwórz losowo</string>
+    <string name="settings_shortcuts_play_mode_ask">Pytaj za każdym razem</string>
+    <string name="shortcut_ask_open">Otwórz</string>
+    <string name="shortcut_ask_play">Odtwarzaj</string>
+    <string name="shortcut_ask_shuffle">Odtwarzaj losowo</string>
     <string name="la_backups_section_manual_title">Ręczna kopia zapasowa</string>
     <string name="la_backups_section_manual_description">Wyeksportuj ustawienia aplikacji do pliku lub zaimportuj je z wcześniejszej kopii. Nie zawierają danych logowania.</string>
     <string name="la_backups_section_manual_button_export">Eksport</string>
