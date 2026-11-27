@@ -19,18 +19,23 @@ import com.eddyizm.tempus.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SongListPageViewModel extends AndroidViewModel {
     private final SongRepository songRepository;
     private final ArtistRepository artistRepository;
+
+    private final MutableLiveData<List<Child>> songList = new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Boolean> refreshing = new MutableLiveData<>(false);
+
+    private boolean loaded = false;
+    private long requestId = 0;
 
     public String title;
     public String toolbarTitle;
     public Genre genre;
     public ArtistID3 artist;
     public AlbumID3 album;
-
-    private MutableLiveData<List<Child>> songList;
 
     public ArrayList<String> filters = new ArrayList<>();
     public ArrayList<String> filterNames = new ArrayList<>();
@@ -46,28 +51,55 @@ public class SongListPageViewModel extends AndroidViewModel {
         artistRepository = new ArtistRepository();
     }
 
+    /**
+     * Returns one stable LiveData for the lifetime of this screen. Querying again is done
+     * explicitly through {@link #refresh()}, so observers are never re-registered and
+     * pull-to-refresh actually re-runs the request.
+     */
     public LiveData<List<Child>> getSongList() {
-        songList = new MutableLiveData<>(new ArrayList<>());
+        if (!loaded) {
+            loaded = true;
+            refresh();
+        }
+        return songList;
+    }
 
-        switch (title) {
+    public LiveData<Boolean> getRefreshing() {
+        return refreshing;
+    }
+
+    public void refresh() {
+        final long id = ++requestId;
+        refreshing.setValue(true);
+
+        Consumer<List<Child>> onResult = songs -> {
+            if (id != requestId) return;
+            songList.setValue(songs != null ? new ArrayList<>(songs) : new ArrayList<>());
+            refreshing.setValue(false);
+        };
+
+        switch (title == null ? "" : title) {
             case Constants.MEDIA_BY_GENRE:
-                songList = songRepository.getRandomSampleWithGenre(maxNumberByGenre, 0, 3000, genre.getGenre());
+                songRepository.fetchRandomSampleWithGenre(maxNumberByGenre, 0, 3000, genre.getGenre(), onResult);
                 break;
             case Constants.MEDIA_BY_ARTIST:
-                songList = artistRepository.getTopSongs(artist.getName(), 50);
+                artistRepository.fetchTopSongs(artist.getName(), 50, onResult);
                 break;
             case Constants.MEDIA_BY_GENRES:
-                songList = songRepository.getSongsByGenres(filters);
+                songRepository.fetchSongsByGenres(filters, onResult);
                 break;
             case Constants.MEDIA_BY_YEAR:
-                songList = songRepository.getRandomSample(maxNumberByYear, year, year + 10);
+                songRepository.fetchRandomSample(maxNumberByYear, year, year + 10, onResult);
                 break;
             case Constants.MEDIA_STARRED:
-                songList = songRepository.getStarredSongs(false, -1);
+                songRepository.fetchStarredSongs(onResult);
+                break;
+            default:
+                // Titles without a dedicated query keep the previous behaviour: an empty list.
+                songList.setValue(new ArrayList<>());
+                refreshing.setValue(false);
                 break;
         }
-
-        return songList;
     }
 
     public void getSongsByPage(LifecycleOwner owner) {

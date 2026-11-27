@@ -442,6 +442,38 @@ public class ArtistRepository {
         return topSongs;
     }
 
+    /**
+     * Callback-based variant with a guaranteed completion signal, including failures.
+     */
+    public void fetchTopSongs(String artistName, int count, Consumer<List<Child>> callback) {
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getTopSongs(artistName, count)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call,
+                                           @NonNull Response<ApiResponse> response) {
+                        List<Child> fetched = null;
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse() != null
+                                && response.body().getSubsonicResponse().getTopSongs() != null) {
+                            fetched = response.body()
+                                    .getSubsonicResponse()
+                                    .getTopSongs()
+                                    .getSongs();
+                        }
+                        callback.accept(fetched != null ? fetched : new ArrayList<>());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call,
+                                          @NonNull Throwable t) {
+                        callback.accept(new ArrayList<>());
+                    }
+                });
+    }
+
     private void addToMutableLiveData(MutableLiveData<List<ArtistID3>> liveData, ArtistID3 artist) {
         List<ArtistID3> liveArtists = liveData.getValue();
         if (liveArtists != null) liveArtists.add(artist);

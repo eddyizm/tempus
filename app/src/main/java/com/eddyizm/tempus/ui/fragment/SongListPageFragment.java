@@ -19,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
@@ -71,7 +70,7 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
 
         bind = FragmentSongListPageBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
-        songListPageViewModel = new ViewModelProvider(requireActivity()).get(SongListPageViewModel.class);
+        songListPageViewModel = new ViewModelProvider(this).get(SongListPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
         Bundle args = getArguments();
@@ -378,20 +377,11 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     }
 
     public void initSwipeToRefresh() {
-        bind.swipeSongListToRefresh.setOnRefreshListener(() -> {
-            pullToRefresh();
-            bind.swipeSongListToRefresh.setRefreshing(false);
+        bind.swipeSongListToRefresh.setOnRefreshListener(songListPageViewModel::refresh);
+        songListPageViewModel.getRefreshing().observe(getViewLifecycleOwner(), refreshing -> {
+            if (bind != null) {
+                bind.swipeSongListToRefresh.setRefreshing(Boolean.TRUE.equals(refreshing));
+            }
         });
-    }
-
-    private void pullToRefresh() {
-        LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
-        songListPageViewModel.getSongList().observe(lifecycleOwner, songs -> {
-            isLoading = false;
-            songHorizontalAdapter.setItems(songs);
-            reapplyPlayback();
-            setSongListPageSubtitle(songs);
-        });
-
     }
 }
