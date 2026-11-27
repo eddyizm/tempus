@@ -14,6 +14,7 @@
     - [Advanced Settings](#advanced-settings)
 - [Main Features](#main-features)
     - [Library View](#library-view)
+    - [Artist page](#artist-page)
     - [Folder or index playback](#folder-or-index-playback)
     - [Now Playing Screen](#now-playing-screen)
     - [Podcasts](#podcasts)
@@ -177,9 +178,15 @@ Library has an **All songs** entry, and the same screen is available from the na
 
 **Song list sorting**
 
-Song lists with a sort button (starred tracks, top songs, multi-genre lists and All songs) can be ordered by name, artist, album or how recently a track was starred. Sorting happens locally in the app, not on the server. On lists that load more songs as you scroll, the order is applied to the songs loaded so far, so newly loaded pages are inserted into the current order. The chosen sort survives a refresh and screen rotation, and it also applies to search filtering and to the queue built from the displayed list.
+Song lists with a sort button (starred tracks, top songs, multi-genre lists, All songs and All songs by an artist) can be ordered by name, artist, album or how recently a track was starred. Sorting happens locally in the app, not on the server. On lists that load more songs as you scroll, the order is applied to the songs loaded so far, so newly loaded pages are inserted into the current order. The chosen sort survives a refresh and screen rotation, and it also applies to search filtering and to the queue built from the displayed list.
 
 The queue button on a song list appends the songs **currently displayed**, in the visible order — including any search filter and sort. It does not fetch more songs from the server and does not start playback; the current track keeps playing. On very large libraries the mapping work is done off the main thread, but a queue with tens of thousands of entries may still take a moment to appear. Shuffle starts playback from a shuffled copy of the loaded songs instead; it never reorders the list on screen.
+
+### Artist page
+
+On an artist's page, **All songs** sits between Top Songs and Albums. Tap **Browse every song by this artist** to open a full song list built from the artist's albums on the server. It uses the same sorting, search filtering, refresh and **Add to queue** actions as other song lists, and duplicate tracks are removed. For an artist with a large discography, collecting every album's tracks can take a while; the loading state stays until the request finishes.
+
+This artist list does not follow the active music-library filter; the server-wide **All songs** screen does. **Group artist releases by type**, under Settings → UI, is on by default and keeps the separate Albums, EPs, Singles and other release shelves. Turn it off to show one **Albums** shelf with all of the artist's albums, newest year first. The change applies the next time the artist page opens; it does not re-shelf a page that is already on screen.
 
 ### Folder or index playback
 
@@ -442,6 +449,8 @@ Accent colors, from the wallpaper or picked, need Android 12 or newer, and some 
 **Tiles size**, under **Settings → UI**, sets how big album and artist covers are in grids and rows, and the Discover cards on Home. **Default** is the largest and **Tiny** the smallest.
 
 **Rounded corners** rounds the corners of covers and **Corners size** sets how much. Restart Tempus after changing either.
+
+**Group artist releases by type**, under **Settings → UI**, is on by default. Turn it off to show one **Albums** shelf on artist pages, newest year first, instead of separate release-type shelves. The next artist page you open uses the new choice.
 
 ### Sound
 
