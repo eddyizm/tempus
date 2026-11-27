@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
 
-        <TextView
+        <com.eddyizm.tempus.util.WrapAwareTextView
             android:id="@+id/disc_title_text_view"
             style="@style/LabelSmall"
             android:layout_width="wrap_content"
@@ -97,7 +97,7 @@
         app:layout_constraintStart_toEndOf="@+id/song_cover_image_view"
         app:layout_constraintTop_toTopOf="@+id/song_cover_image_view" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/search_result_song_title_text_view"
         style="@style/LabelMedium"
         android:layout_width="0dp"
@@ -112,7 +112,7 @@
         app:layout_constraintTop_toTopOf="@+id/song_cover_image_view"
         app:layout_constraintVertical_chainStyle="packed" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/search_result_song_subtitle_text_view"
         style="@style/LabelSmall"
         android:layout_width="0dp"
@@ -121,7 +121,7 @@
         android:paddingEnd="12dp"
         android:singleLine="true"
         android:text="@string/label_placeholder"
-        app:layout_constraintBottom_toBottomOf="@+id/song_cover_image_view"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rating_indicator_image_view"
         app:layout_constraintStart_toEndOf="@+id/cover_image_separator"
         app:layout_constraintTop_toBottomOf="@+id/search_result_song_title_text_view" />

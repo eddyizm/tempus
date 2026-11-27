@@ -49,6 +49,7 @@ object Preferences {
     private const val LANDSCAPE_ITEMS_PER_ROW = "landscape_items_per_row"
     private const val ENABLE_DRAWER_ON_PORTRAIT = "enable_drawer_on_portrait"
     private const val HIDE_BOTTOM_NAVBAR_ON_PORTRAIT = "hide_bottom_navbar_on_portrait"
+    private const val WRAP_LONG_TEXT = "wrap_long_text"
     private const val IMAGE_SIZE = "image_size"
     private const val MAX_BITRATE_WIFI = "max_bitrate_wifi"
     private const val MAX_BITRATE_MOBILE = "max_bitrate_mobile"
@@ -590,6 +591,16 @@ object Preferences {
     @JvmStatic
     fun getEnableDrawerOnPortrait(): Boolean {
         return App.getInstance().preferences.getBoolean(ENABLE_DRAWER_ON_PORTRAIT, false)
+    }
+
+    @JvmStatic
+    fun getWrapLongText(): Boolean {
+        return App.getInstance().preferences.getBoolean(WRAP_LONG_TEXT, false)
+    }
+
+    @JvmStatic
+    fun setWrapLongText(wrapLongText: Boolean) {
+        App.getInstance().preferences.edit().putBoolean(WRAP_LONG_TEXT, wrapLongText).apply()
     }
 
     @JvmStatic

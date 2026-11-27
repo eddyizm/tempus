@@ -112,7 +112,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.575" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/player_media_title_label"
         style="@style/HeadlineLarge"
         android:layout_width="0dp"
@@ -128,7 +128,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rating_container" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/player_artist_name_label"
         style="@style/TitleMedium"
         android:layout_width="0dp"

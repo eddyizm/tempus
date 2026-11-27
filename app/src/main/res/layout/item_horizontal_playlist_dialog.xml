@@ -8,7 +8,7 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp">
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/playlist_dialog_title_text_view"
         style="@style/LabelMedium"
         android:layout_width="0dp"
@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/playlist_dialog_count_text_view"
         style="@style/LabelSmall"
         android:layout_width="0dp"

@@ -27,7 +27,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <com.eddyizm.tempus.util.WrapAwareTextView
                 android:id="@+id/playlist_title_text_view"
                 style="@style/LabelMedium"
                 android:layout_width="0dp"

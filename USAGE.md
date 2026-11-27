@@ -433,6 +433,8 @@ Accent colors, from the wallpaper or picked, need Android 12 or newer, and some 
 
 **Rounded corners** rounds the corners of covers and **Corners size** sets how much. Restart Tempus after changing either.
 
+**Wrap long text**, under **Settings → UI**, wraps long names onto a second line instead of scrolling them across labels. Home-screen widgets keep their scrolling text. The change applies the next time you open a screen.
+
 ### Sound
 
 **Settings → Sound** holds the equalizer, ReplayGain and volume settings.

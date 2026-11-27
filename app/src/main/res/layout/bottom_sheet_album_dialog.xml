@@ -38,7 +38,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <com.eddyizm.tempus.util.WrapAwareTextView
             android:id="@+id/album_title_text_view"
             style="@style/LabelMedium"
             android:layout_width="0dp"

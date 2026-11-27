@@ -31,7 +31,7 @@
         app:layout_constraintStart_toEndOf="@+id/playlist_dialog_song_remove_button"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/playlist_dialog_song_title_text_view"
         style="@style/LabelMedium"
         android:layout_width="0dp"

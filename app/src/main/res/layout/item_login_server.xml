@@ -5,7 +5,7 @@
     android:clipChildren="false"
     android:foreground="?attr/selectableItemBackground">
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/server_name_text_view"
         style="@style/LabelMedium"
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
+    <com.eddyizm.tempus.util.WrapAwareTextView
         android:id="@+id/server_address_text_view"
         style="@style/LabelSmall"
         android:layout_width="match_parent"
