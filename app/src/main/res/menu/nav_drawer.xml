@@ -34,6 +34,11 @@
     <item android:title="@string/menu_filter_all" >
         <menu>
             <item
+                android:id="@+id/allSongsFragment"
+                android:icon="@drawable/ic_queue"
+                android:title="@string/nav_drawer_all_songs" />
+
+            <item
                 android:id="@+id/albumCatalogueFragment"
                 android:icon="@drawable/ic_albums"
                 android:title="@string/library_title_album" />

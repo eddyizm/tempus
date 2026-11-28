@@ -36,6 +36,17 @@ public class ArtistRepository {
     }
 
     public void getArtistAllSongs(String artistId, ArtistSongsCallback callback) {
+        getArtistAllSongs(artistId, false, callback);
+    }
+
+    /**
+     * Collects tracks from the artist's albums. By default only tracks credited to the
+     * artist are kept. Collection/label artists can have albums whose tracks are credited
+     * to other artists; screens that want those can enable the fallback.
+     */
+    public void getArtistAllSongs(String artistId,
+                                  boolean includeAllAlbumTracksWhenNoOwnTracks,
+                                  ArtistSongsCallback callback) {
         Log.d("ArtistSync", "Getting albums for artist: " + artistId);
 
         // Get the artist info first, which contains the albums
@@ -45,17 +56,18 @@ public class ArtistRepository {
                 .enqueue(new Callback<ApiResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                        if (response.isSuccessful() && response.body() != null && 
+                        if (response.isSuccessful() && response.body() != null &&
                             response.body().getSubsonicResponse().getArtist() != null) {
-                            
+
                             List<AlbumID3> albums = response.body().getSubsonicResponse().getArtist().getAlbums();
                             Log.d("ArtistSync", "Got albums directly: " + (albums != null ? albums.size() : 0));
-                            
+
                             if (albums != null && !albums.isEmpty()) {
                                 // Pass target artist id and name so we can filter compilation tracks
                                 ArtistID3 artist = response.body().getSubsonicResponse().getArtist();
                                 String targetName = artist != null ? artist.getName() : null;
-                                fetchAllAlbumSongsWithCallback(albums, artistId, targetName, callback);
+                                fetchAllAlbumSongsWithCallback(albums, artistId, targetName,
+                                        includeAllAlbumTracksWhenNoOwnTracks, callback);
                             } else {
                                 Log.d("ArtistSync", "No albums found in artist response");
                                 callback.onSongsCollected(new ArrayList<>());
@@ -74,44 +86,50 @@ public class ArtistRepository {
                 });
     }
 
-    private void fetchAllAlbumSongsWithCallback(List<AlbumID3> albums, String targetArtistId, String targetArtistName, ArtistSongsCallback callback) {
+    private void fetchAllAlbumSongsWithCallback(List<AlbumID3> albums,
+                                                String targetArtistId,
+                                                String targetArtistName,
+                                                boolean includeAllAlbumTracksWhenNoOwnTracks,
+                                                ArtistSongsCallback callback) {
         if (albums == null || albums.isEmpty()) {
             Log.d("ArtistSync", "No albums to process");
             callback.onSongsCollected(new ArrayList<>());
             return;
         }
 
-        List<Child> allSongs = new ArrayList<>();
+        List<Child> matchingSongs = new ArrayList<>();
+        List<Child> artistAlbumSongs = new ArrayList<>();
         AtomicInteger remainingAlbums = new AtomicInteger(albums.size());
         AtomicBoolean anyFailed = new AtomicBoolean(false);
         Log.d("ArtistSync", "Processing " + albums.size() + " albums");
-        
+
         for (AlbumID3 album : albums) {
             Log.d("ArtistSync", "Getting tracks for album: " + album.getName());
+            boolean albumIsByArtist = album != null
+                    && isCreditedToArtist(album, targetArtistId, targetArtistName);
             Consumer<List<Child>> onAlbumTracks = songs -> {
                 Log.d("ArtistSync", "Got " + (songs != null ? songs.size() : 0) + " songs from album");
                 if (songs != null) {
-                    List<Child> filtered = new ArrayList<>();
                     for (Child song : songs) {
-                        boolean keep = false;
-                        if (song.getArtistId() != null && targetArtistId != null) {
-                            keep = song.getArtistId().equals(targetArtistId);
+                        if (isCreditedToArtist(song, targetArtistId, targetArtistName)) {
+                            matchingSongs.add(song);
                         }
-                        if (!keep && song.getArtist() != null && targetArtistName != null) {
-                            keep = song.getArtist().equalsIgnoreCase(targetArtistName);
+                        // Only albums credited to this artist may supply the compilation fallback.
+                        if (albumIsByArtist) {
+                            artistAlbumSongs.add(song);
                         }
-                        if (keep) filtered.add(song);
                     }
-                    allSongs.addAll(filtered);
                 }
-                
+
                 int remaining = remainingAlbums.decrementAndGet();
                 Log.d("ArtistSync", "Remaining albums: " + remaining);
-                
+
                 if (remaining == 0) {
-                    Log.d("ArtistSync", "All albums processed. Total songs: " + allSongs.size());
-                    if (anyFailed.get()) callback.onFailed(allSongs);
-                    else callback.onSongsCollected(allSongs);
+                    List<Child> result = chooseArtistSongs(matchingSongs, artistAlbumSongs,
+                            includeAllAlbumTracksWhenNoOwnTracks);
+                    Log.d("ArtistSync", "All albums processed. Total songs: " + result.size());
+                    if (anyFailed.get()) callback.onFailed(result);
+                    else callback.onSongsCollected(result);
                 }
             };
             albumRepository.getAlbumTracks(album.getId(), onAlbumTracks, () -> {
@@ -120,6 +138,35 @@ public class ArtistRepository {
                 onAlbumTracks.accept(null);
             });
         }
+    }
+
+    private static boolean isCreditedToArtist(Child song, String targetArtistId, String targetArtistName) {
+        if (song.getArtistId() != null && targetArtistId != null
+                && song.getArtistId().equals(targetArtistId)) {
+            return true;
+        }
+        return song.getArtist() != null && targetArtistName != null
+                && song.getArtist().equalsIgnoreCase(targetArtistName);
+    }
+
+    /** Package-private so the compilation fallback can be tested without a server. */
+    static boolean isCreditedToArtist(AlbumID3 album, String targetArtistId, String targetArtistName) {
+        if (album.getArtistId() != null && targetArtistId != null
+                && album.getArtistId().equals(targetArtistId)) {
+            return true;
+        }
+        return album.getArtist() != null && targetArtistName != null
+                && album.getArtist().equalsIgnoreCase(targetArtistName);
+    }
+
+    /** Package-private so the compilation fallback can be tested without a server. */
+    static List<Child> chooseArtistSongs(List<Child> matchingSongs,
+                                         List<Child> fallbackAlbumSongs,
+                                         boolean includeAllWhenNoMatch) {
+        if (includeAllWhenNoMatch && (matchingSongs == null || matchingSongs.isEmpty())) {
+            return fallbackAlbumSongs != null ? fallbackAlbumSongs : new ArrayList<>();
+        }
+        return matchingSongs != null ? matchingSongs : new ArrayList<>();
     }
 
     public interface ArtistSongsCallback {
@@ -391,7 +438,7 @@ public class ArtistRepository {
                                 albumLimit++;
                             Log.d("ArtistRepository", String.format("Retaining %d/%d albums", albumLimit, albums.size()));
 
-                            fetchAllAlbumSongsWithCallback(albums.stream().limit(albumLimit).collect(Collectors.toList()), artist.getId(), artist.getName(), songs -> {
+                            fetchAllAlbumSongsWithCallback(albums.stream().limit(albumLimit).collect(Collectors.toList()), artist.getId(), artist.getName(), false, songs -> {
                                 Collections.shuffle(songs);
                                 randomSongs.setValue(songs.stream().limit(count).collect(Collectors.toList()));
                             });
@@ -440,6 +487,38 @@ public class ArtistRepository {
                 });
 
         return topSongs;
+    }
+
+    /**
+     * Callback-based variant with a guaranteed completion signal, including failures.
+     */
+    public void fetchTopSongs(String artistName, int count, Consumer<List<Child>> callback) {
+        App.getSubsonicClientInstance(false)
+                .getBrowsingClient()
+                .getTopSongs(artistName, count)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call,
+                                           @NonNull Response<ApiResponse> response) {
+                        List<Child> fetched = null;
+                        if (response.isSuccessful()
+                                && response.body() != null
+                                && response.body().getSubsonicResponse() != null
+                                && response.body().getSubsonicResponse().getTopSongs() != null) {
+                            fetched = response.body()
+                                    .getSubsonicResponse()
+                                    .getTopSongs()
+                                    .getSongs();
+                        }
+                        callback.accept(fetched != null ? fetched : new ArrayList<>());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call,
+                                          @NonNull Throwable t) {
+                        callback.accept(new ArrayList<>());
+                    }
+                });
     }
 
     private void addToMutableLiveData(MutableLiveData<List<ArtistID3>> liveData, ArtistID3 artist) {

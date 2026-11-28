@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,6 +58,35 @@ public class SearchingRepository {
                 });
 
         return result;
+    }
+
+    /**
+     * Fetches one ordered page of every song via search3 with an empty query. The callback
+     * always fires, including on HTTP/network failure, so screens with loading state can
+     * reliably settle. SearchingClient applies the active music-folder filter on each call.
+     */
+    public void fetchAllSongsPage(int offset, int limit, Consumer<List<Child>> callback) {
+        App.getSubsonicClientInstance(false)
+                .getSearchingClient()
+                .search3("", limit, offset, 0, 0, 0, 0)
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        List<Child> songs = new ArrayList<>();
+                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse() != null) {
+                            SearchResult3 searchResult = response.body().getSubsonicResponse().getSearchResult3();
+                            if (searchResult != null && searchResult.getSongs() != null) {
+                                songs.addAll(searchResult.getSongs());
+                            }
+                        }
+                        callback.accept(songs);
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        callback.accept(new ArrayList<>());
+                    }
+                });
     }
 
     @UnstableApi

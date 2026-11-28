@@ -281,6 +281,11 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         filtering.filter(currentFilter);
     }
 
+    /** Snapshot of the currently displayed songs, including the active filter and sort. */
+    public List<Child> getDisplayedSongs() {
+        return new ArrayList<>(differ.getCurrentList());
+    }
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -408,6 +413,12 @@ public class SongHorizontalAdapter extends RecyclerView.Adapter<SongHorizontalAd
         switch (order) {
             case Constants.MEDIA_BY_TITLE:
                 list.sort(Comparator.comparing(Child::getTitle, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+                break;
+            case Constants.SORT_BY_ARTIST:
+                list.sort(Comparator.comparing(Child::getArtist, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
+                break;
+            case Constants.SORT_BY_ALBUM:
+                list.sort(Comparator.comparing(Child::getAlbum, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)));
                 break;
             case Constants.MEDIA_MOST_RECENTLY_STARRED:
                 list.sort(Comparator.comparing(Child::getStarred, Comparator.nullsLast(Comparator.reverseOrder())));

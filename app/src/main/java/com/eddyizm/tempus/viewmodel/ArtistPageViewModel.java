@@ -8,6 +8,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ArtistPageViewModel extends AndroidViewModel {
@@ -43,6 +45,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<AlbumID3>> appearsOn = new MutableLiveData<>();
     private final MutableLiveData<Map<String, List<AlbumID3>>> mapOfAlbums = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> flatAlbums = new MutableLiveData<>();
 
     public ArtistPageViewModel(@NonNull Application application) {
         super(application);
@@ -52,36 +55,60 @@ public class ArtistPageViewModel extends AndroidViewModel {
         favoriteRepository = new FavoriteRepository();
     }
 
-    public void fetchCategorizedAlbums(androidx.lifecycle.LifecycleOwner owner) {
-        artistRepository.getArtist(artist.getId()).observe(owner, artistWithAlbums -> {
-            if (artistWithAlbums != null && artistWithAlbums instanceof com.eddyizm.tempus.subsonic.models.ArtistWithAlbumsID3) {
-                java.util.function.Predicate<AlbumID3> sameArtist = a -> Objects.equals(a.getArtistId(), Objects.requireNonNull(artist.getId()));
-                com.eddyizm.tempus.subsonic.models.ArtistWithAlbumsID3 fullArtist = (com.eddyizm.tempus.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums;
-                List<AlbumID3> allAlbums = fullArtist.getAlbums();
-                if (allAlbums != null) {
-                    allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
-
-                    List<AlbumID3> primaryAlbums = allAlbums.stream()
-                            .filter(sameArtist)
-                            .collect(Collectors.toList());
-                    mapOfAlbums.setValue(
-                            primaryAlbums.stream()
-                                    .collect(groupingBy(ArtistPageViewModel::sectionType)));
-
-                } else {
-                    mapOfAlbums.setValue(Collections.emptyMap());
-                    appearsOn.setValue(Collections.emptyList());
-                }
-                if (allAlbums != null) {
-                    allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
-
-                    appearsOn.setValue(allAlbums.stream()
-                            .filter(a -> !sameArtist.test(a))
-                            .collect(Collectors.toList())
-                    );
-                }
+    public void fetchCategorizedAlbums(LifecycleOwner owner) {
+        boolean categorized = Preferences.isArtistAlbumsCategorized();
+        fetchArtistAlbums(owner).observe(owner, albums -> {
+            List<AlbumID3> safeAlbums = albums != null ? albums : Collections.emptyList();
+            if (categorized) {
+                flatAlbums.setValue(Collections.emptyList());
+                mapOfAlbums.setValue(groupAlbums(safeAlbums));
+            } else {
+                flatAlbums.setValue(safeAlbums);
+                mapOfAlbums.setValue(Collections.emptyMap());
             }
         });
+    }
+
+    /**
+     * Fetch this artist's own albums without any release-type classification.
+     * Both the categorized shelves and the flat album grid go through here, so
+     * sorting and "Appears On" stay identical when the setting changes.
+     */
+    public LiveData<List<AlbumID3>> fetchArtistAlbums(LifecycleOwner owner) {
+        MutableLiveData<List<AlbumID3>> rawAlbums = new MutableLiveData<>();
+
+        artistRepository.getArtist(artist.getId()).observe(owner, artistWithAlbums -> {
+            List<AlbumID3> allAlbums = null;
+            if (artistWithAlbums instanceof com.eddyizm.tempus.subsonic.models.ArtistWithAlbumsID3) {
+                allAlbums = ((com.eddyizm.tempus.subsonic.models.ArtistWithAlbumsID3) artistWithAlbums).getAlbums();
+            }
+
+            if (allAlbums == null) {
+                rawAlbums.setValue(Collections.emptyList());
+                appearsOn.setValue(Collections.emptyList());
+                return;
+            }
+
+            allAlbums.sort(Comparator.comparing(AlbumID3::getYear).reversed());
+            Predicate<AlbumID3> sameArtist = a -> Objects.equals(a.getArtistId(), artist.getId());
+
+            rawAlbums.setValue(allAlbums.stream()
+                    .filter(sameArtist)
+                    .collect(Collectors.toList()));
+            appearsOn.setValue(allAlbums.stream()
+                    .filter(a -> !sameArtist.test(a))
+                    .collect(Collectors.toList()));
+        });
+
+        return rawAlbums;
+    }
+
+    /** Builds release-type shelves. Flat mode skips this entirely and shows the raw list. */
+    static Map<String, List<AlbumID3>> groupAlbums(List<AlbumID3> albums) {
+        if (albums == null || albums.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return albums.stream().collect(groupingBy(ArtistPageViewModel::sectionType));
     }
 
     /**
@@ -114,6 +141,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
     }
 
     public LiveData<Map<String, List<AlbumID3>>> getMapOfAlbums() { return mapOfAlbums; }
+    public LiveData<List<AlbumID3>> getFlatAlbums() { return flatAlbums; }
     public LiveData<List<AlbumID3>> getAppearsOn() { return appearsOn; }
 
     public LiveData<ArtistInfo2> getArtistInfo(String id) {

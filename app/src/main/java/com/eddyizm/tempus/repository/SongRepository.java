@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,6 +64,31 @@ public class SongRepository {
                 });
 
         return starredSongs;
+    }
+
+    /**
+     * Non-random starred songs with an explicit completion callback, including failures.
+     * Used by screens that need to clear a loading indicator when the request settles.
+     */
+    public void fetchStarredSongs(Consumer<List<Child>> callback) {
+        App.getSubsonicClientInstance(false)
+                .getAlbumSongListClient()
+                .getStarred2()
+                .enqueue(new Callback<ApiResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                        List<Child> songs = null;
+                        if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getStarred2() != null) {
+                            songs = response.body().getSubsonicResponse().getStarred2().getSongs();
+                        }
+                        callback.accept(songs != null ? songs : new ArrayList<>());
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                        callback.accept(new ArrayList<>());
+                    }
+                });
     }
 
     /**
@@ -307,6 +334,15 @@ public class SongRepository {
 
     public MutableLiveData<List<Child>> getRandomSample(int number, Integer fromYear, Integer toYear) {
         MutableLiveData<List<Child>> randomSongsSample = new MutableLiveData<>();
+        fetchRandomSample(number, fromYear, toYear, randomSongsSample::setValue);
+        return randomSongsSample;
+    }
+
+    /**
+     * Callback-based variant used by ViewModels that must know when a request has finished,
+     * including failures. Retrofit invokes the callback on the main thread.
+     */
+    public void fetchRandomSample(int number, Integer fromYear, Integer toYear, Consumer<List<Child>> callback) {
         App.getSubsonicClientInstance(false).getAlbumSongListClient().getRandomSongs(number, fromYear, toYear).enqueue(new Callback<ApiResponse>() {
             @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                 List<Child> songs = new ArrayList<>();
@@ -316,16 +352,21 @@ public class SongRepository {
                         songs.addAll(returned);
                     }
                 }
-                randomSongsSample.setValue(songs);
+                callback.accept(songs);
             }
-            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                callback.accept(new ArrayList<>());
+            }
         });
-        return randomSongsSample;
     }
 
     public MutableLiveData<List<Child>> getRandomSampleWithGenre(int number, Integer fromYear, Integer toYear, String genre) {
         MutableLiveData<List<Child>> randomSongsSample = new MutableLiveData<>();
+        fetchRandomSampleWithGenre(number, fromYear, toYear, genre, randomSongsSample::setValue);
+        return randomSongsSample;
+    }
 
+    public void fetchRandomSampleWithGenre(int number, Integer fromYear, Integer toYear, String genre, Consumer<List<Child>> callback) {
         App.getSubsonicClientInstance(false).getAlbumSongListClient().getRandomSongs(number, fromYear, toYear, genre).enqueue(new Callback<ApiResponse>() {
             @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
                 List<Child> songs = new ArrayList<>();
@@ -335,11 +376,12 @@ public class SongRepository {
                         songs.addAll(returned);
                     }
                 }
-                randomSongsSample.setValue(songs);
+                callback.accept(songs);
             }
-            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                callback.accept(new ArrayList<>());
+            }
         });
-        return randomSongsSample;
     }
 
     public void scrobble(String id, boolean submission) {
@@ -369,15 +411,30 @@ public class SongRepository {
 
     public MutableLiveData<List<Child>> getSongsByGenre(String id, int page) {
         MutableLiveData<List<Child>> songsByGenre = new MutableLiveData<>();
-        App.getSubsonicClientInstance(false).getAlbumSongListClient().getSongsByGenre(id, 100, 100 * page).enqueue(new Callback<ApiResponse>() {
-            @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
-                    songsByGenre.setValue(response.body().getSubsonicResponse().getSongsByGenre().getSongs());
-                }
-            }
-            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {}
-        });
+        fetchSongsByGenrePage(id, page, 100, songsByGenre::setValue);
         return songsByGenre;
+    }
+
+    /**
+     * Fetches one ordered page of a genre's songs. Always completes (empty list on failure)
+     * so callers tracking an in-flight request can reliably clear their loading state.
+     */
+    public void fetchSongsByGenrePage(String id, int page, int size, Consumer<List<Child>> callback) {
+        App.getSubsonicClientInstance(false).getAlbumSongListClient().getSongsByGenre(id, size, size * page).enqueue(new Callback<ApiResponse>() {
+            @Override public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                List<Child> songs = new ArrayList<>();
+                if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
+                    List<Child> returned = response.body().getSubsonicResponse().getSongsByGenre().getSongs();
+                    if (returned != null) {
+                        songs.addAll(returned);
+                    }
+                }
+                callback.accept(songs);
+            }
+            @Override public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                callback.accept(new ArrayList<>());
+            }
+        });
     }
 
     public MutableLiveData<List<Child>> getSongsByGenres(ArrayList<String> genresId) {
@@ -398,6 +455,46 @@ public class SongRepository {
             });
         }
         return songsByGenre;
+    }
+
+    /**
+     * Collects songs from every genre and reports once, when all requests have settled.
+     * Keeps the callback contract deterministic for callers that track loading state.
+     */
+    public void fetchSongsByGenres(ArrayList<String> genresId, Consumer<List<Child>> callback) {
+        if (genresId == null || genresId.isEmpty()) {
+            callback.accept(new ArrayList<>());
+            return;
+        }
+
+        List<Child> collected = Collections.synchronizedList(new ArrayList<>());
+        AtomicInteger pending = new AtomicInteger(genresId.size());
+
+        for (String id : genresId) {
+            App.getSubsonicClientInstance(false).getAlbumSongListClient().getSongsByGenre(id, 500, 0).enqueue(new Callback<ApiResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<ApiResponse> call, @NonNull Response<ApiResponse> response) {
+                    if (response.isSuccessful() && response.body() != null && response.body().getSubsonicResponse().getSongsByGenre() != null) {
+                        List<Child> returned = response.body().getSubsonicResponse().getSongsByGenre().getSongs();
+                        if (returned != null) {
+                            collected.addAll(returned);
+                        }
+                    }
+                    finish();
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<ApiResponse> call, @NonNull Throwable t) {
+                    finish();
+                }
+
+                private void finish() {
+                    if (pending.decrementAndGet() == 0) {
+                        callback.accept(new ArrayList<>(collected));
+                    }
+                }
+            });
+        }
     }
 
     public MutableLiveData<Child> getSong(String id) {
