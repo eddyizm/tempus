@@ -14,17 +14,18 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaBrowser;
 import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.eddyizm.tempus.R;
@@ -35,18 +36,22 @@ import com.eddyizm.tempus.service.MediaManager;
 import com.eddyizm.tempus.service.MediaService;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.ui.activity.MainActivity;
+import com.eddyizm.tempus.ui.adapter.LoadingFooterAdapter;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
 import com.eddyizm.tempus.util.Constants;
 import com.eddyizm.tempus.viewmodel.PlaybackViewModel;
 import com.eddyizm.tempus.viewmodel.SongListPageViewModel;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @UnstableApi
 public class SongListPageFragment extends Fragment implements ClickCallback {
     private static final String TAG = "SongListPageFragment";
+    /** Shuffle-and-play starts a larger batch than tap-to-play's PLAYABLE_MEDIA_LIMIT. */
+    private static final int SHUFFLE_QUEUE_LIMIT = 500;
 
     private FragmentSongListPageBinding bind;
     private MainActivity activity;
@@ -54,10 +59,9 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     private PlaybackViewModel playbackViewModel;
 
     private SongHorizontalAdapter songHorizontalAdapter;
+    private LoadingFooterAdapter loadingFooterAdapter;
 
     private ListenableFuture<MediaBrowser> mediaBrowserListenableFuture;
-
-    private boolean isLoading = true;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,11 +75,11 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
 
         bind = FragmentSongListPageBinding.inflate(inflater, container, false);
         View view = bind.getRoot();
-        songListPageViewModel = new ViewModelProvider(requireActivity()).get(SongListPageViewModel.class);
+        songListPageViewModel = new ViewModelProvider(this).get(SongListPageViewModel.class);
         playbackViewModel = new ViewModelProvider(requireActivity()).get(PlaybackViewModel.class);
 
-        Bundle args = getArguments();
-        if (args == null) {
+        Bundle args = prepareArgs(getArguments());
+        if (args == null || args.isEmpty()) {
             if (activity != null && activity.navController != null) activity.navController.navigateUp();
             return view;
         }
@@ -87,6 +91,12 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         initSwipeToRefresh();
 
         return view;
+    }
+
+    /** Hook for dedicated screens that can supply their own media type without arguments. */
+    @Nullable
+    protected Bundle prepareArgs(@Nullable Bundle args) {
+        return args;
     }
 
     @Override
@@ -117,7 +127,11 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     }
 
     private void init(Bundle args) {
-        if (args.getString(Constants.MEDIA_RECENTLY_PLAYED) != null) {
+        if (args.getString(Constants.MEDIA_ALL) != null) {
+            songListPageViewModel.title = Constants.MEDIA_ALL;
+            songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_all);
+            bind.pageTitleLabel.setText(R.string.song_list_page_all);
+        } else if (args.getString(Constants.MEDIA_RECENTLY_PLAYED) != null) {
             songListPageViewModel.title = Constants.MEDIA_RECENTLY_PLAYED;
             songListPageViewModel.toolbarTitle = getString(R.string.song_list_page_recently_played);
             bind.pageTitleLabel.setText(R.string.song_list_page_recently_played);
@@ -191,13 +205,25 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initButtons() {
+        bind.songListAddToQueueImageView.setOnClickListener(v -> {
+            List<Child> displayed = songHorizontalAdapter.getDisplayedSongs();
+            if (displayed.isEmpty()) return;
+            MediaManager.enqueueBulk(mediaBrowserListenableFuture, displayed);
+            activity.setBottomSheetInPeek(true);
+            Toast.makeText(requireContext(), R.string.song_list_page_added_to_queue, Toast.LENGTH_SHORT).show();
+        });
+
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
             if (bind != null) {
                 setSongListPageSorter();
 
                 bind.songListShuffleImageView.setOnClickListener(v -> {
-                    Collections.shuffle(songs);
-                    MediaManager.startQueue(mediaBrowserListenableFuture, songs.subList(0, Math.min(500, songs.size())), 0);
+                    // Never shuffle the LiveData list in place: that would reorder the model
+                    // and leave the displayed list out of sync with the queued order.
+                    List<Child> shuffled = new ArrayList<>(songs == null ? Collections.emptyList() : songs);
+                    Collections.shuffle(shuffled);
+                    MediaManager.startQueue(mediaBrowserListenableFuture,
+                            shuffled.subList(0, Math.min(SHUFFLE_QUEUE_LIMIT, shuffled.size())), 0);
                     activity.setBottomSheetInPeek(true);
                 });
             }
@@ -210,26 +236,36 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         bind.songListRecyclerView.setHasFixedSize(true);
 
         songHorizontalAdapter = new SongHorizontalAdapter(getViewLifecycleOwner(), this, true, false, null);
-        bind.songListRecyclerView.setAdapter(songHorizontalAdapter);
+        if (songListPageViewModel.currentSort != null) {
+            songHorizontalAdapter.sort(songListPageViewModel.currentSort);
+        }
+        loadingFooterAdapter = new LoadingFooterAdapter();
+        bind.songListRecyclerView.setAdapter(new ConcatAdapter(songHorizontalAdapter, loadingFooterAdapter));
         setMediaBrowserListenableFuture();
         reapplyPlayback();
         songListPageViewModel.getSongList().observe(getViewLifecycleOwner(), songs -> {
-            isLoading = false;
             songHorizontalAdapter.setItems(songs);
             reapplyPlayback();
             setSongListPageSubtitle(songs);
+            updateEmptyState(songs);
         });
+        songListPageViewModel.getLoadingMore().observe(getViewLifecycleOwner(),
+                loading -> loadingFooterAdapter.setVisible(Boolean.TRUE.equals(loading)));
 
         bind.songListRecyclerView.addOnScrollListener(new PaginationScrollListener((LinearLayoutManager) bind.songListRecyclerView.getLayoutManager()) {
             @Override
+            protected boolean canLoadMore() {
+                return songListPageViewModel.hasMorePages();
+            }
+
+            @Override
             protected void loadMoreItems() {
-                isLoading = true;
-                songListPageViewModel.getSongsByPage(getViewLifecycleOwner());
+                songListPageViewModel.loadNextPage();
             }
 
             @Override
             public boolean isLoading() {
-                return isLoading;
+                return Boolean.TRUE.equals(songListPageViewModel.getLoadingMore().getValue());
             }
         });
 
@@ -276,18 +312,24 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         popup.getMenuInflater().inflate(menuResource, popup.getMenu());
 
         popup.setOnMenuItemClickListener(menuItem -> {
-            if (menuItem.getItemId() == R.id.menu_song_sort_name) {
-                songHorizontalAdapter.sort(Constants.MEDIA_BY_TITLE);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_song_sort_most_recently_starred) {
-                songHorizontalAdapter.sort(Constants.MEDIA_MOST_RECENTLY_STARRED);
-                return true;
-            } else if (menuItem.getItemId() == R.id.menu_song_sort_least_recently_starred) {
-                songHorizontalAdapter.sort(Constants.MEDIA_LEAST_RECENTLY_STARRED);
-                return true;
+            String sortOrder = null;
+            int itemId = menuItem.getItemId();
+            if (itemId == R.id.menu_song_sort_name) {
+                sortOrder = Constants.MEDIA_BY_TITLE;
+            } else if (itemId == R.id.menu_song_sort_artist) {
+                sortOrder = Constants.SORT_BY_ARTIST;
+            } else if (itemId == R.id.menu_song_sort_album) {
+                sortOrder = Constants.SORT_BY_ALBUM;
+            } else if (itemId == R.id.menu_song_sort_most_recently_starred) {
+                sortOrder = Constants.MEDIA_MOST_RECENTLY_STARRED;
+            } else if (itemId == R.id.menu_song_sort_least_recently_starred) {
+                sortOrder = Constants.MEDIA_LEAST_RECENTLY_STARRED;
             }
 
-            return false;
+            if (sortOrder == null) return false;
+            songListPageViewModel.currentSort = sortOrder;
+            songHorizontalAdapter.sort(sortOrder);
+            return true;
         });
 
         popup.show();
@@ -296,10 +338,11 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     private void setSongListPageSubtitle(List<Child> children) {
         if (children == null) return;
         switch (songListPageViewModel.title) {
+            case Constants.MEDIA_ALL:
             case Constants.MEDIA_BY_GENRE:
-                bind.pageSubtitleLabel.setText(children.size() < songListPageViewModel.maxNumberByGenre ?
-                        getString(R.string.generic_list_page_count, children.size()) :
-                        getString(R.string.generic_list_page_count_unknown, songListPageViewModel.maxNumberByGenre)
+                bind.pageSubtitleLabel.setText(songListPageViewModel.hasMorePages() ?
+                        getString(R.string.generic_list_page_count_unknown, children.size()) :
+                        getString(R.string.generic_list_page_count, children.size())
                 );
                 break;
             case Constants.MEDIA_BY_YEAR:
@@ -316,12 +359,21 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
         }
     }
 
+    private void updateEmptyState(List<Child> songs) {
+        if (bind == null) return;
+        boolean show = Constants.MEDIA_ALL.equals(songListPageViewModel.title)
+                && (songs == null || songs.isEmpty())
+                && !Boolean.TRUE.equals(songListPageViewModel.getRefreshing().getValue());
+        bind.songListEmptyLabel.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
     private void setSongListPageSorter() {
         switch (songListPageViewModel.title) {
             case Constants.MEDIA_BY_GENRE:
             case Constants.MEDIA_BY_YEAR:
                 bind.songListSortImageView.setVisibility(View.GONE);
                 break;
+            case Constants.MEDIA_ALL:
             case Constants.MEDIA_BY_ARTIST:
             case Constants.MEDIA_BY_GENRES:
             case Constants.MEDIA_STARRED:
@@ -378,20 +430,12 @@ public class SongListPageFragment extends Fragment implements ClickCallback {
     }
 
     public void initSwipeToRefresh() {
-        bind.swipeSongListToRefresh.setOnRefreshListener(() -> {
-            pullToRefresh();
-            bind.swipeSongListToRefresh.setRefreshing(false);
+        bind.swipeSongListToRefresh.setOnRefreshListener(songListPageViewModel::refresh);
+        songListPageViewModel.getRefreshing().observe(getViewLifecycleOwner(), refreshing -> {
+            if (bind != null) {
+                bind.swipeSongListToRefresh.setRefreshing(Boolean.TRUE.equals(refreshing));
+                updateEmptyState(songListPageViewModel.getSongList().getValue());
+            }
         });
-    }
-
-    private void pullToRefresh() {
-        LifecycleOwner lifecycleOwner = getViewLifecycleOwner();
-        songListPageViewModel.getSongList().observe(lifecycleOwner, songs -> {
-            isLoading = false;
-            songHorizontalAdapter.setItems(songs);
-            reapplyPlayback();
-            setSongListPageSubtitle(songs);
-        });
-
     }
 }

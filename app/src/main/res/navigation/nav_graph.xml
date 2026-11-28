@@ -103,6 +103,9 @@
         <action
             android:id="@+id/action_libraryFragment_to_indexFragment"
             app:destination="@id/indexFragment" />
+        <action
+            android:id="@+id/action_libraryFragment_to_allSongsFragment"
+            app:destination="@id/allSongsFragment" />
     </fragment>
     <fragment
         android:id="@+id/downloadFragment"
@@ -236,6 +239,11 @@
         android:id="@+id/songListPageFragment"
         android:name="com.eddyizm.tempus.ui.fragment.SongListPageFragment"
         android:label="SongListPageFragment"
+        tools:layout="@layout/fragment_song_list_page" />
+    <fragment
+        android:id="@+id/allSongsFragment"
+        android:name="com.eddyizm.tempus.ui.fragment.AllSongsFragment"
+        android:label="AllSongsFragment"
         tools:layout="@layout/fragment_song_list_page" />
     <fragment
         android:id="@+id/albumListPageFragment"

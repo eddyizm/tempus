@@ -81,6 +81,7 @@ public class NavigationHelper {
         return destId == R.id.homeFragment ||
                 destId == R.id.libraryFragment ||
                 destId == R.id.downloadFragment ||
+                destId == R.id.allSongsFragment ||
                 destId == R.id.albumCatalogueFragment ||
                 destId == R.id.artistCatalogueFragment ||
                 destId == R.id.genreCatalogueFragment ||

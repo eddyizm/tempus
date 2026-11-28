@@ -119,6 +119,8 @@ public class LibraryFragment extends Fragment implements ClickCallback {
     }
 
     private void init() {
+        bind.allSongsTextViewClickable.setOnClickListener(v ->
+                activity.navController.navigate(R.id.action_libraryFragment_to_allSongsFragment));
         bind.albumCatalogueTextViewClickable.setOnClickListener(v -> activity.navController.navigate(R.id.action_libraryFragment_to_albumCatalogueFragment));
         bind.artistCatalogueTextViewClickable.setOnClickListener(v -> activity.navController.navigate(R.id.action_libraryFragment_to_artistCatalogueFragment));
         bind.genreCatalogueTextViewClickable.setOnClickListener(v -> activity.navController.navigate(R.id.action_libraryFragment_to_genreCatalogueFragment));
