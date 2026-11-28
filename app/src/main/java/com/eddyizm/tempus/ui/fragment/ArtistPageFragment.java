@@ -396,6 +396,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
 
     private void initCategorizedAlbumsView() {
         if (Preferences.isArtistAlbumsCategorized()) {
+            bind.allAlbumsTitle.setVisibility(View.GONE);
             bind.allAlbumsRecyclerView.setLayoutManager(
                     new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
             bind.allAlbumsRecyclerView.setHasFixedSize(true);
@@ -412,7 +413,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
                 }
             });
         } else {
-            // One continuous grid: no release-type heading and no "See all" row.
+            // One continuous grid with a plain "Albums" heading and no "See all" row.
             bind.allAlbumsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
             bind.allAlbumsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
             bind.allAlbumsRecyclerView.setHasFixedSize(true);
@@ -422,8 +423,9 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
             bind.allAlbumsRecyclerView.setAdapter(flatAlbumsAdapter);
             artistPageViewModel.getFlatAlbums().observe(getViewLifecycleOwner(), albums -> {
                 if (bind != null) {
-                    bind.allAlbumsRecyclerView.setVisibility(
-                            albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                    int visibility = albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE;
+                    bind.allAlbumsTitle.setVisibility(visibility);
+                    bind.allAlbumsRecyclerView.setVisibility(visibility);
                     if (albums != null) {
                         flatAlbumsAdapter.setItemsWithoutFilter(albums);
                     }
