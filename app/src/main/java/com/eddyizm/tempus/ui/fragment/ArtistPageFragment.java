@@ -28,6 +28,7 @@ import androidx.media3.session.SessionToken;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.eddyizm.tempus.R;
 import com.eddyizm.tempus.databinding.FragmentArtistPageBinding;
@@ -41,6 +42,7 @@ import com.eddyizm.tempus.subsonic.models.ArtistID3;
 import com.eddyizm.tempus.subsonic.models.Child;
 import com.eddyizm.tempus.ui.activity.MainActivity;
 import com.eddyizm.tempus.ui.adapter.AlbumCarouselAdapter;
+import com.eddyizm.tempus.ui.adapter.AlbumCatalogueAdapter;
 import com.eddyizm.tempus.ui.adapter.AlbumSectionsAdapter;
 import com.eddyizm.tempus.ui.adapter.ArtistCarouselAdapter;
 import com.eddyizm.tempus.ui.adapter.SongHorizontalAdapter;
@@ -67,6 +69,7 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
 
     private SongHorizontalAdapter songHorizontalAdapter;
     private AlbumSectionsAdapter allAlbumsAdapter;
+    private AlbumCatalogueAdapter flatAlbumsAdapter;
     private AlbumCarouselAdapter appearsOnAdapter;
     private ArtistCarouselAdapter similarArtistAdapter;
 
@@ -392,20 +395,41 @@ public class ArtistPageFragment extends Fragment implements ClickCallback {
     }
 
     private void initCategorizedAlbumsView() {
-
-        bind.allAlbumsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
-        bind.allAlbumsRecyclerView.setHasFixedSize(true);
-        bind.allAlbumsRecyclerView.setNestedScrollingEnabled(false);
-        allAlbumsAdapter = new AlbumSectionsAdapter(requireContext(), this);
-        bind.allAlbumsRecyclerView.setAdapter(allAlbumsAdapter);
-        artistPageViewModel.getMapOfAlbums().observe(getViewLifecycleOwner(), albums -> {
-            if (bind != null) {
-                bind.allAlbumsRecyclerView.setVisibility(albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
-                if (albums != null) {
-                    allAlbumsAdapter.setItems(albums);
+        if (Preferences.isArtistAlbumsCategorized()) {
+            bind.allAlbumsRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+            bind.allAlbumsRecyclerView.setHasFixedSize(true);
+            bind.allAlbumsRecyclerView.setNestedScrollingEnabled(false);
+            allAlbumsAdapter = new AlbumSectionsAdapter(requireContext(), this);
+            bind.allAlbumsRecyclerView.setAdapter(allAlbumsAdapter);
+            artistPageViewModel.getMapOfAlbums().observe(getViewLifecycleOwner(), albums -> {
+                if (bind != null) {
+                    bind.allAlbumsRecyclerView.setVisibility(
+                            albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                    if (albums != null) {
+                        allAlbumsAdapter.setItems(albums);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            // One continuous grid: no release-type heading and no "See all" row.
+            bind.allAlbumsRecyclerView.setLayoutManager(new GridLayoutManager(requireContext(), spanCount));
+            bind.allAlbumsRecyclerView.addItemDecoration(new GridItemDecoration(spanCount, tileSpacing, false));
+            bind.allAlbumsRecyclerView.setHasFixedSize(true);
+            bind.allAlbumsRecyclerView.setNestedScrollingEnabled(false);
+            flatAlbumsAdapter = new AlbumCatalogueAdapter(this, false);
+            flatAlbumsAdapter.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+            bind.allAlbumsRecyclerView.setAdapter(flatAlbumsAdapter);
+            artistPageViewModel.getFlatAlbums().observe(getViewLifecycleOwner(), albums -> {
+                if (bind != null) {
+                    bind.allAlbumsRecyclerView.setVisibility(
+                            albums != null && !albums.isEmpty() ? View.VISIBLE : View.GONE);
+                    if (albums != null) {
+                        flatAlbumsAdapter.setItemsWithoutFilter(albums);
+                    }
+                }
+            });
+        }
 
         // Appears On
         bind.appearsOnRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));

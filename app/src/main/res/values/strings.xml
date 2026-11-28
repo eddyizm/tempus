@@ -809,7 +809,7 @@
     <string name="settings_artist_sort_by_album_count">Sort artists by album count</string>
     <string name="settings_artist_sort_by_album_count_summary">If enabled, sort the artists by album count. Sort by name if disabled.</string>
     <string name="settings_artist_albums_categorized">Group artist releases by type</string>
-    <string name="settings_artist_albums_categorized_summary">If enabled, show separate Albums, EPs and Singles sections. If disabled, list every album by the same artist in one Albums section, newest year first.</string>
+    <string name="settings_artist_albums_categorized_summary">If enabled, show separate Albums, EPs and Singles sections. If disabled, show all of the artist\'s albums in one continuous vertical grid, newest year first. The number of columns follows the Tile size setting.</string>
 
     <string name="folder_play_collecting">Collecting songs from folder…</string>
     <string name="folder_play_playing">Playing %d songs</string>

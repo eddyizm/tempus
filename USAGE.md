@@ -186,7 +186,7 @@ The queue button on a song list appends the songs **currently displayed**, in th
 
 On an artist's page, **All songs** sits between Top Songs and Albums. Tap **Browse every song by this artist** to open a full song list built from the artist's albums on the server. It uses the same sorting, search filtering, refresh and **Add to queue** actions as other song lists, and duplicate tracks are removed. For an artist with a large discography, collecting every album's tracks can take a while; the loading state stays until the request finishes.
 
-This artist list does not follow the active music-library filter; the server-wide **All songs** screen does. When an artist is a collection of other artists and no tracks are credited to it directly, the list falls back to every track on the albums listed for that artist. **Group artist releases by type**, under Settings → UI, is on by default and keeps the separate Albums, EPs, Singles and other release shelves. Turn it off to show one **Albums** shelf with all of the artist's albums, newest year first. The change applies the next time the artist page opens; it does not re-shelf a page that is already on screen.
+This artist list does not follow the active music-library filter; the server-wide **All songs** screen does. When an artist is a collection of other artists and no tracks are credited to it directly, the list falls back to every track on the albums listed for that artist. **Group artist releases by type**, under Settings → UI, is on by default and keeps the separate Albums, EPs, Singles and other release shelves. Turn it off to show all of the artist's albums in one continuous vertical grid, newest year first, with no release-type headings or **See all** row. The grid follows the Tile size setting for its number of columns. The change applies the next time the artist page opens; it does not re-shelf a page that is already on screen.
 
 ### Folder or index playback
 
@@ -450,7 +450,7 @@ Accent colors, from the wallpaper or picked, need Android 12 or newer, and some 
 
 **Rounded corners** rounds the corners of covers and **Corners size** sets how much. Restart Tempus after changing either.
 
-**Group artist releases by type**, under **Settings → UI**, is on by default. Turn it off to show one **Albums** shelf on artist pages, newest year first, instead of separate release-type shelves. The next artist page you open uses the new choice.
+**Group artist releases by type**, under **Settings → UI**, is on by default. Turn it off to show artist albums in one continuous vertical grid, newest year first, instead of separate release-type shelves. The grid has no section heading or **See all** row, and its number of columns follows **Tile size**. The next artist page you open uses the new choice.
 
 ### Sound
 

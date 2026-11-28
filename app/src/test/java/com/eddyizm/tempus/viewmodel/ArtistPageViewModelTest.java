@@ -1,7 +1,6 @@
 package com.eddyizm.tempus.viewmodel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import com.eddyizm.tempus.subsonic.models.AlbumID3;
@@ -47,34 +46,23 @@ public class ArtistPageViewModelTest {
     }
 
     @Test
-    public void groupAlbums_putsEverythingInOneShelfWhenCategorizationIsOff() {
+    public void groupAlbums_groupsByReleaseType() {
         List<AlbumID3> albums = Arrays.asList(
                 album(10, Collections.singletonList("EP")),
                 album(2, Collections.singletonList("Single")),
                 album(12, Collections.singletonList("Album")));
 
-        Map<String, List<AlbumID3>> grouped = ArtistPageViewModel.groupAlbums(albums, false);
+        Map<String, List<AlbumID3>> grouped = ArtistPageViewModel.groupAlbums(albums);
 
-        assertEquals(Collections.singleton("album"), grouped.keySet());
-        assertSame(albums, grouped.get("album"));
-    }
-
-    @Test
-    public void groupAlbums_keepsTheExistingSectionsWhenCategorizationIsOn() {
-        List<AlbumID3> albums = Arrays.asList(
-                album(10, Collections.singletonList("EP")),
-                album(2, Collections.singletonList("Single")));
-
-        Map<String, List<AlbumID3>> grouped = ArtistPageViewModel.groupAlbums(albums, true);
-
-        assertEquals(2, grouped.size());
+        assertEquals(3, grouped.size());
         assertEquals(1, grouped.get("ep").size());
         assertEquals(1, grouped.get("single").size());
+        assertEquals(1, grouped.get("album").size());
     }
 
     @Test
     public void groupAlbums_returnsNoShelvesWhenThereAreNoAlbums() {
-        assertTrue(ArtistPageViewModel.groupAlbums(Collections.emptyList(), false).isEmpty());
-        assertTrue(ArtistPageViewModel.groupAlbums(null, true).isEmpty());
+        assertTrue(ArtistPageViewModel.groupAlbums(Collections.emptyList()).isEmpty());
+        assertTrue(ArtistPageViewModel.groupAlbums(null).isEmpty());
     }
 }

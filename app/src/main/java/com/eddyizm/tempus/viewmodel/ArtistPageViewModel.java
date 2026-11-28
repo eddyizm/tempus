@@ -45,6 +45,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
 
     private final MutableLiveData<List<AlbumID3>> appearsOn = new MutableLiveData<>();
     private final MutableLiveData<Map<String, List<AlbumID3>>> mapOfAlbums = new MutableLiveData<>();
+    private final MutableLiveData<List<AlbumID3>> flatAlbums = new MutableLiveData<>();
 
     public ArtistPageViewModel(@NonNull Application application) {
         super(application);
@@ -55,13 +56,22 @@ public class ArtistPageViewModel extends AndroidViewModel {
     }
 
     public void fetchCategorizedAlbums(LifecycleOwner owner) {
-        fetchArtistAlbums(owner).observe(owner, albums -> mapOfAlbums.setValue(
-                groupAlbums(albums, Preferences.isArtistAlbumsCategorized())));
+        boolean categorized = Preferences.isArtistAlbumsCategorized();
+        fetchArtistAlbums(owner).observe(owner, albums -> {
+            List<AlbumID3> safeAlbums = albums != null ? albums : Collections.emptyList();
+            if (categorized) {
+                flatAlbums.setValue(Collections.emptyList());
+                mapOfAlbums.setValue(groupAlbums(safeAlbums));
+            } else {
+                flatAlbums.setValue(safeAlbums);
+                mapOfAlbums.setValue(Collections.emptyMap());
+            }
+        });
     }
 
     /**
      * Fetch this artist's own albums without any release-type classification.
-     * Both the categorized shelves and the flat Albums shelf go through here, so
+     * Both the categorized shelves and the flat album grid go through here, so
      * sorting and "Appears On" stay identical when the setting changes.
      */
     public LiveData<List<AlbumID3>> fetchArtistAlbums(LifecycleOwner owner) {
@@ -93,13 +103,10 @@ public class ArtistPageViewModel extends AndroidViewModel {
         return rawAlbums;
     }
 
-    /** The classification choke point: one Albums shelf when grouping is switched off. */
-    static Map<String, List<AlbumID3>> groupAlbums(List<AlbumID3> albums, boolean categorized) {
+    /** Builds release-type shelves. Flat mode skips this entirely and shows the raw list. */
+    static Map<String, List<AlbumID3>> groupAlbums(List<AlbumID3> albums) {
         if (albums == null || albums.isEmpty()) {
             return Collections.emptyMap();
-        }
-        if (!categorized) {
-            return Collections.singletonMap("album", albums);
         }
         return albums.stream().collect(groupingBy(ArtistPageViewModel::sectionType));
     }
@@ -134,6 +141,7 @@ public class ArtistPageViewModel extends AndroidViewModel {
     }
 
     public LiveData<Map<String, List<AlbumID3>>> getMapOfAlbums() { return mapOfAlbums; }
+    public LiveData<List<AlbumID3>> getFlatAlbums() { return flatAlbums; }
     public LiveData<List<AlbumID3>> getAppearsOn() { return appearsOn; }
 
     public LiveData<ArtistInfo2> getArtistInfo(String id) {
